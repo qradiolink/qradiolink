@@ -1,0 +1,22 @@
+package QRadioLink;
+
+option optimize_for = SPEED;
+
+message Parameters {
+    required uint32 station_id = 1;
+    optional uint32 in_call = 2;
+    optional uint32 channel_id = 3;
+    optional uint32 caller_id = 4;
+}
+
+message JoinConference {
+    required uint32 server_id = 1;
+    required uint32 channel_id = 2;
+    required uint32 caller_id = 3;
+    optional string server_ip = 4;
+    optional uint32 server_port = 5;
+}
+    
+message LeaveConference {
+    required bool leave = 1;
+}

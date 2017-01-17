@@ -1,0 +1,341 @@
+// Written by Adrian Musceac YO8RZZ at gmail dot com, started March 2016.
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License as
+// published by the Free Software Foundation; either version 3 of the
+// License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+#include "gr_modem.h"
+
+gr_modem::gr_modem(Settings *settings, QObject *parent) :
+    QObject(parent)
+{
+    _settings = settings;
+    _transmitting = false;
+    _frame_counter = 0;
+    _last_frame_type = FrameTypeNone;
+    //_gr_mod_gmsk = new gr_mod_gmsk(0,24,48000,1600,1200,1);
+    //_gr_mod_gmsk->start();
+    //_gr_demod_gmsk = new gr_demod_gmsk(0,24,48000,1600,1200,1);
+    //_gr_demod_gmsk->start();
+    //_gr_mod_bpsk = new gr_mod_bpsk(0,24,48000,1700,1200,1);
+    //_gr_mod_bpsk->start();
+    //_gr_demod_bpsk = new gr_demod_bpsk(0,24,48000,1700,1200,1);
+    //_gr_demod_bpsk->start();
+    _bit_buf_len = 7 *8;
+    _bit_buf_index = 0;
+    _sync_found = false;
+    _stream_ended = false;
+    _bit_buf = new unsigned char[_bit_buf_len];
+    _current_frame_type = FrameTypeNone;
+}
+
+gr_modem::~gr_modem()
+{
+    //_gr_demod_gmsk->stop();
+    //_gr_mod_gmsk->stop();
+    //_gr_demod_bpsk->stop();
+    //_gr_mod_bpsk->stop();
+    //deinitRX();
+    //deinitTX();
+    //delete _gr_mod_gmsk;
+    //delete _gr_demod_gmsk;
+    //delete _gr_mod_bpsk;
+    //delete _gr_demod_bpsk;
+}
+
+void gr_modem::initTX(int modem_type)
+{
+    _gr_mod_bpsk_sdr = new gr_mod_bpsk_sdr(0, 125, 250000, 1700, 1200, 1, 434025000, 20);
+    _gr_mod_bpsk_sdr->start();
+}
+
+void gr_modem::initRX(int modem_type)
+{
+    _gr_demod_bpsk_sdr = new gr_demod_bpsk_sdr(0,125,1000000,1700,1200,1, 434025000, 50);
+    _gr_demod_bpsk_sdr->start();
+}
+
+void gr_modem::deinitTX(int modem_type)
+{
+    _gr_mod_bpsk_sdr->stop();
+    delete _gr_mod_bpsk_sdr;
+}
+
+void gr_modem::deinitRX(int modem_type)
+{
+    _gr_demod_bpsk_sdr->stop();
+    delete _gr_demod_bpsk_sdr;
+}
+
+void gr_modem::startTransmission()
+{
+    _transmitting = true;
+    for(int i = 0;i<3;i++)
+    {
+        std::vector<unsigned char> *tx_start = new std::vector<unsigned char>;
+        tx_start->push_back(0x8C);
+        tx_start->push_back(0x8C);
+        tx_start->push_back(0x8C);
+        tx_start->push_back(0x8C);
+        tx_start->push_back(0x8C);
+        tx_start->push_back(0x8C);
+        tx_start->push_back(0x8C);
+        tx_start->push_back(0x8C);
+        tx_start->push_back(0x8C);
+        tx_start->push_back(0x8C);
+        QVector<std::vector<unsigned char>*> frames;
+        frames.append(tx_start);
+        transmit(frames);
+    }
+}
+
+void gr_modem::endTransmission()
+{
+    _frame_counter = 0;
+    _transmitting = false;
+    std::vector<unsigned char> *tx_end = new std::vector<unsigned char>;
+    tx_end->push_back(0x4C);
+    tx_end->push_back(0x8A);
+    tx_end->push_back(0x2B);
+    tx_end->push_back(0x4C);
+    tx_end->push_back(0x8A);
+    tx_end->push_back(0x2B);
+    tx_end->push_back(0x4C);
+    tx_end->push_back(0x8A);
+    tx_end->push_back(0x2B);
+    tx_end->push_back(0x00);
+    QVector<std::vector<unsigned char>*> frames;
+    frames.append(tx_end);
+    transmit(frames);
+}
+
+void gr_modem::processC2Data(unsigned char *data, short size)
+{
+    std::vector<unsigned char> *one_frame = frame(data, size, FrameTypeVoice);
+    QVector<std::vector<unsigned char>*> frames;
+    frames.append(one_frame);
+    transmit(frames);
+    delete[] data;
+}
+
+void gr_modem::transmit(QVector<std::vector<unsigned char>*> frames)
+{
+    std::vector<unsigned char> *all_frames = new std::vector<unsigned char>;
+    for (int i=0; i<frames.size();i++)
+    {
+        all_frames->insert( all_frames->end(), frames.at(i)->begin(), frames.at(i)->end() );
+        frames.at(i)->clear();
+        delete frames.at(i);
+    }
+    int ret = 1;
+    while(ret)
+    {
+        usleep(100);
+        ret = _gr_mod_bpsk_sdr->setData(all_frames);
+    }
+
+}
+
+std::vector<unsigned char>* gr_modem::frame(unsigned char *encoded_audio, int data_size, int frame_type)
+{
+
+    std::vector<unsigned char> *data = new std::vector<unsigned char>;
+    data->push_back(0xAA); // frame start
+    if(frame_type == FrameTypeVoice)
+    {
+        data->push_back(0xED);
+        data->push_back(0x89);
+    }
+    else if(frame_type == FrameTypeText)
+    {
+        data->push_back(0x89);
+        data->push_back(0xED);
+    }
+    for(int i=0;i< data_size;i++)
+    {
+        data->push_back(encoded_audio[i]);
+    }
+    return data;
+
+}
+
+void gr_modem::textData(QString text)
+{
+    QStringList list;
+    QVector<std::vector<unsigned char>*> frames;
+    for( int k=0;k<text.length();k+=7)
+    {
+        list.append(text.mid(k,7));
+    }
+
+    startTransmission();
+    for(int o = 0;o < list.length();o++)
+    {
+        QString chunk=list.at(o);
+        unsigned char *data = new unsigned char[7];
+        memset(data, 0, 7);
+        memcpy(data,chunk.toStdString().c_str(),chunk.length());
+        std::vector<unsigned char> *one_frame = frame(data,7, FrameTypeText);
+
+        frames.append(one_frame);
+        delete[] data;
+    }
+    transmit(frames);
+    endTransmission();
+}
+
+static void
+packit(unsigned char *pktbuf, const unsigned char *bitbuf, int bitcount)
+{
+  for(int i = 0; i < bitcount; i += 8) {
+    int t = bitbuf[i+0] & 0x1;
+    t = (t << 1) | (bitbuf[i+1] & 0x1);
+    t = (t << 1) | (bitbuf[i+2] & 0x1);
+    t = (t << 1) | (bitbuf[i+3] & 0x1);
+    t = (t << 1) | (bitbuf[i+4] & 0x1);
+    t = (t << 1) | (bitbuf[i+5] & 0x1);
+    t = (t << 1) | (bitbuf[i+6] & 0x1);
+    t = (t << 1) | (bitbuf[i+7] & 0x1);
+    *pktbuf++ = t;
+  }
+}
+
+void gr_modem::demodulate()
+{
+
+    std::vector<unsigned char> *demod_data = _gr_demod_bpsk_sdr->getData();
+    int v_size = demod_data->size();
+    if(v_size<1)
+    {
+        usleep(1000);
+        delete demod_data;
+        return;
+    }
+
+    for(int i=0;i < v_size;i++)
+    {
+        if(!_sync_found)
+        {
+            _current_frame_type = findSync(demod_data->at(i));
+            if(_sync_found)
+            {
+                _bit_buf_index = 0;
+                continue;
+            }
+            if(_stream_ended)
+            {
+                _stream_ended = false;
+                handleStreamEnd();
+                continue;
+            }
+        }
+        if(_sync_found)
+        {
+            _bit_buf[_bit_buf_index] =  (demod_data->at(i)) & 0x1;
+            _bit_buf_index++;
+            if(_bit_buf_index >= _bit_buf_len)
+            {
+                unsigned char *frame_data = new unsigned char[7];
+                packit(frame_data,_bit_buf,_bit_buf_index);
+                processReceivedData(frame_data, _current_frame_type);
+                _sync_found = false;
+                _shift_reg = 0;
+            }
+        }
+
+    }
+
+    demod_data->clear();
+    delete demod_data;
+
+}
+
+
+int gr_modem::findSync(unsigned char bit)
+{
+
+
+    _shift_reg = (_shift_reg << 1) | (bit & 0x1);
+    u_int32_t temp = _shift_reg & 0xFFFFFF;
+
+    if((temp == 0xAA89ED))
+    {
+        _sync_found = true;
+        return FrameTypeText;
+    }
+    if((temp == 0xAAED89))
+    {
+        _sync_found = true;
+        return FrameTypeVoice;
+    }
+    temp = _shift_reg & 0xFFFFFFFF;
+    if((temp == 0x4C8A2B4C))
+    {
+        _stream_ended = true;
+        return FrameTypeEnd;
+    }
+    return FrameTypeNone;
+}
+
+
+void gr_modem::processReceivedData(unsigned char *received_data, int current_frame_type)
+{
+
+    if (current_frame_type == FrameTypeText)
+    {
+        emit dataFrameReceived();
+        _last_frame_type = FrameTypeText;
+        char *text_data = new char[6];
+        memset(text_data, 0, 6);
+        memcpy(text_data, received_data, 7);
+        quint8 string_length = 7;
+
+        for(int ii=7-1;ii>=0;ii--)
+        {
+            QChar x(text_data[ii]);
+            if(x.unicode()==0)
+            {
+                string_length--;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        emit textReceived( QString::fromLocal8Bit(text_data,string_length));
+        delete[] text_data;
+    }
+    else if (current_frame_type == FrameTypeVoice )
+    {
+        emit audioFrameReceived();
+        _last_frame_type = FrameTypeVoice;
+        unsigned char *codec2_data = new unsigned char[7];
+        memcpy(codec2_data, received_data, 7);
+        emit codec2Audio(codec2_data,7);
+    }
+    delete[] received_data;
+}
+
+void gr_modem::handleStreamEnd()
+{
+    if(_last_frame_type == FrameTypeText)
+    {
+        emit textReceived( QString("\n"));
+    }
+    else if(_last_frame_type == FrameTypeVoice)
+    {
+        // do stuff
+    }
+    emit receiveEnd();
+}
