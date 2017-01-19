@@ -20,6 +20,7 @@ gr_modem::gr_modem(Settings *settings, QObject *parent) :
     QObject(parent)
 {
     _settings = settings;
+    //_const_gui = const_gui;
     _transmitting = false;
     _frame_counter = 0;
     _last_frame_type = FrameTypeNone;

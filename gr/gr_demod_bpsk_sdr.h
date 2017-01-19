@@ -16,9 +16,12 @@
 #include <gnuradio/blocks/float_to_complex.h>
 #include <gnuradio/digital/costas_loop_cc.h>
 #include <gnuradio/digital/diff_decoder_bb.h>
+#include <gnuradio/digital/cma_equalizer_cc.h>
 #include <gnuradio/analog/agc2_cc.h>
 #include <gnuradio/digital/fll_band_edge_cc.h>
 #include <gnuradio/filter/pfb_arb_resampler_ccf.h>
+#include <gnuradio/filter/freq_xlating_fir_filter_ccf.h>
+//#include <gnuradio/qtgui/const_sink_c.h>
 #include <osmosdr/source.h>
 #include <vector>
 #include "gr_vector_sink.h"
@@ -42,8 +45,8 @@ private:
     gr::top_block_sptr _top_block;
     gr_vector_sink_sptr _vector_sink;
     gr::blocks::unpacked_to_packed_bb::sptr _unpacked_to_packed;
-
-    gr::filter::fir_filter_ccf::sptr _band_pass_filter_1;
+    gr::filter::freq_xlating_fir_filter_ccf::sptr _filter;
+    gr::digital::cma_equalizer_cc::sptr _equalizer;
     gr::blocks::complex_to_real::sptr _complex_to_real;
     gr::analog::agc2_cc::sptr _agc;
     gr::digital::fll_band_edge_cc::sptr _fll;
@@ -52,6 +55,7 @@ private:
     gr::digital::costas_loop_cc::sptr _costas_loop;
     gr::digital::diff_decoder_bb::sptr _diff_decoder;
     gr::filter::pfb_arb_resampler_ccf::sptr _resampler;
+    //gr::qtgui::const_sink_c::sptr _constellation;
     osmosdr::source::sptr _osmosdr_source;
 
     int _samples_per_symbol;

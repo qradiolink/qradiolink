@@ -60,11 +60,14 @@ signals:
 public:
     explicit MainWindow(MumbleClient *client, QWidget *parent = 0);
     ~MainWindow();
+    //QWidget* get_const_gui() {return _constellation_gui;}
+
 
 private:
     Ui::MainWindow *ui;
     MumbleClient *_mumble_client;
     bool _transmitting_radio;
+    //QWidget *_constellation_gui;
 
 };
 

@@ -122,6 +122,7 @@ private:
     unsigned long long _shift_reg;
     bool _stream_started;
     bool _stream_ended;
+    QWidget *_const_gui;
     enum
     {
         FrameTypeNone,

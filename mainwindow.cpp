@@ -34,6 +34,7 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
     QObject::connect(ui->checkBoxRX,SIGNAL(clicked(bool)),this,SLOT(toggleRXwin(bool)));
     QObject::connect(ui->checkBoxTX,SIGNAL(clicked(bool)),this,SLOT(toggleTXwin(bool)));
     _transmitting_radio = false;
+    //_constellation_gui = ui->tab_5;
 
 }
 

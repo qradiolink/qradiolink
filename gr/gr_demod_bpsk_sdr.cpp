@@ -16,7 +16,8 @@
 
 #include "gr_demod_bpsk_sdr.h"
 
-gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(QObject *parent, int sps, int samp_rate, int carrier_freq, int filter_width, float mod_index, float device_frequency, float rf_gain) :
+gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(QObject *parent, int sps, int samp_rate, int carrier_freq,
+                                     int filter_width, float mod_index, float device_frequency, float rf_gain) :
     QObject(parent)
 {
     _target_samp_rate = 250000;
@@ -39,20 +40,22 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(QObject *parent, int sps, int samp_rate, in
     std::vector<float> taps = gr::filter::firdes::low_pass(flt_size, flt_size, cutoff, trans_width);
     _resampler = gr::filter::pfb_arb_resampler_ccf::make(rerate, taps, flt_size);
     _agc = gr::analog::agc2_cc::make(0.6e-1, 1e-3, 1, 1);
-    _band_pass_filter_1 = gr::filter::fir_filter_ccf::make(
+    _filter = gr::filter::freq_xlating_fir_filter_ccf::make(
                 1,gr::filter::firdes::low_pass(
-                    1, _target_samp_rate, _filter_width,600,gr::filter::firdes::WIN_HAMMING));
+                    1, _target_samp_rate, _filter_width,600,gr::filter::firdes::WIN_HAMMING), 25000,
+                _target_samp_rate);
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.0025*0.175*0.175, 0.5, 0.175,
                                                               0.005);
     _costas_loop = gr::digital::costas_loop_cc::make(0.0628,2);
-    //_fll = gr::digital::fll_band_edge_cc::make(sps, 0.15, 8, 0.00628);
+    _equalizer = gr::digital::cma_equalizer_cc::make(8,1,0.00005,1);
+    _fll = gr::digital::fll_band_edge_cc::make(sps, 0.15, 32, 0.000628);
     _complex_to_real = gr::blocks::complex_to_real::make();
     _binary_slicer = gr::digital::binary_slicer_fb::make();
     _diff_decoder = gr::digital::diff_decoder_bb::make(2);
     _unpacked_to_packed = gr::blocks::unpacked_to_packed_bb::make(1,gr::GR_MSB_FIRST);
     _vector_sink = make_gr_vector_sink();
     _osmosdr_source = osmosdr::source::make(device_args);
-    _osmosdr_source->set_center_freq(_device_frequency);
+    _osmosdr_source->set_center_freq(_device_frequency-25000);
     _osmosdr_source->set_sample_rate(_samp_rate);
     _osmosdr_source->set_freq_corr(41);
     _osmosdr_source->set_gain_mode(false);
@@ -67,13 +70,18 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(QObject *parent, int sps, int samp_rate, in
         _osmosdr_source->set_gain_mode(true);
     }
 
+    const std::string name = "const";
+    //_constellation = gr::qtgui::const_sink_c::make(1, name,1, const_gui);
+
     _top_block->connect(_osmosdr_source,0,_resampler,0);
-    _top_block->connect(_resampler,0,_band_pass_filter_1,0);
-    _top_block->connect(_band_pass_filter_1,0,_agc,0);
-    _top_block->connect(_agc,0,_clock_recovery,0);
-    //_top_block->connect(_fll,0,_clock_recovery,0);
-    _top_block->connect(_clock_recovery,0,_costas_loop,0);
+    _top_block->connect(_resampler,0,_filter,0);
+    _top_block->connect(_filter,0,_agc,0);
+    _top_block->connect(_agc,0,_fll,0);
+    _top_block->connect(_fll,0,_clock_recovery,0);
+    _top_block->connect(_clock_recovery,0,_equalizer,0);
+    _top_block->connect(_equalizer,0,_costas_loop,0);
     _top_block->connect(_costas_loop,0,_complex_to_real,0);
+    //_top_block->connect(_costas_loop,0,_constellation,0);
     _top_block->connect(_complex_to_real,0,_binary_slicer,0);
     _top_block->connect(_binary_slicer,0,_diff_decoder,0);
     _top_block->connect(_diff_decoder,0,_vector_sink,0);
