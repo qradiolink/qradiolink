@@ -42,9 +42,9 @@ AudioEncoder::~AudioEncoder()
 unsigned char* AudioEncoder::encode_opus(short *audiobuffer, int audiobuffersize, int &encoded_size)
 {
     int opus_bandwidth;
-    opus_encoder_ctl(_enc, OPUS_SET_BITRATE(4000));
+    opus_encoder_ctl(_enc, OPUS_SET_BITRATE(19000));
     opus_encoder_ctl(_enc, OPUS_SET_SIGNAL(OPUS_SIGNAL_VOICE));
-    opus_encoder_ctl(_enc, OPUS_SET_COMPLEXITY(5));
+    //opus_encoder_ctl(_enc, OPUS_SET_COMPLEXITY(5));
     opus_encoder_ctl(_enc, OPUS_SET_DTX(1));
     opus_encoder_ctl(_enc, OPUS_GET_BANDWIDTH(&opus_bandwidth));
     opus_encoder_ctl(_enc, OPUS_SET_INBAND_FEC(1));

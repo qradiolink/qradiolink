@@ -47,7 +47,9 @@ SOURCES += main.cpp\
     gr/gr_mod_bpsk.cpp \
     gr/gr_demod_bpsk.cpp \
     gr/gr_demod_bpsk_sdr.cpp \
-    gr/gr_mod_bpsk_sdr.cpp
+    gr/gr_mod_bpsk_sdr.cpp \
+    gr/gr_mod_qpsk_sdr.cpp \
+    gr/gr_demod_qpsk_sdr.cpp
 
 HEADERS  += mainwindow.h\
         audio/audioencoder.h\
@@ -86,7 +88,9 @@ HEADERS  += mainwindow.h\
     gr/gr_mod_bpsk.h \
     gr/gr_demod_bpsk.h \
     gr/gr_demod_bpsk_sdr.h \
-    gr/gr_mod_bpsk_sdr.h
+    gr/gr_mod_bpsk_sdr.h \
+    gr/gr_mod_qpsk_sdr.h \
+    gr/gr_demod_qpsk_sdr.h
 
 
 FORMS    += mainwindow.ui

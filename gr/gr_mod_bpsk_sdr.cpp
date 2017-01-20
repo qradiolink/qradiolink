@@ -35,6 +35,7 @@ gr_mod_bpsk_sdr::gr_mod_bpsk_sdr(QObject *parent, int sps, int samp_rate, int ca
     _vector_source = make_gr_vector_source();
     _packed_to_unpacked = gr::blocks::packed_to_unpacked_bb::make(1,gr::GR_MSB_FIRST);
     _diff_encoder = gr::digital::diff_encoder_bb::make(2);
+
     _chunks_to_symbols = gr::digital::chunks_to_symbols_bc::make(constellation);
     int nfilts = 32;
     std::vector<float> rrc_taps = gr::filter::firdes::root_raised_cosine(nfilts, nfilts,
@@ -82,4 +83,10 @@ int gr_mod_bpsk_sdr::setData(std::vector<u_int8_t> *data)
 {
     return _vector_source->set_data(data);
 
+}
+
+void gr_mod_bpsk_sdr::tune(long center_freq)
+{
+    _device_frequency = center_freq;
+    _osmosdr_sink->set_center_freq(_device_frequency);
 }

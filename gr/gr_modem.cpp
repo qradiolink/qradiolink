@@ -62,7 +62,7 @@ void gr_modem::initTX(int modem_type)
 
 void gr_modem::initRX(int modem_type)
 {
-    _gr_demod_bpsk_sdr = new gr_demod_bpsk_sdr(0,125,1000000,1700,1200,1, 434025000, 50);
+    _gr_demod_bpsk_sdr = new gr_demod_bpsk_sdr(0,125,1000000,1700,1200,1, 434025000, 80);
     _gr_demod_bpsk_sdr->start();
 }
 
@@ -70,12 +70,22 @@ void gr_modem::deinitTX(int modem_type)
 {
     _gr_mod_bpsk_sdr->stop();
     delete _gr_mod_bpsk_sdr;
+    _gr_mod_bpsk_sdr =0;
 }
 
 void gr_modem::deinitRX(int modem_type)
 {
     _gr_demod_bpsk_sdr->stop();
     delete _gr_demod_bpsk_sdr;
+    _gr_demod_bpsk_sdr =0;
+}
+
+void gr_modem::tune(long center_freq)
+{
+    if(_gr_demod_bpsk_sdr)
+        _gr_demod_bpsk_sdr->tune(center_freq);
+    if(_gr_mod_bpsk_sdr)
+        _gr_mod_bpsk_sdr->tune(center_freq);
 }
 
 void gr_modem::startTransmission()

@@ -67,6 +67,7 @@ public slots:
     void receiveC2Data(unsigned char *data, short size);
     void toggleRX(bool value);
     void toggleTX(bool value);
+    void tuneFreq(long center_freq);
 
 private:
     bool _stop;

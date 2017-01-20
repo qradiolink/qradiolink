@@ -138,7 +138,7 @@ void RadioOp::receiveC2Data(unsigned char *data, short size)
 {
     short *audio_out;
     int samples;
-    audio_out = _codec->decode_codec2(data, 0, samples);
+    audio_out = _codec->decode_codec2(data, size, samples);
     delete[] data;
     _audio->write_short(audio_out,samples*sizeof(short));
 }
@@ -224,4 +224,9 @@ void RadioOp::toggleTX(bool value)
         _tx_inited = false;
         _modem->deinitTX(gr_modem_types::ModemTypeBPSK2000);
     }
+}
+
+void RadioOp::tuneFreq(long center_freq)
+{
+    _modem->tune(434025000 + center_freq*100);
 }

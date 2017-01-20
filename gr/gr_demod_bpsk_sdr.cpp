@@ -37,7 +37,7 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(QObject *parent, int sps, int samp_rate, in
     double trans_width = 0.2*rerate;
     unsigned int flt_size = 32;
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(flt_size, flt_size, cutoff, trans_width);
+    std::vector<float> taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, 100000, 100000);
     _resampler = gr::filter::pfb_arb_resampler_ccf::make(rerate, taps, flt_size);
     _agc = gr::analog::agc2_cc::make(0.6e-1, 1e-3, 1, 1);
     _filter = gr::filter::freq_xlating_fir_filter_ccf::make(
@@ -57,7 +57,7 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(QObject *parent, int sps, int samp_rate, in
     _osmosdr_source = osmosdr::source::make(device_args);
     _osmosdr_source->set_center_freq(_device_frequency-25000);
     _osmosdr_source->set_sample_rate(_samp_rate);
-    _osmosdr_source->set_freq_corr(41);
+    _osmosdr_source->set_freq_corr(40);
     _osmosdr_source->set_gain_mode(false);
     osmosdr::gain_range_t range = _osmosdr_source->get_gain_range();
     if (!range.empty())
@@ -102,5 +102,11 @@ std::vector<unsigned char>* gr_demod_bpsk_sdr::getData()
 {
     std::vector<unsigned char> *data = _vector_sink->get_data();
     return data;
+}
+
+void gr_demod_bpsk_sdr::tune(long center_freq)
+{
+    _device_frequency = center_freq;
+    _osmosdr_source->set_center_freq(_device_frequency-25000);
 }
 

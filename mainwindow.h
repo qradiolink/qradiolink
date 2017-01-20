@@ -47,6 +47,7 @@ public slots:
     void updateOnlineStations(StationList stations);
     void toggleRXwin(bool value);
     void toggleTXwin(bool value);
+    void tuneCenterFreq(int value);
 signals:
     void startTransmission();
     void endTransmission();
@@ -57,6 +58,7 @@ signals:
     void stopTalkVOIP();
     void toggleRX(bool value);
     void toggleTX(bool value);
+    void tuneFreq(long center_freq);
 public:
     explicit MainWindow(MumbleClient *client, QWidget *parent = 0);
     ~MainWindow();

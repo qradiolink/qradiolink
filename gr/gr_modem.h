@@ -36,6 +36,8 @@
 #include "gr_demod_bpsk.h"
 #include "gr_mod_bpsk_sdr.h"
 #include "gr_demod_bpsk_sdr.h"
+#include "gr_mod_qpsk_sdr.h"
+#include "gr_demod_qpsk_sdr.h"
 
 
 #include <stdio.h>
@@ -95,6 +97,7 @@ public slots:
     void initRX(int modem_type);
     void deinitTX(int modem_type);
     void deinitRX(int modem_type);
+    void tune(long center_freq);
 private:
 
     Settings *_settings;
@@ -110,8 +113,10 @@ private:
     gr_demod_gmsk *_gr_demod_gmsk;
     gr_mod_bpsk *_gr_mod_bpsk;
     gr_mod_bpsk_sdr *_gr_mod_bpsk_sdr;
+    gr_mod_qpsk_sdr *_gr_mod_qpsk_sdr;
     gr_demod_bpsk *_gr_demod_bpsk;
     gr_demod_bpsk_sdr *_gr_demod_bpsk_sdr;
+    gr_demod_qpsk_sdr *_gr_demod_qpsk_sdr;
     quint64 _frame_counter;
     quint8 _last_frame_type;
     bool _sync_found;

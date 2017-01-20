@@ -160,6 +160,7 @@ int main(int argc, char *argv[])
     QObject::connect(&w,SIGNAL(sendText(QString, bool)),radio_op,SLOT(textData(QString, bool)));
     QObject::connect(&w,SIGNAL(toggleRX(bool)),radio_op,SLOT(toggleRX(bool)));
     QObject::connect(&w,SIGNAL(toggleTX(bool)),radio_op,SLOT(toggleTX(bool)));
+    QObject::connect(&w,SIGNAL(tuneFreq(long)),radio_op,SLOT(tuneFreq(long)));
     QObject::connect(radio_op, SIGNAL(printText(QString)), &w, SLOT(displayText(QString)));
     QObject::connect(radio_op, SIGNAL(displayReceiveStatus(bool)), &w, SLOT(displayReceiveStatus(bool)));
     QObject::connect(radio_op, SIGNAL(displayTransmitStatus(bool)), &w, SLOT(displayTransmitStatus(bool)));

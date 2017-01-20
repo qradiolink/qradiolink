@@ -40,6 +40,7 @@ public slots:
     void start();
     void stop();
     std::vector<unsigned char> *getData();
+    void tune(long center_freq);
 
 private:
     gr::top_block_sptr _top_block;
