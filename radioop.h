@@ -86,6 +86,7 @@ private:
     QTimer *_led_timer;
     AudioEncoder *_codec;
     gr_modem *_modem;
+    bool _wideband;
 
 };
 

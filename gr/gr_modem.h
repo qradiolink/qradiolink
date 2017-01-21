@@ -117,6 +117,8 @@ private:
     gr_demod_bpsk *_gr_demod_bpsk;
     gr_demod_bpsk_sdr *_gr_demod_bpsk_sdr;
     gr_demod_qpsk_sdr *_gr_demod_qpsk_sdr;
+    int _modem_type;
+    int _frame_length;
     quint64 _frame_counter;
     quint8 _last_frame_type;
     bool _sync_found;

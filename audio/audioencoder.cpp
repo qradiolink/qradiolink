@@ -19,7 +19,7 @@
 AudioEncoder::AudioEncoder()
 {
     int error, error1;
-    _enc = opus_encoder_create(8000,1,OPUS_APPLICATION_VOIP,&error);
+    _enc = opus_encoder_create(8000,1,OPUS_APPLICATION_AUDIO,&error);
     if(error != OPUS_OK)
     {
         qDebug() << "audio encoder creation failed";
@@ -42,15 +42,15 @@ AudioEncoder::~AudioEncoder()
 unsigned char* AudioEncoder::encode_opus(short *audiobuffer, int audiobuffersize, int &encoded_size)
 {
     int opus_bandwidth;
-    opus_encoder_ctl(_enc, OPUS_SET_BITRATE(19000));
-    opus_encoder_ctl(_enc, OPUS_SET_SIGNAL(OPUS_SIGNAL_VOICE));
-    //opus_encoder_ctl(_enc, OPUS_SET_COMPLEXITY(5));
+    opus_encoder_ctl(_enc, OPUS_SET_VBR(0));
+    opus_encoder_ctl(_enc, OPUS_SET_BITRATE(19400));
+    opus_encoder_ctl(_enc, OPUS_SET_COMPLEXITY(5));
     opus_encoder_ctl(_enc, OPUS_SET_DTX(1));
     opus_encoder_ctl(_enc, OPUS_GET_BANDWIDTH(&opus_bandwidth));
-    opus_encoder_ctl(_enc, OPUS_SET_INBAND_FEC(1));
+    opus_encoder_ctl(_enc, OPUS_SET_INBAND_FEC(0));
 
-    unsigned char *encoded_audio = new unsigned char[opus_bandwidth];
-    encoded_size = opus_encode(_enc, audiobuffer, audiobuffersize/sizeof(short), encoded_audio, opus_bandwidth);
+    unsigned char *encoded_audio = new unsigned char[97];
+    encoded_size = opus_encode(_enc, audiobuffer, audiobuffersize/sizeof(short), encoded_audio, 97);
     return encoded_audio;
 
 }
@@ -60,8 +60,8 @@ short* AudioEncoder::decode_opus(unsigned char *audiobuffer, int audiobuffersize
     int nr_of_frames = opus_packet_get_nb_frames(audiobuffer,audiobuffersize);
     if(nr_of_frames <=0)
         return NULL;
-    int fs = 960 * nr_of_frames;
-    short *pcm = new short[fs*sizeof(short)];
+    int fs = 320;
+    short *pcm = new short[fs];
 
     samples = opus_decode(_dec,audiobuffer,audiobuffersize, pcm, fs, 0);
     if(samples <= 0)

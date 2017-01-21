@@ -19,6 +19,7 @@
 RadioOp::RadioOp(Settings *settings, QObject *parent) :
     QObject(parent)
 {
+    _wideband = true;
     _codec = new AudioEncoder;
     _audio = new AudioInterface;
     _stop =false;
@@ -96,7 +97,10 @@ void RadioOp::run()
             _audio->read_short(audiobuffer2,audiobuffer_size2);
             int packet_size = 0;
             unsigned char *encoded_audio;
-            encoded_audio = _codec->encode_codec2(audiobuffer2, audiobuffer_size2, packet_size);
+            if(_wideband)
+                encoded_audio = _codec->encode_opus(audiobuffer2, audiobuffer_size2, packet_size);
+            else
+                encoded_audio = _codec->encode_codec2(audiobuffer2, audiobuffer_size2, packet_size);
             unsigned char *data = new unsigned char[packet_size];
             memcpy(data,encoded_audio,packet_size);
             if(_tx_inited)
@@ -138,9 +142,13 @@ void RadioOp::receiveC2Data(unsigned char *data, short size)
 {
     short *audio_out;
     int samples;
-    audio_out = _codec->decode_codec2(data, size, samples);
+    if(_wideband)
+        audio_out = _codec->decode_opus(data, size, samples);
+    else
+        audio_out = _codec->decode_codec2(data, size, samples);
     delete[] data;
-    _audio->write_short(audio_out,samples*sizeof(short));
+    if(samples > 0)
+        _audio->write_short(audio_out,samples*sizeof(short));
 }
 
 void RadioOp::startTransmission()
@@ -200,29 +208,39 @@ void RadioOp::syncIssue()
 
 void RadioOp::toggleRX(bool value)
 {
+    int modem_type;
+    if(_wideband)
+        modem_type = gr_modem_types::ModemTypeQPSK20000;
+    else
+        modem_type = gr_modem_types::ModemTypeBPSK2000;
     if(value)
     {
         _rx_inited = true;
-        _modem->initRX(gr_modem_types::ModemTypeBPSK2000);
+        _modem->initRX(modem_type);
     }
     else
     {
         _rx_inited = false;
-        _modem->deinitRX(gr_modem_types::ModemTypeBPSK2000);
+        _modem->deinitRX(modem_type);
     }
 }
 
 void RadioOp::toggleTX(bool value)
 {
+    int modem_type;
+    if(_wideband)
+        modem_type = gr_modem_types::ModemTypeQPSK20000;
+    else
+        modem_type = gr_modem_types::ModemTypeBPSK2000;
     if(value)
     {
         _tx_inited = true;
-        _modem->initTX(gr_modem_types::ModemTypeBPSK2000);
+        _modem->initTX(modem_type);
     }
     else
     {
         _tx_inited = false;
-        _modem->deinitTX(gr_modem_types::ModemTypeBPSK2000);
+        _modem->deinitTX(modem_type);
     }
 }
 
