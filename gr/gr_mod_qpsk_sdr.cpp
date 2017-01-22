@@ -50,7 +50,7 @@ gr_mod_qpsk_sdr::gr_mod_qpsk_sdr(QObject *parent, int sps, int samp_rate, int ca
     _chunks_to_symbols = gr::digital::chunks_to_symbols_bc::make(constellation);
     int nfilts = 32;
     std::vector<float> rrc_taps = gr::filter::firdes::root_raised_cosine(nfilts, nfilts,
-                                                        1, 0.35, nfilts * 11 * _samples_per_symbol);
+                                                        1, 0.15, nfilts * 11 * _samples_per_symbol);
     _shaping_filter = gr::filter::pfb_arb_resampler_ccf::make(_samples_per_symbol, rrc_taps, nfilts);
     _amplify = gr::blocks::multiply_const_cc::make(0.5,1);
     _band_pass_filter_1 = gr::filter::fir_filter_ccf::make(

@@ -25,6 +25,7 @@ gr_modem::gr_modem(Settings *settings, QObject *parent) :
     //_const_gui = const_gui;
     _transmitting = false;
     _frame_counter = 0;
+    _shift_reg = 0;
     _last_frame_type = FrameTypeNone;
     //_gr_mod_gmsk = new gr_mod_gmsk(0,24,48000,1600,1200,1);
     //_gr_mod_gmsk->start();
@@ -77,7 +78,7 @@ void gr_modem::initRX(int modem_type)
     _modem_type = modem_type;
     if(modem_type == gr_modem_types::ModemTypeBPSK2000)
     {
-        _gr_demod_bpsk_sdr = new gr_demod_bpsk_sdr(0,125,1000000,1700,1200,1, 434025000, 80);
+        _gr_demod_bpsk_sdr = new gr_demod_bpsk_sdr(0,125,1000000,1700,1200,1, 434025000, 50);
         _bit_buf_len = 7 *8;
         _frame_length = 7;
         _bit_buf = new unsigned char[_bit_buf_len];
@@ -85,7 +86,7 @@ void gr_modem::initRX(int modem_type)
     }
     else if (modem_type == gr_modem_types::ModemTypeQPSK20000)
     {
-        _gr_demod_qpsk_sdr = new gr_demod_qpsk_sdr(0,25,1000000,1700,6000,1, 434025000, 80);
+        _gr_demod_qpsk_sdr = new gr_demod_qpsk_sdr(0,25,1000000,1700,6000,1, 434025000, 50);
         _bit_buf_len = 97 *8;
         _frame_length = 97;
         _bit_buf = new unsigned char[_bit_buf_len];
@@ -197,7 +198,7 @@ void gr_modem::transmit(QVector<std::vector<unsigned char>*> frames)
     int ret = 1;
     while(ret)
     {
-        usleep(100);
+        usleep(10);
         if(_modem_type == gr_modem_types::ModemTypeBPSK2000)
             ret = _gr_mod_bpsk_sdr->setData(all_frames);
         else if(_modem_type == gr_modem_types::ModemTypeQPSK20000)
@@ -224,6 +225,7 @@ std::vector<unsigned char>* gr_modem::frame(unsigned char *encoded_audio, int da
     {
         data->push_back(encoded_audio[i]);
     }
+
     return data;
 
 }
@@ -253,8 +255,7 @@ void gr_modem::textData(QString text)
     endTransmission();
 }
 
-static void
-packit(unsigned char *pktbuf, const unsigned char *bitbuf, int bitcount)
+static void packBytes(unsigned char *pktbuf, const unsigned char *bitbuf, int bitcount)
 {
   for(int i = 0; i < bitcount; i += 8) {
     int t = bitbuf[i+0] & 0x1;
@@ -276,10 +277,11 @@ void gr_modem::demodulate()
         demod_data = _gr_demod_bpsk_sdr->getData();
     else if(_modem_type == gr_modem_types::ModemTypeQPSK20000)
         demod_data = _gr_demod_qpsk_sdr->getData();
+
     int v_size = demod_data->size();
     if(v_size<1)
     {
-        usleep(1000);
+        usleep(10);
         delete demod_data;
         return;
     }
@@ -308,10 +310,11 @@ void gr_modem::demodulate()
             if(_bit_buf_index >= _bit_buf_len)
             {
                 unsigned char *frame_data = new unsigned char[_frame_length];
-                packit(frame_data,_bit_buf,_bit_buf_index);
+                packBytes(frame_data,_bit_buf,_bit_buf_index);
                 processReceivedData(frame_data, _current_frame_type);
                 _sync_found = false;
                 _shift_reg = 0;
+                _bit_buf_index = 0;
             }
         }
 
@@ -352,7 +355,6 @@ int gr_modem::findSync(unsigned char bit)
 
 void gr_modem::processReceivedData(unsigned char *received_data, int current_frame_type)
 {
-
     if (current_frame_type == FrameTypeText)
     {
         emit dataFrameReceived();

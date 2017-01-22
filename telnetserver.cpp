@@ -88,8 +88,6 @@ void TelnetServer::connectionSuccess()
 }
 
 
-
-
 void TelnetServer::processData()
 {
 
@@ -100,29 +98,23 @@ void TelnetServer::processData()
 
     while ((!endOfLine))
     {
-
         char ch;
         if(socket->bytesAvailable()>0)
         {
             int bytesRead = socket->read(&ch, sizeof(ch));
             if (bytesRead == sizeof(ch))
             {
-                //cnt++;
                 data.append(ch);
                 if (socket->bytesAvailable()==0)
                 {
                     endOfLine = true;
-
                 }
-
             }
         }
         else
         {
             break;
         }
-
-
     }
     qDebug() << "Good message from: " << socket->peerAddress().toString();
     QByteArray response = processCommand(data);

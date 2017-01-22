@@ -20,6 +20,7 @@
 #include <QDebug>
 #include <opus/opus.h>
 #include <codec2/codec2.h>
+#include <gsm/gsm.h>
 
 class AudioEncoder
 {
@@ -29,12 +30,15 @@ public:
     unsigned char *encode_opus(short *audiobuffer, int audiobuffersize, int &encoded_size);
     short *decode_opus(unsigned char *audiobuffer, int data_length, int &samples);
     unsigned char* encode_codec2(short *audiobuffer, int audiobuffersize, int &length);
+    unsigned char* encode_gsm(short *audiobuffer, int audiobuffersize, int &length);
+    short* decode_gsm(unsigned char *audiobuffer, int data_length, int &samples);
     short* decode_codec2(unsigned char *audiobuffer, int audiobuffersize, int &samples);
 
 private:
     OpusEncoder *_enc;
     OpusDecoder *_dec;
     struct CODEC2 *_codec2;
+    struct gsm_state *_gsm;
 };
 
 #endif // AUDIOENCODER_H

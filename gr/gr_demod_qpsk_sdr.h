@@ -15,6 +15,7 @@
 #include <gnuradio/digital/diff_decoder_bb.h>
 #include <gnuradio/digital/cma_equalizer_cc.h>
 #include <gnuradio/analog/agc2_cc.h>
+#include <gnuradio/analog/feedforward_agc_cc.h>
 #include <gnuradio/digital/fll_band_edge_cc.h>
 #include <gnuradio/filter/pfb_arb_resampler_ccf.h>
 #include <gnuradio/filter/freq_xlating_fir_filter_ccf.h>

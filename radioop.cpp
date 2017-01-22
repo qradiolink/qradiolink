@@ -56,11 +56,6 @@ void RadioOp::stop()
 
 void RadioOp::run()
 {
-#if 0
-    int audiobuffer_size = 1920; //40 ms @ 48k
-    AlsaAudio *audio = new AlsaAudio("pulseusb");
-    GMSKModem *modem = new GMSKModem(_settings, audio, audio2);
-#endif
     int audiobuffer_size2 = 640; //40 ms @ 8k
 
     bool transmit_activated = false;
@@ -71,14 +66,11 @@ void RadioOp::run()
         _mutex.unlock();
         QCoreApplication::processEvents();
         short *audiobuffer2 = new short[audiobuffer_size2/2];
-#if 0
-        short *audiobuffer = new short[audiobuffer_size];
-        memset(audiobuffer,0,audiobuffer_size2*sizeof(short));
-        audio->read_short(audiobuffer,audiobuffer_size);
-        modem->demodulate(audiobuffer, audiobuffer_size);
-#endif
+
         if(_rx_inited)
+        {
             _modem->demodulate();
+        }
 
         if(transmitting && !transmit_activated)
         {
@@ -90,7 +82,9 @@ void RadioOp::run()
         {
             transmit_activated = false;
             if(_tx_inited)
+            {
                 _modem->endTransmission();
+            }
         }
         if(transmitting)
         {
@@ -103,13 +97,12 @@ void RadioOp::run()
                 encoded_audio = _codec->encode_codec2(audiobuffer2, audiobuffer_size2, packet_size);
             unsigned char *data = new unsigned char[packet_size];
             memcpy(data,encoded_audio,packet_size);
-            if(_tx_inited)
-                emit audioData(data,packet_size);
+            emit audioData(data,packet_size);
             delete[] encoded_audio;
         }
         else
         {
-            usleep(40000);
+            usleep(10);
         }
         if(_process_text)
         {
@@ -123,18 +116,11 @@ void RadioOp::run()
             }
             emit displayTransmitStatus(false);
         }
-
-#if 0
-        delete[] audiobuffer;
-#endif
         delete[] audiobuffer2;
         if(_stop)
             break;
     }
-#if 0
-    delete audio;
-#endif
-    //delete modem;
+
     emit finished();
 }
 
@@ -143,7 +129,9 @@ void RadioOp::receiveC2Data(unsigned char *data, short size)
     short *audio_out;
     int samples;
     if(_wideband)
+    {
         audio_out = _codec->decode_opus(data, size, samples);
+    }
     else
         audio_out = _codec->decode_codec2(data, size, samples);
     delete[] data;

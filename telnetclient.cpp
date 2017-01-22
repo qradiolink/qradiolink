@@ -125,8 +125,6 @@ void TelnetClient::processData()
                 int bytesRead = _socket->read(&ch, sizeof(ch));
                 if (bytesRead == sizeof(ch))
                 {
-                    //cnt++;
-
                     if (_socket->bytesAvailable()==0)
                     {
                         endOfLine = true;
@@ -139,9 +137,7 @@ void TelnetClient::processData()
                 break;
             }
         }
-
     }
-
     qDebug() << "Good message from " << _socket->peerAddress().toString();
     emit haveMessage(data);
 }

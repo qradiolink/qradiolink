@@ -198,9 +198,7 @@ void SSLClient::processData()
                     if(_socket->bytesAvailable()==0)
                     {
                         endOfLine = true;
-
                     }
-
                 }
             }
             else

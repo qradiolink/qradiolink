@@ -61,14 +61,14 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(QObject *parent, int sps, int samp_rate, in
 
     std::vector<float> taps = gr::filter::firdes::low_pass(flt_size, flt_size, cutoff, trans_width);
     _resampler = gr::filter::pfb_arb_resampler_ccf::make(rerate, taps, flt_size);
-    _agc = gr::analog::agc2_cc::make(0.6e-1, 1e-3, 1, 1);
+    _agc = gr::analog::agc2_cc::make(0.006e-1, 1e-3, 1, 1);
     _filter = gr::filter::freq_xlating_fir_filter_ccf::make(
                 1,gr::filter::firdes::low_pass(
                     1, _target_samp_rate, _filter_width,600,gr::filter::firdes::WIN_HAMMING), 25000,
                 _target_samp_rate);
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.0025*0.175*0.175, 0.5, 0.175,
                                                               0.005);
-    _costas_loop = gr::digital::costas_loop_cc::make(0.0628,2);
+    _costas_loop = gr::digital::costas_loop_cc::make(0.0628,4);
     _equalizer = gr::digital::cma_equalizer_cc::make(8,1,0.00005,1);
     _fll = gr::digital::fll_band_edge_cc::make(sps, 0.15, 32, 0.000628);
     _diff_decoder = gr::digital::diff_decoder_bb::make(4);
@@ -79,8 +79,10 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(QObject *parent, int sps, int samp_rate, in
     _osmosdr_source = osmosdr::source::make(device_args);
     _osmosdr_source->set_center_freq(_device_frequency-25000);
     _osmosdr_source->set_sample_rate(_samp_rate);
-    _osmosdr_source->set_freq_corr(41);
+    _osmosdr_source->set_freq_corr(39);
     _osmosdr_source->set_gain_mode(false);
+    _osmosdr_source->set_dc_offset_mode(0);
+    _osmosdr_source->set_iq_balance_mode(0);
     osmosdr::gain_range_t range = _osmosdr_source->get_gain_range();
     if (!range.empty())
     {
@@ -92,8 +94,8 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(QObject *parent, int sps, int samp_rate, in
         _osmosdr_source->set_gain_mode(true);
     }
 
-    //const std::string name = "const";
-    //_constellation = gr::qtgui::const_sink_c::make(1, name,1, const_gui);
+    const std::string name = "const";
+    //_constellation = gr::qtgui::const_sink_c::make(1,name);
 
     _top_block->connect(_osmosdr_source,0,_resampler,0);
     _top_block->connect(_resampler,0,_filter,0);
@@ -102,7 +104,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(QObject *parent, int sps, int samp_rate, in
     _top_block->connect(_fll,0,_clock_recovery,0);
     _top_block->connect(_clock_recovery,0,_equalizer,0);
     _top_block->connect(_equalizer,0,_costas_loop,0);
-
+    //_top_block->connect(_costas_loop,0,_constellation,0);
     _top_block->connect(_costas_loop,0,_constellation_receiver,0);
     _top_block->connect(_constellation_receiver,0,_map,0);
     _top_block->connect(_map,0,_diff_decoder,0);
