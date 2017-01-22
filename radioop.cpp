@@ -19,7 +19,7 @@
 RadioOp::RadioOp(Settings *settings, QObject *parent) :
     QObject(parent)
 {
-    _wideband = true;
+    _wideband = false;
     _codec = new AudioEncoder;
     _audio = new AudioInterface;
     _stop =false;
