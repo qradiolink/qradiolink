@@ -60,11 +60,12 @@ int gr_vector_source::work(int noutput_items,
        gr_vector_void_star &output_items)
 {
 
-   // gr::thread::scoped_lock guard(_mutex);
-    if(_finished || (_data->size()==0))
+    //gr::thread::scoped_lock guard(_mutex);
+    //if(_finished || (_data->size()==0))
+    if(_finished)
     {
-	//guard.unlock();
-        usleep(100);
+        //guard.unlock();
+        usleep(5);
         return 0;
     }
 
