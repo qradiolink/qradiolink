@@ -56,7 +56,7 @@ void RadioOp::stop()
 
 void RadioOp::run()
 {
-    int audiobuffer_size2 = 640; //40 ms @ 8k
+    int audiobuffer_size = 640; //40 ms @ 8k
 
     bool transmit_activated = false;
     while(true)
@@ -65,7 +65,7 @@ void RadioOp::run()
         bool transmitting = _transmitting;
         _mutex.unlock();
         QCoreApplication::processEvents();
-        short *audiobuffer2 = new short[audiobuffer_size2/2];
+        short *audiobuffer = new short[audiobuffer_size/2];
 
         if(_rx_inited)
         {
@@ -88,13 +88,13 @@ void RadioOp::run()
         }
         if(transmitting)
         {
-            _audio->read_short(audiobuffer2,audiobuffer_size2);
+            _audio->read_short(audiobuffer,audiobuffer_size);
             int packet_size = 0;
             unsigned char *encoded_audio;
             if(_wideband)
-                encoded_audio = _codec->encode_opus(audiobuffer2, audiobuffer_size2, packet_size);
+                encoded_audio = _codec->encode_opus(audiobuffer, audiobuffer_size, packet_size);
             else
-                encoded_audio = _codec->encode_codec2(audiobuffer2, audiobuffer_size2, packet_size);
+                encoded_audio = _codec->encode_codec2(audiobuffer, audiobuffer_size, packet_size);
             unsigned char *data = new unsigned char[packet_size];
             memcpy(data,encoded_audio,packet_size);
             emit audioData(data,packet_size);
@@ -116,7 +116,7 @@ void RadioOp::run()
             }
             emit displayTransmitStatus(false);
         }
-        delete[] audiobuffer2;
+        delete[] audiobuffer;
         if(_stop)
             break;
     }
