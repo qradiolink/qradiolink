@@ -64,13 +64,13 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(QObject *parent, int sps, int samp_rate, in
     _agc = gr::analog::agc2_cc::make(0.006e-1, 1e-3, 1, 1);
     _filter = gr::filter::freq_xlating_fir_filter_ccf::make(
                 1,gr::filter::firdes::low_pass(
-                    1, _target_samp_rate, _filter_width,600,gr::filter::firdes::WIN_HAMMING), 25000,
+                    1, _target_samp_rate, _filter_width,10000,gr::filter::firdes::WIN_BLACKMAN_HARRIS), 25000,
                 _target_samp_rate);
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.0025*0.175*0.175, 0.5, 0.175,
                                                               0.005);
     _costas_loop = gr::digital::costas_loop_cc::make(0.0628,4);
     _equalizer = gr::digital::cma_equalizer_cc::make(8,1,0.00005,1);
-    _fll = gr::digital::fll_band_edge_cc::make(sps, 0.15, 32, 0.000628);
+    _fll = gr::digital::fll_band_edge_cc::make(sps, 0.55, 32, 0.000628);
     _diff_decoder = gr::digital::diff_decoder_bb::make(4);
     _map = gr::digital::map_bb::make(map);
     _unpack = gr::blocks::unpack_k_bits_bb::make(2);

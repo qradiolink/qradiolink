@@ -55,7 +55,7 @@ gr_mod_qpsk_sdr::gr_mod_qpsk_sdr(QObject *parent, int sps, int samp_rate, int ca
     _amplify = gr::blocks::multiply_const_cc::make(0.5,1);
     _band_pass_filter_1 = gr::filter::fir_filter_ccf::make(
                 1,gr::filter::firdes::low_pass(
-                    1, _samp_rate, _filter_width, 600,gr::filter::firdes::WIN_HAMMING));
+                    1, _samp_rate, _filter_width, 1200,gr::filter::firdes::WIN_HAMMING));
 
     _osmosdr_sink = osmosdr::sink::make(device_args);
     _osmosdr_sink->set_sample_rate(_samp_rate);
