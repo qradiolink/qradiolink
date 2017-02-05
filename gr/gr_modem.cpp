@@ -234,19 +234,19 @@ void gr_modem::textData(QString text)
 {
     QStringList list;
     QVector<std::vector<unsigned char>*> frames;
-    for( int k=0;k<text.length();k+=7)
+    for( int k=0;k<text.length();k+=_frame_length)
     {
-        list.append(text.mid(k,7));
+        list.append(text.mid(k,_frame_length));
     }
 
     startTransmission();
     for(int o = 0;o < list.length();o++)
     {
         QString chunk=list.at(o);
-        unsigned char *data = new unsigned char[7];
-        memset(data, 0, 7);
+        unsigned char *data = new unsigned char[_frame_length];
+        memset(data, 0, _frame_length);
         memcpy(data,chunk.toStdString().c_str(),chunk.length());
-        std::vector<unsigned char> *one_frame = frame(data,7, FrameTypeText);
+        std::vector<unsigned char> *one_frame = frame(data,_frame_length, FrameTypeText);
 
         frames.append(one_frame);
         delete[] data;
@@ -359,12 +359,12 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
     {
         emit dataFrameReceived();
         _last_frame_type = FrameTypeText;
-        char *text_data = new char[6];
-        memset(text_data, 0, 6);
-        memcpy(text_data, received_data, 7);
-        quint8 string_length = 7;
+        char *text_data = new char[_frame_length];
+        memset(text_data, 0, _frame_length);
+        memcpy(text_data, received_data, _frame_length);
+        quint8 string_length = _frame_length;
 
-        for(int ii=7-1;ii>=0;ii--)
+        for(int ii=_frame_length-1;ii>=0;ii--)
         {
             QChar x(text_data[ii]);
             if(x.unicode()==0)
