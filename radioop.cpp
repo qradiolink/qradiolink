@@ -59,6 +59,7 @@ void RadioOp::run()
     int audiobuffer_size = 640; //40 ms @ 8k
 
     bool transmit_activated = false;
+
     while(true)
     {
         _mutex.lock();
@@ -67,16 +68,16 @@ void RadioOp::run()
         QCoreApplication::processEvents();
         short *audiobuffer = new short[audiobuffer_size/2];
 
-        if(_rx_inited)
-        {
-            _modem->demodulate();
-        }
-
         if(transmitting && !transmit_activated)
         {
             transmit_activated = true;
             if(_tx_inited)
+            {
+                if(_rx_inited)
+                    _modem->stopRX();
+                _modem->startTX();
                 _modem->startTransmission();
+            }
         }
         if(!transmitting && transmit_activated)
         {
@@ -84,7 +85,11 @@ void RadioOp::run()
             if(_tx_inited)
             {
                 _modem->endTransmission();
+                _modem->stopTX();
             }
+            usleep(40000);
+            if(_rx_inited)
+                _modem->startRX();
         }
         if(transmitting)
         {
@@ -102,6 +107,10 @@ void RadioOp::run()
         }
         else
         {
+            if(_rx_inited)
+            {
+                _modem->demodulate();
+            }
             usleep(10);
         }
         if(_process_text)

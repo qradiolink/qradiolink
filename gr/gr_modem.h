@@ -98,6 +98,10 @@ public slots:
     void deinitTX(int modem_type);
     void deinitRX(int modem_type);
     void tune(long center_freq);
+    void startRX();
+    void stopRX();
+    void startTX();
+    void stopTX();
 private:
 
     Settings *_settings;

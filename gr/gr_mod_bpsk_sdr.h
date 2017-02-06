@@ -41,6 +41,7 @@ public slots:
     int setData(std::vector<u_int8_t> *data);
     void tune(long center_freq);
 
+
 private:
     gr::top_block_sptr _top_block;
     gr_vector_source_sptr _vector_source;

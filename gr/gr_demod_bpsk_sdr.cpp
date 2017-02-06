@@ -22,6 +22,7 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(QObject *parent, int sps, int samp_rate, in
 {
     _target_samp_rate = 250000;
     const std::string device_args = "rtl=0";
+    const std::string device_antenna = "TX/RX";
     _device_frequency = device_frequency;
     _samples_per_symbol = sps;
     _samp_rate =samp_rate;
@@ -59,6 +60,7 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(QObject *parent, int sps, int samp_rate, in
     _osmosdr_source->set_sample_rate(_samp_rate);
     _osmosdr_source->set_freq_corr(40);
     _osmosdr_source->set_gain_mode(false);
+    _osmosdr_source->set_antenna(device_antenna);
     osmosdr::gain_range_t range = _osmosdr_source->get_gain_range();
     if (!range.empty())
     {
