@@ -33,6 +33,7 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
     QObject::connect(ui->chooseFileButton,SIGNAL(clicked()),this,SLOT(chooseFile()));
     QObject::connect(ui->checkBoxRX,SIGNAL(clicked(bool)),this,SLOT(toggleRXwin(bool)));
     QObject::connect(ui->checkBoxTX,SIGNAL(clicked(bool)),this,SLOT(toggleTXwin(bool)));
+    QObject::connect(ui->checkBoxWideband,SIGNAL(clicked(bool)),this,SLOT(toggleWideband(bool)));
     QObject::connect(ui->tuneSlider,SIGNAL(valueChanged(int)),this,SLOT(tuneCenterFreq(int)));
     ui->tuneSlider->setRange(-100,100);
     _transmitting_radio = false;
@@ -142,6 +143,11 @@ void MainWindow::toggleRXwin(bool value)
 void MainWindow::toggleTXwin(bool value)
 {
     emit toggleTX(value);
+}
+
+void MainWindow::toggleWideband(bool value)
+{
+    emit toggleWidebandMode(value);
 }
 
 void MainWindow::tuneCenterFreq(int value)

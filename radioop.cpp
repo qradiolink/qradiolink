@@ -241,6 +241,11 @@ void RadioOp::toggleTX(bool value)
     }
 }
 
+void RadioOp::toggleWideband(bool value)
+{
+    _wideband = value;
+}
+
 void RadioOp::tuneFreq(long center_freq)
 {
     _modem->tune(434025000 + center_freq*100);

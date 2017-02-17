@@ -48,6 +48,7 @@ public slots:
     void toggleRXwin(bool value);
     void toggleTXwin(bool value);
     void tuneCenterFreq(int value);
+    void toggleWideband(bool value);
 signals:
     void startTransmission();
     void endTransmission();
@@ -59,6 +60,7 @@ signals:
     void toggleRX(bool value);
     void toggleTX(bool value);
     void tuneFreq(long center_freq);
+    void toggleWidebandMode(bool value);
 public:
     explicit MainWindow(MumbleClient *client, QWidget *parent = 0);
     ~MainWindow();

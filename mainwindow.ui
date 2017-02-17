@@ -326,6 +326,19 @@ border-radius: 4px;
             </widget>
            </item>
            <item>
+            <widget class="QCheckBox" name="checkBoxWideband">
+             <property name="styleSheet">
+              <string notr="true">QCheckBox::indicator {
+     width: 32px;
+     height: 32px;
+}</string>
+             </property>
+             <property name="text">
+              <string>Wideband</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <spacer name="verticalSpacer">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
