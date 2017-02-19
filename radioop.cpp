@@ -19,7 +19,7 @@
 RadioOp::RadioOp(Settings *settings, QObject *parent) :
     QObject(parent)
 {
-    _wideband = true;
+    _wideband = false;
     _codec = new AudioEncoder;
     _audio = new AudioInterface;
     _stop =false;
@@ -111,7 +111,6 @@ void RadioOp::run()
             {
                 _modem->demodulate();
             }
-            usleep(10);
         }
         if(_process_text)
         {
@@ -126,6 +125,7 @@ void RadioOp::run()
             emit displayTransmitStatus(false);
         }
         delete[] audiobuffer;
+        usleep(10);
         if(_stop)
             break;
     }
