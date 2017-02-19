@@ -59,7 +59,7 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(QObject *parent, int sps, int samp_rate, in
     _osmosdr_source->set_center_freq(_device_frequency-25000);
     _osmosdr_source->set_sample_rate(_samp_rate);
     _osmosdr_source->set_freq_corr(40);
-    _osmosdr_source->set_gain_mode(false);
+    _osmosdr_source->set_gain_mode(true);
     _osmosdr_source->set_antenna(device_antenna);
     osmosdr::gain_range_t range = _osmosdr_source->get_gain_range();
     if (!range.empty())
