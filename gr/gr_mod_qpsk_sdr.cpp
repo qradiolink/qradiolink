@@ -52,7 +52,7 @@ gr_mod_qpsk_sdr::gr_mod_qpsk_sdr(QObject *parent, int sps, int samp_rate, int ca
     std::vector<float> rrc_taps = gr::filter::firdes::root_raised_cosine(nfilts, nfilts,
                                                         1, 0.35, nfilts * 11 * _samples_per_symbol);
     _shaping_filter = gr::filter::pfb_arb_resampler_ccf::make(_samples_per_symbol, rrc_taps, nfilts);
-    _amplify = gr::blocks::multiply_const_cc::make(0.5,1);
+    _amplify = gr::blocks::multiply_const_cc::make(0.8,1);
     _band_pass_filter_1 = gr::filter::fir_filter_ccf::make(
                 1,gr::filter::firdes::low_pass(
                     1, _samp_rate, _filter_width, 6000,gr::filter::firdes::WIN_HAMMING));

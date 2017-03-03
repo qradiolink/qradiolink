@@ -15,6 +15,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "gr_mod_bpsk_sdr.h"
+#include "QDebug"
 
 gr_mod_bpsk_sdr::gr_mod_bpsk_sdr(QObject *parent, int sps, int samp_rate, int carrier_freq,
                                  int filter_width, float mod_index, float device_frequency, float rf_gain) :
@@ -34,6 +35,7 @@ gr_mod_bpsk_sdr::gr_mod_bpsk_sdr(QObject *parent, int sps, int samp_rate, int ca
     _top_block = gr::make_top_block("bpsk modulator sdr");
     _vector_source = make_gr_vector_source();
     _packed_to_unpacked = gr::blocks::packed_to_unpacked_bb::make(1,gr::GR_MSB_FIRST);
+    _scrambler = gr::digital::scrambler_bb::make(0x8A, 0x7F ,7);
     _diff_encoder = gr::digital::diff_encoder_bb::make(2);
 
     _chunks_to_symbols = gr::digital::chunks_to_symbols_bc::make(constellation);
@@ -41,10 +43,11 @@ gr_mod_bpsk_sdr::gr_mod_bpsk_sdr(QObject *parent, int sps, int samp_rate, int ca
     std::vector<float> rrc_taps = gr::filter::firdes::root_raised_cosine(nfilts, nfilts,
                                                         1, 0.35, nfilts * 11 * _samples_per_symbol);
     _shaping_filter = gr::filter::pfb_arb_resampler_ccf::make(_samples_per_symbol, rrc_taps, nfilts);
-    _amplify = gr::blocks::multiply_const_cc::make(0.5,1);
-    _band_pass_filter_1 = gr::filter::fir_filter_ccf::make(
+    _repeat = gr::blocks::repeat::make(8, _samples_per_symbol);
+    _amplify = gr::blocks::multiply_const_cc::make(0.85,1);
+    _filter = gr::filter::fft_filter_ccf::make(
                 1,gr::filter::firdes::low_pass(
-                    1, _samp_rate, _filter_width, 600,gr::filter::firdes::WIN_HAMMING));
+                    1, _samp_rate, _filter_width, 100,gr::filter::firdes::WIN_HAMMING));
 
     _osmosdr_sink = osmosdr::sink::make(device_args);
     _osmosdr_sink->set_sample_rate(_samp_rate);
@@ -54,14 +57,15 @@ gr_mod_bpsk_sdr::gr_mod_bpsk_sdr(QObject *parent, int sps, int samp_rate, int ca
 
     _osmosdr_sink->set_gain(rf_gain);
     _top_block->connect(_vector_source,0,_packed_to_unpacked,0);
-    _top_block->connect(_packed_to_unpacked,0,_diff_encoder,0);
+    _top_block->connect(_packed_to_unpacked,0,_scrambler,0);
+    _top_block->connect(_scrambler,0,_diff_encoder,0);
     _top_block->connect(_diff_encoder,0,_chunks_to_symbols,0);
-    _top_block->connect(_chunks_to_symbols,0,_shaping_filter,0);
+    _top_block->connect(_chunks_to_symbols,0,_repeat,0);
 
-    _top_block->connect(_shaping_filter,0,_amplify,0);
-    _top_block->connect(_amplify,0,_band_pass_filter_1,0);
+    _top_block->connect(_repeat,0,_amplify,0);
+    _top_block->connect(_amplify,0,_filter,0);
 
-    _top_block->connect(_band_pass_filter_1,0,_osmosdr_sink,0);
+    _top_block->connect(_filter,0,_osmosdr_sink,0);
 
 }
 

@@ -66,7 +66,7 @@ void RadioOp::run()
         bool transmitting = _transmitting;
         _mutex.unlock();
         QCoreApplication::processEvents();
-        short *audiobuffer = new short[audiobuffer_size/2];
+        short *audiobuffer;
 
         if(transmitting && !transmit_activated)
         {
@@ -93,6 +93,7 @@ void RadioOp::run()
         }
         if(transmitting)
         {
+            audiobuffer = new short[audiobuffer_size/2];
             _audio->read_short(audiobuffer,audiobuffer_size);
             int packet_size = 0;
             unsigned char *encoded_audio;
@@ -104,6 +105,7 @@ void RadioOp::run()
             memcpy(data,encoded_audio,packet_size);
             emit audioData(data,packet_size);
             delete[] encoded_audio;
+            delete[] audiobuffer;
         }
         else
         {
@@ -124,8 +126,8 @@ void RadioOp::run()
             }
             emit displayTransmitStatus(false);
         }
-        delete[] audiobuffer;
-        usleep(10);
+
+        usleep(1000);
         if(_stop)
             break;
     }

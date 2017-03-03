@@ -62,12 +62,12 @@ void gr_modem::initTX(int modem_type)
     _modem_type = modem_type;
     if(modem_type == gr_modem_types::ModemTypeBPSK2000)
     {
-        _gr_mod_bpsk_sdr = new gr_mod_bpsk_sdr(0, 125, 250000, 1700, 1200, 1, 434025000, 70);
+        _gr_mod_bpsk_sdr = new gr_mod_bpsk_sdr(0, 125, 250000, 1700, 1200, 1, 434025000, 50);
         //_gr_mod_bpsk_sdr->start();
     }
     else if(modem_type == gr_modem_types::ModemTypeQPSK20000)
     {
-        _gr_mod_qpsk_sdr = new gr_mod_qpsk_sdr(0, 25, 250000, 1700, 6000, 1, 434025000, 70);
+        _gr_mod_qpsk_sdr = new gr_mod_qpsk_sdr(0, 25, 250000, 1700, 6000, 1, 434025000, 50);
         //_gr_mod_qpsk_sdr->start();
     }
 

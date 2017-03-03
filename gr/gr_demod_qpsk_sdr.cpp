@@ -63,10 +63,12 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(QObject *parent, int sps, int samp_rate, in
     std::vector<float> taps = gr::filter::firdes::low_pass(flt_size, flt_size, cutoff, trans_width);
     _resampler = gr::filter::pfb_arb_resampler_ccf::make(rerate, taps, flt_size);
     _agc = gr::analog::agc2_cc::make(0.006e-1, 1e-3, 1, 1);
-    _filter = gr::filter::freq_xlating_fir_filter_ccf::make(
+    _freq_transl_filter = gr::filter::freq_xlating_fir_filter_ccf::make(
                 1,gr::filter::firdes::low_pass(
-                    1, _target_samp_rate, _filter_width,10000,gr::filter::firdes::WIN_HAMMING), 25000,
+                    1, _target_samp_rate, 2*_filter_width, 250000, gr::filter::firdes::WIN_HAMMING), 25000,
                 _target_samp_rate);
+    _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
+                                1, _target_samp_rate, _filter_width,100,gr::filter::firdes::WIN_HAMMING) );
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.0025*0.175*0.175, 0.5, 0.175,
                                                               0.005);
     _costas_loop = gr::digital::costas_loop_cc::make(0.0628,4);
@@ -100,7 +102,8 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(QObject *parent, int sps, int samp_rate, in
     //_constellation = gr::qtgui::const_sink_c::make(1,name);
 
     _top_block->connect(_osmosdr_source,0,_resampler,0);
-    _top_block->connect(_resampler,0,_filter,0);
+    _top_block->connect(_resampler,0,_freq_transl_filter,0);
+    _top_block->connect(_freq_transl_filter,0,_filter,0);
     _top_block->connect(_filter,0,_agc,0);
     _top_block->connect(_agc,0,_fll,0);
     _top_block->connect(_fll,0,_clock_recovery,0);

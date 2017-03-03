@@ -22,6 +22,7 @@
 #include <gnuradio/digital/map_bb.h>
 #include <gnuradio/digital/constellation.h>
 #include <gnuradio/digital/constellation_decoder_cb.h>
+#include <gnuradio/filter/fft_filter_ccf.h>
 //#include <gnuradio/qtgui/const_sink_c.h>
 #include <osmosdr/source.h>
 #include <vector>
@@ -46,7 +47,7 @@ private:
     gr::top_block_sptr _top_block;
     gr_vector_sink_sptr _vector_sink;
     gr::blocks::unpack_k_bits_bb::sptr _unpack;
-    gr::filter::freq_xlating_fir_filter_ccf::sptr _filter;
+    gr::filter::freq_xlating_fir_filter_ccf::sptr _freq_transl_filter;
     gr::digital::cma_equalizer_cc::sptr _equalizer;
     gr::analog::agc2_cc::sptr _agc;
     gr::digital::fll_band_edge_cc::sptr _fll;
@@ -56,6 +57,7 @@ private:
     gr::filter::pfb_arb_resampler_ccf::sptr _resampler;
     gr::digital::map_bb::sptr _map;
     gr::digital::constellation_decoder_cb::sptr _constellation_receiver;
+    gr::filter::fft_filter_ccf::sptr _filter;
     //gr::qtgui::const_sink_c::sptr _constellation;
     osmosdr::source::sptr _osmosdr_source;
 
