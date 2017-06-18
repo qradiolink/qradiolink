@@ -26,6 +26,10 @@
 #include <gnuradio/digital/descrambler_bb.h>
 #include <gnuradio/qtgui/const_sink_c.h>
 #include <gnuradio/qtgui/number_sink.h>
+#include <gnuradio/blocks/complex_to_mag_squared.h>
+#include <gnuradio/blocks/nlog10_ff.h>
+#include <gnuradio/blocks/multiply_const_ff.h>
+#include <gnuradio/filter/single_pole_iir_filter_ff.h>
 #include <osmosdr/source.h>
 #include <vector>
 #include "gr_vector_sink.h"
@@ -65,6 +69,10 @@ private:
     gr::filter::fft_filter_ccf::sptr _filter;
     gr::digital::descrambler_bb::sptr _descrambler;
     gr::qtgui::const_sink_c::sptr _constellation;
+    gr::blocks::complex_to_mag_squared::sptr _mag_squared;
+    gr::blocks::nlog10_ff::sptr _log10;
+    gr::filter::single_pole_iir_filter_ff::sptr _single_pole_filter;
+    gr::blocks::multiply_const_ff::sptr _multiply_const_ff;
     gr::qtgui::number_sink::sptr _rssi;
     osmosdr::source::sptr _osmosdr_source;
 

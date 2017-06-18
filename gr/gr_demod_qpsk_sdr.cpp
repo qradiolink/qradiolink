@@ -83,6 +83,12 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::const_sink_c::sptr const_gui,
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
     _constellation_receiver = gr::digital::constellation_decoder_cb::make(constellation);
     _vector_sink = make_gr_vector_sink();
+
+    _mag_squared = gr::blocks::complex_to_mag_squared::make();
+    _single_pole_filter = gr::filter::single_pole_iir_filter_ff::make(0.04);
+    _log10 = gr::blocks::nlog10_ff::make();
+    _multiply_const_ff = gr::blocks::multiply_const_ff::make(10);
+
     _osmosdr_source = osmosdr::source::make(device_args);
     _osmosdr_source->set_center_freq(_device_frequency-25000);
     _osmosdr_source->set_sample_rate(_samp_rate);
@@ -117,6 +123,12 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::const_sink_c::sptr const_gui,
     _top_block->connect(_diff_decoder,0,_unpack,0);
     _top_block->connect(_unpack,0,_descrambler,0);
     _top_block->connect(_descrambler,0,_vector_sink,0);
+
+    _top_block->connect(_filter,0,_mag_squared,0);
+    _top_block->connect(_mag_squared,0,_single_pole_filter,0);
+    _top_block->connect(_single_pole_filter,0,_log10,0);
+    _top_block->connect(_log10,0,_multiply_const_ff,0);
+    _top_block->connect(_multiply_const_ff,0,_rssi,0);
 }
 
 void gr_demod_qpsk_sdr::start()
