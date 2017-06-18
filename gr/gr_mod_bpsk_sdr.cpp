@@ -44,18 +44,19 @@ gr_mod_bpsk_sdr::gr_mod_bpsk_sdr(QObject *parent, int sps, int samp_rate, int ca
                                                         1, 0.35, nfilts * 11 * _samples_per_symbol);
     _shaping_filter = gr::filter::pfb_arb_resampler_ccf::make(_samples_per_symbol, rrc_taps, nfilts);
     _repeat = gr::blocks::repeat::make(8, _samples_per_symbol);
-    _amplify = gr::blocks::multiply_const_cc::make(0.85,1);
+    _amplify = gr::blocks::multiply_const_cc::make(0.2,1);
     _filter = gr::filter::fft_filter_ccf::make(
                 1,gr::filter::firdes::low_pass(
-                    1, _samp_rate, _filter_width, 100,gr::filter::firdes::WIN_HAMMING));
+                    1, _samp_rate, _filter_width, 300, gr::filter::firdes::WIN_HAMMING));
 
     _osmosdr_sink = osmosdr::sink::make(device_args);
     _osmosdr_sink->set_sample_rate(_samp_rate);
     _osmosdr_sink->set_antenna("TX/RX");
-
     _osmosdr_sink->set_center_freq(_device_frequency);
-
     _osmosdr_sink->set_gain(rf_gain);
+
+
+
     _top_block->connect(_vector_source,0,_packed_to_unpacked,0);
     _top_block->connect(_packed_to_unpacked,0,_scrambler,0);
     _top_block->connect(_scrambler,0,_diff_encoder,0);
@@ -93,4 +94,9 @@ void gr_mod_bpsk_sdr::tune(long center_freq)
 {
     _device_frequency = center_freq;
     _osmosdr_sink->set_center_freq(_device_frequency);
+}
+
+void gr_mod_bpsk_sdr::set_power(int dbm)
+{
+    _osmosdr_sink->set_gain(dbm);
 }

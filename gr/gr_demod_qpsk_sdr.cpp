@@ -16,7 +16,7 @@
 
 #include "gr_demod_qpsk_sdr.h"
 
-gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(QObject *parent, int sps, int samp_rate, int carrier_freq,
+gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::const_sink_c::sptr const_gui, QObject *parent, int sps, int samp_rate, int carrier_freq,
                                      int filter_width, float mod_index, float device_frequency, float rf_gain) :
     QObject(parent)
 {
@@ -77,6 +77,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(QObject *parent, int sps, int samp_rate, in
     _diff_decoder = gr::digital::diff_decoder_bb::make(4);
     _map = gr::digital::map_bb::make(map);
     _unpack = gr::blocks::unpack_k_bits_bb::make(2);
+    _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
     _constellation_receiver = gr::digital::constellation_decoder_cb::make(constellation);
     _vector_sink = make_gr_vector_sink();
     _osmosdr_source = osmosdr::source::make(device_args);
@@ -97,10 +98,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(QObject *parent, int sps, int samp_rate, in
     {
         _osmosdr_source->set_gain_mode(true);
     }
-
-    const std::string name = "const";
-    //_constellation = gr::qtgui::const_sink_c::make(1,name);
-
+    _constellation = const_gui;
     _top_block->connect(_osmosdr_source,0,_resampler,0);
     _top_block->connect(_resampler,0,_freq_transl_filter,0);
     _top_block->connect(_freq_transl_filter,0,_filter,0);
@@ -109,12 +107,13 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(QObject *parent, int sps, int samp_rate, in
     _top_block->connect(_fll,0,_clock_recovery,0);
     _top_block->connect(_clock_recovery,0,_equalizer,0);
     _top_block->connect(_equalizer,0,_costas_loop,0);
-    //_top_block->connect(_costas_loop,0,_constellation,0);
+    _top_block->connect(_costas_loop,0,_constellation,0);
     _top_block->connect(_costas_loop,0,_constellation_receiver,0);
     _top_block->connect(_constellation_receiver,0,_map,0);
     _top_block->connect(_map,0,_diff_decoder,0);
     _top_block->connect(_diff_decoder,0,_unpack,0);
-    _top_block->connect(_unpack,0,_vector_sink,0);
+    _top_block->connect(_unpack,0,_descrambler,0);
+    _top_block->connect(_descrambler,0,_vector_sink,0);
 }
 
 void gr_demod_qpsk_sdr::start()
@@ -132,6 +131,12 @@ std::vector<unsigned char>* gr_demod_qpsk_sdr::getData()
 {
     std::vector<unsigned char> *data = _vector_sink->get_data();
     return data;
+}
+
+void gr_demod_qpsk_sdr::tune(long center_freq)
+{
+    _device_frequency = center_freq;
+    _osmosdr_source->set_center_freq(_device_frequency-25000);
 }
 
 

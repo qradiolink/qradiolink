@@ -75,7 +75,7 @@ class gr_modem : public QObject
 {
     Q_OBJECT
 public:
-    explicit gr_modem(Settings *settings, QObject *parent = 0);
+    explicit gr_modem(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui, QObject *parent = 0);
     ~gr_modem();
 
 signals:
@@ -102,6 +102,7 @@ public slots:
     void stopRX();
     void startTX();
     void stopTX();
+    void setTxPower(int value);
 private:
 
     Settings *_settings;
@@ -133,7 +134,8 @@ private:
     unsigned long long _shift_reg;
     bool _stream_started;
     bool _stream_ended;
-    QWidget *_const_gui;
+    gr::qtgui::const_sink_c::sptr _const_gui;
+
     enum
     {
         FrameTypeNone,

@@ -37,13 +37,14 @@
 #endif
 #include "audio/alsaaudio.h"
 #include "gr/gr_modem.h"
+#include <gnuradio/qtgui/const_sink_c.h>
 
 
 class RadioOp : public QObject
 {
     Q_OBJECT
 public:
-    explicit RadioOp(Settings *settings, QObject *parent = 0);
+    explicit RadioOp(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui, QObject *parent = 0);
     ~RadioOp();
 signals:
     void finished();
@@ -69,6 +70,7 @@ public slots:
     void toggleTX(bool value);
     void toggleWideband(bool value);
     void tuneFreq(long center_freq);
+    void setTxPower(int dbm);
 
 private:
     bool _stop;

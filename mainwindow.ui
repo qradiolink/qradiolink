@@ -36,7 +36,7 @@
     </size>
    </property>
    <property name="styleSheet">
-    <string notr="true">#centralWidget {background-image: url(:/res/main-bg.png);}</string>
+    <string notr="true">background-color: #88BCBC;</string>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
@@ -58,12 +58,11 @@
          </font>
         </property>
         <property name="styleSheet">
-         <string notr="true">background-image: url(:/res/main-bg.png);
-background-color: rgba(207, 207, 0, 128);
+         <string notr="true">background-color: #88BCBC;
 </string>
         </property>
         <property name="currentIndex">
-         <number>2</number>
+         <number>0</number>
         </property>
         <property name="iconSize">
          <size>
@@ -103,7 +102,7 @@ background-color: rgba(207, 207, 0, 128);
              <string notr="true">font: 14pt &quot;Sans Serif&quot;;
 background: none;
 color: rgb(203, 0, 0);
-background-color: qconicalgradient(cx:0, cy:0, angle:135, stop:0 rgba(255, 255, 0, 69), stop:0.375 rgba(255, 255, 0, 69), stop:0.423533 rgba(251, 255, 0, 145), stop:0.45 rgba(247, 255, 0, 208), stop:0.477581 rgba(255, 244, 71, 130), stop:0.518717 rgba(255, 218, 71, 130), stop:0.55 rgba(255, 255, 0, 255), stop:0.57754 rgba(255, 203, 0, 130), stop:0.625 rgba(255, 255, 0, 69), stop:1 rgba(255, 255, 0, 69));</string>
+</string>
             </property>
             <property name="text">
              <string>File</string>
@@ -122,7 +121,7 @@ background-color: qconicalgradient(cx:0, cy:0, angle:135, stop:0 rgba(255, 255, 
              <string notr="true">font: 14pt &quot;Sans Serif&quot;;
 background: none;
 color: rgb(203, 0, 0);
-background-color: qconicalgradient(cx:0, cy:0, angle:135, stop:0 rgba(255, 255, 0, 69), stop:0.375 rgba(255, 255, 0, 69), stop:0.423533 rgba(251, 255, 0, 145), stop:0.45 rgba(247, 255, 0, 208), stop:0.477581 rgba(255, 244, 71, 130), stop:0.518717 rgba(255, 218, 71, 130), stop:0.55 rgba(255, 255, 0, 255), stop:0.57754 rgba(255, 203, 0, 130), stop:0.625 rgba(255, 255, 0, 69), stop:1 rgba(255, 255, 0, 69));
+
 </string>
             </property>
             <property name="text">
@@ -161,7 +160,7 @@ font: 12pt &quot;Sans Serif&quot;;
              <string notr="true">font: 14pt &quot;Sans Serif&quot;;
 color: rgb(203, 0, 0);
 background: none;
-background-color: qconicalgradient(cx:0, cy:0, angle:135, stop:0 rgba(255, 255, 0, 69), stop:0.375 rgba(255, 255, 0, 69), stop:0.423533 rgba(251, 255, 0, 145), stop:0.45 rgba(247, 255, 0, 208), stop:0.477581 rgba(255, 244, 71, 130), stop:0.518717 rgba(255, 218, 71, 130), stop:0.55 rgba(255, 255, 0, 255), stop:0.57754 rgba(255, 203, 0, 130), stop:0.625 rgba(255, 255, 0, 69), stop:1 rgba(255, 255, 0, 69));</string>
+</string>
             </property>
             <property name="text">
              <string>Voice</string>
@@ -235,7 +234,7 @@ font: 12pt &quot;Sans Serif&quot;;
             <property name="styleSheet">
              <string notr="true">font: 14pt &quot;Sans Serif&quot;;
 background: none;
-background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(255, 0, 0, 255), stop:0.339795 rgba(255, 0, 0, 255), stop:0.339799 rgba(255, 255, 255, 255), stop:0.662444 rgba(255, 255, 255, 255), stop:0.662469 rgba(0, 0, 255, 255), stop:1 rgba(0, 0, 255, 255));
+
 </string>
             </property>
             <property name="text">
@@ -263,52 +262,19 @@ background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgb
             <widget class="QSlider" name="tuneSlider">
              <property name="styleSheet">
               <string notr="true">QSlider::groove:horizontal {
-border: 2px solid #bbb;
-background: white;
-height: 120px;
-border-radius: 2px;
-}
-
-QSlider::sub-page:horizontal {
-border: 1px solid #777;
-height: 50px;
-border-radius: 4px;
-}
-
-QSlider::add-page:horizontal {
-background: #fff;
-border: 1px solid #777;
-height: 50px;
-border-radius: 4px;
+    border: 1px solid #999999;
+    height: 55px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #B1B1B1, stop:1 #c4c4c4);
+    margin: 5px 0;
 }
 
 QSlider::handle:horizontal {
-border: 10px solid #777;
-width: 20px;
-margin-top: -2px;
-margin-bottom: -2px;
-border-radius: 4px;
-}
-
-QSlider::handle:horizontal:hover {
-border: 1px solid #444;
-border-radius: 4px;
-}
-
-QSlider::sub-page:horizontal:disabled {
-background: #bbb;
-border-color: #999;
-}
-
-QSlider::add-page:horizontal:disabled {
-background: #eee;
-border-color: #999;
-}
-
-QSlider::handle:horizontal:disabled {
-background: #eee;
-border: 1px solid #aaa;
-border-radius: 4px;
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #b4b4b4, stop:1 #8f8f8f);
+    border: 1px solid #5c5c5c;
+    width: 35px;
+    height: 35px;
+    margin: -2px 0; /* handle is placed by default on the contents rect of the groove. Expand outside the groove */
+    border-radius: 1px;
 }</string>
              </property>
              <property name="minimum">
@@ -324,6 +290,61 @@ border-radius: 4px;
               <number>1</number>
              </property>
             </widget>
+           </item>
+           <item>
+            <widget class="QLCDNumber" name="txPowerDisplay">
+             <property name="lineWidth">
+              <number>1</number>
+             </property>
+             <property name="midLineWidth">
+              <number>5</number>
+             </property>
+             <property name="segmentStyle">
+              <enum>QLCDNumber::Outline</enum>
+             </property>
+             <property name="value" stdset="0">
+              <double>50.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSlider" name="txPowerSlider">
+             <property name="styleSheet">
+              <string notr="true">QSlider::groove:horizontal {
+    border: 1px solid #999999;
+    height: 55px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #BCBCBC, stop:1 #c9c9c9);
+    margin: 5px 0;
+}
+
+QSlider::handle:horizontal {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #b4b4b4, stop:1 #8f8f8f);
+    border: 1px solid #5c5c5c;
+    width: 35px;
+    height: 35px;
+    margin: -2px 0; /* handle is placed by default on the contents rect of the groove. Expand outside the groove */
+    border-radius: 1px;
+}</string>
+             </property>
+             <property name="maximum">
+              <number>80</number>
+             </property>
+             <property name="value">
+              <number>50</number>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="tickPosition">
+              <enum>QSlider::TicksBelow</enum>
+             </property>
+             <property name="tickInterval">
+              <number>10</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QGridLayout" name="gridLayout_3"/>
            </item>
            <item>
             <widget class="QCheckBox" name="checkBoxWideband">
@@ -355,6 +376,9 @@ border-radius: 4px;
          </widget>
         </widget>
         <widget class="QWidget" name="tab_5">
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(255, 255, 255);</string>
+         </property>
          <attribute name="title">
           <string>Const</string>
          </attribute>
@@ -438,7 +462,7 @@ background-color: rgb(0, 85, 127);</string>
            </size>
           </property>
           <property name="styleSheet">
-           <string notr="true"/>
+           <string notr="true">background-color: rgb(191, 201, 235);</string>
           </property>
           <property name="frameShape">
            <enum>QFrame::StyledPanel</enum>
@@ -572,22 +596,5 @@ background-color: rgb(0, 85, 127);</string>
  <resources>
   <include location="resources.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>clearReceivedTextButton</sender>
-   <signal>clicked()</signal>
-   <receiver>receivedTextEdit</receiver>
-   <slot>clear()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>472</x>
-     <y>366</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>287</x>
-     <y>221</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

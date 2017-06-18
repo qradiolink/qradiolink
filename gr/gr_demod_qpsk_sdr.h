@@ -23,7 +23,8 @@
 #include <gnuradio/digital/constellation.h>
 #include <gnuradio/digital/constellation_decoder_cb.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
-//#include <gnuradio/qtgui/const_sink_c.h>
+#include <gnuradio/digital/descrambler_bb.h>
+#include <gnuradio/qtgui/const_sink_c.h>
 #include <osmosdr/source.h>
 #include <vector>
 #include "gr_vector_sink.h"
@@ -32,7 +33,7 @@ class gr_demod_qpsk_sdr : public QObject
 {
     Q_OBJECT
 public:
-    explicit gr_demod_qpsk_sdr(QObject *parent = 0, int sps=4, int samp_rate=8000, int carrier_freq=1600,
+    explicit gr_demod_qpsk_sdr(gr::qtgui::const_sink_c::sptr const_gui, QObject *parent = 0, int sps=4, int samp_rate=8000, int carrier_freq=1600,
                                int filter_width=1200, float mod_index=1, float device_frequency=434000000,
                                float rf_gain=50);
 
@@ -42,6 +43,7 @@ public slots:
     void start();
     void stop();
     std::vector<unsigned char> *getData();
+    void tune(long center_freq);
 
 private:
     gr::top_block_sptr _top_block;
@@ -58,7 +60,8 @@ private:
     gr::digital::map_bb::sptr _map;
     gr::digital::constellation_decoder_cb::sptr _constellation_receiver;
     gr::filter::fft_filter_ccf::sptr _filter;
-    //gr::qtgui::const_sink_c::sptr _constellation;
+    gr::digital::descrambler_bb::sptr _descrambler;
+    gr::qtgui::const_sink_c::sptr _constellation;
     osmosdr::source::sptr _osmosdr_source;
 
     int _samples_per_symbol;

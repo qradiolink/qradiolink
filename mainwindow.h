@@ -49,6 +49,7 @@ public slots:
     void toggleTXwin(bool value);
     void tuneCenterFreq(int value);
     void toggleWideband(bool value);
+    void setTxPowerDisplay(int);
 signals:
     void startTransmission();
     void endTransmission();
@@ -61,17 +62,18 @@ signals:
     void toggleTX(bool value);
     void tuneFreq(long center_freq);
     void toggleWidebandMode(bool value);
+    void setTxPower(int value);
 public:
     explicit MainWindow(MumbleClient *client, QWidget *parent = 0);
     ~MainWindow();
-    //QWidget* get_const_gui() {return _constellation_gui;}
+    QWidget* get_const_gui() {return _constellation_gui;}
 
 
 private:
     Ui::MainWindow *ui;
     MumbleClient *_mumble_client;
     bool _transmitting_radio;
-    //QWidget *_constellation_gui;
+    QWidget *_constellation_gui;
 
 };
 

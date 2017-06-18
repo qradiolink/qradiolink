@@ -35,9 +35,10 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
     QObject::connect(ui->checkBoxTX,SIGNAL(clicked(bool)),this,SLOT(toggleTXwin(bool)));
     QObject::connect(ui->checkBoxWideband,SIGNAL(clicked(bool)),this,SLOT(toggleWideband(bool)));
     QObject::connect(ui->tuneSlider,SIGNAL(valueChanged(int)),this,SLOT(tuneCenterFreq(int)));
+    QObject::connect(ui->txPowerSlider,SIGNAL(valueChanged(int)),this,SLOT(setTxPowerDisplay(int)));
     ui->tuneSlider->setRange(-100,100);
     _transmitting_radio = false;
-    //_constellation_gui = ui->tab_5;
+    _constellation_gui = ui->tab_5;
 
 }
 
@@ -153,5 +154,11 @@ void MainWindow::toggleWideband(bool value)
 void MainWindow::tuneCenterFreq(int value)
 {
     emit tuneFreq(ui->tuneSlider->value());
+}
+
+void MainWindow::setTxPowerDisplay(int value)
+{
+    ui->txPowerDisplay->display(value);
+    emit setTxPower(value);
 }
 

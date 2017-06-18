@@ -16,7 +16,7 @@
 
 #include "gr_demod_bpsk_sdr.h"
 
-gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(QObject *parent, int sps, int samp_rate, int carrier_freq,
+gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::const_sink_c::sptr const_gui, QObject *parent, int sps, int samp_rate, int carrier_freq,
                                      int filter_width, float mod_index, float device_frequency, float rf_gain) :
     QObject(parent)
 {
@@ -38,7 +38,7 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(QObject *parent, int sps, int samp_rate, in
     double trans_width = 0.2*rerate;
     unsigned int flt_size = 32;
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(flt_size, flt_size, cutoff, trans_width);
+    std::vector<float> taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, 50000, 150000);
     _resampler = gr::filter::pfb_arb_resampler_ccf::make(rerate, taps, flt_size);
     _agc = gr::analog::agc2_cc::make(0.6e-1, 1e-3, 1, 1);
     _freq_transl_filter = gr::filter::freq_xlating_fir_filter_ccf::make(
@@ -62,7 +62,7 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(QObject *parent, int sps, int samp_rate, in
     _osmosdr_source->set_center_freq(_device_frequency-25000);
     _osmosdr_source->set_sample_rate(_samp_rate);
     _osmosdr_source->set_freq_corr(40);
-    _osmosdr_source->set_gain_mode(true);
+    _osmosdr_source->set_gain_mode(false);
     _osmosdr_source->set_antenna(device_antenna);
     osmosdr::gain_range_t range = _osmosdr_source->get_gain_range();
     if (!range.empty())
@@ -76,7 +76,7 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(QObject *parent, int sps, int samp_rate, in
     }
 
     const std::string name = "const";
-    //_constellation = gr::qtgui::const_sink_c::make(1, name,1, const_gui);
+    _constellation = const_gui;
 
     _top_block->connect(_osmosdr_source,0,_resampler,0);
     _top_block->connect(_resampler,0,_freq_transl_filter,0);
@@ -87,7 +87,7 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(QObject *parent, int sps, int samp_rate, in
     _top_block->connect(_clock_recovery,0,_equalizer,0);
     _top_block->connect(_equalizer,0,_costas_loop,0);
     _top_block->connect(_costas_loop,0,_complex_to_real,0);
-    //_top_block->connect(_costas_loop,0,_constellation,0);
+    _top_block->connect(_costas_loop,0,_constellation,0);
     _top_block->connect(_complex_to_real,0,_binary_slicer,0);
     _top_block->connect(_binary_slicer,0,_diff_decoder,0);
     _top_block->connect(_diff_decoder,0,_descrambler,0);

@@ -16,13 +16,12 @@
 
 #include "gr_modem.h"
 
-gr_modem::gr_modem(Settings *settings, QObject *parent) :
+gr_modem::gr_modem(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui, QObject *parent) :
     QObject(parent)
 {
     _modem_type = gr_modem_types::ModemTypeBPSK2000;
     _frame_length = 7;
     _settings = settings;
-    //_const_gui = const_gui;
     _transmitting = false;
     _frame_counter = 0;
     _shift_reg = 0;
@@ -39,8 +38,8 @@ gr_modem::gr_modem(Settings *settings, QObject *parent) :
     _bit_buf_index = 0;
     _sync_found = false;
     _stream_ended = false;
-
     _current_frame_type = FrameTypeNone;
+    _const_gui = const_gui;
 }
 
 gr_modem::~gr_modem()
@@ -62,12 +61,12 @@ void gr_modem::initTX(int modem_type)
     _modem_type = modem_type;
     if(modem_type == gr_modem_types::ModemTypeBPSK2000)
     {
-        _gr_mod_bpsk_sdr = new gr_mod_bpsk_sdr(0, 125, 250000, 1700, 1200, 1, 434025000, 50);
+        _gr_mod_bpsk_sdr = new gr_mod_bpsk_sdr(0, 125, 250000, 1700, 1200, 1, 434025000, 80);
         //_gr_mod_bpsk_sdr->start();
     }
     else if(modem_type == gr_modem_types::ModemTypeQPSK20000)
     {
-        _gr_mod_qpsk_sdr = new gr_mod_qpsk_sdr(0, 25, 250000, 1700, 6000, 1, 434025000, 50);
+        _gr_mod_qpsk_sdr = new gr_mod_qpsk_sdr(0, 25, 250000, 1700, 6000, 1, 434025000, 80);
         //_gr_mod_qpsk_sdr->start();
     }
 
@@ -78,7 +77,7 @@ void gr_modem::initRX(int modem_type)
     _modem_type = modem_type;
     if(modem_type == gr_modem_types::ModemTypeBPSK2000)
     {
-        _gr_demod_bpsk_sdr = new gr_demod_bpsk_sdr(0,125,1000000,1700,1200,1, 434025000, 50);
+        _gr_demod_bpsk_sdr = new gr_demod_bpsk_sdr(_const_gui, 0,125,1000000,1700,1200,1, 434025000, 50);
         _bit_buf_len = 7 *8;
         _frame_length = 7;
         _bit_buf = new unsigned char[_bit_buf_len];
@@ -86,7 +85,7 @@ void gr_modem::initRX(int modem_type)
     }
     else if (modem_type == gr_modem_types::ModemTypeQPSK20000)
     {
-        _gr_demod_qpsk_sdr = new gr_demod_qpsk_sdr(0,25,1000000,1700,6000,1, 434025000, 50);
+        _gr_demod_qpsk_sdr = new gr_demod_qpsk_sdr(_const_gui,0,25,1000000,1700,6000,1, 434025000, 50);
         _bit_buf_len = 97 *8;
         _frame_length = 97;
         _bit_buf = new unsigned char[_bit_buf_len];
@@ -180,8 +179,16 @@ void gr_modem::tune(long center_freq)
 {
     if(_gr_demod_bpsk_sdr)
         _gr_demod_bpsk_sdr->tune(center_freq);
+    if(_gr_demod_bpsk_sdr)
+        _gr_demod_bpsk_sdr->tune(center_freq);
+}
+
+void gr_modem::setTxPower(int value)
+{
     if(_gr_mod_bpsk_sdr)
-        _gr_mod_bpsk_sdr->tune(center_freq);
+        _gr_mod_bpsk_sdr->set_power(value);
+    if(_gr_mod_qpsk_sdr)
+        _gr_mod_qpsk_sdr->set_power(value);
 }
 
 void gr_modem::startTransmission()
@@ -247,7 +254,7 @@ void gr_modem::transmit(QVector<std::vector<unsigned char>*> frames)
     int ret = 1;
     while(ret)
     {
-        usleep(10);
+        usleep(1);
         if(_modem_type == gr_modem_types::ModemTypeBPSK2000)
             ret = _gr_mod_bpsk_sdr->setData(all_frames);
         else if(_modem_type == gr_modem_types::ModemTypeQPSK20000)

@@ -22,6 +22,9 @@
 #include <gnuradio/filter/pfb_arb_resampler_ccf.h>
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/digital/map_bb.h>
+#include <gnuradio/digital/scrambler_bb.h>
+#include <gnuradio/blocks/pack_k_bits_bb.h>
+#include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/digital/constellation.h>
 #include <osmosdr/sink.h>
 #include <vector>
@@ -41,6 +44,8 @@ public slots:
     void start();
     void stop();
     int setData(std::vector<u_int8_t> *data);
+    void tune(long center_freq);
+    void set_power(int dbm);
 
 private:
     gr::top_block_sptr _top_block;
@@ -49,9 +54,11 @@ private:
     gr::digital::chunks_to_symbols_bc::sptr _chunks_to_symbols;
     gr::filter::pfb_arb_resampler_ccf::sptr _shaping_filter;
     gr::blocks::multiply_const_cc::sptr _amplify;
-    gr::filter::fir_filter_ccf::sptr _band_pass_filter_1;
-    gr::audio::sink::sptr _audio_sink;
+    gr::digital::scrambler_bb::sptr _scrambler;
+    gr::blocks::repeat::sptr _repeat;
+    gr::filter::fft_filter_ccf::sptr _filter;
     gr::digital::diff_encoder_bb::sptr _diff_encoder;
+    gr::blocks::pack_k_bits_bb::sptr _packer;
     gr::digital::map_bb::sptr _map;
     osmosdr::sink::sptr _osmosdr_sink;
 

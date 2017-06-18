@@ -43,6 +43,7 @@ public slots:
     void stop();
     int setData(std::vector<u_int8_t> *data);
     void tune(long center_freq);
+    void set_power(int dbm);
 
 
 private:
@@ -56,6 +57,7 @@ private:
     gr::digital::scrambler_bb::sptr _scrambler;
     gr::blocks::repeat::sptr _repeat;
     gr::filter::fft_filter_ccf::sptr _filter;
+
     osmosdr::sink::sptr _osmosdr_sink;
 
 
