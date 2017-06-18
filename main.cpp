@@ -40,6 +40,7 @@
 #include "station.h"
 #include "radioop.h"
 #include <gnuradio/qtgui/const_sink_c.h>
+#include <gnuradio/qtgui/number_sink.h>
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 void logMessage(QtMsgType type, const QMessageLogContext &context, const QString &msg)
@@ -90,6 +91,7 @@ int main(int argc, char *argv[])
     Settings *settings = db.get_settings();
     MumbleClient client(settings);
     MainWindow w(&client);
+    w.setWindowTitle("QRadioLink");
     //client.connectToServer(settings->_voice_server_ip, settings->_voice_server_port);
     //client.setMute(false);
     /* Uncomment later
@@ -147,11 +149,20 @@ int main(int argc, char *argv[])
     t3->start();
     */
 
-    const std::string name = "const";
-    gr::qtgui::const_sink_c::sptr const_gui = gr::qtgui::const_sink_c::make(256, name,1, (&w)->get_const_gui());
+    const std::string const_name = "const";
+    gr::qtgui::const_sink_c::sptr const_gui = gr::qtgui::const_sink_c::make(256, const_name,1, (&w)->get_const_gui());
+    const_gui->set_size(512,300);
+
+    const std::string rssi_name = "rssi";
+    gr::qtgui::number_sink::sptr rssi_gui = gr::qtgui::number_sink::make(4,0.5,gr::qtgui::NUM_GRAPH_HORIZ,1,(&w)->get_rssi_gui());
+    rssi_gui->set_max(0,20);
+    rssi_gui->set_min(0,-70);
+    rssi_gui->set_label(0,"RSSI");
+    rssi_gui->qwidget()->resize(500,40);
+
     QThread *t4 = new QThread;
     t4->setObjectName("radioop");
-    RadioOp *radio_op = new RadioOp(settings, const_gui);
+    RadioOp *radio_op = new RadioOp(settings, const_gui, rssi_gui);
     radio_op->moveToThread(t4);
     QObject::connect(t4, SIGNAL(started()), radio_op, SLOT(run()));
     QObject::connect(radio_op, SIGNAL(finished()), t4, SLOT(quit()));

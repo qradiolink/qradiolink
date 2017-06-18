@@ -38,7 +38,8 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
     QObject::connect(ui->txPowerSlider,SIGNAL(valueChanged(int)),this,SLOT(setTxPowerDisplay(int)));
     ui->tuneSlider->setRange(-100,100);
     _transmitting_radio = false;
-    _constellation_gui = ui->tab_5;
+    _constellation_gui = ui->widget_const;
+    _rssi_gui = ui->widget_rssi;
 
 }
 

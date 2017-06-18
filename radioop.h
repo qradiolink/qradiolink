@@ -38,13 +38,14 @@
 #include "audio/alsaaudio.h"
 #include "gr/gr_modem.h"
 #include <gnuradio/qtgui/const_sink_c.h>
+#include <gnuradio/qtgui/number_sink.h>
 
 
 class RadioOp : public QObject
 {
     Q_OBJECT
 public:
-    explicit RadioOp(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui, QObject *parent = 0);
+    explicit RadioOp(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui, gr::qtgui::number_sink::sptr rssi_gui, QObject *parent = 0);
     ~RadioOp();
 signals:
     void finished();

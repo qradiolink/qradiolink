@@ -16,7 +16,8 @@
 
 #include "gr_modem.h"
 
-gr_modem::gr_modem(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui, QObject *parent) :
+gr_modem::gr_modem(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui,
+                   gr::qtgui::number_sink::sptr rssi_gui, QObject *parent) :
     QObject(parent)
 {
     _modem_type = gr_modem_types::ModemTypeBPSK2000;
@@ -40,6 +41,7 @@ gr_modem::gr_modem(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui, 
     _stream_ended = false;
     _current_frame_type = FrameTypeNone;
     _const_gui = const_gui;
+    _rssi_gui = rssi_gui;
 }
 
 gr_modem::~gr_modem()
@@ -77,7 +79,7 @@ void gr_modem::initRX(int modem_type)
     _modem_type = modem_type;
     if(modem_type == gr_modem_types::ModemTypeBPSK2000)
     {
-        _gr_demod_bpsk_sdr = new gr_demod_bpsk_sdr(_const_gui, 0,125,1000000,1700,1200,1, 434025000, 50);
+        _gr_demod_bpsk_sdr = new gr_demod_bpsk_sdr(_const_gui, _rssi_gui, 0,125,1000000,1700,1200,1, 434025000, 50);
         _bit_buf_len = 7 *8;
         _frame_length = 7;
         _bit_buf = new unsigned char[_bit_buf_len];
@@ -85,7 +87,7 @@ void gr_modem::initRX(int modem_type)
     }
     else if (modem_type == gr_modem_types::ModemTypeQPSK20000)
     {
-        _gr_demod_qpsk_sdr = new gr_demod_qpsk_sdr(_const_gui,0,25,1000000,1700,6000,1, 434025000, 50);
+        _gr_demod_qpsk_sdr = new gr_demod_qpsk_sdr(_const_gui,_rssi_gui, 0,25,1000000,1700,6000,1, 434025000, 50);
         _bit_buf_len = 97 *8;
         _frame_length = 97;
         _bit_buf = new unsigned char[_bit_buf_len];

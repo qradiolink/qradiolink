@@ -67,6 +67,7 @@ public:
     explicit MainWindow(MumbleClient *client, QWidget *parent = 0);
     ~MainWindow();
     QWidget* get_const_gui() {return _constellation_gui;}
+    QWidget* get_rssi_gui() {return _rssi_gui;}
 
 
 private:
@@ -74,6 +75,7 @@ private:
     MumbleClient *_mumble_client;
     bool _transmitting_radio;
     QWidget *_constellation_gui;
+    QWidget *_rssi_gui;
 
 };
 

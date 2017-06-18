@@ -16,11 +16,13 @@
 
 #include "gr_demod_bpsk_sdr.h"
 
-gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::const_sink_c::sptr const_gui, QObject *parent, int sps, int samp_rate, int carrier_freq,
+gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::const_sink_c::sptr const_gui,
+                                     gr::qtgui::number_sink::sptr rssi_gui, QObject *parent, int sps, int samp_rate, int carrier_freq,
                                      int filter_width, float mod_index, float device_frequency, float rf_gain) :
     QObject(parent)
 {
     _target_samp_rate = 250000;
+    _rssi = rssi_gui;
     const std::string device_args = "rtl=0";
     const std::string device_antenna = "TX/RX";
     _device_frequency = device_frequency;
@@ -58,6 +60,13 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::const_sink_c::sptr const_gui, QO
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
     _unpacked_to_packed = gr::blocks::unpacked_to_packed_bb::make(1,gr::GR_MSB_FIRST);
     _vector_sink = make_gr_vector_sink();
+
+    _mag_squared = gr::blocks::complex_to_mag_squared::make();
+    _single_pole_filter = gr::filter::single_pole_iir_filter_ff::make(0.04);
+    _log10 = gr::blocks::nlog10_ff::make();
+    _multiply_const_ff = gr::blocks::multiply_const_ff::make(10);
+
+
     _osmosdr_source = osmosdr::source::make(device_args);
     _osmosdr_source->set_center_freq(_device_frequency-25000);
     _osmosdr_source->set_sample_rate(_samp_rate);
@@ -92,6 +101,13 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::const_sink_c::sptr const_gui, QO
     _top_block->connect(_binary_slicer,0,_diff_decoder,0);
     _top_block->connect(_diff_decoder,0,_descrambler,0);
     _top_block->connect(_descrambler,0,_vector_sink,0);
+
+    _top_block->connect(_filter,0,_mag_squared,0);
+    _top_block->connect(_mag_squared,0,_single_pole_filter,0);
+    _top_block->connect(_single_pole_filter,0,_log10,0);
+    _top_block->connect(_log10,0,_multiply_const_ff,0);
+    _top_block->connect(_multiply_const_ff,0,_rssi,0);
+
 }
 
 void gr_demod_bpsk_sdr::start()

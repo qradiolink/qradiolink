@@ -38,6 +38,7 @@
 #include "gr_demod_bpsk_sdr.h"
 #include "gr_mod_qpsk_sdr.h"
 #include "gr_demod_qpsk_sdr.h"
+#include <gnuradio/qtgui/number_sink.h>
 
 
 #include <stdio.h>
@@ -75,7 +76,8 @@ class gr_modem : public QObject
 {
     Q_OBJECT
 public:
-    explicit gr_modem(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui, QObject *parent = 0);
+    explicit gr_modem(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui,
+                      gr::qtgui::number_sink::sptr rssi_gui, QObject *parent = 0);
     ~gr_modem();
 
 signals:
@@ -135,6 +137,7 @@ private:
     bool _stream_started;
     bool _stream_ended;
     gr::qtgui::const_sink_c::sptr _const_gui;
+    gr::qtgui::number_sink::sptr _rssi_gui;
 
     enum
     {

@@ -16,11 +16,14 @@
 
 #include "gr_demod_qpsk_sdr.h"
 
-gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::const_sink_c::sptr const_gui, QObject *parent, int sps, int samp_rate, int carrier_freq,
+gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::const_sink_c::sptr const_gui,
+                                     gr::qtgui::number_sink::sptr rssi_gui, QObject *parent,
+                                     int sps, int samp_rate, int carrier_freq,
                                      int filter_width, float mod_index, float device_frequency, float rf_gain) :
     QObject(parent)
 {
     _target_samp_rate = 250000;
+    _rssi = rssi_gui;
     const std::string device_args = "rtl=0";
     const std::string device_antenna = "TX/RX";
     _device_frequency = device_frequency;

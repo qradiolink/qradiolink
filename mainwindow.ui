@@ -90,8 +90,27 @@
           <string>TX</string>
          </attribute>
          <layout class="QGridLayout" name="gridLayout">
-          <item row="2" column="2">
-           <widget class="QPushButton" name="chooseFileButton">
+          <item row="0" column="0" colspan="5">
+           <widget class="QPlainTextEdit" name="sendTextEdit">
+            <property name="font">
+             <font>
+              <family>Sans Serif</family>
+              <pointsize>12</pointsize>
+              <weight>50</weight>
+              <italic>false</italic>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">background: transparent;
+background-color: rgba(255, 255, 255, 180);
+font: 12pt &quot;Sans Serif&quot;;
+</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" rowspan="2">
+           <widget class="QPushButton" name="buttonTransmit">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -100,16 +119,16 @@
             </property>
             <property name="styleSheet">
              <string notr="true">font: 14pt &quot;Sans Serif&quot;;
-background: none;
 color: rgb(203, 0, 0);
+background: none;
 </string>
             </property>
             <property name="text">
-             <string>File</string>
+             <string>Voice</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
+          <item row="1" column="1" rowspan="2">
            <widget class="QPushButton" name="sendTextButton">
             <property name="minimumSize">
              <size>
@@ -129,27 +148,8 @@ color: rgb(203, 0, 0);
             </property>
            </widget>
           </item>
-          <item row="0" column="0" rowspan="2" colspan="4">
-           <widget class="QPlainTextEdit" name="sendTextEdit">
-            <property name="font">
-             <font>
-              <family>Sans Serif</family>
-              <pointsize>12</pointsize>
-              <weight>50</weight>
-              <italic>false</italic>
-              <bold>false</bold>
-             </font>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">background: transparent;
-background-color: rgba(255, 255, 255, 180);
-font: 12pt &quot;Sans Serif&quot;;
-</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QPushButton" name="buttonTransmit">
+          <item row="1" column="2" rowspan="2">
+           <widget class="QPushButton" name="chooseFileButton">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -158,44 +158,53 @@ font: 12pt &quot;Sans Serif&quot;;
             </property>
             <property name="styleSheet">
              <string notr="true">font: 14pt &quot;Sans Serif&quot;;
-color: rgb(203, 0, 0);
 background: none;
+color: rgb(203, 0, 0);
 </string>
             </property>
             <property name="text">
-             <string>Voice</string>
+             <string>File</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3">
+           <widget class="QCheckBox" name="checkBoxTX">
+            <property name="styleSheet">
+             <string notr="true">QCheckBox::indicator {
+     width: 32px;
+     height: 32px;
+}</string>
+            </property>
+            <property name="text">
+             <string>TX</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="4">
+           <widget class="QCheckBox" name="checkBoxWideband">
+            <property name="styleSheet">
+             <string notr="true">QCheckBox::indicator {
+     width: 32px;
+     height: 32px;
+}</string>
+            </property>
+            <property name="text">
+             <string>Wideband</string>
             </property>
            </widget>
           </item>
           <item row="2" column="3">
-           <layout class="QVBoxLayout" name="verticalLayout_4">
-            <item>
-             <widget class="QCheckBox" name="checkBoxTX">
-              <property name="styleSheet">
-               <string notr="true">QCheckBox::indicator {
+           <widget class="QCheckBox" name="checkBoxRX">
+            <property name="styleSheet">
+             <string notr="true">QCheckBox::indicator {
      width: 32px;
      height: 32px;
 }</string>
-              </property>
-              <property name="text">
-               <string>TX</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="checkBoxRX">
-              <property name="styleSheet">
-               <string notr="true">QCheckBox::indicator {
-     width: 32px;
-     height: 32px;
-}</string>
-              </property>
-              <property name="text">
-               <string>RX</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
+            </property>
+            <property name="text">
+             <string>RX</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -248,20 +257,13 @@ background: none;
          <attribute name="title">
           <string>Tune</string>
          </attribute>
-         <widget class="QWidget" name="verticalLayoutWidget">
-          <property name="geometry">
-           <rect>
-            <x>-1</x>
-            <y>9</y>
-            <width>541</width>
-            <height>281</height>
-           </rect>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_5">
-           <item>
-            <widget class="QSlider" name="tuneSlider">
-             <property name="styleSheet">
-              <string notr="true">QSlider::groove:horizontal {
+         <layout class="QVBoxLayout" name="verticalLayout_4">
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_5">
+            <item>
+             <widget class="QSlider" name="tuneSlider">
+              <property name="styleSheet">
+               <string notr="true">QSlider::groove:horizontal {
     border: 1px solid #999999;
     height: 55px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */
     background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #B1B1B1, stop:1 #c4c4c4);
@@ -276,41 +278,47 @@ QSlider::handle:horizontal {
     margin: -2px 0; /* handle is placed by default on the contents rect of the groove. Expand outside the groove */
     border-radius: 1px;
 }</string>
-             </property>
-             <property name="minimum">
-              <number>-100</number>
-             </property>
-             <property name="maximum">
-              <number>100</number>
-             </property>
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="tickInterval">
-              <number>1</number>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLCDNumber" name="txPowerDisplay">
-             <property name="lineWidth">
-              <number>1</number>
-             </property>
-             <property name="midLineWidth">
-              <number>5</number>
-             </property>
-             <property name="segmentStyle">
-              <enum>QLCDNumber::Outline</enum>
-             </property>
-             <property name="value" stdset="0">
-              <double>50.000000000000000</double>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QSlider" name="txPowerSlider">
-             <property name="styleSheet">
-              <string notr="true">QSlider::groove:horizontal {
+              </property>
+              <property name="minimum">
+               <number>-100</number>
+              </property>
+              <property name="maximum">
+               <number>100</number>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="tickInterval">
+               <number>1</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLCDNumber" name="txPowerDisplay">
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>40</height>
+               </size>
+              </property>
+              <property name="lineWidth">
+               <number>1</number>
+              </property>
+              <property name="midLineWidth">
+               <number>1</number>
+              </property>
+              <property name="segmentStyle">
+               <enum>QLCDNumber::Outline</enum>
+              </property>
+              <property name="value" stdset="0">
+               <double>50.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSlider" name="txPowerSlider">
+              <property name="styleSheet">
+               <string notr="true">QSlider::groove:horizontal {
     border: 1px solid #999999;
     height: 55px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */
     background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #BCBCBC, stop:1 #c9c9c9);
@@ -325,55 +333,52 @@ QSlider::handle:horizontal {
     margin: -2px 0; /* handle is placed by default on the contents rect of the groove. Expand outside the groove */
     border-radius: 1px;
 }</string>
-             </property>
-             <property name="maximum">
-              <number>80</number>
-             </property>
-             <property name="value">
-              <number>50</number>
-             </property>
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="tickPosition">
-              <enum>QSlider::TicksBelow</enum>
-             </property>
-             <property name="tickInterval">
-              <number>10</number>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <layout class="QGridLayout" name="gridLayout_3"/>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="checkBoxWideband">
-             <property name="styleSheet">
-              <string notr="true">QCheckBox::indicator {
-     width: 32px;
-     height: 32px;
-}</string>
-             </property>
-             <property name="text">
-              <string>Wideband</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="verticalSpacer">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </widget>
+              </property>
+              <property name="maximum">
+               <number>80</number>
+              </property>
+              <property name="value">
+               <number>50</number>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="tickPosition">
+               <enum>QSlider::TicksBelow</enum>
+              </property>
+              <property name="tickInterval">
+               <number>10</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QWidget" name="widget_const" native="true">
+              <widget class="QWidget" name="layoutWidget">
+               <property name="geometry">
+                <rect>
+                 <x>0</x>
+                 <y>-1</y>
+                 <width>539</width>
+                 <height>121</height>
+                </rect>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_3"/>
+              </widget>
+             </widget>
+            </item>
+            <item>
+             <widget class="QWidget" name="widget_rssi" native="true">
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>50</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
         </widget>
         <widget class="QWidget" name="tab_5">
          <property name="styleSheet">
