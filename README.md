@@ -26,12 +26,14 @@ Building the software
 ---------------------
 
 After cloning the Github repository into a directory of your choice:
+<pre>
 cd qradiolink
 mkdir build 
 cd build/
 qmake-qt4 ..
 make
 ./qradiolink
+</pre>
 
 Known issues:
 Build fails due to include error in /usr/include/gnuradio/qtgui/qtgui_types.h (Debian): manually edit the header to specify the correct directory for QWT
