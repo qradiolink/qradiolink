@@ -59,13 +59,15 @@ As qradiolink is very experimental and the development is in constant flux, it i
 
 Running the code on Android devices for portable VHF-UHF SDR in amateur radio scope
 -----------------------------------------------------------------------------------
-The current master branch supports running the application on recent Android mobile phones or tablets.Requires some knowledge of Android internals.
+The current master branch supports running the application on recent Android mobile phones or tablets [1].Requires some knowledge of Android internals.
 You will need to have the device fully unlocked and root access. A SIM card is not necessary.
 First install an Android application which can create a Linux chroot and an Android VNC viewer.
 Install Debian Jessie in the chroot using a fresh SDcard. Configure it so you can run SSH and an X server.
 Compile qradiolink for the armhf EABI and install all required packages on the phone. Gnuradio has optimizations in for ARM using the Volk kernels.
 Note: a phone may not be able to provide enough power to your SDR peripheral, so you may require an external battery pack. Only the RTL-SDR is confirmed to be powered correctly by the phone through the USB OTG interface.
 Please report back any successful deployments.
+
+[1] see https://www.youtube.com/watch?v=93nWWASt5a4
 
 
 Credits and License
