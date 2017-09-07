@@ -73,6 +73,11 @@ void gr_modem::initTX(int modem_type)
         _gr_mod_qpsk_sdr = new gr_mod_qpsk_sdr(0, 25, 250000, 1700, 6000, 1, 434025000, 20);
         //_gr_mod_qpsk_sdr->start();
     }
+    else if(modem_type == gr_modem_types::ModemType4FSK20000)
+    {
+        _gr_mod_4fsk_sdr = new gr_mod_4fsk_sdr(0, 25, 250000, 1700, 8000, 1, 434025000, 20);
+        //_gr_mod_qpsk_sdr->start();
+    }
 
 }
 
@@ -111,6 +116,12 @@ void gr_modem::deinitTX(int modem_type)
         _gr_mod_qpsk_sdr->stop();
         delete _gr_mod_qpsk_sdr;
         _gr_mod_qpsk_sdr =0;
+    }
+    else if(modem_type == gr_modem_types::ModemType4FSK20000)
+    {
+        _gr_mod_4fsk_sdr->stop();
+        delete _gr_mod_4fsk_sdr;
+        _gr_mod_4fsk_sdr =0;
     }
 
 }
@@ -165,6 +176,10 @@ void gr_modem::startTX()
     {
         _gr_mod_qpsk_sdr->start();
     }
+    else if(_modem_type == gr_modem_types::ModemType4FSK20000)
+    {
+        _gr_mod_4fsk_sdr->start();
+    }
 }
 
 void gr_modem::stopTX()
@@ -177,6 +192,10 @@ void gr_modem::stopTX()
     else if(_modem_type == gr_modem_types::ModemTypeQPSK20000)
     {
         _gr_mod_qpsk_sdr->stop();
+    }
+    else if(_modem_type == gr_modem_types::ModemType4FSK20000)
+    {
+        _gr_mod_4fsk_sdr->stop();
     }
 }
 
@@ -198,6 +217,8 @@ void gr_modem::setTxPower(int value)
         _gr_mod_bpsk_sdr->set_power(value);
     if(_gr_mod_qpsk_sdr)
         _gr_mod_qpsk_sdr->set_power(value);
+    if(_gr_mod_4fsk_sdr)
+        _gr_mod_4fsk_sdr->set_power(value);
 }
 
 void gr_modem::startTransmission()
@@ -268,6 +289,8 @@ void gr_modem::transmit(QVector<std::vector<unsigned char>*> frames)
             ret = _gr_mod_bpsk_sdr->setData(all_frames);
         else if(_modem_type == gr_modem_types::ModemTypeQPSK20000)
             ret = _gr_mod_qpsk_sdr->setData(all_frames);
+        else if(_modem_type == gr_modem_types::ModemType4FSK20000)
+            ret = _gr_mod_4fsk_sdr->setData(all_frames);
     }
 
 }
