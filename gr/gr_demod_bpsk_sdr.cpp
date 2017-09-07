@@ -41,7 +41,8 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::const_sink_c::sptr const_gui,
     unsigned int flt_size = 32;
 
     std::vector<float> taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, 50000, 150000);
-    _resampler = gr::filter::pfb_arb_resampler_ccf::make(rerate, taps, flt_size);
+    //_resampler = gr::filter::pfb_arb_resampler_ccf::make(rerate, taps, flt_size);
+    _resampler = gr::filter::rational_resampler_base_ccf::make(1, 4, taps);
     _agc = gr::analog::agc2_cc::make(0.6e-1, 1e-3, 1, 1);
     _freq_transl_filter = gr::filter::freq_xlating_fir_filter_ccf::make(
                 1,gr::filter::firdes::low_pass(
@@ -65,6 +66,7 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::const_sink_c::sptr const_gui,
     _single_pole_filter = gr::filter::single_pole_iir_filter_ff::make(0.04);
     _log10 = gr::blocks::nlog10_ff::make();
     _multiply_const_ff = gr::blocks::multiply_const_ff::make(10);
+    _agc2 = gr::analog::agc2_ff::make(0.6e-1, 1e-3, 1, 1);
 
 
     _osmosdr_source = osmosdr::source::make(device_args);
@@ -91,8 +93,8 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::const_sink_c::sptr const_gui,
     _top_block->connect(_resampler,0,_freq_transl_filter,0);
     _top_block->connect(_freq_transl_filter,0,_filter,0);
     _top_block->connect(_filter,0,_agc,0);
-    _top_block->connect(_agc,0,_fll,0);
-    _top_block->connect(_fll,0,_clock_recovery,0);
+    _top_block->connect(_agc,0,_clock_recovery,0);
+    //_top_block->connect(_fll,0,_clock_recovery,0);
     _top_block->connect(_clock_recovery,0,_equalizer,0);
     _top_block->connect(_equalizer,0,_costas_loop,0);
     _top_block->connect(_costas_loop,0,_complex_to_real,0);

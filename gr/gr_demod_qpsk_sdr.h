@@ -18,6 +18,7 @@
 #include <gnuradio/analog/feedforward_agc_cc.h>
 #include <gnuradio/digital/fll_band_edge_cc.h>
 #include <gnuradio/filter/pfb_arb_resampler_ccf.h>
+#include <gnuradio/filter/rational_resampler_base_ccf.h>
 #include <gnuradio/filter/freq_xlating_fir_filter_ccf.h>
 #include <gnuradio/digital/map_bb.h>
 #include <gnuradio/digital/constellation.h>
@@ -63,7 +64,8 @@ private:
     gr::digital::clock_recovery_mm_cc::sptr _clock_recovery;
     gr::digital::costas_loop_cc::sptr _costas_loop;
     gr::digital::diff_decoder_bb::sptr _diff_decoder;
-    gr::filter::pfb_arb_resampler_ccf::sptr _resampler;
+    //gr::filter::pfb_arb_resampler_ccf::sptr _resampler;
+    gr::filter::rational_resampler_base_ccf::sptr _resampler;
     gr::digital::map_bb::sptr _map;
     gr::digital::constellation_decoder_cb::sptr _constellation_receiver;
     gr::filter::fft_filter_ccf::sptr _filter;

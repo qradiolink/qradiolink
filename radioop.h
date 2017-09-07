@@ -72,6 +72,7 @@ public slots:
     void toggleWideband(bool value);
     void tuneFreq(long center_freq);
     void setTxPower(int dbm);
+    void syncFrequency(bool freq_found);
 
 private:
     bool _stop;
@@ -91,6 +92,11 @@ private:
     AudioEncoder *_codec;
     gr_modem *_modem;
     bool _wideband;
+    long _tune_center_freq;
+    int _step_hz;
+    int _tune_limit_lower;
+    int _tune_limit_upper;
+
 
 };
 

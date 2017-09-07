@@ -23,6 +23,7 @@
 #include <QVector>
 #include <QDateTime>
 #include <QtEndian>
+#include <QMutex>
 #include <QCoreApplication>
 #include <string>
 #include "ext/utils.h"
@@ -79,7 +80,8 @@ public:
     explicit gr_modem(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui,
                       gr::qtgui::number_sink::sptr rssi_gui, QObject *parent = 0);
     ~gr_modem();
-
+    bool _frequency_found;
+    long _requested_frequency_hz;
 signals:
     void pcmAudio(short *pcm, short size);
     void codec2Audio(unsigned char *c2data, short size);
@@ -99,7 +101,7 @@ public slots:
     void initRX(int modem_type);
     void deinitTX(int modem_type);
     void deinitRX(int modem_type);
-    void tune(long center_freq);
+    void tune(long center_freq, bool sync=false);
     void startRX();
     void stopRX();
     void startTX();
@@ -115,6 +117,7 @@ private:
     void handleStreamEnd();
     int findSync(unsigned char bit);
     void transmit(QVector<std::vector<unsigned char>*> frames);
+
 
     gr_mod_gmsk *_gr_mod_gmsk;
     gr_demod_gmsk *_gr_demod_gmsk;
@@ -136,6 +139,7 @@ private:
     unsigned long long _shift_reg;
     bool _stream_started;
     bool _stream_ended;
+
     gr::qtgui::const_sink_c::sptr _const_gui;
     gr::qtgui::number_sink::sptr _rssi_gui;
 
