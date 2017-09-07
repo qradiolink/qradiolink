@@ -34,7 +34,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui,
     _tune_center_freq = 0;
     _tune_limit_lower = -5000;
     _tune_limit_upper = 5000;
-    _step_hz = 10;
+    _step_hz = 1;
     _tuning_done = false;
     _led_timer = new QTimer(this);
     QObject::connect(_led_timer, SIGNAL(timeout()), this, SLOT(syncIssue()));
@@ -135,7 +135,7 @@ void RadioOp::run()
             emit displayTransmitStatus(false);
         }
 
-        usleep(1);
+        usleep(10);
         if(_stop)
             break;
     }
@@ -269,8 +269,9 @@ void RadioOp::setTxPower(int dbm)
 
 void RadioOp::syncFrequency(unsigned freq_found)
 {
-    if(freq_found < 70)
+    if(freq_found < 10)
     {
+        usleep(10000);
         _tune_center_freq = _tune_center_freq + _step_hz;
         _modem->tune(_tune_center_freq, true);
         if(_tune_center_freq >= (_modem->_requested_frequency_hz + _tune_limit_upper))

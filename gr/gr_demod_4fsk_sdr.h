@@ -1,5 +1,5 @@
-#ifndef GR_DEMOD_QPSK_SDR_H
-#define GR_DEMOD_QPSK_SDR_H
+#ifndef GR_DEMOD_4FSK_SDR_H
+#define GR_DEMOD_4FSK_SDR_H
 
 #include <QObject>
 #include <gnuradio/audio/source.h>
@@ -12,13 +12,10 @@
 #include <gnuradio/digital/clock_recovery_mm_cc.h>
 #include <gnuradio/blocks/unpack_k_bits_bb.h>
 #include <gnuradio/blocks/float_to_complex.h>
-#include <gnuradio/digital/costas_loop_cc.h>
+#include <gnuradio/analog/quadrature_demod_cf.h>
+#include <gnuradio/blocks/float_to_complex.h>
 #include <gnuradio/digital/diff_decoder_bb.h>
-#include <gnuradio/digital/cma_equalizer_cc.h>
-#include <gnuradio/analog/agc2_cc.h>
-#include <gnuradio/analog/feedforward_agc_cc.h>
-#include <gnuradio/digital/fll_band_edge_cc.h>
-#include <gnuradio/filter/pfb_arb_resampler_ccf.h>
+#include <gnuradio/blocks/multiply_const_cc.h>
 #include <gnuradio/filter/rational_resampler_base_ccf.h>
 #include <gnuradio/filter/freq_xlating_fir_filter_ccf.h>
 #include <gnuradio/digital/map_bb.h>
@@ -60,14 +57,12 @@ private:
     gr::blocks::unpack_k_bits_bb::sptr _unpack;
     gr::analog::sig_source_c::sptr _signal_source;
     gr::blocks::multiply_cc::sptr _multiply;
-    gr::filter::freq_xlating_fir_filter_ccf::sptr _freq_transl_filter;
-    gr::digital::cma_equalizer_cc::sptr _equalizer;
-    gr::analog::agc2_cc::sptr _agc;
-    gr::digital::fll_band_edge_cc::sptr _fll;
+    gr::blocks::multiply_const_cc::sptr _multiply_symbols;
+    gr::analog::quadrature_demod_cf::sptr _freq_demod;
+    gr::blocks::float_to_complex::sptr _float_to_complex;
+    gr::filter::fft_filter_ccf::sptr _symbol_filter;
     gr::digital::clock_recovery_mm_cc::sptr _clock_recovery;
-    gr::digital::costas_loop_cc::sptr _costas_loop;
     gr::digital::diff_decoder_bb::sptr _diff_decoder;
-    //gr::filter::pfb_arb_resampler_ccf::sptr _resampler;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
     gr::digital::map_bb::sptr _map;
     gr::digital::constellation_decoder_cb::sptr _constellation_receiver;

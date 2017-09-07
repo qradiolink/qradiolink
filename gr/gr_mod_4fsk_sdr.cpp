@@ -42,7 +42,7 @@ gr_mod_4fsk_sdr::gr_mod_4fsk_sdr(QObject *parent, int sps, int samp_rate, int ca
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
     _modulation_index = mod_index;
-    _top_block = gr::make_top_block("qpsk modulator sdr");
+    _top_block = gr::make_top_block("4fsk modulator sdr");
     _vector_source = make_gr_vector_source();
     _packed_to_unpacked = gr::blocks::packed_to_unpacked_bb::make(1,gr::GR_MSB_FIRST);
     _packer = gr::blocks::pack_k_bits_bb::make(2);

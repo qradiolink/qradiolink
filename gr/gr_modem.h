@@ -40,6 +40,7 @@
 #include "gr_mod_qpsk_sdr.h"
 #include "gr_mod_4fsk_sdr.h"
 #include "gr_demod_qpsk_sdr.h"
+#include "gr_demod_4fsk_sdr.h"
 #include <gnuradio/qtgui/number_sink.h>
 
 
@@ -130,6 +131,7 @@ private:
     gr_demod_bpsk *_gr_demod_bpsk;
     gr_demod_bpsk_sdr *_gr_demod_bpsk_sdr;
     gr_demod_qpsk_sdr *_gr_demod_qpsk_sdr;
+    gr_demod_4fsk_sdr *_gr_demod_4fsk_sdr;
     int _modem_type;
     int _frame_length;
     quint64 _frame_counter;

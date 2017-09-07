@@ -32,7 +32,7 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(gr::qtgui::const_sink_c::sptr const_gui,
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
     _modulation_index = mod_index;
-    _top_block = gr::make_top_block("qpsk demodulator sdr");
+    _top_block = gr::make_top_block("4fsk demodulator sdr");
 
     std::vector<int> map;
     map.push_back(0);
@@ -41,45 +41,42 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(gr::qtgui::const_sink_c::sptr const_gui,
     map.push_back(3);
 
     std::vector<unsigned int> const_map;
-    map.push_back(0);
-    map.push_back(1);
-    map.push_back(2);
-    map.push_back(3);
+    const_map.push_back(0);
+    const_map.push_back(1);
+    const_map.push_back(2);
+    const_map.push_back(3);
 
     std::vector<int> pre_diff_code;
 
     std::vector<gr_complex> constellation_points;
-    constellation_points.push_back(-0.707-0.707j);
-    constellation_points.push_back(-0.707+0.707j);
-    constellation_points.push_back(0.707+0.707j);
-    constellation_points.push_back(0.707-0.707j);
-
-    float rerate = (float)_target_samp_rate/(float)_samp_rate;
+    constellation_points.push_back(-1.5);
+    constellation_points.push_back(-0.5);
+    constellation_points.push_back(0.5);
+    constellation_points.push_back(1.5);
 
 
-    double cutoff = 0.4*rerate;
-    double trans_width = 0.2*rerate;
     unsigned int flt_size = 32;
     gr::digital::constellation_expl_rect::sptr constellation = gr::digital::constellation_expl_rect::make(
                 constellation_points,pre_diff_code,4,2,2,1,1,const_map);
 
     std::vector<float> taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, 50000, 150000);
-    //_resampler = gr::filter::pfb_arb_resampler_ccf::make(rerate, taps, flt_size);
+    std::vector<float> symbol_filter_taps = gr::filter::firdes::low_pass(1.0,
+                                 _target_samp_rate, _target_samp_rate*0.85/_samples_per_symbol, _target_samp_rate*0.25/_samples_per_symbol);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1, 4, taps);
-    _agc = gr::analog::agc2_cc::make(0.006e-1, 1e-3, 1, 1);
     _signal_source = gr::analog::sig_source_c::make(_target_samp_rate,gr::analog::GR_COS_WAVE,-25000,1);
     _multiply = gr::blocks::multiply_cc::make();
-    _freq_transl_filter = gr::filter::freq_xlating_fir_filter_ccf::make(
-                1,gr::filter::firdes::low_pass(
-                    1, _target_samp_rate, 2*_filter_width, 250000, gr::filter::firdes::WIN_HAMMING), 25000,
-                _target_samp_rate);
+    //_freq_transl_filter = gr::filter::freq_xlating_fir_filter_ccf::make(
+    //            1,gr::filter::firdes::low_pass(
+    //                1, _target_samp_rate, 2*_filter_width, 250000, gr::filter::firdes::WIN_HAMMING), 25000,
+    //            _target_samp_rate);
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
                                 1, _target_samp_rate, _filter_width,100,gr::filter::firdes::WIN_HAMMING) );
+    _freq_demod = gr::analog::quadrature_demod_cf::make(sps/(M_PI/2));
+    _float_to_complex = gr::blocks::float_to_complex::make();
+    _symbol_filter = gr::filter::fft_filter_ccf::make(1,symbol_filter_taps);
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.0025*0.175*0.175, 0.5, 0.175,
                                                               0.005);
-    _costas_loop = gr::digital::costas_loop_cc::make(0.0628,4);
-    _equalizer = gr::digital::cma_equalizer_cc::make(8,1,0.00005,1);
-    _fll = gr::digital::fll_band_edge_cc::make(sps, 0.55, 32, 0.000628);
+    _multiply_symbols = gr::blocks::multiply_const_cc::make(1);
     _diff_decoder = gr::digital::diff_decoder_bb::make(4);
     _map = gr::digital::map_bb::make(map);
     _unpack = gr::blocks::unpack_k_bits_bb::make(2);
@@ -115,13 +112,13 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(gr::qtgui::const_sink_c::sptr const_gui,
     _top_block->connect(_resampler,0,_multiply,0);
     _top_block->connect(_signal_source,0,_multiply,1);
     _top_block->connect(_multiply,0,_filter,0);
-    _top_block->connect(_filter,0,_agc,0);
-    _top_block->connect(_agc,0,_clock_recovery,0);
-    //_top_block->connect(_fll,0,_clock_recovery,0);
-    _top_block->connect(_clock_recovery,0,_equalizer,0);
-    _top_block->connect(_equalizer,0,_costas_loop,0);
-    _top_block->connect(_costas_loop,0,_constellation,0);
-    _top_block->connect(_costas_loop,0,_constellation_receiver,0);
+    _top_block->connect(_filter,0,_freq_demod,0);
+    _top_block->connect(_freq_demod,0,_float_to_complex,0);
+    _top_block->connect(_float_to_complex,0,_symbol_filter,0);
+    _top_block->connect(_symbol_filter,0,_clock_recovery,0);
+    _top_block->connect(_clock_recovery,0,_multiply_symbols,0);
+    _top_block->connect(_multiply_symbols,0,_constellation,0);
+    _top_block->connect(_multiply_symbols,0,_constellation_receiver,0);
     _top_block->connect(_constellation_receiver,0,_map,0);
     _top_block->connect(_map,0,_diff_decoder,0);
     _top_block->connect(_diff_decoder,0,_unpack,0);

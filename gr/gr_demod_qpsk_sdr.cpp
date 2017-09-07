@@ -41,10 +41,10 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::const_sink_c::sptr const_gui,
     map.push_back(3);
 
     std::vector<unsigned int> const_map;
-    map.push_back(0);
-    map.push_back(1);
-    map.push_back(2);
-    map.push_back(3);
+    const_map.push_back(0);
+    const_map.push_back(1);
+    const_map.push_back(2);
+    const_map.push_back(3);
 
     std::vector<int> pre_diff_code;
 
