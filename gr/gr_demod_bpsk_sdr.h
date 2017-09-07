@@ -55,6 +55,8 @@ private:
     gr::top_block_sptr _top_block;
     gr_vector_sink_sptr _vector_sink;
     gr::blocks::unpacked_to_packed_bb::sptr _unpacked_to_packed;
+    gr::analog::sig_source_c::sptr _signal_source;
+    gr::blocks::multiply_cc::sptr _multiply;
     gr::filter::freq_xlating_fir_filter_ccf::sptr _freq_transl_filter;
     gr::digital::cma_equalizer_cc::sptr _equalizer;
     gr::blocks::complex_to_real::sptr _complex_to_real;

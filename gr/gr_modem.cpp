@@ -42,7 +42,7 @@ gr_modem::gr_modem(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui,
     _current_frame_type = FrameTypeNone;
     _const_gui = const_gui;
     _rssi_gui = rssi_gui;
-    _frequency_found =false;
+    _frequency_found =0;
     _requested_frequency_hz = 0;
 }
 
@@ -370,7 +370,7 @@ void gr_modem::demodulate()
         }
         if(_sync_found)
         {
-            _frequency_found = true;
+            _frequency_found++;
             _bit_buf[_bit_buf_index] =  (demod_data->at(i)) & 0x1;
             _bit_buf_index++;
             if(_bit_buf_index >= _bit_buf_len)
@@ -385,7 +385,7 @@ void gr_modem::demodulate()
         }
 
     }
-
+    usleep(1);
     demod_data->clear();
     delete demod_data;
 

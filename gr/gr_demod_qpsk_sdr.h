@@ -4,6 +4,7 @@
 #include <QObject>
 #include <gnuradio/audio/source.h>
 #include <gnuradio/blocks/multiply_cc.h>
+#include <gnuradio/analog/sig_source_c.h>
 #include <gnuradio/top_block.h>
 #include <gnuradio/endianness.h>
 #include <gnuradio/filter/fir_filter_ccf.h>
@@ -57,6 +58,8 @@ private:
     gr::top_block_sptr _top_block;
     gr_vector_sink_sptr _vector_sink;
     gr::blocks::unpack_k_bits_bb::sptr _unpack;
+    gr::analog::sig_source_c::sptr _signal_source;
+    gr::blocks::multiply_cc::sptr _multiply;
     gr::filter::freq_xlating_fir_filter_ccf::sptr _freq_transl_filter;
     gr::digital::cma_equalizer_cc::sptr _equalizer;
     gr::analog::agc2_cc::sptr _agc;

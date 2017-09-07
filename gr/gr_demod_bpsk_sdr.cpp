@@ -44,6 +44,8 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::const_sink_c::sptr const_gui,
     //_resampler = gr::filter::pfb_arb_resampler_ccf::make(rerate, taps, flt_size);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1, 4, taps);
     _agc = gr::analog::agc2_cc::make(0.6e-1, 1e-3, 1, 1);
+    _signal_source = gr::analog::sig_source_c::make(_target_samp_rate,gr::analog::GR_COS_WAVE,-25000,1);
+    _multiply = gr::blocks::multiply_cc::make();
     _freq_transl_filter = gr::filter::freq_xlating_fir_filter_ccf::make(
                 1,gr::filter::firdes::low_pass(
                     1, _target_samp_rate, 2*_filter_width ,250000, gr::filter::firdes::WIN_HAMMING), 25000,
@@ -90,8 +92,9 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::const_sink_c::sptr const_gui,
     _constellation = const_gui;
 
     _top_block->connect(_osmosdr_source,0,_resampler,0);
-    _top_block->connect(_resampler,0,_freq_transl_filter,0);
-    _top_block->connect(_freq_transl_filter,0,_filter,0);
+    _top_block->connect(_resampler,0,_multiply,0);
+    _top_block->connect(_signal_source,0,_multiply,1);
+    _top_block->connect(_multiply,0,_filter,0);
     _top_block->connect(_filter,0,_agc,0);
     _top_block->connect(_agc,0,_clock_recovery,0);
     //_top_block->connect(_fll,0,_clock_recovery,0);
