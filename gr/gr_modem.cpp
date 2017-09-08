@@ -115,6 +115,7 @@ void gr_modem::initRX(int modem_type)
 
 void gr_modem::deinitTX(int modem_type)
 {
+    _modem_type = modem_type;
     if(modem_type == gr_modem_types::ModemTypeBPSK2000)
     {
         _gr_mod_bpsk_sdr->stop();
@@ -138,6 +139,7 @@ void gr_modem::deinitTX(int modem_type)
 
 void gr_modem::deinitRX(int modem_type)
 {
+    _modem_type = modem_type;
     if(modem_type == gr_modem_types::ModemTypeBPSK2000)
     {
         _gr_demod_bpsk_sdr->stop();

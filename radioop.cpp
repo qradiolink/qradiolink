@@ -20,7 +20,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui,
                  gr::qtgui::number_sink::sptr rssi_gui, QObject *parent) :
     QObject(parent)
 {
-    _wideband = false;
+    _mode = gr_modem_types::ModemTypeBPSK2000;
     _codec = new AudioEncoder;
     _audio = new AudioInterface;
     _stop =false;
@@ -109,7 +109,7 @@ void RadioOp::run()
             _audio->read_short(audiobuffer,audiobuffer_size);
             int packet_size = 0;
             unsigned char *encoded_audio;
-            if(_wideband)
+            if(_mode)
                 encoded_audio = _codec->encode_opus(audiobuffer, audiobuffer_size, packet_size);
             else
                 encoded_audio = _codec->encode_codec2(audiobuffer, audiobuffer_size, packet_size);
@@ -165,7 +165,7 @@ void RadioOp::receiveC2Data(unsigned char *data, short size)
 {
     short *audio_out;
     int samples;
-    if(_wideband)
+    if(_mode)
     {
         audio_out = _codec->decode_opus(data, size, samples);
     }
@@ -233,46 +233,60 @@ void RadioOp::syncIssue()
 
 void RadioOp::toggleRX(bool value)
 {
-    int modem_type;
-    if(_wideband)
-        modem_type = gr_modem_types::ModemTypeQPSK20000;
-    else
-        modem_type = gr_modem_types::ModemTypeBPSK2000;
     if(value)
     {
         _rx_inited = true;
-        _modem->initRX(modem_type);
+        _modem->initRX(_mode);
         _tune_center_freq = _modem->_requested_frequency_hz;
     }
     else
     {
+        qDebug() << _mode;
         _rx_inited = false;
-        _modem->deinitRX(modem_type);
+        _modem->deinitRX(_mode);
     }
 }
 
 void RadioOp::toggleTX(bool value)
 {
-    int modem_type;
-    if(_wideband)
-        modem_type = gr_modem_types::ModemTypeQPSK20000;
-    else
-        modem_type = gr_modem_types::ModemTypeBPSK2000;
     if(value)
     {
         _tx_inited = true;
-        _modem->initTX(modem_type);
+        _modem->initTX(_mode);
     }
     else
     {
         _tx_inited = false;
-        _modem->deinitTX(modem_type);
+        _modem->deinitTX(_mode);
     }
 }
 
-void RadioOp::toggleWideband(bool value)
+void RadioOp::toggleMode(int value)
 {
-    _wideband = value;
+    bool rx_inited_before = _rx_inited;
+    bool tx_inited_before = _tx_inited;
+    if(_rx_inited)
+    {
+        toggleRX(false);
+    }
+    if(_tx_inited)
+    {
+        toggleTX(false);
+    }
+    switch(value)
+    {
+    case 0:
+        _mode = gr_modem_types::ModemTypeBPSK2000;
+    case 1:
+        _mode = gr_modem_types::ModemTypeQPSK20000;
+    case 2:
+        _mode = gr_modem_types::ModemType4FSK20000;
+    }
+    if(rx_inited_before)
+        toggleRX(true);
+
+    if(tx_inited_before)
+        toggleTX(true);
 }
 
 void RadioOp::fineTuneFreq(long center_freq)
@@ -294,7 +308,7 @@ void RadioOp::syncFrequency(unsigned freq_found)
 {
     if(freq_found < 10)
     {
-        if(!_wideband)
+        if(_mode == gr_modem_types::ModemTypeBPSK2000 )
             usleep(100);
         else
             usleep(10);

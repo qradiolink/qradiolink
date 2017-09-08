@@ -69,7 +69,7 @@ public slots:
     void receiveC2Data(unsigned char *data, short size);
     void toggleRX(bool value);
     void toggleTX(bool value);
-    void toggleWideband(bool value);
+    void toggleMode(int value);
     void fineTuneFreq(long center_freq);
     void tuneFreq(long center_freq);
     void setTxPower(int dbm);
@@ -92,14 +92,13 @@ private:
     QTimer *_led_timer;
     AudioEncoder *_codec;
     gr_modem *_modem;
-    bool _wideband;
+    int _mode;
     long _tune_center_freq;
     int _step_hz;
     int _tune_limit_lower;
     int _tune_limit_upper;
     bool _tuning_done;
     bool _tx_modem_started;
-
 
 };
 
