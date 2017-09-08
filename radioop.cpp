@@ -135,7 +135,7 @@ void RadioOp::run()
             emit displayTransmitStatus(false);
         }
 
-        usleep(10);
+        usleep(1000);
         if(_stop)
             break;
     }
@@ -271,7 +271,7 @@ void RadioOp::syncFrequency(unsigned freq_found)
 {
     if(freq_found < 10)
     {
-        usleep(10000);
+        usleep(100);
         _tune_center_freq = _tune_center_freq + _step_hz;
         _modem->tune(_tune_center_freq, true);
         if(_tune_center_freq >= (_modem->_requested_frequency_hz + _tune_limit_upper))

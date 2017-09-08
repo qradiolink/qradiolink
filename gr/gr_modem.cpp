@@ -435,8 +435,8 @@ void gr_modem::demodulate()
             }
         }
 
+
     }
-    usleep(1);
     demod_data->clear();
     delete demod_data;
 

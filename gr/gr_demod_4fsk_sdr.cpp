@@ -49,15 +49,15 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(gr::qtgui::const_sink_c::sptr const_gui,
     std::vector<int> pre_diff_code;
 
     std::vector<gr_complex> constellation_points;
-    constellation_points.push_back(-1.5);
-    constellation_points.push_back(-0.5);
-    constellation_points.push_back(0.5);
-    constellation_points.push_back(1.5);
+    constellation_points.push_back(-1.5+0j);
+    constellation_points.push_back(-0.5+0j);
+    constellation_points.push_back(0.5+0j);
+    constellation_points.push_back(1.5+0j);
 
 
     unsigned int flt_size = 32;
     gr::digital::constellation_expl_rect::sptr constellation = gr::digital::constellation_expl_rect::make(
-                constellation_points,pre_diff_code,4,2,2,1,1,const_map);
+                constellation_points,pre_diff_code,2,4,1,1,1,const_map);
 
     std::vector<float> taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, 50000, 150000);
     std::vector<float> symbol_filter_taps = gr::filter::firdes::low_pass(1.0,
@@ -71,12 +71,12 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(gr::qtgui::const_sink_c::sptr const_gui,
     //            _target_samp_rate);
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
                                 1, _target_samp_rate, _filter_width,100,gr::filter::firdes::WIN_HAMMING) );
-    _freq_demod = gr::analog::quadrature_demod_cf::make(sps/(M_PI/2));
+    _freq_demod = gr::analog::quadrature_demod_cf::make(sps/(10*M_PI/2));
     _float_to_complex = gr::blocks::float_to_complex::make();
     _symbol_filter = gr::filter::fft_filter_ccf::make(1,symbol_filter_taps);
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.0025*0.175*0.175, 0.5, 0.175,
                                                               0.005);
-    _multiply_symbols = gr::blocks::multiply_const_cc::make(1);
+    _multiply_symbols = gr::blocks::multiply_const_cc::make(10);
     _diff_decoder = gr::digital::diff_decoder_bb::make(4);
     _map = gr::digital::map_bb::make(map);
     _unpack = gr::blocks::unpack_k_bits_bb::make(2);

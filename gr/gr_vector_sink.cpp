@@ -43,7 +43,6 @@ std::vector<unsigned char> * gr_vector_sink::get_data()
 {
     gr::thread::scoped_lock guard(_mutex);
     std::vector<unsigned char>* data = new std::vector<unsigned char>;
-
     data->insert(data->end(),_data->begin(),_data->end());
     _data->clear();
 
