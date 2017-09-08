@@ -124,8 +124,11 @@ void RadioOp::run()
         }
         if(_process_text)
         {
-            if(_tx_inited)
+            if(_tx_inited) {
+                _modem->stopTX();
+                _modem->startTX();
                 _modem->textData(_text_out);
+            }
             if(!_repeat_text)
             {
                 _mutex.lock();
