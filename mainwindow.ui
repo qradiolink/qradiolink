@@ -54,7 +54,7 @@
         </property>
         <property name="font">
          <font>
-          <pointsize>24</pointsize>
+          <pointsize>16</pointsize>
          </font>
         </property>
         <property name="styleSheet">
@@ -443,7 +443,7 @@ QSlider::handle:horizontal {
               <property name="maximumSize">
                <size>
                 <width>16777215</width>
-                <height>70</height>
+                <height>50</height>
                </size>
               </property>
              </widget>
