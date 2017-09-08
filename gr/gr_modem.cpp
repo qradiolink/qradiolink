@@ -43,7 +43,7 @@ gr_modem::gr_modem(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui,
     _const_gui = const_gui;
     _rssi_gui = rssi_gui;
     _frequency_found =0;
-    _requested_frequency_hz = 0;
+    _requested_frequency_hz = 434025000;
 }
 
 gr_modem::~gr_modem()
@@ -65,19 +65,19 @@ void gr_modem::initTX(int modem_type)
     _modem_type = modem_type;
     if(modem_type == gr_modem_types::ModemTypeBPSK2000)
     {
-        _gr_mod_bpsk_sdr = new gr_mod_bpsk_sdr(0, 125, 250000, 1700, 1200, 1, 434025000, 40);
+        _gr_mod_bpsk_sdr = new gr_mod_bpsk_sdr(0, 125, 250000, 1700, 1200, 1, _requested_frequency_hz, 40);
         _frame_length = 7;
         //_gr_mod_bpsk_sdr->start();
     }
     else if(modem_type == gr_modem_types::ModemTypeQPSK20000)
     {
-        _gr_mod_qpsk_sdr = new gr_mod_qpsk_sdr(0, 25, 250000, 1700, 6000, 1, 434025000, 40);
+        _gr_mod_qpsk_sdr = new gr_mod_qpsk_sdr(0, 25, 250000, 1700, 6000, 1, _requested_frequency_hz, 40);
         _frame_length = 97;
         //_gr_mod_qpsk_sdr->start();
     }
     else if(modem_type == gr_modem_types::ModemType4FSK20000)
     {
-        _gr_mod_4fsk_sdr = new gr_mod_4fsk_sdr(0, 25, 250000, 1700, 8000, 1, 434025000, 40);
+        _gr_mod_4fsk_sdr = new gr_mod_4fsk_sdr(0, 25, 250000, 1700, 8000, 1, _requested_frequency_hz, 40);
         _frame_length = 97;
         //_gr_mod_qpsk_sdr->start();
     }
@@ -86,7 +86,6 @@ void gr_modem::initTX(int modem_type)
 
 void gr_modem::initRX(int modem_type)
 {
-    _requested_frequency_hz = 434025000;
     _modem_type = modem_type;
     if(modem_type == gr_modem_types::ModemTypeBPSK2000)
     {
@@ -232,8 +231,17 @@ void gr_modem::tune(long center_freq, bool sync)
         _gr_demod_qpsk_sdr->tune(center_freq);
     if(_gr_demod_4fsk_sdr)
         _gr_demod_4fsk_sdr->tune(center_freq);
+
     if(!sync)
+    {
         _requested_frequency_hz = center_freq;
+        if(_gr_mod_bpsk_sdr)
+            _gr_mod_bpsk_sdr->tune(center_freq);
+        if(_gr_mod_qpsk_sdr)
+            _gr_mod_qpsk_sdr->tune(center_freq);
+        if(_gr_mod_4fsk_sdr)
+            _gr_mod_4fsk_sdr->tune(center_freq);
+    }
 }
 
 

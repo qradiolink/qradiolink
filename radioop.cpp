@@ -275,9 +275,14 @@ void RadioOp::toggleWideband(bool value)
     _wideband = value;
 }
 
-void RadioOp::tuneFreq(long center_freq)
+void RadioOp::fineTuneFreq(long center_freq)
 {
     _modem->tune(434025000 + center_freq*100, false);
+}
+
+void RadioOp::tuneFreq(long center_freq)
+{
+    _modem->tune(center_freq*1000, false);
 }
 
 void RadioOp::setTxPower(int dbm)

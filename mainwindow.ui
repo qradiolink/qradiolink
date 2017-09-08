@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>572</width>
-    <height>460</height>
+    <height>519</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -231,7 +231,7 @@ color: rgb(203, 0, 0);
            </widget>
           </item>
           <item row="3" column="4">
-           <widget class="QComboBox" name="comboBox">
+           <widget class="QComboBox" name="modemTypeComboBox">
             <property name="font">
              <font>
               <pointsize>16</pointsize>

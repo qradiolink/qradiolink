@@ -70,6 +70,7 @@ public slots:
     void toggleRX(bool value);
     void toggleTX(bool value);
     void toggleWideband(bool value);
+    void fineTuneFreq(long center_freq);
     void tuneFreq(long center_freq);
     void setTxPower(int dbm);
     void syncFrequency(unsigned freq_found);

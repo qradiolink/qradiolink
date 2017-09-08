@@ -35,6 +35,7 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
     QObject::connect(ui->checkBoxTX,SIGNAL(clicked(bool)),this,SLOT(toggleTXwin(bool)));
     QObject::connect(ui->checkBoxWideband,SIGNAL(clicked(bool)),this,SLOT(toggleWideband(bool)));
     QObject::connect(ui->tuneSlider,SIGNAL(valueChanged(int)),this,SLOT(tuneCenterFreq(int)));
+    QObject::connect(ui->frequencyEdit,SIGNAL(returnPressed()),this,SLOT(tuneMainFreq()));
     QObject::connect(ui->txPowerSlider,SIGNAL(valueChanged(int)),this,SLOT(setTxPowerDisplay(int)));
     ui->tuneSlider->setRange(-100,100);
     _transmitting_radio = false;
@@ -154,7 +155,12 @@ void MainWindow::toggleWideband(bool value)
 
 void MainWindow::tuneCenterFreq(int value)
 {
-    emit tuneFreq(ui->tuneSlider->value());
+    emit fineTuneFreq(ui->tuneSlider->value());
+}
+
+void MainWindow::tuneMainFreq()
+{
+    emit tuneFreq(ui->frequencyEdit->text().toInt());
 }
 
 void MainWindow::setTxPowerDisplay(int value)

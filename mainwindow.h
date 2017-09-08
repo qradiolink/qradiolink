@@ -48,6 +48,7 @@ public slots:
     void toggleRXwin(bool value);
     void toggleTXwin(bool value);
     void tuneCenterFreq(int value);
+    void tuneMainFreq();
     void toggleWideband(bool value);
     void setTxPowerDisplay(int);
 signals:
@@ -61,6 +62,7 @@ signals:
     void toggleRX(bool value);
     void toggleTX(bool value);
     void tuneFreq(long center_freq);
+    void fineTuneFreq(long center_freq);
     void toggleWidebandMode(bool value);
     void setTxPower(int value);
 public:
