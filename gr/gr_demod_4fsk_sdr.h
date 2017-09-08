@@ -29,6 +29,8 @@
 #include <gnuradio/blocks/nlog10_ff.h>
 #include <gnuradio/blocks/multiply_const_ff.h>
 #include <gnuradio/filter/single_pole_iir_filter_ff.h>
+#include <gnuradio/blocks/moving_average_ff.h>
+#include <gnuradio/blocks/add_const_ff.h>
 #include <osmosdr/source.h>
 #include <vector>
 #include "gr_vector_sink.h"
@@ -73,6 +75,8 @@ private:
     gr::blocks::nlog10_ff::sptr _log10;
     gr::filter::single_pole_iir_filter_ff::sptr _single_pole_filter;
     gr::blocks::multiply_const_ff::sptr _multiply_const_ff;
+    gr::blocks::moving_average_ff::sptr _moving_average;
+    gr::blocks::add_const_ff::sptr _add_const;
     gr::qtgui::number_sink::sptr _rssi;
     osmosdr::source::sptr _osmosdr_source;
 

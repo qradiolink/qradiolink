@@ -310,6 +310,12 @@ background: none;
            <layout class="QVBoxLayout" name="verticalLayout_5">
             <item>
              <widget class="QSlider" name="tuneSlider">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>30</height>
+               </size>
+              </property>
               <property name="styleSheet">
                <string notr="true">QSlider::groove:horizontal {
     border: 1px solid #999999;
@@ -365,6 +371,12 @@ QSlider::handle:horizontal {
             </item>
             <item>
              <widget class="QSlider" name="txPowerSlider">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>30</height>
+               </size>
+              </property>
               <property name="styleSheet">
                <string notr="true">QSlider::groove:horizontal {
     border: 1px solid #999999;
@@ -401,6 +413,18 @@ QSlider::handle:horizontal {
             </item>
             <item>
              <widget class="QWidget" name="widget_const" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>512</height>
+               </size>
+              </property>
               <widget class="QWidget" name="layoutWidget">
                <property name="geometry">
                 <rect>
@@ -419,7 +443,7 @@ QSlider::handle:horizontal {
               <property name="maximumSize">
                <size>
                 <width>16777215</width>
-                <height>50</height>
+                <height>70</height>
                </size>
               </property>
              </widget>

@@ -69,6 +69,8 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::const_sink_c::sptr const_gui,
     _log10 = gr::blocks::nlog10_ff::make();
     _multiply_const_ff = gr::blocks::multiply_const_ff::make(10);
     _agc2 = gr::analog::agc2_ff::make(0.6e-1, 1e-3, 1, 1);
+    _moving_average = gr::blocks::moving_average_ff::make(25000,1,2000);
+    _add_const = gr::blocks::add_const_ff::make(-110);
 
 
     _osmosdr_source = osmosdr::source::make(device_args);
@@ -108,10 +110,12 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::const_sink_c::sptr const_gui,
     _top_block->connect(_descrambler,0,_vector_sink,0);
 
     _top_block->connect(_filter,0,_mag_squared,0);
-    _top_block->connect(_mag_squared,0,_single_pole_filter,0);
+    _top_block->connect(_mag_squared,0,_moving_average,0);
+    _top_block->connect(_moving_average,0,_single_pole_filter,0);
     _top_block->connect(_single_pole_filter,0,_log10,0);
     _top_block->connect(_log10,0,_multiply_const_ff,0);
-    _top_block->connect(_multiply_const_ff,0,_rssi,0);
+    _top_block->connect(_multiply_const_ff,0,_add_const,0);
+    _top_block->connect(_add_const,0,_rssi,0);
 
 }
 

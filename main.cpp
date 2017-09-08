@@ -155,10 +155,10 @@ int main(int argc, char *argv[])
 
     const std::string rssi_name = "rssi";
     gr::qtgui::number_sink::sptr rssi_gui = gr::qtgui::number_sink::make(4,0.5,gr::qtgui::NUM_GRAPH_HORIZ,1,(&w)->get_rssi_gui());
-    rssi_gui->set_max(0,20);
-    rssi_gui->set_min(0,-70);
+    rssi_gui->set_max(0,10);
+    rssi_gui->set_min(0,-120);
     rssi_gui->set_label(0,"RSSI");
-    rssi_gui->qwidget()->resize(500,40);
+    rssi_gui->qwidget()->resize(700,50);
 
     QThread *t4 = new QThread;
     t4->setObjectName("radioop");
