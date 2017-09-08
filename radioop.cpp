@@ -128,14 +128,16 @@ void RadioOp::run()
                     emit displayReceiveStatus(false);
                     emit displayDataReceiveStatus(false);
                 }
-                 syncFrequency(_modem->_frequency_found);
+                if(!_tuning_done)
+                    syncFrequency(_modem->_frequency_found);
                 _modem->demodulate();
             }
         }
         if(_process_text)
         {
             if(_tx_inited) {
-                if(!_tx_modem_started) {
+                if(!_tx_modem_started)
+                {
                     _modem->stopTX();
                     _modem->startTX();
                 }
@@ -288,7 +290,7 @@ void RadioOp::syncFrequency(unsigned freq_found)
     if(freq_found < 10)
     {
         if(!_wideband)
-            usleep(300);
+            usleep(100);
         else
             usleep(10);
         _tune_center_freq = _tune_center_freq + _step_hz;
@@ -296,5 +298,9 @@ void RadioOp::syncFrequency(unsigned freq_found)
         if(_tune_center_freq >= (_modem->_requested_frequency_hz + _tune_limit_upper))
             _tune_center_freq = _modem->_requested_frequency_hz + _tune_limit_lower;
 
+    }
+    else if(freq_found > 254)
+    {
+        _tuning_done = true;
     }
 }
