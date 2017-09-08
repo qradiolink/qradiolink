@@ -36,6 +36,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui,
     _tune_limit_upper = 5000;
     _step_hz = 1;
     _tuning_done = false;
+    _tx_modem_started = false;
     _led_timer = new QTimer(this);
     QObject::connect(_led_timer, SIGNAL(timeout()), this, SLOT(syncIssue()));
     _modem = new gr_modem(_settings, const_gui, rssi_gui);
@@ -82,8 +83,10 @@ void RadioOp::run()
             {
                 if(_rx_inited)
                     _modem->stopRX();
-                _modem->stopTX();
+                if(_tx_modem_started)
+                    _modem->stopTX();
                 _modem->startTX();
+                _tx_modem_started = true;
                 _modem->startTransmission();
             }
         }
@@ -94,6 +97,7 @@ void RadioOp::run()
             {
                 _modem->endTransmission();
                 _modem->stopTX();
+                _tx_modem_started = false;
             }
             usleep(40000);
             if(_rx_inited)
@@ -119,6 +123,11 @@ void RadioOp::run()
         {
             if(_rx_inited)
             {
+                if(_modem->_frequency_found == 0)
+                {
+                    emit displayReceiveStatus(false);
+                    emit displayDataReceiveStatus(false);
+                }
                  syncFrequency(_modem->_frequency_found);
                 _modem->demodulate();
             }
@@ -126,8 +135,11 @@ void RadioOp::run()
         if(_process_text)
         {
             if(_tx_inited) {
-                _modem->stopTX();
-                _modem->startTX();
+                if(!_tx_modem_started) {
+                    _modem->stopTX();
+                    _modem->startTX();
+                }
+                _tx_modem_started = true;
                 _modem->textData(_text_out);
             }
             if(!_repeat_text)
@@ -276,7 +288,7 @@ void RadioOp::syncFrequency(unsigned freq_found)
     if(freq_found < 10)
     {
         if(!_wideband)
-            usleep(100);
+            usleep(300);
         else
             usleep(10);
         _tune_center_freq = _tune_center_freq + _step_hz;

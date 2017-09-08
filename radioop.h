@@ -97,6 +97,7 @@ private:
     int _tune_limit_lower;
     int _tune_limit_upper;
     bool _tuning_done;
+    bool _tx_modem_started;
 
 
 };

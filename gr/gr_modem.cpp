@@ -425,7 +425,8 @@ void gr_modem::demodulate()
         }
         if(_sync_found)
         {
-            _frequency_found++;
+            if(_frequency_found < 100)
+                _frequency_found++;
             _bit_buf[_bit_buf_index] =  (demod_data->at(i)) & 0x1;
             _bit_buf_index++;
             if(_bit_buf_index >= _bit_buf_len)
