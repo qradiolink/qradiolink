@@ -82,6 +82,7 @@ void RadioOp::run()
             {
                 if(_rx_inited)
                     _modem->stopRX();
+                _modem->stopTX();
                 _modem->startTX();
                 _modem->startTransmission();
             }
@@ -274,7 +275,10 @@ void RadioOp::syncFrequency(unsigned freq_found)
 {
     if(freq_found < 10)
     {
-        usleep(100);
+        if(!_wideband)
+            usleep(100);
+        else
+            usleep(10);
         _tune_center_freq = _tune_center_freq + _step_hz;
         _modem->tune(_tune_center_freq, true);
         if(_tune_center_freq >= (_modem->_requested_frequency_hz + _tune_limit_upper))
