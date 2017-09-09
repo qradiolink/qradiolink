@@ -35,7 +35,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui,
     _tune_limit_lower = -5000;
     _tune_limit_upper = 5000;
     _step_hz = 1;
-    _tuning_done = false;
+    _tuning_done = true;
     _tune_counter = 0;
     _tx_modem_started = false;
     _led_timer = new QTimer(this);
@@ -345,8 +345,10 @@ void RadioOp::syncFrequency()
 
 void RadioOp::autoTune()
 {
-    if((_mode == gr_modem_types::ModemTypeBPSK2000 ) || (_mode != gr_modem_types::ModemType4FSK2000))
+    if(_mode == gr_modem_types::ModemTypeBPSK2000 )
         usleep(5000);
+    else if (_mode != gr_modem_types::ModemType4FSK2000)
+        usleep(15000);
     else
         usleep(100);
     _tune_center_freq = _tune_center_freq + _step_hz;
