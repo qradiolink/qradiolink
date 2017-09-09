@@ -31,9 +31,8 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
     QObject::connect(ui->voipTalkButton,SIGNAL(pressed()),this,SLOT(GUIstartTalkVOIP()));
     QObject::connect(ui->voipTalkButton,SIGNAL(released()),this,SLOT(GUIstopTalkVOIP()));
     QObject::connect(ui->chooseFileButton,SIGNAL(clicked()),this,SLOT(chooseFile()));
-    QObject::connect(ui->checkBoxRX,SIGNAL(clicked(bool)),this,SLOT(toggleRXwin(bool)));
-    QObject::connect(ui->checkBoxTX,SIGNAL(clicked(bool)),this,SLOT(toggleTXwin(bool)));
-    QObject::connect(ui->checkBoxWideband,SIGNAL(clicked(bool)),this,SLOT(toggleWideband(bool)));
+    QObject::connect(ui->rxStatusButton,SIGNAL(toggled(bool)),this,SLOT(toggleRXwin(bool)));
+    QObject::connect(ui->txStatusButton,SIGNAL(toggled(bool)),this,SLOT(toggleTXwin(bool)));
     QObject::connect(ui->tuneSlider,SIGNAL(valueChanged(int)),this,SLOT(tuneCenterFreq(int)));
     QObject::connect(ui->frequencyEdit,SIGNAL(returnPressed()),this,SLOT(tuneMainFreq()));
     QObject::connect(ui->txPowerSlider,SIGNAL(valueChanged(int)),this,SLOT(setTxPowerDisplay(int)));

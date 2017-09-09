@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>662</width>
-    <height>519</height>
+    <height>546</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -90,123 +90,7 @@
           <string>TX</string>
          </attribute>
          <layout class="QGridLayout" name="gridLayout">
-          <item row="2" column="3">
-           <widget class="QCheckBox" name="checkBoxTX">
-            <property name="styleSheet">
-             <string notr="true">QCheckBox::indicator {
-     width: 32px;
-     height: 32px;
-}</string>
-            </property>
-            <property name="text">
-             <string>TX</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="3">
-           <widget class="QCheckBox" name="checkBoxRX">
-            <property name="styleSheet">
-             <string notr="true">QCheckBox::indicator {
-     width: 32px;
-     height: 32px;
-}</string>
-            </property>
-            <property name="text">
-             <string>RX</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0" colspan="5">
-           <widget class="QPlainTextEdit" name="sendTextEdit">
-            <property name="font">
-             <font>
-              <family>Sans Serif</family>
-              <pointsize>12</pointsize>
-              <weight>50</weight>
-              <italic>false</italic>
-              <bold>false</bold>
-             </font>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">background: transparent;
-background-color: rgba(255, 255, 255, 180);
-font: 12pt &quot;Sans Serif&quot;;
-</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1" rowspan="2">
-           <widget class="QPushButton" name="sendTextButton">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>64</height>
-             </size>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">font: 14pt &quot;Sans Serif&quot;;
-background: none;
-color: rgb(203, 0, 0);
-
-</string>
-            </property>
-            <property name="text">
-             <string>Text</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0" rowspan="2">
-           <widget class="QPushButton" name="buttonTransmit">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>64</height>
-             </size>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">font: 14pt &quot;Sans Serif&quot;;
-color: rgb(203, 0, 0);
-background: none;
-</string>
-            </property>
-            <property name="text">
-             <string>Voice</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="2" rowspan="2">
-           <widget class="QPushButton" name="chooseFileButton">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>64</height>
-             </size>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">font: 14pt &quot;Sans Serif&quot;;
-background: none;
-color: rgb(203, 0, 0);
-</string>
-            </property>
-            <property name="text">
-             <string>File</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="4">
-           <widget class="QCheckBox" name="checkBoxWideband">
-            <property name="styleSheet">
-             <string notr="true">QCheckBox::indicator {
-     width: 32px;
-     height: 32px;
-}</string>
-            </property>
-            <property name="text">
-             <string>Wideband</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0" colspan="5">
+          <item row="1" column="0">
            <widget class="QLineEdit" name="frequencyEdit">
             <property name="minimumSize">
              <size>
@@ -230,28 +114,171 @@ color: rgb(203, 0, 0);
             </property>
            </widget>
           </item>
-          <item row="3" column="4">
-           <widget class="QComboBox" name="modemTypeComboBox">
+          <item row="5" column="0">
+           <layout class="QGridLayout" name="gridLayout_4">
+            <item row="0" column="1">
+             <widget class="QPushButton" name="sendTextButton">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>64</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">font: 14pt &quot;Sans Serif&quot;;
+background: none;
+color: rgb(203, 0, 0);
+
+</string>
+              </property>
+              <property name="text">
+               <string>Text</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QPushButton" name="buttonTransmit">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>64</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">font: 14pt &quot;Sans Serif&quot;;
+color: rgb(203, 0, 0);
+background: none;
+</string>
+              </property>
+              <property name="text">
+               <string>Voice</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="3">
+             <widget class="QCommandLinkButton" name="rxStatusButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>60</width>
+                <height>64</height>
+               </size>
+              </property>
+              <property name="cursor">
+               <cursorShape>PointingHandCursor</cursorShape>
+              </property>
+              <property name="autoFillBackground">
+               <bool>false</bool>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">font: 14pt &quot;Sans Serif&quot;;
+border-width: 4px;
+background: rgb(183, 77, 77);
+color: rgb(255, 255, 255);</string>
+              </property>
+              <property name="text">
+               <string>RX</string>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>16</width>
+                <height>16</height>
+               </size>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2">
+             <widget class="QPushButton" name="chooseFileButton">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>64</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">font: 14pt &quot;Sans Serif&quot;;
+background: none;
+color: rgb(203, 0, 0);
+</string>
+              </property>
+              <property name="text">
+               <string>File</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="4">
+             <widget class="QCommandLinkButton" name="txStatusButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>60</width>
+                <height>64</height>
+               </size>
+              </property>
+              <property name="cursor">
+               <cursorShape>PointingHandCursor</cursorShape>
+              </property>
+              <property name="autoFillBackground">
+               <bool>false</bool>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">font: 14pt &quot;Sans Serif&quot;;
+border-width: 4px;
+background: rgb(183, 77, 77);
+color: rgb(255, 255, 255);</string>
+              </property>
+              <property name="text">
+               <string>TX</string>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>16</width>
+                <height>16</height>
+               </size>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="3" column="0" colspan="2">
+           <widget class="QPlainTextEdit" name="sendTextEdit">
+            <property name="minimumSize">
+             <size>
+              <width>600</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="font">
              <font>
-              <pointsize>16</pointsize>
+              <family>Sans Serif</family>
+              <pointsize>12</pointsize>
+              <weight>50</weight>
+              <italic>false</italic>
+              <bold>false</bold>
              </font>
             </property>
-            <item>
-             <property name="text">
-              <string>BPSK2000</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>QPSK20000</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>4FSK20000</string>
-             </property>
-            </item>
+            <property name="styleSheet">
+             <string notr="true">background: transparent;
+background-color: rgba(255, 255, 255, 180);
+font: 12pt &quot;Sans Serif&quot;;
+</string>
+            </property>
            </widget>
           </item>
          </layout>
@@ -669,7 +696,32 @@ background-color: rgb(0, 85, 127);</string>
          </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_2"/>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QComboBox" name="modemTypeComboBox">
+            <property name="font">
+             <font>
+              <pointsize>16</pointsize>
+             </font>
+            </property>
+            <item>
+             <property name="text">
+              <string>BPSK2000</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>QPSK20000</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>4FSK20000</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </item>
