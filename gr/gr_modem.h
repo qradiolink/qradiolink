@@ -83,7 +83,7 @@ public:
     explicit gr_modem(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui,
                       gr::qtgui::number_sink::sptr rssi_gui, QObject *parent = 0);
     ~gr_modem();
-    unsigned _frequency_found;
+    long _frequency_found;
     long _requested_frequency_hz;
 signals:
     void pcmAudio(short *pcm, short size);

@@ -36,6 +36,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui,
     _tune_limit_upper = 5000;
     _step_hz = 1;
     _tuning_done = false;
+    _tune_counter = 0;
     _tx_modem_started = false;
     _led_timer = new QTimer(this);
     QObject::connect(_led_timer, SIGNAL(timeout()), this, SLOT(syncIssue()));
@@ -69,9 +70,7 @@ void RadioOp::run()
 
     while(true)
     {
-        _mutex.lock();
         bool transmitting = _transmitting;
-        _mutex.unlock();
         QCoreApplication::processEvents();
 
         short *audiobuffer;
@@ -86,7 +85,7 @@ void RadioOp::run()
                 if(_tx_modem_started)
                     _modem->stopTX();
                 _modem->startTX();
-                _tx_modem_started = true;
+                _tx_modem_started = false;
                 _modem->startTransmission();
             }
         }
@@ -109,7 +108,7 @@ void RadioOp::run()
             _audio->read_short(audiobuffer,audiobuffer_size);
             int packet_size = 0;
             unsigned char *encoded_audio;
-            if(_mode)
+            if(_mode != gr_modem_types::ModemTypeBPSK2000)
                 encoded_audio = _codec->encode_opus(audiobuffer, audiobuffer_size, packet_size);
             else
                 encoded_audio = _codec->encode_codec2(audiobuffer, audiobuffer_size, packet_size);
@@ -129,7 +128,7 @@ void RadioOp::run()
                     emit displayDataReceiveStatus(false);
                 }
                 if(!_tuning_done)
-                    syncFrequency(_modem->_frequency_found);
+                    autoTune();
                 _modem->demodulate();
             }
         }
@@ -153,7 +152,7 @@ void RadioOp::run()
             emit displayTransmitStatus(false);
         }
 
-        usleep(1000);
+        usleep(100);
         if(_stop)
             break;
     }
@@ -165,7 +164,7 @@ void RadioOp::receiveC2Data(unsigned char *data, short size)
 {
     short *audio_out;
     int samples;
-    if(_mode)
+    if(_mode != gr_modem_types::ModemTypeBPSK2000)
     {
         audio_out = _codec->decode_opus(data, size, samples);
     }
@@ -178,9 +177,8 @@ void RadioOp::receiveC2Data(unsigned char *data, short size)
 
 void RadioOp::startTransmission()
 {
-    _mutex.lock();
-    _transmitting = true;
-    _mutex.unlock();
+    if(_tx_inited)
+        _transmitting = true;
 }
 
 void RadioOp::endTransmission()
@@ -241,7 +239,6 @@ void RadioOp::toggleRX(bool value)
     }
     else
     {
-        qDebug() << _mode;
         _rx_inited = false;
         _modem->deinitRX(_mode);
     }
@@ -251,6 +248,7 @@ void RadioOp::toggleTX(bool value)
 {
     if(value)
     {
+        qDebug() << _mode;
         _tx_inited = true;
         _modem->initTX(_mode);
     }
@@ -277,10 +275,16 @@ void RadioOp::toggleMode(int value)
     {
     case 0:
         _mode = gr_modem_types::ModemTypeBPSK2000;
+        break;
     case 1:
         _mode = gr_modem_types::ModemTypeQPSK20000;
+        break;
     case 2:
         _mode = gr_modem_types::ModemType4FSK20000;
+        break;
+    default:
+        _mode = gr_modem_types::ModemTypeBPSK2000;
+        break;
     }
     if(rx_inited_before)
         toggleRX(true);
@@ -304,22 +308,32 @@ void RadioOp::setTxPower(int dbm)
     _modem->setTxPower(dbm);
 }
 
-void RadioOp::syncFrequency(unsigned freq_found)
+void RadioOp::syncFrequency()
 {
-    if(freq_found < 10)
+    if(_modem->_frequency_found > 20000)
     {
-        if(_mode == gr_modem_types::ModemTypeBPSK2000 )
-            usleep(100);
-        else
-            usleep(10);
-        _tune_center_freq = _tune_center_freq + _step_hz;
-        _modem->tune(_tune_center_freq, true);
-        if(_tune_center_freq >= (_modem->_requested_frequency_hz + _tune_limit_upper))
-            _tune_center_freq = _modem->_requested_frequency_hz + _tune_limit_lower;
+        _tune_counter = 0;
+        _modem->_frequency_found = 10;
+    }
+    qDebug() << "modem counter: " << _modem->_frequency_found << " op counter: " << _tune_counter;
+    if((_modem->_frequency_found > 20) && (_modem->_frequency_found >= _tune_counter))
+    {
+        _tune_counter = _modem->_frequency_found;
+        return;
+    }
+    _tune_counter = _modem->_frequency_found;
+    autoTune();
 
-    }
-    else if(freq_found > 254)
-    {
-        _tuning_done = true;
-    }
+}
+
+void RadioOp::autoTune()
+{
+    if(_mode == gr_modem_types::ModemTypeBPSK2000 )
+        usleep(5000);
+    else
+        usleep(1000);
+    _tune_center_freq = _tune_center_freq + _step_hz;
+    _modem->tune(_tune_center_freq, true);
+    if(_tune_center_freq >= (_modem->_requested_frequency_hz + _tune_limit_upper))
+        _tune_center_freq = _modem->_requested_frequency_hz + _tune_limit_lower;
 }

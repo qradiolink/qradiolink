@@ -73,7 +73,8 @@ public slots:
     void fineTuneFreq(long center_freq);
     void tuneFreq(long center_freq);
     void setTxPower(int dbm);
-    void syncFrequency(unsigned freq_found);
+    void syncFrequency();
+    void autoTune();
 
 private:
     bool _stop;
@@ -99,6 +100,7 @@ private:
     int _tune_limit_upper;
     bool _tuning_done;
     bool _tx_modem_started;
+    int _tune_counter;
 
 };
 

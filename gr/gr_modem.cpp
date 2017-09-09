@@ -431,12 +431,12 @@ void gr_modem::demodulate()
                 continue;
             }
             if(_frequency_found > 0)
-                _frequency_found--;
+                _frequency_found--; // substract one bit
         }
         if(_sync_found)
         {
-            if(_frequency_found < 254)
-                _frequency_found++;
+            if(_frequency_found < 100000)
+                _frequency_found += 1; // 80 bits + counter
             _bit_buf[_bit_buf_index] =  (demod_data->at(i)) & 0x1;
             _bit_buf_index++;
             if(_bit_buf_index >= _bit_buf_len)
