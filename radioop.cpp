@@ -327,7 +327,7 @@ void RadioOp::setTxPower(int dbm)
 
 void RadioOp::syncFrequency()
 {
-    if(_modem->_frequency_found > 20000)
+    if(_modem->_frequency_found >= 254)
     {
         _tune_counter = 0;
         _modem->_frequency_found = 10;
