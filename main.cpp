@@ -177,6 +177,8 @@ int main(int argc, char *argv[])
     QObject::connect(&w,SIGNAL(toggleTX(bool)),radio_op,SLOT(toggleTX(bool)));
     QObject::connect(&w,SIGNAL(toggleModemMode(int)),radio_op,SLOT(toggleMode(int)));
     QObject::connect(&w,SIGNAL(tuneFreq(long)),radio_op,SLOT(tuneFreq(long)));
+    QObject::connect(&w,SIGNAL(startAutoTuneFreq()),radio_op,SLOT(startAutoTune()));
+    QObject::connect(&w,SIGNAL(stopAutoTuneFreq()),radio_op,SLOT(stopAutoTune()));
     QObject::connect(&w,SIGNAL(fineTuneFreq(long)),radio_op,SLOT(fineTuneFreq(long)));
     QObject::connect(&w,SIGNAL(setTxPower(int)),radio_op,SLOT(setTxPower(int)));
     QObject::connect(radio_op, SIGNAL(printText(QString)), &w, SLOT(displayText(QString)));

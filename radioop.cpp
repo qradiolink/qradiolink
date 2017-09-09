@@ -275,15 +275,27 @@ void RadioOp::toggleMode(int value)
     {
     case 0:
         _mode = gr_modem_types::ModemTypeBPSK2000;
+        _tune_limit_lower = -5000;
+        _tune_limit_upper = 5000;
+        _step_hz = 1;
         break;
     case 1:
         _mode = gr_modem_types::ModemTypeQPSK20000;
+        _tune_limit_lower = -5000;
+        _tune_limit_upper = 5000;
+        _step_hz = 10;
         break;
     case 2:
         _mode = gr_modem_types::ModemType4FSK20000;
+        _tune_limit_lower = -5000;
+        _tune_limit_upper = 5000;
+        _step_hz = 10;
         break;
     default:
         _mode = gr_modem_types::ModemTypeBPSK2000;
+        _tune_limit_lower = -5000;
+        _tune_limit_upper = 5000;
+        _step_hz = 1;
         break;
     }
     if(rx_inited_before)
@@ -331,9 +343,19 @@ void RadioOp::autoTune()
     if(_mode == gr_modem_types::ModemTypeBPSK2000 )
         usleep(5000);
     else
-        usleep(1000);
+        usleep(100);
     _tune_center_freq = _tune_center_freq + _step_hz;
     _modem->tune(_tune_center_freq, true);
     if(_tune_center_freq >= (_modem->_requested_frequency_hz + _tune_limit_upper))
         _tune_center_freq = _modem->_requested_frequency_hz + _tune_limit_lower;
+}
+
+void RadioOp::startAutoTune()
+{
+    _tuning_done = false;
+}
+
+void RadioOp::stopAutoTune()
+{
+    _tuning_done = true;
 }

@@ -52,6 +52,8 @@ public slots:
     void toggleWideband(bool value);
     void toggleMode(int value);
     void setTxPowerDisplay(int);
+    void autoTune(bool value);
+
 signals:
     void startTransmission();
     void endTransmission();
@@ -67,6 +69,8 @@ signals:
     void toggleWidebandMode(bool value);
     void toggleModemMode(int value);
     void setTxPower(int value);
+    void startAutoTuneFreq();
+    void stopAutoTuneFreq();
 public:
     explicit MainWindow(MumbleClient *client, QWidget *parent = 0);
     ~MainWindow();

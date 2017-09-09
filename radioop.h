@@ -75,6 +75,8 @@ public slots:
     void setTxPower(int dbm);
     void syncFrequency();
     void autoTune();
+    void startAutoTune();
+    void stopAutoTune();
 
 private:
     bool _stop;

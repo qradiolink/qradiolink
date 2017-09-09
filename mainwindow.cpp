@@ -38,6 +38,7 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
     QObject::connect(ui->frequencyEdit,SIGNAL(returnPressed()),this,SLOT(tuneMainFreq()));
     QObject::connect(ui->txPowerSlider,SIGNAL(valueChanged(int)),this,SLOT(setTxPowerDisplay(int)));
     QObject::connect(ui->modemTypeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(toggleMode(int)));
+    QObject::connect(ui->autotuneButton,SIGNAL(toggled(bool)),this,SLOT(autoTune(bool)));
     ui->tuneSlider->setRange(-100,100);
     _transmitting_radio = false;
     _constellation_gui = ui->widget_const;
@@ -174,4 +175,13 @@ void MainWindow::setTxPowerDisplay(int value)
     ui->txPowerDisplay->display(value);
     emit setTxPower(value);
 }
+
+void MainWindow::autoTune(bool value)
+{
+    if(value)
+        emit startAutoTuneFreq();
+    else
+        emit stopAutoTuneFreq();
+}
+
 
