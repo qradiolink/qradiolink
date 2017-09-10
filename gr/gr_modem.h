@@ -73,6 +73,7 @@ namespace gr_modem_types {
         ModemTypeQPSK20000,
         ModemType4FSK20000,
         ModemType4FSK2000,
+        ModemTypeQPSK2000,
         ModemTypeAnalog2000
     };
 }

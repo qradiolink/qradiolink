@@ -108,10 +108,13 @@ void RadioOp::run()
             _audio->read_short(audiobuffer,audiobuffer_size);
             int packet_size = 0;
             unsigned char *encoded_audio;
-            if((_mode != gr_modem_types::ModemTypeBPSK2000) && (_mode != gr_modem_types::ModemType4FSK2000))
-                encoded_audio = _codec->encode_opus(audiobuffer, audiobuffer_size, packet_size);
-            else
+            if((_mode == gr_modem_types::ModemTypeBPSK2000) ||
+                    (_mode == gr_modem_types::ModemType4FSK2000) ||
+                    (_mode == gr_modem_types::ModemTypeQPSK2000))
                 encoded_audio = _codec->encode_codec2(audiobuffer, audiobuffer_size, packet_size);
+            else
+                encoded_audio = _codec->encode_opus(audiobuffer, audiobuffer_size, packet_size);
+
             unsigned char *data = new unsigned char[packet_size];
             memcpy(data,encoded_audio,packet_size);
             emit audioData(data,packet_size);
@@ -164,12 +167,14 @@ void RadioOp::receiveC2Data(unsigned char *data, short size)
 {
     short *audio_out;
     int samples;
-    if((_mode != gr_modem_types::ModemTypeBPSK2000) && (_mode != gr_modem_types::ModemType4FSK2000))
+    if((_mode == gr_modem_types::ModemTypeBPSK2000) ||
+            (_mode == gr_modem_types::ModemType4FSK2000) ||
+            (_mode == gr_modem_types::ModemTypeQPSK2000))
     {
-        audio_out = _codec->decode_opus(data, size, samples);
+        audio_out = _codec->decode_codec2(data, size, samples);
     }
     else
-        audio_out = _codec->decode_codec2(data, size, samples);
+        audio_out = _codec->decode_opus(data, size, samples);
     delete[] data;
     if(samples > 0)
         _audio->write_short(audio_out,samples*sizeof(short));
@@ -296,6 +301,12 @@ void RadioOp::toggleMode(int value)
         _tune_limit_upper = 5000;
         _step_hz = 1;
         break;
+    case 4:
+        _mode = gr_modem_types::ModemTypeQPSK2000;
+        _tune_limit_lower = -5000;
+        _tune_limit_upper = 5000;
+        _step_hz = 1;
+        break;
     default:
         _mode = gr_modem_types::ModemTypeBPSK2000;
         _tune_limit_lower = -5000;
@@ -345,7 +356,9 @@ void RadioOp::syncFrequency()
 
 void RadioOp::autoTune()
 {
-    if((_mode == gr_modem_types::ModemTypeBPSK2000 ) || (_mode == gr_modem_types::ModemType4FSK2000))
+    if((_mode == gr_modem_types::ModemTypeBPSK2000 ) ||
+            (_mode == gr_modem_types::ModemType4FSK2000) ||
+            (_mode == gr_modem_types::ModemTypeQPSK2000))
         usleep(5000);
     else
         usleep(100);
