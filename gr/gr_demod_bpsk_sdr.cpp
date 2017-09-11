@@ -26,7 +26,7 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::const_sink_c::sptr const_gui,
     const std::string device_args = "rtl=0";
     const std::string device_antenna = "TX/RX";
     _device_frequency = device_frequency;
-    _samples_per_symbol = sps;
+    _samples_per_symbol = sps*2/25;
     _samp_rate =samp_rate;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
@@ -52,7 +52,7 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::const_sink_c::sptr const_gui,
                 _target_samp_rate);
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
                             1, _target_samp_rate, _filter_width,600,gr::filter::firdes::WIN_HAMMING) );
-    _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol*2/25, 0.0025*0.175*0.175, 0.5, 0.175,
+    _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.0025*0.175*0.175, 0.5, 0.175,
                                                               0.005);
     _costas_loop = gr::digital::costas_loop_cc::make(0.0628,2);
     _equalizer = gr::digital::cma_equalizer_cc::make(8,1,0.00005,1);
