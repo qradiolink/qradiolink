@@ -155,7 +155,7 @@ void RadioOp::run()
             emit displayTransmitStatus(false);
         }
 
-        usleep(100);
+        usleep(1000);
         if(_stop)
             break;
     }
@@ -357,12 +357,12 @@ void RadioOp::syncFrequency()
 void RadioOp::autoTune()
 {
     if(_mode == gr_modem_types::ModemTypeBPSK2000 )
-        usleep(5000);
+        usleep(500);
     else if ((_mode == gr_modem_types::ModemType4FSK2000) ||
              (_mode == gr_modem_types::ModemTypeQPSK2000))
-        usleep(10000);
+        usleep(1000);
     else
-        usleep(100);
+        usleep(10);
     _tune_center_freq = _tune_center_freq + _step_hz;
     _modem->tune(_tune_center_freq, true);
     if(_tune_center_freq >= (_modem->_requested_frequency_hz + _tune_limit_upper))

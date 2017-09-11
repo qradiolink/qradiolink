@@ -22,7 +22,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::const_sink_c::sptr const_gui,
                                      int filter_width, float mod_index, float device_frequency, float rf_gain) :
     QObject(parent)
 {
-    _target_samp_rate = 250000;
+    _target_samp_rate = 20000;
     _rssi = rssi_gui;
     const std::string device_args = "rtl=0";
     const std::string device_antenna = "TX/RX";
@@ -49,10 +49,16 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::const_sink_c::sptr const_gui,
     std::vector<int> pre_diff_code;
 
     std::vector<gr_complex> constellation_points;
+    /*
     constellation_points.push_back(-0.707-0.707j);
     constellation_points.push_back(-0.707+0.707j);
     constellation_points.push_back(0.707+0.707j);
     constellation_points.push_back(0.707-0.707j);
+    */
+    constellation_points.push_back(-1-1j);
+    constellation_points.push_back(-1+1j);
+    constellation_points.push_back(1+1j);
+    constellation_points.push_back(1-1j);
 
     float rerate = (float)_target_samp_rate/(float)_samp_rate;
 
@@ -65,18 +71,20 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::const_sink_c::sptr const_gui,
 
     std::vector<float> taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, 50000, 150000);
     //_resampler = gr::filter::pfb_arb_resampler_ccf::make(rerate, taps, flt_size);
-    _resampler = gr::filter::rational_resampler_base_ccf::make(1, 4, taps);
+    _resampler = gr::filter::rational_resampler_base_ccf::make(1, 50, taps);
     _agc = gr::analog::agc2_cc::make(0.006e-1, 1e-3, 1, 1);
-    _signal_source = gr::analog::sig_source_c::make(_target_samp_rate,gr::analog::GR_COS_WAVE,-25000,1);
+    _signal_source = gr::analog::sig_source_c::make(_samp_rate,gr::analog::GR_COS_WAVE,-25000,1);
     _multiply = gr::blocks::multiply_cc::make();
+    /*
     _freq_transl_filter = gr::filter::freq_xlating_fir_filter_ccf::make(
                 1,gr::filter::firdes::low_pass(
                     1, _target_samp_rate, 2*_filter_width, 250000, gr::filter::firdes::WIN_HAMMING), 25000,
                 _target_samp_rate);
+    */
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
                                 1, _target_samp_rate, _filter_width,600,gr::filter::firdes::WIN_HAMMING) );
     float gain_mu = 0.0025;
-    _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
+    _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol*2/25, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
                                                               0.015);
     _costas_loop = gr::digital::costas_loop_cc::make(0.0628,4);
     _equalizer = gr::digital::cma_equalizer_cc::make(8,1,0.00005,1);
@@ -114,10 +122,10 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::const_sink_c::sptr const_gui,
         _osmosdr_source->set_gain_mode(true);
     }
     _constellation = const_gui;
-    _top_block->connect(_osmosdr_source,0,_resampler,0);
-    _top_block->connect(_resampler,0,_multiply,0);
+    _top_block->connect(_osmosdr_source,0,_multiply,0);
     _top_block->connect(_signal_source,0,_multiply,1);
-    _top_block->connect(_multiply,0,_filter,0);
+    _top_block->connect(_multiply,0,_resampler,0);
+    _top_block->connect(_resampler,0,_filter,0);
     _top_block->connect(_filter,0,_agc,0);
     _top_block->connect(_agc,0,_clock_recovery,0);
     //_top_block->connect(_fll,0,_clock_recovery,0);
