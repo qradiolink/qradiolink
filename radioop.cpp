@@ -356,10 +356,11 @@ void RadioOp::syncFrequency()
 
 void RadioOp::autoTune()
 {
-    if((_mode == gr_modem_types::ModemTypeBPSK2000 ) ||
-            (_mode == gr_modem_types::ModemType4FSK2000) ||
-            (_mode == gr_modem_types::ModemTypeQPSK2000))
+    if(_mode == gr_modem_types::ModemTypeBPSK2000 )
         usleep(5000);
+    else if ((_mode == gr_modem_types::ModemType4FSK2000) ||
+             (_mode == gr_modem_types::ModemTypeQPSK2000))
+        usleep(10000);
     else
         usleep(100);
     _tune_center_freq = _tune_center_freq + _step_hz;

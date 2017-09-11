@@ -23,10 +23,17 @@ gr_mod_qpsk_sdr::gr_mod_qpsk_sdr(QObject *parent, int sps, int samp_rate, int ca
     //gr::digital::constellation_qpsk::sptr constellation = gr::digital::constellation_qpsk::make();
     //std::vector<gr_complex> constellation_points = constellation->points();
     std::vector<gr_complex> constellation;
+    /*
     constellation.push_back(-0.707-0.707j);
     constellation.push_back(-0.707+0.707j);
     constellation.push_back(0.707+0.707j);
     constellation.push_back(0.707-0.707j);
+    */
+
+    constellation.push_back(-1-1j);
+    constellation.push_back(-1+1j);
+    constellation.push_back(1+1j);
+    constellation.push_back(1-1j);
 
     std::vector<int> map;
     map.push_back(0);
