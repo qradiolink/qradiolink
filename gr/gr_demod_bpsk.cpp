@@ -33,7 +33,7 @@ gr_demod_bpsk::gr_demod_bpsk(QObject *parent, int sps, int samp_rate, int carrie
     _agc = gr::analog::feedforward_agc_cc::make(64,1);
     _band_pass_filter_1 = gr::filter::fir_filter_ccf::make(
                 1,gr::filter::firdes::low_pass(
-                    1, _samp_rate, _filter_width,600,gr::filter::firdes::WIN_HAMMING));
+                    1, _samp_rate, _filter_width,1200,gr::filter::firdes::WIN_HAMMING));
     //_band_pass_filter_2 = gr::filter::fir_filter_ccf::make(
     //            1,gr::filter::firdes::low_pass(
     //                1, _samp_rate, _filter_width,600));
