@@ -109,7 +109,7 @@ void gr_modem::initRX(int modem_type)
     }
     else if (modem_type == gr_modem_types::ModemTypeQPSK20000)
     {
-        _gr_demod_qpsk_sdr = new gr_demod_qpsk_sdr(_const_gui,_rssi_gui, 0,25,1000000,1700,7000,1, _requested_frequency_hz, 50);
+        _gr_demod_qpsk_sdr = new gr_demod_qpsk_sdr(_const_gui,_rssi_gui, 0,25,1000000,1700,9000,1, _requested_frequency_hz, 50);
         _bit_buf_len = 97 *8;
         _frame_length = 97;
         _bit_buf = new unsigned char[_bit_buf_len];
