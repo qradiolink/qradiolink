@@ -94,9 +94,14 @@ void gr_modem::initTX(int modem_type)
         //_gr_mod_qpsk_sdr->start();
     }
 
-    else if(modem_type == gr_modem_types::ModemTypeAnalog5000)
+    else if(modem_type == gr_modem_types::ModemTypeNBFM2500)
     {
-        _gr_mod_nbfm_sdr = new gr_mod_nbfm_sdr(0,250000, 1700, 5000, 1, _requested_frequency_hz, 50);
+        _gr_mod_nbfm_sdr = new gr_mod_nbfm_sdr(0,250000, 1700, 2500, 1, _requested_frequency_hz, 50);
+        //_gr_mod_qpsk_sdr->start();
+    }
+    else if(modem_type == gr_modem_types::ModemTypeSSB2500)
+    {
+        _gr_mod_ssb_sdr = new gr_mod_ssb_sdr(0,250000, 1700, 2500, 1, _requested_frequency_hz, 50);
         //_gr_mod_qpsk_sdr->start();
     }
 
@@ -145,10 +150,15 @@ void gr_modem::initRX(int modem_type)
         _bit_buf = new unsigned char[_bit_buf_len];
         _gr_demod_4fsk_sdr->start();
     }
-    else if (modem_type == gr_modem_types::ModemTypeAnalog5000)
+    else if (modem_type == gr_modem_types::ModemTypeNBFM2500)
     {
-        _gr_demod_nbfm_sdr = new gr_demod_nbfm_sdr(_const_gui,_rssi_gui, 0, 1000000,1700,5000,1, _requested_frequency_hz, 50);
+        _gr_demod_nbfm_sdr = new gr_demod_nbfm_sdr(_const_gui,_rssi_gui, 0, 1000000,1700,2500,1, _requested_frequency_hz, 50);
         _gr_demod_nbfm_sdr->start();
+    }
+    else if (modem_type == gr_modem_types::ModemTypeSSB2500)
+    {
+        _gr_demod_ssb_sdr = new gr_demod_ssb_sdr(_const_gui,_rssi_gui, 0, 1000000,1700,2500,1, _requested_frequency_hz, 50);
+        _gr_demod_ssb_sdr->start();
     }
 }
 
@@ -173,11 +183,17 @@ void gr_modem::deinitTX(int modem_type)
         delete _gr_mod_4fsk_sdr;
         _gr_mod_4fsk_sdr =0;
     }
-    else if (modem_type == gr_modem_types::ModemTypeAnalog5000)
+    else if (modem_type == gr_modem_types::ModemTypeNBFM2500)
     {
         _gr_mod_nbfm_sdr->stop();
         delete _gr_mod_nbfm_sdr;
         _gr_mod_nbfm_sdr =0;
+    }
+    else if (modem_type == gr_modem_types::ModemTypeSSB2500)
+    {
+        _gr_mod_ssb_sdr->stop();
+        delete _gr_mod_ssb_sdr;
+        _gr_mod_ssb_sdr =0;
     }
 
 }
@@ -203,11 +219,17 @@ void gr_modem::deinitRX(int modem_type)
         delete _gr_demod_4fsk_sdr;
         _gr_demod_4fsk_sdr =0;
     }
-    else if(modem_type == gr_modem_types::ModemTypeAnalog5000)
+    else if(modem_type == gr_modem_types::ModemTypeNBFM2500)
     {
         _gr_demod_nbfm_sdr->stop();
         delete _gr_demod_nbfm_sdr;
         _gr_demod_nbfm_sdr =0;
+    }
+    else if(modem_type == gr_modem_types::ModemTypeSSB2500)
+    {
+        _gr_demod_ssb_sdr->stop();
+        delete _gr_demod_ssb_sdr;
+        _gr_demod_ssb_sdr =0;
     }
 }
 
@@ -225,9 +247,13 @@ void gr_modem::startRX()
     {
         _gr_demod_4fsk_sdr->start();
     }
-    else if(_modem_type == gr_modem_types::ModemTypeAnalog5000)
+    else if(_modem_type == gr_modem_types::ModemTypeNBFM2500)
     {
         _gr_demod_nbfm_sdr->start();
+    }
+    else if(_modem_type == gr_modem_types::ModemTypeSSB2500)
+    {
+        _gr_demod_ssb_sdr->start();
     }
 }
 
@@ -245,9 +271,13 @@ void gr_modem::stopRX()
     {
         _gr_demod_4fsk_sdr->stop();
     }
-    else if(_modem_type == gr_modem_types::ModemTypeAnalog5000)
+    else if(_modem_type == gr_modem_types::ModemTypeNBFM2500)
     {
         _gr_demod_nbfm_sdr->stop();
+    }
+    else if(_modem_type == gr_modem_types::ModemTypeSSB2500)
+    {
+        _gr_demod_ssb_sdr->stop();
     }
 }
 
@@ -265,9 +295,13 @@ void gr_modem::startTX()
     {
         _gr_mod_4fsk_sdr->start();
     }
-    else if(_modem_type == gr_modem_types::ModemTypeAnalog5000)
+    else if(_modem_type == gr_modem_types::ModemTypeNBFM2500)
     {
         _gr_mod_nbfm_sdr->start();
+    }
+    else if(_modem_type == gr_modem_types::ModemTypeSSB2500)
+    {
+        _gr_mod_ssb_sdr->start();
     }
 }
 
@@ -286,9 +320,13 @@ void gr_modem::stopTX()
     {
         _gr_mod_4fsk_sdr->stop();
     }
-    else if(_modem_type == gr_modem_types::ModemTypeAnalog5000)
+    else if(_modem_type == gr_modem_types::ModemTypeNBFM2500)
     {
         _gr_mod_nbfm_sdr->stop();
+    }
+    else if(_modem_type == gr_modem_types::ModemTypeSSB2500)
+    {
+        _gr_mod_ssb_sdr->stop();
     }
 }
 
@@ -302,6 +340,8 @@ void gr_modem::tune(long center_freq, bool sync)
         _gr_demod_4fsk_sdr->tune(center_freq);
     if(_gr_demod_nbfm_sdr)
         _gr_demod_nbfm_sdr->tune(center_freq);
+    if(_gr_demod_ssb_sdr)
+        _gr_demod_ssb_sdr->tune(center_freq);
 
 
     if(!sync)
@@ -315,6 +355,8 @@ void gr_modem::tune(long center_freq, bool sync)
             _gr_mod_4fsk_sdr->tune(center_freq);
         if(_gr_mod_nbfm_sdr)
             _gr_mod_nbfm_sdr->tune(center_freq);
+        if(_gr_mod_nbfm_sdr)
+            _gr_mod_ssb_sdr->tune(center_freq);
     }
 }
 
@@ -330,6 +372,8 @@ void gr_modem::setTxPower(int value)
         _gr_mod_4fsk_sdr->set_power(value);
     if(_gr_mod_nbfm_sdr)
         _gr_mod_nbfm_sdr->set_power(value);
+    if(_gr_mod_ssb_sdr)
+        _gr_mod_ssb_sdr->set_power(value);
 }
 
 void gr_modem::startTransmission()

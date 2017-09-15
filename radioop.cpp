@@ -314,10 +314,17 @@ void RadioOp::toggleMode(int value)
         break;
     case 5:
         _radio_type = radio_type::RADIO_TYPE_ANALOG;
-        _mode = gr_modem_types::ModemTypeAnalog5000;
+        _mode = gr_modem_types::ModemTypeNBFM2500;
         _tune_limit_lower = -5000;
         _tune_limit_upper = 5000;
         _step_hz = 5;
+        break;
+    case 6:
+        _radio_type = radio_type::RADIO_TYPE_ANALOG;
+        _mode = gr_modem_types::ModemTypeSSB2500;
+        _tune_limit_lower = -1000;
+        _tune_limit_upper = 1500;
+        _step_hz = 1;
         break;
     default:
         _mode = gr_modem_types::ModemTypeBPSK2000;

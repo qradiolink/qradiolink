@@ -727,32 +727,37 @@ background-color: rgb(0, 85, 127);</string>
             </property>
             <item>
              <property name="text">
-              <string>BPSK2000</string>
+              <string>BPSK  2K</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>QPSK20000</string>
+              <string>QPSK  20K</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>4FSK20000</string>
+              <string>4FSK  20K</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>4FSK2000</string>
+              <string>4FSK  2K</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>QPSK2000</string>
+              <string>QPSK  2K</string>
              </property>
             </item>
             <item>
              <property name="text">
               <string>Analog FM</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>SSB</string>
              </property>
             </item>
            </widget>
