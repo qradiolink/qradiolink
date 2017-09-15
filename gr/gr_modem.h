@@ -41,6 +41,8 @@
 #include "gr_mod_4fsk_sdr.h"
 #include "gr_demod_qpsk_sdr.h"
 #include "gr_demod_4fsk_sdr.h"
+#include "gr_mod_nbfm_sdr.h"
+#include "gr_demod_nbfm_sdr.h"
 #include <gnuradio/qtgui/number_sink.h>
 
 
@@ -74,7 +76,7 @@ namespace gr_modem_types {
         ModemType4FSK20000,
         ModemType4FSK2000,
         ModemTypeQPSK2000,
-        ModemTypeAnalog2000
+        ModemTypeAnalog5000
     };
 }
 
@@ -130,10 +132,12 @@ private:
     gr_mod_bpsk_sdr *_gr_mod_bpsk_sdr;
     gr_mod_qpsk_sdr *_gr_mod_qpsk_sdr;
     gr_mod_4fsk_sdr *_gr_mod_4fsk_sdr;
+    gr_mod_nbfm_sdr *_gr_mod_nbfm_sdr;
     gr_demod_bpsk *_gr_demod_bpsk;
     gr_demod_bpsk_sdr *_gr_demod_bpsk_sdr;
     gr_demod_qpsk_sdr *_gr_demod_qpsk_sdr;
     gr_demod_4fsk_sdr *_gr_demod_4fsk_sdr;
+    gr_demod_nbfm_sdr *_gr_demod_nbfm_sdr;
     int _modem_type;
     int _frame_length;
     quint64 _frame_counter;

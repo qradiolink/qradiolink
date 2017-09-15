@@ -40,6 +40,14 @@
 #include <gnuradio/qtgui/const_sink_c.h>
 #include <gnuradio/qtgui/number_sink.h>
 
+namespace radio_type
+{
+    enum
+    {
+        RADIO_TYPE_DIGITAL,
+        RADIO_TYPE_ANALOG
+    };
+}
 
 class RadioOp : public QObject
 {
@@ -47,6 +55,7 @@ class RadioOp : public QObject
 public:
     explicit RadioOp(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui, gr::qtgui::number_sink::sptr rssi_gui, QObject *parent = 0);
     ~RadioOp();
+
 signals:
     void finished();
     void printText(QString text);
@@ -96,6 +105,7 @@ private:
     AudioEncoder *_codec;
     gr_modem *_modem;
     int _mode;
+    int _radio_type;
     long _tune_center_freq;
     int _step_hz;
     int _tune_limit_lower;

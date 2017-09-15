@@ -118,9 +118,15 @@
            <layout class="QGridLayout" name="gridLayout_4">
             <item row="0" column="1">
              <widget class="QPushButton" name="sendTextButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="minimumSize">
                <size>
-                <width>0</width>
+                <width>100</width>
                 <height>64</height>
                </size>
               </property>
@@ -138,9 +144,15 @@ color: rgb(203, 0, 0);
             </item>
             <item row="0" column="0">
              <widget class="QPushButton" name="buttonTransmit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="minimumSize">
                <size>
-                <width>0</width>
+                <width>100</width>
                 <height>64</height>
                </size>
               </property>
@@ -197,9 +209,15 @@ color: rgb(255, 255, 255);</string>
             </item>
             <item row="0" column="2">
              <widget class="QPushButton" name="chooseFileButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="minimumSize">
                <size>
-                <width>0</width>
+                <width>100</width>
                 <height>64</height>
                </size>
               </property>
@@ -727,6 +745,11 @@ background-color: rgb(0, 85, 127);</string>
             <item>
              <property name="text">
               <string>QPSK2000</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Analog FM</string>
              </property>
             </item>
            </widget>

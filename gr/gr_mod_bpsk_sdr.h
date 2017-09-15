@@ -6,7 +6,6 @@
 #include <gnuradio/top_block.h>
 #include <gnuradio/blocks/vector_source_b.h>
 #include <gnuradio/blocks/packed_to_unpacked_bb.h>
-#include <gnuradio/audio/sink.h>
 #include <gnuradio/endianness.h>
 #include <gnuradio/digital/chunks_to_symbols_bc.h>
 #include <gnuradio/blocks/repeat.h>

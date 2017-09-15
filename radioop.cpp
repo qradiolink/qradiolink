@@ -21,6 +21,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui,
     QObject(parent)
 {
     _mode = gr_modem_types::ModemTypeBPSK2000;
+    _radio_type = radio_type::RADIO_TYPE_DIGITAL;
     _codec = new AudioEncoder;
     _audio = new AudioInterface;
     _stop =false;
@@ -86,7 +87,8 @@ void RadioOp::run()
                     _modem->stopTX();
                 _modem->startTX();
                 _tx_modem_started = false;
-                _modem->startTransmission();
+                if(_radio_type == radio_type::RADIO_TYPE_DIGITAL)
+                    _modem->startTransmission();
             }
         }
         if(!transmitting && transmit_activated)
@@ -94,7 +96,8 @@ void RadioOp::run()
             transmit_activated = false;
             if(_tx_inited)
             {
-                _modem->endTransmission();
+                if(_radio_type == radio_type::RADIO_TYPE_DIGITAL)
+                    _modem->endTransmission();
                 _modem->stopTX();
                 _tx_modem_started = false;
             }
@@ -102,7 +105,7 @@ void RadioOp::run()
             if(_rx_inited)
                 _modem->startRX();
         }
-        if(transmitting)
+        if(transmitting && (_radio_type == radio_type::RADIO_TYPE_DIGITAL))
         {
             audiobuffer = new short[audiobuffer_size/2];
             _audio->read_short(audiobuffer,audiobuffer_size);
@@ -132,10 +135,11 @@ void RadioOp::run()
                 }
                 if(!_tuning_done)
                     autoTune();
-                _modem->demodulate();
+                if(_radio_type == radio_type::RADIO_TYPE_DIGITAL)
+                    _modem->demodulate();
             }
         }
-        if(_process_text)
+        if(_process_text && (_radio_type == radio_type::RADIO_TYPE_DIGITAL))
         {
             if(_tx_inited) {
                 if(!_tx_modem_started)
@@ -275,6 +279,7 @@ void RadioOp::toggleMode(int value)
     {
         toggleTX(false);
     }
+    _radio_type = radio_type::RADIO_TYPE_DIGITAL;
     switch(value)
     {
     case 0:
@@ -306,6 +311,13 @@ void RadioOp::toggleMode(int value)
         _tune_limit_lower = -5000;
         _tune_limit_upper = 5000;
         _step_hz = 1;
+        break;
+    case 5:
+        _radio_type = radio_type::RADIO_TYPE_ANALOG;
+        _mode = gr_modem_types::ModemTypeAnalog5000;
+        _tune_limit_lower = -5000;
+        _tune_limit_upper = 5000;
+        _step_hz = 5;
         break;
     default:
         _mode = gr_modem_types::ModemTypeBPSK2000;
@@ -360,7 +372,7 @@ void RadioOp::autoTune()
         usleep(500);
     else if ((_mode == gr_modem_types::ModemType4FSK2000) ||
              (_mode == gr_modem_types::ModemTypeQPSK2000))
-        usleep(1000);
+        usleep(2000);
     else
         usleep(10);
     _tune_center_freq = _tune_center_freq + _step_hz;

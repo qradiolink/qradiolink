@@ -2,7 +2,6 @@
 #define GR_DEMOD_QPSK_SDR_H
 
 #include <QObject>
-#include <gnuradio/audio/source.h>
 #include <gnuradio/blocks/multiply_cc.h>
 #include <gnuradio/analog/sig_source_c.h>
 #include <gnuradio/top_block.h>

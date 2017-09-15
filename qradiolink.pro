@@ -53,7 +53,9 @@ SOURCES += main.cpp\
     gr/gr_mod_4fsk_sdr.cpp \
     gr/gr_demod_4fsk_sdr.cpp \
     gr/gr_mod_base.cpp \
-    gr/gr_demod_base.cpp
+    gr/gr_demod_base.cpp \
+    gr/gr_mod_nbfm_sdr.cpp \
+    gr/gr_demod_nbfm_sdr.cpp
 
 HEADERS  += mainwindow.h\
         audio/audioencoder.h\
@@ -98,7 +100,9 @@ HEADERS  += mainwindow.h\
     gr/gr_mod_4fsk_sdr.h \
     gr/gr_demod_4fsk_sdr.h \
     gr/gr_mod_base.h \
-    gr/gr_demod_base.h
+    gr/gr_demod_base.h \
+    gr/gr_mod_nbfm_sdr.h \
+    gr/gr_demod_nbfm_sdr.h
 
 
 FORMS    += mainwindow.ui
