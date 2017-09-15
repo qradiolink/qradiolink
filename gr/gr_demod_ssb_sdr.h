@@ -8,7 +8,7 @@
 #include <gnuradio/top_block.h>
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/filter/pfb_arb_resampler_ccf.h>
-#include <gnuradio/filter/fft_filter_ccf.h>
+#include <gnuradio/filter/fft_filter_ccc.h>
 #include <gnuradio/qtgui/const_sink_c.h>
 #include <gnuradio/qtgui/number_sink.h>
 #include <gnuradio/blocks/complex_to_mag_squared.h>
@@ -17,6 +17,7 @@
 #include <gnuradio/filter/single_pole_iir_filter_ff.h>
 #include <gnuradio/blocks/moving_average_ff.h>
 #include <gnuradio/blocks/add_const_ff.h>
+#include <gnuradio/blocks/complex_to_mag.h>
 #include <osmosdr/source.h>
 
 class gr_demod_ssb_sdr : public QObject
@@ -38,7 +39,9 @@ private:
     gr::analog::sig_source_c::sptr _signal_source;
     gr::blocks::multiply_cc::sptr _multiply;
     gr::filter::pfb_arb_resampler_ccf::sptr _resampler;
-    gr::filter::fft_filter_ccf::sptr _filter;
+    gr::filter::fft_filter_ccc::sptr _filter;
+    gr::blocks::complex_to_mag::sptr _complex_to_mag;
+    gr::blocks::multiply_const_ff::sptr _audio_gain;
     gr::qtgui::const_sink_c::sptr _constellation;
     gr::blocks::complex_to_mag_squared::sptr _mag_squared;
     gr::blocks::nlog10_ff::sptr _log10;

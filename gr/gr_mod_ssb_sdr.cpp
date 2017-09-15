@@ -9,7 +9,7 @@ gr_mod_ssb_sdr::gr_mod_ssb_sdr(QObject *parent, int samp_rate, int carrier_freq,
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
     _modulation_index = mod_index;
-    _top_block = gr::make_top_block("nbfm modulator sdr");
+    _top_block = gr::make_top_block("ssb modulator sdr");
 
     _audio_source = gr::audio::source::make(48000,"",false);
     _signal_source = gr::analog::sig_source_f::make(48000,gr::analog::GR_COS_WAVE, 0, 1);
@@ -28,7 +28,7 @@ gr_mod_ssb_sdr::gr_mod_ssb_sdr(QObject *parent, int samp_rate, int carrier_freq,
     _amplify = gr::blocks::multiply_const_cc::make(60,1);
     _filter = gr::filter::fft_filter_ccc::make(
                 1,gr::filter::firdes::complex_band_pass(
-                    1, _samp_rate, 300, _filter_width, 10, gr::filter::firdes::WIN_HAMMING));
+                    1, _samp_rate, 300, _filter_width, 50, gr::filter::firdes::WIN_HAMMING));
 
     _osmosdr_sink = osmosdr::sink::make(device_args);
     _osmosdr_sink->set_sample_rate(_samp_rate);

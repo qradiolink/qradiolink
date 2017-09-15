@@ -12,7 +12,7 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(gr::qtgui::const_sink_c::sptr const_gui, gr::
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
     _modulation_index = mod_index;
-    _top_block = gr::make_top_block("nbfm demodulator sdr");
+    _top_block = gr::make_top_block("ssb demodulator sdr");
 
     float rerate = (float)_target_samp_rate/(float)_samp_rate;
 
@@ -25,8 +25,10 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(gr::qtgui::const_sink_c::sptr const_gui, gr::
     _resampler = gr::filter::pfb_arb_resampler_ccf::make(rerate, taps, flt_size);
     _signal_source = gr::analog::sig_source_c::make(_samp_rate,gr::analog::GR_COS_WAVE,-25000,1);
     _multiply = gr::blocks::multiply_cc::make();
-    _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
-                            1, _target_samp_rate, _filter_width,600,gr::filter::firdes::WIN_HAMMING) );
+    _filter = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
+                            1, _target_samp_rate, 300, _filter_width,50,gr::filter::firdes::WIN_HAMMING) );
+    _complex_to_mag = gr::blocks::complex_to_mag::make();
+    _audio_gain = gr::blocks::multiply_const_ff::make(70);
     _audio_sink = gr::audio::sink::make(_target_samp_rate,"", true);
 
     _mag_squared = gr::blocks::complex_to_mag_squared::make();
@@ -61,9 +63,9 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(gr::qtgui::const_sink_c::sptr const_gui, gr::
     _top_block->connect(_signal_source,0,_multiply,1);
     _top_block->connect(_multiply,0,_resampler,0);
     _top_block->connect(_resampler,0,_filter,0);
-    //_top_block->connect(_filter,0,_fm_demod,0);
-    _top_block->connect(_filter,0,_audio_sink,0);
-
+    _top_block->connect(_filter,0,_complex_to_mag,0);
+    _top_block->connect(_complex_to_mag,0,_audio_gain,0);
+    _top_block->connect(_audio_gain,0,_audio_sink,0);
 
     _top_block->connect(_filter,0,_mag_squared,0);
     _top_block->connect(_mag_squared,0,_moving_average,0);
