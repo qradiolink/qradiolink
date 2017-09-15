@@ -19,13 +19,13 @@ gr_mod_nbfm_sdr::gr_mod_nbfm_sdr(QObject *parent, int samp_rate, int carrier_fre
     _multiply = gr::blocks::multiply_ff::make();
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::low_pass(
-                    1, _samp_rate, _filter_width, 600, gr::filter::firdes::WIN_HAMMING));
+                    1, 48000, _filter_width, 600, gr::filter::firdes::WIN_HAMMING));
 
     std::vector<float> interp_taps = gr::filter::firdes::low_pass(1, 48000,
-                                                        20000, 2000);
+                                                        10000, 10000);
     float rerate = (float)_samp_rate/48000.0;
     _resampler = gr::filter::pfb_arb_resampler_ccf::make(rerate, interp_taps, 32);
-    _amplify = gr::blocks::multiply_const_cc::make(4,1);
+    _amplify = gr::blocks::multiply_const_cc::make(14,1);
     _filter = gr::filter::fft_filter_ccf::make(
                 1,gr::filter::firdes::low_pass(
                     1, _samp_rate, _filter_width, 600, gr::filter::firdes::WIN_HAMMING));
