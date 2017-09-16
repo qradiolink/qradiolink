@@ -284,8 +284,8 @@ void RadioOp::toggleMode(int value)
     {
     case 0:
         _mode = gr_modem_types::ModemTypeBPSK2000;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
+        _tune_limit_lower = -2000;
+        _tune_limit_upper = 2000;
         _step_hz = 1;
         break;
     case 1:
@@ -302,14 +302,14 @@ void RadioOp::toggleMode(int value)
         break;
     case 3:
         _mode = gr_modem_types::ModemType4FSK2000;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
+        _tune_limit_lower = -2000;
+        _tune_limit_upper = 2000;
         _step_hz = 1;
         break;
     case 4:
         _mode = gr_modem_types::ModemTypeQPSK2000;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
+        _tune_limit_lower = -2000;
+        _tune_limit_upper = 2000;
         _step_hz = 1;
         break;
     case 5:
@@ -322,14 +322,14 @@ void RadioOp::toggleMode(int value)
     case 6:
         _radio_type = radio_type::RADIO_TYPE_ANALOG;
         _mode = gr_modem_types::ModemTypeSSB2500;
-        _tune_limit_lower = -1000;
+        _tune_limit_lower = -1500;
         _tune_limit_upper = 1500;
         _step_hz = 1;
         break;
     default:
         _mode = gr_modem_types::ModemTypeBPSK2000;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
+        _tune_limit_lower = -2000;
+        _tune_limit_upper = 2000;
         _step_hz = 1;
         break;
     }
@@ -342,7 +342,7 @@ void RadioOp::toggleMode(int value)
 
 void RadioOp::fineTuneFreq(long center_freq)
 {
-    _modem->tune(434025000 + center_freq*100, false);
+    _modem->tune(434025000 + center_freq*10, false);
 }
 
 void RadioOp::tuneFreq(long center_freq)
