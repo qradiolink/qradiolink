@@ -35,7 +35,7 @@ AudioEncoder::AudioEncoder()
 
     int opus_bandwidth;
     opus_encoder_ctl(_enc, OPUS_SET_VBR(0));
-    opus_encoder_ctl(_enc, OPUS_SET_BITRATE(19400));
+    opus_encoder_ctl(_enc, OPUS_SET_BITRATE(9400));
     opus_encoder_ctl(_enc, OPUS_SET_COMPLEXITY(5));
     //opus_encoder_ctl(_enc, OPUS_SET_DTX(1));
     opus_encoder_ctl(_enc, OPUS_GET_BANDWIDTH(&opus_bandwidth));
@@ -54,8 +54,8 @@ unsigned char* AudioEncoder::encode_opus(short *audiobuffer, int audiobuffersize
 {
 
 
-    unsigned char *encoded_audio = new unsigned char[97];
-    encoded_size = opus_encode(_enc, audiobuffer, audiobuffersize/sizeof(short), encoded_audio, 97);
+    unsigned char *encoded_audio = new unsigned char[47];
+    encoded_size = opus_encode(_enc, audiobuffer, audiobuffersize/sizeof(short), encoded_audio, 47);
     return encoded_audio;
 
 }
