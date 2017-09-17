@@ -45,7 +45,7 @@ static int              fd = -1;
 struct buffer          *buffers;
 static unsigned int     n_buffers;
 static int              out_buf;
-static int              force_format;
+static int              force_format = 1;
 static int              frame_count = 70;
 
 
@@ -96,7 +96,9 @@ static int read_frame(char *frame, int& len)
                         }
                 }
 
-                process_image(buffers[0].start, buffers[0].length);
+                //process_image(buffers[0].start, buffers[0].length);
+                memcpy(frame, buffers[0].start, buffers[0].length);
+                len = buffers[0].length;
                 break;
 
         case IO_METHOD_MMAP:
@@ -123,8 +125,8 @@ static int read_frame(char *frame, int& len)
                 assert(buf.index < n_buffers);
 
                 //process_image(buffers[buf.index].start, buf.bytesused);
-		memcpy(frame, buffers[buf.index].start, buf.bytesused);
-		len = buf.bytesused;
+                memcpy(frame, buffers[buf.index].start, buf.bytesused);
+                len = buf.bytesused;
 
                 if (-1 == xioctl(fd, VIDIOC_QBUF, &buf))
                         errno_exit("VIDIOC_QBUF");
@@ -158,7 +160,9 @@ static int read_frame(char *frame, int& len)
 
                 assert(i < n_buffers);
 
-                process_image((void *)buf.m.userptr, buf.bytesused);
+                //process_image((void *)buf.m.userptr, buf.bytesused);
+                memcpy(frame, (void *)buf.m.userptr, buf.bytesused);
+                len = buf.bytesused;
 
                 if (-1 == xioctl(fd, VIDIOC_QBUF, &buf))
                         errno_exit("VIDIOC_QBUF");
@@ -551,19 +555,3 @@ static void open_device(void)
 }
 }
 
-int main(int argc, char **argv)
-{
-        dev_name = "/dev/video0";
-	int len;
-	char *frame;
-	frame = new char[614400];
-        open_device();
-        init_device();
-        start_capturing();
-        capture_frame(frame, len);
-
-        stop_capturing();
-        uninit_device();
-        close_device();
-        return 0;
-}
