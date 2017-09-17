@@ -95,6 +95,7 @@ public:
 signals:
     void pcmAudio(short *pcm, short size);
     void codec2Audio(unsigned char *c2data, short size);
+    void jpegVideo(unsigned char *video_data, int size);
     void demodulated_audio(short *pcm, short size);
     void textReceived(QString text);
     void audioFrameReceived();
@@ -165,6 +166,7 @@ private:
         FrameTypeVoice,
         FrameTypeText,
         FrameTypeData,
+        FrameTypeVideo,
         FrameTypeStart,
         FrameTypeEnd
     };

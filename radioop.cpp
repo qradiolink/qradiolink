@@ -109,19 +109,32 @@ void RadioOp::run()
         }
         if(transmitting && (_radio_type == radio_type::RADIO_TYPE_DIGITAL))
         {
-            if(frame_flag)
+            if(true && frame_flag)
             {
+                int max_video_frame_size = 7997;
                 unsigned long size;
-                unsigned char *videobuffer = NULL;
-                _video->encode_jpeg(videobuffer, size);
+                unsigned char *videobuffer = (unsigned char*)calloc(max_video_frame_size, sizeof(unsigned char));
+                _video->encode_jpeg(&(videobuffer[12]), size);
+
+                if(size > max_video_frame_size)
+                {
+                    qDebug() << "Too large frame size: " << size;
+                    delete[] videobuffer;
+                    usleep(10000);
+                    continue;
+                }
+                memcpy(&videobuffer[0], &size, 4);
+                memcpy(&videobuffer[4], &size, 4);
+                memcpy(&videobuffer[8], &size, 4);
                 frame_flag = false;
+
             }
             else
             {
                 frame_flag = true;
             }
 
-            qDebug() << "frame size: " << size;
+
             audiobuffer = new short[audiobuffer_size/2];
             _audio->read_short(audiobuffer,audiobuffer_size);
             int packet_size = 0;

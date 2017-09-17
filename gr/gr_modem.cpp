@@ -464,6 +464,11 @@ std::vector<unsigned char>* gr_modem::frame(unsigned char *encoded_audio, int da
         data->push_back(0x89);
         data->push_back(0xED);
     }
+    else if(frame_type == FrameTypeVideo)
+    {
+        data->push_back(0x98);
+        data->push_back(0xDE);
+    }
     for(int i=0;i< data_size;i++)
     {
         data->push_back(encoded_audio[i]);
@@ -593,6 +598,11 @@ int gr_modem::findSync(unsigned char bit)
         _sync_found = true;
         return FrameTypeVoice;
     }
+    if((temp == 0xAA98DE))
+    {
+        _sync_found = true;
+        return FrameTypeVideo;
+    }
     temp = _shift_reg & 0xFFFFFFFF;
     if((temp == 0x4C8A2B4C))
     {
@@ -637,6 +647,14 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
         unsigned char *codec2_data = new unsigned char[_frame_length];
         memcpy(codec2_data, received_data, _frame_length);
         emit codec2Audio(codec2_data,_frame_length);
+    }
+    else if (current_frame_type == FrameTypeVideo )
+    {
+        emit audioFrameReceived();
+        _last_frame_type = FrameTypeVideo;
+        unsigned char *video_data = new unsigned char[_frame_length];
+        memcpy(video_data, received_data, _frame_length);
+        emit jpegVideo(video_data,_frame_length);
     }
     delete[] received_data;
 }
