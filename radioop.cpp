@@ -23,6 +23,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui,
     _mode = gr_modem_types::ModemTypeBPSK2000;
     _radio_type = radio_type::RADIO_TYPE_DIGITAL;
     _codec = new AudioEncoder;
+    _video = new VideoEncoder();
     _audio = new AudioInterface;
     _stop =false;
     _tx_inited = false;
@@ -53,6 +54,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui,
 RadioOp::~RadioOp()
 {
     delete _codec;
+    delete _video;
     delete _audio;
     delete _led_timer;
     delete _modem;
@@ -68,7 +70,7 @@ void RadioOp::run()
     int audiobuffer_size = 640; //40 ms @ 8k
 
     bool transmit_activated = false;
-
+    bool frame_flag = true;
     while(true)
     {
         bool transmitting = _transmitting;
@@ -107,6 +109,19 @@ void RadioOp::run()
         }
         if(transmitting && (_radio_type == radio_type::RADIO_TYPE_DIGITAL))
         {
+            if(frame_flag)
+            {
+                unsigned long size;
+                unsigned char *videobuffer = NULL;
+                _video->encode_jpeg(videobuffer, size);
+                frame_flag = false;
+            }
+            else
+            {
+                frame_flag = true;
+            }
+
+            qDebug() << "frame size: " << size;
             audiobuffer = new short[audiobuffer_size/2];
             _audio->read_short(audiobuffer,audiobuffer_size);
             int packet_size = 0;

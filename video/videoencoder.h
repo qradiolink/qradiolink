@@ -1,15 +1,15 @@
 #ifndef VIDEOENCODER_H
 #define VIDEOENCODER_H
 
-
+#include <QString>
 
 class VideoEncoder
 {
 public:
-    VideoEncoder();
+    VideoEncoder(QString device_name="/dev/video0");
     ~VideoEncoder();
     void encode_jpeg(unsigned char *videobuffer, unsigned long &encoded_size);
-    short *decode_jpeg(unsigned char *audiobuffer, int data_length, int &samples);
+    unsigned char *decode_jpeg(unsigned char *videobuffer, int data_length);
 
 private:
 

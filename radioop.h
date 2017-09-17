@@ -32,6 +32,7 @@
 #include "ext/vox.h"
 #include "settings.h"
 #include "audio/audioencoder.h"
+#include "video/videoencoder.h"
 #if 0
 #include "gmskmodem.h"
 #endif
@@ -103,6 +104,7 @@ private:
     QMutex _mutex;
     QTimer *_led_timer;
     AudioEncoder *_codec;
+    VideoEncoder *_video;
     gr_modem *_modem;
     int _mode;
     int _radio_type;
