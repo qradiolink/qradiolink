@@ -74,9 +74,9 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(gr::qtgui::const_sink_c::sptr const_gui,
     _freq_demod = gr::analog::quadrature_demod_cf::make(sps/(4*M_PI/2));
     _float_to_complex = gr::blocks::float_to_complex::make();
     _symbol_filter = gr::filter::fft_filter_ccf::make(1,symbol_filter_taps);
-    float gain_mu = 0.075;
-    _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.25*gain_mu*gain_mu, 0.5, gain_mu,
-                                                              0.0005);
+    float gain_mu = 0.025;
+    _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
+                                                              0.015);
     _multiply_symbols = gr::blocks::multiply_const_cc::make(0.15);
     _diff_decoder = gr::digital::diff_decoder_bb::make(4);
     _map = gr::digital::map_bb::make(map);
