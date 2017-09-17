@@ -418,7 +418,7 @@ void gr_modem::endTransmission()
     transmit(frames);
 }
 
-void gr_modem::processC2Data(unsigned char *data, short size)
+void gr_modem::processC2Data(unsigned char *data, int size)
 {
     std::vector<unsigned char> *one_frame = frame(data, size, FrameTypeVoice);
     QVector<std::vector<unsigned char>*> frames;
@@ -666,6 +666,10 @@ void gr_modem::handleStreamEnd()
         emit textReceived( QString("\n"));
     }
     else if(_last_frame_type == FrameTypeVoice)
+    {
+        // do stuff
+    }
+    else if(_last_frame_type == FrameTypeVideo)
     {
         // do stuff
     }

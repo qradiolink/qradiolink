@@ -64,7 +64,7 @@ signals:
     void displaySyncIssue(bool status);
     void displayTransmitStatus(bool status);
     void displayDataReceiveStatus(bool status);
-    void audioData(unsigned char *buf, short size);
+    void audioData(unsigned char *buf, int size);
 public slots:
     void run();
     void startTransmission();

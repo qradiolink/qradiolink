@@ -103,7 +103,7 @@ signals:
     void syncIssues();
     void receiveEnd();
 public slots:
-    void processC2Data(unsigned char *data, short size);
+    void processC2Data(unsigned char *data, int size);
     void demodulate();
     void startTransmission();
     void endTransmission();
