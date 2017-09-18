@@ -47,6 +47,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui,
     QObject::connect(_modem,SIGNAL(dataFrameReceived()),this,SLOT(dataFrameReceived()));
     QObject::connect(_modem,SIGNAL(receiveEnd()),this,SLOT(receiveEnd()));
     QObject::connect(this,SIGNAL(audioData(unsigned char*,int)),_modem,SLOT(processC2Data(unsigned char*,int)));
+    QObject::connect(this,SIGNAL(videoData(unsigned char*,int)),_modem,SLOT(processVideoData(unsigned char*,int)));
     QObject::connect(_modem,SIGNAL(codec2Audio(unsigned char*,short)),this,SLOT(receiveC2Data(unsigned char*,short)));
 }
 
@@ -87,30 +88,28 @@ void RadioOp::processAudioStream()
 
 int RadioOp::processVideoStream(bool &frame_flag)
 {
-    if(1)
+
+    int max_video_frame_size = 12287;
+    unsigned long size;
+    unsigned char *videobuffer = (unsigned char*)calloc(max_video_frame_size, sizeof(unsigned char));
+    _video->encode_jpeg(&(videobuffer[12]), size);
+    if(size > max_video_frame_size)
     {
-        int max_video_frame_size = 12287;
-        unsigned long size;
-        unsigned char *videobuffer = (unsigned char*)calloc(max_video_frame_size, sizeof(unsigned char));
-        _video->encode_jpeg(&(videobuffer[12]), size);
-        qDebug() << size;
-        if(size > max_video_frame_size)
-        {
-            qDebug() << "Too large frame size: " << size;
-            delete[] videobuffer;
-            return -EINVAL;
-        }
-        memcpy(&videobuffer[0], &size, 4);
-        memcpy(&videobuffer[4], &size, 4);
-        memcpy(&videobuffer[8], &size, 4);
-        emit audioData(videobuffer,max_video_frame_size);
-        frame_flag = false;
+        qDebug() << "Too large frame size: " << size;
+        delete[] videobuffer;
+        return -EINVAL;
+    }
+    memcpy(&videobuffer[0], &size, 4);
+    memcpy(&videobuffer[4], &size, 4);
+    memcpy(&videobuffer[8], &size, 4);
+    for(int k=size;k<max_video_frame_size;k++)
+    {
+
+        videobuffer[k] = rand() % 256;
 
     }
-    else
-    {
-        frame_flag = true;
-    }
+    emit videoData(videobuffer,max_video_frame_size);
+
 }
 
 void RadioOp::run()
@@ -155,10 +154,10 @@ void RadioOp::run()
         }
         if(transmitting && (_radio_type == radio_type::RADIO_TYPE_DIGITAL))
         {
-            if(1)
+            if(_mode == gr_modem_types::ModemTypeQPSKVideo)
                 processVideoStream(frame_flag);
 
-            if(0)
+            else
             {
                 processAudioStream();
             }

@@ -67,6 +67,7 @@ signals:
     void displayTransmitStatus(bool status);
     void displayDataReceiveStatus(bool status);
     void audioData(unsigned char *buf, int size);
+    void videoData(unsigned char *buf, int size);
 public slots:
     void run();
     void startTransmission();

@@ -31,8 +31,8 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::const_sink_c::sptr const_gui,
     int interpolation;
     if(_target_samp_rate == 20000)
     {
-        interpolation = 96;
-        decimation = 100;
+        interpolation = 1;
+        decimation = 50;
         _samples_per_symbol = sps*2/25;
     }
     else
@@ -78,9 +78,17 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::const_sink_c::sptr const_gui,
     gr::digital::constellation_expl_rect::sptr constellation = gr::digital::constellation_expl_rect::make(
                 constellation_points,pre_diff_code,4,2,2,1,1,const_map);
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, _target_samp_rate/2-10000, _target_samp_rate);
+    std::vector<float> taps;
+    if(_target_samp_rate == 20000)
+    {
+        taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, 50000, 150000);
+    }
+    else
+    {
+        taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, _filter_width, _filter_width/2);
+    }
     //_resampler = gr::filter::pfb_arb_resampler_ccf::make(rerate, taps, flt_size);
-    _resampler = gr::filter::rational_resampler_base_ccf::make(1, 50, taps);
+    _resampler = gr::filter::rational_resampler_base_ccf::make(interpolation, decimation, taps);
     _agc = gr::analog::agc2_cc::make(0.006e-1, 1e-3, 1, 1);
     _signal_source = gr::analog::sig_source_c::make(_samp_rate,gr::analog::GR_COS_WAVE,-25000,1);
     _multiply = gr::blocks::multiply_cc::make();

@@ -48,7 +48,6 @@ gr_mod_qpsk_sdr::gr_mod_qpsk_sdr(QObject *parent, int sps, int samp_rate, int ca
     _packed_to_unpacked = gr::blocks::packed_to_unpacked_bb::make(1,gr::GR_MSB_FIRST);
     _packer = gr::blocks::pack_k_bits_bb::make(2);
     _scrambler = gr::digital::scrambler_bb::make(0x8A, 0x7F ,7);
-    //_packed_to_unpacked2 = gr::blocks::packed_to_unpacked_bb::make(2,gr::GR_MSB_FIRST);
     _diff_encoder = gr::digital::diff_encoder_bb::make(4);
     _map = gr::digital::map_bb::make(map);
 
