@@ -126,6 +126,7 @@ void RadioOp::run()
                 memcpy(&videobuffer[0], &size, 4);
                 memcpy(&videobuffer[4], &size, 4);
                 memcpy(&videobuffer[8], &size, 4);
+                emit audioData(videobuffer,7997);
                 frame_flag = false;
 
             }
@@ -134,23 +135,25 @@ void RadioOp::run()
                 frame_flag = true;
             }
 
+            if(0)
+            {
+                audiobuffer = new short[audiobuffer_size/2];
+                _audio->read_short(audiobuffer,audiobuffer_size);
+                int packet_size = 0;
+                unsigned char *encoded_audio;
+                if((_mode == gr_modem_types::ModemTypeBPSK2000) ||
+                        (_mode == gr_modem_types::ModemType4FSK2000) ||
+                        (_mode == gr_modem_types::ModemTypeQPSK2000))
+                    encoded_audio = _codec->encode_codec2(audiobuffer, audiobuffer_size, packet_size);
+                else
+                    encoded_audio = _codec->encode_opus(audiobuffer, audiobuffer_size, packet_size);
 
-            audiobuffer = new short[audiobuffer_size/2];
-            _audio->read_short(audiobuffer,audiobuffer_size);
-            int packet_size = 0;
-            unsigned char *encoded_audio;
-            if((_mode == gr_modem_types::ModemTypeBPSK2000) ||
-                    (_mode == gr_modem_types::ModemType4FSK2000) ||
-                    (_mode == gr_modem_types::ModemTypeQPSK2000))
-                encoded_audio = _codec->encode_codec2(audiobuffer, audiobuffer_size, packet_size);
-            else
-                encoded_audio = _codec->encode_opus(audiobuffer, audiobuffer_size, packet_size);
-
-            unsigned char *data = new unsigned char[packet_size];
-            memcpy(data,encoded_audio,packet_size);
-            emit audioData(data,packet_size);
-            delete[] encoded_audio;
-            delete[] audiobuffer;
+                unsigned char *data = new unsigned char[packet_size];
+                memcpy(data,encoded_audio,packet_size);
+                emit audioData(data,packet_size);
+                delete[] encoded_audio;
+                delete[] audiobuffer;
+            }
         }
         else
         {
@@ -353,6 +356,12 @@ void RadioOp::toggleMode(int value)
         _tune_limit_lower = -1500;
         _tune_limit_upper = 1500;
         _step_hz = 1;
+        break;
+    case 7:
+        _mode = gr_modem_types::ModemTypeQPSKVideo;
+        _tune_limit_lower = -15000;
+        _tune_limit_upper = 15000;
+        _step_hz = 100;
         break;
     default:
         _mode = gr_modem_types::ModemTypeBPSK2000;

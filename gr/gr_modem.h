@@ -75,6 +75,7 @@ namespace gr_modem_types {
     {
         ModemTypeBPSK2000,
         ModemTypeQPSK20000,
+        ModemTypeQPSKVideo,
         ModemType4FSK20000,
         ModemType4FSK2000,
         ModemTypeQPSK2000,

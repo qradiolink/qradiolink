@@ -760,6 +760,11 @@ background-color: rgb(0, 85, 127);</string>
               <string>SSB</string>
              </property>
             </item>
+            <item>
+             <property name="text">
+              <string>Video (640x480)</string>
+             </property>
+            </item>
            </widget>
           </item>
          </layout>

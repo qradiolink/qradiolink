@@ -49,16 +49,12 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::const_sink_c::sptr const_gui,
     std::vector<int> pre_diff_code;
 
     std::vector<gr_complex> constellation_points;
-    /*
+
     constellation_points.push_back(-0.707-0.707j);
     constellation_points.push_back(-0.707+0.707j);
     constellation_points.push_back(0.707+0.707j);
     constellation_points.push_back(0.707-0.707j);
-    */
-    constellation_points.push_back(-1-1j);
-    constellation_points.push_back(-1+1j);
-    constellation_points.push_back(1+1j);
-    constellation_points.push_back(1-1j);
+
 
     float rerate = (float)_target_samp_rate/(float)_samp_rate;
 
