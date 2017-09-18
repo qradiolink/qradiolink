@@ -89,11 +89,11 @@ int RadioOp::processVideoStream(bool &frame_flag)
 {
     if(1)
     {
-        int max_video_frame_size = 7997;
+        int max_video_frame_size = 12287;
         unsigned long size;
         unsigned char *videobuffer = (unsigned char*)calloc(max_video_frame_size, sizeof(unsigned char));
         _video->encode_jpeg(&(videobuffer[12]), size);
-
+        qDebug() << size;
         if(size > max_video_frame_size)
         {
             qDebug() << "Too large frame size: " << size;

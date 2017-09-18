@@ -37,8 +37,8 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::const_sink_c::sptr const_gui,
     }
     else
     {
-        interpolation = 1;
-        decimation = 50;
+        interpolation = 14748;
+        decimation = 20000;
         _samples_per_symbol = sps;
     }
     _samp_rate =samp_rate;
