@@ -19,12 +19,17 @@ VideoEncoder::~VideoEncoder()
     close_device();
 }
 
-void VideoEncoder::encode_jpeg(unsigned char *videobuffer, unsigned long &encoded_size)
+void VideoEncoder::encode_jpeg(unsigned char *videobuffer, unsigned long &encoded_size, int max_video_frame_size)
 {
     int len;
-    char *frame = new char[614400];
+    unsigned char *frame = new unsigned char[153600];
+    QDateTime dateTime1 = QDateTime::currentDateTime();
     capture_frame(frame, len);
-    char *input = frame;
+    QDateTime dateTime2 = QDateTime::currentDateTime();
+    qint64 milliseconds = dateTime1.msecsTo(dateTime2);
+    //qDebug() << "video capture " << milliseconds << " / " << len;
+
+    unsigned char *input = frame;
     struct jpeg_compress_struct cinfo;
     struct jpeg_error_mgr jerr;
     JSAMPROW row_ptr[1];
@@ -39,8 +44,8 @@ void VideoEncoder::encode_jpeg(unsigned char *videobuffer, unsigned long &encode
     jpeg_mem_dest(&cinfo, &outbuf, &encoded_size);
 
         // jrow is a libjpeg row of samples array of 1 row pointer
-    cinfo.image_width = 640 & -1;
-    cinfo.image_height = 480 & -1;
+    cinfo.image_width = 320 & -1;
+    cinfo.image_height = 240 & -1;
     cinfo.input_components = 3;
     cinfo.in_color_space = JCS_YCbCr; //libJPEG expects YUV 3bytes, 24bit
 
@@ -69,12 +74,17 @@ void VideoEncoder::encode_jpeg(unsigned char *videobuffer, unsigned long &encode
     jpeg_finish_compress(&cinfo);
     jpeg_destroy_compress(&cinfo);
     delete[] frame;
+    if(encoded_size > max_video_frame_size)
+    {
+        qDebug() << "Encoded JPEG buffer too large: " << encoded_size;
+        return;
+    }
     memcpy(videobuffer, outbuf, encoded_size);
 }
 
 unsigned char* VideoEncoder::decode_jpeg(unsigned char *videobuffer, int data_length)
 {
-    int max_frame_size = 12288;
+    int max_frame_size = 153600;
 
     unsigned char *out = new unsigned char[max_frame_size];
     /* This struct contains the JPEG decompression parameters and pointers to
@@ -96,10 +106,11 @@ unsigned char* VideoEncoder::decode_jpeg(unsigned char *videobuffer, int data_le
     */
 
     jpeg_error_mgr jerr;
+    jerr.error_exit = 0;
     /* Step 1: allocate and initialize JPEG decompression object */
 
     /* We set up the normal JPEG error routines, then override error_exit. */
-    cinfo.err = jpeg_std_error(&jerr);
+    //cinfo.err = jpeg_std_error(&jerr);
 
     /* Establish the setjmp return context for my_error_exit to use. */
     if (jerr.error_exit) {

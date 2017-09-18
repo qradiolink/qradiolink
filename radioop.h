@@ -18,10 +18,12 @@
 #define RADIOOP_H
 
 #include <QObject>
+#include <QDateTime>
 #include <QTimer>
 #include <QMutex>
 #include <QDebug>
 #include <QCoreApplication>
+#include <QElapsedTimer>
 #if 0
 #include <QSoundEffect>
 #endif
@@ -79,7 +81,8 @@ public slots:
     void dataFrameReceived();
     void receiveEnd();
     void syncIssue();
-    void receiveC2Data(unsigned char *data, short size);
+    void receiveC2Data(unsigned char *data, int size);
+    void receiveVideoData(unsigned char *data, int size);
     void toggleRX(bool value);
     void toggleTX(bool value);
     void toggleMode(int value);
@@ -118,6 +121,7 @@ private:
     bool _tuning_done;
     bool _tx_modem_started;
     int _tune_counter;
+    unsigned char *_rand_frame_data;
 
 };
 

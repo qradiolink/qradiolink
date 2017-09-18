@@ -106,8 +106,8 @@ void gr_modem::initTX(int modem_type)
     }
     else if(modem_type == gr_modem_types::ModemTypeQPSKVideo)
     {
-        _gr_mod_qpsk_sdr = new gr_mod_qpsk_sdr(0, 2, 1474800, 1700, 370000, 1, _requested_frequency_hz, 50);
-        _frame_length = 12287;
+        _gr_mod_qpsk_sdr = new gr_mod_qpsk_sdr(0, 2, 250000, 1700, 65000, 1, _requested_frequency_hz, 50);
+        _frame_length = 3122;
         //_gr_mod_qpsk_sdr->start();
     }
 
@@ -176,9 +176,9 @@ void gr_modem::initRX(int modem_type)
     else if (modem_type == gr_modem_types::ModemTypeQPSKVideo)
     {
         _gr_demod_qpsk_sdr = new gr_demod_qpsk_sdr(
-                    _const_gui,_rssi_gui, 0,2,2000000,1474800,1700,370000,1, _requested_frequency_hz, 50);
-        _bit_buf_len = 12287 *8;
-        _frame_length = 12287;
+                    _const_gui,_rssi_gui, 0,2,1000000,250000,1700,65000,1, _requested_frequency_hz, 50);
+        _bit_buf_len = 3122 *8;
+        _frame_length = 3122;
         _bit_buf = new unsigned char[_bit_buf_len];
         //_gr_demod_qpsk_sdr->start();
     }
@@ -709,7 +709,7 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
         _last_frame_type = FrameTypeVideo;
         unsigned char *video_data = new unsigned char[_frame_length];
         memcpy(video_data, received_data, _frame_length);
-        emit jpegVideo(video_data,_frame_length);
+        emit videoData(video_data,_frame_length);
     }
     delete[] received_data;
 }

@@ -40,6 +40,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui,
     _tune_counter = 0;
     _tx_modem_started = false;
     _led_timer = new QTimer(this);
+    _rand_frame_data = new unsigned char[5000];
     QObject::connect(_led_timer, SIGNAL(timeout()), this, SLOT(syncIssue()));
     _modem = new gr_modem(_settings, const_gui, rssi_gui);
     QObject::connect(_modem,SIGNAL(textReceived(QString)),this,SLOT(textReceived(QString)));
@@ -48,7 +49,11 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui,
     QObject::connect(_modem,SIGNAL(receiveEnd()),this,SLOT(receiveEnd()));
     QObject::connect(this,SIGNAL(audioData(unsigned char*,int)),_modem,SLOT(processC2Data(unsigned char*,int)));
     QObject::connect(this,SIGNAL(videoData(unsigned char*,int)),_modem,SLOT(processVideoData(unsigned char*,int)));
-    QObject::connect(_modem,SIGNAL(codec2Audio(unsigned char*,short)),this,SLOT(receiveC2Data(unsigned char*,short)));
+    QObject::connect(_modem,SIGNAL(codec2Audio(unsigned char*,int)),this,SLOT(receiveC2Data(unsigned char*,int)));
+    QObject::connect(_modem,SIGNAL(videoData(unsigned char*,int)),this,SLOT(receiveVideoData(unsigned char*,int)));
+    for (int j = 0;j<5000;j++)
+        _rand_frame_data[j] = rand() % 256;
+
 }
 
 RadioOp::~RadioOp()
@@ -88,28 +93,43 @@ void RadioOp::processAudioStream()
 
 int RadioOp::processVideoStream(bool &frame_flag)
 {
-
-    int max_video_frame_size = 12287;
+    int max_video_frame_size = 3122;
     unsigned long size;
     unsigned char *videobuffer = (unsigned char*)calloc(max_video_frame_size, sizeof(unsigned char));
-    _video->encode_jpeg(&(videobuffer[12]), size);
+
+    QElapsedTimer timer;
+    qint64 microsec;
+    timer.start();
+
+    _video->encode_jpeg(&(videobuffer[12]), size, max_video_frame_size);
+
+    microsec = (quint64)timer.nsecsElapsed()/1000;
+    if(microsec < 100000)
+    {
+        usleep((100000 - microsec) - 10000);
+    }
+
+    //qDebug() << "video out " << microsec << " / " << size;
+
     if(size > max_video_frame_size)
     {
-        qDebug() << "Too large frame size: " << size;
+        qDebug() << "Too large frame size (dropped): " << size;
         delete[] videobuffer;
         return -EINVAL;
     }
-    memcpy(&videobuffer[0], &size, 4);
-    memcpy(&videobuffer[4], &size, 4);
-    memcpy(&videobuffer[8], &size, 4);
-    for(int k=size;k<max_video_frame_size;k++)
+
+    memcpy(&videobuffer[0], &size, 4*sizeof(char));
+    memcpy(&videobuffer[4], &size, 4*sizeof(char));
+    memcpy(&videobuffer[8], &size, 4*sizeof(char));
+    for(int k=size,i=0;k<max_video_frame_size;k++,i++)
     {
 
-        videobuffer[k] = rand() % 256;
+        videobuffer[k] = _rand_frame_data[i];
 
     }
-    emit videoData(videobuffer,max_video_frame_size);
 
+    emit videoData(videobuffer,max_video_frame_size);
+    return 1;
 }
 
 void RadioOp::run()
@@ -205,7 +225,7 @@ void RadioOp::run()
     emit finished();
 }
 
-void RadioOp::receiveC2Data(unsigned char *data, short size)
+void RadioOp::receiveC2Data(unsigned char *data, int size)
 {
     short *audio_out;
     int samples;
@@ -220,6 +240,23 @@ void RadioOp::receiveC2Data(unsigned char *data, short size)
     delete[] data;
     if(samples > 0)
         _audio->write_short(audio_out,samples*sizeof(short));
+}
+
+void RadioOp::receiveVideoData(unsigned char *data, int size)
+{
+    unsigned long frame_size1;
+    unsigned long frame_size2;
+    unsigned long frame_size3;
+
+    memcpy(&frame_size1, &data[0], 4*sizeof(char));
+    memcpy(&frame_size2, &data[4], 4*sizeof(char));
+    memcpy(&frame_size3, &data[8], 4*sizeof(char));
+    qDebug() << "received frame size: " << frame_size1;
+    unsigned char *jpeg_frame = new unsigned char[frame_size1];
+    memcpy((unsigned char*)jpeg_frame, &data[12], frame_size1);
+    delete[] data;
+    unsigned char *raw_output = _video->decode_jpeg(jpeg_frame,frame_size1);
+
 }
 
 void RadioOp::startTransmission()

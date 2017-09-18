@@ -36,14 +36,15 @@ gr_vector_source::gr_vector_source() :
 
 gr_vector_source::~gr_vector_source()
 {
-
+    delete _data;
 }
 
 int gr_vector_source::set_data(std::vector<unsigned char> *data)
 {
-    gr::thread::scoped_lock guard(_mutex);
+
     if(_offset == 0)
     {
+        gr::thread::scoped_lock guard(_mutex);
         _data->insert(_data->end(),data->begin(),data->end());
         delete data;
         _finished = false;
@@ -77,10 +78,11 @@ int gr_vector_source::work(int noutput_items,
     {
         out[i] = _data->at(_offset + i);
     }
-    gr::thread::scoped_lock guard(_mutex);
+
     _offset += n;
     if(_offset == _data->size())
     {
+        gr::thread::scoped_lock guard(_mutex);
         _data->clear();
         _finished = true;
         _offset = 0;

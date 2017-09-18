@@ -37,13 +37,17 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::const_sink_c::sptr const_gui,
     }
     else
     {
-        interpolation = 14748;
-        decimation = 20000;
+        interpolation = 1;
+        decimation = 4;
         _samples_per_symbol = sps;
     }
     _samp_rate =samp_rate;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
+    int filter_slope = 600;
+    if(_target_samp_rate > 100000)
+        filter_slope = 10000;
+
     _modulation_index = mod_index;
     _top_block = gr::make_top_block("qpsk demodulator sdr");
 
@@ -85,10 +89,14 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::const_sink_c::sptr const_gui,
     }
     else
     {
-        taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, _filter_width, _filter_width/2);
+        taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, _target_samp_rate/2, _target_samp_rate/2-1000);
     }
-    //_resampler = gr::filter::pfb_arb_resampler_ccf::make(rerate, taps, flt_size);
+
+
     _resampler = gr::filter::rational_resampler_base_ccf::make(interpolation, decimation, taps);
+
+    //_resampler_pfb = gr::filter::pfb_arb_resampler_ccf::make(rerate, taps, flt_size);
+
     _agc = gr::analog::agc2_cc::make(0.006e-1, 1e-3, 1, 1);
     _signal_source = gr::analog::sig_source_c::make(_samp_rate,gr::analog::GR_COS_WAVE,-25000,1);
     _multiply = gr::blocks::multiply_cc::make();
@@ -99,7 +107,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::const_sink_c::sptr const_gui,
                 _target_samp_rate);
     */
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
-                                1, _target_samp_rate, _filter_width,600,gr::filter::firdes::WIN_HAMMING) );
+                                1, _target_samp_rate, _filter_width, filter_slope,gr::filter::firdes::WIN_HAMMING) );
     float gain_mu = 0.0025;
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
                                                               0.015);
@@ -141,8 +149,10 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::const_sink_c::sptr const_gui,
     _constellation = const_gui;
     _top_block->connect(_osmosdr_source,0,_multiply,0);
     _top_block->connect(_signal_source,0,_multiply,1);
+
     _top_block->connect(_multiply,0,_resampler,0);
     _top_block->connect(_resampler,0,_filter,0);
+
     _top_block->connect(_filter,0,_agc,0);
     _top_block->connect(_agc,0,_clock_recovery,0);
     //_top_block->connect(_fll,0,_clock_recovery,0);

@@ -74,7 +74,7 @@ static void process_image(const void *p, int size)
         fflush(stderr);
 }
 
-static int read_frame(char *frame, int& len)
+static int read_frame(unsigned char *frame, int& len)
 {
         struct v4l2_buffer buf;
         unsigned int i;
@@ -172,7 +172,7 @@ static int read_frame(char *frame, int& len)
         return 1;
 }
 
-static void capture_frame(char *frame, int& len)
+static void capture_frame(unsigned char *frame, int& len)
 {
       for (;;) {
 	      fd_set fds;
@@ -200,7 +200,7 @@ static void capture_frame(char *frame, int& len)
 	      }
 
 	      if (read_frame(frame, len))
-		      break;
+              break;
 	      /* EAGAIN - continue select loop. */
       }
 
@@ -484,8 +484,8 @@ static void init_device(void)
 
         fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
         if (force_format) {
-                fmt.fmt.pix.width       = 640;
-                fmt.fmt.pix.height      = 480;
+                fmt.fmt.pix.width       = 320;
+                fmt.fmt.pix.height      = 240;
                 fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
                 fmt.fmt.pix.field       = V4L2_FIELD_INTERLACED;
 
@@ -500,6 +500,7 @@ static void init_device(void)
         }
 
         /* FPS set */
+        /*
         struct v4l2_streamparm fps;
         memset(&fps, 0, sizeof(fps));
         fps.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
@@ -507,12 +508,42 @@ static void init_device(void)
             printf("Couldn't query v4l fps!\n");
             errno_exit("VIDIOC_G_FMT");
         }
+       fprintf (stdout, "Previous FPS value: %d / %d\n", fps.parm.capture.timeperframe.numerator,
+                fps.parm.capture.timeperframe.denominator);
+
         fps.parm.capture.timeperframe.numerator = 1;
-        fps.parm.capture.timeperframe.denominator = 15;
+        fps.parm.capture.timeperframe.denominator = 30 * fps.parm.capture.timeperframe.numerator;
         if (ioctl(fd, VIDIOC_S_PARM, &fps) < 0) {
             printf("Couldn't set v4l fps!\n");
+            errno_exit("VIDIOC_S_FMT");
+        }
+
+        memset(&fps, 0, sizeof(fps));
+        fps.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+        if (ioctl(fd, VIDIOC_G_PARM, &fps) < 0) {
+            printf("Couldn't query v4l fps!\n");
             errno_exit("VIDIOC_G_FMT");
         }
+        fprintf(stdout, "FPS value set: %d / %d\n", fps.parm.capture.timeperframe.numerator,
+                fps.parm.capture.timeperframe.denominator);
+        */
+
+        struct v4l2_control control;
+        control.id = V4L2_CID_EXPOSURE_AUTO;
+        control.value = V4L2_EXPOSURE_MANUAL;
+        if (ioctl(fd, VIDIOC_S_CTRL, &control) < 0) {
+            printf("Couldn't set v4l exposure!\n");
+            errno_exit("VIDIOC_S_FMT");
+        }
+        /*
+        memset(&control, 0, sizeof(v4l2_control));
+        control.id = V4L2_CID_EXPOSURE_ABSOLUTE;
+        control.value = 200;
+        if (ioctl(fd, VIDIOC_S_CTRL, &control) < 0) {
+            printf("Couldn't set v4l exposure!\n");
+            errno_exit("VIDIOC_S_FMT");
+        }
+        */
 
         /* Buggy driver paranoia. */
         min = fmt.fmt.pix.width * 2;
