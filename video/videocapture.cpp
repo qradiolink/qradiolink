@@ -538,12 +538,13 @@ static void init_device(void)
         /*
         memset(&control, 0, sizeof(v4l2_control));
         control.id = V4L2_CID_EXPOSURE_ABSOLUTE;
-        control.value = 200;
+        control.value = 200000;
         if (ioctl(fd, VIDIOC_S_CTRL, &control) < 0) {
             printf("Couldn't set v4l exposure!\n");
             errno_exit("VIDIOC_S_FMT");
         }
         */
+
 
         /* Buggy driver paranoia. */
         min = fmt.fmt.pix.width * 2;

@@ -51,8 +51,9 @@ public slots:
     void tuneMainFreq();
     void toggleWideband(bool value);
     void toggleMode(int value);
-    void setTxPowerDisplay(int);
+    void setTxPowerDisplay(int value);
     void autoTune(bool value);
+    void displayImage(QImage *img);
 
 signals:
     void startTransmission();

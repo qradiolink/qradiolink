@@ -2,6 +2,7 @@
 
 #include "video/videocapture.cpp"
 #include <jpeglib.h>
+#include <setjmp.h>
 
 
 VideoEncoder::VideoEncoder(QString device_name)
@@ -50,7 +51,7 @@ void VideoEncoder::encode_jpeg(unsigned char *videobuffer, unsigned long &encode
     cinfo.in_color_space = JCS_YCbCr; //libJPEG expects YUV 3bytes, 24bit
 
     jpeg_set_defaults(&cinfo);
-    jpeg_set_quality(&cinfo, 8, TRUE);
+    jpeg_set_quality(&cinfo, 20, TRUE);
     jpeg_start_compress(&cinfo, TRUE);
 
     unsigned char tmprowbuf[640 * 3];
@@ -82,10 +83,36 @@ void VideoEncoder::encode_jpeg(unsigned char *videobuffer, unsigned long &encode
     memcpy(videobuffer, outbuf, encoded_size);
 }
 
+struct my_error_mgr {
+  struct jpeg_error_mgr pub;    /* "public" fields */
+
+  jmp_buf setjmp_buffer;        /* for return to caller */
+};
+
+typedef struct my_error_mgr *my_error_ptr;
+
+/*
+ * Here's the routine that will replace the standard error_exit method:
+ */
+
+METHODDEF(void)
+my_error_exit (j_common_ptr cinfo)
+{
+  /* cinfo->err really points to a my_error_mgr struct, so coerce pointer */
+  my_error_ptr myerr = (my_error_ptr) cinfo->err;
+
+  /* Always display the message. */
+  /* We could postpone this until after returning, if we chose. */
+  (*cinfo->err->output_message) (cinfo);
+
+  /* Return control to the setjmp point */
+  longjmp(myerr->setjmp_buffer, 1);
+}
+
 unsigned char* VideoEncoder::decode_jpeg(unsigned char *videobuffer, int data_length)
 {
     int max_frame_size = 153600;
-
+    struct my_error_mgr jerr;
     unsigned char *out = new unsigned char[max_frame_size];
     /* This struct contains the JPEG decompression parameters and pointers to
     * working space (which is allocated as needed by the JPEG library).
@@ -105,15 +132,13 @@ unsigned char* VideoEncoder::decode_jpeg(unsigned char *videobuffer, int data_le
     * requires it in order to read binary files.
     */
 
-    jpeg_error_mgr jerr;
-    jerr.error_exit = 0;
     /* Step 1: allocate and initialize JPEG decompression object */
-
+    jerr.pub.error_exit = my_error_exit;
     /* We set up the normal JPEG error routines, then override error_exit. */
-    //cinfo.err = jpeg_std_error(&jerr);
+    cinfo.err = jpeg_std_error(&jerr.pub);
 
     /* Establish the setjmp return context for my_error_exit to use. */
-    if (jerr.error_exit) {
+    if (setjmp(jerr.setjmp_buffer)) {
         /* If we get here, the JPEG code has signaled an error.
          * We need to clean up the JPEG object, close the input file, and return.
          */
@@ -196,6 +221,7 @@ unsigned char* VideoEncoder::decode_jpeg(unsigned char *videobuffer, int data_le
     */
 
     /* And we're done! */
+
     delete[] videobuffer;
     return out;
 }

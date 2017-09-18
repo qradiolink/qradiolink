@@ -183,4 +183,9 @@ void MainWindow::autoTune(bool value)
         emit stopAutoTuneFreq();
 }
 
+void MainWindow::displayImage(QImage *img)
+{
+    ui->videoLabel->setPixmap(QPixmap::fromImage(*img));
+}
+
 

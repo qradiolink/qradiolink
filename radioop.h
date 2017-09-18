@@ -24,6 +24,7 @@
 #include <QDebug>
 #include <QCoreApplication>
 #include <QElapsedTimer>
+#include <QImage>
 #if 0
 #include <QSoundEffect>
 #endif
@@ -70,6 +71,7 @@ signals:
     void displayDataReceiveStatus(bool status);
     void audioData(unsigned char *buf, int size);
     void videoData(unsigned char *buf, int size);
+    void videoImage(QImage *img);
 public slots:
     void run();
     void startTransmission();
