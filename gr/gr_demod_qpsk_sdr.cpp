@@ -18,16 +18,29 @@
 
 gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::const_sink_c::sptr const_gui,
                                      gr::qtgui::number_sink::sptr rssi_gui, QObject *parent,
-                                     int sps, int samp_rate, int carrier_freq,
+                                     int sps, int samp_rate, int target_samp_rate, int carrier_freq,
                                      int filter_width, float mod_index, float device_frequency, float rf_gain) :
     QObject(parent)
 {
-    _target_samp_rate = 20000;
+    _target_samp_rate = target_samp_rate;
     _rssi = rssi_gui;
     const std::string device_args = "rtl=0";
     const std::string device_antenna = "TX/RX";
     _device_frequency = device_frequency;
-    _samples_per_symbol = sps*2/25;
+    int decimation;
+    int interpolation;
+    if(_target_samp_rate == 20000)
+    {
+        interpolation = 96;
+        decimation = 100;
+        _samples_per_symbol = sps*2/25;
+    }
+    else
+    {
+        interpolation = 1;
+        decimation = 50;
+        _samples_per_symbol = sps;
+    }
     _samp_rate =samp_rate;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
@@ -65,7 +78,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::const_sink_c::sptr const_gui,
     gr::digital::constellation_expl_rect::sptr constellation = gr::digital::constellation_expl_rect::make(
                 constellation_points,pre_diff_code,4,2,2,1,1,const_map);
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, 50000, 150000);
+    std::vector<float> taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, _target_samp_rate/2-10000, _target_samp_rate);
     //_resampler = gr::filter::pfb_arb_resampler_ccf::make(rerate, taps, flt_size);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1, 50, taps);
     _agc = gr::analog::agc2_cc::make(0.006e-1, 1e-3, 1, 1);

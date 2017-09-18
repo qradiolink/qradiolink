@@ -499,6 +499,21 @@ static void init_device(void)
                         errno_exit("VIDIOC_G_FMT");
         }
 
+        /* FPS set */
+        struct v4l2_streamparm fps;
+        memset(&fps, 0, sizeof(fps));
+        fps.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+        if (ioctl(fd, VIDIOC_G_PARM, &fps) < 0) {
+            printf("Couldn't query v4l fps!\n");
+            errno_exit("VIDIOC_G_FMT");
+        }
+        fps.parm.capture.timeperframe.numerator = 1;
+        fps.parm.capture.timeperframe.denominator = 15;
+        if (ioctl(fd, VIDIOC_S_PARM, &fps) < 0) {
+            printf("Couldn't set v4l fps!\n");
+            errno_exit("VIDIOC_G_FMT");
+        }
+
         /* Buggy driver paranoia. */
         min = fmt.fmt.pix.width * 2;
         if (fmt.fmt.pix.bytesperline < min)

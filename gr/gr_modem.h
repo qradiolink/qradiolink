@@ -105,6 +105,7 @@ signals:
     void receiveEnd();
 public slots:
     void processC2Data(unsigned char *data, int size);
+    void processVideoData(unsigned char *data, int size);
     void demodulate();
     void startTransmission();
     void endTransmission();

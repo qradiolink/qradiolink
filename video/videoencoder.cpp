@@ -32,9 +32,11 @@ void VideoEncoder::encode_jpeg(unsigned char *videobuffer, unsigned long &encode
 
     encoded_size = 0;
 
+    unsigned char *outbuf = NULL;
+
     cinfo.err = jpeg_std_error(&jerr);
     jpeg_create_compress(&cinfo);
-    jpeg_mem_dest(&cinfo, &videobuffer, &encoded_size);
+    jpeg_mem_dest(&cinfo, &outbuf, &encoded_size);
 
         // jrow is a libjpeg row of samples array of 1 row pointer
     cinfo.image_width = 640 & -1;
@@ -67,6 +69,7 @@ void VideoEncoder::encode_jpeg(unsigned char *videobuffer, unsigned long &encode
     jpeg_finish_compress(&cinfo);
     jpeg_destroy_compress(&cinfo);
     delete[] frame;
+    memcpy(videobuffer, outbuf, encoded_size);
 }
 
 unsigned char* VideoEncoder::decode_jpeg(unsigned char *videobuffer, int data_length)

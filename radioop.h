@@ -57,6 +57,8 @@ public:
     explicit RadioOp(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui, gr::qtgui::number_sink::sptr rssi_gui, QObject *parent = 0);
     ~RadioOp();
 
+    void processAudioStream();
+    int processVideoStream(bool &frame_flag);
 signals:
     void finished();
     void printText(QString text);

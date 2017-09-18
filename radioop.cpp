@@ -23,7 +23,6 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui,
     _mode = gr_modem_types::ModemTypeBPSK2000;
     _radio_type = radio_type::RADIO_TYPE_DIGITAL;
     _codec = new AudioEncoder;
-    _video = new VideoEncoder();
     _audio = new AudioInterface;
     _stop =false;
     _tx_inited = false;
@@ -65,9 +64,58 @@ void RadioOp::stop()
     _stop=true;
 }
 
-void RadioOp::run()
+void RadioOp::processAudioStream()
 {
     int audiobuffer_size = 640; //40 ms @ 8k
+    short *audiobuffer = new short[audiobuffer_size/2];
+    _audio->read_short(audiobuffer,audiobuffer_size);
+    int packet_size = 0;
+    unsigned char *encoded_audio;
+    if((_mode == gr_modem_types::ModemTypeBPSK2000) ||
+            (_mode == gr_modem_types::ModemType4FSK2000) ||
+            (_mode == gr_modem_types::ModemTypeQPSK2000))
+        encoded_audio = _codec->encode_codec2(audiobuffer, audiobuffer_size, packet_size);
+    else
+        encoded_audio = _codec->encode_opus(audiobuffer, audiobuffer_size, packet_size);
+
+    unsigned char *data = new unsigned char[packet_size];
+    memcpy(data,encoded_audio,packet_size);
+    emit audioData(data,packet_size);
+    delete[] encoded_audio;
+    delete[] audiobuffer;
+}
+
+int RadioOp::processVideoStream(bool &frame_flag)
+{
+    if(1)
+    {
+        int max_video_frame_size = 7997;
+        unsigned long size;
+        unsigned char *videobuffer = (unsigned char*)calloc(max_video_frame_size, sizeof(unsigned char));
+        _video->encode_jpeg(&(videobuffer[12]), size);
+
+        if(size > max_video_frame_size)
+        {
+            qDebug() << "Too large frame size: " << size;
+            delete[] videobuffer;
+            return -EINVAL;
+        }
+        memcpy(&videobuffer[0], &size, 4);
+        memcpy(&videobuffer[4], &size, 4);
+        memcpy(&videobuffer[8], &size, 4);
+        emit audioData(videobuffer,max_video_frame_size);
+        frame_flag = false;
+
+    }
+    else
+    {
+        frame_flag = true;
+    }
+}
+
+void RadioOp::run()
+{
+
 
     bool transmit_activated = false;
     bool frame_flag = true;
@@ -75,8 +123,6 @@ void RadioOp::run()
     {
         bool transmitting = _transmitting;
         QCoreApplication::processEvents();
-
-        short *audiobuffer;
 
         if(transmitting && !transmit_activated)
         {
@@ -109,50 +155,12 @@ void RadioOp::run()
         }
         if(transmitting && (_radio_type == radio_type::RADIO_TYPE_DIGITAL))
         {
-            if(true && frame_flag)
-            {
-                int max_video_frame_size = 7997;
-                unsigned long size;
-                unsigned char *videobuffer = (unsigned char*)calloc(max_video_frame_size, sizeof(unsigned char));
-                _video->encode_jpeg(&(videobuffer[12]), size);
-
-                if(size > max_video_frame_size)
-                {
-                    qDebug() << "Too large frame size: " << size;
-                    delete[] videobuffer;
-                    usleep(10000);
-                    continue;
-                }
-                memcpy(&videobuffer[0], &size, 4);
-                memcpy(&videobuffer[4], &size, 4);
-                memcpy(&videobuffer[8], &size, 4);
-                emit audioData(videobuffer,7997);
-                frame_flag = false;
-
-            }
-            else
-            {
-                frame_flag = true;
-            }
+            if(1)
+                processVideoStream(frame_flag);
 
             if(0)
             {
-                audiobuffer = new short[audiobuffer_size/2];
-                _audio->read_short(audiobuffer,audiobuffer_size);
-                int packet_size = 0;
-                unsigned char *encoded_audio;
-                if((_mode == gr_modem_types::ModemTypeBPSK2000) ||
-                        (_mode == gr_modem_types::ModemType4FSK2000) ||
-                        (_mode == gr_modem_types::ModemTypeQPSK2000))
-                    encoded_audio = _codec->encode_codec2(audiobuffer, audiobuffer_size, packet_size);
-                else
-                    encoded_audio = _codec->encode_opus(audiobuffer, audiobuffer_size, packet_size);
-
-                unsigned char *data = new unsigned char[packet_size];
-                memcpy(data,encoded_audio,packet_size);
-                emit audioData(data,packet_size);
-                delete[] encoded_audio;
-                delete[] audiobuffer;
+                processAudioStream();
             }
         }
         else
@@ -275,11 +283,13 @@ void RadioOp::toggleRX(bool value)
     {
         _rx_inited = true;
         _modem->initRX(_mode);
+        _modem->startRX();
         _tune_center_freq = _modem->_requested_frequency_hz;
     }
     else
     {
         _rx_inited = false;
+        _modem->stopRX();
         _modem->deinitRX(_mode);
     }
 }
@@ -290,11 +300,15 @@ void RadioOp::toggleTX(bool value)
     {
         _tx_inited = true;
         _modem->initTX(_mode);
+        if(_mode == gr_modem_types::ModemTypeQPSKVideo)
+            _video = new VideoEncoder;
     }
     else
     {
         _tx_inited = false;
         _modem->deinitTX(_mode);
+        if(_mode == gr_modem_types::ModemTypeQPSKVideo)
+            delete _video;
     }
 }
 
