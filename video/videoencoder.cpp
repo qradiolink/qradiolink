@@ -51,10 +51,10 @@ void VideoEncoder::encode_jpeg(unsigned char *videobuffer, unsigned long &encode
     cinfo.in_color_space = JCS_YCbCr; //libJPEG expects YUV 3bytes, 24bit
 
     jpeg_set_defaults(&cinfo);
-    jpeg_set_quality(&cinfo, 20, TRUE);
+    jpeg_set_quality(&cinfo, 10, TRUE);
     jpeg_start_compress(&cinfo, TRUE);
 
-    unsigned char tmprowbuf[640 * 3];
+    unsigned char tmprowbuf[320 * 3];
 
     JSAMPROW row_pointer[1];
     row_pointer[0] = &tmprowbuf[0];
@@ -73,14 +73,15 @@ void VideoEncoder::encode_jpeg(unsigned char *videobuffer, unsigned long &encode
     }
 
     jpeg_finish_compress(&cinfo);
-    jpeg_destroy_compress(&cinfo);
-    delete[] frame;
     if(encoded_size > max_video_frame_size)
     {
         qDebug() << "Encoded JPEG buffer too large: " << encoded_size;
         return;
     }
     memcpy(videobuffer, outbuf, encoded_size);
+    jpeg_destroy_compress(&cinfo);
+    delete[] frame;
+
 }
 
 struct my_error_mgr {
@@ -111,9 +112,9 @@ my_error_exit (j_common_ptr cinfo)
 
 unsigned char* VideoEncoder::decode_jpeg(unsigned char *videobuffer, int data_length)
 {
-    int max_frame_size = 153600;
+    int max_frame_size = 230400;
     struct my_error_mgr jerr;
-    unsigned char *out = new unsigned char[max_frame_size];
+    unsigned char *out_decompress = new unsigned char[max_frame_size];
     /* This struct contains the JPEG decompression parameters and pointers to
     * working space (which is allocated as needed by the JPEG library).
     */
@@ -144,7 +145,7 @@ unsigned char* VideoEncoder::decode_jpeg(unsigned char *videobuffer, int data_le
          */
         jpeg_destroy_decompress(&cinfo);
         delete[] videobuffer;
-        delete[] out;
+        delete[] out_decompress;
         return 0;
     }
     /* Now we can initialize the JPEG decompression object. */
@@ -156,7 +157,7 @@ unsigned char* VideoEncoder::decode_jpeg(unsigned char *videobuffer, int data_le
 
     /* Step 3: read file parameters with jpeg_read_header() */
 
-    (void) jpeg_read_header(&cinfo, TRUE);
+    (void) jpeg_read_header(&cinfo, FALSE);
     /* We can ignore the return value from jpeg_read_header since
     *   (a) suspension is not possible with the stdio data source, and
     *   (b) we passed TRUE to reject a tables-only JPEG file as an error.
@@ -184,6 +185,7 @@ unsigned char* VideoEncoder::decode_jpeg(unsigned char *videobuffer, int data_le
     */
     /* JSAMPLEs per row in output buffer */
     row_stride = cinfo.output_width * cinfo.output_components;
+
     /* Make a one-row-high sample array that will go away when done with image */
     buffer = (*cinfo.mem->alloc_sarray)
                 ((j_common_ptr) &cinfo, JPOOL_IMAGE, row_stride, 1);
@@ -194,6 +196,7 @@ unsigned char* VideoEncoder::decode_jpeg(unsigned char *videobuffer, int data_le
     /* Here we use the library's state variable cinfo.output_scanline as the
     * loop counter, so that we don't have to keep track ourselves.
     */
+    int offset = 0;
     while (cinfo.output_scanline < cinfo.output_height) {
         /* jpeg_read_scanlines expects an array of pointers to scanlines.
          * Here the array is only one element long, but you could ask for
@@ -201,9 +204,14 @@ unsigned char* VideoEncoder::decode_jpeg(unsigned char *videobuffer, int data_le
          */
         (void) jpeg_read_scanlines(&cinfo, buffer, 1);
         /* Assume put_scanline_someplace wants a pointer and sample count. */
-        memcpy(out, buffer[0], row_stride);
+        memcpy(&out_decompress[offset], buffer[0], row_stride);
+        offset += row_stride;
     }
 
+    int raw_size = cinfo.output_components * cinfo.output_width * cinfo.output_height;
+    unsigned char *raw_image = new unsigned char[raw_size];
+    memcpy(raw_image, out_decompress, raw_size);
+    delete[] out_decompress;
     /* Step 7: Finish decompression */
 
     (void) jpeg_finish_decompress(&cinfo);
@@ -223,5 +231,5 @@ unsigned char* VideoEncoder::decode_jpeg(unsigned char *videobuffer, int data_le
     /* And we're done! */
 
     delete[] videobuffer;
-    return out;
+    return raw_image;
 }

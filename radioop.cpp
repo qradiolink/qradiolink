@@ -94,14 +94,15 @@ void RadioOp::processAudioStream()
 int RadioOp::processVideoStream(bool &frame_flag)
 {
     int max_video_frame_size = 3122;
-    unsigned long size;
+    unsigned long encoded_size;
+
     unsigned char *videobuffer = (unsigned char*)calloc(max_video_frame_size, sizeof(unsigned char));
 
     QElapsedTimer timer;
     qint64 microsec;
     timer.start();
 
-    _video->encode_jpeg(&(videobuffer[12]), size, max_video_frame_size);
+    _video->encode_jpeg(&(videobuffer[12]), encoded_size, max_video_frame_size);
 
     microsec = (quint64)timer.nsecsElapsed()/1000;
     if(microsec < 100000)
@@ -109,19 +110,18 @@ int RadioOp::processVideoStream(bool &frame_flag)
         usleep((100000 - microsec) - 10000);
     }
 
-    qDebug() << "video out " << microsec << " / " << size;
+    //qDebug() << "video out " << microsec << " / " << encoded_size;
 
-    if(size > max_video_frame_size)
+    if(encoded_size > max_video_frame_size)
     {
-        qDebug() << "Too large frame size (dropped): " << size;
+        qDebug() << "Too large frame size (dropped): " << encoded_size;
         delete[] videobuffer;
         return -EINVAL;
     }
-
-    memcpy(&(videobuffer[0]), &size, 4);
-    memcpy(&(videobuffer[4]), &size, 4);
-    memcpy(&(videobuffer[8]), &size, 4);
-    for(int k=size,i=0;k<max_video_frame_size;k++,i++)
+    memcpy(&(videobuffer[0]), &encoded_size, 4);
+    memcpy(&(videobuffer[4]), &encoded_size, 4);
+    memcpy(&(videobuffer[8]), &encoded_size, 4);
+    for(int k=encoded_size,i=0;k<max_video_frame_size;k++,i++)
     {
 
         videobuffer[k] = _rand_frame_data[i];
@@ -261,17 +261,26 @@ void RadioOp::receiveVideoData(unsigned char *data, int size)
     else
     {
         qDebug() << "received corrupted frame size, dropping frame ";
+        delete[] data;
+        return;
     }
-    // qDebug() << "received frame size: " << frame_size;
     unsigned char *jpeg_frame = new unsigned char[frame_size];
     memcpy(jpeg_frame, &data[12], frame_size);
     delete[] data;
     unsigned char *raw_output = _video->decode_jpeg(jpeg_frame,frame_size);
-    QImage *img = new QImage((const unsigned char*)(raw_output),
-                             320,240,
-                             QImage::Format_RGB16);
-    emit videoImage(img);
 
+    if(!raw_output)
+    {
+        delete[] jpeg_frame;
+        return;
+    }
+    QImage *img = new QImage(
+                             320,240,
+                             QImage::Format_RGB888);
+    img->loadFromData(raw_output, 230400, 0);
+    img->convertToFormat(QImage::Format_RGB32);
+    emit videoImage(img);
+    delete[] raw_output;
 
 }
 

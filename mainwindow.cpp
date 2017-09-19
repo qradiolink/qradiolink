@@ -185,7 +185,7 @@ void MainWindow::autoTune(bool value)
 
 void MainWindow::displayImage(QImage *img)
 {
-    ui->videoLabel->setPixmap(QPixmap::fromImage(*img));
+    ui->videoLabel->setPixmap(QPixmap::fromImage(*img,Qt::AutoColor));
 }
 
 
