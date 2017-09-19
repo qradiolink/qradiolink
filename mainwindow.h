@@ -21,10 +21,9 @@
 #include <QFile>
 #include <QFileDialog>
 #include <QScrollBar>
-#include <QSound>
+#include <phonon/MediaObject>
 #include <QDir>
 #include <QFileInfo>
-#include <QResource>
 #include "mumbleclient.h"
 
 namespace Ui {

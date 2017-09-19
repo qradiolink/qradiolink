@@ -194,15 +194,15 @@ void MainWindow::displayImage(QImage img)
 
 void MainWindow::playEndBeep(int seconds)
 {
-    QFileInfo resource ("qrc:res/end_beep.wav");
+
     QDir files = QDir::current();
 
-    QString name = resource.baseName();
-    qDebug() <<name;
+    QString name = "end_beep.wav";
+
     QFileInfo new_file = files.filePath(name);
     if(!new_file.exists())
     {
-        QFile resfile(name);
+        QFile resfile(":/res/end_beep.wav");
         QFile newfile(new_file.absoluteFilePath());
         if(resfile.open(QIODevice::ReadOnly))
         {
@@ -214,9 +214,10 @@ void MainWindow::playEndBeep(int seconds)
             resfile.close();
         }
     }
-
-    QSound end_beep(QString(new_file.absoluteFilePath()));
-    end_beep.play();
+    Phonon::MediaObject *music =
+            Phonon::createPlayer(Phonon::MusicCategory,
+                                 Phonon::MediaSource(new_file.absoluteFilePath()));
+    music->play();
 }
 
 

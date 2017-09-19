@@ -137,16 +137,16 @@ void RadioOp::run()
 {
 
 
-    bool transmit_activated = false;
+    bool ptt_activated = false;
     bool frame_flag = true;
     while(true)
     {
         bool transmitting = _transmitting;
         QCoreApplication::processEvents();
 
-        if(transmitting && !transmit_activated)
+        if(transmitting && !ptt_activated)
         {
-            transmit_activated = true;
+            ptt_activated = true;
             if(_tx_inited)
             {
                 if(_rx_inited)
@@ -159,17 +159,18 @@ void RadioOp::run()
                     _modem->startTransmission();
             }
         }
-        if(!transmitting && transmit_activated)
+        if(!transmitting && ptt_activated)
         {
-            transmit_activated = false;
+            ptt_activated = false;
             if(_tx_inited)
             {
                 if(_radio_type == radio_type::RADIO_TYPE_DIGITAL)
                     _modem->endTransmission();
+                usleep(50000);
                 _modem->stopTX();
                 _tx_modem_started = false;
             }
-            usleep(40000);
+
             if(_rx_inited)
                 _modem->startRX();
         }
