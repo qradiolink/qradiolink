@@ -71,7 +71,7 @@ signals:
     void displayDataReceiveStatus(bool status);
     void audioData(unsigned char *buf, int size);
     void videoData(unsigned char *buf, int size);
-    void videoImage(QImage *img);
+    void videoImage(QImage img);
 public slots:
     void run();
     void startTransmission();

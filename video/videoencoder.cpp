@@ -144,7 +144,6 @@ unsigned char* VideoEncoder::decode_jpeg(unsigned char *videobuffer, int data_le
          * We need to clean up the JPEG object, close the input file, and return.
          */
         jpeg_destroy_decompress(&cinfo);
-        delete[] videobuffer;
         delete[] out_decompress;
         return NULL;
     }

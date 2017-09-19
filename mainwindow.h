@@ -53,7 +53,7 @@ public slots:
     void toggleMode(int value);
     void setTxPowerDisplay(int value);
     void autoTune(bool value);
-    void displayImage(QImage *img);
+    void displayImage(QImage img);
 
 signals:
     void startTransmission();
