@@ -530,7 +530,7 @@ static void init_device(void)
 
         struct v4l2_control control;
         control.id = V4L2_CID_EXPOSURE_AUTO;
-        control.value = 1;
+        control.value = 3;
         if (ioctl(fd, VIDIOC_S_CTRL, &control) < 0) {
             printf("Couldn't set v4l exposure!\n");
             errno_exit("VIDIOC_S_FMT");
