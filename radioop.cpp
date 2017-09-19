@@ -268,10 +268,10 @@ void RadioOp::receiveVideoData(unsigned char *data, int size)
     memcpy(jpeg_frame, &data[12], frame_size);
     delete[] data;
     unsigned char *raw_output = _video->decode_jpeg(jpeg_frame,frame_size);
-
+    delete[] jpeg_frame;
     if(!raw_output)
     {
-        delete[] jpeg_frame;
+
         return;
     }
     QImage img (320,240,

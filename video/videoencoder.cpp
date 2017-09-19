@@ -229,7 +229,7 @@ unsigned char* VideoEncoder::decode_jpeg(unsigned char *videobuffer, int data_le
     unsigned char *raw_image = new unsigned char[raw_size];
     memcpy(raw_image, out_decompress, raw_size);
     delete[] out_decompress;
-    delete[] videobuffer;
+
     return raw_image;
 
 }
