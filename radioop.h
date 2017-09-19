@@ -72,6 +72,8 @@ signals:
     void audioData(unsigned char *buf, int size);
     void videoData(unsigned char *buf, int size);
     void videoImage(QImage img);
+    void endAudio(int secs);
+    void startAudio();
 public slots:
     void run();
     void startTransmission();
@@ -95,6 +97,7 @@ public slots:
     void autoTune();
     void startAutoTune();
     void stopAutoTune();
+    void endAudioTransmission();
 
 private:
     bool _stop;

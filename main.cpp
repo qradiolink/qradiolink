@@ -188,7 +188,7 @@ int main(int argc, char *argv[])
     QObject::connect(radio_op, SIGNAL(displayReceiveStatus(bool)), &w, SLOT(displayReceiveStatus(bool)));
     QObject::connect(radio_op, SIGNAL(displayTransmitStatus(bool)), &w, SLOT(displayTransmitStatus(bool)));
     QObject::connect(radio_op, SIGNAL(displayDataReceiveStatus(bool)), &w, SLOT(displayDataReceiveStatus(bool)));
-
+    QObject::connect(radio_op, SIGNAL(endAudio(int)), &w, SLOT(playEndBeep(int)));
     //QObject::connect(&w,SIGNAL(startTalkVOIP()),audio_op,SLOT(startTransmission()));
     //QObject::connect(&w,SIGNAL(stopTalkVOIP()),audio_op,SLOT(endTransmission()));
 

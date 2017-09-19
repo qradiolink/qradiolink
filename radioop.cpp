@@ -47,6 +47,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui,
     QObject::connect(_modem,SIGNAL(audioFrameReceived()),this,SLOT(audioFrameReceived()));
     QObject::connect(_modem,SIGNAL(dataFrameReceived()),this,SLOT(dataFrameReceived()));
     QObject::connect(_modem,SIGNAL(receiveEnd()),this,SLOT(receiveEnd()));
+    QObject::connect(_modem,SIGNAL(endAudioTransmission()),this,SLOT(endAudioTransmission()));
     QObject::connect(this,SIGNAL(audioData(unsigned char*,int)),_modem,SLOT(processC2Data(unsigned char*,int)));
     QObject::connect(this,SIGNAL(videoData(unsigned char*,int)),_modem,SLOT(processVideoData(unsigned char*,int)));
     QObject::connect(_modem,SIGNAL(codec2Audio(unsigned char*,int)),this,SLOT(receiveC2Data(unsigned char*,int)));
@@ -107,7 +108,7 @@ int RadioOp::processVideoStream(bool &frame_flag)
     microsec = (quint64)timer.nsecsElapsed()/1000;
     if(microsec < 100000)
     {
-        usleep((100000 - microsec) - 10000);
+        usleep((100000 - microsec) - 7000);
     }
 
     //qDebug() << "video out " << microsec << " / " << encoded_size;
@@ -278,7 +279,7 @@ void RadioOp::receiveVideoData(unsigned char *data, int size)
                              QImage::Format_RGB888);
     img.loadFromData(raw_output, 230400, 0);
     img.convertToFormat(QImage::Format_RGB32);
-    QImage out_img(img.scaled(640, 480));
+    QImage out_img(img.scaled(480, 360));
 
     emit videoImage(out_img);
     delete[] raw_output;
@@ -326,12 +327,11 @@ void RadioOp::receiveEnd()
 {
     emit displayReceiveStatus(false);
     emit displayDataReceiveStatus(false);
-#if 0
-    QSoundEffect *end_beep = new QSoundEffect;
-    end_beep->setSource(QUrl("qrc:res/end_beep.wav"));
-    end_beep->play();
-    delete end_beep;
-#endif
+}
+
+void RadioOp::endAudioTransmission()
+{
+    emit endAudio(9);
 }
 
 void RadioOp::syncIssue()

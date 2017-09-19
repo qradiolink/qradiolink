@@ -159,7 +159,7 @@ void gr_modem::initRX(int modem_type)
         _bit_buf_len = 7 *8;
         _frame_length = 7;
         _bit_buf = new unsigned char[_bit_buf_len];
-        _gr_demod_4fsk_sdr->start();
+        //_gr_demod_4fsk_sdr->start();
     }
     else if (modem_type == gr_modem_types::ModemTypeNBFM2500)
     {
@@ -722,11 +722,11 @@ void gr_modem::handleStreamEnd()
     }
     else if(_last_frame_type == FrameTypeVoice)
     {
-        // do stuff
+        emit endAudioTransmission();
     }
     else if(_last_frame_type == FrameTypeVideo)
     {
-        // do stuff
+        emit endAudioTransmission();
     }
     emit receiveEnd();
 }

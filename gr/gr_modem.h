@@ -103,6 +103,7 @@ signals:
     void dataFrameReceived();
     void syncIssues();
     void receiveEnd();
+    void endAudioTransmission();
 public slots:
     void processC2Data(unsigned char *data, int size);
     void processVideoData(unsigned char *data, int size);

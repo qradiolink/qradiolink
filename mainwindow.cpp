@@ -81,9 +81,13 @@ void MainWindow::GUIsendText()
 
 void MainWindow::displayText(QString text)
 {
+    if(ui->receivedTextEdit->toPlainText().size() > 1024*1024*1024)
+    {
+        // TODO: truncate text
+    }
     ui->receivedTextEdit->setPlainText(ui->receivedTextEdit->toPlainText() + text);
     ui->receivedTextEdit->verticalScrollBar()->setValue(ui->receivedTextEdit->verticalScrollBar()->maximum());
-    ui->tabWidget->setCurrentIndex(1);
+    //ui->tabWidget->setCurrentIndex(1);
 }
 
 void MainWindow::chooseFile()
@@ -186,6 +190,33 @@ void MainWindow::autoTune(bool value)
 void MainWindow::displayImage(QImage img)
 {
     ui->videoLabel->setPixmap(QPixmap::fromImage(img,Qt::AutoColor));
+}
+
+void MainWindow::playEndBeep(int seconds)
+{
+    QFileInfo resource ("qrc:res/end_beep.wav");
+    QDir files = QDir::current();
+
+    QString name = resource.baseName();
+    qDebug() <<name;
+    QFileInfo new_file = files.filePath(name);
+    if(!new_file.exists())
+    {
+        QFile resfile(name);
+        QFile newfile(new_file.absoluteFilePath());
+        if(resfile.open(QIODevice::ReadOnly))
+        {
+            if (newfile.open(QIODevice::ReadWrite))
+            {
+                newfile.write(resfile.readAll());
+                newfile.close();
+            }
+            resfile.close();
+        }
+    }
+
+    QSound end_beep(QString(new_file.absoluteFilePath()));
+    end_beep.play();
 }
 
 

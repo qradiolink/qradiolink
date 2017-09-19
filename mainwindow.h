@@ -21,6 +21,10 @@
 #include <QFile>
 #include <QFileDialog>
 #include <QScrollBar>
+#include <QSound>
+#include <QDir>
+#include <QFileInfo>
+#include <QResource>
 #include "mumbleclient.h"
 
 namespace Ui {
@@ -54,6 +58,7 @@ public slots:
     void setTxPowerDisplay(int value);
     void autoTune(bool value);
     void displayImage(QImage img);
+    void playEndBeep(int seconds);
 
 signals:
     void startTransmission();
