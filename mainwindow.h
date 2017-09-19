@@ -89,6 +89,7 @@ private:
     bool _transmitting_radio;
     QWidget *_constellation_gui;
     QWidget *_rssi_gui;
+    Phonon::MediaObject *_end_beep;
 
 };
 

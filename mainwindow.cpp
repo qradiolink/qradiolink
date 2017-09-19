@@ -43,6 +43,28 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
     _constellation_gui = ui->widget_const;
     _rssi_gui = ui->widget_rssi;
 
+    QDir files = QDir::current();
+
+    QString name = "end_beep.wav";
+
+    QFileInfo new_file = files.filePath(name);
+    if(!new_file.exists())
+    {
+        QFile resfile(":/res/end_beep.wav");
+        QFile newfile(new_file.absoluteFilePath());
+        if(resfile.open(QIODevice::ReadOnly))
+        {
+            if (newfile.open(QIODevice::ReadWrite))
+            {
+                newfile.write(resfile.readAll());
+                newfile.close();
+            }
+            resfile.close();
+        }
+    }
+    _end_beep = Phonon::createPlayer(Phonon::MusicCategory,
+                                 Phonon::MediaSource(new_file.absoluteFilePath()));
+
 }
 
 MainWindow::~MainWindow()
@@ -195,29 +217,7 @@ void MainWindow::displayImage(QImage img)
 void MainWindow::playEndBeep(int seconds)
 {
 
-    QDir files = QDir::current();
-
-    QString name = "end_beep.wav";
-
-    QFileInfo new_file = files.filePath(name);
-    if(!new_file.exists())
-    {
-        QFile resfile(":/res/end_beep.wav");
-        QFile newfile(new_file.absoluteFilePath());
-        if(resfile.open(QIODevice::ReadOnly))
-        {
-            if (newfile.open(QIODevice::ReadWrite))
-            {
-                newfile.write(resfile.readAll());
-                newfile.close();
-            }
-            resfile.close();
-        }
-    }
-    Phonon::MediaObject *music =
-            Phonon::createPlayer(Phonon::MusicCategory,
-                                 Phonon::MediaSource(new_file.absoluteFilePath()));
-    music->play();
+    _end_beep->play();
 }
 
 
