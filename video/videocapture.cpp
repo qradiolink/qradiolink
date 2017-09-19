@@ -527,15 +527,15 @@ static void init_device(void)
         fprintf(stdout, "FPS value set: %d / %d\n", fps.parm.capture.timeperframe.numerator,
                 fps.parm.capture.timeperframe.denominator);
         */
-        /*
+
         struct v4l2_control control;
         control.id = V4L2_CID_EXPOSURE_AUTO;
-        control.value = V4L2_EXPOSURE_MANUAL;
+        control.value = 1;
         if (ioctl(fd, VIDIOC_S_CTRL, &control) < 0) {
             printf("Couldn't set v4l exposure!\n");
             errno_exit("VIDIOC_S_FMT");
         }
-        */
+
         /*
         memset(&control, 0, sizeof(v4l2_control));
         control.id = V4L2_CID_EXPOSURE_ABSOLUTE;

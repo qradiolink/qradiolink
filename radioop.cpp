@@ -271,7 +271,6 @@ void RadioOp::receiveVideoData(unsigned char *data, int size)
 
     if(!raw_output)
     {
-        delete[] jpeg_frame;
         return;
     }
     QImage *img = new QImage(
@@ -279,7 +278,9 @@ void RadioOp::receiveVideoData(unsigned char *data, int size)
                              QImage::Format_RGB888);
     img->loadFromData(raw_output, 230400, 0);
     img->convertToFormat(QImage::Format_RGB32);
-    emit videoImage(img);
+    QImage *out_img = new QImage(img->scaled(640, 480));
+    delete img;
+    emit videoImage(out_img);
     delete[] raw_output;
 
 }

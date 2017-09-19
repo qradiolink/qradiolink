@@ -84,6 +84,7 @@ void VideoEncoder::encode_jpeg(unsigned char *videobuffer, unsigned long &encode
 
 }
 
+
 struct my_error_mgr {
   struct jpeg_error_mgr pub;    /* "public" fields */
 
@@ -105,7 +106,6 @@ my_error_exit (j_common_ptr cinfo)
   /* Always display the message. */
   /* We could postpone this until after returning, if we chose. */
   (*cinfo->err->output_message) (cinfo);
-
   /* Return control to the setjmp point */
   longjmp(myerr->setjmp_buffer, 1);
 }
@@ -134,10 +134,10 @@ unsigned char* VideoEncoder::decode_jpeg(unsigned char *videobuffer, int data_le
     */
 
     /* Step 1: allocate and initialize JPEG decompression object */
-    jerr.pub.error_exit = my_error_exit;
+
     /* We set up the normal JPEG error routines, then override error_exit. */
     cinfo.err = jpeg_std_error(&jerr.pub);
-
+    jerr.pub.error_exit = my_error_exit;
     /* Establish the setjmp return context for my_error_exit to use. */
     if (setjmp(jerr.setjmp_buffer)) {
         /* If we get here, the JPEG code has signaled an error.
@@ -146,7 +146,7 @@ unsigned char* VideoEncoder::decode_jpeg(unsigned char *videobuffer, int data_le
         jpeg_destroy_decompress(&cinfo);
         delete[] videobuffer;
         delete[] out_decompress;
-        return 0;
+        return NULL;
     }
     /* Now we can initialize the JPEG decompression object. */
     jpeg_create_decompress(&cinfo);
@@ -209,9 +209,7 @@ unsigned char* VideoEncoder::decode_jpeg(unsigned char *videobuffer, int data_le
     }
 
     int raw_size = cinfo.output_components * cinfo.output_width * cinfo.output_height;
-    unsigned char *raw_image = new unsigned char[raw_size];
-    memcpy(raw_image, out_decompress, raw_size);
-    delete[] out_decompress;
+
     /* Step 7: Finish decompression */
 
     (void) jpeg_finish_decompress(&cinfo);
@@ -229,7 +227,10 @@ unsigned char* VideoEncoder::decode_jpeg(unsigned char *videobuffer, int data_le
     */
 
     /* And we're done! */
-
+    unsigned char *raw_image = new unsigned char[raw_size];
+    memcpy(raw_image, out_decompress, raw_size);
+    delete[] out_decompress;
     delete[] videobuffer;
     return raw_image;
+
 }
