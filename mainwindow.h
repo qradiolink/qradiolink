@@ -83,6 +83,7 @@ public:
     QWidget* get_rssi_gui() {return _rssi_gui;}
 
 
+    QFileInfo setupSounds(QString name);
 private:
     Ui::MainWindow *ui;
     MumbleClient *_mumble_client;
