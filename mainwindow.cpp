@@ -45,7 +45,8 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
 
     QFileInfo new_file = setupSounds("end_beep.wav");
     _end_beep = Phonon::createPlayer(Phonon::MusicCategory,
-                                 Phonon::MediaSource(new_file.absoluteFilePath()));
+                                 Phonon::MediaSource(QUrl("qrc:/res/end_beep.wav")));
+    _video_img = new QPixmap;
 
 }
 
@@ -216,7 +217,9 @@ void MainWindow::autoTune(bool value)
 
 void MainWindow::displayImage(QImage img)
 {
-    ui->videoLabel->setPixmap(QPixmap::fromImage(img,Qt::AutoColor));
+    delete _video_img;
+    _video_img = new QPixmap(QPixmap::fromImage(img,Qt::AutoColor));
+    ui->videoLabel->setPixmap(*_video_img);
 }
 
 void MainWindow::playEndBeep(int seconds)

@@ -36,10 +36,15 @@ AudioEncoder::AudioEncoder()
     int opus_bandwidth;
     opus_encoder_ctl(_enc, OPUS_SET_VBR(0));
     opus_encoder_ctl(_enc, OPUS_SET_BITRATE(9400));
-    opus_encoder_ctl(_enc, OPUS_SET_COMPLEXITY(5));
+    opus_encoder_ctl(_enc, OPUS_SET_COMPLEXITY(10));
     //opus_encoder_ctl(_enc, OPUS_SET_DTX(1));
+    opus_encoder_ctl(_enc, OPUS_SET_LSB_DEPTH(16));
+    opus_encoder_ctl(_enc, OPUS_SET_MAX_BANDWIDTH(OPUS_BANDWIDTH_FULLBAND));
+    opus_encoder_ctl(_enc, OPUS_SET_PACKET_LOSS_PERC(100));
+    opus_encoder_ctl(_enc, OPUS_SET_PREDICTION_DISABLED(0));
     opus_encoder_ctl(_enc, OPUS_GET_BANDWIDTH(&opus_bandwidth));
     opus_encoder_ctl(_enc, OPUS_SET_INBAND_FEC(0));
+    opus_decoder_ctl(_dec, OPUS_SET_GAIN(-3));
 }
 
 AudioEncoder::~AudioEncoder()

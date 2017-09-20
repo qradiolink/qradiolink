@@ -91,6 +91,7 @@ private:
     QWidget *_constellation_gui;
     QWidget *_rssi_gui;
     Phonon::MediaObject *_end_beep;
+    QPixmap *_video_img;
 
 };
 
