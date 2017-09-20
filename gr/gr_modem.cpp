@@ -416,7 +416,7 @@ void gr_modem::setTxPower(int value)
         _gr_mod_ssb_sdr->set_power(value);
 }
 
-void gr_modem::startTransmission()
+void gr_modem::startTransmission(QString callsign, int size)
 {
     _transmitting = true;
     for(int i = 0;i<3;i++)
@@ -436,6 +436,17 @@ void gr_modem::startTransmission()
         frames.append(tx_start);
         transmit(frames);
     }
+    std::vector<unsigned char> *send_callsign = new std::vector<unsigned char>;
+    QVector<std::vector<unsigned char>*> callsign_frames;
+    send_callsign->push_back(0xDD);
+    send_callsign->push_back(0xFB);
+    send_callsign->push_back(0xBF);
+    for(int i = 0;i<size;i++)
+    {
+        send_callsign->push_back(callsign.toStdString().c_str()[i]);
+    }
+    callsign_frames.append(send_callsign);
+    transmit(callsign_frames);
 }
 
 void gr_modem::endTransmission()
@@ -539,7 +550,6 @@ void gr_modem::textData(QString text)
         list.append(text.mid(k,_frame_length));
     }
 
-    startTransmission();
     for(int o = 0;o < list.length();o++)
     {
         QString chunk=list.at(o);
@@ -658,6 +668,11 @@ int gr_modem::findSync(unsigned char bit)
         _sync_found = true;
         return FrameTypeVideo;
     }
+    if((temp == 0xDDFBBF))
+    {
+        _sync_found = true;
+        return FrameTypeCallsign;
+    }
     temp = _shift_reg & 0xFFFFFFFF;
     if((temp == 0x4C8A2B4C))
     {
@@ -675,7 +690,6 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
         emit dataFrameReceived();
         _last_frame_type = FrameTypeText;
         char *text_data = new char[_frame_length];
-        memset(text_data, 0, _frame_length);
         memcpy(text_data, received_data, _frame_length);
         quint8 string_length = _frame_length;
 
@@ -693,6 +707,30 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
         }
 
         emit textReceived( QString::fromLocal8Bit(text_data,string_length));
+        delete[] text_data;
+    }
+    else if (current_frame_type == FrameTypeCallsign)
+    {
+        emit dataFrameReceived();
+        _last_frame_type = FrameTypeCallsign;
+        char *text_data = new char[_frame_length];
+        memcpy(text_data, received_data, _frame_length);
+        quint8 string_length = _frame_length;
+
+        for(int ii=_frame_length-1;ii>=0;ii--)
+        {
+            QChar x(text_data[ii]);
+            if(x.unicode()==0)
+            {
+                string_length--;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        emit callsignReceived( QString::fromLocal8Bit(text_data,string_length));
         delete[] text_data;
     }
     else if (current_frame_type == FrameTypeVoice )

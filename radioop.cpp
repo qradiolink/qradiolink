@@ -44,6 +44,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui,
     QObject::connect(_led_timer, SIGNAL(timeout()), this, SLOT(syncIssue()));
     _modem = new gr_modem(_settings, const_gui, rssi_gui);
     QObject::connect(_modem,SIGNAL(textReceived(QString)),this,SLOT(textReceived(QString)));
+    QObject::connect(_modem,SIGNAL(callsignReceived(QString)),this,SLOT(callsignReceived(QString)));
     QObject::connect(_modem,SIGNAL(audioFrameReceived()),this,SLOT(audioFrameReceived()));
     QObject::connect(_modem,SIGNAL(dataFrameReceived()),this,SLOT(dataFrameReceived()));
     QObject::connect(_modem,SIGNAL(receiveEnd()),this,SLOT(receiveEnd()));
@@ -156,7 +157,7 @@ void RadioOp::run()
                 _modem->startTX();
                 _tx_modem_started = false;
                 if(_radio_type == radio_type::RADIO_TYPE_DIGITAL)
-                    _modem->startTransmission();
+                    _modem->startTransmission("YO8RZZ",7);
             }
         }
         if(!transmitting && ptt_activated)
@@ -208,6 +209,7 @@ void RadioOp::run()
                     _modem->startTX();
                 }
                 _tx_modem_started = true;
+                _modem->startTransmission("YO8RZZ",7);
                 _modem->textData(_text_out);
             }
             if(!_repeat_text)
@@ -310,6 +312,11 @@ void RadioOp::textData(QString text, bool repeat)
 void RadioOp::textReceived(QString text)
 {
     emit printText(text);
+}
+
+void RadioOp::callsignReceived(QString text)
+{
+    emit printCallsign(text);
 }
 
 void RadioOp::audioFrameReceived()

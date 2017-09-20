@@ -45,7 +45,7 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
 
     QFileInfo new_file = setupSounds("end_beep.wav");
     _end_beep = Phonon::createPlayer(Phonon::MusicCategory,
-                                 Phonon::MediaSource(QUrl("qrc:/res/end_beep.wav")));
+                                 Phonon::MediaSource(new_file.absoluteFilePath()));
     _video_img = new QPixmap;
 
 }
@@ -115,6 +115,12 @@ void MainWindow::displayText(QString text)
     }
     ui->receivedTextEdit->setPlainText(ui->receivedTextEdit->toPlainText() + text);
     ui->receivedTextEdit->verticalScrollBar()->setValue(ui->receivedTextEdit->verticalScrollBar()->maximum());
+    //ui->tabWidget->setCurrentIndex(1);
+}
+
+void MainWindow::displayCallsign(QString text)
+{
+    ui->labelDisplayCallsign->setText(text);
     //ui->tabWidget->setCurrentIndex(1);
 }
 

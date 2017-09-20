@@ -99,6 +99,7 @@ signals:
     void videoData(unsigned char *video_data, int size);
     void demodulated_audio(short *pcm, short size);
     void textReceived(QString text);
+    void callsignReceived(QString text);
     void audioFrameReceived();
     void dataFrameReceived();
     void syncIssues();
@@ -108,7 +109,7 @@ public slots:
     void processC2Data(unsigned char *data, int size);
     void processVideoData(unsigned char *data, int size);
     void demodulate();
-    void startTransmission();
+    void startTransmission(QString callsign, int size);
     void endTransmission();
     void textData(QString text);
     void initTX(int modem_type);
@@ -171,6 +172,7 @@ private:
         FrameTypeData,
         FrameTypeVideo,
         FrameTypeStart,
+        FrameTypeCallsign,
         FrameTypeEnd
     };
 

@@ -44,6 +44,7 @@ public slots:
     void GUIsendText();
     void chooseFile();
     void displayText(QString text);
+    void displayCallsign(QString text);
     void displayReceiveStatus(bool status);
     void displayTransmitStatus(bool status);
     void displayDataReceiveStatus(bool status);

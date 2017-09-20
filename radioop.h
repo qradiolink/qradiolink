@@ -65,6 +65,7 @@ public:
 signals:
     void finished();
     void printText(QString text);
+    void printCallsign(QString text);
     void displayReceiveStatus(bool status);
     void displaySyncIssue(bool status);
     void displayTransmitStatus(bool status);
@@ -81,6 +82,7 @@ public slots:
     void textData(QString text, bool repeat = false);
     void stop();
     void textReceived(QString text);
+    void callsignReceived(QString text);
     void audioFrameReceived();
     void dataFrameReceived();
     void receiveEnd();

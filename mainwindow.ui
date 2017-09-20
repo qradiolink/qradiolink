@@ -62,7 +62,7 @@
 </string>
         </property>
         <property name="currentIndex">
-         <number>5</number>
+         <number>0</number>
         </property>
         <property name="iconSize">
          <size>
@@ -340,7 +340,7 @@ color: rgb(255, 255, 255);</string>
               </property>
               <property name="styleSheet">
                <string notr="true">color: rgb(0, 0, 127);
-background-color: rgb(255, 255, 127);</string>
+background-color: rgb(255, 255, 255);</string>
               </property>
               <property name="frameShape">
                <enum>QFrame::Box</enum>
@@ -463,51 +463,6 @@ QSlider::handle:horizontal {
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="tab_2">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <attribute name="title">
-          <string>Data</string>
-         </attribute>
-         <layout class="QVBoxLayout" name="verticalLayout_3">
-          <item>
-           <widget class="QPlainTextEdit" name="receivedTextEdit">
-            <property name="styleSheet">
-             <string notr="true">background: transparent;
-background-color: rgb(255, 255, 255, 180);
-font: 12pt &quot;Sans Serif&quot;;
-</string>
-            </property>
-            <property name="textInteractionFlags">
-             <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="clearReceivedTextButton">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>64</height>
-             </size>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">font: 14pt &quot;Sans Serif&quot;;
-background: none;
-
-</string>
-            </property>
-            <property name="text">
-             <string>Clear</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
         <widget class="QWidget" name="tab_4">
          <attribute name="title">
           <string>Tune</string>
@@ -617,6 +572,51 @@ color: rgb(203, 0, 0);</string>
              </widget>
             </item>
            </layout>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="tab_2">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <attribute name="title">
+          <string>Data</string>
+         </attribute>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <widget class="QPlainTextEdit" name="receivedTextEdit">
+            <property name="styleSheet">
+             <string notr="true">background: transparent;
+background-color: rgb(255, 255, 255, 180);
+font: 12pt &quot;Sans Serif&quot;;
+</string>
+            </property>
+            <property name="textInteractionFlags">
+             <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="clearReceivedTextButton">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>64</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">font: 14pt &quot;Sans Serif&quot;;
+background: none;
+
+</string>
+            </property>
+            <property name="text">
+             <string>Clear</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
