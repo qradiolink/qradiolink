@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>662</width>
-    <height>504</height>
+    <width>718</width>
+    <height>540</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -558,15 +558,15 @@ color: rgb(203, 0, 0);</string>
             <item row="3" column="1">
              <widget class="QWidget" name="widget_const" native="true">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
               <property name="maximumSize">
                <size>
-                <width>512</width>
-                <height>512</height>
+                <width>800</width>
+                <height>600</height>
                </size>
               </property>
              </widget>
@@ -872,11 +872,6 @@ background-color: rgb(0, 85, 127);</string>
             <pixmap resource="resources.qrc">:/res/Button-Blank-Red-icon.png</pixmap>
            </property>
           </widget>
-          <zorder>blueLED</zorder>
-          <zorder>greenLED</zorder>
-          <zorder>yellowLED</zorder>
-          <zorder>redLED</zorder>
-          <zorder>tabWidget</zorder>
          </widget>
         </item>
         <item>
@@ -943,7 +938,7 @@ background-color: rgb(0, 85, 127);</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>662</width>
+     <width>718</width>
      <height>19</height>
     </rect>
    </property>
