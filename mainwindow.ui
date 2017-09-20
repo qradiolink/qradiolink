@@ -62,7 +62,7 @@
 </string>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <property name="iconSize">
          <size>
@@ -470,10 +470,13 @@ QSlider::handle:horizontal {
          <layout class="QVBoxLayout" name="verticalLayout_4">
           <item>
            <layout class="QGridLayout" name="gridLayout_3">
+            <property name="sizeConstraint">
+             <enum>QLayout::SetMaximumSize</enum>
+            </property>
             <item row="0" column="1">
              <widget class="QSlider" name="tuneSlider">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -481,7 +484,7 @@ QSlider::handle:horizontal {
               <property name="minimumSize">
                <size>
                 <width>512</width>
-                <height>30</height>
+                <height>40</height>
                </size>
               </property>
               <property name="styleSheet">
@@ -520,6 +523,18 @@ QSlider::handle:horizontal {
             </item>
             <item row="4" column="1">
              <widget class="QWidget" name="widget_rssi" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>400</width>
+                <height>50</height>
+               </size>
+              </property>
               <property name="maximumSize">
                <size>
                 <width>16777215</width>
@@ -531,7 +546,7 @@ QSlider::handle:horizontal {
             <item row="0" column="0">
              <widget class="QCommandLinkButton" name="autotuneButton">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -539,7 +554,7 @@ QSlider::handle:horizontal {
               <property name="maximumSize">
                <size>
                 <width>100</width>
-                <height>16777215</height>
+                <height>40</height>
                </size>
               </property>
               <property name="styleSheet">
@@ -558,15 +573,21 @@ color: rgb(203, 0, 0);</string>
             <item row="3" column="1">
              <widget class="QWidget" name="widget_const" native="true">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+               <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="minimumSize">
+               <size>
+                <width>550</width>
+                <height>250</height>
+               </size>
+              </property>
               <property name="maximumSize">
                <size>
-                <width>800</width>
-                <height>600</height>
+                <width>550</width>
+                <height>550</height>
                </size>
               </property>
              </widget>
