@@ -339,8 +339,9 @@ color: rgb(255, 255, 255);</string>
                </font>
               </property>
               <property name="styleSheet">
-               <string notr="true">color: rgb(0, 0, 127);
-background-color: rgb(255, 255, 255);</string>
+               <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(0, 85, 127);
+</string>
               </property>
               <property name="frameShape">
                <enum>QFrame::Box</enum>
@@ -669,14 +670,14 @@ color: rgb(203, 0, 0);</string>
                 <property name="font">
                  <font>
                   <family>Sans Serif</family>
-                  <pointsize>12</pointsize>
+                  <pointsize>10</pointsize>
                   <weight>50</weight>
                   <italic>false</italic>
                   <bold>false</bold>
                  </font>
                 </property>
                 <property name="styleSheet">
-                 <string notr="true">font: 12pt &quot;Sans Serif&quot;;</string>
+                 <string notr="true">font: 10pt &quot;Sans Serif&quot;;</string>
                 </property>
                </widget>
               </widget>

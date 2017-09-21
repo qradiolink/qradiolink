@@ -164,11 +164,12 @@ int main(int argc, char *argv[])
     rssi_gui->set_update_time(0.2);
 
     const std::string fft_name = "fft";
-    gr::qtgui::sink_c::sptr fft_gui = gr::qtgui::sink_c::make(8048,gr::filter::firdes::WIN_BLACKMAN_HARRIS,
-                                                          0,500000,fft_name,true,true,false,false,(&w)->get_fft_gui());
+    gr::qtgui::sink_c::sptr fft_gui = gr::qtgui::sink_c::make(8096,gr::filter::firdes::WIN_BLACKMAN_HARRIS,
+                                                          0,1000000,fft_name,true,true,false,false,(&w)->get_fft_gui());
 
     fft_gui->set_update_time(0.1);
-
+    fft_gui->qwidget()->resize(700,450);
+    //fft_gui->qwidget()->
 
     QThread *t4 = new QThread;
     t4->setObjectName("radioop");
