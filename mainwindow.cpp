@@ -42,6 +42,7 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
     _transmitting_radio = false;
     _constellation_gui = ui->widget_const;
     _rssi_gui = ui->widget_rssi;
+    _fft_gui = ui->widget_fft;
 
     QFileInfo new_file = setupSounds("end_beep.wav");
     _end_beep = Phonon::createPlayer(Phonon::MusicCategory,

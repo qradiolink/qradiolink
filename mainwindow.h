@@ -82,6 +82,7 @@ public:
     ~MainWindow();
     QWidget* get_const_gui() {return _constellation_gui;}
     QWidget* get_rssi_gui() {return _rssi_gui;}
+    QWidget* get_fft_gui() {return _fft_gui;}
 
 
     QFileInfo setupSounds(QString name);
@@ -91,6 +92,7 @@ private:
     bool _transmitting_radio;
     QWidget *_constellation_gui;
     QWidget *_rssi_gui;
+    QWidget *_fft_gui;
     Phonon::MediaObject *_end_beep;
     QPixmap *_video_img;
 

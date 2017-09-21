@@ -16,7 +16,7 @@
 
 #include "radioop.h"
 
-RadioOp::RadioOp(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui,
+RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui::const_sink_c::sptr const_gui,
                  gr::qtgui::number_sink::sptr rssi_gui, QObject *parent) :
     QObject(parent)
 {
@@ -42,7 +42,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui,
     _led_timer = new QTimer(this);
     _rand_frame_data = new unsigned char[5000];
     QObject::connect(_led_timer, SIGNAL(timeout()), this, SLOT(syncIssue()));
-    _modem = new gr_modem(_settings, const_gui, rssi_gui);
+    _modem = new gr_modem(_settings, fft_gui,const_gui, rssi_gui);
     QObject::connect(_modem,SIGNAL(textReceived(QString)),this,SLOT(textReceived(QString)));
     QObject::connect(_modem,SIGNAL(callsignReceived(QString)),this,SLOT(callsignReceived(QString)));
     QObject::connect(_modem,SIGNAL(audioFrameReceived()),this,SLOT(audioFrameReceived()));

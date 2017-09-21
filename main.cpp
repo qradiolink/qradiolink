@@ -40,6 +40,7 @@
 #include "station.h"
 #include "radioop.h"
 #include <gnuradio/qtgui/const_sink_c.h>
+#include <gnuradio/qtgui/sink_c.h>
 #include <gnuradio/qtgui/number_sink.h>
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
@@ -162,9 +163,16 @@ int main(int argc, char *argv[])
     rssi_gui->qwidget()->resize(700,50);
     rssi_gui->set_update_time(0.2);
 
+    const std::string fft_name = "fft";
+    gr::qtgui::sink_c::sptr fft_gui = gr::qtgui::sink_c::make(8048,gr::filter::firdes::WIN_BLACKMAN_HARRIS,
+                                                          0,500000,fft_name,true,true,false,false,(&w)->get_fft_gui());
+
+    fft_gui->set_update_time(0.1);
+
+
     QThread *t4 = new QThread;
     t4->setObjectName("radioop");
-    RadioOp *radio_op = new RadioOp(settings, const_gui, rssi_gui);
+    RadioOp *radio_op = new RadioOp(settings, fft_gui,const_gui, rssi_gui);
     radio_op->moveToThread(t4);
     QObject::connect(t4, SIGNAL(started()), radio_op, SLOT(run()));
     QObject::connect(radio_op, SIGNAL(finished()), t4, SLOT(quit()));

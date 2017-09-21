@@ -11,6 +11,7 @@
 #include <gnuradio/analog/quadrature_demod_cf.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/qtgui/const_sink_c.h>
+#include <gnuradio/qtgui/sink_c.h>
 #include <gnuradio/qtgui/number_sink.h>
 #include <gnuradio/blocks/complex_to_mag_squared.h>
 #include <gnuradio/blocks/nlog10_ff.h>
@@ -24,7 +25,9 @@ class gr_demod_nbfm_sdr : public QObject
 {
     Q_OBJECT
 public:
-    explicit gr_demod_nbfm_sdr(gr::qtgui::const_sink_c::sptr const_gui, gr::qtgui::number_sink::sptr rssi_gui, QObject *parent = 0, int samp_rate=8000, int carrier_freq=1600,
+    explicit gr_demod_nbfm_sdr(gr::qtgui::sink_c::sptr fft_gui,
+                               gr::qtgui::const_sink_c::sptr const_gui, gr::qtgui::number_sink::sptr rssi_gui,
+                               QObject *parent = 0, int samp_rate=8000, int carrier_freq=1600,
                                int filter_width=1200, float mod_index=1, float device_frequency=434000000,
                                float rf_gain=50);
 
@@ -42,6 +45,7 @@ private:
     gr::filter::pfb_arb_resampler_ccf::sptr _resampler;
     gr::filter::fft_filter_ccf::sptr _filter;
     gr::qtgui::const_sink_c::sptr _constellation;
+    gr::qtgui::sink_c::sptr _fft_gui;
     gr::blocks::complex_to_mag_squared::sptr _mag_squared;
     gr::blocks::nlog10_ff::sptr _log10;
     gr::filter::single_pole_iir_filter_ff::sptr _single_pole_filter;

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>718</width>
+    <width>750</width>
     <height>540</height>
    </rect>
   </property>
@@ -62,7 +62,7 @@
 </string>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <property name="iconSize">
          <size>
@@ -464,6 +464,18 @@ QSlider::handle:horizontal {
          </layout>
         </widget>
         <widget class="QWidget" name="tab_4">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>550</width>
+           <height>300</height>
+          </size>
+         </property>
          <attribute name="title">
           <string>Tune</string>
          </attribute>
@@ -471,7 +483,7 @@ QSlider::handle:horizontal {
           <item>
            <layout class="QGridLayout" name="gridLayout_3">
             <property name="sizeConstraint">
-             <enum>QLayout::SetMaximumSize</enum>
+             <enum>QLayout::SetDefaultConstraint</enum>
             </property>
             <item row="0" column="1">
              <widget class="QSlider" name="tuneSlider">
@@ -570,8 +582,8 @@ color: rgb(203, 0, 0);</string>
               </property>
              </widget>
             </item>
-            <item row="3" column="1">
-             <widget class="QWidget" name="widget_const" native="true">
+            <item row="2" column="1">
+             <widget class="QTabWidget" name="tabWidget_2">
               <property name="sizePolicy">
                <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
                 <horstretch>0</horstretch>
@@ -580,16 +592,94 @@ color: rgb(203, 0, 0);</string>
               </property>
               <property name="minimumSize">
                <size>
-                <width>550</width>
+                <width>600</width>
                 <height>250</height>
                </size>
               </property>
-              <property name="maximumSize">
-               <size>
-                <width>550</width>
-                <height>550</height>
-               </size>
+              <property name="styleSheet">
+               <string notr="true">font: 14pt &quot;Sans Serif&quot;;</string>
               </property>
+              <property name="currentIndex">
+               <number>0</number>
+              </property>
+              <widget class="QWidget" name="tab_7">
+               <attribute name="title">
+                <string>Constellation</string>
+               </attribute>
+               <widget class="QWidget" name="widget_const" native="true">
+                <property name="geometry">
+                 <rect>
+                  <x>-10</x>
+                  <y>-30</y>
+                  <width>550</width>
+                  <height>258</height>
+                 </rect>
+                </property>
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>550</width>
+                  <height>250</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>550</width>
+                  <height>550</height>
+                 </size>
+                </property>
+               </widget>
+              </widget>
+              <widget class="QWidget" name="tab_8">
+               <attribute name="title">
+                <string>Spectrum</string>
+               </attribute>
+               <widget class="QWidget" name="widget_fft" native="true">
+                <property name="geometry">
+                 <rect>
+                  <x>1</x>
+                  <y>1</y>
+                  <width>1024</width>
+                  <height>450</height>
+                 </rect>
+                </property>
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>550</width>
+                  <height>250</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>1024</width>
+                  <height>450</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <family>Sans Serif</family>
+                  <pointsize>12</pointsize>
+                  <weight>50</weight>
+                  <italic>false</italic>
+                  <bold>false</bold>
+                 </font>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">font: 12pt &quot;Sans Serif&quot;;</string>
+                </property>
+               </widget>
+              </widget>
              </widget>
             </item>
            </layout>
@@ -959,7 +1049,7 @@ background-color: rgb(0, 85, 127);</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>718</width>
+     <width>750</width>
      <height>19</height>
     </rect>
    </property>

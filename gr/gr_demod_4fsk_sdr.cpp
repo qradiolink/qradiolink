@@ -16,7 +16,7 @@
 
 #include "gr_demod_4fsk_sdr.h"
 
-gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(gr::qtgui::const_sink_c::sptr const_gui,
+gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui::const_sink_c::sptr const_gui,
                                      gr::qtgui::number_sink::sptr rssi_gui, QObject *parent,
                                      int sps, int samp_rate, int carrier_freq,
                                      int filter_width, float mod_index, float device_frequency, float rf_gain) :
@@ -111,8 +111,10 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(gr::qtgui::const_sink_c::sptr const_gui,
         _osmosdr_source->set_gain_mode(true);
     }
     _constellation = const_gui;
+    _fft_gui = fft_gui;
     _top_block->connect(_osmosdr_source,0,_multiply,0);
     _top_block->connect(_signal_source,0,_multiply,1);
+    _top_block->connect(_multiply,0,_fft_gui,0);
     _top_block->connect(_multiply,0,_resampler,0);
     _top_block->connect(_resampler,0,_filter,0);
     _top_block->connect(_filter,0,_freq_demod,0);

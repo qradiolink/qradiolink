@@ -46,6 +46,8 @@
 #include "gr_mod_ssb_sdr.h"
 #include "gr_demod_ssb_sdr.h"
 #include <gnuradio/qtgui/number_sink.h>
+#include <gnuradio/qtgui/const_sink_c.h>
+#include <gnuradio/qtgui/sink_c.h>
 
 
 #include <stdio.h>
@@ -88,7 +90,7 @@ class gr_modem : public QObject
 {
     Q_OBJECT
 public:
-    explicit gr_modem(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui,
+    explicit gr_modem(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui::const_sink_c::sptr const_gui,
                       gr::qtgui::number_sink::sptr rssi_gui, QObject *parent = 0);
     ~gr_modem();
     long _frequency_found;
@@ -163,6 +165,7 @@ private:
 
     gr::qtgui::const_sink_c::sptr _const_gui;
     gr::qtgui::number_sink::sptr _rssi_gui;
+    gr::qtgui::sink_c::sptr _fft_gui;
 
     enum
     {
