@@ -399,8 +399,8 @@ void RadioOp::toggleMode(int value)
     {
     case 0:
         _mode = gr_modem_types::ModemTypeBPSK2000;
-        _tune_limit_lower = -2000;
-        _tune_limit_upper = 2000;
+        _tune_limit_lower = -5000;
+        _tune_limit_upper = 5000;
         _step_hz = 1;
         break;
     case 1:
@@ -417,14 +417,14 @@ void RadioOp::toggleMode(int value)
         break;
     case 3:
         _mode = gr_modem_types::ModemType4FSK2000;
-        _tune_limit_lower = -2000;
-        _tune_limit_upper = 2000;
+        _tune_limit_lower = -5000;
+        _tune_limit_upper = 5000;
         _step_hz = 1;
         break;
     case 4:
         _mode = gr_modem_types::ModemTypeQPSK2000;
-        _tune_limit_lower = -2000;
-        _tune_limit_upper = 2000;
+        _tune_limit_lower = -5000;
+        _tune_limit_upper = 5000;
         _step_hz = 1;
         break;
     case 5:

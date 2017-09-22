@@ -155,7 +155,7 @@ int main(int argc, char *argv[])
     const_gui->set_size(550,300);
     const_gui->set_update_time(0.2);
 
-    const std::string rssi_name = "rssi";
+
     gr::qtgui::number_sink::sptr rssi_gui = gr::qtgui::number_sink::make(4,0.5,gr::qtgui::NUM_GRAPH_HORIZ,1,(&w)->get_rssi_gui());
     rssi_gui->set_max(0,10);
     rssi_gui->set_min(0,-120);
