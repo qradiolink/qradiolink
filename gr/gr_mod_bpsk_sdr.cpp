@@ -24,6 +24,9 @@ gr_mod_bpsk_sdr::gr_mod_bpsk_sdr(QObject *parent, int sps, int samp_rate, int ca
     std::vector<gr_complex> constellation;
     constellation.push_back(-1);
     constellation.push_back(1);
+    std::vector<int> polys;
+    polys.push_back(109);
+    polys.push_back(79);
 
     const std::string device_args = "uhd";
     _device_frequency = device_frequency;
@@ -36,6 +39,8 @@ gr_mod_bpsk_sdr::gr_mod_bpsk_sdr(QObject *parent, int sps, int samp_rate, int ca
     _vector_source = make_gr_vector_source();
     _packed_to_unpacked = gr::blocks::packed_to_unpacked_bb::make(1,gr::GR_MSB_FIRST);
     _scrambler = gr::digital::scrambler_bb::make(0x8A, 0x7F ,7);
+    gr::fec::code::cc_encoder::sptr ccsds = gr::fec::code::cc_encoder::make(10*8,7,2,polys,0,CC_TERMINATED);
+    _ccsds_encoder = gr::fec::encoder::make(ccsds,1,1);
     _diff_encoder = gr::digital::diff_encoder_bb::make(2);
 
     _chunks_to_symbols = gr::digital::chunks_to_symbols_bc::make(constellation);
@@ -59,7 +64,8 @@ gr_mod_bpsk_sdr::gr_mod_bpsk_sdr(QObject *parent, int sps, int samp_rate, int ca
 
     _top_block->connect(_vector_source,0,_packed_to_unpacked,0);
     _top_block->connect(_packed_to_unpacked,0,_scrambler,0);
-    _top_block->connect(_scrambler,0,_diff_encoder,0);
+    _top_block->connect(_scrambler,0,_ccsds_encoder,0);
+    _top_block->connect(_ccsds_encoder,0,_diff_encoder,0);
     _top_block->connect(_diff_encoder,0,_chunks_to_symbols,0);
     _top_block->connect(_chunks_to_symbols,0,_repeat,0);
 

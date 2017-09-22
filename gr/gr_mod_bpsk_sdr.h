@@ -22,7 +22,9 @@
 #include <gnuradio/blocks/repeat.h>
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/digital/scrambler_bb.h>
+#include <gnuradio/fec/cc_encoder.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
+#include <gnuradio/fec/cc_common.h>
 #include <osmosdr/sink.h>
 #include <vector>
 #include "gr_vector_source.h"
@@ -53,6 +55,7 @@ private:
     gr::filter::pfb_arb_resampler_ccf::sptr _shaping_filter;
     gr::blocks::multiply_const_cc::sptr _amplify;
     gr::digital::diff_encoder_bb::sptr _diff_encoder;
+    gr::fec::encoder::sptr _ccsds_encoder;
     gr::digital::scrambler_bb::sptr _scrambler;
     gr::blocks::repeat::sptr _repeat;
     gr::filter::fft_filter_ccf::sptr _filter;

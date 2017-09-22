@@ -26,7 +26,7 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     const std::string device_args = "rtl=0";
     const std::string device_antenna = "TX/RX";
     _device_frequency = device_frequency;
-    _samples_per_symbol = sps*2/25;
+    _samples_per_symbol = sps/25;
     _samp_rate =samp_rate;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
@@ -35,6 +35,9 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
 
     float rerate = (float)_target_samp_rate/(float)_samp_rate;
 
+    std::vector<int> polys;
+    polys.push_back(109);
+    polys.push_back(79);
 
     double cutoff = 0.4*rerate;
     double trans_width = 0.2*rerate;
@@ -61,6 +64,8 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _complex_to_real = gr::blocks::complex_to_real::make();
     _binary_slicer = gr::digital::binary_slicer_fb::make();
     _diff_decoder = gr::digital::diff_decoder_bb::make(2);
+    gr::fec::code::cc_decoder::sptr cc_decoder = gr::fec::code::cc_decoder::make(10*8,7,2,polys,0,-1,CC_TERMINATED);
+    _fec_decoder = gr::fec::decoder::make(cc_decoder,1,1);
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
     _unpacked_to_packed = gr::blocks::unpacked_to_packed_bb::make(1,gr::GR_MSB_FIRST);
     _vector_sink = make_gr_vector_sink();
@@ -108,7 +113,9 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _top_block->connect(_costas_loop,0,_constellation,0);
     _top_block->connect(_complex_to_real,0,_binary_slicer,0);
     _top_block->connect(_binary_slicer,0,_diff_decoder,0);
-    _top_block->connect(_diff_decoder,0,_descrambler,0);
+
+    _top_block->connect(_diff_decoder,0,_fec_decoder,0);
+    _top_block->connect(_fec_decoder,0,_descrambler,0);
     _top_block->connect(_descrambler,0,_vector_sink,0);
 
     _top_block->connect(_filter,0,_mag_squared,0);
