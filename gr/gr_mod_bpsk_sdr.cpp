@@ -39,7 +39,7 @@ gr_mod_bpsk_sdr::gr_mod_bpsk_sdr(QObject *parent, int sps, int samp_rate, int ca
     _vector_source = make_gr_vector_source();
     _packed_to_unpacked = gr::blocks::packed_to_unpacked_bb::make(1,gr::GR_MSB_FIRST);
     _scrambler = gr::digital::scrambler_bb::make(0x8A, 0x7F ,7);
-    gr::fec::code::cc_encoder::sptr ccsds = gr::fec::code::cc_encoder::make(10*8,7,2,polys,0,CC_TERMINATED);
+    gr::fec::code::cc_encoder::sptr ccsds = gr::fec::code::cc_encoder::make(10*8,7,2,polys,0,CC_STREAMING);
     _ccsds_encoder = gr::fec::encoder::make(ccsds,1,1);
     _diff_encoder = gr::digital::diff_encoder_bb::make(2);
 
@@ -64,9 +64,9 @@ gr_mod_bpsk_sdr::gr_mod_bpsk_sdr(QObject *parent, int sps, int samp_rate, int ca
 
     _top_block->connect(_vector_source,0,_packed_to_unpacked,0);
     _top_block->connect(_packed_to_unpacked,0,_scrambler,0);
-    _top_block->connect(_scrambler,0,_ccsds_encoder,0);
-    _top_block->connect(_ccsds_encoder,0,_diff_encoder,0);
-    _top_block->connect(_diff_encoder,0,_chunks_to_symbols,0);
+    _top_block->connect(_scrambler,0,_diff_encoder,0);
+    _top_block->connect(_diff_encoder,0,_ccsds_encoder,0);
+    _top_block->connect(_ccsds_encoder,0,_chunks_to_symbols,0);
     _top_block->connect(_chunks_to_symbols,0,_repeat,0);
 
     _top_block->connect(_repeat,0,_amplify,0);
