@@ -68,6 +68,7 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _fec_decoder = gr::fec::decoder::make(cc_decoder,1,1);
     _multiply_const_fec = gr::blocks::multiply_const_ff::make(48.0);
     _float_to_uchar = gr::blocks::float_to_uchar::make();
+    _add_const_fec = gr::blocks::add_const_ff::make(128.0);
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
     _unpacked_to_packed = gr::blocks::unpacked_to_packed_bb::make(1,gr::GR_MSB_FIRST);
     _vector_sink = make_gr_vector_sink();
@@ -114,7 +115,8 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _top_block->connect(_costas_loop,0,_complex_to_real,0);
     _top_block->connect(_costas_loop,0,_constellation,0);
     _top_block->connect(_complex_to_real,0,_multiply_const_fec,0);
-    _top_block->connect(_multiply_const_fec,0,_float_to_uchar,0);
+    _top_block->connect(_multiply_const_fec,0,_add_const_fec,0);
+    _top_block->connect(_add_const_fec,0,_float_to_uchar,0);
     _top_block->connect(_float_to_uchar,0,_fec_decoder,0);
     _top_block->connect(_fec_decoder,0,_diff_decoder,0);
     //_top_block->connect(_packed_to_unpacked,0,_diff_decoder,0);
