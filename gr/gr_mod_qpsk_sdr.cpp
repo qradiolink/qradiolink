@@ -61,7 +61,7 @@ gr_mod_qpsk_sdr::gr_mod_qpsk_sdr(QObject *parent, int sps, int samp_rate, int ca
                                                         1, 0.35, nfilts * 11 * _samples_per_symbol);
     //_shaping_filter = gr::filter::pfb_arb_resampler_ccf::make(_samples_per_symbol, rrc_taps, nfilts);
     _repeat = gr::blocks::repeat::make(8, _samples_per_symbol);
-    _amplify = gr::blocks::multiply_const_cc::make(0.2,1);
+    _amplify = gr::blocks::multiply_const_cc::make(0.33,1);
     _filter = gr::filter::fft_filter_ccf::make(
                 1,gr::filter::firdes::low_pass(
                     1, _samp_rate, _filter_width, filter_slope,gr::filter::firdes::WIN_HAMMING));
