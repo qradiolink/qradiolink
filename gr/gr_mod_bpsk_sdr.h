@@ -6,6 +6,7 @@
 #include <gnuradio/top_block.h>
 #include <gnuradio/blocks/vector_source_b.h>
 #include <gnuradio/blocks/packed_to_unpacked_bb.h>
+#include <gnuradio/blocks/unpacked_to_packed_bb.h>
 #include <gnuradio/endianness.h>
 #include <gnuradio/digital/chunks_to_symbols_bc.h>
 #include <gnuradio/blocks/repeat.h>
@@ -51,6 +52,8 @@ private:
     gr::top_block_sptr _top_block;
     gr_vector_source_sptr _vector_source;
     gr::blocks::packed_to_unpacked_bb::sptr _packed_to_unpacked;
+    gr::blocks::packed_to_unpacked_bb::sptr _packed_to_unpacked2;
+    gr::blocks::unpacked_to_packed_bb::sptr _unpacked_to_packed;
     gr::digital::chunks_to_symbols_bc::sptr _chunks_to_symbols;
     gr::filter::pfb_arb_resampler_ccf::sptr _shaping_filter;
     gr::blocks::multiply_const_cc::sptr _amplify;

@@ -13,6 +13,7 @@
 #include <gnuradio/digital/clock_recovery_mm_cc.h>
 #include <gnuradio/digital/binary_slicer_fb.h>
 #include <gnuradio/blocks/unpacked_to_packed_bb.h>
+#include <gnuradio/blocks/packed_to_unpacked_bb.h>
 #include <gnuradio/blocks/float_to_complex.h>
 #include <gnuradio/digital/costas_loop_cc.h>
 #include <gnuradio/digital/diff_decoder_bb.h>
@@ -73,6 +74,7 @@ private:
     gr::digital::clock_recovery_mm_cc::sptr _clock_recovery;
     gr::digital::binary_slicer_fb::sptr _binary_slicer;
     gr::digital::costas_loop_cc::sptr _costas_loop;
+    gr::blocks::packed_to_unpacked_bb::sptr _packed_to_unpacked;
     gr::digital::diff_decoder_bb::sptr _diff_decoder;
     //gr::filter::pfb_arb_resampler_ccf::sptr _resampler;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;

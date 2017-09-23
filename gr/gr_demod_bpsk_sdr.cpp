@@ -36,8 +36,8 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     float rerate = (float)_target_samp_rate/(float)_samp_rate;
 
     std::vector<int> polys;
-    polys.push_back(109);
     polys.push_back(79);
+    polys.push_back(109);
 
     double cutoff = 0.4*rerate;
     double trans_width = 0.2*rerate;
@@ -66,6 +66,7 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _diff_decoder = gr::digital::diff_decoder_bb::make(2);
     gr::fec::code::cc_decoder::sptr cc_decoder = gr::fec::code::cc_decoder::make(10*8,7,2,polys,0,-1,CC_STREAMING);
     _fec_decoder = gr::fec::decoder::make(cc_decoder,4,1);
+    _packed_to_unpacked = gr::blocks::packed_to_unpacked_bb::make(1,gr::GR_MSB_FIRST);
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
     _unpacked_to_packed = gr::blocks::unpacked_to_packed_bb::make(1,gr::GR_MSB_FIRST);
     _vector_sink = make_gr_vector_sink();
@@ -113,7 +114,7 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _top_block->connect(_costas_loop,0,_constellation,0);
     _top_block->connect(_complex_to_real,0,_fec_decoder,0);
     _top_block->connect(_fec_decoder,0,_diff_decoder,0);
-
+    //_top_block->connect(_packed_to_unpacked,0,_diff_decoder,0);
     _top_block->connect(_diff_decoder,0,_descrambler,0);
     //_top_block->connect(_fec_decoder,0,_descrambler,0);
     _top_block->connect(_descrambler,0,_vector_sink,0);
