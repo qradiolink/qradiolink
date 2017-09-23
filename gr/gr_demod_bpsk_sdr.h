@@ -26,6 +26,7 @@
 #include <gnuradio/filter/freq_xlating_fir_filter_ccf.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/digital/descrambler_bb.h>
+#include <gnuradio/blocks/float_to_uchar.h>
 #include <gnuradio/fec/decoder.h>
 #include <gnuradio/fec/cc_decoder.h>
 #include <gnuradio/fec/cc_common.h>
@@ -80,6 +81,8 @@ private:
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
     gr::filter::fft_filter_ccf::sptr _filter;
     gr::digital::descrambler_bb::sptr _descrambler;
+    gr::blocks::multiply_const_ff::sptr _multiply_const_fec;
+    gr::blocks::float_to_uchar::sptr _float_to_uchar;
     gr::fec::decoder::sptr _fec_decoder;
     gr::qtgui::const_sink_c::sptr _constellation;
     gr::qtgui::sink_c::sptr _fft_gui;
