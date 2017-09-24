@@ -463,7 +463,7 @@ void RadioOp::toggleMode(int value)
 
 void RadioOp::fineTuneFreq(long center_freq)
 {
-    _modem->tune(434025000 + center_freq*10, false);
+    _modem->tune(_modem->_requested_frequency_hz + center_freq, false);
 }
 
 void RadioOp::tuneFreq(long center_freq)

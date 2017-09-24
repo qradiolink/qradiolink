@@ -71,7 +71,7 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     //            _target_samp_rate);
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
                                 1, _target_samp_rate, _filter_width,600,gr::filter::firdes::WIN_HAMMING) );
-    _freq_demod = gr::analog::quadrature_demod_cf::make(sps/(4*M_PI/2));
+    _freq_demod = gr::analog::quadrature_demod_cf::make(sps/(2*M_PI/2));
     _float_to_complex = gr::blocks::float_to_complex::make();
     _symbol_filter = gr::filter::fft_filter_ccf::make(1,symbol_filter_taps);
     float gain_mu = 0.025;
