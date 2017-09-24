@@ -117,9 +117,7 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _top_block->connect(_add_const_fec,0,_float_to_uchar,0);
     _top_block->connect(_float_to_uchar,0,_fec_decoder,0);
     _top_block->connect(_fec_decoder,0,_diff_decoder,0);
-    //_top_block->connect(_packed_to_unpacked,0,_diff_decoder,0);
     _top_block->connect(_diff_decoder,0,_descrambler,0);
-    //_top_block->connect(_fec_decoder,0,_descrambler,0);
     _top_block->connect(_descrambler,0,_vector_sink,0);
 
     _top_block->connect(_filter,0,_mag_squared,0);
