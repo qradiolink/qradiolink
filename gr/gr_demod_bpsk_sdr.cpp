@@ -36,8 +36,8 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     float rerate = (float)_target_samp_rate/(float)_samp_rate;
 
     std::vector<int> polys;
-    polys.push_back(79);
     polys.push_back(109);
+    polys.push_back(79);
 
     double cutoff = 0.4*rerate;
     double trans_width = 0.2*rerate;

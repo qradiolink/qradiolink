@@ -25,8 +25,8 @@ gr_mod_bpsk_sdr::gr_mod_bpsk_sdr(QObject *parent, int sps, int samp_rate, int ca
     constellation.push_back(-1);
     constellation.push_back(1);
     std::vector<int> polys;
-    polys.push_back(79);
     polys.push_back(109);
+    polys.push_back(79);
 
     const std::string device_args = "uhd";
     _device_frequency = device_frequency;
