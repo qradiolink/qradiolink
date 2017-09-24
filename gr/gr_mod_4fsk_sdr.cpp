@@ -21,8 +21,7 @@ gr_mod_4fsk_sdr::gr_mod_4fsk_sdr(QObject *parent, int sps, int samp_rate, int ca
                                  int filter_width, float mod_index, float device_frequency, float rf_gain) :
     QObject(parent)
 {
-    //gr::digital::constellation_qpsk::sptr constellation = gr::digital::constellation_qpsk::make();
-    //std::vector<gr_complex> constellation_points = constellation->points();
+
     std::vector<float> constellation;
     constellation.push_back(-1.5);
     constellation.push_back(-0.5);

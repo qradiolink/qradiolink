@@ -1,6 +1,10 @@
 #include "gr_demod_nbfm_sdr.h"
 
-gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui::const_sink_c::sptr const_gui, gr::qtgui::number_sink::sptr rssi_gui, QObject *parent, int samp_rate, int carrier_freq, int filter_width, float mod_index, float device_frequency, float rf_gain) :
+gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(gr::qtgui::sink_c::sptr fft_gui,
+                                     gr::qtgui::const_sink_c::sptr const_gui,
+                                     gr::qtgui::number_sink::sptr rssi_gui, QObject *parent,
+                                     int samp_rate, int carrier_freq, int filter_width,
+                                     float mod_index, float device_frequency, float rf_gain) :
     QObject(parent)
 {
     _target_samp_rate = 48000;
@@ -21,14 +25,14 @@ gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     double trans_width = 0.2*rerate;
     unsigned int flt_size = 32;
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, 50000, 150000);
+    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, 2500, 2000);
     _resampler = gr::filter::pfb_arb_resampler_ccf::make(rerate, taps, flt_size);
     _signal_source = gr::analog::sig_source_c::make(_samp_rate,gr::analog::GR_COS_WAVE,-25000,1);
     _multiply = gr::blocks::multiply_cc::make();
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
                             1, _target_samp_rate, _filter_width,600,gr::filter::firdes::WIN_HAMMING) );
     _audio_sink = gr::audio::sink::make(_target_samp_rate,"", true);
-    _fm_demod = gr::analog::quadrature_demod_cf::make(2/M_PI);
+    _fm_demod = gr::analog::quadrature_demod_cf::make(_target_samp_rate/(2.0 * M_PI * _filter_width));
 
     _mag_squared = gr::blocks::complex_to_mag_squared::make();
     _single_pole_filter = gr::filter::single_pole_iir_filter_ff::make(0.04);
@@ -41,10 +45,11 @@ gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _osmosdr_source = osmosdr::source::make(device_args);
     _osmosdr_source->set_center_freq(_device_frequency-25000);
     _osmosdr_source->set_sample_rate(_samp_rate);
-    _osmosdr_source->set_freq_corr(40);
+    _osmosdr_source->set_freq_corr(39);
     _osmosdr_source->set_gain_mode(false);
     _osmosdr_source->set_antenna(device_antenna);
     osmosdr::gain_range_t range = _osmosdr_source->get_gain_range();
+
     if (!range.empty())
     {
         double gain =  range.start() + rf_gain*(range.stop()-range.start());
