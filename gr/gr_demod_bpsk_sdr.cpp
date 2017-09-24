@@ -39,11 +39,9 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     polys.push_back(109);
     polys.push_back(79);
 
-    double cutoff = 0.4*rerate;
-    double trans_width = 0.2*rerate;
     unsigned int flt_size = 32;
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, 50000, 150000);
+    std::vector<float> taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, _filter_width, 1200);
     //_resampler = gr::filter::pfb_arb_resampler_ccf::make(rerate, taps, flt_size);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1, 50, taps);
     _agc = gr::analog::agc2_cc::make(0.6e-1, 1e-3, 1, 1);

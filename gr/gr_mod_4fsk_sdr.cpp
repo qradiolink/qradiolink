@@ -21,8 +21,7 @@ gr_mod_4fsk_sdr::gr_mod_4fsk_sdr(QObject *parent, int sps, int samp_rate, int ca
                                  int filter_width, float mod_index, float device_frequency, float rf_gain) :
     QObject(parent)
 {
-    //gr::digital::constellation_qpsk::sptr constellation = gr::digital::constellation_qpsk::make();
-    //std::vector<gr_complex> constellation_points = constellation->points();
+
     std::vector<float> constellation;
     constellation.push_back(-1.5);
     constellation.push_back(-0.5);
@@ -52,7 +51,7 @@ gr_mod_4fsk_sdr::gr_mod_4fsk_sdr(QObject *parent, int sps, int samp_rate, int ca
     _map = gr::digital::map_bb::make(map);
 
     _chunks_to_symbols = gr::digital::chunks_to_symbols_bf::make(constellation);
-    _freq_modulator = gr::analog::frequency_modulator_fc::make((4*M_PI/2)/(_samples_per_symbol));
+    _freq_modulator = gr::analog::frequency_modulator_fc::make((2*M_PI/2)/(_samples_per_symbol));
     _repeat = gr::blocks::repeat::make(4, _samples_per_symbol);
     _amplify = gr::blocks::multiply_const_cc::make(0.33,1);
     _filter = gr::filter::fft_filter_ccf::make(

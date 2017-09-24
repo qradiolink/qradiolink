@@ -67,6 +67,7 @@ void gr_modem::initTX(int modem_type)
     if(modem_type == gr_modem_types::ModemTypeBPSK2000)
     {
         _gr_mod_bpsk_sdr = new gr_mod_bpsk_sdr(0, 125, 500000, 1700, 2400, 1, _requested_frequency_hz, 50);
+        _gr_mod_bpsk_sdr = new gr_mod_bpsk_sdr(0, 125, 250000, 1700, 1100, 1, _requested_frequency_hz, 50);
         _frame_length = 7;
         //_gr_mod_bpsk_sdr->start();
     }
@@ -84,13 +85,13 @@ void gr_modem::initTX(int modem_type)
     }
     else if(modem_type == gr_modem_types::ModemType4FSK20000)
     {
-        _gr_mod_4fsk_sdr = new gr_mod_4fsk_sdr(0, 50, 250000, 1700, 8500, 1, _requested_frequency_hz, 50);
+        _gr_mod_4fsk_sdr = new gr_mod_4fsk_sdr(0, 50, 250000, 1700, 5500, 1, _requested_frequency_hz, 50);
         _frame_length = 47;
         //_gr_mod_qpsk_sdr->start();
     }
     else if(modem_type == gr_modem_types::ModemType4FSK2000)
     {
-        _gr_mod_4fsk_sdr = new gr_mod_4fsk_sdr(0, 250, 250000, 1700, 1700, 1, _requested_frequency_hz, 50);
+        _gr_mod_4fsk_sdr = new gr_mod_4fsk_sdr(0, 250, 250000, 1700, 1100, 1, _requested_frequency_hz, 50);
         _frame_length = 7;
         //_gr_mod_qpsk_sdr->start();
     }
@@ -120,7 +121,7 @@ void gr_modem::initRX(int modem_type)
     if(modem_type == gr_modem_types::ModemTypeBPSK2000)
     {
         _gr_demod_bpsk_sdr = new gr_demod_bpsk_sdr(_fft_gui,
-                    _const_gui, _rssi_gui, 0,125,1000000,1700,2400,1, _requested_frequency_hz, 50);
+                    _const_gui, _rssi_gui, 0,125,1000000,1700,2400,1, _requested_frequency_hz, 0.9);
         _bit_buf_len = 7 *8;
         _frame_length = 7;
         _bit_buf = new unsigned char[_bit_buf_len];
@@ -129,7 +130,7 @@ void gr_modem::initRX(int modem_type)
     else if (modem_type == gr_modem_types::ModemTypeQPSK20000)
     {
         _gr_demod_qpsk_sdr = new gr_demod_qpsk_sdr(_fft_gui,
-                    _const_gui,_rssi_gui, 0,50,1000000,20000,1700,4000,1, _requested_frequency_hz, 50);
+                    _const_gui,_rssi_gui, 0,50,1000000,20000,1700,4000,1, _requested_frequency_hz, 0.9);
         _bit_buf_len = 47 *8;
         _frame_length = 47;
         _bit_buf = new unsigned char[_bit_buf_len];
@@ -138,7 +139,7 @@ void gr_modem::initRX(int modem_type)
     else if (modem_type == gr_modem_types::ModemTypeQPSK2000)
     {
         _gr_demod_qpsk_sdr = new gr_demod_qpsk_sdr(_fft_gui,
-                    _const_gui,_rssi_gui, 0,250,1000000,20000,1700,600,1, _requested_frequency_hz, 50);
+                    _const_gui,_rssi_gui, 0,250,1000000,20000,1700,700,1, _requested_frequency_hz, 0.9);
         _bit_buf_len = 7 *8;
         _frame_length = 7;
         _bit_buf = new unsigned char[_bit_buf_len];
@@ -147,7 +148,7 @@ void gr_modem::initRX(int modem_type)
     else if (modem_type == gr_modem_types::ModemType4FSK20000)
     {
         _gr_demod_4fsk_sdr = new gr_demod_4fsk_sdr(_fft_gui,
-                    _const_gui,_rssi_gui, 0,50,1000000,1700,8500,1, _requested_frequency_hz, 50);
+                    _const_gui,_rssi_gui, 0,50,1000000,1700,5500,1, _requested_frequency_hz, 0.9);
         _bit_buf_len = 47 *8;
         _frame_length = 47;
         _bit_buf = new unsigned char[_bit_buf_len];
@@ -156,7 +157,7 @@ void gr_modem::initRX(int modem_type)
     else if (modem_type == gr_modem_types::ModemType4FSK2000)
     {
         _gr_demod_4fsk_sdr = new gr_demod_4fsk_sdr(_fft_gui,
-                    _const_gui,_rssi_gui, 0,250,1000000,1700,1700,1, _requested_frequency_hz, 50);
+                    _const_gui,_rssi_gui, 0,250,1000000,1700,1100,1, _requested_frequency_hz, 0.9);
         _bit_buf_len = 7 *8;
         _frame_length = 7;
         _bit_buf = new unsigned char[_bit_buf_len];
@@ -165,19 +166,19 @@ void gr_modem::initRX(int modem_type)
     else if (modem_type == gr_modem_types::ModemTypeNBFM2500)
     {
         _gr_demod_nbfm_sdr = new gr_demod_nbfm_sdr(_fft_gui,
-                    _const_gui,_rssi_gui, 0, 1000000,1700,2500,1, _requested_frequency_hz, 50);
+                    _const_gui,_rssi_gui, 0, 1000000,1700,2500,1, _requested_frequency_hz, 0.9);
         //_gr_demod_nbfm_sdr->start();
     }
     else if (modem_type == gr_modem_types::ModemTypeSSB2500)
     {
         _gr_demod_ssb_sdr = new gr_demod_ssb_sdr(_fft_gui,
-                    _const_gui,_rssi_gui, 0, 1000000,1700,2500,1, _requested_frequency_hz, 50);
+                    _const_gui,_rssi_gui, 0, 1000000,1700,2500,1, _requested_frequency_hz, 0.9);
         //_gr_demod_ssb_sdr->start();
     }
     else if (modem_type == gr_modem_types::ModemTypeQPSKVideo)
     {
         _gr_demod_qpsk_sdr = new gr_demod_qpsk_sdr(_fft_gui,
-                    _const_gui,_rssi_gui, 0,2,1000000,250000,1700,65000,1, _requested_frequency_hz, 50);
+                    _const_gui,_rssi_gui, 0,2,1000000,250000,1700,65000,1, _requested_frequency_hz, 0.9);
         _bit_buf_len = 3122 *8;
         _frame_length = 3122;
         _bit_buf = new unsigned char[_bit_buf_len];
@@ -384,10 +385,10 @@ void gr_modem::tune(long center_freq, bool sync)
     if(_gr_demod_ssb_sdr)
         _gr_demod_ssb_sdr->tune(center_freq);
 
-
+    _requested_frequency_hz = center_freq;
     if(!sync)
     {
-        _requested_frequency_hz = center_freq;
+
         if(_gr_mod_bpsk_sdr)
             _gr_mod_bpsk_sdr->tune(center_freq);
         if(_gr_mod_qpsk_sdr)

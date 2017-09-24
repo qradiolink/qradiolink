@@ -59,7 +59,7 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     gr::digital::constellation_expl_rect::sptr constellation = gr::digital::constellation_expl_rect::make(
                 constellation_points,pre_diff_code,2,4,1,1,1,const_map);
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, 50000, 150000);
+    std::vector<float> taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, _filter_width, 1000);
     std::vector<float> symbol_filter_taps = gr::filter::firdes::low_pass(1.0,
                                  _target_samp_rate, _target_samp_rate*0.75/_samples_per_symbol, _target_samp_rate*0.25/_samples_per_symbol);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1, 25, taps);
@@ -71,7 +71,7 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     //            _target_samp_rate);
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
                                 1, _target_samp_rate, _filter_width,600,gr::filter::firdes::WIN_HAMMING) );
-    _freq_demod = gr::analog::quadrature_demod_cf::make(sps/(4*M_PI/2));
+    _freq_demod = gr::analog::quadrature_demod_cf::make(sps/(2*M_PI/2));
     _float_to_complex = gr::blocks::float_to_complex::make();
     _symbol_filter = gr::filter::fft_filter_ccf::make(1,symbol_filter_taps);
     float gain_mu = 0.025;

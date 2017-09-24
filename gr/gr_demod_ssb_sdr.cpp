@@ -20,9 +20,6 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(gr::qtgui::sink_c::sptr fft_gui,
 
     float rerate = (float)_target_samp_rate/(float)_samp_rate;
 
-
-    double cutoff = 0.4*rerate;
-    double trans_width = 0.2*rerate;
     unsigned int flt_size = 32;
 
     std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, 50000, 150000);
