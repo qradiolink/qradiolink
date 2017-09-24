@@ -20,12 +20,9 @@ gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(gr::qtgui::sink_c::sptr fft_gui,
 
     float rerate = (float)_target_samp_rate/(float)_samp_rate;
 
-
-    double cutoff = 0.4*rerate;
-    double trans_width = 0.2*rerate;
     unsigned int flt_size = 32;
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, 2500, 2000);
+    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width, 1000);
     _resampler = gr::filter::pfb_arb_resampler_ccf::make(rerate, taps, flt_size);
     _signal_source = gr::analog::sig_source_c::make(_samp_rate,gr::analog::GR_COS_WAVE,-25000,1);
     _multiply = gr::blocks::multiply_cc::make();

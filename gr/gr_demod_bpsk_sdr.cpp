@@ -35,9 +35,6 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
 
     float rerate = (float)_target_samp_rate/(float)_samp_rate;
 
-
-    double cutoff = 0.4*rerate;
-    double trans_width = 0.2*rerate;
     unsigned int flt_size = 32;
 
     std::vector<float> taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, _filter_width, 1200);

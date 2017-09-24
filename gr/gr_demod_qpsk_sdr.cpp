@@ -75,16 +75,19 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
 
     float rerate = (float)_target_samp_rate/(float)_samp_rate;
 
-
-    double cutoff = 0.4*rerate;
-    double trans_width = 0.2*rerate;
     unsigned int flt_size = 32;
     gr::digital::constellation_expl_rect::sptr constellation = gr::digital::constellation_expl_rect::make(
                 constellation_points,pre_diff_code,4,2,2,1,1,const_map);
 
     std::vector<float> taps;
-
-    taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, _filter_width, 1000);
+    if(_target_samp_rate == 20000)
+    {
+        taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, _filter_width, 1000);
+    }
+    else
+    {
+        taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, _target_samp_rate/2, _target_samp_rate/2-1000);
+    }
 
 
 
