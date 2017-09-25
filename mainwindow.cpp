@@ -130,9 +130,12 @@ void MainWindow::displayText(QString text)
     //ui->tabWidget->setCurrentIndex(1);
 }
 
-void MainWindow::displayCallsign(QString text)
+void MainWindow::displayCallsign(QString callsign)
 {
-    ui->labelDisplayCallsign->setText(text);
+    ui->labelDisplayCallsign->setText(callsign);
+    QString text = "\n>>>> " + callsign + " start transmission >>>>\n";
+    ui->receivedTextEdit->setPlainText(ui->receivedTextEdit->toPlainText() + text);
+    ui->receivedTextEdit->verticalScrollBar()->setValue(ui->receivedTextEdit->verticalScrollBar()->maximum());
     //ui->tabWidget->setCurrentIndex(1);
 }
 
