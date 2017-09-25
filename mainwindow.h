@@ -27,6 +27,8 @@
 #include "mumbleclient.h"
 #include <math.h>
 #include "qtgui/freqctrl.h"
+#include <libconfig.h++>
+#include <iostream>
 
 namespace Ui {
 class MainWindow;
@@ -63,6 +65,7 @@ public slots:
     void displayImage(QImage img);
     void playEndBeep(int seconds);
     void enterFreq();
+    void saveConfig();
 
 signals:
     void startTransmission();
@@ -90,8 +93,7 @@ public:
     QWidget* get_rssi_gui() {return _rssi_gui;}
     QWidget* get_fft_gui() {return _fft_gui;}
 
-
-    QFileInfo setupSounds(QString name);
+    void readConfig(QFileInfo *config_file);
 private:
     Ui::MainWindow *ui;
     MumbleClient *_mumble_client;
@@ -101,6 +103,10 @@ private:
     QWidget *_fft_gui;
     Phonon::MediaObject *_end_beep;
     QPixmap *_video_img;
+    QFileInfo *_config_file;
+    QFileInfo setupSounds(QString name);
+    QFileInfo *setupConfig();
+
 
 
 };

@@ -17,6 +17,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+
 MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
@@ -46,6 +47,7 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
     QObject::connect(ui->rxSensitivitySlider,SIGNAL(valueChanged(int)),this,SLOT(setRxSensitivityDisplay(int)));
     QObject::connect(ui->modemTypeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(toggleMode(int)));
     QObject::connect(ui->autotuneButton,SIGNAL(toggled(bool)),this,SLOT(autoTune(bool)));
+    QObject::connect(ui->saveOptionsButton,SIGNAL(clicked()),this,SLOT(saveConfig()));
 
     QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
 
@@ -56,6 +58,8 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
     _fft_gui = ui->widget_fft;
 
     QFileInfo new_file = setupSounds("end_beep.wav");
+    _config_file = setupConfig();
+    readConfig(_config_file);
     _end_beep = Phonon::createPlayer(Phonon::MusicCategory,
                                  Phonon::MediaSource(new_file.absoluteFilePath()));
     _video_img = new QPixmap;
@@ -65,6 +69,69 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::readConfig(QFileInfo *config_file)
+{
+    libconfig::Config cfg;
+    try
+    {
+        cfg.readFile(config_file->absoluteFilePath().toStdString().c_str());
+    }
+    catch(const libconfig::FileIOException &fioex)
+    {
+        std::cerr << "I/O error while reading configuration file." << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    catch(const libconfig::ParseException &pex)
+    {
+        std::cerr << "Configuratio parse error at " << pex.getFile() << ":" << pex.getLine()
+                  << " - " << pex.getError() << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    try
+    {
+        ui->lineEditRXDev->setText(QString(cfg.lookup("rx_device_args")));
+        ui->lineEditTXDev->setText(QString(cfg.lookup("tx_device_args")));
+        ui->lineEditRXAntenna->setText(QString(cfg.lookup("rx_antenna")));
+        ui->lineEditTXAntenna->setText(QString(cfg.lookup("tx_antenna")));
+        ui->lineEditRXFreqCorrection->setText(QString(cfg.lookup("rx_freq_corr")));
+        ui->lineEditTXFreqCorrection->setText(QString(cfg.lookup("tx_freq_corr")));
+        ui->lineEditCallsign->setText(QString(cfg.lookup("callsign")));
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        ui->lineEditRXDev->setText("rtl=0");
+        ui->lineEditTXDev->setText("uhd");
+        ui->lineEditRXAntenna->setText("RX");
+        ui->lineEditTXAntenna->setText("TX/RX");
+        ui->lineEditRXFreqCorrection->setText("39");
+        ui->lineEditTXFreqCorrection->setText("0");
+        ui->lineEditCallsign->setText("CALL");
+        std::cerr << "Settings not found in configuration file." << std::endl;
+    }
+}
+
+void MainWindow::saveConfig()
+{
+    libconfig::Config cfg;
+    libconfig::Setting &root = cfg.getRoot();
+    root.add("tx_device_args",libconfig::Setting::TypeString) = ui->lineEditRXDev->text().toStdString();
+    root.add("rx_device_args",libconfig::Setting::TypeString) = ui->lineEditTXDev->text().toStdString();
+    root.add("rx_antenna",libconfig::Setting::TypeString) = ui->lineEditRXAntenna->text().toStdString();
+    root.add("tx_antenna",libconfig::Setting::TypeString) = ui->lineEditTXAntenna->text().toStdString();
+    root.add("rx_freq_corr",libconfig::Setting::TypeString) = ui->lineEditRXFreqCorrection->text().toStdString();
+    root.add("tx_freq_corr",libconfig::Setting::TypeString) = ui->lineEditTXFreqCorrection->text().toStdString();
+    root.add("callsign",libconfig::Setting::TypeString) = ui->lineEditCallsign->text().toStdString();
+    try
+    {
+        cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());
+    }
+    catch(const libconfig::FileIOException &fioex)
+    {
+        std::cerr << "I/O error while writing configuration file: " << _config_file->absoluteFilePath().toStdString() << std::endl;
+        exit(EXIT_FAILURE);
+    }
 }
 
 QFileInfo MainWindow::setupSounds(QString name)
@@ -88,6 +155,27 @@ QFileInfo MainWindow::setupSounds(QString name)
     }
 
     return new_file;
+}
+
+QFileInfo* MainWindow::setupConfig()
+{
+    QDir files = QDir::current();
+
+    QFileInfo new_file = files.filePath("qradiolink.cfg");
+    if(!new_file.exists())
+    {
+        QString config = "// Automatically generated\n";
+        QFile newfile(new_file.absoluteFilePath());
+
+        if (newfile.open(QIODevice::ReadWrite))
+        {
+            newfile.write(config.toStdString().c_str());
+            newfile.close();
+        }
+
+    }
+
+    return new QFileInfo(new_file);
 }
 
 void MainWindow::GUIendTransmission()
