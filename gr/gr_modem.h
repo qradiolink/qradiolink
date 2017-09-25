@@ -124,7 +124,7 @@ public slots:
     void startTX();
     void stopTX();
     void setTxPower(int value);
-    void setRxSensitivity(int value);
+    void setRxSensitivity(float value);
 private:
 
     Settings *_settings;

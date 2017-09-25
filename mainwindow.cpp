@@ -23,7 +23,7 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
     _mumble_client(client)
 {
     ui->setupUi(this);
-    ui->frameCtrlFreq->setup(10, 10U, 9000000000U, 1, UNITS_GHZ );
+    ui->frameCtrlFreq->setup(10, 10U, 9000000000U, 1, UNITS_MHZ );
     ui->frameCtrlFreq->setFrequency(434025000);
     ui->frameCtrlFreq->setBkColor(QColor(0,0,127,240));
     ui->frameCtrlFreq->setHighlightColor(QColor(127,0,0,255));

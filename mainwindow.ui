@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1111</width>
-    <height>568</height>
+    <height>618</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -555,6 +555,9 @@ QSlider::handle:vertical {
           </item>
           <item row="2" column="0">
            <layout class="QHBoxLayout" name="horizontalLayout_5">
+            <property name="spacing">
+             <number>0</number>
+            </property>
             <property name="sizeConstraint">
              <enum>QLayout::SetDefaultConstraint</enum>
             </property>
@@ -569,8 +572,19 @@ QSlider::handle:vertical {
               <property name="minimumSize">
                <size>
                 <width>0</width>
-                <height>40</height>
+                <height>46</height>
                </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>42</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>12</pointsize>
+               </font>
               </property>
               <property name="frameShape">
                <enum>QFrame::StyledPanel</enum>
@@ -578,78 +592,91 @@ QSlider::handle:vertical {
               <property name="frameShadow">
                <enum>QFrame::Raised</enum>
               </property>
-              <widget class="QLCDNumber" name="rxSensitivityDisplay">
-               <property name="geometry">
-                <rect>
-                 <x>140</x>
-                 <y>0</y>
-                 <width>70</width>
-                 <height>40</height>
-                </rect>
+              <layout class="QHBoxLayout" name="horizontalLayout_6">
+               <property name="spacing">
+                <number>5</number>
                </property>
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
+               <property name="leftMargin">
+                <number>0</number>
                </property>
-               <property name="minimumSize">
-                <size>
-                 <width>70</width>
-                 <height>0</height>
-                </size>
+               <property name="topMargin">
+                <number>0</number>
                </property>
-               <property name="maximumSize">
-                <size>
-                 <width>16777215</width>
-                 <height>40</height>
-                </size>
+               <property name="rightMargin">
+                <number>0</number>
                </property>
-               <property name="styleSheet">
-                <string notr="true">color: rgb(255, 0, 0);
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QLabel" name="label_9">
+                 <property name="styleSheet">
+                  <string notr="true">font: 14pt &quot;Sans Serif&quot;;</string>
+                 </property>
+                 <property name="text">
+                  <string>RX sensitivity</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLCDNumber" name="rxSensitivityDisplay">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>60</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">color: rgb(0, 220, 0);
 background-color: rgb(35, 35, 35);</string>
-               </property>
-               <property name="lineWidth">
-                <number>1</number>
-               </property>
-               <property name="midLineWidth">
-                <number>1</number>
-               </property>
-               <property name="digitCount">
-                <number>2</number>
-               </property>
-               <property name="segmentStyle">
-                <enum>QLCDNumber::Filled</enum>
-               </property>
-               <property name="value" stdset="0">
-                <double>90.000000000000000</double>
-               </property>
-              </widget>
-              <widget class="QSlider" name="rxSensitivitySlider">
-               <property name="geometry">
-                <rect>
-                 <x>210</x>
-                 <y>0</y>
-                 <width>889</width>
-                 <height>40</height>
-                </rect>
-               </property>
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>512</width>
-                 <height>40</height>
-                </size>
-               </property>
-               <property name="styleSheet">
-                <string notr="true">QSlider::groove:horizontal {
+                 </property>
+                 <property name="lineWidth">
+                  <number>1</number>
+                 </property>
+                 <property name="midLineWidth">
+                  <number>1</number>
+                 </property>
+                 <property name="digitCount">
+                  <number>2</number>
+                 </property>
+                 <property name="segmentStyle">
+                  <enum>QLCDNumber::Filled</enum>
+                 </property>
+                 <property name="value" stdset="0">
+                  <double>90.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QSlider" name="rxSensitivitySlider">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>512</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">QSlider::groove:horizontal {
     border: 3px solid #0000FF;
-    height: 38px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */
+    height: 37px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */
     background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #BCBCBC, stop:1 #c9c9c9);
     margin: 0px 0;
 }
@@ -658,21 +685,20 @@ QSlider::handle:horizontal {
     background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #b4b4b4, stop:1 #8f8f8f);
     border: 2px solid #5c5c5c;
     width: 35px;
-    height: 39px;
-    margin: -2px 0; /* handle is placed by default on the contents rect of the groove. Expand outside the groove */
+    height: 37px;
+    margin: -2px 0 -2px 0; /* handle is placed by default on the contents rect of the groove. Expand outside the groove */
     border-radius: 1px;
 }
 QSlider::groove:horizontal {
     background: #AB3A26;
     position: absolute; /* absolutely position 4px from the left and right of the widget. setting margins on the widget should work too... */
-    left: 4px; right: 4px;
 }
 
 QSlider::handle:horizontal {
     height: 10px;
     background: #3B39AB;
     position: absolute; /* absolutely position 4px from the left and right of the widget. setting margins on the widget should work too... */
-    margin: 0 -4px; /* expand outside the groove */
+    margin: 0 -4px 0; /* expand outside the groove */
 }
 
 
@@ -690,45 +716,31 @@ QSlider::handle:vertical {
     margin: 0 -4px; /* expand outside the groove */
 }
 </string>
-               </property>
-               <property name="maximum">
-                <number>100</number>
-               </property>
-               <property name="pageStep">
-                <number>1</number>
-               </property>
-               <property name="value">
-                <number>90</number>
-               </property>
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="invertedAppearance">
-                <bool>false</bool>
-               </property>
-               <property name="tickPosition">
-                <enum>QSlider::NoTicks</enum>
-               </property>
-               <property name="tickInterval">
-                <number>1</number>
-               </property>
-              </widget>
-              <widget class="QLabel" name="label_9">
-               <property name="geometry">
-                <rect>
-                 <x>0</x>
-                 <y>0</y>
-                 <width>141</width>
-                 <height>41</height>
-                </rect>
-               </property>
-               <property name="styleSheet">
-                <string notr="true">font: 14pt &quot;Sans Serif&quot;;</string>
-               </property>
-               <property name="text">
-                <string>RX sensitivity</string>
-               </property>
-              </widget>
+                 </property>
+                 <property name="maximum">
+                  <number>100</number>
+                 </property>
+                 <property name="pageStep">
+                  <number>1</number>
+                 </property>
+                 <property name="value">
+                  <number>90</number>
+                 </property>
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="invertedAppearance">
+                  <bool>false</bool>
+                 </property>
+                 <property name="tickPosition">
+                  <enum>QSlider::NoTicks</enum>
+                 </property>
+                 <property name="tickInterval">
+                  <number>1</number>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </widget>
             </item>
            </layout>
@@ -1374,11 +1386,6 @@ font: 18pt &quot;Sans Serif&quot;;</string>
             <pixmap resource="resources.qrc">:/res/Button-Blank-Red-icon.png</pixmap>
            </property>
           </widget>
-          <zorder>blueLED</zorder>
-          <zorder>greenLED</zorder>
-          <zorder>yellowLED</zorder>
-          <zorder>redLED</zorder>
-          <zorder>tabWidget</zorder>
          </widget>
         </item>
         <item>

@@ -479,7 +479,7 @@ void RadioOp::setTxPower(int dbm)
 
 void RadioOp::setRxSensitivity(int value)
 {
-    _modem->setRxSensitivity(value);
+    _modem->setRxSensitivity((float)value/100);
 }
 
 void RadioOp::syncFrequency()

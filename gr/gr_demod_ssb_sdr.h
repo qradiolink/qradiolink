@@ -33,7 +33,7 @@ public slots:
     void start();
     void stop();
     void tune(long center_freq);
-    void set_rx_sensitivity(int value);
+    void set_rx_sensitivity(float value);
 
 private:
     gr::top_block_sptr _top_block;

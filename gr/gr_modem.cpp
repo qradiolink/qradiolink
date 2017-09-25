@@ -416,7 +416,7 @@ void gr_modem::setTxPower(int value)
         _gr_mod_ssb_sdr->set_power(value);
 }
 
-void gr_modem::setRxSensitivity(int value)
+void gr_modem::setRxSensitivity(float value)
 {
     if(_gr_demod_bpsk_sdr)
         _gr_demod_bpsk_sdr->set_rx_sensitivity(value);
