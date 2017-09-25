@@ -40,10 +40,10 @@ make
 
 Known issues:
 - Build fails due to include error in /usr/include/gnuradio/qtgui/qtgui_types.h (Debian): manually edit the header to specify the correct directory for QWT
-<pre>
-#include <qwt/qwt_color_map.h>
-#include <qwt/qwt_scale_draw.h>
-</pre>
+
+- #include <qwt/qwt_color_map.h>
+- #include <qwt/qwt_scale_draw.h>
+
 
 
 Running

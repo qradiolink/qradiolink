@@ -1,9 +1,11 @@
 #include "gr_mod_ssb_sdr.h"
 
-gr_mod_ssb_sdr::gr_mod_ssb_sdr(QObject *parent, int samp_rate, int carrier_freq, int filter_width, float mod_index, float device_frequency, float rf_gain) :
+gr_mod_ssb_sdr::gr_mod_ssb_sdr(QObject *parent, int samp_rate, int carrier_freq, int filter_width,
+                               float mod_index, float device_frequency, float rf_gain,
+                               std::string device_args, std::string device_antenna, int freq_corr) :
     QObject(parent)
 {
-    const std::string device_args = "uhd";
+
     _device_frequency = device_frequency;
     _samp_rate =samp_rate;
     _carrier_freq = carrier_freq;
@@ -32,7 +34,7 @@ gr_mod_ssb_sdr::gr_mod_ssb_sdr(QObject *parent, int samp_rate, int carrier_freq,
 
     _osmosdr_sink = osmosdr::sink::make(device_args);
     _osmosdr_sink->set_sample_rate(_samp_rate);
-    _osmosdr_sink->set_antenna("TX/RX");
+    _osmosdr_sink->set_antenna(device_antenna);
     _osmosdr_sink->set_center_freq(_device_frequency);
     _osmosdr_sink->set_gain(rf_gain);
 

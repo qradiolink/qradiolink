@@ -85,25 +85,28 @@ void MainWindow::readConfig(QFileInfo *config_file)
     }
     catch(const libconfig::ParseException &pex)
     {
-        std::cerr << "Configuratio parse error at " << pex.getFile() << ":" << pex.getLine()
+        std::cerr << "Configuration parse error at " << pex.getFile() << ":" << pex.getLine()
                   << " - " << pex.getError() << std::endl;
         exit(EXIT_FAILURE);
     }
     try
     {
+        int rx_freq_corr, tx_freq_corr;
+        cfg.lookupValue("rx_freq_corr", rx_freq_corr);
+        cfg.lookupValue("tx_freq_corr", tx_freq_corr);
         ui->lineEditRXDev->setText(QString(cfg.lookup("rx_device_args")));
         ui->lineEditTXDev->setText(QString(cfg.lookup("tx_device_args")));
         ui->lineEditRXAntenna->setText(QString(cfg.lookup("rx_antenna")));
         ui->lineEditTXAntenna->setText(QString(cfg.lookup("tx_antenna")));
-        ui->lineEditRXFreqCorrection->setText(QString(cfg.lookup("rx_freq_corr")));
-        ui->lineEditTXFreqCorrection->setText(QString(cfg.lookup("tx_freq_corr")));
+        ui->lineEditRXFreqCorrection->setText(QString::number(rx_freq_corr));
+        ui->lineEditTXFreqCorrection->setText(QString::number(tx_freq_corr));
         ui->lineEditCallsign->setText(QString(cfg.lookup("callsign")));
     }
     catch(const libconfig::SettingNotFoundException &nfex)
     {
         ui->lineEditRXDev->setText("rtl=0");
         ui->lineEditTXDev->setText("uhd");
-        ui->lineEditRXAntenna->setText("RX");
+        ui->lineEditRXAntenna->setText("RX2");
         ui->lineEditTXAntenna->setText("TX/RX");
         ui->lineEditRXFreqCorrection->setText("39");
         ui->lineEditTXFreqCorrection->setText("0");
@@ -116,12 +119,12 @@ void MainWindow::saveConfig()
 {
     libconfig::Config cfg;
     libconfig::Setting &root = cfg.getRoot();
-    root.add("tx_device_args",libconfig::Setting::TypeString) = ui->lineEditRXDev->text().toStdString();
-    root.add("rx_device_args",libconfig::Setting::TypeString) = ui->lineEditTXDev->text().toStdString();
+    root.add("rx_device_args",libconfig::Setting::TypeString) = ui->lineEditRXDev->text().toStdString();
+    root.add("tx_device_args",libconfig::Setting::TypeString) = ui->lineEditTXDev->text().toStdString();
     root.add("rx_antenna",libconfig::Setting::TypeString) = ui->lineEditRXAntenna->text().toStdString();
     root.add("tx_antenna",libconfig::Setting::TypeString) = ui->lineEditTXAntenna->text().toStdString();
-    root.add("rx_freq_corr",libconfig::Setting::TypeString) = ui->lineEditRXFreqCorrection->text().toStdString();
-    root.add("tx_freq_corr",libconfig::Setting::TypeString) = ui->lineEditTXFreqCorrection->text().toStdString();
+    root.add("rx_freq_corr",libconfig::Setting::TypeInt) = ui->lineEditRXFreqCorrection->text().toInt();
+    root.add("tx_freq_corr",libconfig::Setting::TypeInt) = ui->lineEditTXFreqCorrection->text().toInt();
     root.add("callsign",libconfig::Setting::TypeString) = ui->lineEditCallsign->text().toStdString();
     try
     {

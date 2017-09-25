@@ -23,7 +23,7 @@ class gr_mod_ssb_sdr : public QObject
 public:
     explicit gr_mod_ssb_sdr(QObject *parent = 0, int samp_rate=250000, int carrier_freq=1700,
                             int filter_width=1200, float mod_index=1, float device_frequency=434000000,
-                            float rf_gain=70);
+                            float rf_gain=70, std::string device_args="uhd", std::string device_antenna="TX/RX", int freq_corr=0);
 
 public slots:
     void start();
