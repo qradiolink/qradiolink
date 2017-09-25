@@ -402,8 +402,6 @@ void gr_modem::tune(long center_freq, bool sync)
     }
 }
 
-
-
 void gr_modem::setTxPower(int value)
 {
     if(_gr_mod_bpsk_sdr)
@@ -416,6 +414,20 @@ void gr_modem::setTxPower(int value)
         _gr_mod_nbfm_sdr->set_power(value);
     if(_gr_mod_ssb_sdr)
         _gr_mod_ssb_sdr->set_power(value);
+}
+
+void gr_modem::setRxSensitivity(int value)
+{
+    if(_gr_demod_bpsk_sdr)
+        _gr_demod_bpsk_sdr->set_rx_sensitivity(value);
+    if(_gr_demod_qpsk_sdr)
+        _gr_demod_qpsk_sdr->set_rx_sensitivity(value);
+    if(_gr_demod_4fsk_sdr)
+        _gr_demod_4fsk_sdr->set_rx_sensitivity(value);
+    if(_gr_demod_nbfm_sdr)
+        _gr_demod_nbfm_sdr->set_rx_sensitivity(value);
+    if(_gr_demod_ssb_sdr)
+        _gr_demod_ssb_sdr->set_rx_sensitivity(value);
 }
 
 void gr_modem::startTransmission(QString callsign, int size)

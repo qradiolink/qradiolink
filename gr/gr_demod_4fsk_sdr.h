@@ -53,6 +53,7 @@ public slots:
     void stop();
     std::vector<unsigned char> *getData();
     void tune(long center_freq);
+    void set_rx_sensitivity(int value);
 
 private:
     gr::top_block_sptr _top_block;

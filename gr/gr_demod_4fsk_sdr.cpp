@@ -162,4 +162,14 @@ void gr_demod_4fsk_sdr::tune(long center_freq)
     _osmosdr_source->set_center_freq(_device_frequency-25000);
 }
 
+void gr_demod_4fsk_sdr::set_rx_sensitivity(int value)
+{
+    osmosdr::gain_range_t range = _osmosdr_source->get_gain_range();
+    if (!range.empty())
+    {
+        double gain =  range.start() + value*(range.stop()-range.start());
+        _osmosdr_source->set_gain(gain);
+    }
+}
+
 

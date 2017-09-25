@@ -43,6 +43,7 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
     QObject::connect(ui->tuneSlider,SIGNAL(valueChanged(int)),this,SLOT(tuneCenterFreq(int)));
     QObject::connect(ui->frequencyEdit,SIGNAL(returnPressed()),this,SLOT(enterFreq()));
     QObject::connect(ui->txPowerSlider,SIGNAL(valueChanged(int)),this,SLOT(setTxPowerDisplay(int)));
+    QObject::connect(ui->rxSensitivitySlider,SIGNAL(valueChanged(int)),this,SLOT(setRxSensitivityDisplay(int)));
     QObject::connect(ui->modemTypeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(toggleMode(int)));
     QObject::connect(ui->autotuneButton,SIGNAL(toggled(bool)),this,SLOT(autoTune(bool)));
 
@@ -229,6 +230,12 @@ void MainWindow::setTxPowerDisplay(int value)
 {
     ui->txPowerDisplay->display(value);
     emit setTxPower(value);
+}
+
+void MainWindow::setRxSensitivityDisplay(int value)
+{
+    ui->rxSensitivityDisplay->display(value);
+    emit setRxSensitivity(value);
 }
 
 void MainWindow::autoTune(bool value)

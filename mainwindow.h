@@ -58,6 +58,7 @@ public slots:
     void toggleWideband(bool value);
     void toggleMode(int value);
     void setTxPowerDisplay(int value);
+    void setRxSensitivityDisplay(int value);
     void autoTune(bool value);
     void displayImage(QImage img);
     void playEndBeep(int seconds);
@@ -78,8 +79,10 @@ signals:
     void toggleWidebandMode(bool value);
     void toggleModemMode(int value);
     void setTxPower(int value);
+    void setRxSensitivity(int value);
     void startAutoTuneFreq();
     void stopAutoTuneFreq();
+
 public:
     explicit MainWindow(MumbleClient *client, QWidget *parent = 0);
     ~MainWindow();

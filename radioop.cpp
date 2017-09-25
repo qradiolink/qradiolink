@@ -477,6 +477,11 @@ void RadioOp::setTxPower(int dbm)
     _modem->setTxPower(dbm);
 }
 
+void RadioOp::setRxSensitivity(int value)
+{
+    _modem->setRxSensitivity(value);
+}
+
 void RadioOp::syncFrequency()
 {
     if(_modem->_frequency_found >= 254)
