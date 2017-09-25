@@ -536,30 +536,30 @@ static void init_device(void)
             errno_exit("VIDIOC_S_FMT");
         }
 
-        /*
+
         control.id = V4L2_CID_BRIGHTNESS;
-        control.value = 64;
+        control.value = 1;
         if (ioctl(fd, VIDIOC_S_CTRL, &control) < 0) {
             printf("Couldn't set v4l exposure!\n");
             errno_exit("VIDIOC_S_FMT");
         }
 
         control.id = V4L2_CID_CONTRAST;
-        control.value = 100;
+        control.value = 50;
         if (ioctl(fd, VIDIOC_S_CTRL, &control) < 0) {
             printf("Couldn't set v4l exposure!\n");
             errno_exit("VIDIOC_S_FMT");
         }
 
         control.id = V4L2_CID_SATURATION;
-        control.value = 100;
+        control.value = 50;
         if (ioctl(fd, VIDIOC_S_CTRL, &control) < 0) {
             printf("Couldn't set v4l exposure!\n");
             errno_exit("VIDIOC_S_FMT");
         }
 
         control.id = V4L2_CID_HUE;
-        control.value = 100;
+        control.value = 50;
         if (ioctl(fd, VIDIOC_S_CTRL, &control) < 0) {
             printf("Couldn't set v4l exposure!\n");
             errno_exit("VIDIOC_S_FMT");
@@ -567,12 +567,12 @@ static void init_device(void)
 
 
         control.id = V4L2_CID_GAMMA;
-        control.value = 500;
+        control.value = 250;
         if (ioctl(fd, VIDIOC_S_CTRL, &control) < 0) {
             printf("Couldn't set v4l exposure!\n");
             errno_exit("VIDIOC_S_FMT");
         }
-        */
+
 
         /*
         memset(&control, 0, sizeof(v4l2_control));
