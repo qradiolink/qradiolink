@@ -25,6 +25,8 @@
 #include <QDir>
 #include <QFileInfo>
 #include "mumbleclient.h"
+#include <math.h>
+#include "qtgui/freqctrl.h"
 
 namespace Ui {
 class MainWindow;
@@ -52,13 +54,14 @@ public slots:
     void toggleRXwin(bool value);
     void toggleTXwin(bool value);
     void tuneCenterFreq(int value);
-    void tuneMainFreq();
+    void tuneMainFreq(qint64 freq);
     void toggleWideband(bool value);
     void toggleMode(int value);
     void setTxPowerDisplay(int value);
     void autoTune(bool value);
     void displayImage(QImage img);
     void playEndBeep(int seconds);
+    void enterFreq();
 
 signals:
     void startTransmission();
@@ -70,7 +73,7 @@ signals:
     void stopTalkVOIP();
     void toggleRX(bool value);
     void toggleTX(bool value);
-    void tuneFreq(long center_freq);
+    void tuneFreq(qint64 center_freq);
     void fineTuneFreq(long center_freq);
     void toggleWidebandMode(bool value);
     void toggleModemMode(int value);
@@ -95,6 +98,7 @@ private:
     QWidget *_fft_gui;
     Phonon::MediaObject *_end_beep;
     QPixmap *_video_img;
+
 
 };
 

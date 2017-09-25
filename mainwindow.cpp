@@ -23,6 +23,13 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
     _mumble_client(client)
 {
     ui->setupUi(this);
+    ui->frameCtrlFreq->setup(10, 10U, 9000000000U, 1, UNITS_GHZ );
+    ui->frameCtrlFreq->setFrequency(434025000);
+    ui->frameCtrlFreq->setBkColor(QColor(0,0,127,240));
+    ui->frameCtrlFreq->setHighlightColor(QColor(127,0,0,255));
+    ui->frameCtrlFreq->setDigitColor(QColor(230,230,230,240));
+    ui->frameCtrlFreq->setUnitsColor(QColor(254,254,254,255));
+
     QObject::connect(ui->buttonTransmit,SIGNAL(pressed()),this,SLOT(GUIstartTransmission()));
     //QObject::connect(ui->buttonTransmit,SIGNAL(released()),this,SLOT(GUIendTransmission()));
     QObject::connect(ui->sendTextButton,SIGNAL(clicked()),this,SLOT(GUIsendText()));
@@ -34,10 +41,13 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
     QObject::connect(ui->rxStatusButton,SIGNAL(toggled(bool)),this,SLOT(toggleRXwin(bool)));
     QObject::connect(ui->txStatusButton,SIGNAL(toggled(bool)),this,SLOT(toggleTXwin(bool)));
     QObject::connect(ui->tuneSlider,SIGNAL(valueChanged(int)),this,SLOT(tuneCenterFreq(int)));
-    QObject::connect(ui->frequencyEdit,SIGNAL(returnPressed()),this,SLOT(tuneMainFreq()));
+    QObject::connect(ui->frequencyEdit,SIGNAL(returnPressed()),this,SLOT(enterFreq()));
     QObject::connect(ui->txPowerSlider,SIGNAL(valueChanged(int)),this,SLOT(setTxPowerDisplay(int)));
     QObject::connect(ui->modemTypeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(toggleMode(int)));
     QObject::connect(ui->autotuneButton,SIGNAL(toggled(bool)),this,SLOT(autoTune(bool)));
+
+    QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
+
     //ui->tuneSlider->setRange(-100,100);
     _transmitting_radio = false;
     _constellation_gui = ui->widget_const;
@@ -203,9 +213,16 @@ void MainWindow::tuneCenterFreq(int value)
     emit fineTuneFreq(ui->tuneSlider->value());
 }
 
-void MainWindow::tuneMainFreq()
+void MainWindow::tuneMainFreq(qint64 freq)
 {
-    emit tuneFreq(ui->frequencyEdit->text().toInt());
+    ui->frequencyEdit->setText(QString::number(ceil(freq/1000)));
+    emit tuneFreq(freq);
+}
+
+void MainWindow::enterFreq()
+{
+    ui->frameCtrlFreq->setFrequency(ui->frequencyEdit->text().toLong()*1000);
+    emit tuneFreq(ui->frequencyEdit->text().toLong()*1000);
 }
 
 void MainWindow::setTxPowerDisplay(int value)

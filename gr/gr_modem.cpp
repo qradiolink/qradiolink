@@ -373,6 +373,7 @@ void gr_modem::stopTX()
 
 void gr_modem::tune(long center_freq, bool sync)
 {
+    _requested_frequency_hz = center_freq;
     if(_gr_demod_bpsk_sdr)
         _gr_demod_bpsk_sdr->tune(center_freq);
     if(_gr_demod_qpsk_sdr)
@@ -384,7 +385,7 @@ void gr_modem::tune(long center_freq, bool sync)
     if(_gr_demod_ssb_sdr)
         _gr_demod_ssb_sdr->tune(center_freq);
 
-    _requested_frequency_hz = center_freq;
+
     if(!sync)
     {
 

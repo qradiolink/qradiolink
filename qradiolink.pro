@@ -39,6 +39,7 @@ SOURCES += main.cpp\
         ext/utils.cpp\
         video/videocapture.cpp\
     radioop.cpp \
+    qtgui/freqctrl.cpp \
     audio/alsaaudio.cpp \
     gr/gr_mod_gmsk.cpp \
     gr/gr_modem.cpp \
@@ -89,6 +90,7 @@ HEADERS  += mainwindow.h\
         ext/vox.h\
         ext/utils.h \
     radioop.h \
+    qtgui/freqctrl.h \
     audio/alsaaudio.h \
     gr/gr_mod_gmsk.h \
     gr/gr_modem.h \

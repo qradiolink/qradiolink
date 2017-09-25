@@ -95,7 +95,7 @@ public slots:
     void toggleTX(bool value);
     void toggleMode(int value);
     void fineTuneFreq(long center_freq);
-    void tuneFreq(long center_freq);
+    void tuneFreq(qint64 center_freq);
     void setTxPower(int dbm);
     void syncFrequency();
     void autoTune();

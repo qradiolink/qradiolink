@@ -466,10 +466,10 @@ void RadioOp::fineTuneFreq(long center_freq)
     _modem->tune(_tune_center_freq + center_freq*10, false);
 }
 
-void RadioOp::tuneFreq(long center_freq)
+void RadioOp::tuneFreq(qint64 center_freq)
 {
-    _tune_center_freq = center_freq*1000;
-    _modem->tune(center_freq*1000, false);
+    _tune_center_freq = center_freq;
+    _modem->tune(center_freq, false);
 }
 
 void RadioOp::setTxPower(int dbm)

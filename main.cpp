@@ -168,6 +168,7 @@ int main(int argc, char *argv[])
                                                           0,1000000,fft_name,true,true,false,false,(&w)->get_fft_gui());
 
     fft_gui->set_update_time(0.1);
+    fft_gui->set_fft_power_db(-120,-30);
     fft_gui->qwidget()->resize(700,450);
     //fft_gui->qwidget()->
 
@@ -187,7 +188,7 @@ int main(int argc, char *argv[])
     QObject::connect(&w,SIGNAL(toggleRX(bool)),radio_op,SLOT(toggleRX(bool)));
     QObject::connect(&w,SIGNAL(toggleTX(bool)),radio_op,SLOT(toggleTX(bool)));
     QObject::connect(&w,SIGNAL(toggleModemMode(int)),radio_op,SLOT(toggleMode(int)));
-    QObject::connect(&w,SIGNAL(tuneFreq(long)),radio_op,SLOT(tuneFreq(long)));
+    QObject::connect(&w,SIGNAL(tuneFreq(qint64)),radio_op,SLOT(tuneFreq(qint64)));
     QObject::connect(&w,SIGNAL(startAutoTuneFreq()),radio_op,SLOT(startAutoTune()));
     QObject::connect(&w,SIGNAL(stopAutoTuneFreq()),radio_op,SLOT(stopAutoTune()));
     QObject::connect(&w,SIGNAL(fineTuneFreq(long)),radio_op,SLOT(fineTuneFreq(long)));
