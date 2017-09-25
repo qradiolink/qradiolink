@@ -479,7 +479,7 @@ void gr_modem::startTransmission(QString callsign, int size)
     transmit(callsign_frames);
 }
 
-void gr_modem::endTransmission()
+void gr_modem::endTransmission(QString callsign, int size)
 {
     _frame_counter = 0;
     _transmitting = false;
@@ -497,6 +497,18 @@ void gr_modem::endTransmission()
     QVector<std::vector<unsigned char>*> frames;
     frames.append(tx_end);
     transmit(frames);
+
+    std::vector<unsigned char> *send_callsign = new std::vector<unsigned char>;
+    QVector<std::vector<unsigned char>*> callsign_frames;
+    send_callsign->push_back(0xDD);
+    send_callsign->push_back(0xFB);
+    send_callsign->push_back(0xBF);
+    for(int i = 0;i<size;i++)
+    {
+        send_callsign->push_back(callsign.toStdString().c_str()[i]);
+    }
+    callsign_frames.append(send_callsign);
+    transmit(callsign_frames);
 }
 
 void gr_modem::processC2Data(unsigned char *data, int size)
@@ -593,7 +605,7 @@ void gr_modem::textData(QString text)
         delete[] data;
     }
     transmit(frames);
-    endTransmission();
+    endTransmission("",0);
 }
 
 static void packBytes(unsigned char *pktbuf, const unsigned char *bitbuf, int bitcount)

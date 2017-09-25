@@ -213,7 +213,7 @@ void RadioOp::run()
             if(_tx_inited)
             {
                 if(_radio_type == radio_type::RADIO_TYPE_DIGITAL)
-                    _modem->endTransmission();
+                    _modem->endTransmission(_callsign, _callsign.size());
                 usleep(50000);
                 _modem->stopTX();
                 _tx_modem_started = false;
@@ -361,9 +361,11 @@ void RadioOp::textReceived(QString text)
     emit printText(text);
 }
 
-void RadioOp::callsignReceived(QString text)
+void RadioOp::callsignReceived(QString callsign)
 {
-    emit printCallsign(text);
+    QString text = "\n>>>> " + callsign + " start transmission >>>>\n";
+    emit printText(text);
+    emit printCallsign(callsign);
 }
 
 void RadioOp::audioFrameReceived()
@@ -386,6 +388,7 @@ void RadioOp::receiveEnd()
 
 void RadioOp::endAudioTransmission()
 {
+    emit printText("<<<< end transmission <<<<\n");
     emit endAudio(9);
 }
 

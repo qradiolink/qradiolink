@@ -112,7 +112,7 @@ public slots:
     void processVideoData(unsigned char *data, int size);
     void demodulate();
     void startTransmission(QString callsign, int size);
-    void endTransmission();
+    void endTransmission(QString callsign, int size);
     void textData(QString text);
     void initTX(int modem_type, std::string device_args, std::string device_antenna, int freq_corr);
     void initRX(int modem_type, std::string device_args, std::string device_antenna, int freq_corr);

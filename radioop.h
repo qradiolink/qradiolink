@@ -87,7 +87,7 @@ public slots:
     void textData(QString text, bool repeat = false);
     void stop();
     void textReceived(QString text);
-    void callsignReceived(QString text);
+    void callsignReceived(QString callsign);
     void audioFrameReceived();
     void dataFrameReceived();
     void receiveEnd();
