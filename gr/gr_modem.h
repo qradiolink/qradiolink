@@ -112,10 +112,10 @@ public slots:
     void processVideoData(unsigned char *data, int size);
     void demodulate();
     void startTransmission(QString callsign, int size);
-    void endTransmission();
+    void endTransmission(QString callsign, int size);
     void textData(QString text);
-    void initTX(int modem_type);
-    void initRX(int modem_type);
+    void initTX(int modem_type, std::string device_args, std::string device_antenna, int freq_corr);
+    void initRX(int modem_type, std::string device_args, std::string device_antenna, int freq_corr);
     void deinitTX(int modem_type);
     void deinitRX(int modem_type);
     void tune(long center_freq, bool sync=false);
@@ -124,6 +124,7 @@ public slots:
     void startTX();
     void stopTX();
     void setTxPower(int value);
+    void setRxSensitivity(float value);
 private:
 
     Settings *_settings;

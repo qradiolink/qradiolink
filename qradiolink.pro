@@ -39,6 +39,7 @@ SOURCES += main.cpp\
         ext/utils.cpp\
         video/videocapture.cpp\
     radioop.cpp \
+    qtgui/freqctrl.cpp \
     audio/alsaaudio.cpp \
     gr/gr_mod_gmsk.cpp \
     gr/gr_modem.cpp \
@@ -89,6 +90,7 @@ HEADERS  += mainwindow.h\
         ext/vox.h\
         ext/utils.h \
     radioop.h \
+    qtgui/freqctrl.h \
     audio/alsaaudio.h \
     gr/gr_mod_gmsk.h \
     gr/gr_modem.h \
@@ -121,7 +123,7 @@ LIBS += -lgnuradio-pmt -lgnuradio-audio -lgnuradio-analog -lgnuradio-blocks \
         -lboost_thread$$BOOST_SUFFIX -lboost_system$$BOOST_SUFFIX -lboost_program_options$$BOOST_SUFFIX
 LIBS += -lrt  # need to include on some distros
 
-unix:!symbian: LIBS += -lprotobuf -lopus -lpulse-simple -lpulse -lcodec2 -lasound -ljpeg
+unix:!symbian: LIBS += -lprotobuf -lopus -lpulse-simple -lpulse -lcodec2 -lasound -ljpeg -lconfig++
                     #-lFestival -lestbase -leststring -lestools -lasound
 #INCLUDEPATH += /usr/include/speech_tools
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>750</width>
-    <height>540</height>
+    <width>1111</width>
+    <height>624</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -90,7 +90,7 @@
           <string>TX</string>
          </attribute>
          <layout class="QGridLayout" name="gridLayout">
-          <item row="8" column="0" colspan="2">
+          <item row="9" column="0" colspan="2">
            <widget class="QPlainTextEdit" name="sendTextEdit">
             <property name="minimumSize">
              <size>
@@ -115,7 +115,7 @@ font: 12pt &quot;Sans Serif&quot;;
             </property>
            </widget>
           </item>
-          <item row="10" column="0">
+          <item row="11" column="0">
            <layout class="QGridLayout" name="gridLayout_4">
             <item row="0" column="1">
              <widget class="QPushButton" name="sendTextButton">
@@ -290,10 +290,10 @@ color: rgb(255, 255, 255);</string>
           <item row="3" column="0">
            <layout class="QHBoxLayout" name="horizontalLayout_3">
             <property name="spacing">
-             <number>2</number>
+             <number>0</number>
             </property>
             <item>
-             <widget class="QSpinBox" name="spinBox">
+             <widget class="CFreqCtrl" name="frameCtrlFreq">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -302,298 +302,34 @@ color: rgb(255, 255, 255);</string>
               </property>
               <property name="minimumSize">
                <size>
-                <width>50</width>
-                <height>0</height>
+                <width>600</width>
+                <height>70</height>
                </size>
               </property>
-              <property name="font">
-               <font>
-                <family>Sans Serif</family>
-                <pointsize>26</pointsize>
-                <weight>50</weight>
-                <italic>false</italic>
-                <bold>false</bold>
-               </font>
-              </property>
               <property name="styleSheet">
-               <string notr="true">font: 26pt &quot;Sans Serif&quot;;
-background-color: rgb(0, 0, 127);
-color: rgb(255, 255, 255);</string>
+               <string notr="true">font: 35pt &quot;Sans Serif&quot;;
+background-color: rgb(0, 0, 230,130);</string>
               </property>
-              <property name="frame">
-               <bool>false</bool>
+              <property name="frameShape">
+               <enum>QFrame::StyledPanel</enum>
               </property>
-              <property name="alignment">
-               <set>Qt::AlignBottom|Qt::AlignHCenter</set>
-              </property>
-              <property name="buttonSymbols">
-               <enum>QAbstractSpinBox::NoButtons</enum>
-              </property>
-              <property name="maximum">
-               <number>9</number>
+              <property name="frameShadow">
+               <enum>QFrame::Raised</enum>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QSpinBox" name="spinBox_2">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
+             <spacer name="horizontalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
               </property>
-              <property name="minimumSize">
-               <size>
-                <width>50</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">font: 24pt &quot;Sans Serif&quot;;
-color: rgb(255, 255, 255);
-background-color: rgb(0, 0, 127);</string>
-              </property>
-              <property name="frame">
-               <bool>false</bool>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignBottom|Qt::AlignHCenter</set>
-              </property>
-              <property name="buttonSymbols">
-               <enum>QAbstractSpinBox::NoButtons</enum>
-              </property>
-              <property name="maximum">
-               <number>9</number>
-              </property>
-              <property name="value">
-               <number>4</number>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QSpinBox" name="spinBox_3">
-              <property name="minimumSize">
-               <size>
-                <width>50</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">font: 24pt &quot;Sans Serif&quot;;
-color: rgb(255, 255, 255);
-background-color: rgb(0, 0, 127);</string>
-              </property>
-              <property name="frame">
-               <bool>false</bool>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignBottom|Qt::AlignHCenter</set>
-              </property>
-              <property name="buttonSymbols">
-               <enum>QAbstractSpinBox::NoButtons</enum>
-              </property>
-              <property name="maximum">
-               <number>9</number>
-              </property>
-              <property name="value">
-               <number>3</number>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QSpinBox" name="spinBox_4">
-              <property name="minimumSize">
-               <size>
-                <width>50</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">font: 24pt &quot;Sans Serif&quot;;
-color: rgb(255, 255, 255);
-background-color: rgb(0, 0, 127);</string>
-              </property>
-              <property name="frame">
-               <bool>false</bool>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignBottom|Qt::AlignHCenter</set>
-              </property>
-              <property name="buttonSymbols">
-               <enum>QAbstractSpinBox::NoButtons</enum>
-              </property>
-              <property name="maximum">
-               <number>9</number>
-              </property>
-              <property name="value">
-               <number>4</number>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QSpinBox" name="spinBox_5">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
+              <property name="sizeHint" stdset="0">
                <size>
                 <width>40</width>
-                <height>0</height>
+                <height>20</height>
                </size>
               </property>
-              <property name="styleSheet">
-               <string notr="true">font: 22pt &quot;Sans Serif&quot;;
-color: rgb(255, 255, 255);
-background-color: rgb(0, 0, 255);</string>
-              </property>
-              <property name="frame">
-               <bool>false</bool>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignBottom|Qt::AlignHCenter</set>
-              </property>
-              <property name="buttonSymbols">
-               <enum>QAbstractSpinBox::NoButtons</enum>
-              </property>
-              <property name="maximum">
-               <number>9</number>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QSpinBox" name="spinBox_6">
-              <property name="minimumSize">
-               <size>
-                <width>40</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">font: 22pt &quot;Sans Serif&quot;;
-color: rgb(255, 255, 255);
-background-color: rgb(0, 0, 255);</string>
-              </property>
-              <property name="frame">
-               <bool>false</bool>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignBottom|Qt::AlignHCenter</set>
-              </property>
-              <property name="buttonSymbols">
-               <enum>QAbstractSpinBox::NoButtons</enum>
-              </property>
-              <property name="maximum">
-               <number>9</number>
-              </property>
-              <property name="value">
-               <number>2</number>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QSpinBox" name="spinBox_7">
-              <property name="minimumSize">
-               <size>
-                <width>40</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">font: 22pt &quot;Sans Serif&quot;;
-color: rgb(255, 255, 255);
-background-color: rgb(0, 0, 255);</string>
-              </property>
-              <property name="frame">
-               <bool>false</bool>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignBottom|Qt::AlignHCenter</set>
-              </property>
-              <property name="buttonSymbols">
-               <enum>QAbstractSpinBox::NoButtons</enum>
-              </property>
-              <property name="maximum">
-               <number>9</number>
-              </property>
-              <property name="value">
-               <number>5</number>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QSpinBox" name="spinBox_8">
-              <property name="minimumSize">
-               <size>
-                <width>50</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">font: 20pt &quot;Sans Serif&quot;;
-color: rgb(255, 255, 255);
-background-color: rgb(0, 85, 127);</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignBottom|Qt::AlignHCenter</set>
-              </property>
-              <property name="buttonSymbols">
-               <enum>QAbstractSpinBox::NoButtons</enum>
-              </property>
-              <property name="maximum">
-               <number>9</number>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QSpinBox" name="spinBox_9">
-              <property name="minimumSize">
-               <size>
-                <width>50</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">font: 20pt &quot;Sans Serif&quot;;
-color: rgb(255, 255, 255);
-background-color: rgb(0, 85, 127);</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignBottom|Qt::AlignHCenter</set>
-              </property>
-              <property name="buttonSymbols">
-               <enum>QAbstractSpinBox::NoButtons</enum>
-              </property>
-              <property name="maximum">
-               <number>9</number>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QSpinBox" name="spinBox_10">
-              <property name="minimumSize">
-               <size>
-                <width>50</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">font: 20pt &quot;Sans Serif&quot;;
-color: rgb(255, 255, 255);
-background-color: rgb(0, 85, 127);</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignBottom|Qt::AlignHCenter</set>
-              </property>
-              <property name="buttonSymbols">
-               <enum>QAbstractSpinBox::NoButtons</enum>
-              </property>
-              <property name="maximum">
-               <number>9</number>
-              </property>
-             </widget>
+             </spacer>
             </item>
             <item>
              <widget class="QLineEdit" name="frequencyEdit">
@@ -629,6 +365,19 @@ font: 18pt &quot;Sans Serif&quot;;</string>
                <set>Qt::AlignCenter</set>
               </property>
              </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
             </item>
             <item>
              <widget class="QLabel" name="labelDisplayCallsign">
@@ -675,7 +424,7 @@ background-color: rgb(0, 85, 127);
             <item>
              <widget class="QLabel" name="label">
               <property name="styleSheet">
-               <string notr="true">font: 12pt &quot;Sans Serif&quot;;</string>
+               <string notr="true">font: 14pt &quot;Sans Serif&quot;;</string>
               </property>
               <property name="text">
                <string>TX power</string>
@@ -712,6 +461,9 @@ background-color: rgb(35, 35, 35);</string>
               <property name="midLineWidth">
                <number>1</number>
               </property>
+              <property name="digitCount">
+               <number>2</number>
+              </property>
               <property name="segmentStyle">
                <enum>QLCDNumber::Filled</enum>
               </property>
@@ -731,25 +483,53 @@ background-color: rgb(35, 35, 35);</string>
               <property name="minimumSize">
                <size>
                 <width>512</width>
-                <height>30</height>
+                <height>40</height>
                </size>
               </property>
               <property name="styleSheet">
                <string notr="true">QSlider::groove:horizontal {
-    border: 1px solid #999999;
-    height: 55px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */
+    border: 3px solid #0000FF;
+    height: 38px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */
     background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #BCBCBC, stop:1 #c9c9c9);
-    margin: 5px 0;
+    margin: 0px 0;
 }
 
 QSlider::handle:horizontal {
     background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #b4b4b4, stop:1 #8f8f8f);
-    border: 1px solid #5c5c5c;
+    border: 2px solid #5c5c5c;
     width: 35px;
-    height: 35px;
+    height: 39px;
     margin: -2px 0; /* handle is placed by default on the contents rect of the groove. Expand outside the groove */
     border-radius: 1px;
-}</string>
+}
+QSlider::groove:horizontal {
+    background: #AB3A26;
+    position: absolute; /* absolutely position 4px from the left and right of the widget. setting margins on the widget should work too... */
+    left: 4px; right: 4px;
+}
+
+QSlider::handle:horizontal {
+    height: 10px;
+    background: #3B39AB;
+    position: absolute; /* absolutely position 4px from the left and right of the widget. setting margins on the widget should work too... */
+    margin: 0 -4px; /* expand outside the groove */
+}
+
+
+QSlider::add-page:horizontal {
+    background: white;
+}
+
+QSlider::sub-page:horizontal {
+    background: #AB3A26;
+}
+
+QSlider::handle:vertical {
+    height: 10px;
+    background: green;
+    margin: 0 -4px; /* expand outside the groove */
+}
+</string>
               </property>
               <property name="maximum">
                <number>80</number>
@@ -769,6 +549,198 @@ QSlider::handle:horizontal {
               <property name="tickInterval">
                <number>10</number>
               </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="2" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_5">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="sizeConstraint">
+             <enum>QLayout::SetDefaultConstraint</enum>
+            </property>
+            <item>
+             <widget class="QFrame" name="frame_2">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>46</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>42</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>12</pointsize>
+               </font>
+              </property>
+              <property name="frameShape">
+               <enum>QFrame::StyledPanel</enum>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Raised</enum>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_6">
+               <property name="spacing">
+                <number>5</number>
+               </property>
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QLabel" name="label_9">
+                 <property name="styleSheet">
+                  <string notr="true">font: 14pt &quot;Sans Serif&quot;;</string>
+                 </property>
+                 <property name="text">
+                  <string>RX sensitivity</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLCDNumber" name="rxSensitivityDisplay">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>60</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">color: rgb(0, 220, 0);
+background-color: rgb(35, 35, 35);</string>
+                 </property>
+                 <property name="lineWidth">
+                  <number>1</number>
+                 </property>
+                 <property name="midLineWidth">
+                  <number>1</number>
+                 </property>
+                 <property name="digitCount">
+                  <number>2</number>
+                 </property>
+                 <property name="segmentStyle">
+                  <enum>QLCDNumber::Filled</enum>
+                 </property>
+                 <property name="value" stdset="0">
+                  <double>90.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QSlider" name="rxSensitivitySlider">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>512</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">QSlider::groove:horizontal {
+    border: 3px solid #0000FF;
+    height: 37px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #BCBCBC, stop:1 #c9c9c9);
+    margin: 0px 0;
+}
+
+QSlider::handle:horizontal {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #b4b4b4, stop:1 #8f8f8f);
+    border: 2px solid #5c5c5c;
+    width: 35px;
+    height: 37px;
+    margin: -2px 0 -2px 0; /* handle is placed by default on the contents rect of the groove. Expand outside the groove */
+    border-radius: 1px;
+}
+QSlider::groove:horizontal {
+    background: #AB3A26;
+    position: absolute; /* absolutely position 4px from the left and right of the widget. setting margins on the widget should work too... */
+}
+
+QSlider::handle:horizontal {
+    height: 10px;
+    background: #3B39AB;
+    position: absolute; /* absolutely position 4px from the left and right of the widget. setting margins on the widget should work too... */
+    margin: 0 -4px 0; /* expand outside the groove */
+}
+
+
+QSlider::add-page:horizontal {
+    background: white;
+}
+
+QSlider::sub-page:horizontal {
+    background: #2B9B03;
+}
+
+QSlider::handle:vertical {
+    height: 10px;
+    background: green;
+    margin: 0 -4px; /* expand outside the groove */
+}
+</string>
+                 </property>
+                 <property name="maximum">
+                  <number>100</number>
+                 </property>
+                 <property name="pageStep">
+                  <number>1</number>
+                 </property>
+                 <property name="value">
+                  <number>90</number>
+                 </property>
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="invertedAppearance">
+                  <bool>false</bool>
+                 </property>
+                 <property name="tickPosition">
+                  <enum>QSlider::NoTicks</enum>
+                 </property>
+                 <property name="tickInterval">
+                  <number>1</number>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </widget>
             </item>
            </layout>
@@ -813,20 +785,22 @@ QSlider::handle:horizontal {
               </property>
               <property name="styleSheet">
                <string notr="true">QSlider::groove:horizontal {
-    border: 1px solid #999999;
-    height: 55px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #B1B1B1, stop:1 #c4c4c4);
-    margin: 5px 0;
+    border: 3px solid #0000FF;
+    height: 38px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #FF3407, stop:1 #B60AFF);
+    margin: 2px 0;
 }
 
 QSlider::handle:horizontal {
-    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #b4b4b4, stop:1 #8f8f8f);
-    border: 1px solid #5c5c5c;
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 green, stop:1 #8f8f8f);
+    border: 2px solid #000000;
     width: 35px;
-    height: 35px;
-    margin: -2px 0; /* handle is placed by default on the contents rect of the groove. Expand outside the groove */
+    height: 39px;
+    margin: -2px 0 0 -4px; /* handle is placed by default on the contents rect of the groove. Expand outside the groove */
     border-radius: 1px;
-}</string>
+}
+
+</string>
               </property>
               <property name="minimum">
                <number>-500</number>
@@ -1186,13 +1160,130 @@ background-color: rgb(0, 85, 127);</string>
          <widget class="QWidget" name="gridLayoutWidget">
           <property name="geometry">
            <rect>
-            <x>10</x>
+            <x>20</x>
             <y>10</y>
             <width>621</width>
-            <height>321</height>
+            <height>381</height>
            </rect>
           </property>
-          <layout class="QGridLayout" name="gridLayout_5"/>
+          <layout class="QGridLayout" name="gridLayout_5">
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="lineEditCallsign">
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(255, 255, 255);
+font: 18pt &quot;Sans Serif&quot;;</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="lineEditRXDev">
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(255, 255, 255);
+font: 18pt &quot;Sans Serif&quot;;</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="0">
+            <widget class="QLabel" name="label_8">
+             <property name="text">
+              <string>TX Freq Correction ppm</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_4">
+             <property name="text">
+              <string>Callsign</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLabel" name="label_6">
+             <property name="text">
+              <string>RX antenna</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QLineEdit" name="lineEditRXAntenna">
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(255, 255, 255);
+font: 18pt &quot;Sans Serif&quot;;</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QLineEdit" name="lineEditTXAntenna">
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(255, 255, 255);
+font: 18pt &quot;Sans Serif&quot;;</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0">
+            <widget class="QLabel" name="label_7">
+             <property name="text">
+              <string>RX Freq Correction ppm</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string>TX device args</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_5">
+             <property name="text">
+              <string>TX antenna</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="lineEditTXDev">
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(255, 255, 255);
+font: 18pt &quot;Sans Serif&quot;;</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="1">
+            <widget class="QLineEdit" name="lineEditTXFreqCorrection">
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(255, 255, 255);
+font: 18pt &quot;Sans Serif&quot;;</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1">
+            <widget class="QLineEdit" name="lineEditRXFreqCorrection">
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(255, 255, 255);
+font: 18pt &quot;Sans Serif&quot;;</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_2">
+             <property name="text">
+              <string>RX device args</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="0">
+            <widget class="QPushButton" name="saveOptionsButton">
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(255, 255, 255);
+font: 18pt &quot;Sans Serif&quot;;</string>
+             </property>
+             <property name="text">
+              <string>Save</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </widget>
        </widget>
@@ -1361,7 +1452,7 @@ background-color: rgb(0, 85, 127);</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>750</width>
+     <width>1111</width>
      <height>19</height>
     </rect>
    </property>
@@ -1389,6 +1480,14 @@ background-color: rgb(0, 85, 127);</string>
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>CFreqCtrl</class>
+   <extends>QFrame</extends>
+   <header>qtgui/freqctrl.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="resources.qrc"/>
  </resources>

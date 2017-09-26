@@ -21,6 +21,8 @@
 #include <QDateTime>
 #include <QTimer>
 #include <QMutex>
+#include <QDir>
+#include <QFileInfo>
 #include <QDebug>
 #include <QCoreApplication>
 #include <QElapsedTimer>
@@ -44,6 +46,7 @@
 #include <gnuradio/qtgui/const_sink_c.h>
 #include <gnuradio/qtgui/sink_c.h>
 #include <gnuradio/qtgui/number_sink.h>
+#include <libconfig.h++>
 
 namespace radio_type
 {
@@ -84,7 +87,7 @@ public slots:
     void textData(QString text, bool repeat = false);
     void stop();
     void textReceived(QString text);
-    void callsignReceived(QString text);
+    void callsignReceived(QString callsign);
     void audioFrameReceived();
     void dataFrameReceived();
     void receiveEnd();
@@ -95,8 +98,9 @@ public slots:
     void toggleTX(bool value);
     void toggleMode(int value);
     void fineTuneFreq(long center_freq);
-    void tuneFreq(long center_freq);
+    void tuneFreq(qint64 center_freq);
     void setTxPower(int dbm);
+    void setRxSensitivity(int value);
     void syncFrequency();
     void autoTune();
     void startAutoTune();
@@ -116,6 +120,7 @@ private:
     bool _process_text;
     bool _repeat_text;
     QString _text_out;
+    QString _callsign;
     QMutex _mutex;
     QTimer *_led_timer;
     AudioEncoder *_codec;
@@ -131,6 +136,9 @@ private:
     bool _tx_modem_started;
     int _tune_counter;
     unsigned char *_rand_frame_data;
+    void readConfig(std::string &rx_device_args, std::string &tx_device_args,
+                    std::string &rx_antenna, std::string &tx_antenna, int &rx_freq_corr,
+                    int &tx_freq_corr, std::string &callsign);
 
 };
 

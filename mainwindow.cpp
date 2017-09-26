@@ -17,12 +17,20 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+
 MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     _mumble_client(client)
 {
     ui->setupUi(this);
+    ui->frameCtrlFreq->setup(10, 10U, 9000000000U, 1, UNITS_MHZ );
+    ui->frameCtrlFreq->setFrequency(434025000);
+    ui->frameCtrlFreq->setBkColor(QColor(0,0,127,255));
+    ui->frameCtrlFreq->setHighlightColor(QColor(127,0,0,255));
+    ui->frameCtrlFreq->setDigitColor(QColor(230,230,230,240));
+    ui->frameCtrlFreq->setUnitsColor(QColor(254,254,254,255));
+
     QObject::connect(ui->buttonTransmit,SIGNAL(pressed()),this,SLOT(GUIstartTransmission()));
     //QObject::connect(ui->buttonTransmit,SIGNAL(released()),this,SLOT(GUIendTransmission()));
     QObject::connect(ui->sendTextButton,SIGNAL(clicked()),this,SLOT(GUIsendText()));
@@ -34,10 +42,15 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
     QObject::connect(ui->rxStatusButton,SIGNAL(toggled(bool)),this,SLOT(toggleRXwin(bool)));
     QObject::connect(ui->txStatusButton,SIGNAL(toggled(bool)),this,SLOT(toggleTXwin(bool)));
     QObject::connect(ui->tuneSlider,SIGNAL(valueChanged(int)),this,SLOT(tuneCenterFreq(int)));
-    QObject::connect(ui->frequencyEdit,SIGNAL(returnPressed()),this,SLOT(tuneMainFreq()));
+    QObject::connect(ui->frequencyEdit,SIGNAL(returnPressed()),this,SLOT(enterFreq()));
     QObject::connect(ui->txPowerSlider,SIGNAL(valueChanged(int)),this,SLOT(setTxPowerDisplay(int)));
+    QObject::connect(ui->rxSensitivitySlider,SIGNAL(valueChanged(int)),this,SLOT(setRxSensitivityDisplay(int)));
     QObject::connect(ui->modemTypeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(toggleMode(int)));
     QObject::connect(ui->autotuneButton,SIGNAL(toggled(bool)),this,SLOT(autoTune(bool)));
+    QObject::connect(ui->saveOptionsButton,SIGNAL(clicked()),this,SLOT(saveConfig()));
+
+    QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
+
     //ui->tuneSlider->setRange(-100,100);
     _transmitting_radio = false;
     _constellation_gui = ui->widget_const;
@@ -45,6 +58,8 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
     _fft_gui = ui->widget_fft;
 
     QFileInfo new_file = setupSounds("end_beep.wav");
+    _config_file = setupConfig();
+    readConfig(_config_file);
     _end_beep = Phonon::createPlayer(Phonon::MusicCategory,
                                  Phonon::MediaSource(new_file.absoluteFilePath()));
     _video_img = new QPixmap;
@@ -54,6 +69,72 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::readConfig(QFileInfo *config_file)
+{
+    libconfig::Config cfg;
+    try
+    {
+        cfg.readFile(config_file->absoluteFilePath().toStdString().c_str());
+    }
+    catch(const libconfig::FileIOException &fioex)
+    {
+        std::cerr << "I/O error while reading configuration file." << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    catch(const libconfig::ParseException &pex)
+    {
+        std::cerr << "Configuration parse error at " << pex.getFile() << ":" << pex.getLine()
+                  << " - " << pex.getError() << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    try
+    {
+        int rx_freq_corr, tx_freq_corr;
+        cfg.lookupValue("rx_freq_corr", rx_freq_corr);
+        cfg.lookupValue("tx_freq_corr", tx_freq_corr);
+        ui->lineEditRXDev->setText(QString(cfg.lookup("rx_device_args")));
+        ui->lineEditTXDev->setText(QString(cfg.lookup("tx_device_args")));
+        ui->lineEditRXAntenna->setText(QString(cfg.lookup("rx_antenna")));
+        ui->lineEditTXAntenna->setText(QString(cfg.lookup("tx_antenna")));
+        ui->lineEditRXFreqCorrection->setText(QString::number(rx_freq_corr));
+        ui->lineEditTXFreqCorrection->setText(QString::number(tx_freq_corr));
+        ui->lineEditCallsign->setText(QString(cfg.lookup("callsign")));
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        ui->lineEditRXDev->setText("rtl=0");
+        ui->lineEditTXDev->setText("uhd");
+        ui->lineEditRXAntenna->setText("RX2");
+        ui->lineEditTXAntenna->setText("TX/RX");
+        ui->lineEditRXFreqCorrection->setText("39");
+        ui->lineEditTXFreqCorrection->setText("0");
+        ui->lineEditCallsign->setText("CALL");
+        std::cerr << "Settings not found in configuration file." << std::endl;
+    }
+}
+
+void MainWindow::saveConfig()
+{
+    libconfig::Config cfg;
+    libconfig::Setting &root = cfg.getRoot();
+    root.add("rx_device_args",libconfig::Setting::TypeString) = ui->lineEditRXDev->text().toStdString();
+    root.add("tx_device_args",libconfig::Setting::TypeString) = ui->lineEditTXDev->text().toStdString();
+    root.add("rx_antenna",libconfig::Setting::TypeString) = ui->lineEditRXAntenna->text().toStdString();
+    root.add("tx_antenna",libconfig::Setting::TypeString) = ui->lineEditTXAntenna->text().toStdString();
+    root.add("rx_freq_corr",libconfig::Setting::TypeInt) = ui->lineEditRXFreqCorrection->text().toInt();
+    root.add("tx_freq_corr",libconfig::Setting::TypeInt) = ui->lineEditTXFreqCorrection->text().toInt();
+    root.add("callsign",libconfig::Setting::TypeString) = ui->lineEditCallsign->text().toStdString();
+    try
+    {
+        cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());
+    }
+    catch(const libconfig::FileIOException &fioex)
+    {
+        std::cerr << "I/O error while writing configuration file: " << _config_file->absoluteFilePath().toStdString() << std::endl;
+        exit(EXIT_FAILURE);
+    }
 }
 
 QFileInfo MainWindow::setupSounds(QString name)
@@ -77,6 +158,27 @@ QFileInfo MainWindow::setupSounds(QString name)
     }
 
     return new_file;
+}
+
+QFileInfo* MainWindow::setupConfig()
+{
+    QDir files = QDir::current();
+
+    QFileInfo new_file = files.filePath("qradiolink.cfg");
+    if(!new_file.exists())
+    {
+        QString config = "// Automatically generated\n";
+        QFile newfile(new_file.absoluteFilePath());
+
+        if (newfile.open(QIODevice::ReadWrite))
+        {
+            newfile.write(config.toStdString().c_str());
+            newfile.close();
+        }
+
+    }
+
+    return new QFileInfo(new_file);
 }
 
 void MainWindow::GUIendTransmission()
@@ -119,10 +221,9 @@ void MainWindow::displayText(QString text)
     //ui->tabWidget->setCurrentIndex(1);
 }
 
-void MainWindow::displayCallsign(QString text)
+void MainWindow::displayCallsign(QString callsign)
 {
-    ui->labelDisplayCallsign->setText(text);
-    //ui->tabWidget->setCurrentIndex(1);
+    ui->labelDisplayCallsign->setText(callsign);
 }
 
 void MainWindow::chooseFile()
@@ -203,15 +304,28 @@ void MainWindow::tuneCenterFreq(int value)
     emit fineTuneFreq(ui->tuneSlider->value());
 }
 
-void MainWindow::tuneMainFreq()
+void MainWindow::tuneMainFreq(qint64 freq)
 {
-    emit tuneFreq(ui->frequencyEdit->text().toInt());
+    ui->frequencyEdit->setText(QString::number(ceil(freq/1000)));
+    emit tuneFreq(freq);
+}
+
+void MainWindow::enterFreq()
+{
+    ui->frameCtrlFreq->setFrequency(ui->frequencyEdit->text().toLong()*1000);
+    emit tuneFreq(ui->frequencyEdit->text().toLong()*1000);
 }
 
 void MainWindow::setTxPowerDisplay(int value)
 {
     ui->txPowerDisplay->display(value);
     emit setTxPower(value);
+}
+
+void MainWindow::setRxSensitivityDisplay(int value)
+{
+    ui->rxSensitivityDisplay->display(value);
+    emit setRxSensitivity(value);
 }
 
 void MainWindow::autoTune(bool value)

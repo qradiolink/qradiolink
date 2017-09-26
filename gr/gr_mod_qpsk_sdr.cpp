@@ -17,7 +17,8 @@
 #include "gr_mod_qpsk_sdr.h"
 
 gr_mod_qpsk_sdr::gr_mod_qpsk_sdr(QObject *parent, int sps, int samp_rate, int carrier_freq,
-                                 int filter_width, float mod_index, float device_frequency, float rf_gain) :
+                                 int filter_width, float mod_index, float device_frequency, float rf_gain,
+                                 std::string device_args, std::string device_antenna, int freq_corr) :
     QObject(parent)
 {
     //gr::digital::constellation_qpsk::sptr constellation = gr::digital::constellation_qpsk::make();
@@ -36,7 +37,6 @@ gr_mod_qpsk_sdr::gr_mod_qpsk_sdr(QObject *parent, int sps, int samp_rate, int ca
     map.push_back(2);
     map.push_back(3);
 
-    const std::string device_args = "uhd";
     _device_frequency = device_frequency;
     _samples_per_symbol = sps;
     _samp_rate =samp_rate;
@@ -67,7 +67,7 @@ gr_mod_qpsk_sdr::gr_mod_qpsk_sdr(QObject *parent, int sps, int samp_rate, int ca
                     1, _samp_rate, _filter_width, filter_slope,gr::filter::firdes::WIN_HAMMING));
     _osmosdr_sink = osmosdr::sink::make(device_args);
     _osmosdr_sink->set_sample_rate(_samp_rate);
-    _osmosdr_sink->set_antenna("TX/RX");
+    _osmosdr_sink->set_antenna(device_antenna);
 
     _osmosdr_sink->set_center_freq(_device_frequency);
 

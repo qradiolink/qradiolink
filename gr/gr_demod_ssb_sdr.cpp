@@ -4,13 +4,12 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(gr::qtgui::sink_c::sptr fft_gui,
                                    gr::qtgui::const_sink_c::sptr const_gui,
                                    gr::qtgui::number_sink::sptr rssi_gui, QObject *parent,
                                    int samp_rate, int carrier_freq, int filter_width,
-                                   float mod_index, float device_frequency, float rf_gain) :
+                                   float mod_index, float device_frequency, float rf_gain,
+                                   std::string device_args, std::string device_antenna, int freq_corr) :
     QObject(parent)
 {
     _target_samp_rate = 48000;
     _rssi = rssi_gui;
-    const std::string device_args = "rtl=0";
-    const std::string device_antenna = "TX/RX";
     _device_frequency = device_frequency;
     _samp_rate = samp_rate;
     _carrier_freq = carrier_freq;
@@ -22,13 +21,15 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(gr::qtgui::sink_c::sptr fft_gui,
 
     unsigned int flt_size = 32;
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, 50000, 150000);
+    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width, 1200);
     _resampler = gr::filter::pfb_arb_resampler_ccf::make(rerate, taps, flt_size);
     _signal_source = gr::analog::sig_source_c::make(_samp_rate,gr::analog::GR_COS_WAVE,-25000,1);
     _multiply = gr::blocks::multiply_cc::make();
     _filter = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
                             1, _target_samp_rate, 300, _filter_width,50,gr::filter::firdes::WIN_HAMMING) );
-    _complex_to_mag = gr::blocks::complex_to_mag::make();
+    _agc = gr::analog::agc2_cc::make(0.006e-1, 1e-3, 1, 1);
+    _complex_to_real = gr::blocks::complex_to_real::make();
+    _level_control = gr::blocks::multiply_const_ff::make(0.001);
     _audio_gain = gr::blocks::multiply_const_ff::make(70);
     _audio_sink = gr::audio::sink::make(_target_samp_rate,"", true);
 
@@ -43,7 +44,7 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(gr::qtgui::sink_c::sptr fft_gui,
     _osmosdr_source = osmosdr::source::make(device_args);
     _osmosdr_source->set_center_freq(_device_frequency-25000);
     _osmosdr_source->set_sample_rate(_samp_rate);
-    _osmosdr_source->set_freq_corr(40);
+    _osmosdr_source->set_freq_corr(freq_corr);
     _osmosdr_source->set_gain_mode(false);
     _osmosdr_source->set_antenna(device_antenna);
     osmosdr::gain_range_t range = _osmosdr_source->get_gain_range();
@@ -65,8 +66,10 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(gr::qtgui::sink_c::sptr fft_gui,
     _top_block->connect(_multiply,0,_resampler,0);
     _top_block->connect(_multiply,0,_fft_gui,0);
     _top_block->connect(_resampler,0,_filter,0);
-    _top_block->connect(_filter,0,_complex_to_mag,0);
-    _top_block->connect(_complex_to_mag,0,_audio_gain,0);
+    _top_block->connect(_filter,0,_agc,0);
+    _top_block->connect(_agc,0,_complex_to_real,0);
+    _top_block->connect(_complex_to_real,0,_level_control,0);
+    _top_block->connect(_level_control,0,_audio_gain,0);
     _top_block->connect(_audio_gain,0,_audio_sink,0);
 
     _top_block->connect(_filter,0,_mag_squared,0);
@@ -95,4 +98,14 @@ void gr_demod_ssb_sdr::tune(long center_freq)
 {
     _device_frequency = center_freq;
     _osmosdr_source->set_center_freq(_device_frequency-25000);
+}
+
+void gr_demod_ssb_sdr::set_rx_sensitivity(float value)
+{
+    osmosdr::gain_range_t range = _osmosdr_source->get_gain_range();
+    if (!range.empty())
+    {
+        double gain =  range.start() + value*(range.stop()-range.start());
+        _osmosdr_source->set_gain(gain);
+    }
 }

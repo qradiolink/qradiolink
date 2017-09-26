@@ -72,6 +72,53 @@ void RadioOp::stop()
     _stop=true;
 }
 
+void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_args,
+                         std::string &rx_antenna, std::string &tx_antenna, int &rx_freq_corr,
+                         int &tx_freq_corr, std::string &callsign)
+{
+    QDir files = QDir::current();
+
+    QFileInfo config_file = files.filePath("qradiolink.cfg");
+    libconfig::Config cfg;
+    try
+    {
+        cfg.readFile(config_file.absoluteFilePath().toStdString().c_str());
+    }
+    catch(const libconfig::FileIOException &fioex)
+    {
+        std::cerr << "I/O error while reading configuration file." << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    catch(const libconfig::ParseException &pex)
+    {
+        std::cerr << "Configuration parse error at " << pex.getFile() << ":" << pex.getLine()
+                  << " - " << pex.getError() << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    try
+    {
+        const libconfig::Setting& root = cfg.getRoot();
+        root.lookupValue("rx_device_args", rx_device_args);
+        root.lookupValue("tx_device_args", tx_device_args);
+        root.lookupValue("rx_antenna", rx_antenna);
+        root.lookupValue("tx_antenna", tx_antenna);
+        root.lookupValue("rx_freq_corr", rx_freq_corr);
+        root.lookupValue("tx_freq_corr", tx_freq_corr);
+        root.lookupValue("callsign", callsign);
+        _callsign = QString::fromStdString(callsign);
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        std::cerr << "Settings not found in configuration file." << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    catch(const libconfig::SettingTypeException &tex)
+    {
+        std::cerr << "Configuration error." << std::endl;
+        exit(EXIT_FAILURE);
+    }
+}
+
 void RadioOp::processAudioStream()
 {
     int audiobuffer_size = 640; //40 ms @ 8k
@@ -157,7 +204,7 @@ void RadioOp::run()
                 _modem->startTX();
                 _tx_modem_started = false;
                 if(_radio_type == radio_type::RADIO_TYPE_DIGITAL)
-                    _modem->startTransmission("YO8RZZ",7);
+                    _modem->startTransmission(_callsign,_callsign.size());
             }
         }
         if(!transmitting && ptt_activated)
@@ -166,7 +213,7 @@ void RadioOp::run()
             if(_tx_inited)
             {
                 if(_radio_type == radio_type::RADIO_TYPE_DIGITAL)
-                    _modem->endTransmission();
+                    _modem->endTransmission(_callsign, _callsign.size());
                 usleep(50000);
                 _modem->stopTX();
                 _tx_modem_started = false;
@@ -209,7 +256,7 @@ void RadioOp::run()
                     _modem->startTX();
                 }
                 _tx_modem_started = true;
-                _modem->startTransmission("YO8RZZ",7);
+                _modem->startTransmission(_callsign,_callsign.size());
                 _modem->textData(_text_out);
             }
             if(!_repeat_text)
@@ -314,9 +361,11 @@ void RadioOp::textReceived(QString text)
     emit printText(text);
 }
 
-void RadioOp::callsignReceived(QString text)
+void RadioOp::callsignReceived(QString callsign)
 {
-    emit printCallsign(text);
+    QString text = "\n>>>> " + callsign + " start transmission >>>>\n";
+    emit printText(text);
+    emit printCallsign(callsign);
 }
 
 void RadioOp::audioFrameReceived()
@@ -339,6 +388,7 @@ void RadioOp::receiveEnd()
 
 void RadioOp::endAudioTransmission()
 {
+    emit printText("<<<< end transmission <<<<\n");
     emit endAudio(9);
 }
 
@@ -349,10 +399,21 @@ void RadioOp::syncIssue()
 
 void RadioOp::toggleRX(bool value)
 {
+
     if(value)
     {
+        std::string rx_device_args;
+        std::string tx_device_args;
+        std::string rx_antenna;
+        std::string tx_antenna;
+        int rx_freq_corr;
+        int tx_freq_corr;
+        std::string callsign;
+        readConfig(rx_device_args, tx_device_args,
+                                 rx_antenna, tx_antenna, rx_freq_corr,
+                                 tx_freq_corr, callsign);
         _rx_inited = true;
-        _modem->initRX(_mode);
+        _modem->initRX(_mode, rx_device_args, rx_antenna, rx_freq_corr);
         _modem->startRX();
         _tune_center_freq = _modem->_requested_frequency_hz;
     }
@@ -368,8 +429,18 @@ void RadioOp::toggleTX(bool value)
 {
     if(value)
     {
+        std::string rx_device_args;
+        std::string tx_device_args;
+        std::string rx_antenna;
+        std::string tx_antenna;
+        int rx_freq_corr;
+        int tx_freq_corr;
+        std::string callsign;
+        readConfig(rx_device_args, tx_device_args,
+                                 rx_antenna, tx_antenna, rx_freq_corr,
+                                 tx_freq_corr, callsign);
         _tx_inited = true;
-        _modem->initTX(_mode);
+        _modem->initTX(_mode, tx_device_args, tx_antenna, tx_freq_corr);
         if(_mode == gr_modem_types::ModemTypeQPSKVideo)
             _video = new VideoEncoder;
     }
@@ -466,15 +537,20 @@ void RadioOp::fineTuneFreq(long center_freq)
     _modem->tune(_tune_center_freq + center_freq*10, false);
 }
 
-void RadioOp::tuneFreq(long center_freq)
+void RadioOp::tuneFreq(qint64 center_freq)
 {
-    _tune_center_freq = center_freq*1000;
-    _modem->tune(center_freq*1000, false);
+    _tune_center_freq = center_freq;
+    _modem->tune(center_freq, false);
 }
 
 void RadioOp::setTxPower(int dbm)
 {
     _modem->setTxPower(dbm);
+}
+
+void RadioOp::setRxSensitivity(int value)
+{
+    _modem->setRxSensitivity((float)value/100);
 }
 
 void RadioOp::syncFrequency()

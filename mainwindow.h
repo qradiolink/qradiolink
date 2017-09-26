@@ -25,6 +25,10 @@
 #include <QDir>
 #include <QFileInfo>
 #include "mumbleclient.h"
+#include <math.h>
+#include "qtgui/freqctrl.h"
+#include <libconfig.h++>
+#include <iostream>
 
 namespace Ui {
 class MainWindow;
@@ -44,7 +48,7 @@ public slots:
     void GUIsendText();
     void chooseFile();
     void displayText(QString text);
-    void displayCallsign(QString text);
+    void displayCallsign(QString callsign);
     void displayReceiveStatus(bool status);
     void displayTransmitStatus(bool status);
     void displayDataReceiveStatus(bool status);
@@ -52,13 +56,16 @@ public slots:
     void toggleRXwin(bool value);
     void toggleTXwin(bool value);
     void tuneCenterFreq(int value);
-    void tuneMainFreq();
+    void tuneMainFreq(qint64 freq);
     void toggleWideband(bool value);
     void toggleMode(int value);
     void setTxPowerDisplay(int value);
+    void setRxSensitivityDisplay(int value);
     void autoTune(bool value);
     void displayImage(QImage img);
     void playEndBeep(int seconds);
+    void enterFreq();
+    void saveConfig();
 
 signals:
     void startTransmission();
@@ -70,13 +77,15 @@ signals:
     void stopTalkVOIP();
     void toggleRX(bool value);
     void toggleTX(bool value);
-    void tuneFreq(long center_freq);
+    void tuneFreq(qint64 center_freq);
     void fineTuneFreq(long center_freq);
     void toggleWidebandMode(bool value);
     void toggleModemMode(int value);
     void setTxPower(int value);
+    void setRxSensitivity(int value);
     void startAutoTuneFreq();
     void stopAutoTuneFreq();
+
 public:
     explicit MainWindow(MumbleClient *client, QWidget *parent = 0);
     ~MainWindow();
@@ -84,8 +93,7 @@ public:
     QWidget* get_rssi_gui() {return _rssi_gui;}
     QWidget* get_fft_gui() {return _fft_gui;}
 
-
-    QFileInfo setupSounds(QString name);
+    void readConfig(QFileInfo *config_file);
 private:
     Ui::MainWindow *ui;
     MumbleClient *_mumble_client;
@@ -95,6 +103,11 @@ private:
     QWidget *_fft_gui;
     Phonon::MediaObject *_end_beep;
     QPixmap *_video_img;
+    QFileInfo *_config_file;
+    QFileInfo setupSounds(QString name);
+    QFileInfo *setupConfig();
+
+
 
 };
 

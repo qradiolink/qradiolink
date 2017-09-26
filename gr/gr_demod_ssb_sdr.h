@@ -7,6 +7,7 @@
 #include <gnuradio/analog/sig_source_c.h>
 #include <gnuradio/top_block.h>
 #include <gnuradio/filter/firdes.h>
+#include <gnuradio/analog/agc2_cc.h>
 #include <gnuradio/filter/pfb_arb_resampler_ccf.h>
 #include <gnuradio/filter/fft_filter_ccc.h>
 #include <gnuradio/qtgui/const_sink_c.h>
@@ -18,7 +19,7 @@
 #include <gnuradio/filter/single_pole_iir_filter_ff.h>
 #include <gnuradio/blocks/moving_average_ff.h>
 #include <gnuradio/blocks/add_const_ff.h>
-#include <gnuradio/blocks/complex_to_mag.h>
+#include <gnuradio/blocks/complex_to_real.h>
 #include <osmosdr/source.h>
 
 class gr_demod_ssb_sdr : public QObject
@@ -27,12 +28,13 @@ class gr_demod_ssb_sdr : public QObject
 public:
     explicit gr_demod_ssb_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui::const_sink_c::sptr const_gui, gr::qtgui::number_sink::sptr rssi_gui, QObject *parent = 0, int samp_rate=8000, int carrier_freq=1600,
                               int filter_width=1200, float mod_index=1, float device_frequency=434000000,
-                              float rf_gain=50);
+                              float rf_gain=50, std::string device_args="rtl=0", std::string device_antenna="RX2", int freq_corr=0);
 
 public slots:
     void start();
     void stop();
     void tune(long center_freq);
+    void set_rx_sensitivity(float value);
 
 private:
     gr::top_block_sptr _top_block;
@@ -41,7 +43,9 @@ private:
     gr::blocks::multiply_cc::sptr _multiply;
     gr::filter::pfb_arb_resampler_ccf::sptr _resampler;
     gr::filter::fft_filter_ccc::sptr _filter;
-    gr::blocks::complex_to_mag::sptr _complex_to_mag;
+    gr::analog::agc2_cc::sptr _agc;
+    gr::blocks::complex_to_real::sptr _complex_to_real;
+    gr::blocks::multiply_const_ff::sptr _level_control;
     gr::blocks::multiply_const_ff::sptr _audio_gain;
     gr::qtgui::const_sink_c::sptr _constellation;
     gr::qtgui::sink_c::sptr _fft_gui;

@@ -18,7 +18,8 @@
 #include "QDebug"
 
 gr_mod_bpsk_sdr::gr_mod_bpsk_sdr(QObject *parent, int sps, int samp_rate, int carrier_freq,
-                                 int filter_width, float mod_index, float device_frequency, float rf_gain) :
+                                 int filter_width, float mod_index, float device_frequency, float rf_gain,
+                                 std::string device_args, std::string device_antenna, int freq_corr) :
     QObject(parent)
 {
     std::vector<gr_complex> constellation;
@@ -28,7 +29,6 @@ gr_mod_bpsk_sdr::gr_mod_bpsk_sdr(QObject *parent, int sps, int samp_rate, int ca
     polys.push_back(109);
     polys.push_back(79);
 
-    const std::string device_args = "uhd";
     _device_frequency = device_frequency;
     _samples_per_symbol = sps;
     _samp_rate =samp_rate;
@@ -58,7 +58,7 @@ gr_mod_bpsk_sdr::gr_mod_bpsk_sdr(QObject *parent, int sps, int samp_rate, int ca
 
     _osmosdr_sink = osmosdr::sink::make(device_args);
     _osmosdr_sink->set_sample_rate(_samp_rate);
-    _osmosdr_sink->set_antenna("TX/RX");
+    _osmosdr_sink->set_antenna(device_antenna);
     _osmosdr_sink->set_center_freq(_device_frequency);
     _osmosdr_sink->set_gain(rf_gain);
 
