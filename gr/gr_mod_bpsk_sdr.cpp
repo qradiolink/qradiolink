@@ -39,7 +39,7 @@ gr_mod_bpsk_sdr::gr_mod_bpsk_sdr(QObject *parent, int sps, int samp_rate, int ca
     _vector_source = make_gr_vector_source();
     _packed_to_unpacked = gr::blocks::packed_to_unpacked_bb::make(1,gr::GR_MSB_FIRST);
     _scrambler = gr::digital::scrambler_bb::make(0x8A, 0x7F ,7);
-    gr::fec::code::cc_encoder::sptr ccsds = gr::fec::code::cc_encoder::make(4096,7,2,polys,0,CC_TRUNCATED);
+    gr::fec::code::cc_encoder::sptr ccsds = gr::fec::code::cc_encoder::make(512,7,2,polys,0,CC_TRUNCATED);
     _unpacked_to_packed = gr::blocks::unpacked_to_packed_bb::make(1,gr::GR_MSB_FIRST);
     _ccsds_encoder = gr::fec::encoder::make(ccsds,1,1);
     _packed_to_unpacked2 = gr::blocks::packed_to_unpacked_bb::make(1,gr::GR_MSB_FIRST);
