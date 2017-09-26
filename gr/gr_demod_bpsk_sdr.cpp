@@ -54,14 +54,15 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
                             1, _target_samp_rate, _filter_width,600,gr::filter::firdes::WIN_HAMMING) );
     float gain_mu = 0.025;
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, 0.175,
-                                                              0.015);
+                                                              0.035);
     _costas_loop = gr::digital::costas_loop_cc::make(0.0628,2);
     _equalizer = gr::digital::cma_equalizer_cc::make(8,1,0.00005,1);
     _fll = gr::digital::fll_band_edge_cc::make(sps, 0.35, 32, 0.000628);
     _complex_to_real = gr::blocks::complex_to_real::make();
     _binary_slicer = gr::digital::binary_slicer_fb::make();
     _diff_decoder = gr::digital::diff_decoder_bb::make(2);
-    gr::fec::code::cc_decoder::sptr cc_decoder = gr::fec::code::cc_decoder::make(100,7,2,polys,0,-1,CC_STREAMING);
+    gr::fec::code::cc_decoder::sptr cc_decoder = gr::fec::code::cc_decoder::make(4096,7,2,polys,
+                                                                                 0,-1,CC_TRUNCATED);
     _fec_decoder = gr::fec::decoder::make(cc_decoder,1,1);
     _multiply_const_fec = gr::blocks::multiply_const_ff::make(48.0);
     _float_to_uchar = gr::blocks::float_to_uchar::make();
