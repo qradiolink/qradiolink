@@ -140,17 +140,19 @@ private:
     gr_mod_gmsk *_gr_mod_gmsk;
     gr_demod_gmsk *_gr_demod_gmsk;
     gr_mod_bpsk *_gr_mod_bpsk;
-    gr_mod_bpsk_sdr *_gr_mod_bpsk_sdr = 0;
-    gr_mod_qpsk_sdr *_gr_mod_qpsk_sdr = 0;
-    gr_mod_4fsk_sdr *_gr_mod_4fsk_sdr = 0;
-    gr_mod_nbfm_sdr *_gr_mod_nbfm_sdr = 0;
-    gr_mod_ssb_sdr *_gr_mod_ssb_sdr = 0;
     gr_demod_bpsk *_gr_demod_bpsk;
-    gr_demod_bpsk_sdr *_gr_demod_bpsk_sdr = 0;
-    gr_demod_qpsk_sdr *_gr_demod_qpsk_sdr = 0;
-    gr_demod_4fsk_sdr *_gr_demod_4fsk_sdr = 0;
-    gr_demod_nbfm_sdr *_gr_demod_nbfm_sdr = 0;
-    gr_demod_ssb_sdr *_gr_demod_ssb_sdr = 0;
+
+    gr_mod_bpsk_sdr *_gr_mod_bpsk_sdr;
+    gr_mod_qpsk_sdr *_gr_mod_qpsk_sdr;
+    gr_mod_4fsk_sdr *_gr_mod_4fsk_sdr;
+    gr_mod_nbfm_sdr *_gr_mod_nbfm_sdr;
+    gr_mod_ssb_sdr *_gr_mod_ssb_sdr;
+
+    gr_demod_bpsk_sdr *_gr_demod_bpsk_sdr;
+    gr_demod_qpsk_sdr *_gr_demod_qpsk_sdr;
+    gr_demod_4fsk_sdr *_gr_demod_4fsk_sdr;
+    gr_demod_nbfm_sdr *_gr_demod_nbfm_sdr;
+    gr_demod_ssb_sdr *_gr_demod_ssb_sdr;
     int _modem_type;
     int _frame_length;
     quint64 _frame_counter;
