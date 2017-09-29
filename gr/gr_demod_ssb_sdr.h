@@ -45,7 +45,6 @@ private:
     gr::filter::fft_filter_ccc::sptr _filter;
     gr::analog::agc2_cc::sptr _agc;
     gr::blocks::complex_to_real::sptr _complex_to_real;
-    gr::blocks::multiply_const_ff::sptr _level_control;
     gr::blocks::multiply_const_ff::sptr _audio_gain;
     gr::qtgui::const_sink_c::sptr _constellation;
     gr::qtgui::sink_c::sptr _fft_gui;

@@ -106,6 +106,11 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
         root.lookupValue("tx_freq_corr", tx_freq_corr);
         root.lookupValue("callsign", callsign);
         _callsign = QString::fromStdString(callsign);
+        if(_callsign.size() < 7)
+        {
+            QString pad = QString(" ").repeated(7 - _callsign.size());
+            _callsign = _callsign + pad;
+        }
     }
     catch(const libconfig::SettingNotFoundException &nfex)
     {

@@ -45,6 +45,17 @@ gr_modem::gr_modem(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgu
     _fft_gui = fft_gui;
     _frequency_found =0;
     _requested_frequency_hz = 434025000;
+    _gr_mod_bpsk_sdr = 0;
+    _gr_mod_qpsk_sdr = 0;
+    _gr_mod_4fsk_sdr = 0;
+    _gr_mod_nbfm_sdr = 0;
+    _gr_mod_ssb_sdr = 0;
+
+    _gr_demod_bpsk_sdr = 0;
+    _gr_demod_qpsk_sdr = 0;
+    _gr_demod_4fsk_sdr = 0;
+    _gr_demod_nbfm_sdr = 0;
+    _gr_demod_ssb_sdr = 0;
 }
 
 gr_modem::~gr_modem()
@@ -413,7 +424,7 @@ void gr_modem::tune(long center_freq, bool sync)
             _gr_mod_4fsk_sdr->tune(center_freq);
         if(_gr_mod_nbfm_sdr)
             _gr_mod_nbfm_sdr->tune(center_freq);
-        if(_gr_mod_nbfm_sdr)
+        if(_gr_mod_ssb_sdr)
             _gr_mod_ssb_sdr->tune(center_freq);
     }
 }
