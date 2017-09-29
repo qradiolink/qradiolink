@@ -413,7 +413,7 @@ void gr_modem::tune(long center_freq, bool sync)
             _gr_mod_4fsk_sdr->tune(center_freq);
         if(_gr_mod_nbfm_sdr)
             _gr_mod_nbfm_sdr->tune(center_freq);
-        if(_gr_mod_nbfm_sdr)
+        if(_gr_mod_ssb_sdr)
             _gr_mod_ssb_sdr->tune(center_freq);
     }
 }
