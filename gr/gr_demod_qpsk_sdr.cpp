@@ -109,7 +109,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
                                                               0.015);
     _costas_loop = gr::digital::costas_loop_cc::make(0.0628,4);
-    _equalizer = gr::digital::cma_equalizer_cc::make(8,1,0.00005,1);
+    _equalizer = gr::digital::cma_equalizer_cc::make(8,4,0.00005,1);
     _fll = gr::digital::fll_band_edge_cc::make(sps, 0.55, 32, 0.000628);
     _diff_decoder = gr::digital::diff_decoder_bb::make(4);
     _map = gr::digital::map_bb::make(map);
