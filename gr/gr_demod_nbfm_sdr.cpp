@@ -28,7 +28,7 @@ gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(gr::qtgui::sink_c::sptr fft_gui,
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
                             1, _target_samp_rate, _filter_width,600,gr::filter::firdes::WIN_HAMMING) );
     _audio_sink = gr::audio::sink::make(_target_samp_rate,"", true);
-    _fm_demod = gr::analog::quadrature_demod_cf::make(_target_samp_rate/(2.0 * M_PI * _filter_width));
+    _fm_demod = gr::analog::quadrature_demod_cf::make(_target_samp_rate/(2*M_PI* _filter_width));
 
     _mag_squared = gr::blocks::complex_to_mag_squared::make();
     _single_pole_filter = gr::filter::single_pole_iir_filter_ff::make(0.04);
