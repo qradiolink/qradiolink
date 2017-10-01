@@ -53,30 +53,18 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     std::vector<int> map;
     map.push_back(0);
     map.push_back(1);
-    map.push_back(2);
     map.push_back(3);
+    map.push_back(2);
 
-    std::vector<unsigned int> const_map;
-    const_map.push_back(0);
-    const_map.push_back(1);
-    const_map.push_back(2);
-    const_map.push_back(3);
-
-    std::vector<int> pre_diff_code;
-
-    std::vector<gr_complex> constellation_points;
-
-    constellation_points.push_back(-0.707-0.707j);
-    constellation_points.push_back(-0.707+0.707j);
-    constellation_points.push_back(0.707+0.707j);
-    constellation_points.push_back(0.707-0.707j);
-
+    gr::digital::constellation_dqpsk::sptr constellation = gr::digital::constellation_dqpsk::make();
 
     float rerate = (float)_target_samp_rate/(float)_samp_rate;
 
     unsigned int flt_size = 32;
+    /*
     gr::digital::constellation_expl_rect::sptr constellation = gr::digital::constellation_expl_rect::make(
-                constellation_points,pre_diff_code,4,2,2,1,1,const_map);
+                constellation->points(),pre_diff_code,4,2,2,1,1,const_map);
+                */
 
     std::vector<float> taps;
     if(_target_samp_rate == 20000)
@@ -107,7 +95,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
                                 1, _target_samp_rate, _filter_width, filter_slope,gr::filter::firdes::WIN_HAMMING) );
     float gain_mu = 0.025;
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
-                                                              0.015);
+                                                              0.035);
     _costas_loop = gr::digital::costas_loop_cc::make(0.0628,4);
     _equalizer = gr::digital::cma_equalizer_cc::make(8,4,0.00005,1);
     _fll = gr::digital::fll_band_edge_cc::make(sps, 0.55, 32, 0.000628);
@@ -158,9 +146,9 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _top_block->connect(_equalizer,0,_costas_loop,0);
     _top_block->connect(_costas_loop,0,_constellation,0);
     _top_block->connect(_costas_loop,0,_constellation_receiver,0);
-    _top_block->connect(_constellation_receiver,0,_map,0);
-    _top_block->connect(_map,0,_diff_decoder,0);
-    _top_block->connect(_diff_decoder,0,_unpack,0);
+    _top_block->connect(_constellation_receiver,0,_diff_decoder,0);
+    _top_block->connect(_diff_decoder,0,_map,0);
+    _top_block->connect(_map,0,_unpack,0);
     _top_block->connect(_unpack,0,_descrambler,0);
     _top_block->connect(_descrambler,0,_vector_sink,0);
 

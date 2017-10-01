@@ -21,21 +21,13 @@ gr_mod_qpsk_sdr::gr_mod_qpsk_sdr(QObject *parent, int sps, int samp_rate, int ca
                                  std::string device_args, std::string device_antenna, int freq_corr) :
     QObject(parent)
 {
-    //gr::digital::constellation_qpsk::sptr constellation = gr::digital::constellation_qpsk::make();
-    //std::vector<gr_complex> constellation_points = constellation->points();
-    std::vector<gr_complex> constellation;
-
-    constellation.push_back(-0.707-0.707j);
-    constellation.push_back(-0.707+0.707j);
-    constellation.push_back(0.707+0.707j);
-    constellation.push_back(0.707-0.707j);
-
+    gr::digital::constellation_dqpsk::sptr constellation = gr::digital::constellation_dqpsk::make();
 
     std::vector<int> map;
     map.push_back(0);
     map.push_back(1);
-    map.push_back(2);
     map.push_back(3);
+    map.push_back(2);
 
     _device_frequency = device_frequency;
     _samples_per_symbol = sps;
@@ -55,7 +47,7 @@ gr_mod_qpsk_sdr::gr_mod_qpsk_sdr(QObject *parent, int sps, int samp_rate, int ca
     _diff_encoder = gr::digital::diff_encoder_bb::make(4);
     _map = gr::digital::map_bb::make(map);
 
-    _chunks_to_symbols = gr::digital::chunks_to_symbols_bc::make(constellation);
+    _chunks_to_symbols = gr::digital::chunks_to_symbols_bc::make(constellation->points());
     int nfilts = 32;
     std::vector<float> rrc_taps = gr::filter::firdes::root_raised_cosine(nfilts, nfilts,
                                                         1, 0.35, nfilts * 11 * _samples_per_symbol);
