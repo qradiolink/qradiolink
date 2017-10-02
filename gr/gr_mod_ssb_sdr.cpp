@@ -15,7 +15,7 @@ gr_mod_ssb_sdr::gr_mod_ssb_sdr(QObject *parent, int samp_rate, int carrier_freq,
 
     _audio_source = gr::audio::source::make(48000,"",false);
     _signal_source = gr::analog::sig_source_f::make(48000,gr::analog::GR_COS_WAVE, 0, 1);
-    _carrier_suppress = gr::analog::sig_source_c::make(48000,gr::analog::GR_COS_WAVE,0,1);
+    _carrier_suppress = gr::analog::sig_source_c::make(48000,gr::analog::GR_SIN_WAVE,0,1);
     _delay = gr::blocks::delay::make(8,125000);
     _multiply = gr::blocks::multiply_ff::make();
     _multiply2 = gr::blocks::multiply_cc::make();
@@ -27,10 +27,11 @@ gr_mod_ssb_sdr::gr_mod_ssb_sdr(QObject *parent, int samp_rate, int carrier_freq,
                                                         10000, 10000);
     float rerate = (float)_samp_rate/48000.0;
     _resampler = gr::filter::pfb_arb_resampler_ccf::make(rerate, interp_taps, 16);
-    _amplify = gr::blocks::multiply_const_cc::make(60,1);
+    _amplify = gr::blocks::multiply_const_cc::make(90,1);
     _filter = gr::filter::fft_filter_ccc::make(
-                1,gr::filter::firdes::complex_band_pass(
-                    1, _samp_rate, 300, _filter_width, 50, gr::filter::firdes::WIN_HAMMING));
+                1,gr::filter::firdes::complex_band_pass_2(
+                    1, _samp_rate, 400, _filter_width, 10, 120, gr::filter::firdes::WIN_HAMMING));
+
 
     _osmosdr_sink = osmosdr::sink::make(device_args);
     _osmosdr_sink->set_sample_rate(_samp_rate);
@@ -47,8 +48,8 @@ gr_mod_ssb_sdr::gr_mod_ssb_sdr(QObject *parent, int samp_rate, int carrier_freq,
     _top_block->connect(_audio_filter,0,_float_to_complex,0);
     _top_block->connect(_float_to_complex,0,_resampler,0);
     _top_block->connect(_resampler,0,_multiply2,0);
-    _top_block->connect(_carrier_suppress,0,_delay,0);
-    _top_block->connect(_delay,0,_multiply2,1);
+    _top_block->connect(_carrier_suppress,0,_multiply2,1);
+    //_top_block->connect(_delay,0,_multiply2,1);
     _top_block->connect(_multiply2,0,_amplify,0);
 
     //_top_block->connect(_resampler,0,_amplify,0);
