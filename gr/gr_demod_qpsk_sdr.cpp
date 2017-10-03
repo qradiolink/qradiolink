@@ -64,19 +64,18 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     /*
     gr::digital::constellation_expl_rect::sptr constellation = gr::digital::constellation_expl_rect::make(
                 constellation->points(),pre_diff_code,4,2,2,1,1,const_map);
-                */
+    */
 
-    std::vector<float> taps;
+    int bw;
     if(_target_samp_rate == 20000)
     {
-        taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, _filter_width, 1000);
+        bw = 1000;
     }
     else
     {
-        taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, _target_samp_rate/2, _target_samp_rate/2-1000);
+        bw = 10000;
     }
-
-
+    std::vector<float> taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, _filter_width, bw);
 
     _resampler = gr::filter::rational_resampler_base_ccf::make(interpolation, decimation, taps);
 
@@ -93,9 +92,19 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     */
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
                                 1, _target_samp_rate, _filter_width, filter_slope,gr::filter::firdes::WIN_HAMMING) );
-    float gain_mu = 0.025;
+    float gain_mu, omega_rel_limit;
+    if(_target_samp_rate == 20000)
+    {
+        gain_mu = 0.025;
+        omega_rel_limit = 0.015;
+    }
+    else
+    {
+        gain_mu = 0.0025;
+        omega_rel_limit = 0.0015;
+    }
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
-                                                              0.035);
+                                                              omega_rel_limit);
     _costas_loop = gr::digital::costas_loop_cc::make(0.0628,4);
     _equalizer = gr::digital::cma_equalizer_cc::make(8,4,0.00005,1);
     _fll = gr::digital::fll_band_edge_cc::make(sps, 0.55, 32, 0.000628);
