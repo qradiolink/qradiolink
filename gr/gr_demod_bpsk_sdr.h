@@ -40,6 +40,7 @@
 #include <gnuradio/filter/single_pole_iir_filter_ff.h>
 #include <gnuradio/blocks/moving_average_ff.h>
 #include <gnuradio/blocks/add_const_ff.h>
+#include <gnuradio/blocks/delay.h>
 #include <osmosdr/source.h>
 #include <vector>
 #include "gr_vector_sink.h"
@@ -59,12 +60,14 @@ public slots:
     void start();
     void stop();
     std::vector<unsigned char> *getData();
+    std::vector<unsigned char> *getData2();
     void tune(long center_freq);
     void set_rx_sensitivity(float value);
 
 private:
     gr::top_block_sptr _top_block;
     gr_vector_sink_sptr _vector_sink;
+    gr_vector_sink_sptr _vector_sink2;
     gr::blocks::unpacked_to_packed_bb::sptr _unpacked_to_packed;
     gr::analog::sig_source_c::sptr _signal_source;
     gr::blocks::multiply_cc::sptr _multiply;
@@ -78,15 +81,20 @@ private:
     gr::digital::binary_slicer_fb::sptr _binary_slicer;
     gr::digital::costas_loop_cc::sptr _costas_loop;
     gr::blocks::packed_to_unpacked_bb::sptr _packed_to_unpacked;
-    gr::digital::diff_decoder_bb::sptr _diff_decoder;
+
     //gr::filter::pfb_arb_resampler_ccf::sptr _resampler;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
     gr::filter::fft_filter_ccf::sptr _filter;
+    gr::digital::diff_decoder_bb::sptr _diff_decoder;
     gr::digital::descrambler_bb::sptr _descrambler;
+    gr::digital::diff_decoder_bb::sptr _diff_decoder2;
+    gr::digital::descrambler_bb::sptr _descrambler2;
+    gr::blocks::delay::sptr _delay;
     gr::blocks::multiply_const_ff::sptr _multiply_const_fec;
     gr::blocks::add_const_ff::sptr _add_const_fec;
     gr::blocks::float_to_uchar::sptr _float_to_uchar;
     gr::fec::decoder::sptr _fec_decoder;
+    gr::fec::decoder::sptr _fec_decoder2;
     gr::qtgui::const_sink_c::sptr _constellation;
     gr::qtgui::sink_c::sptr _fft_gui;
     gr::blocks::complex_to_mag_squared::sptr _mag_squared;

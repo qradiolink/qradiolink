@@ -37,7 +37,8 @@ gr_modem::gr_modem(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgu
     //_gr_demod_bpsk->start();
     _bit_buf_len = 7 *8;
     _bit_buf_index = 0;
-    _sync_found = false;
+    _sync_found1 = false;
+    _sync_found2 = false;
     _stream_ended = false;
     _current_frame_type = FrameTypeNone;
     _const_gui = const_gui;
@@ -637,8 +638,12 @@ static void packBytes(unsigned char *pktbuf, const unsigned char *bitbuf, int bi
 void gr_modem::demodulate()
 {
     std::vector<unsigned char> *demod_data;
+    std::vector<unsigned char> *demod_data2;
     if(_modem_type == gr_modem_types::ModemTypeBPSK2000)
+    {
         demod_data = _gr_demod_bpsk_sdr->getData();
+        demod_data2 = _gr_demod_bpsk_sdr->getData2();
+    }
     else if((_modem_type == gr_modem_types::ModemTypeQPSK20000)
             || (_modem_type == gr_modem_types::ModemTypeQPSK2000)
             || (_modem_type == gr_modem_types::ModemTypeQPSKVideo))
@@ -648,19 +653,13 @@ void gr_modem::demodulate()
         demod_data = _gr_demod_4fsk_sdr->getData();
 
     int v_size = demod_data->size();
-    if(v_size<1)
-    {
-        usleep(10);
-        delete demod_data;
-        return;
-    }
 
     for(int i=0;i < v_size;i++)
     {
-        if(!_sync_found)
+        if(!_sync_found1)
         {
-            _current_frame_type = findSync(demod_data->at(i));
-            if(_sync_found)
+            _current_frame_type = findSync(demod_data->at(i),1);
+            if(_sync_found1)
             {
                 _bit_buf_index = 0;
                 continue;
@@ -674,7 +673,7 @@ void gr_modem::demodulate()
             if(_frequency_found > 0)
                 _frequency_found--; // substract one bit
         }
-        if(_sync_found)
+        if(_sync_found1)
         {
             if(_frequency_found < 255)
                 _frequency_found += 1; // 80 bits + counter
@@ -685,7 +684,48 @@ void gr_modem::demodulate()
                 unsigned char *frame_data = new unsigned char[_frame_length];
                 packBytes(frame_data,_bit_buf,_bit_buf_index);
                 processReceivedData(frame_data, _current_frame_type);
-                _sync_found = false;
+                _sync_found1 = false;
+                _shift_reg = 0;
+                _bit_buf_index = 0;
+            }
+        }
+    }
+    demod_data->clear();
+    delete demod_data;
+    if(_modem_type != gr_modem_types::ModemTypeBPSK2000)
+        return;
+    int v_size2 = demod_data2->size();
+    for(int i=0;i < v_size2;i++)
+    {
+        if(!_sync_found2)
+        {
+            _current_frame_type = findSync(demod_data2->at(i),2);
+            if(_sync_found2)
+            {
+                _bit_buf_index = 0;
+                continue;
+            }
+            if(_stream_ended)
+            {
+                _stream_ended = false;
+                handleStreamEnd();
+                continue;
+            }
+            if(_frequency_found > 0)
+                _frequency_found--; // substract one bit
+        }
+        if(_sync_found2)
+        {
+            if(_frequency_found < 255)
+                _frequency_found += 1; // 80 bits + counter
+            _bit_buf[_bit_buf_index] =  (demod_data2->at(i)) & 0x1;
+            _bit_buf_index++;
+            if(_bit_buf_index >= _bit_buf_len)
+            {
+                unsigned char *frame_data = new unsigned char[_frame_length];
+                packBytes(frame_data,_bit_buf,_bit_buf_index);
+                processReceivedData(frame_data, _current_frame_type);
+                _sync_found2 = false;
                 _shift_reg = 0;
                 _bit_buf_index = 0;
             }
@@ -693,13 +733,13 @@ void gr_modem::demodulate()
 
 
     }
-    demod_data->clear();
-    delete demod_data;
+    demod_data2->clear();
+    delete demod_data2;
 
 }
 
 
-int gr_modem::findSync(unsigned char bit)
+int gr_modem::findSync(unsigned char bit, int nr)
 {
 
 
@@ -708,22 +748,34 @@ int gr_modem::findSync(unsigned char bit)
 
     if((temp == 0xAA89ED))
     {
-        _sync_found = true;
+        if(nr == 1)
+            _sync_found1 = true;
+        else
+            _sync_found2 = true;
         return FrameTypeText;
     }
     if((temp == 0xAAED89))
     {
-        _sync_found = true;
+        if(nr == 1)
+            _sync_found1 = true;
+        else
+            _sync_found2 = true;
         return FrameTypeVoice;
     }
     if((temp == 0xAA98DE))
     {
-        _sync_found = true;
+        if(nr == 1)
+            _sync_found1 = true;
+        else
+            _sync_found2 = true;
         return FrameTypeVideo;
     }
     if((temp == 0xDDFBBF))
     {
-        _sync_found = true;
+        if(nr == 1)
+            _sync_found1 = true;
+        else
+            _sync_found2 = true;
         return FrameTypeCallsign;
     }
     temp = _shift_reg & 0xFFFFFFFF;

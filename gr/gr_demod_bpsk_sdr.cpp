@@ -60,16 +60,22 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _fll = gr::digital::fll_band_edge_cc::make(sps, 0.35, 32, 0.000628);
     _complex_to_real = gr::blocks::complex_to_real::make();
     _binary_slicer = gr::digital::binary_slicer_fb::make();
-    _diff_decoder = gr::digital::diff_decoder_bb::make(2);
+
     gr::fec::code::cc_decoder::sptr cc_decoder = gr::fec::code::cc_decoder::make(800,7,2,polys,
                                                                                  0,-1,CC_TERMINATED);
     _fec_decoder = gr::fec::decoder::make(cc_decoder,1,1);
+    _fec_decoder2 = gr::fec::decoder::make(cc_decoder,1,1);
     _multiply_const_fec = gr::blocks::multiply_const_ff::make(48.0);
     _float_to_uchar = gr::blocks::float_to_uchar::make();
     _add_const_fec = gr::blocks::add_const_ff::make(128.0);
+    _diff_decoder = gr::digital::diff_decoder_bb::make(2);
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
-    _unpacked_to_packed = gr::blocks::unpacked_to_packed_bb::make(1,gr::GR_MSB_FIRST);
     _vector_sink = make_gr_vector_sink();
+
+    _delay = gr::blocks::delay::make(1,1);
+    _diff_decoder2 = gr::digital::diff_decoder_bb::make(2);
+    _descrambler2 = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
+    _vector_sink2 = make_gr_vector_sink();
 
     _mag_squared = gr::blocks::complex_to_mag_squared::make();
     _single_pole_filter = gr::filter::single_pole_iir_filter_ff::make(0.04);
@@ -119,6 +125,11 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _top_block->connect(_fec_decoder,0,_diff_decoder,0);
     _top_block->connect(_diff_decoder,0,_descrambler,0);
     _top_block->connect(_descrambler,0,_vector_sink,0);
+    _top_block->connect(_float_to_uchar,0,_delay,0);
+    _top_block->connect(_delay,0,_fec_decoder2,0);
+    _top_block->connect(_fec_decoder2,0,_diff_decoder2,0);
+    _top_block->connect(_diff_decoder2,0,_descrambler2,0);
+    _top_block->connect(_descrambler2,0,_vector_sink2,0);
 
     _top_block->connect(_filter,0,_mag_squared,0);
     _top_block->connect(_mag_squared,0,_moving_average,0);
@@ -144,6 +155,12 @@ void gr_demod_bpsk_sdr::stop()
 std::vector<unsigned char>* gr_demod_bpsk_sdr::getData()
 {
     std::vector<unsigned char> *data = _vector_sink->get_data();
+    return data;
+}
+
+std::vector<unsigned char>* gr_demod_bpsk_sdr::getData2()
+{
+    std::vector<unsigned char> *data = _vector_sink2->get_data();
     return data;
 }
 

@@ -133,7 +133,7 @@ private:
     std::vector<unsigned char>* frame(unsigned char *encoded_audio, int data_size, int frame_type=FrameTypeVoice);
     void processReceivedData(unsigned char* received_data, int current_frame_type);
     void handleStreamEnd();
-    int findSync(unsigned char bit);
+    int findSync(unsigned char bit, int nr);
     void transmit(QVector<std::vector<unsigned char>*> frames);
 
 
@@ -157,7 +157,8 @@ private:
     int _frame_length;
     quint64 _frame_counter;
     quint8 _last_frame_type;
-    bool _sync_found;
+    bool _sync_found1;
+    bool _sync_found2;
     int _current_frame_type;
     long _bit_buf_index;
     unsigned char *_bit_buf;
