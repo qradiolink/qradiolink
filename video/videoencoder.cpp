@@ -75,8 +75,7 @@ void VideoEncoder::encode_jpeg(unsigned char *videobuffer, unsigned long &encode
     jpeg_finish_compress(&cinfo);
     if(encoded_size > max_video_frame_size)
     {
-        qDebug() << "Encoded JPEG buffer too large: " << encoded_size;
-        return;
+        encoded_size = max_video_frame_size;
     }
     memcpy(videobuffer, outbuf, encoded_size);
     jpeg_destroy_compress(&cinfo);

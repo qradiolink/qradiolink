@@ -168,14 +168,12 @@ int RadioOp::processVideoStream(bool &frame_flag)
 
     if(encoded_size > max_video_frame_size)
     {
-        qDebug() << "Too large frame size (dropped): " << encoded_size;
-        delete[] videobuffer;
-        return -EINVAL;
+        encoded_size = max_video_frame_size;
     }
     memcpy(&(videobuffer[0]), &encoded_size, 4);
     memcpy(&(videobuffer[4]), &encoded_size, 4);
     memcpy(&(videobuffer[8]), &encoded_size, 4);
-    for(int k=encoded_size,i=0;k<max_video_frame_size;k++,i++)
+    for(int k=encoded_size+12,i=0;k<max_video_frame_size;k++,i++)
     {
 
         videobuffer[k] = _rand_frame_data[i];
