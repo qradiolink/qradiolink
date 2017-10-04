@@ -621,17 +621,29 @@ void gr_modem::textData(QString text)
 
 static void packBytes(unsigned char *pktbuf, const unsigned char *bitbuf, int bitcount)
 {
-  for(int i = 0; i < bitcount; i += 8) {
-    int t = bitbuf[i+0] & 0x1;
-    t = (t << 1) | (bitbuf[i+1] & 0x1);
-    t = (t << 1) | (bitbuf[i+2] & 0x1);
-    t = (t << 1) | (bitbuf[i+3] & 0x1);
-    t = (t << 1) | (bitbuf[i+4] & 0x1);
-    t = (t << 1) | (bitbuf[i+5] & 0x1);
-    t = (t << 1) | (bitbuf[i+6] & 0x1);
-    t = (t << 1) | (bitbuf[i+7] & 0x1);
-    *pktbuf++ = t;
-  }
+    for(int i = 0; i < bitcount; i += 8)
+    {
+        int t = bitbuf[i+0] & 0x1;
+        t = (t << 1) | (bitbuf[i+1] & 0x1);
+        t = (t << 1) | (bitbuf[i+2] & 0x1);
+        t = (t << 1) | (bitbuf[i+3] & 0x1);
+        t = (t << 1) | (bitbuf[i+4] & 0x1);
+        t = (t << 1) | (bitbuf[i+5] & 0x1);
+        t = (t << 1) | (bitbuf[i+6] & 0x1);
+        t = (t << 1) | (bitbuf[i+7] & 0x1);
+        *pktbuf++ = t;
+    }
+}
+
+static void unpackBytes(unsigned char *bitbuf, const unsigned char *bytebuf, int bytecount)
+{
+    for(int i=0; i<bytecount; i++)
+    {
+        for(int j=0; j<8; j++)
+        {
+            bitbuf[i*8+j] = (bytebuf[i] & (128 >> j)) != 0;
+        }
+    }
 }
 
 void gr_modem::demodulate()
