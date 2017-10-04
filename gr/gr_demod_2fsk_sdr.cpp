@@ -35,19 +35,19 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
                                 1, _target_samp_rate, _filter_width,600,gr::filter::firdes::WIN_HAMMING) );
 
     _upper_filter = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
-                                1, _target_samp_rate, -_filter_width,400,600,gr::filter::firdes::WIN_HAMMING) );
+                                1, _target_samp_rate, -_filter_width,0,600,gr::filter::firdes::WIN_HAMMING) );
     _lower_filter = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
-                                1, _target_samp_rate, -400,_filter_width,600,gr::filter::firdes::WIN_HAMMING) );
+                                1, _target_samp_rate, 0,_filter_width,600,gr::filter::firdes::WIN_HAMMING) );
     _mag_squared_lower = gr::blocks::complex_to_mag_squared::make();
     _mag_squared_upper = gr::blocks::complex_to_mag_squared::make();
     _divide = gr::blocks::divide_ff::make();
     _add = gr::blocks::add_const_ff::make(-0.5);
-    _threshhold = gr::blocks::threshold_ff::make(0.999999,1.000001);
+    _threshhold = gr::blocks::threshold_ff::make(0.9999999,1.0000001);
     _float_to_complex = gr::blocks::float_to_complex::make();
     _symbol_filter = gr::filter::fft_filter_ccf::make(1,symbol_filter_taps);
-    float gain_mu = 0.025;
+    float gain_mu = 0.0025;
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
-                                                              0.015);
+                                                              0.095);
     _complex_to_real = gr::blocks::complex_to_real::make();
     _binary_slicer = gr::digital::binary_slicer_fb::make();
     _diff_decoder = gr::digital::diff_decoder_bb::make(2);
@@ -91,8 +91,8 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _top_block->connect(_filter,0,_upper_filter,0);
     _top_block->connect(_lower_filter,0,_mag_squared_lower,0);
     _top_block->connect(_upper_filter,0,_mag_squared_upper,0);
-    _top_block->connect(_mag_squared_lower,0,_divide,0);
-    _top_block->connect(_mag_squared_upper,0,_divide,1);
+    _top_block->connect(_mag_squared_lower,0,_divide,1);
+    _top_block->connect(_mag_squared_upper,0,_divide,0);
     _top_block->connect(_divide,0,_threshhold,0);
     _top_block->connect(_threshhold,0,_add,0);
     _top_block->connect(_add,0,_float_to_complex,0);
@@ -101,9 +101,9 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _top_block->connect(_clock_recovery,0,_constellation,0);
     _top_block->connect(_clock_recovery,0,_complex_to_real,0);
     _top_block->connect(_complex_to_real,0,_binary_slicer,0);
-    _top_block->connect(_binary_slicer,0,_diff_decoder,0);
-    _top_block->connect(_diff_decoder,0,_map,0);
-    _top_block->connect(_map,0,_descrambler,0);
+    //_top_block->connect(_binary_slicer,0,_diff_decoder,0);
+    //_top_block->connect(_diff_decoder,0,_map,0);
+    _top_block->connect(_binary_slicer,0,_descrambler,0);
     _top_block->connect(_descrambler,0,_vector_sink,0);
 
     _top_block->connect(_filter,0,_mag_squared,0);
