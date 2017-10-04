@@ -2,18 +2,15 @@
 #define GR_DEMOD_4FSK_SDR_H
 
 #include <QObject>
-#include <gnuradio/audio/source.h>
 #include <gnuradio/blocks/multiply_cc.h>
 #include <gnuradio/analog/sig_source_c.h>
 #include <gnuradio/top_block.h>
 #include <gnuradio/endianness.h>
-#include <gnuradio/filter/fir_filter_ccf.h>
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/digital/clock_recovery_mm_cc.h>
 #include <gnuradio/blocks/unpack_k_bits_bb.h>
 #include <gnuradio/blocks/float_to_complex.h>
 #include <gnuradio/analog/quadrature_demod_cf.h>
-#include <gnuradio/blocks/float_to_complex.h>
 #include <gnuradio/digital/diff_decoder_bb.h>
 #include <gnuradio/blocks/multiply_const_cc.h>
 #include <gnuradio/filter/rational_resampler_base_ccf.h>

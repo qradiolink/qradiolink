@@ -1404,12 +1404,12 @@ font: 18pt &quot;Sans Serif&quot;;</string>
             </item>
             <item>
              <property name="text">
-              <string>QPSK  20K</string>
+              <string>QPSK  10K</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>4FSK  20K</string>
+              <string>4FSK  10K</string>
              </property>
             </item>
             <item>
@@ -1435,6 +1435,11 @@ font: 18pt &quot;Sans Serif&quot;;</string>
             <item>
              <property name="text">
               <string>Video (640x480)</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>2FSK 2K</string>
              </property>
             </item>
            </widget>

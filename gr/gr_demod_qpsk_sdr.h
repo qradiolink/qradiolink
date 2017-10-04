@@ -6,7 +6,6 @@
 #include <gnuradio/analog/sig_source_c.h>
 #include <gnuradio/top_block.h>
 #include <gnuradio/endianness.h>
-#include <gnuradio/filter/fir_filter_ccf.h>
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/digital/clock_recovery_mm_cc.h>
 #include <gnuradio/blocks/unpack_k_bits_bb.h>
@@ -15,7 +14,6 @@
 #include <gnuradio/digital/diff_decoder_bb.h>
 #include <gnuradio/digital/cma_equalizer_cc.h>
 #include <gnuradio/analog/agc2_cc.h>
-#include <gnuradio/analog/feedforward_agc_cc.h>
 #include <gnuradio/digital/fll_band_edge_cc.h>
 #include <gnuradio/filter/pfb_arb_resampler_ccf.h>
 #include <gnuradio/filter/rational_resampler_base_ccf.h>

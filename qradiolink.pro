@@ -60,7 +60,9 @@ SOURCES += main.cpp\
     gr/gr_demod_nbfm_sdr.cpp \
     gr/gr_mod_ssb_sdr.cpp \
     gr/gr_demod_ssb_sdr.cpp \
-    video/videoencoder.cpp
+    video/videoencoder.cpp \
+    gr/gr_mod_2fsk_sdr.cpp \
+    gr/gr_demod_2fsk_sdr.cpp
 
 HEADERS  += mainwindow.h\
         audio/audioencoder.h\
@@ -111,7 +113,9 @@ HEADERS  += mainwindow.h\
     gr/gr_demod_nbfm_sdr.h \
     gr/gr_mod_ssb_sdr.h \
     gr/gr_demod_ssb_sdr.h \
-    video/videoencoder.h
+    video/videoencoder.h \
+    gr/gr_mod_2fsk_sdr.h \
+    gr/gr_demod_2fsk_sdr.h
 
 
 FORMS    += mainwindow.ui

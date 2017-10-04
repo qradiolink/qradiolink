@@ -9,9 +9,6 @@
 #include <gnuradio/endianness.h>
 #include <gnuradio/digital/chunks_to_symbols_bc.h>
 #include <gnuradio/blocks/repeat.h>
-#include <gnuradio/filter/interp_fir_filter_fff.h>
-#include <gnuradio/filter/interp_fir_filter_ccf.h>
-#include <gnuradio/filter/fir_filter_ccf.h>
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/analog/sig_source_waveform.h>
 #include <gnuradio/blocks/multiply_cc.h>
