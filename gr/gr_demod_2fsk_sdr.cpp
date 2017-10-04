@@ -50,7 +50,7 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
                                                               0.015);
     _complex_to_real = gr::blocks::complex_to_real::make();
     _binary_slicer = gr::digital::binary_slicer_fb::make();
-    _diff_decoder = gr::digital::diff_decoder_bb::make(4);
+    _diff_decoder = gr::digital::diff_decoder_bb::make(2);
     _map = gr::digital::map_bb::make(map);
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
     _vector_sink = make_gr_vector_sink();
