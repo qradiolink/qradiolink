@@ -2,12 +2,10 @@
 #define GR_DEMOD_BPSK_SDR_H
 
 #include <QObject>
-#include <gnuradio/audio/source.h>
 #include <gnuradio/blocks/multiply_cc.h>
 #include <gnuradio/analog/sig_source_c.h>
 #include <gnuradio/top_block.h>
 #include <gnuradio/endianness.h>
-#include <gnuradio/filter/fir_filter_ccf.h>
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/blocks/complex_to_real.h>
 #include <gnuradio/digital/clock_recovery_mm_cc.h>

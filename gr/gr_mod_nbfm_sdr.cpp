@@ -17,8 +17,8 @@ gr_mod_nbfm_sdr::gr_mod_nbfm_sdr(QObject *parent, int samp_rate, int carrier_fre
     _signal_source = gr::analog::sig_source_f::make(48000,gr::analog::GR_COS_WAVE, 0, 1);
     _multiply = gr::blocks::multiply_ff::make();
     _audio_filter = gr::filter::fft_filter_fff::make(
-                1,gr::filter::firdes::low_pass(
-                    1, 48000, _filter_width, 600, gr::filter::firdes::WIN_HAMMING));
+                1,gr::filter::firdes::band_pass(
+                    1, 48000, 300, _filter_width, 600, gr::filter::firdes::WIN_HAMMING));
 
     std::vector<float> interp_taps = gr::filter::firdes::low_pass(1, 48000,
                                                         _filter_width, 2000);
