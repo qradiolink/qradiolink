@@ -79,7 +79,7 @@ void gr_modem::initTX(int modem_type, std::string device_args, std::string devic
     _modem_type = modem_type;
     if(modem_type == gr_modem_types::ModemTypeBPSK2000)
     {
-        _gr_mod_bpsk_sdr = new gr_mod_bpsk_sdr(0, 125, 250000, 1700, 1100, 1,
+        _gr_mod_bpsk_sdr = new gr_mod_bpsk_sdr(0, 125, 250000, 1700, 1200, 1,
                                                _requested_frequency_hz, 50, device_args, device_antenna, freq_corr);
         _frame_length = 7;
         //_gr_mod_bpsk_sdr->start();
@@ -148,7 +148,7 @@ void gr_modem::initRX(int modem_type, std::string device_args, std::string devic
     if(modem_type == gr_modem_types::ModemTypeBPSK2000)
     {
         _gr_demod_bpsk_sdr = new gr_demod_bpsk_sdr(_fft_gui,
-                    _const_gui, _rssi_gui, 0,125,1000000,1700,1200,1,
+                    _const_gui, _rssi_gui, 0,125,1000000,1700,1250,1,
                                                    _requested_frequency_hz, 0.9, device_args, device_antenna, freq_corr);
         _bit_buf_len = 7 *8;
         _frame_length = 7;

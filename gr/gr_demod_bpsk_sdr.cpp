@@ -39,7 +39,7 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     std::vector<float> taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, _filter_width, 1200);
     //_resampler = gr::filter::pfb_arb_resampler_ccf::make(rerate, taps, flt_size);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1, 50, taps);
-    _agc = gr::analog::agc2_cc::make(0.6e-1, 1e-3, 1, 1);
+    _agc = gr::analog::agc2_cc::make(0.006e-1, 1e-3, 1, 1);
     _signal_source = gr::analog::sig_source_c::make(_samp_rate,gr::analog::GR_COS_WAVE,-25000,1);
     _multiply = gr::blocks::multiply_cc::make();
     _freq_transl_filter = gr::filter::freq_xlating_fir_filter_ccf::make(
@@ -50,7 +50,7 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
                             1, _target_samp_rate, _filter_width,600,gr::filter::firdes::WIN_HAMMING) );
     float gain_mu = 0.025;
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, 0.175,
-                                                              0.035);
+                                                              0.015);
     _costas_loop = gr::digital::costas_loop_cc::make(0.0628,2);
     _equalizer = gr::digital::cma_equalizer_cc::make(8,2,0.00005,1);
     _fll = gr::digital::fll_band_edge_cc::make(sps, 0.35, 32, 0.000628);
