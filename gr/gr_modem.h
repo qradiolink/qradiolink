@@ -164,6 +164,7 @@ private:
     quint8 _last_frame_type;
     bool _sync_found1;
     bool _sync_found2;
+    bool _next_frame1;
     int _current_frame_type;
     long _bit_buf_index;
     unsigned char *_bit_buf;

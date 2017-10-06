@@ -39,6 +39,7 @@ gr_modem::gr_modem(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgu
     _bit_buf_index = 0;
     _sync_found1 = false;
     _sync_found2 = false;
+    _next_frame1 = false;
     _stream_ended = false;
     _current_frame_type = FrameTypeNone;
     _const_gui = const_gui;
@@ -725,9 +726,11 @@ void gr_modem::demodulate()
         demod_data = _gr_demod_2fsk_sdr->getData();
 
     int v_size = demod_data->size();
-
+    if(_modem_type == gr_modem_types::ModemTypeBPSK2000 && _sync_found2 && !_sync_found1)
+        goto second_deframer;
     for(int i=0;i < v_size;i++)
     {
+        _next_frame1 = false;
         if(!_sync_found1)
         {
             _current_frame_type = findSync(demod_data->at(i),1);
@@ -757,6 +760,7 @@ void gr_modem::demodulate()
                 packBytes(frame_data,_bit_buf,_bit_buf_index);
                 processReceivedData(frame_data, _current_frame_type);
                 _sync_found1 = false;
+                _next_frame1 = true;
                 _shift_reg = 0;
                 _bit_buf_index = 0;
             }
@@ -764,8 +768,10 @@ void gr_modem::demodulate()
     }
     demod_data->clear();
     delete demod_data;
-    if(_modem_type != gr_modem_types::ModemTypeBPSK2000)
+    if((_modem_type != gr_modem_types::ModemTypeBPSK2000) || _sync_found1 || _next_frame1)
         return;
+
+    second_deframer:
     int v_size2 = demod_data2->size();
     for(int i=0;i < v_size2;i++)
     {

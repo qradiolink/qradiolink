@@ -81,7 +81,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
 
     //_resampler_pfb = gr::filter::pfb_arb_resampler_ccf::make(rerate, taps, flt_size);
 
-    _agc = gr::analog::agc2_cc::make(0.006e-1, 1e-3, 1, 1);
+    _agc = gr::analog::agc2_cc::make(0.06e-1, 1e-3, 1, 1);
     _signal_source = gr::analog::sig_source_c::make(_samp_rate,gr::analog::GR_COS_WAVE,-25000,1);
     _multiply = gr::blocks::multiply_cc::make();
     /*
@@ -96,7 +96,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     if(_target_samp_rate == 20000)
     {
         gain_mu = 0.025;
-        omega_rel_limit = 0.015;
+        omega_rel_limit = 0.005;
     }
     else
     {
@@ -106,7 +106,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
                                                               omega_rel_limit);
     _costas_loop = gr::digital::costas_loop_cc::make(0.0628,4);
-    _equalizer = gr::digital::cma_equalizer_cc::make(8,4,0.00005,1);
+    _equalizer = gr::digital::cma_equalizer_cc::make(8,4,0.00001,1);
     _fll = gr::digital::fll_band_edge_cc::make(sps, 0.55, 32, 0.000628);
     _diff_decoder = gr::digital::diff_decoder_bb::make(4);
     _map = gr::digital::map_bb::make(map);
