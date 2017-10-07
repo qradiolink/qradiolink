@@ -35,19 +35,19 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
                                 1, _target_samp_rate, _filter_width,2000,gr::filter::firdes::WIN_HAMMING) );
 
     _upper_filter = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
-                                1, _target_samp_rate, -_filter_width,600,600,gr::filter::firdes::WIN_HAMMING) );
+                                1, _target_samp_rate, -_filter_width,0,1200,gr::filter::firdes::WIN_HAMMING) );
     _lower_filter = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
-                                1, _target_samp_rate, -600,_filter_width,600,gr::filter::firdes::WIN_HAMMING) );
+                                1, _target_samp_rate, 0,_filter_width,1200,gr::filter::firdes::WIN_HAMMING) );
     _mag_squared_lower = gr::blocks::complex_to_mag_squared::make();
     _mag_squared_upper = gr::blocks::complex_to_mag_squared::make();
     _divide = gr::blocks::divide_ff::make();
     _add = gr::blocks::add_const_ff::make(-0.5);
-    _threshhold = gr::blocks::threshold_ff::make(0.5,1.5);
+    _threshhold = gr::blocks::threshold_ff::make(0.99999,1.00001);
     _float_to_complex = gr::blocks::float_to_complex::make();
     _symbol_filter = gr::filter::fft_filter_ccf::make(1,symbol_filter_taps);
     float gain_mu = 0.025;
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
-                                                              0.015);
+                                                              0.035);
     _complex_to_real = gr::blocks::complex_to_real::make();
     _binary_slicer = gr::digital::binary_slicer_fb::make();
     _diff_decoder = gr::digital::diff_decoder_bb::make(2);
