@@ -546,6 +546,10 @@ void gr_modem::enableGUI(bool value)
         _gr_demod_4fsk_sdr->enable_gui(value);
     if(_gr_demod_2fsk_sdr)
         _gr_demod_2fsk_sdr->enable_gui(value);
+    if(_gr_demod_nbfm_sdr)
+        _gr_demod_nbfm_sdr->enable_gui(value);
+    if(_gr_demod_ssb_sdr)
+        _gr_demod_ssb_sdr->enable_gui(value);
 }
 
 void gr_modem::startTransmission(QString callsign, int size)
