@@ -536,6 +536,18 @@ void gr_modem::setRxSensitivity(float value)
         _gr_demod_2fsk_sdr->set_rx_sensitivity(value);
 }
 
+void gr_modem::enableGUI(bool value)
+{
+    if(_gr_demod_bpsk_sdr)
+        _gr_demod_bpsk_sdr->enable_gui(value);
+    if(_gr_demod_qpsk_sdr)
+        _gr_demod_qpsk_sdr->enable_gui(value);
+    if(_gr_demod_4fsk_sdr)
+        _gr_demod_4fsk_sdr->enable_gui(value);
+    if(_gr_demod_2fsk_sdr)
+        _gr_demod_2fsk_sdr->enable_gui(value);
+}
+
 void gr_modem::startTransmission(QString callsign, int size)
 {
     _transmitting = true;

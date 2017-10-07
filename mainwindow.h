@@ -66,6 +66,7 @@ public slots:
     void playEndBeep(int seconds);
     void enterFreq();
     void saveConfig();
+    void mainTabChanged(int value);
 
 signals:
     void startTransmission();
@@ -83,6 +84,7 @@ signals:
     void toggleModemMode(int value);
     void setTxPower(int value);
     void setRxSensitivity(int value);
+    void enableGUI(bool value);
     void startAutoTuneFreq();
     void stopAutoTuneFreq();
 

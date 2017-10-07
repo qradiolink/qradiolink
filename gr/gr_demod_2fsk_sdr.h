@@ -29,6 +29,7 @@
 #include <gnuradio/filter/single_pole_iir_filter_ff.h>
 #include <gnuradio/blocks/moving_average_ff.h>
 #include <gnuradio/blocks/add_const_ff.h>
+#include <gnuradio/blocks/copy.h>
 #include <osmosdr/source.h>
 #include <vector>
 #include "gr_vector_sink.h"
@@ -52,6 +53,7 @@ public slots:
     std::vector<unsigned char> *getData();
     void tune(long center_freq);
     void set_rx_sensitivity(float value);
+    void enable_gui(bool value);
 
 private:
     gr::top_block_sptr _top_block;
@@ -78,6 +80,8 @@ private:
     gr::digital::descrambler_bb::sptr _descrambler;
     gr::qtgui::const_sink_c::sptr _constellation;
     gr::qtgui::sink_c::sptr _fft_gui;
+    gr::blocks::copy::sptr _rssi_valve;
+    gr::blocks::copy::sptr _fft_valve;
     gr::blocks::complex_to_mag_squared::sptr _mag_squared;
     gr::blocks::nlog10_ff::sptr _log10;
     gr::filter::single_pole_iir_filter_ff::sptr _single_pole_filter;

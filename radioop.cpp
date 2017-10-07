@@ -574,6 +574,11 @@ void RadioOp::setRxSensitivity(int value)
     _modem->setRxSensitivity((float)value/100);
 }
 
+void RadioOp::enableGUI(bool value)
+{
+    _modem->enableGUI(value);
+}
+
 void RadioOp::syncFrequency()
 {
     if(_modem->_frequency_found >= 254)
