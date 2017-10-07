@@ -84,6 +84,13 @@ void gr_modem::initTX(int modem_type, std::string device_args, std::string devic
         _frame_length = 7;
         //_gr_mod_bpsk_sdr->start();
     }
+    else if(modem_type == gr_modem_types::ModemTypeBPSK1000)
+    {
+        _gr_mod_bpsk_sdr = new gr_mod_bpsk_sdr(0, 250, 250000, 1700, 600, 1,
+                                               _requested_frequency_hz, 50, device_args, device_antenna, freq_corr);
+        _frame_length = 4;
+        //_gr_mod_bpsk_sdr->start();
+    }
     else if(modem_type == gr_modem_types::ModemTypeQPSK20000)
     {
         _gr_mod_qpsk_sdr = new gr_mod_qpsk_sdr(0, 50, 250000, 1700, 4000, 1,
@@ -152,6 +159,16 @@ void gr_modem::initRX(int modem_type, std::string device_args, std::string devic
                                                    _requested_frequency_hz, 0.9, device_args, device_antenna, freq_corr);
         _bit_buf_len = 8 *8;
         _frame_length = 7;
+        _bit_buf = new unsigned char[_bit_buf_len];
+        //_gr_demod_bpsk_sdr->start();
+    }
+    else if(modem_type == gr_modem_types::ModemTypeBPSK1000)
+    {
+        _gr_demod_bpsk_sdr = new gr_demod_bpsk_sdr(_fft_gui,
+                    _const_gui, _rssi_gui, 0,250,1000000,1700,650,1,
+                                                   _requested_frequency_hz, 0.9, device_args, device_antenna, freq_corr);
+        _bit_buf_len = 4 *8;
+        _frame_length = 4;
         _bit_buf = new unsigned char[_bit_buf_len];
         //_gr_demod_bpsk_sdr->start();
     }
@@ -234,7 +251,8 @@ void gr_modem::initRX(int modem_type, std::string device_args, std::string devic
 void gr_modem::deinitTX(int modem_type)
 {
     _modem_type = modem_type;
-    if(modem_type == gr_modem_types::ModemTypeBPSK2000)
+    if((modem_type == gr_modem_types::ModemTypeBPSK2000)
+            || (modem_type == gr_modem_types::ModemTypeBPSK1000))
     {
         _gr_mod_bpsk_sdr->stop();
         delete _gr_mod_bpsk_sdr;
@@ -279,7 +297,8 @@ void gr_modem::deinitTX(int modem_type)
 void gr_modem::deinitRX(int modem_type)
 {
     _modem_type = modem_type;
-    if(modem_type == gr_modem_types::ModemTypeBPSK2000)
+    if((modem_type == gr_modem_types::ModemTypeBPSK2000)
+            || (modem_type == gr_modem_types::ModemTypeBPSK1000))
     {
         _gr_demod_bpsk_sdr->stop();
         delete _gr_demod_bpsk_sdr;
@@ -322,7 +341,8 @@ void gr_modem::deinitRX(int modem_type)
 
 void gr_modem::startRX()
 {
-    if(_modem_type == gr_modem_types::ModemTypeBPSK2000)
+    if((_modem_type == gr_modem_types::ModemTypeBPSK2000)
+            || (_modem_type == gr_modem_types::ModemTypeBPSK1000))
     {
         _gr_demod_bpsk_sdr->start();
     }
@@ -353,7 +373,8 @@ void gr_modem::startRX()
 
 void gr_modem::stopRX()
 {
-    if(_modem_type == gr_modem_types::ModemTypeBPSK2000)
+    if((_modem_type == gr_modem_types::ModemTypeBPSK2000)
+            || (_modem_type == gr_modem_types::ModemTypeBPSK1000))
     {
         _gr_demod_bpsk_sdr->stop();
     }
@@ -384,7 +405,8 @@ void gr_modem::stopRX()
 
 void gr_modem::startTX()
 {
-    if(_modem_type == gr_modem_types::ModemTypeBPSK2000)
+    if((_modem_type == gr_modem_types::ModemTypeBPSK2000)
+            || (_modem_type == gr_modem_types::ModemTypeBPSK1000))
     {
         _gr_mod_bpsk_sdr->start();
     }
@@ -415,7 +437,8 @@ void gr_modem::startTX()
 
 void gr_modem::stopTX()
 {
-    if(_modem_type == gr_modem_types::ModemTypeBPSK2000)
+    if((_modem_type == gr_modem_types::ModemTypeBPSK2000)
+            || (_modem_type == gr_modem_types::ModemTypeBPSK1000))
     {
 
         _gr_mod_bpsk_sdr->stop();
@@ -605,7 +628,8 @@ void gr_modem::transmit(QVector<std::vector<unsigned char>*> frames)
     while(ret)
     {
         usleep(1);
-        if(_modem_type == gr_modem_types::ModemTypeBPSK2000)
+        if((_modem_type == gr_modem_types::ModemTypeBPSK2000)
+                || (_modem_type == gr_modem_types::ModemTypeBPSK1000))
             ret = _gr_mod_bpsk_sdr->setData(all_frames);
         else if((_modem_type == gr_modem_types::ModemTypeQPSK20000)
                 || (_modem_type == gr_modem_types::ModemTypeQPSK2000)
@@ -623,11 +647,17 @@ void gr_modem::transmit(QVector<std::vector<unsigned char>*> frames)
 std::vector<unsigned char>* gr_modem::frame(unsigned char *encoded_audio, int data_size, int frame_type)
 {
     std::vector<unsigned char> *data = new std::vector<unsigned char>;
-
     if(frame_type == FrameTypeVoice)
     {
-        data->push_back(0xED);
-        data->push_back(0x89);
+        if(_modem_type == gr_modem_types::ModemTypeBPSK1000)
+        {
+            data->push_back(0xB5);
+        }
+        else
+        {
+            data->push_back(0xED);
+            data->push_back(0x89);
+        }
     }
     else if(frame_type == FrameTypeText)
     {
@@ -639,7 +669,9 @@ std::vector<unsigned char>* gr_modem::frame(unsigned char *encoded_audio, int da
         data->push_back(0x98);
         data->push_back(0xDE);
     }
-    data->push_back(0xAA); // frame start
+
+    if(_modem_type != gr_modem_types::ModemTypeBPSK1000)
+        data->push_back(0xAA); // frame start
     for(int i=0;i< data_size;i++)
     {
         data->push_back(encoded_audio[i]);
@@ -704,7 +736,8 @@ static void unpackBytes(unsigned char *bitbuf, const unsigned char *bytebuf, int
 void gr_modem::demodulate()
 {
     std::vector<unsigned char> *demod_data;
-    if(_modem_type == gr_modem_types::ModemTypeBPSK2000)
+    if((_modem_type == gr_modem_types::ModemTypeBPSK2000)
+            || (_modem_type == gr_modem_types::ModemTypeBPSK1000))
         demod_data = _gr_demod_bpsk_sdr->getData();
     else if((_modem_type == gr_modem_types::ModemTypeQPSK20000)
             || (_modem_type == gr_modem_types::ModemTypeQPSK2000)
@@ -751,7 +784,10 @@ void gr_modem::demodulate()
             _bit_buf_index++;
             if(_bit_buf_index >= _bit_buf_len)
             {
-                unsigned char *frame_data = new unsigned char[_frame_length+1];
+                int frame_length = _frame_length;
+                if(_modem_type != gr_modem_types::ModemTypeBPSK1000)
+                    frame_length++;
+                unsigned char *frame_data = new unsigned char[frame_length];
                 packBytes(frame_data,_bit_buf,_bit_buf_index);
                 processReceivedData(frame_data, _current_frame_type);
                 _sync_found = false;
@@ -773,8 +809,16 @@ int gr_modem::findSync(unsigned char bit)
 
 
     _shift_reg = (_shift_reg << 1) | (bit & 0x1);
-    u_int32_t temp = _shift_reg & 0xFFFF;
-
+    u_int32_t temp;
+    if(_modem_type != gr_modem_types::ModemTypeBPSK1000)
+        temp = _shift_reg & 0xFFFF;
+    else
+        temp = _shift_reg & 0xFF;
+    if((_modem_type == gr_modem_types::ModemTypeBPSK1000) && (temp == 0xB5))
+    {
+        _sync_found = true;
+        return FrameTypeVoice;
+    }
     if((temp == 0x89ED))
     {
         _sync_found = true;
@@ -860,7 +904,11 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
         emit audioFrameReceived();
         _last_frame_type = FrameTypeVoice;
         unsigned char *codec2_data = new unsigned char[_frame_length];
-        memcpy(codec2_data, received_data+1, _frame_length);
+        memset(codec2_data,0,_frame_length);
+        if(_modem_type == gr_modem_types::ModemTypeBPSK1000)
+            memcpy(codec2_data, received_data, _frame_length);
+        else
+            memcpy(codec2_data, received_data+1, _frame_length);
         emit codec2Audio(codec2_data,_frame_length);
     }
     else if (current_frame_type == FrameTypeVideo )
