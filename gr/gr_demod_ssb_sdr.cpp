@@ -27,9 +27,9 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(gr::qtgui::sink_c::sptr fft_gui,
     _multiply = gr::blocks::multiply_cc::make();
     _filter = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
                             1, _target_samp_rate, 300, _filter_width,50,gr::filter::firdes::WIN_HAMMING) );
-    _agc = gr::analog::agc2_cc::make(0.06e-1, 1e-3, 1, 1);
+    _agc = gr::analog::agc2_cc::make(0.6e-1, 1e-3, 1, 1);
     _complex_to_real = gr::blocks::complex_to_real::make();
-    _audio_gain = gr::blocks::multiply_const_ff::make(0.7);
+    _audio_gain = gr::blocks::multiply_const_ff::make(0.8);
     _audio_sink = gr::audio::sink::make(_target_samp_rate,"", true);
 
     _mag_squared = gr::blocks::complex_to_mag_squared::make();
