@@ -30,7 +30,7 @@ AudioEncoder::AudioEncoder()
     {
         qDebug() << "audio decoder creation failed";
     }
-    _codec2 = codec2_create(CODEC2_MODE_1300);
+    _codec2 = codec2_create(CODEC2_MODE_1400);
     _codec2_700 = codec2_create(CODEC2_MODE_700B);
 
     _gsm = gsm_create();
@@ -86,7 +86,8 @@ unsigned char* AudioEncoder::encode_codec2(short *audiobuffer, int audiobuffersi
 {
     Q_UNUSED(audiobuffersize);
     int bits = codec2_bits_per_frame(_codec2);
-    int bytes = (bits + 7) / 8;
+    //int bytes = (bits + 7) / 8;
+    int bytes = bits / 8;
     unsigned char *encoded = new unsigned char[bytes];
     codec2_encode(_codec2, encoded, audiobuffer);
     length = bytes;

@@ -4,10 +4,12 @@ QRadioLink
 About
 -----
 - This application is a building platform based on Gnuradio which allows experimenting with 
-VHF-UHF SDR transceivers using different modulation schemes for digital data transmissions.
+SDR transceivers using different modulation schemes for digital data transmissions and analog modes.
 - Analog voice, digital voice, low resolution video and text transmission are supported.
 - Digital audio transmission uses either a narrow band modem and Codec2 or a high bandwidth modem and Opus.
-- Modes: BPSK, QPSK, 4FSK, FM
+- Modems: BPSK, QPSK, 2FSK, 4FSK
+- Modes: narrow FM, SSB, digital voice, digital video
+- Audio bitrates: Codec2 700B, Codec2 1400, Opus 10 kbit/s
 - Supported hardware includes the Ettus USRP, RTL-SDR, HackRF, BladeRF and in general all devices 
 supported by libgnuradio-osmosdr
  
@@ -52,7 +54,7 @@ manually edit the header to specify the correct directory for QWT
 Running
 -------
 - Start the application using the command line and check for any errors.
-- Please see the Setup tab first
+- Please see the Setup tab first and make sure to click Save before starting TX or RX modes, otherwise you may get a segmentation fault
 - Setup options include RX and TX frequency correction (in PPM), device access strings, 
 RX and TX antenna settings as a string and your callsign which will be sent at the start of the transmission.
 - By default the device will operate in the 433 MHz ISM band.
