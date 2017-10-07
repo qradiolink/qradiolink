@@ -35,7 +35,7 @@ gr_modem::gr_modem(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgu
     //_gr_mod_bpsk->start();
     //_gr_demod_bpsk = new gr_demod_bpsk(0,24,48000,1700,1200,1);
     //_gr_demod_bpsk->start();
-    _bit_buf_len = 7 *8;
+    _bit_buf_len = 8 *8;
     _bit_buf_index = 0;
     _sync_found = false;
     _stream_ended = false;
@@ -150,7 +150,7 @@ void gr_modem::initRX(int modem_type, std::string device_args, std::string devic
         _gr_demod_bpsk_sdr = new gr_demod_bpsk_sdr(_fft_gui,
                     _const_gui, _rssi_gui, 0,125,1000000,1700,1250,1,
                                                    _requested_frequency_hz, 0.9, device_args, device_antenna, freq_corr);
-        _bit_buf_len = 7 *8;
+        _bit_buf_len = 8 *8;
         _frame_length = 7;
         _bit_buf = new unsigned char[_bit_buf_len];
         //_gr_demod_bpsk_sdr->start();
@@ -160,7 +160,7 @@ void gr_modem::initRX(int modem_type, std::string device_args, std::string devic
         _gr_demod_qpsk_sdr = new gr_demod_qpsk_sdr(_fft_gui,
                     _const_gui,_rssi_gui, 0,50,1000000,20000,1700,4000,1,
                                                    _requested_frequency_hz, 0.9, device_args, device_antenna, freq_corr);
-        _bit_buf_len = 47 *8;
+        _bit_buf_len = 48 *8;
         _frame_length = 47;
         _bit_buf = new unsigned char[_bit_buf_len];
         //_gr_demod_qpsk_sdr->start();
@@ -170,7 +170,7 @@ void gr_modem::initRX(int modem_type, std::string device_args, std::string devic
         _gr_demod_qpsk_sdr = new gr_demod_qpsk_sdr(_fft_gui,
                     _const_gui,_rssi_gui, 0,250,1000000,20000,1700,800,1,
                                                    _requested_frequency_hz, 0.9, device_args, device_antenna, freq_corr);
-        _bit_buf_len = 7 *8;
+        _bit_buf_len = 8 *8;
         _frame_length = 7;
         _bit_buf = new unsigned char[_bit_buf_len];
         //_gr_demod_qpsk_sdr->start();
@@ -180,7 +180,7 @@ void gr_modem::initRX(int modem_type, std::string device_args, std::string devic
         _gr_demod_4fsk_sdr = new gr_demod_4fsk_sdr(_fft_gui,
                     _const_gui,_rssi_gui, 0,50,1000000,1700,5500,1,
                                                    _requested_frequency_hz, 0.9, device_args, device_antenna, freq_corr);
-        _bit_buf_len = 47 *8;
+        _bit_buf_len = 48 *8;
         _frame_length = 47;
         _bit_buf = new unsigned char[_bit_buf_len];
         //_gr_demod_4fsk_sdr->start();
@@ -190,7 +190,7 @@ void gr_modem::initRX(int modem_type, std::string device_args, std::string devic
         _gr_demod_4fsk_sdr = new gr_demod_4fsk_sdr(_fft_gui,
                     _const_gui,_rssi_gui, 0,250,1000000,1700,1100,1,
                                                    _requested_frequency_hz, 0.9, device_args, device_antenna, freq_corr);
-        _bit_buf_len = 7 *8;
+        _bit_buf_len = 8 *8;
         _frame_length = 7;
         _bit_buf = new unsigned char[_bit_buf_len];
         //_gr_demod_4fsk_sdr->start();
@@ -214,7 +214,7 @@ void gr_modem::initRX(int modem_type, std::string device_args, std::string devic
         _gr_demod_qpsk_sdr = new gr_demod_qpsk_sdr(_fft_gui,
                     _const_gui,_rssi_gui, 0,2,1000000,250000,1700,65000,1,
                                                    _requested_frequency_hz, 0.9, device_args, device_antenna, freq_corr);
-        _bit_buf_len = 3122 *8;
+        _bit_buf_len = 3123 *8;
         _frame_length = 3122;
         _bit_buf = new unsigned char[_bit_buf_len];
         //_gr_demod_qpsk_sdr->start();
@@ -224,7 +224,7 @@ void gr_modem::initRX(int modem_type, std::string device_args, std::string devic
         _gr_demod_2fsk_sdr = new gr_demod_2fsk_sdr(_fft_gui,
                     _const_gui, _rssi_gui, 0,125,1000000,1700,1800,1,
                                                    _requested_frequency_hz, 0.9, device_args, device_antenna, freq_corr);
-        _bit_buf_len = 7 *8;
+        _bit_buf_len = 8 *8;
         _frame_length = 7;
         _bit_buf = new unsigned char[_bit_buf_len];
         //_gr_demod_bpsk_sdr->start();
@@ -535,9 +535,10 @@ void gr_modem::startTransmission(QString callsign, int size)
     }
     std::vector<unsigned char> *send_callsign = new std::vector<unsigned char>;
     QVector<std::vector<unsigned char>*> callsign_frames;
+
+    send_callsign->push_back(0x8C);
+    send_callsign->push_back(0xC8);
     send_callsign->push_back(0xDD);
-    send_callsign->push_back(0xFB);
-    send_callsign->push_back(0xBF);
     for(int i = 0;i<size;i++)
     {
         send_callsign->push_back(callsign.toStdString().c_str()[i]);
@@ -555,11 +556,6 @@ void gr_modem::endTransmission(QString callsign, int size)
     tx_end->push_back(0x8A);
     tx_end->push_back(0x2B);
     tx_end->push_back(0x4C);
-    tx_end->push_back(0x8A);
-    tx_end->push_back(0x2B);
-    tx_end->push_back(0x4C);
-    tx_end->push_back(0x8A);
-    tx_end->push_back(0x2B);
     tx_end->push_back(0x00);
     QVector<std::vector<unsigned char>*> frames;
     frames.append(tx_end);
@@ -567,9 +563,9 @@ void gr_modem::endTransmission(QString callsign, int size)
 
     std::vector<unsigned char> *send_callsign = new std::vector<unsigned char>;
     QVector<std::vector<unsigned char>*> callsign_frames;
+    send_callsign->push_back(0x8C);
+    send_callsign->push_back(0xC8);
     send_callsign->push_back(0xDD);
-    send_callsign->push_back(0xFB);
-    send_callsign->push_back(0xBF);
     for(int i = 0;i<size;i++)
     {
         send_callsign->push_back(callsign.toStdString().c_str()[i]);
@@ -627,7 +623,7 @@ void gr_modem::transmit(QVector<std::vector<unsigned char>*> frames)
 std::vector<unsigned char>* gr_modem::frame(unsigned char *encoded_audio, int data_size, int frame_type)
 {
     std::vector<unsigned char> *data = new std::vector<unsigned char>;
-    data->push_back(0xAA); // frame start
+
     if(frame_type == FrameTypeVoice)
     {
         data->push_back(0xED);
@@ -643,6 +639,7 @@ std::vector<unsigned char>* gr_modem::frame(unsigned char *encoded_audio, int da
         data->push_back(0x98);
         data->push_back(0xDE);
     }
+    data->push_back(0xAA); // frame start
     for(int i=0;i< data_size;i++)
     {
         data->push_back(encoded_audio[i]);
@@ -754,7 +751,7 @@ void gr_modem::demodulate()
             _bit_buf_index++;
             if(_bit_buf_index >= _bit_buf_len)
             {
-                unsigned char *frame_data = new unsigned char[_frame_length];
+                unsigned char *frame_data = new unsigned char[_frame_length+1];
                 packBytes(frame_data,_bit_buf,_bit_buf_index);
                 processReceivedData(frame_data, _current_frame_type);
                 _sync_found = false;
@@ -776,30 +773,30 @@ int gr_modem::findSync(unsigned char bit)
 
 
     _shift_reg = (_shift_reg << 1) | (bit & 0x1);
-    u_int32_t temp = _shift_reg & 0xFFFFFF;
+    u_int32_t temp = _shift_reg & 0xFFFF;
 
-    if((temp == 0xAA89ED))
+    if((temp == 0x89ED))
     {
         _sync_found = true;
         return FrameTypeText;
     }
-    if((temp == 0xAAED89))
+    if((temp == 0xED89))
     {
         _sync_found = true;
         return FrameTypeVoice;
     }
-    if((temp == 0xAA98DE))
+    if((temp == 0x98DE))
     {
         _sync_found = true;
         return FrameTypeVideo;
     }
-    if((temp == 0xDDFBBF))
+    if((temp == 0x8CC8))
     {
         _sync_found = true;
         return FrameTypeCallsign;
     }
-    temp = _shift_reg & 0xFFFFFFFF;
-    if((temp == 0x4C8A2B4C))
+    temp = _shift_reg & 0xFFFFFF;
+    if((temp == 0x4C8A2B))
     {
         _stream_ended = true;
         return FrameTypeEnd;
@@ -815,7 +812,7 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
         emit dataFrameReceived();
         _last_frame_type = FrameTypeText;
         char *text_data = new char[_frame_length];
-        memcpy(text_data, received_data, _frame_length);
+        memcpy(text_data, received_data+1, _frame_length);
         quint8 string_length = _frame_length;
 
         for(int ii=_frame_length-1;ii>=0;ii--)
@@ -839,7 +836,7 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
         emit dataFrameReceived();
         _last_frame_type = FrameTypeCallsign;
         char *text_data = new char[_frame_length];
-        memcpy(text_data, received_data, _frame_length);
+        memcpy(text_data, received_data+1, _frame_length);
         quint8 string_length = _frame_length;
 
         for(int ii=_frame_length-1;ii>=0;ii--)
@@ -863,7 +860,7 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
         emit audioFrameReceived();
         _last_frame_type = FrameTypeVoice;
         unsigned char *codec2_data = new unsigned char[_frame_length];
-        memcpy(codec2_data, received_data, _frame_length);
+        memcpy(codec2_data, received_data+1, _frame_length);
         emit codec2Audio(codec2_data,_frame_length);
     }
     else if (current_frame_type == FrameTypeVideo )
@@ -871,7 +868,7 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
         emit audioFrameReceived();
         _last_frame_type = FrameTypeVideo;
         unsigned char *video_data = new unsigned char[_frame_length];
-        memcpy(video_data, received_data, _frame_length);
+        memcpy(video_data, received_data+1, _frame_length);
         emit videoData(video_data,_frame_length);
     }
     delete[] received_data;
