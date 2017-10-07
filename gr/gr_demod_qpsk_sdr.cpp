@@ -66,16 +66,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
                 constellation->points(),pre_diff_code,4,2,2,1,1,const_map);
     */
 
-    int bw;
-    if(_target_samp_rate == 20000)
-    {
-        bw = 1000;
-    }
-    else
-    {
-        bw = 10000;
-    }
-    std::vector<float> taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, _filter_width, bw);
+    std::vector<float> taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, _filter_width, 12000);
 
     _resampler = gr::filter::rational_resampler_base_ccf::make(interpolation, decimation, taps);
 

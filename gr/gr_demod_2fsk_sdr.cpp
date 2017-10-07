@@ -21,7 +21,7 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     map.push_back(0);
     map.push_back(1);
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(32, _samp_rate, _filter_width, 1000);
+    std::vector<float> taps = gr::filter::firdes::low_pass(32, _samp_rate, _filter_width, 12000);
     std::vector<float> symbol_filter_taps = gr::filter::firdes::low_pass(1.0,
                                  _target_samp_rate, _target_samp_rate*0.75/_samples_per_symbol, _target_samp_rate*0.25/_samples_per_symbol);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1, 25, taps);
@@ -35,14 +35,14 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
                                 1, _target_samp_rate, _filter_width,2000,gr::filter::firdes::WIN_HAMMING) );
 
     _upper_filter = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
-                                1, _target_samp_rate, -_filter_width,300,600,gr::filter::firdes::WIN_HAMMING) );
+                                1, _target_samp_rate, -_filter_width,600,600,gr::filter::firdes::WIN_HAMMING) );
     _lower_filter = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
-                                1, _target_samp_rate, -300,_filter_width,600,gr::filter::firdes::WIN_HAMMING) );
+                                1, _target_samp_rate, -600,_filter_width,600,gr::filter::firdes::WIN_HAMMING) );
     _mag_squared_lower = gr::blocks::complex_to_mag_squared::make();
     _mag_squared_upper = gr::blocks::complex_to_mag_squared::make();
     _divide = gr::blocks::divide_ff::make();
     _add = gr::blocks::add_const_ff::make(-0.5);
-    _threshhold = gr::blocks::threshold_ff::make(0.9999999,1.0000001);
+    _threshhold = gr::blocks::threshold_ff::make(0.5,1.5);
     _float_to_complex = gr::blocks::float_to_complex::make();
     _symbol_filter = gr::filter::fft_filter_ccf::make(1,symbol_filter_taps);
     float gain_mu = 0.025;
