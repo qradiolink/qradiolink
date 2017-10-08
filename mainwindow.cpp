@@ -298,6 +298,7 @@ void MainWindow::toggleWideband(bool value)
 void MainWindow::toggleMode(int value)
 {
     emit toggleModemMode(value);
+    mainTabChanged(ui->tabWidget->currentIndex());
 }
 
 void MainWindow::tuneCenterFreq(int value)
