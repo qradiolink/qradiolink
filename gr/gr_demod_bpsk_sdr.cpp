@@ -50,7 +50,7 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
                             1, _target_samp_rate, _filter_width,600,gr::filter::firdes::WIN_HAMMING) );
     float gain_mu = 0.025;
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, 0.175,
-                                                              0.015);
+                                                              0.055);
     _costas_loop = gr::digital::costas_loop_cc::make(0.0628,2);
     _equalizer = gr::digital::cma_equalizer_cc::make(8,2,0.00005,1);
     _fll = gr::digital::fll_band_edge_cc::make(sps, 0.35, 32, 0.000628);

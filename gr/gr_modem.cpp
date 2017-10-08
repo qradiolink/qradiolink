@@ -86,7 +86,7 @@ void gr_modem::initTX(int modem_type, std::string device_args, std::string devic
     }
     else if(modem_type == gr_modem_types::ModemTypeBPSK1000)
     {
-        _gr_mod_bpsk_sdr = new gr_mod_bpsk_sdr(0, 250, 250000, 1700, 600, 1,
+        _gr_mod_bpsk_sdr = new gr_mod_bpsk_sdr(0, 250, 250000, 1700, 650, 1,
                                                _requested_frequency_hz, 50, device_args, device_antenna, freq_corr);
         _frame_length = 4;
         //_gr_mod_bpsk_sdr->start();
@@ -114,7 +114,7 @@ void gr_modem::initTX(int modem_type, std::string device_args, std::string devic
     }
     else if(modem_type == gr_modem_types::ModemType4FSK2000)
     {
-        _gr_mod_4fsk_sdr = new gr_mod_4fsk_sdr(0, 250, 250000, 1700, 1100, 1,
+        _gr_mod_4fsk_sdr = new gr_mod_4fsk_sdr(0, 250, 250000, 1700, 2500, 1,
                                                _requested_frequency_hz, 50, device_args, device_antenna, freq_corr);
         _frame_length = 7;
         //_gr_mod_qpsk_sdr->start();
@@ -141,7 +141,7 @@ void gr_modem::initTX(int modem_type, std::string device_args, std::string devic
     }
     if(modem_type == gr_modem_types::ModemType2FSK2000)
     {
-        _gr_mod_2fsk_sdr = new gr_mod_2fsk_sdr(0, 125, 250000, 1700, 1800, 1,
+        _gr_mod_2fsk_sdr = new gr_mod_2fsk_sdr(0, 125, 250000, 1700, 2000, 1,
                                                _requested_frequency_hz, 50, device_args, device_antenna, freq_corr);
         _frame_length = 7;
         //_gr_mod_bpsk_sdr->start();
@@ -205,7 +205,7 @@ void gr_modem::initRX(int modem_type, std::string device_args, std::string devic
     else if (modem_type == gr_modem_types::ModemType4FSK2000)
     {
         _gr_demod_4fsk_sdr = new gr_demod_4fsk_sdr(_fft_gui,
-                    _const_gui,_rssi_gui, 0,250,1000000,1700,1100,1,
+                    _const_gui,_rssi_gui, 0,250,1000000,1700,2500,1,
                                                    _requested_frequency_hz, 0.9, device_args, device_antenna, freq_corr);
         _bit_buf_len = 8 *8;
         _frame_length = 7;
@@ -239,7 +239,7 @@ void gr_modem::initRX(int modem_type, std::string device_args, std::string devic
     if(modem_type == gr_modem_types::ModemType2FSK2000)
     {
         _gr_demod_2fsk_sdr = new gr_demod_2fsk_sdr(_fft_gui,
-                    _const_gui, _rssi_gui, 0,125,1000000,1700,1800,1,
+                    _const_gui, _rssi_gui, 0,125,1000000,1700,2000,1,
                                                    _requested_frequency_hz, 0.9, device_args, device_antenna, freq_corr);
         _bit_buf_len = 8 *8;
         _frame_length = 7;
@@ -794,8 +794,8 @@ void gr_modem::demodulate()
         }
         if(_sync_found)
         {
-            if(_frequency_found < 255)
-                _frequency_found += 1; // 80 bits + counter
+            if(_frequency_found < 2000)
+                _frequency_found += 32; // 40 bits + counter
             _bit_buf[_bit_buf_index] =  (demod_data->at(i)) & 0x1;
             _bit_buf_index++;
             if(_bit_buf_index >= _bit_buf_len)

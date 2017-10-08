@@ -32,12 +32,12 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     //                1, _target_samp_rate, 2*_filter_width, 250000, gr::filter::firdes::WIN_HAMMING), 25000,
     //            _target_samp_rate);
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
-                                1, _target_samp_rate, _filter_width,2000,gr::filter::firdes::WIN_HAMMING) );
+                                1, _target_samp_rate, _filter_width,1200,gr::filter::firdes::WIN_HAMMING) );
 
     _upper_filter = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
-                                1, _target_samp_rate, -_filter_width,0,1200,gr::filter::firdes::WIN_HAMMING) );
+                                1, _target_samp_rate, -_filter_width,0,600,gr::filter::firdes::WIN_HAMMING) );
     _lower_filter = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
-                                1, _target_samp_rate, 0,_filter_width,1200,gr::filter::firdes::WIN_HAMMING) );
+                                1, _target_samp_rate, 0,_filter_width,600,gr::filter::firdes::WIN_HAMMING) );
     _mag_squared_lower = gr::blocks::complex_to_mag_squared::make();
     _mag_squared_upper = gr::blocks::complex_to_mag_squared::make();
     _divide = gr::blocks::divide_ff::make();
