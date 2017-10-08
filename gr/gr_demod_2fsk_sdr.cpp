@@ -57,6 +57,8 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
 
     _rssi_valve = gr::blocks::copy::make(8);
     _rssi_valve->set_enabled(false);
+    _const_valve = gr::blocks::copy::make(8);
+    _const_valve->set_enabled(false);
     _fft_valve = gr::blocks::copy::make(8);
     _fft_valve->set_enabled(false);
     _mag_squared = gr::blocks::complex_to_mag_squared::make();
@@ -103,7 +105,8 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _top_block->connect(_add,0,_float_to_complex,0);
     _top_block->connect(_float_to_complex,0,_symbol_filter,0);
     _top_block->connect(_symbol_filter,0,_clock_recovery,0);
-    _top_block->connect(_clock_recovery,0,_constellation,0);
+    _top_block->connect(_clock_recovery,0,_const_valve,0);
+    _top_block->connect(_const_valve,0,_constellation,0);
     _top_block->connect(_clock_recovery,0,_complex_to_real,0);
     _top_block->connect(_complex_to_real,0,_binary_slicer,0);
     //_top_block->connect(_binary_slicer,0,_diff_decoder,0);
@@ -158,4 +161,5 @@ void gr_demod_2fsk_sdr::enable_gui(bool value)
 {
     _rssi_valve->set_enabled(value);
     _fft_valve->set_enabled(value);
+    _const_valve->set_enabled(value);
 }

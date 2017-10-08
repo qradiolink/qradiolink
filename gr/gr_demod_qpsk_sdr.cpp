@@ -110,6 +110,8 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _rssi_valve->set_enabled(false);
     _fft_valve = gr::blocks::copy::make(8);
     _fft_valve->set_enabled(false);
+    _const_valve = gr::blocks::copy::make(8);
+    _const_valve->set_enabled(false);
     _mag_squared = gr::blocks::complex_to_mag_squared::make();
     _single_pole_filter = gr::filter::single_pole_iir_filter_ff::make(0.04);
     _log10 = gr::blocks::nlog10_ff::make();
@@ -149,7 +151,8 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     //_top_block->connect(_fll,0,_clock_recovery,0);
     _top_block->connect(_clock_recovery,0,_equalizer,0);
     _top_block->connect(_equalizer,0,_costas_loop,0);
-    _top_block->connect(_costas_loop,0,_constellation,0);
+    _top_block->connect(_costas_loop,0,_const_valve,0);
+    _top_block->connect(_const_valve,0,_constellation,0);
     _top_block->connect(_costas_loop,0,_constellation_receiver,0);
     _top_block->connect(_constellation_receiver,0,_diff_decoder,0);
     _top_block->connect(_diff_decoder,0,_map,0);
@@ -204,4 +207,5 @@ void gr_demod_qpsk_sdr::enable_gui(bool value)
 {
     _rssi_valve->set_enabled(value);
     _fft_valve->set_enabled(value);
+    _const_valve->set_enabled(value);
 }

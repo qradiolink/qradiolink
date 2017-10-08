@@ -75,6 +75,7 @@ private:
     gr::qtgui::sink_c::sptr _fft_gui;
     gr::blocks::copy::sptr _rssi_valve;
     gr::blocks::copy::sptr _fft_valve;
+    gr::blocks::copy::sptr _const_valve;
     gr::blocks::complex_to_mag_squared::sptr _mag_squared;
     gr::blocks::nlog10_ff::sptr _log10;
     gr::filter::single_pole_iir_filter_ff::sptr _single_pole_filter;
