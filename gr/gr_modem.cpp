@@ -139,12 +139,19 @@ void gr_modem::initTX(int modem_type, std::string device_args, std::string devic
         _frame_length = 3122;
         //_gr_mod_qpsk_sdr->start();
     }
-    if(modem_type == gr_modem_types::ModemType2FSK2000)
+    else if(modem_type == gr_modem_types::ModemType2FSK2000)
     {
         _gr_mod_2fsk_sdr = new gr_mod_2fsk_sdr(0, 125, 250000, 1700, 2000, 1,
                                                _requested_frequency_hz, 50, device_args, device_antenna, freq_corr);
         _frame_length = 7;
         //_gr_mod_bpsk_sdr->start();
+    }
+    else if(modem_type == gr_modem_types::ModemTypeQPSK250000)
+    {
+        _gr_mod_qpsk_sdr = new gr_mod_qpsk_sdr(0, 2, 250000, 1700, 65000, 1,
+                                               _requested_frequency_hz, 50, device_args, device_antenna, freq_corr);
+        _frame_length = 3122;
+        //_gr_mod_qpsk_sdr->start();
     }
 
 }
@@ -236,7 +243,7 @@ void gr_modem::initRX(int modem_type, std::string device_args, std::string devic
         _bit_buf = new unsigned char[_bit_buf_len];
         //_gr_demod_qpsk_sdr->start();
     }
-    if(modem_type == gr_modem_types::ModemType2FSK2000)
+    else if(modem_type == gr_modem_types::ModemType2FSK2000)
     {
         _gr_demod_2fsk_sdr = new gr_demod_2fsk_sdr(_fft_gui,
                     _const_gui, _rssi_gui, 0,125,1000000,1700,2000,1,
@@ -245,6 +252,16 @@ void gr_modem::initRX(int modem_type, std::string device_args, std::string devic
         _frame_length = 7;
         _bit_buf = new unsigned char[_bit_buf_len];
         //_gr_demod_bpsk_sdr->start();
+    }
+    else if (modem_type == gr_modem_types::ModemTypeQPSK250000)
+    {
+        _gr_demod_qpsk_sdr = new gr_demod_qpsk_sdr(_fft_gui,
+                    _const_gui,_rssi_gui, 0,2,1000000,250000,1700,65000,1,
+                                                   _requested_frequency_hz, 0.9, device_args, device_antenna, freq_corr);
+        _bit_buf_len = 3123 *8;
+        _frame_length = 3122;
+        _bit_buf = new unsigned char[_bit_buf_len];
+        //_gr_demod_qpsk_sdr->start();
     }
 }
 
@@ -260,7 +277,8 @@ void gr_modem::deinitTX(int modem_type)
     }
     else if((modem_type == gr_modem_types::ModemTypeQPSK20000)
             || (modem_type == gr_modem_types::ModemTypeQPSK2000)
-            || (modem_type == gr_modem_types::ModemTypeQPSKVideo))
+            || (modem_type == gr_modem_types::ModemTypeQPSKVideo)
+            || (modem_type == gr_modem_types::ModemTypeQPSK250000))
     {
         _gr_mod_qpsk_sdr->stop();
         delete _gr_mod_qpsk_sdr;
@@ -306,7 +324,8 @@ void gr_modem::deinitRX(int modem_type)
     }
     else if((modem_type == gr_modem_types::ModemTypeQPSK20000)
             || (modem_type == gr_modem_types::ModemTypeQPSK2000)
-            || (modem_type == gr_modem_types::ModemTypeQPSKVideo))
+            || (modem_type == gr_modem_types::ModemTypeQPSKVideo)
+            || (modem_type == gr_modem_types::ModemTypeQPSK250000))
     {
         _gr_demod_qpsk_sdr->stop();
         delete _gr_demod_qpsk_sdr;
@@ -348,7 +367,8 @@ void gr_modem::startRX()
     }
     else if((_modem_type == gr_modem_types::ModemTypeQPSK20000)
             || (_modem_type == gr_modem_types::ModemTypeQPSK2000)
-            || (_modem_type == gr_modem_types::ModemTypeQPSKVideo))
+            || (_modem_type == gr_modem_types::ModemTypeQPSKVideo)
+            || (_modem_type == gr_modem_types::ModemTypeQPSK250000))
     {
         _gr_demod_qpsk_sdr->start();
     }
@@ -380,7 +400,8 @@ void gr_modem::stopRX()
     }
     else if((_modem_type == gr_modem_types::ModemTypeQPSK20000)
             || (_modem_type == gr_modem_types::ModemTypeQPSK2000)
-            || (_modem_type == gr_modem_types::ModemTypeQPSKVideo))
+            || (_modem_type == gr_modem_types::ModemTypeQPSKVideo)
+            || (_modem_type == gr_modem_types::ModemTypeQPSK250000))
     {
         _gr_demod_qpsk_sdr->stop();
     }
@@ -412,7 +433,8 @@ void gr_modem::startTX()
     }
     else if((_modem_type == gr_modem_types::ModemTypeQPSK20000)
             || (_modem_type == gr_modem_types::ModemTypeQPSK2000)
-            || (_modem_type == gr_modem_types::ModemTypeQPSKVideo))
+            || (_modem_type == gr_modem_types::ModemTypeQPSKVideo)
+            || (_modem_type == gr_modem_types::ModemTypeQPSK250000))
     {
         _gr_mod_qpsk_sdr->start();
     }
@@ -445,7 +467,8 @@ void gr_modem::stopTX()
     }
     else if((_modem_type == gr_modem_types::ModemTypeQPSK20000)
             || (_modem_type == gr_modem_types::ModemTypeQPSK2000)
-            || (_modem_type == gr_modem_types::ModemTypeQPSKVideo))
+            || (_modem_type == gr_modem_types::ModemTypeQPSKVideo)
+            || (_modem_type == gr_modem_types::ModemTypeQPSK250000))
     {
         _gr_mod_qpsk_sdr->stop();
     }
@@ -649,7 +672,8 @@ void gr_modem::transmit(QVector<std::vector<unsigned char>*> frames)
             ret = _gr_mod_bpsk_sdr->setData(all_frames);
         else if((_modem_type == gr_modem_types::ModemTypeQPSK20000)
                 || (_modem_type == gr_modem_types::ModemTypeQPSK2000)
-                || (_modem_type == gr_modem_types::ModemTypeQPSKVideo))
+                || (_modem_type == gr_modem_types::ModemTypeQPSKVideo)
+                || (_modem_type == gr_modem_types::ModemTypeQPSK250000))
             ret = _gr_mod_qpsk_sdr->setData(all_frames);
         else if((_modem_type == gr_modem_types::ModemType4FSK20000)
                 || (_modem_type == gr_modem_types::ModemType4FSK2000))
@@ -757,7 +781,8 @@ void gr_modem::demodulate()
         demod_data = _gr_demod_bpsk_sdr->getData();
     else if((_modem_type == gr_modem_types::ModemTypeQPSK20000)
             || (_modem_type == gr_modem_types::ModemTypeQPSK2000)
-            || (_modem_type == gr_modem_types::ModemTypeQPSKVideo))
+            || (_modem_type == gr_modem_types::ModemTypeQPSKVideo)
+            || (_modem_type == gr_modem_types::ModemTypeQPSK250000))
         demod_data = _gr_demod_qpsk_sdr->getData();
     else if((_modem_type == gr_modem_types::ModemType4FSK20000)
             || (_modem_type == gr_modem_types::ModemType4FSK2000))

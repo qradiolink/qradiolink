@@ -47,6 +47,10 @@
 #include <gnuradio/qtgui/sink_c.h>
 #include <gnuradio/qtgui/number_sink.h>
 #include <libconfig.h++>
+#include <sys/socket.h>
+#include <linux/if.h>
+#include <linux/if_tun.h>
+#include <arpa/inet.h>
 
 namespace radio_type
 {
@@ -67,6 +71,7 @@ public:
 
     void processAudioStream();
     int processVideoStream(bool &frame_flag);
+    void processNetStream();
 signals:
     void finished();
     void printText(QString text);
@@ -137,9 +142,11 @@ private:
     bool _tx_modem_started;
     int _tune_counter;
     unsigned char *_rand_frame_data;
+    int _fd_tun;
     void readConfig(std::string &rx_device_args, std::string &tx_device_args,
                     std::string &rx_antenna, std::string &tx_antenna, int &rx_freq_corr,
                     int &tx_freq_corr, std::string &callsign);
+    int tun_init();
 
 };
 

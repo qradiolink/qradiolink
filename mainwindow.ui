@@ -1447,6 +1447,11 @@ font: 18pt &quot;Sans Serif&quot;;</string>
               <string>BPSK 1K (700B)</string>
              </property>
             </item>
+            <item>
+             <property name="text">
+              <string>QPSK 250K</string>
+             </property>
+            </item>
            </widget>
           </item>
          </layout>

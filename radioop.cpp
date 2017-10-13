@@ -43,6 +43,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _rand_frame_data = new unsigned char[5000];
     QObject::connect(_led_timer, SIGNAL(timeout()), this, SLOT(syncIssue()));
     _modem = new gr_modem(_settings, fft_gui,const_gui, rssi_gui);
+
     QObject::connect(_modem,SIGNAL(textReceived(QString)),this,SLOT(textReceived(QString)));
     QObject::connect(_modem,SIGNAL(callsignReceived(QString)),this,SLOT(callsignReceived(QString)));
     QObject::connect(_modem,SIGNAL(audioFrameReceived()),this,SLOT(audioFrameReceived()));
@@ -187,6 +188,78 @@ int RadioOp::processVideoStream(bool &frame_flag)
     return 1;
 }
 
+void RadioOp::processNetStream()
+{
+    unsigned char *buffer = new unsigned char[1500];
+    int nread = read(_fd_tun,buffer,1500);
+    if(nread < 0)
+    {
+      qDebug() << "error reading from tun if";
+      delete[] buffer;
+    }
+
+    if(nread > 0)
+    {
+        qDebug() << "Read from tun if bytes: " << nread;
+        emit videoData(buffer,nread);
+    }
+    else
+        delete[] buffer;
+}
+
+int RadioOp::tun_init()
+{
+    struct ifreq ifr;
+    int s, err;
+    struct sockaddr_in addr;
+    char dev[] = "tunif0";
+    if( (_fd_tun = open("/dev/net/tun", O_RDWR)) < 0 )
+    {
+        qDebug() << "tun device open failed";
+        return -1;
+    }
+
+    memset(&ifr, 0, sizeof(ifr));
+
+    /* Flags: IFF_TUN   - TUN device (no Ethernet headers)
+    *        IFF_TAP   - TAP device
+    *
+    *        IFF_NO_PI - Do not provide packet information
+    */
+    ifr.ifr_flags = IFF_TUN;
+    if( *dev )
+        strncpy(ifr.ifr_name, dev, IFNAMSIZ);
+
+    if( (err = ioctl(_fd_tun, TUNSETIFF, (void *) &ifr)) < 0 )
+    {
+        qDebug() << "tun ioctl failed";
+        close(_fd_tun);
+        return err;
+    }
+    addr.sin_family = AF_INET;
+    s = socket(addr.sin_family, SOCK_DGRAM, IPPROTO_IP);
+    strcpy(dev, ifr.ifr_name);
+    ifr.ifr_addr = *(struct sockaddr *) &addr;
+    ifr.ifr_addr.sa_family = AF_INET;
+    inet_pton(AF_INET, "10.0.0.1", ifr.ifr_addr.sa_data + 2);
+    ioctl(s, SIOCSIFADDR, &ifr);
+
+    inet_pton(AF_INET, "255.255.255.0", ifr.ifr_addr.sa_data + 2);
+    ioctl(s, SIOCSIFNETMASK, &ifr);
+
+    ioctl(s, SIOCGIFFLAGS, &ifr);
+    ifr.ifr_flags |= (IFF_UP | IFF_RUNNING);
+
+    strncpy(ifr.ifr_name, dev, IFNAMSIZ);
+    if( (err = ioctl(s, SIOCSIFFLAGS, &ifr)) < 0 )
+    {
+        qDebug() << "could not bring tun if up";
+        return err;
+    }
+
+    return 1;
+}
+
 void RadioOp::run()
 {
 
@@ -232,7 +305,10 @@ void RadioOp::run()
         {
             if(_mode == gr_modem_types::ModemTypeQPSKVideo)
                 processVideoStream(frame_flag);
-
+            else if(_mode == gr_modem_types::ModemTypeQPSK250000)
+            {
+                processNetStream();
+            }
             else
             {
                 processAudioStream();
@@ -452,6 +528,11 @@ void RadioOp::toggleTX(bool value)
         _modem->initTX(_mode, tx_device_args, tx_antenna, tx_freq_corr);
         if(_mode == gr_modem_types::ModemTypeQPSKVideo)
             _video = new VideoEncoder;
+        if(_mode == gr_modem_types::ModemTypeQPSK250000)
+        {
+            if(tun_init() < 0)
+                qDebug() << "cannot init tun device";
+        }
     }
     else
     {
@@ -538,6 +619,12 @@ void RadioOp::toggleMode(int value)
         _tune_limit_lower = -5000;
         _tune_limit_upper = 5000;
         _step_hz = 1;
+        break;
+    case 10:
+        _mode = gr_modem_types::ModemTypeQPSK250000;
+        _tune_limit_lower = -5000;
+        _tune_limit_upper = 5000;
+        _step_hz = 100;
         break;
     default:
         _mode = gr_modem_types::ModemTypeBPSK2000;
