@@ -400,7 +400,7 @@ void RadioOp::receiveNetData(unsigned char *data, int size)
     unsigned char *net_frame = new unsigned char[frame_size];
     memcpy(net_frame, &data[12], frame_size);
     delete[] data;
-    qDebug() << net_frame;
+    int res = _net_device->write_buffered(net_frame,frame_size);
 }
 
 void RadioOp::startTransmission()
@@ -483,12 +483,20 @@ void RadioOp::toggleRX(bool value)
         _modem->initRX(_mode, rx_device_args, rx_antenna, rx_freq_corr);
         _modem->startRX();
         _tune_center_freq = _modem->_requested_frequency_hz;
+        if(_mode == gr_modem_types::ModemTypeQPSK250000)
+        {
+            _net_device = new NetDevice;
+        }
     }
     else
     {
         _rx_inited = false;
         _modem->stopRX();
         _modem->deinitRX(_mode);
+        if(_mode == gr_modem_types::ModemTypeQPSK250000)
+        {
+            delete _net_device;
+        }
     }
 }
 

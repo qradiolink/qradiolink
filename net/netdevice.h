@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QDebug>
+#include <QRegExp>
 #include <QCoreApplication>
 #include <unistd.h>
 #include <math.h>
@@ -25,10 +26,13 @@ public slots:
 
 public:
     unsigned char* read_buffered(int &bytes);
+    int write_buffered(unsigned char* data, int len);
 
 private:
     int tun_init();
+    void if_list();
     int _fd_tun;
+    int _if_no;
 
 };
 
