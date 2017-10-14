@@ -104,6 +104,7 @@ signals:
     void pcmAudio(short *pcm, short size);
     void codec2Audio(unsigned char *c2data, int size);
     void videoData(unsigned char *video_data, int size);
+    void netData(unsigned char *net_data, int size);
     void demodulated_audio(short *pcm, short size);
     void textReceived(QString text);
     void callsignReceived(QString text);
@@ -115,6 +116,7 @@ signals:
 public slots:
     void processC2Data(unsigned char *data, int size);
     void processVideoData(unsigned char *data, int size);
+    void processNetData(unsigned char *data, int size);
     void demodulate();
     void startTransmission(QString callsign, int size);
     void endTransmission(QString callsign, int size);

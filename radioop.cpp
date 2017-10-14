@@ -52,8 +52,10 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     QObject::connect(_modem,SIGNAL(endAudioTransmission()),this,SLOT(endAudioTransmission()));
     QObject::connect(this,SIGNAL(audioData(unsigned char*,int)),_modem,SLOT(processC2Data(unsigned char*,int)));
     QObject::connect(this,SIGNAL(videoData(unsigned char*,int)),_modem,SLOT(processVideoData(unsigned char*,int)));
+    QObject::connect(this,SIGNAL(netData(unsigned char*,int)),_modem,SLOT(processNetData(unsigned char*,int)));
     QObject::connect(_modem,SIGNAL(codec2Audio(unsigned char*,int)),this,SLOT(receiveC2Data(unsigned char*,int)));
     QObject::connect(_modem,SIGNAL(videoData(unsigned char*,int)),this,SLOT(receiveVideoData(unsigned char*,int)));
+    QObject::connect(_modem,SIGNAL(netData(unsigned char*,int)),this,SLOT(receiveNetData(unsigned char*,int)));
     for (int j = 0;j<5000;j++)
         _rand_frame_data[j] = rand() % 256;
 
@@ -190,6 +192,8 @@ int RadioOp::processVideoStream(bool &frame_flag)
 
 void RadioOp::processNetStream()
 {
+    int max_frame_size = 1512;
+    unsigned char *netbuffer = (unsigned char*)calloc(max_frame_size, sizeof(unsigned char));
     unsigned char *buffer = new unsigned char[1500];
     int nread = read(_fd_tun,buffer,1500);
     if(nread < 0)
@@ -198,13 +202,22 @@ void RadioOp::processNetStream()
       delete[] buffer;
     }
 
+
+
     if(nread > 0)
     {
-        qDebug() << "Read from tun if bytes: " << nread;
-        emit videoData(buffer,nread);
+        memcpy(&(netbuffer[0]), &nread, 4);
+        memcpy(&(netbuffer[4]), &nread, 4);
+        memcpy(&(netbuffer[8]), &nread, 4);
+        memcpy(&(netbuffer[12]), buffer, nread);
+        emit netData(netbuffer,max_frame_size);
+        delete[] buffer;
     }
     else
+    {
+        delete[] netbuffer;
         delete[] buffer;
+    }
 }
 
 int RadioOp::tun_init()
@@ -419,6 +432,34 @@ void RadioOp::receiveVideoData(unsigned char *data, int size)
     emit videoImage(out_img);
     delete[] raw_output;
 
+}
+
+void RadioOp::receiveNetData(unsigned char *data, int size)
+{
+    unsigned long frame_size1;
+    unsigned long frame_size2;
+    unsigned long frame_size3;
+    int frame_size;
+
+    memcpy(&frame_size1, &data[0], 4);
+    memcpy(&frame_size2, &data[4], 4);
+    memcpy(&frame_size3, &data[8], 4);
+    if(frame_size1 == frame_size2)
+        frame_size = (int)frame_size1;
+    else if(frame_size1 == frame_size3)
+        frame_size = (int)frame_size1;
+    else if(frame_size2 == frame_size3)
+        frame_size = (int)frame_size2;
+    else
+    {
+        qDebug() << "received corrupted frame size, dropping frame ";
+        delete[] data;
+        return;
+    }
+    unsigned char *net_frame = new unsigned char[frame_size];
+    memcpy(net_frame, &data[12], frame_size);
+    delete[] data;
+    qDebug() << net_frame;
 }
 
 void RadioOp::startTransmission()

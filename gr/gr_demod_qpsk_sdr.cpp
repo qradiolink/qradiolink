@@ -72,7 +72,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
 
     //_resampler_pfb = gr::filter::pfb_arb_resampler_ccf::make(rerate, taps, flt_size);
 
-    _agc = gr::analog::agc2_cc::make(0.006e-1, 1e-3, 1, 1);
+    _agc = gr::analog::agc2_cc::make(0.0006e-1, 1e-4, 1, 1);
     _signal_source = gr::analog::sig_source_c::make(_samp_rate,gr::analog::GR_COS_WAVE,-25000,1);
     _multiply = gr::blocks::multiply_cc::make();
     /*
@@ -96,6 +96,8 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     }
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
                                                               omega_rel_limit);
+    std::vector<float> pfb_taps = gr::filter::firdes::root_raised_cosine(flt_size,flt_size, 1, 0.35, flt_size * 11 * _samples_per_symbol);
+    _clock_sync = gr::digital::pfb_clock_sync_ccf::make(_samples_per_symbol,0.0628,pfb_taps);
     _costas_loop = gr::digital::costas_loop_cc::make(0.0628,4);
     _equalizer = gr::digital::cma_equalizer_cc::make(8,4,0.00005,1);
     _fll = gr::digital::fll_band_edge_cc::make(sps, 0.55, 32, 0.000628);
@@ -149,8 +151,8 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _top_block->connect(_filter,0,_agc,0);
     _top_block->connect(_agc,0,_clock_recovery,0);
     //_top_block->connect(_fll,0,_clock_recovery,0);
-    _top_block->connect(_clock_recovery,0,_equalizer,0);
-    _top_block->connect(_equalizer,0,_costas_loop,0);
+    _top_block->connect(_clock_recovery,0,_costas_loop,0);
+    //_top_block->connect(_equalizer,0,_costas_loop,0);
     _top_block->connect(_costas_loop,0,_const_valve,0);
     _top_block->connect(_const_valve,0,_constellation,0);
     _top_block->connect(_costas_loop,0,_constellation_receiver,0);

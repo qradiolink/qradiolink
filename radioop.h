@@ -82,6 +82,7 @@ signals:
     void displayDataReceiveStatus(bool status);
     void audioData(unsigned char *buf, int size);
     void videoData(unsigned char *buf, int size);
+    void netData(unsigned char *buf, int size);
     void videoImage(QImage img);
     void endAudio(int secs);
     void startAudio();
@@ -99,6 +100,7 @@ public slots:
     void syncIssue();
     void receiveC2Data(unsigned char *data, int size);
     void receiveVideoData(unsigned char *data, int size);
+    void receiveNetData(unsigned char *data, int size);
     void toggleRX(bool value);
     void toggleTX(bool value);
     void toggleMode(int value);

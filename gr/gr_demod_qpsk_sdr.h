@@ -21,6 +21,7 @@
 #include <gnuradio/digital/map_bb.h>
 #include <gnuradio/digital/constellation.h>
 #include <gnuradio/digital/constellation_decoder_cb.h>
+#include <gnuradio/digital/pfb_clock_sync_ccf.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/digital/descrambler_bb.h>
 #include <gnuradio/qtgui/const_sink_c.h>
@@ -68,6 +69,7 @@ private:
     gr::analog::agc2_cc::sptr _agc;
     gr::digital::fll_band_edge_cc::sptr _fll;
     gr::digital::clock_recovery_mm_cc::sptr _clock_recovery;
+    gr::digital::pfb_clock_sync_ccf::sptr _clock_sync;
     gr::digital::costas_loop_cc::sptr _costas_loop;
     gr::digital::diff_decoder_bb::sptr _diff_decoder;
     gr::filter::pfb_arb_resampler_ccf::sptr _resampler_pfb;
