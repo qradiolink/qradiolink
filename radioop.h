@@ -38,19 +38,14 @@
 #include "settings.h"
 #include "audio/audioencoder.h"
 #include "video/videoencoder.h"
-#if 0
-#include "gmskmodem.h"
-#endif
 #include "audio/alsaaudio.h"
 #include "gr/gr_modem.h"
+#include "net/netdevice.h"
 #include <gnuradio/qtgui/const_sink_c.h>
 #include <gnuradio/qtgui/sink_c.h>
 #include <gnuradio/qtgui/number_sink.h>
 #include <libconfig.h++>
-#include <sys/socket.h>
-#include <linux/if.h>
-#include <linux/if_tun.h>
-#include <arpa/inet.h>
+
 
 namespace radio_type
 {
@@ -133,6 +128,7 @@ private:
     QTimer *_led_timer;
     AudioEncoder *_codec;
     VideoEncoder *_video;
+    NetDevice *_net_device;
     gr_modem *_modem;
     int _mode;
     int _radio_type;
@@ -144,7 +140,7 @@ private:
     bool _tx_modem_started;
     int _tune_counter;
     unsigned char *_rand_frame_data;
-    int _fd_tun;
+
     void readConfig(std::string &rx_device_args, std::string &tx_device_args,
                     std::string &rx_antenna, std::string &tx_antenna, int &rx_freq_corr,
                     int &tx_freq_corr, std::string &callsign);
