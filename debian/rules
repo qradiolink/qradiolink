@@ -1,9 +1,9 @@
 #!/usr/bin/make -f
 %:
+	QT_SELECT=qt4 dh $@
+override_dh_auto_clean:
 	protoc --proto_path=${PWD}/ext --cpp_out=${PWD}/ext ${PWD}/ext/Mumble.proto
 	protoc --proto_path=${PWD}/ext --cpp_out=${PWD}/ext ${PWD}/ext/QRadioLink.proto
-	cd ..
 	sed -i 's/qwt_symbol.h/qwt\/qwt_symbol.h/g' /usr/include/gnuradio/qtgui/sink_c.h
 	sed -i 's/qwt_color_map.h/qwt\/qwt_color_map.h/g' /usr/include/gnuradio/qtgui/qtgui_types.h
 	sed -i 's/qwt_scale_draw.h/qwt\/qwt_scale_draw.h/g' /usr/include/gnuradio/qtgui/qtgui_types.h
-	QT_SELECT=qt4 dh $@
