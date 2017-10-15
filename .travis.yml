@@ -13,11 +13,16 @@ branches:
   except:
     - /^debian\/\d/
 
+before_deploy:
+  - export RELEASE_PKG_FILE=$(ls *.deb)
+  - echo "deploying $RELEASE_PKG_FILE to GitHub releases"
+
 deploy:
   provider: releases
   api_key: "a8b3d4e3f0eefb93700c240562a9a9cb5aac34a9"
-  file: "qradiolink_0.2.1999999999-1_amd64.deb"
   skip_cleanup: true
+  file_glob: true
+  file: "${RELEASE_PKG_FILE}"
   overwrite: true
   on:
     tags: true
