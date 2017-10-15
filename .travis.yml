@@ -1,3 +1,5 @@
+notifications:
+  email: false
 sudo: required
 language: generic
 
