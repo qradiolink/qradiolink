@@ -1,4 +1,8 @@
 matrix:
+  before_install:
+    - sudo add-apt-repository deb http://ftp.de.debian.org/debian/ jessie main contrib non-free -y
+    - sudo add-apt-repository deb http://ftp.de.debian.org/debian/ jessie-backports main contrib non-free -y
+    - sudo apt-get update -q
   install: true
   script:
     - mkdir build
