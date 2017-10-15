@@ -42,9 +42,9 @@ cd ext/
 protoc --cpp_out=. Mumble.proto
 protoc --cpp_out=. QRadioLink.proto
 cd ..
-sed -i 's/qwt_symbol.h/qwt\/qwt_symbol.h/g' /usr/include/gnuradio/qtgui/sink_c.h
-sed -i 's/qwt_color_map.h/qwt\/qwt_color_map.h/g' /usr/include/gnuradio/qtgui/qtgui_types.h
-sed -i 's/qwt_scale_draw.h/qwt\/qwt_scale_draw.h/g' /usr/include/gnuradio/qtgui/qtgui_types.h 
+sudo sed -i 's/qwt_symbol.h/qwt\/qwt_symbol.h/g' /usr/include/gnuradio/qtgui/sink_c.h
+sudo sed -i 's/qwt_color_map.h/qwt\/qwt_color_map.h/g' /usr/include/gnuradio/qtgui/qtgui_types.h
+sudo sed -i 's/qwt_scale_draw.h/qwt\/qwt_scale_draw.h/g' /usr/include/gnuradio/qtgui/qtgui_types.h 
 cd build/
 qmake-qt4 ..
 make
@@ -53,8 +53,6 @@ make
 
 Known issues:
 - Build fails due to include error in /usr/include/gnuradio/qtgui/qtgui_types.h (Debian): 
-manually edit the header to specify the correct directory for QWT
-
 - #include <qwt/qwt_color_map.h>
 - #include <qwt/qwt_scale_draw.h>
 
