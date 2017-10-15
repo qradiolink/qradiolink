@@ -5,6 +5,7 @@ Priority: optional
 Standards-Version: 3.9.2
 Build-Depends: debhelper (>= 9),
       gnuradio-dev,
+      protobuf-compiler,
       gr-osmosdr,
       libgnuradio-pmt3.7.10,
       libgnuradio-audio3.7.10,
