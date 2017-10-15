@@ -58,11 +58,11 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
     _rssi_gui = ui->widget_rssi;
     _fft_gui = ui->widget_fft;
 
-    QFileInfo new_file = setupSounds("end_beep.wav");
+    //QFileInfo new_file = setupSounds("end_beep.wav");
     _config_file = setupConfig();
     readConfig(_config_file);
-    _end_beep = Phonon::createPlayer(Phonon::MusicCategory,
-                                 Phonon::MediaSource(new_file.absoluteFilePath()));
+    //_end_beep = Phonon::createPlayer(Phonon::MusicCategory,
+    //                             Phonon::MediaSource(new_file.absoluteFilePath()));
     _video_img = new QPixmap;
 
 }
@@ -348,7 +348,7 @@ void MainWindow::displayImage(QImage img)
 void MainWindow::playEndBeep(int seconds)
 {
 
-    _end_beep->play();
+    //_end_beep->play();
 }
 
 void MainWindow::mainTabChanged(int value)

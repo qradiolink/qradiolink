@@ -21,7 +21,7 @@
 #include <QFile>
 #include <QFileDialog>
 #include <QScrollBar>
-#include <phonon/MediaObject>
+//#include <phonon/MediaObject>
 #include <QDir>
 #include <QFileInfo>
 #include "mumbleclient.h"
@@ -103,7 +103,7 @@ private:
     QWidget *_constellation_gui;
     QWidget *_rssi_gui;
     QWidget *_fft_gui;
-    Phonon::MediaObject *_end_beep;
+    //Phonon::MediaObject *_end_beep;
     QPixmap *_video_img;
     QFileInfo *_config_file;
     QFileInfo setupSounds(QString name);
