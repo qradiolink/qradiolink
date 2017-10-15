@@ -41,6 +41,7 @@ Build-Depends: debhelper (>= 9),
       libqt4-sql,
       libqt4-sql-sqlite,
       qt4-dev-tools
+
 Package: qradiolink
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},
