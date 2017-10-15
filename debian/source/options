@@ -1,2 +1,3 @@
-extend-diff-ignore = "^\.travis\.yml$"
+extend-diff-ignore = "^\.travis*"
 extend-diff-ignore = "^build/*"
+extend-diff-ignore = "^*\.user$"
