@@ -1,6 +1,15 @@
 matrix:
+  sudo: required
+  language: generic
+  services:
+    - docker
+  branches:
+    except:
+      - /^debian\/\d/
+  language: cpp
   install: true
   script:
+    - wget -O- http://travis.debian.net/script.sh | sh -
     - mkdir build
     - cd build
     - qmake-qt ..
