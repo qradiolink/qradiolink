@@ -1,0 +1,11 @@
+Source: qradiolink
+Maintainer: Adrian Musceac <yo8rzz@gmail.com>
+Section: misc
+Priority: optional
+Standards-Version: 3.9.2
+Build-Depends: debhelper (>= 9)
+
+Package: qradiolink
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Gnuradio SDR wrapper
