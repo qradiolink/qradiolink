@@ -19,7 +19,7 @@ before_deploy:
 
 deploy:
   provider: releases
-  api_key: "544ee8e113651687e9232e4baa5ed78d48e706a5"
+  api_key: "df450d5c23e2439cf01e3df41ae783cadf109d55"
   skip_cleanup: true
   file_glob: true
   file: "${RELEASE_PKG_FILE}"
