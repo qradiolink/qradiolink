@@ -1,3 +1,8 @@
 #!/usr/bin/make -f
 %:
+	cd ext/
+	protoc --cpp_out=. Mumble.proto
+	protoc --cpp_out=. QRadioLink.proto
+	cd ..
+	sed -i 's/qwt_symbol.h/qwt\/qwt_symbol.h/g' /usr/include/gnuradio/qtgui/sink_c.h
 	QT_SELECT=qt4 dh $@
