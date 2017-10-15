@@ -1,4 +1,4 @@
-qradiolink (0.2.13) UNRELEASED; urgency=medium
+qradiolink (2017.10-2) UNRELEASED; urgency=medium
 
   [ Adrian Musceac ]
   * Disable QTgui when tab not active
@@ -29,7 +29,7 @@ qradiolink (0.2.13) UNRELEASED; urgency=medium
 
  -- Adrian Musceac <kantooon@gmail.com>  Sun, 15 Oct 2017 17:37:02 +0300
 
-qradiolink (0.2.12) stretch; urgency=medium
+qradiolink (2017.10-1) stretch; urgency=medium
 
   * Initial release. 
 
