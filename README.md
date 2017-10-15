@@ -1,6 +1,8 @@
 QRadioLink
 ==========
 
+[![Build Status](https://travis-ci.org/kantooon/qradiolink.svg?branch=0.2.17)](https://travis-ci.org/kantooon/qradiolink)
+
 About
 -----
 - This application is a building platform based on Gnuradio which allows experimenting with 
@@ -35,7 +37,14 @@ Building the software
 After cloning the Github repository into a directory of your choice:
 <pre>
 cd qradiolink
-mkdir build 
+mkdir build
+cd ext/
+protoc --cpp_out=. Mumble.proto
+protoc --cpp_out=. QRadioLink.proto
+cd ..
+sed -i 's/qwt_symbol.h/qwt\/qwt_symbol.h/g' /usr/include/gnuradio/qtgui/sink_c.h
+sed -i 's/qwt_color_map.h/qwt\/qwt_color_map.h/g' /usr/include/gnuradio/qtgui/qtgui_types.h
+sed -i 's/qwt_scale_draw.h/qwt\/qwt_scale_draw.h/g' /usr/include/gnuradio/qtgui/qtgui_types.h 
 cd build/
 qmake-qt4 ..
 make
