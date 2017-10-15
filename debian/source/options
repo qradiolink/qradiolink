@@ -1,4 +1,4 @@
 extend-diff-ignore = "^\.travis*"
 extend-diff-ignore = "^build/*"
 extend-diff-ignore = "^*\.user$"
-extend-diff-ignore=^*\.$
+extend-diff-ignore = "^ext/*$
