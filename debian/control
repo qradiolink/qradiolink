@@ -3,8 +3,45 @@ Maintainer: Adrian Musceac <yo8rzz@gmail.com>
 Section: misc
 Priority: optional
 Standards-Version: 3.9.2
-Build-Depends: debhelper (>= 9)
-
+Build-Depends: debhelper (>= 9),
+      gnuradio-dev,
+      gr-osmosdr,
+      libgnuradio-pmt,
+      libgnuradio-audio,
+      libgnuradio-analog,
+      libgnuradio-blocks,
+      libgnuradio-osmosdr,
+      libgsm1,
+      libgsm1-dev,
+      libprotobuf9,
+      libprotobuf-dev,
+      libopus0,
+      libopus-dev,
+      libpulse-simple,
+      libpulse0,
+      libpulse-dev
+      libcodec2-0.4,
+      libcodec2-dev,
+      libasound2,
+      libasound2-dev,
+      libjpeg9,
+      libjpeg-dev,
+      libconfig++9,
+      libconfig++-dev,
+      libgnuradio-filter,
+      libgnuradio-digital,
+      libgnuradio-runtime,
+      libgnuradio-qtgui,
+      libgnuradio-fec,
+      qt4-qmake,
+      libqt4-core,
+      libqt4-dev,
+      libqt4-gui,
+      libqt4-network,
+      libqt4-phonon,
+      libqt4-sql,
+      libqt4-sql-sqlite,
+      qt4-dev-tools
 Package: qradiolink
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
