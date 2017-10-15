@@ -1,0 +1,31 @@
+qradiolink (0.2.12-2) UNRELEASED; urgency=medium
+
+  [ Adrian Musceac ]
+  * Disable QTgui when tab not active
+  * SSB adjustments
+  * Disable qtGUI for SSB and FM as well
+  * Disable constellation sink when not on the view
+  * Tweak FSK modem parameters
+  * FSK20000 params
+  * Activate qtGUI when switching modes on the tune page
+  * net branch
+  * Working 250k ip mode
+  * Reorganise code
+  * Working ARP RX
+  * Add travis file
+  * Add Travis build file
+  * Update build script
+  * WIP
+  * Add debian script
+  * wip
+  * wip2
+  * Use debian script
+  * Fix issue
+  * Add Debian packaging files
+  * Changelog
+  * gbp.conf
+
+  [ adrian ]
+
+ -- Adrian Musceac <kantooon@gmail.com>  Sun, 15 Oct 2017 17:37:02 +0300
+
