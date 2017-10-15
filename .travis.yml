@@ -12,3 +12,12 @@ script:
 branches:
   except:
     - /^debian\/\d/
+
+deploy:
+  provider: releases
+  api_key: "a8b3d4e3f0eefb93700c240562a9a9cb5aac34a9"
+  file: "qradiolink_0.2.16-1_amd64.deb"
+  skip_cleanup: true
+  overwrite: true
+  on:
+    tags: true
