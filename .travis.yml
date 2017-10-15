@@ -1,8 +1,4 @@
 matrix:
-  before_install:
-    - sudo add-apt-repository deb http://ftp.de.debian.org/debian/ jessie main contrib non-free -y
-    - sudo add-apt-repository deb http://ftp.de.debian.org/debian/ jessie-backports main contrib non-free -y
-    - sudo apt-get update -q
   install: true
   script:
     - mkdir build
@@ -15,6 +11,9 @@ matrix:
       addons:
         apt:
           sources:
+            - sourceline: deb http://ftp.de.debian.org/debian/ jessie main contrib non-free
+            - sourceline: deb http://ftp.de.debian.org/debian/ jessie-backports main contrib non-free
+            - sourceline: deb http://ftp.ro.debian.org/debian/ jessie-updates main contrib non-free
             - ubuntu-toolchain-r-test
           packages:
             - g++-4.9 
