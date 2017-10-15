@@ -1,53 +1,12 @@
 sudo: required
+language: generic
+
 services:
   - docker
+
+script:
+  - wget -O- http://travis.debian.net/script.sh | sh -
+
 branches:
   except:
     - /^debian\/\d/
-language: cpp
-install: true
-script:
-  - wget -O- http://travis.debian.net/script.sh | sh -
-  - mkdir build
-  - cd build
-  - qmake-qt ..
-  - make
-addons:
-  apt:
-    sources:
-      - sourceline: deb http://ftp.de.debian.org/debian/ jessie main contrib non-free
-      - sourceline: deb http://ftp.de.debian.org/debian/ jessie-backports main contrib non-free
-      - sourceline: deb http://ftp.ro.debian.org/debian/ jessie-updates main contrib non-free
-      - ubuntu-toolchain-r-test
-    packages:
-      - g++-4.9 
-      - libgnuradio-pmt 
-      - libgnuradio-audio
-      - libgnuradio-analog
-      - libgnuradio-blocks
-      - libgnuradio-osmosdr
-      - libgsm
-      - libprotobuf
-      - libopus 
-      - libpulse-simple 
-      - libpulse
-      - libcodec2 
-      - libasound 
-      - libjpeg 
-      - libconfig++
-      - libgnuradio-filter 
-      - libgnuradio-digital 
-      - libgnuradio-runtime 
-      - libgnuradio-qtgui 
-      - libgnuradio-fec
-      - qt4-qmake
-      - libqt4-core
-      - libqt4-dev
-      - libqt4-gui
-      - libqt4-network
-      - libqt4-phonon
-      - libqt4-sql
-      - libqt4-sql-sqlite
-      - qt4-dev-tools
-env:
-    - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9" 
