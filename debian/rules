@@ -1,8 +1,8 @@
 #!/usr/bin/make -f
 %:
 	cd ext/
-	protoc --cpp_out=. ./Mumble.proto
-	protoc --cpp_out=. ./QRadioLink.proto
+	protoc --cpp_out=${PWD} ${PWD}/Mumble.proto
+	protoc --cpp_out=${PWD} ${PWD}/QRadioLink.proto
 	cd ..
 	sed -i 's/qwt_symbol.h/qwt\/qwt_symbol.h/g' /usr/include/gnuradio/qtgui/sink_c.h
 	sed -i 's/qwt_color_map.h/qwt\/qwt_color_map.h/g' /usr/include/gnuradio/qtgui/qtgui_types.h
