@@ -45,6 +45,7 @@ libqt4-sql (>= 4:4.5.3), libqtcore4 (>= 4:4.8.0), libqtgui4 (>= 4:4.6.1),
 [Downloads](https://github.com/kantooon/qradiolink/releases "Downloads")
 ---------
 
+Debian Stretch (stable) packages are provided via Travis CI automated builds
 Please see the [Github releases page](https://github.com/kantooon/qradiolink/releases)
 
 Building the software
