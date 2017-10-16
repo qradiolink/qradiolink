@@ -163,9 +163,9 @@ QFileInfo MainWindow::setupSounds(QString name)
 
 QFileInfo* MainWindow::setupConfig()
 {
-    QDir files = QDir::current();
+    QDir files = QDir::homePath();
 
-    QFileInfo new_file = files.filePath("qradiolink.cfg");
+    QFileInfo new_file = files.filePath(".config/qradiolink.cfg");
     if(!new_file.exists())
     {
         QString config = "// Automatically generated\n";

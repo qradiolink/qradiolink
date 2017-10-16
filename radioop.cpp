@@ -80,9 +80,9 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
                          std::string &rx_antenna, std::string &tx_antenna, int &rx_freq_corr,
                          int &tx_freq_corr, std::string &callsign)
 {
-    QDir files = QDir::current();
+    QDir files = QDir::homePath();
 
-    QFileInfo config_file = files.filePath("qradiolink.cfg");
+    QFileInfo config_file = files.filePath(".config/qradiolink.cfg");
     libconfig::Config cfg;
     try
     {
