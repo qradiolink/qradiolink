@@ -18,6 +18,18 @@ supported by libgnuradio-osmosdr
 
 Requirements
 ------------
+- Build deps: libasound2 (>= 1.0.16), libboost-program-options1.62.0, libboost-system1.62.0, 
+libboost-thread1.62.0, libc6 (>= 2.15), libcodec2-0.4, libconfig++9v5, libgcc1 (>= 1:3.0), 
+libgnuradio-analog3.7.10, libgnuradio-audio3.7.10, libgnuradio-blocks3.7.10, 
+libgnuradio-digital3.7.10, libgnuradio-fec3.7.10, libgnuradio-filter3.7.10, 
+libgnuradio-osmosdr0.1.4, libgnuradio-pmt3.7.10, libgnuradio-qtgui3.7.10, 
+libgnuradio-runtime3.7.10, libgsm1 (>= 1.0.13), libjpeg62-turbo (>= 1.3.1), 
+libopus0 (>= 1.1), libprotobuf10, libpulse0 (>= 0.99.1), libqt4-network (>= 4:4.5.3), 
+libqt4-sql (>= 4:4.5.3), libqtcore4 (>= 4:4.8.0), libqtgui4 (>= 4:4.6.1),
+ libstdc++6 (>= 5.2), gnuradio-dev, gr-osmosdr, libgsm1-dev, libprotobuf-dev,
+ libopus-dev, libpulse-dev, libcodec2-dev, libasound2-dev, libjpeg62-turbo-dev,
+ libconfig++-dev, qt4-qmake, libqt4-dev, libqt4-phonon, libqt4-sql-sqlite, qt4-dev-tools
+
 - All packages require binaries and development packages (headers)
 - Please make sure you have the development packages installed before building QRadioLink
 
