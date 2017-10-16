@@ -1,7 +1,7 @@
 QRadioLink
 ==========
 
-[![Build Status](https://travis-ci.org/kantooon/qradiolink.svg?branch=0.2.17)](https://travis-ci.org/kantooon/qradiolink)
+[![Build Status](https://travis-ci.org/kantooon/qradiolink.svg?branch=master)](https://travis-ci.org/kantooon/qradiolink)
 
 About
 -----
