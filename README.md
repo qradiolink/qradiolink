@@ -42,10 +42,10 @@ libqt4-sql (>= 4:4.5.3), libqtcore4 (>= 4:4.8.0), libqtgui4 (>= 4:4.6.1),
 - libgsm, libprotobuf, libopus, libpulse-simple, libpulse, libasound, libcodec2, libsqlite3, libjpeg, libphonon
 - optional protoc compiler for development work only (libprotoc 2.6.1)
 
-Downloads
+[Downloads](https://github.com/kantooon/qradiolink/releases "Downloads")
 ---------
 
-Please see the Github releases page: https://github.com/kantooon/qradiolink/releases
+Please see the [Github releases page](https://github.com/kantooon/qradiolink/releases)
 
 Building the software
 ---------------------
