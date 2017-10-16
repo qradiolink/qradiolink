@@ -19,7 +19,7 @@ before_deploy:
 
 deploy:
   provider: releases
-  api_key: "41f99805b9215fe6c3c3e45eef17f2068109826d"
+  api_key: "${GH_OAUTH_TOKEN}"
   skip_cleanup: true
   file_glob: true
   file: "${RELEASE_PKG_FILE}"
