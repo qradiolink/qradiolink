@@ -14,7 +14,7 @@ branches:
     - /^debian\/\d/
 
 before_deploy:
-  - export RELEASE_PKG_FILE=$(ls *.deb)
+  - export RELEASE_PKG_FILE=$(ls qradiolink_*.deb)
   - echo "deploying $RELEASE_PKG_FILE to GitHub releases"
 
 deploy:
