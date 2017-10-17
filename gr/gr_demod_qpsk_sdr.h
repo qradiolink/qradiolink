@@ -21,6 +21,7 @@
 #include <gnuradio/digital/map_bb.h>
 #include <gnuradio/digital/constellation.h>
 #include <gnuradio/digital/constellation_decoder_cb.h>
+#include <gnuradio/digital/pfb_clock_sync_ccf.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/digital/descrambler_bb.h>
 #include <gnuradio/qtgui/const_sink_c.h>
@@ -32,6 +33,7 @@
 #include <gnuradio/filter/single_pole_iir_filter_ff.h>
 #include <gnuradio/blocks/moving_average_ff.h>
 #include <gnuradio/blocks/add_const_ff.h>
+#include <gnuradio/blocks/copy.h>
 #include <osmosdr/source.h>
 #include <vector>
 #include "gr_vector_sink.h"
@@ -54,6 +56,7 @@ public slots:
     std::vector<unsigned char> *getData();
     void tune(long center_freq);
     void set_rx_sensitivity(float value);
+    void enable_gui(bool value);
 
 private:
     gr::top_block_sptr _top_block;
@@ -66,6 +69,7 @@ private:
     gr::analog::agc2_cc::sptr _agc;
     gr::digital::fll_band_edge_cc::sptr _fll;
     gr::digital::clock_recovery_mm_cc::sptr _clock_recovery;
+    gr::digital::pfb_clock_sync_ccf::sptr _clock_sync;
     gr::digital::costas_loop_cc::sptr _costas_loop;
     gr::digital::diff_decoder_bb::sptr _diff_decoder;
     gr::filter::pfb_arb_resampler_ccf::sptr _resampler_pfb;
@@ -76,6 +80,9 @@ private:
     gr::digital::descrambler_bb::sptr _descrambler;
     gr::qtgui::const_sink_c::sptr _constellation;
     gr::qtgui::sink_c::sptr _fft_gui;
+    gr::blocks::copy::sptr _rssi_valve;
+    gr::blocks::copy::sptr _fft_valve;
+    gr::blocks::copy::sptr _const_valve;
     gr::blocks::complex_to_mag_squared::sptr _mag_squared;
     gr::blocks::nlog10_ff::sptr _log10;
     gr::filter::single_pole_iir_filter_ff::sptr _single_pole_filter;

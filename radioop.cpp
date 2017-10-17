@@ -24,6 +24,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _radio_type = radio_type::RADIO_TYPE_DIGITAL;
     _codec = new AudioEncoder;
     _audio = new AudioInterface;
+    _net_device = 0;
     _stop =false;
     _tx_inited = false;
     _rx_inited = false;
@@ -43,6 +44,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _rand_frame_data = new unsigned char[5000];
     QObject::connect(_led_timer, SIGNAL(timeout()), this, SLOT(syncIssue()));
     _modem = new gr_modem(_settings, fft_gui,const_gui, rssi_gui);
+
     QObject::connect(_modem,SIGNAL(textReceived(QString)),this,SLOT(textReceived(QString)));
     QObject::connect(_modem,SIGNAL(callsignReceived(QString)),this,SLOT(callsignReceived(QString)));
     QObject::connect(_modem,SIGNAL(audioFrameReceived()),this,SLOT(audioFrameReceived()));
@@ -51,8 +53,10 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     QObject::connect(_modem,SIGNAL(endAudioTransmission()),this,SLOT(endAudioTransmission()));
     QObject::connect(this,SIGNAL(audioData(unsigned char*,int)),_modem,SLOT(processC2Data(unsigned char*,int)));
     QObject::connect(this,SIGNAL(videoData(unsigned char*,int)),_modem,SLOT(processVideoData(unsigned char*,int)));
+    QObject::connect(this,SIGNAL(netData(unsigned char*,int)),_modem,SLOT(processNetData(unsigned char*,int)));
     QObject::connect(_modem,SIGNAL(codec2Audio(unsigned char*,int)),this,SLOT(receiveC2Data(unsigned char*,int)));
     QObject::connect(_modem,SIGNAL(videoData(unsigned char*,int)),this,SLOT(receiveVideoData(unsigned char*,int)));
+    QObject::connect(_modem,SIGNAL(netData(unsigned char*,int)),this,SLOT(receiveNetData(unsigned char*,int)));
     for (int j = 0;j<5000;j++)
         _rand_frame_data[j] = rand() % 256;
 
@@ -76,9 +80,9 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
                          std::string &rx_antenna, std::string &tx_antenna, int &rx_freq_corr,
                          int &tx_freq_corr, std::string &callsign)
 {
-    QDir files = QDir::current();
+    QDir files = QDir::homePath();
 
-    QFileInfo config_file = files.filePath("qradiolink.cfg");
+    QFileInfo config_file = files.filePath(".config/qradiolink.cfg");
     libconfig::Config cfg;
     try
     {
@@ -136,6 +140,8 @@ void RadioOp::processAudioStream()
             (_mode == gr_modem_types::ModemType4FSK2000) ||
             (_mode == gr_modem_types::ModemTypeQPSK2000))
         encoded_audio = _codec->encode_codec2(audiobuffer, audiobuffer_size, packet_size);
+    else if(_mode == gr_modem_types::ModemTypeBPSK1000)
+        encoded_audio = _codec->encode_codec2_700(audiobuffer, audiobuffer_size, packet_size);
     else
         encoded_audio = _codec->encode_opus(audiobuffer, audiobuffer_size, packet_size);
 
@@ -185,6 +191,29 @@ int RadioOp::processVideoStream(bool &frame_flag)
     return 1;
 }
 
+void RadioOp::processNetStream()
+{
+    int max_frame_size = 1512;
+    unsigned char *netbuffer = (unsigned char*)calloc(max_frame_size, sizeof(unsigned char));
+    int nread;
+    unsigned char *buffer = _net_device->read_buffered(nread);
+
+    if(nread > 0)
+    {
+        memcpy(&(netbuffer[0]), &nread, 4);
+        memcpy(&(netbuffer[4]), &nread, 4);
+        memcpy(&(netbuffer[8]), &nread, 4);
+        memcpy(&(netbuffer[12]), buffer, nread);
+        emit netData(netbuffer,max_frame_size);
+        delete[] buffer;
+    }
+    else
+    {
+        delete[] netbuffer;
+        delete[] buffer;
+    }
+}
+
 void RadioOp::run()
 {
 
@@ -230,7 +259,10 @@ void RadioOp::run()
         {
             if(_mode == gr_modem_types::ModemTypeQPSKVideo)
                 processVideoStream(frame_flag);
-
+            else if(_mode == gr_modem_types::ModemTypeQPSK250000)
+            {
+                processNetStream();
+            }
             else
             {
                 processAudioStream();
@@ -291,6 +323,8 @@ void RadioOp::receiveC2Data(unsigned char *data, int size)
     {
         audio_out = _codec->decode_codec2(data, size, samples);
     }
+    else if((_mode == gr_modem_types::ModemTypeBPSK1000))
+        audio_out = _codec->decode_codec2_700(data, size, samples);
     else
         audio_out = _codec->decode_opus(data, size, samples);
     delete[] data;
@@ -339,6 +373,34 @@ void RadioOp::receiveVideoData(unsigned char *data, int size)
     emit videoImage(out_img);
     delete[] raw_output;
 
+}
+
+void RadioOp::receiveNetData(unsigned char *data, int size)
+{
+    unsigned long frame_size1;
+    unsigned long frame_size2;
+    unsigned long frame_size3;
+    int frame_size;
+
+    memcpy(&frame_size1, &data[0], 4);
+    memcpy(&frame_size2, &data[4], 4);
+    memcpy(&frame_size3, &data[8], 4);
+    if(frame_size1 == frame_size2)
+        frame_size = (int)frame_size1;
+    else if(frame_size1 == frame_size3)
+        frame_size = (int)frame_size1;
+    else if(frame_size2 == frame_size3)
+        frame_size = (int)frame_size2;
+    else
+    {
+        qDebug() << "received corrupted frame size, dropping frame ";
+        delete[] data;
+        return;
+    }
+    unsigned char *net_frame = new unsigned char[frame_size];
+    memcpy(net_frame, &data[12], frame_size);
+    delete[] data;
+    int res = _net_device->write_buffered(net_frame,frame_size);
 }
 
 void RadioOp::startTransmission()
@@ -421,12 +483,20 @@ void RadioOp::toggleRX(bool value)
         _modem->initRX(_mode, rx_device_args, rx_antenna, rx_freq_corr);
         _modem->startRX();
         _tune_center_freq = _modem->_requested_frequency_hz;
+        if(_mode == gr_modem_types::ModemTypeQPSK250000)
+        {
+            _net_device = new NetDevice;
+        }
     }
     else
     {
         _rx_inited = false;
         _modem->stopRX();
         _modem->deinitRX(_mode);
+        if(_mode == gr_modem_types::ModemTypeQPSK250000)
+        {
+            delete _net_device;
+        }
     }
 }
 
@@ -448,6 +518,10 @@ void RadioOp::toggleTX(bool value)
         _modem->initTX(_mode, tx_device_args, tx_antenna, tx_freq_corr);
         if(_mode == gr_modem_types::ModemTypeQPSKVideo)
             _video = new VideoEncoder;
+        if(_mode == gr_modem_types::ModemTypeQPSK250000)
+        {
+            _net_device = new NetDevice;
+        }
     }
     else
     {
@@ -455,6 +529,10 @@ void RadioOp::toggleTX(bool value)
         _modem->deinitTX(_mode);
         if(_mode == gr_modem_types::ModemTypeQPSKVideo)
             delete _video;
+        if(_mode == gr_modem_types::ModemTypeQPSK250000)
+        {
+            delete _net_device;
+        }
     }
 }
 
@@ -529,6 +607,18 @@ void RadioOp::toggleMode(int value)
         _tune_limit_upper = 5000;
         _step_hz = 1;
         break;
+    case 9:
+        _mode = gr_modem_types::ModemTypeBPSK1000;
+        _tune_limit_lower = -5000;
+        _tune_limit_upper = 5000;
+        _step_hz = 1;
+        break;
+    case 10:
+        _mode = gr_modem_types::ModemTypeQPSK250000;
+        _tune_limit_lower = -5000;
+        _tune_limit_upper = 5000;
+        _step_hz = 100;
+        break;
     default:
         _mode = gr_modem_types::ModemTypeBPSK2000;
         _tune_limit_lower = -2000;
@@ -564,6 +654,11 @@ void RadioOp::setRxSensitivity(int value)
     _modem->setRxSensitivity((float)value/100);
 }
 
+void RadioOp::enableGUI(bool value)
+{
+    _modem->enableGUI(value);
+}
+
 void RadioOp::syncFrequency()
 {
     if(_modem->_frequency_found >= 254)
@@ -584,7 +679,8 @@ void RadioOp::syncFrequency()
 
 void RadioOp::autoTune()
 {
-    if(_mode == gr_modem_types::ModemTypeBPSK2000 )
+    if((_mode == gr_modem_types::ModemTypeBPSK2000)
+            || (_mode == gr_modem_types::ModemTypeBPSK1000))
         usleep(500);
     else if ((_mode == gr_modem_types::ModemType4FSK2000) ||
              (_mode == gr_modem_types::ModemType2FSK2000) ||

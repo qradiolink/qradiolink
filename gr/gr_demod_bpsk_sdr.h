@@ -39,9 +39,11 @@
 #include <gnuradio/blocks/moving_average_ff.h>
 #include <gnuradio/blocks/add_const_ff.h>
 #include <gnuradio/blocks/delay.h>
+#include <gnuradio/blocks/copy.h>
 #include <osmosdr/source.h>
 #include <vector>
 #include "gr_vector_sink.h"
+#include "gr_deframer_bb.h"
 
 class gr_demod_bpsk_sdr : public QObject
 {
@@ -50,7 +52,7 @@ public:
     explicit gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui,
                                gr::qtgui::const_sink_c::sptr const_gui, gr::qtgui::number_sink::sptr rssi_gui, QObject *parent = 0, int sps=4, int samp_rate=8000, int carrier_freq=1600,
                                int filter_width=1200, float mod_index=1, float device_frequency=434000000,
-                               float rf_gain=50, std::string device_args="rtl=0", std::string device_antenna="RX2", int freq_corr=0);
+                               float rf_gain=50, std::string device_args="rtl=0", std::string device_antenna="RX2", int freq_corr=0, int modem_type=1);
 
 signals:
 
@@ -61,11 +63,14 @@ public slots:
     std::vector<unsigned char> *getData2();
     void tune(long center_freq);
     void set_rx_sensitivity(float value);
+    void enable_gui(bool value);
 
 private:
     gr::top_block_sptr _top_block;
     gr_vector_sink_sptr _vector_sink;
     gr_vector_sink_sptr _vector_sink2;
+    gr_deframer_bb_sptr _deframer1;
+    gr_deframer_bb_sptr _deframer2;
     gr::blocks::unpacked_to_packed_bb::sptr _unpacked_to_packed;
     gr::analog::sig_source_c::sptr _signal_source;
     gr::blocks::multiply_cc::sptr _multiply;
@@ -95,6 +100,9 @@ private:
     gr::fec::decoder::sptr _fec_decoder2;
     gr::qtgui::const_sink_c::sptr _constellation;
     gr::qtgui::sink_c::sptr _fft_gui;
+    gr::blocks::copy::sptr _rssi_valve;
+    gr::blocks::copy::sptr _fft_valve;
+    gr::blocks::copy::sptr _const_valve;
     gr::blocks::complex_to_mag_squared::sptr _mag_squared;
     gr::blocks::nlog10_ff::sptr _log10;
     gr::filter::single_pole_iir_filter_ff::sptr _single_pole_filter;

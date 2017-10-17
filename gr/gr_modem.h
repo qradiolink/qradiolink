@@ -86,6 +86,8 @@ namespace gr_modem_types {
         ModemTypeNBFM2500,
         ModemTypeSSB2500,
         ModemType2FSK2000,
+        ModemTypeBPSK1000,
+        ModemTypeQPSK250000,
     };
 }
 
@@ -93,6 +95,17 @@ class gr_modem : public QObject
 {
     Q_OBJECT
 public:
+    enum
+    {
+        FrameTypeNone,
+        FrameTypeVoice,
+        FrameTypeText,
+        FrameTypeData,
+        FrameTypeVideo,
+        FrameTypeStart,
+        FrameTypeCallsign,
+        FrameTypeEnd
+    };
     explicit gr_modem(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui::const_sink_c::sptr const_gui,
                       gr::qtgui::number_sink::sptr rssi_gui, QObject *parent = 0);
     ~gr_modem();
@@ -102,6 +115,7 @@ signals:
     void pcmAudio(short *pcm, short size);
     void codec2Audio(unsigned char *c2data, int size);
     void videoData(unsigned char *video_data, int size);
+    void netData(unsigned char *net_data, int size);
     void demodulated_audio(short *pcm, short size);
     void textReceived(QString text);
     void callsignReceived(QString text);
@@ -113,6 +127,7 @@ signals:
 public slots:
     void processC2Data(unsigned char *data, int size);
     void processVideoData(unsigned char *data, int size);
+    void processNetData(unsigned char *data, int size);
     void demodulate();
     void startTransmission(QString callsign, int size);
     void endTransmission(QString callsign, int size);
@@ -128,6 +143,7 @@ public slots:
     void stopTX();
     void setTxPower(int value);
     void setRxSensitivity(float value);
+    void enableGUI(bool value);
 private:
 
     Settings *_settings;
@@ -136,7 +152,7 @@ private:
     std::vector<unsigned char>* frame(unsigned char *encoded_audio, int data_size, int frame_type=FrameTypeVoice);
     void processReceivedData(unsigned char* received_data, int current_frame_type);
     void handleStreamEnd();
-    int findSync(unsigned char bit, int nr);
+    int findSync(unsigned char bit);
     void transmit(QVector<std::vector<unsigned char>*> frames);
 
 
@@ -162,9 +178,7 @@ private:
     int _frame_length;
     quint64 _frame_counter;
     quint8 _last_frame_type;
-    bool _sync_found1;
-    bool _sync_found2;
-    bool _next_frame1;
+    bool _sync_found;
     int _current_frame_type;
     long _bit_buf_index;
     unsigned char *_bit_buf;
@@ -176,19 +190,6 @@ private:
     gr::qtgui::const_sink_c::sptr _const_gui;
     gr::qtgui::number_sink::sptr _rssi_gui;
     gr::qtgui::sink_c::sptr _fft_gui;
-
-    enum
-    {
-        FrameTypeNone,
-        FrameTypeVoice,
-        FrameTypeText,
-        FrameTypeData,
-        FrameTypeVideo,
-        FrameTypeStart,
-        FrameTypeCallsign,
-        FrameTypeEnd
-    };
-
 
 
 };

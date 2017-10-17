@@ -12,3 +12,7 @@ v4l2-ctl --list-ctrls-menus
 v4l2-ctl --list-ctrls
 v4l2-ctl --list-devices
 v4l2-ctl --help-all
+
+Net configuration
+=================
+setcap "cap_net_raw,cap_net_admin+eip" ./qradiolink

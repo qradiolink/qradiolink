@@ -16,6 +16,7 @@
 
 #include "audioencoder.h"
 
+
 AudioEncoder::AudioEncoder()
 {
     int error, error1;
@@ -29,7 +30,8 @@ AudioEncoder::AudioEncoder()
     {
         qDebug() << "audio decoder creation failed";
     }
-    _codec2 = codec2_create(CODEC2_MODE_1300);
+    _codec2 = codec2_create(CODEC2_MODE_1400);
+    _codec2_700 = codec2_create(CODEC2_MODE_700B);
 
     _gsm = gsm_create();
 
@@ -52,6 +54,7 @@ AudioEncoder::~AudioEncoder()
     opus_encoder_destroy(_enc);
     opus_decoder_destroy(_dec);
     codec2_destroy(_codec2);
+    codec2_destroy(_codec2_700);
     gsm_destroy(_gsm);
 }
 
@@ -83,7 +86,8 @@ unsigned char* AudioEncoder::encode_codec2(short *audiobuffer, int audiobuffersi
 {
     Q_UNUSED(audiobuffersize);
     int bits = codec2_bits_per_frame(_codec2);
-    int bytes = (bits + 7) / 8;
+    //int bytes = (bits + 7) / 8;
+    int bytes = bits / 8;
     unsigned char *encoded = new unsigned char[bytes];
     codec2_encode(_codec2, encoded, audiobuffer);
     length = bytes;
@@ -96,6 +100,26 @@ short* AudioEncoder::decode_codec2(unsigned char *audiobuffer, int audiobuffersi
     samples = codec2_samples_per_frame(_codec2);
     short* decoded = new short[samples];
     codec2_decode(_codec2, decoded, audiobuffer);
+    return decoded;
+}
+
+unsigned char* AudioEncoder::encode_codec2_700(short *audiobuffer, int audiobuffersize, int &length)
+{
+    Q_UNUSED(audiobuffersize);
+    int bits = codec2_bits_per_frame(_codec2_700);
+    int bytes = (bits + 4) / 8;
+    unsigned char *encoded = new unsigned char[bytes];
+    codec2_encode(_codec2_700, encoded, audiobuffer);
+    length = bytes;
+    return encoded;
+}
+
+short* AudioEncoder::decode_codec2_700(unsigned char *audiobuffer, int audiobuffersize, int &samples)
+{
+    Q_UNUSED(audiobuffersize);
+    samples = codec2_samples_per_frame(_codec2_700);
+    short* decoded = new short[samples];
+    codec2_decode(_codec2_700, decoded, audiobuffer);
     return decoded;
 }
 
@@ -114,3 +138,5 @@ short* AudioEncoder::decode_gsm(unsigned char *audiobuffer, int data_length, int
     gsm_decode(_gsm,audiobuffer,decoded);
     return decoded;
 }
+
+

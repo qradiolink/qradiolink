@@ -1,0 +1,24 @@
+notifications:
+  email: false
+sudo: required
+language: generic
+
+services:
+  - docker
+
+script:
+  - wget -O - http://travis.debian.net/script.sh | sh -
+
+branches:
+  except:
+    - /^debian\/\d/
+
+deploy:
+  provider: releases
+  api_key: "${GH_OAUTH_TOKEN}"
+  skip_cleanup: true
+  file_glob: true
+  file: "*.deb"
+  overwrite: true
+  on:
+    tags: true

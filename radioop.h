@@ -38,15 +38,14 @@
 #include "settings.h"
 #include "audio/audioencoder.h"
 #include "video/videoencoder.h"
-#if 0
-#include "gmskmodem.h"
-#endif
 #include "audio/alsaaudio.h"
 #include "gr/gr_modem.h"
+#include "net/netdevice.h"
 #include <gnuradio/qtgui/const_sink_c.h>
 #include <gnuradio/qtgui/sink_c.h>
 #include <gnuradio/qtgui/number_sink.h>
 #include <libconfig.h++>
+
 
 namespace radio_type
 {
@@ -67,6 +66,7 @@ public:
 
     void processAudioStream();
     int processVideoStream(bool &frame_flag);
+    void processNetStream();
 signals:
     void finished();
     void printText(QString text);
@@ -77,6 +77,7 @@ signals:
     void displayDataReceiveStatus(bool status);
     void audioData(unsigned char *buf, int size);
     void videoData(unsigned char *buf, int size);
+    void netData(unsigned char *buf, int size);
     void videoImage(QImage img);
     void endAudio(int secs);
     void startAudio();
@@ -94,6 +95,7 @@ public slots:
     void syncIssue();
     void receiveC2Data(unsigned char *data, int size);
     void receiveVideoData(unsigned char *data, int size);
+    void receiveNetData(unsigned char *data, int size);
     void toggleRX(bool value);
     void toggleTX(bool value);
     void toggleMode(int value);
@@ -101,6 +103,7 @@ public slots:
     void tuneFreq(qint64 center_freq);
     void setTxPower(int dbm);
     void setRxSensitivity(int value);
+    void enableGUI(bool value);
     void syncFrequency();
     void autoTune();
     void startAutoTune();
@@ -125,6 +128,7 @@ private:
     QTimer *_led_timer;
     AudioEncoder *_codec;
     VideoEncoder *_video;
+    NetDevice *_net_device;
     gr_modem *_modem;
     int _mode;
     int _radio_type;
@@ -136,9 +140,11 @@ private:
     bool _tx_modem_started;
     int _tune_counter;
     unsigned char *_rand_frame_data;
+
     void readConfig(std::string &rx_device_args, std::string &tx_device_args,
                     std::string &rx_antenna, std::string &tx_antenna, int &rx_freq_corr,
                     int &tx_freq_corr, std::string &callsign);
+    int tun_init();
 
 };
 

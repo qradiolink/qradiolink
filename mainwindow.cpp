@@ -48,6 +48,7 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
     QObject::connect(ui->modemTypeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(toggleMode(int)));
     QObject::connect(ui->autotuneButton,SIGNAL(toggled(bool)),this,SLOT(autoTune(bool)));
     QObject::connect(ui->saveOptionsButton,SIGNAL(clicked()),this,SLOT(saveConfig()));
+    QObject::connect(ui->tabWidget,SIGNAL(currentChanged(int)),this,SLOT(mainTabChanged(int)));
 
     QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
 
@@ -57,11 +58,11 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
     _rssi_gui = ui->widget_rssi;
     _fft_gui = ui->widget_fft;
 
-    QFileInfo new_file = setupSounds("end_beep.wav");
+    //QFileInfo new_file = setupSounds("end_beep.wav");
     _config_file = setupConfig();
     readConfig(_config_file);
-    _end_beep = Phonon::createPlayer(Phonon::MusicCategory,
-                                 Phonon::MediaSource(new_file.absoluteFilePath()));
+    //_end_beep = Phonon::createPlayer(Phonon::MusicCategory,
+    //                             Phonon::MediaSource(new_file.absoluteFilePath()));
     _video_img = new QPixmap;
 
 }
@@ -162,9 +163,9 @@ QFileInfo MainWindow::setupSounds(QString name)
 
 QFileInfo* MainWindow::setupConfig()
 {
-    QDir files = QDir::current();
+    QDir files = QDir::homePath();
 
-    QFileInfo new_file = files.filePath("qradiolink.cfg");
+    QFileInfo new_file = files.filePath(".config/qradiolink.cfg");
     if(!new_file.exists())
     {
         QString config = "// Automatically generated\n";
@@ -297,6 +298,7 @@ void MainWindow::toggleWideband(bool value)
 void MainWindow::toggleMode(int value)
 {
     emit toggleModemMode(value);
+    mainTabChanged(ui->tabWidget->currentIndex());
 }
 
 void MainWindow::tuneCenterFreq(int value)
@@ -346,7 +348,14 @@ void MainWindow::displayImage(QImage img)
 void MainWindow::playEndBeep(int seconds)
 {
 
-    _end_beep->play();
+    //_end_beep->play();
 }
 
+void MainWindow::mainTabChanged(int value)
+{
+    if(value == 1)
+        emit enableGUI(true);
+    else
+        emit enableGUI(false);
+}
 

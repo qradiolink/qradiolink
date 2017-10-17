@@ -1,1 +1,4 @@
 *.pro.user
+.directory
+build/*
+.travis.yml-ubuntu

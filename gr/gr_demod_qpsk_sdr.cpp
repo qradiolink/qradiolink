@@ -66,16 +66,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
                 constellation->points(),pre_diff_code,4,2,2,1,1,const_map);
     */
 
-    int bw;
-    if(_target_samp_rate == 20000)
-    {
-        bw = 1000;
-    }
-    else
-    {
-        bw = 10000;
-    }
-    std::vector<float> taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, _filter_width, bw);
+    std::vector<float> taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, _filter_width, 12000);
 
     _resampler = gr::filter::rational_resampler_base_ccf::make(interpolation, decimation, taps);
 
@@ -105,6 +96,8 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     }
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
                                                               omega_rel_limit);
+    std::vector<float> pfb_taps = gr::filter::firdes::root_raised_cosine(flt_size,flt_size, 1, 0.35, flt_size * 11 * _samples_per_symbol);
+    _clock_sync = gr::digital::pfb_clock_sync_ccf::make(_samples_per_symbol,0.0628,pfb_taps);
     _costas_loop = gr::digital::costas_loop_cc::make(0.0628,4);
     _equalizer = gr::digital::cma_equalizer_cc::make(8,4,0.00005,1);
     _fll = gr::digital::fll_band_edge_cc::make(sps, 0.55, 32, 0.000628);
@@ -115,6 +108,12 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _constellation_receiver = gr::digital::constellation_decoder_cb::make(constellation);
     _vector_sink = make_gr_vector_sink();
 
+    _rssi_valve = gr::blocks::copy::make(8);
+    _rssi_valve->set_enabled(false);
+    _fft_valve = gr::blocks::copy::make(8);
+    _fft_valve->set_enabled(false);
+    _const_valve = gr::blocks::copy::make(8);
+    _const_valve->set_enabled(false);
     _mag_squared = gr::blocks::complex_to_mag_squared::make();
     _single_pole_filter = gr::filter::single_pole_iir_filter_ff::make(0.04);
     _log10 = gr::blocks::nlog10_ff::make();
@@ -144,16 +143,18 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _fft_gui = fft_gui;
     _top_block->connect(_osmosdr_source,0,_multiply,0);
     _top_block->connect(_signal_source,0,_multiply,1);
-    _top_block->connect(_multiply,0,_fft_gui,0);
+    _top_block->connect(_multiply,0,_fft_valve,0);
+    _top_block->connect(_fft_valve,0,_fft_gui,0);
     _top_block->connect(_multiply,0,_resampler,0);
     _top_block->connect(_resampler,0,_filter,0);
 
     _top_block->connect(_filter,0,_agc,0);
-    _top_block->connect(_agc,0,_fll,0);
-    _top_block->connect(_fll,0,_clock_recovery,0);
-    _top_block->connect(_clock_recovery,0,_equalizer,0);
-    _top_block->connect(_equalizer,0,_costas_loop,0);
-    _top_block->connect(_costas_loop,0,_constellation,0);
+    _top_block->connect(_agc,0,_clock_recovery,0);
+    //_top_block->connect(_fll,0,_clock_recovery,0);
+    _top_block->connect(_clock_recovery,0,_costas_loop,0);
+    //_top_block->connect(_equalizer,0,_costas_loop,0);
+    _top_block->connect(_costas_loop,0,_const_valve,0);
+    _top_block->connect(_const_valve,0,_constellation,0);
     _top_block->connect(_costas_loop,0,_constellation_receiver,0);
     _top_block->connect(_constellation_receiver,0,_diff_decoder,0);
     _top_block->connect(_diff_decoder,0,_map,0);
@@ -161,7 +162,8 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _top_block->connect(_unpack,0,_descrambler,0);
     _top_block->connect(_descrambler,0,_vector_sink,0);
 
-    _top_block->connect(_filter,0,_mag_squared,0);
+    _top_block->connect(_filter,0,_rssi_valve,0);
+    _top_block->connect(_rssi_valve,0,_mag_squared,0);
     _top_block->connect(_mag_squared,0,_moving_average,0);
     _top_block->connect(_moving_average,0,_single_pole_filter,0);
     _top_block->connect(_single_pole_filter,0,_log10,0);
@@ -203,4 +205,9 @@ void gr_demod_qpsk_sdr::set_rx_sensitivity(float value)
     }
 }
 
-
+void gr_demod_qpsk_sdr::enable_gui(bool value)
+{
+    _rssi_valve->set_enabled(value);
+    _fft_valve->set_enabled(value);
+    _const_valve->set_enabled(value);
+}

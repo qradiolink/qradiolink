@@ -1442,6 +1442,16 @@ font: 18pt &quot;Sans Serif&quot;;</string>
               <string>2FSK 2K</string>
              </property>
             </item>
+            <item>
+             <property name="text">
+              <string>BPSK 1K (700B)</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>QPSK 250K</string>
+             </property>
+            </item>
            </widget>
           </item>
          </layout>

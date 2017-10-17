@@ -30,6 +30,9 @@ gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(gr::qtgui::sink_c::sptr fft_gui,
     _audio_sink = gr::audio::sink::make(_target_samp_rate,"", true);
     _fm_demod = gr::analog::quadrature_demod_cf::make(_target_samp_rate/(2*M_PI* _filter_width));
 
+    _rssi_valve = gr::blocks::copy::make(8);
+    _rssi_valve->set_enabled(false);
+    _fft_valve = gr::blocks::copy::make(8);
     _mag_squared = gr::blocks::complex_to_mag_squared::make();
     _single_pole_filter = gr::filter::single_pole_iir_filter_ff::make(0.04);
     _log10 = gr::blocks::nlog10_ff::make();
@@ -61,13 +64,15 @@ gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(gr::qtgui::sink_c::sptr fft_gui,
     _top_block->connect(_osmosdr_source,0,_multiply,0);
     _top_block->connect(_signal_source,0,_multiply,1);
     _top_block->connect(_multiply,0,_resampler,0);
-    _top_block->connect(_multiply,0,_fft_gui,0);
+    _top_block->connect(_multiply,0,_fft_valve,0);
+    _top_block->connect(_fft_valve,0,_fft_gui,0);
     _top_block->connect(_resampler,0,_filter,0);
     _top_block->connect(_filter,0,_fm_demod,0);
     _top_block->connect(_fm_demod,0,_audio_sink,0);
 
 
-    _top_block->connect(_filter,0,_mag_squared,0);
+    _top_block->connect(_filter,0,_rssi_valve,0);
+    _top_block->connect(_rssi_valve,0,_mag_squared,0);
     _top_block->connect(_mag_squared,0,_moving_average,0);
     _top_block->connect(_moving_average,0,_single_pole_filter,0);
     _top_block->connect(_single_pole_filter,0,_log10,0);
@@ -102,4 +107,10 @@ void gr_demod_nbfm_sdr::set_rx_sensitivity(float value)
         double gain =  range.start() + value*(range.stop()-range.start());
         _osmosdr_source->set_gain(gain);
     }
+}
+
+void gr_demod_nbfm_sdr::enable_gui(bool value)
+{
+    _rssi_valve->set_enabled(value);
+    _fft_valve->set_enabled(value);
 }

@@ -193,6 +193,7 @@ int main(int argc, char *argv[])
     QObject::connect(&w,SIGNAL(fineTuneFreq(long)),radio_op,SLOT(fineTuneFreq(long)));
     QObject::connect(&w,SIGNAL(setTxPower(int)),radio_op,SLOT(setTxPower(int)));
     QObject::connect(&w,SIGNAL(setRxSensitivity(int)),radio_op,SLOT(setRxSensitivity(int)));
+    QObject::connect(&w,SIGNAL(enableGUI(bool)),radio_op,SLOT(enableGUI(bool)));
     QObject::connect(radio_op, SIGNAL(printText(QString)), &w, SLOT(displayText(QString)));
     QObject::connect(radio_op, SIGNAL(printCallsign(QString)), &w, SLOT(displayCallsign(QString)));
     QObject::connect(radio_op, SIGNAL(videoImage(QImage)), &w, SLOT(displayImage(QImage)));

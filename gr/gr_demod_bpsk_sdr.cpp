@@ -19,7 +19,7 @@
 gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui::const_sink_c::sptr const_gui,
                                      gr::qtgui::number_sink::sptr rssi_gui, QObject *parent, int sps, int samp_rate, int carrier_freq,
                                      int filter_width, float mod_index, float device_frequency, float rf_gain,
-                                     std::string device_args, std::string device_antenna, int freq_corr) :
+                                     std::string device_args, std::string device_antenna, int freq_corr, int modem_type) :
     QObject(parent)
 {
     _target_samp_rate = 20000;
@@ -40,7 +40,7 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
 
     unsigned int flt_size = 32;
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, _filter_width, 1200);
+    std::vector<float> taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, _filter_width, 12000);
     //_resampler = gr::filter::pfb_arb_resampler_ccf::make(rerate, taps, flt_size);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1, 50, taps);
     _agc = gr::analog::agc2_cc::make(0.006e-1, 1e-3, 1, 1);
@@ -54,7 +54,7 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
                             1, _target_samp_rate, _filter_width,600,gr::filter::firdes::WIN_HAMMING) );
     float gain_mu = 0.025;
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, 0.175,
-                                                              0.015);
+                                                              0.055);
     _costas_loop = gr::digital::costas_loop_cc::make(0.0628,2);
     _equalizer = gr::digital::cma_equalizer_cc::make(8,2,0.00001,1);
     _fll = gr::digital::fll_band_edge_cc::make(sps, 0.35, 32, 0.000628);
@@ -71,12 +71,21 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _diff_decoder = gr::digital::diff_decoder_bb::make(2);
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
     _vector_sink = make_gr_vector_sink();
+    _deframer1 = make_gr_deframer_bb(modem_type);
+    _deframer2 = make_gr_deframer_bb(modem_type);
+
 
     _delay = gr::blocks::delay::make(1,1);
     _diff_decoder2 = gr::digital::diff_decoder_bb::make(2);
     _descrambler2 = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
     _vector_sink2 = make_gr_vector_sink();
 
+    _rssi_valve = gr::blocks::copy::make(8);
+    _rssi_valve->set_enabled(false);
+    _fft_valve = gr::blocks::copy::make(8);
+    _fft_valve->set_enabled(false);
+    _const_valve = gr::blocks::copy::make(8);
+    _const_valve->set_enabled(false);
     _mag_squared = gr::blocks::complex_to_mag_squared::make();
     _single_pole_filter = gr::filter::single_pole_iir_filter_ff::make(0.04);
     _log10 = gr::blocks::nlog10_ff::make();
@@ -109,29 +118,32 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _top_block->connect(_osmosdr_source,0,_multiply,0);
     _top_block->connect(_signal_source,0,_multiply,1);
     _top_block->connect(_multiply,0,_resampler,0);
-    _top_block->connect(_multiply,0,_fft_gui,0);
+    _top_block->connect(_multiply,0,_fft_valve,0);
+    _top_block->connect(_fft_valve,0,_fft_gui,0);
     _top_block->connect(_resampler,0,_filter,0);
     _top_block->connect(_filter,0,_agc,0);
-    _top_block->connect(_agc,0,_fll,0);
-    _top_block->connect(_fll,0,_clock_recovery,0);
-    _top_block->connect(_clock_recovery,0,_equalizer,0);
-    _top_block->connect(_equalizer,0,_costas_loop,0);
+    _top_block->connect(_agc,0,_clock_recovery,0);
+    //_top_block->connect(_fll,0,_clock_recovery,0);
+    _top_block->connect(_clock_recovery,0,_costas_loop,0);
+    //_top_block->connect(_equalizer,0,_costas_loop,0);
     _top_block->connect(_costas_loop,0,_complex_to_real,0);
-    _top_block->connect(_costas_loop,0,_constellation,0);
+    _top_block->connect(_costas_loop,0,_const_valve,0);
+    _top_block->connect(_const_valve,0,_constellation,0);
     _top_block->connect(_complex_to_real,0,_multiply_const_fec,0);
     _top_block->connect(_multiply_const_fec,0,_add_const_fec,0);
     _top_block->connect(_add_const_fec,0,_float_to_uchar,0);
     _top_block->connect(_float_to_uchar,0,_fec_decoder,0);
     _top_block->connect(_fec_decoder,0,_diff_decoder,0);
     _top_block->connect(_diff_decoder,0,_descrambler,0);
-    _top_block->connect(_descrambler,0,_vector_sink,0);
+    _top_block->connect(_descrambler,0,_deframer1,0);
     _top_block->connect(_float_to_uchar,0,_delay,0);
     _top_block->connect(_delay,0,_fec_decoder2,0);
     _top_block->connect(_fec_decoder2,0,_diff_decoder2,0);
     _top_block->connect(_diff_decoder2,0,_descrambler2,0);
-    _top_block->connect(_descrambler2,0,_vector_sink2,0);
+    _top_block->connect(_descrambler2,0,_deframer2,0);
 
-    _top_block->connect(_filter,0,_mag_squared,0);
+    _top_block->connect(_filter,0,_rssi_valve,0);
+    _top_block->connect(_rssi_valve,0,_mag_squared,0);
     _top_block->connect(_mag_squared,0,_moving_average,0);
     _top_block->connect(_moving_average,0,_single_pole_filter,0);
     _top_block->connect(_single_pole_filter,0,_log10,0);
@@ -154,13 +166,13 @@ void gr_demod_bpsk_sdr::stop()
 
 std::vector<unsigned char>* gr_demod_bpsk_sdr::getData()
 {
-    std::vector<unsigned char> *data = _vector_sink->get_data();
+    std::vector<unsigned char> *data = _deframer1->get_data();
     return data;
 }
 
 std::vector<unsigned char>* gr_demod_bpsk_sdr::getData2()
 {
-    std::vector<unsigned char> *data = _vector_sink2->get_data();
+    std::vector<unsigned char> *data = _deframer2->get_data();
     return data;
 }
 
@@ -179,4 +191,11 @@ void gr_demod_bpsk_sdr::set_rx_sensitivity(float value)
         double gain =  range.start() + value*(range.stop()-range.start());
         _osmosdr_source->set_gain(gain);
     }
+}
+
+void gr_demod_bpsk_sdr::enable_gui(bool value)
+{
+    _rssi_valve->set_enabled(value);
+    _fft_valve->set_enabled(value);
+    _const_valve->set_enabled(value);
 }
