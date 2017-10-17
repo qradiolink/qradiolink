@@ -86,7 +86,7 @@ void gr_modem::initTX(int modem_type, std::string device_args, std::string devic
     }
     else if(modem_type == gr_modem_types::ModemTypeBPSK1000)
     {
-        _gr_mod_bpsk_sdr = new gr_mod_bpsk_sdr(0, 250, 500000, 1700, 650, 1,
+        _gr_mod_bpsk_sdr = new gr_mod_bpsk_sdr(0, 250, 500000, 1700, 1200, 1,
                                                _requested_frequency_hz, 50, device_args, device_antenna, freq_corr);
         _frame_length = 4;
         //_gr_mod_bpsk_sdr->start();
@@ -172,7 +172,7 @@ void gr_modem::initRX(int modem_type, std::string device_args, std::string devic
     else if(modem_type == gr_modem_types::ModemTypeBPSK1000)
     {
         _gr_demod_bpsk_sdr = new gr_demod_bpsk_sdr(_fft_gui,
-                    _const_gui, _rssi_gui, 0,250,1000000,1700,650,1,
+                    _const_gui, _rssi_gui, 0,250,1000000,1700,1300,1,
                                                    _requested_frequency_hz, 0.9, device_args, device_antenna, freq_corr, 2);
         _bit_buf_len = 4 *8;
         _frame_length = 4;

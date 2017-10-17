@@ -14,7 +14,6 @@
 #include <gnuradio/blocks/packed_to_unpacked_bb.h>
 #include <gnuradio/blocks/float_to_complex.h>
 #include <gnuradio/digital/costas_loop_cc.h>
-#include <gnuradio/digital/diff_decoder_bb.h>
 #include <gnuradio/digital/cma_equalizer_cc.h>
 #include <gnuradio/analog/agc2_cc.h>
 #include <gnuradio/analog/agc2_ff.h>
@@ -88,9 +87,7 @@ private:
     //gr::filter::pfb_arb_resampler_ccf::sptr _resampler;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
     gr::filter::fft_filter_ccf::sptr _filter;
-    gr::digital::diff_decoder_bb::sptr _diff_decoder;
     gr::digital::descrambler_bb::sptr _descrambler;
-    gr::digital::diff_decoder_bb::sptr _diff_decoder2;
     gr::digital::descrambler_bb::sptr _descrambler2;
     gr::blocks::delay::sptr _delay;
     gr::blocks::multiply_const_ff::sptr _multiply_const_fec;
