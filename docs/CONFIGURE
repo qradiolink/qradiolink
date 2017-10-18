@@ -15,4 +15,6 @@ v4l2-ctl --help-all
 
 Net configuration
 =================
+- you need to grant NET_ADMIN capabilities to the application or run it as root in order to enable IP
+
 setcap "cap_net_raw,cap_net_admin+eip" ./qradiolink
