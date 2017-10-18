@@ -75,7 +75,6 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
 
 
     _delay = gr::blocks::delay::make(1,1);
-    _diff_decoder2 = gr::digital::diff_decoder_bb::make(2);
     _descrambler2 = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
     _vector_sink2 = make_gr_vector_sink();
 
