@@ -5,14 +5,18 @@ QRadioLink
 
 About
 -----
-- This application is a building platform based on Gnuradio which allows experimenting with 
-SDR transceivers using different modulation schemes for digital data transmissions and analog modes.
-- Analog voice, digital voice, low resolution video and text transmission are supported.
+- QRadioLink is a building platform based on Gnuradio for hobbyists, tinkerers and radio enthusiasts
+which allows experimenting with SDR hardware using different modulation schemes for digital 
+data transmissions and analog modes.
+- Possible applications: digital walkie talkie, baby monitor, video camera streaming, IoT devices which are RF
+enabled, radio LAN, robotics.
+- Receives and transmits analog voice, digital voice, low resolution video and text, IP protocol.
 - Digital audio transmission uses either a narrow band modem and Codec2 or a high bandwidth modem and Opus.
 - Modems: BPSK, QPSK, 2FSK, 4FSK
-- Modes: narrow FM, SSB, digital voice, digital video
-- Audio bitrates: Codec2 700B, Codec2 1400, Opus 10 kbit/s
-- Supported hardware includes the Ettus USRP, RTL-SDR, HackRF, BladeRF and in general all devices 
+- Modes: narrow FM, SSB, digital voice, digital video, digital data
+- Audio formats: Codec2 700B, Codec2 1400, Opus 10 kbit/s
+- Video formats: JPEG, x264 (work in progress)
+- Supported hardware: Ettus USRP, RTL-SDR, HackRF, BladeRF and in general all devices 
 supported by libgnuradio-osmosdr
  
 
@@ -30,7 +34,6 @@ libqt4-sql (>= 4:4.5.3), libqtcore4 (>= 4:4.8.0), libqtgui4 (>= 4:4.6.1),
  libopus-dev, libpulse-dev, libcodec2-dev, libasound2-dev, libjpeg62-turbo-dev,
  libconfig++-dev, qt4-qmake, libqt4-dev, libqt4-phonon, libqt4-sql-sqlite, qt4-dev-tools
 
-- All packages require binaries and development packages (headers)
 - Please make sure you have the development packages installed before building QRadioLink
 
 - QT >= 4.8 (QT>=5.3 does not work on Debian 8, it may work on other distributions)
@@ -39,19 +42,25 @@ libqt4-sql (>= 4:4.5.3), libqtcore4 (>= 4:4.8.0), libqtgui4 (>= 4:4.6.1),
 - Gnuradio >= 3.7.10 built with OsmoSDR and UHD support (On Debian 8 you can find it in jessie-backports)
 - Boost 
 - libgnuradio-osmosdr built with UHD, HackRF, BladeRF or LimeSDR support
-- libgsm, libprotobuf, libopus, libpulse-simple, libpulse, libasound, libcodec2, libsqlite3, libjpeg, libphonon
+- libgsm, libprotobuf, libopus, libpulse-simple, libpulse, libasound, libcodec2, libsqlite3, libjpeg,
 - optional protoc compiler for development work only (libprotoc 2.6.1)
 
 [Downloads](https://github.com/kantooon/qradiolink/releases "Downloads")
 ---------
 
-Debian Stretch (stable) packages are provided via Travis CI automated builds
+Debian Stretch (stable) x86_64 packages are provided via Travis CI automated builds
 Please see the [Github releases page](https://github.com/kantooon/qradiolink/releases)
 
 Building the software
 ---------------------
 
-After cloning the Github repository into a directory of your choice:
+The guide assumes you are using Debian Stetch.
+- Clone the Github repository into a directory of your choice
+- Compile the protobuf sources for your system
+- Work around the Debian issue with the QWT include paths in Gnuradio
+- Run qmake to generate the Makefile
+- Run make (with the optional -j flag)
+
 <pre>
 cd qradiolink
 mkdir build
@@ -81,37 +90,38 @@ Running
 - Please see the Setup tab first and make sure to click Save before starting TX or RX modes, otherwise you may get a segmentation fault
 - Setup options include RX and TX frequency correction (in PPM), device access strings, 
 RX and TX antenna settings as a string and your callsign which will be sent at the start of the transmission.
+- The configuration file is located in $HOME/.config/
 - By default the device will operate in the 433 MHz ISM band.
-- Adjust TX gain and RX sensitivity from the TX tab.
+- Adjust TX gain in dB and RX sensitivity from the TX tab. If you are driving an external amplifier check the waveform for distorsion.
 - Adjust the frequency from the TX tab either by using the dial widget or by entering it in the text box. 
 - The select input in the lower right corner toggles between different operating modes.
 - Enable the TX and/or RX buttons depending on whether you want only RX, only TX or both. 
-- The Tune page allows fine tuning 5KHz around the frequency with the slider, and monitoring the 
+- The Tune page allows fine tuning 5-5000 KHz around the frequency with the slider, and monitoring the 
 signal with the constellation or the spectrum display
-- Video page will display received video stream. Right now only a limited amount of cameras are 
-supported for TX, and ISO settings/ exposure of the camera might cause too low a framerate, which can't be received.
+- Video page will display received video stream. Right now only a limited number of cameras are 
+supported for TX, and ISO settings/ exposure of the camera might cause too low a framerate, which can't be transmitted properly.
 
 
 Running the code on Android devices for portable VHF-UHF SDR in amateur radio scope
 -----------------------------------------------------------------------------------
-The current master branch supports running the application on recent Android mobile phones or tablets [1].
-Requires some knowledge of Android internals.
-You will need to have the device fully unlocked and root access. A SIM card is not necessary.
-First install an Android application which can create a Linux chroot and an Android VNC viewer.
+- The current master branch supports running the application on recent Android mobile phones or tablets [1].
+- Requires some knowledge of Android internals.
+- You will need to have the device fully unlocked and root access. A SIM card is not necessary.
+- First install an Android application which can create a Linux chroot and an Android VNC viewer.
 Install Debian Jessie in the chroot using a fresh SDcard. Configure it so you can run SSH and an X server.
 Install all required packages on the phone and compile QRadioLink. In the future a ready built SD card 
 image may be provided.
-Note: a phone may not be able to provide enough power to your SDR peripheral, so you may require an 
+- Note: a phone may not be able to provide enough power to your SDR peripheral, so you may require an 
 external battery pack. Only the RTL-SDR is confirmed to be powered correctly by the phone through the 
 USB OTG interface.
 
-[1] see https://www.youtube.com/watch?v=93nWWASt5a4
+[QRadioLink running on a mobile phone](https://www.youtube.com/watch?v=93nWWASt5a4)
 
 
 Credits and License
 -------------------
-- QRadioLink is designed and developed by Adrian Musceac YO8RZZ, and it is licensed under the 
-GNU General Public License version 3.
+- QRadioLink is based on a fork of a RoIP software and was redesigned by Adrian Musceac YO8RZZ with some help from others,
+and it is licensed under the GNU General Public License version 3.
 - It makes use of other code under compatible licenses, and the authors are credited in the source files.
 - The CFreqCtrl widget is Copyright 2010 Moe Wheatley.
 - Codec2 is developed by David Rowe
