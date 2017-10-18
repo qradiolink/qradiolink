@@ -844,17 +844,6 @@ void gr_modem::demodulate()
         v_size = demod_data->size();
         data = demod_data;
     }
-    if(v_size < 1)
-    {
-        usleep(10);
-        delete demod_data;
-        if((_modem_type == gr_modem_types::ModemTypeBPSK2000)
-                || (_modem_type == gr_modem_types::ModemTypeBPSK1000))
-        {
-            delete demod_data2;
-        }
-        return;
-    }
     for(int i=0;i < v_size;i++)
     {
         if(!_sync_found)
@@ -897,6 +886,11 @@ void gr_modem::demodulate()
     }
     demod_data->clear();
     delete demod_data;
+    if((_modem_type == gr_modem_types::ModemTypeBPSK2000)
+            || (_modem_type == gr_modem_types::ModemTypeBPSK1000))
+    {
+        delete demod_data2;
+    }
 
 }
 
