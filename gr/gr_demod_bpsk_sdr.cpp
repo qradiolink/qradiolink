@@ -61,11 +61,11 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _complex_to_real = gr::blocks::complex_to_real::make();
     _binary_slicer = gr::digital::binary_slicer_fb::make();
 
-    gr::fec::code::cc_decoder::sptr cc_decoder = gr::fec::code::cc_decoder::make(160,7,2,polys,
+    gr::fec::code::cc_decoder::sptr cc_decoder = gr::fec::code::cc_decoder::make(80,7,2,polys,
                                                                                  0,-1,CC_TRUNCATED);
     _fec_decoder = gr::fec::decoder::make(cc_decoder,1,1);
     _fec_decoder2 = gr::fec::decoder::make(cc_decoder,1,1);
-    _multiply_const_fec = gr::blocks::multiply_const_ff::make(48.0);
+    _multiply_const_fec = gr::blocks::multiply_const_ff::make(127.0);
     _float_to_uchar = gr::blocks::float_to_uchar::make();
     _add_const_fec = gr::blocks::add_const_ff::make(128.0);
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
