@@ -34,6 +34,7 @@ AudioEncoder::AudioEncoder()
     _codec2_700 = codec2_create(CODEC2_MODE_700B);
 
     _gsm = gsm_create();
+    _agc = hvdi::initAGC(0.5);
 
     int opus_bandwidth;
     opus_encoder_ctl(_enc, OPUS_SET_VBR(0));
@@ -79,6 +80,7 @@ short* AudioEncoder::decode_opus(unsigned char *audiobuffer, int audiobuffersize
         delete[] pcm;
         return NULL;
     }
+    hvdi::AGC(_agc,pcm,samples);
     return pcm;
 }
 
@@ -100,6 +102,7 @@ short* AudioEncoder::decode_codec2(unsigned char *audiobuffer, int audiobuffersi
     samples = codec2_samples_per_frame(_codec2);
     short* decoded = new short[samples];
     codec2_decode(_codec2, decoded, audiobuffer);
+    hvdi::AGC(_agc,decoded,samples);
     return decoded;
 }
 
@@ -120,6 +123,7 @@ short* AudioEncoder::decode_codec2_700(unsigned char *audiobuffer, int audiobuff
     samples = codec2_samples_per_frame(_codec2_700);
     short* decoded = new short[samples];
     codec2_decode(_codec2_700, decoded, audiobuffer);
+    hvdi::AGC(_agc,decoded,samples);
     return decoded;
 }
 
