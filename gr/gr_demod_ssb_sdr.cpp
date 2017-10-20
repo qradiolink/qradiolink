@@ -29,7 +29,7 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(gr::qtgui::sink_c::sptr fft_gui,
                             1, _target_samp_rate, 300, _filter_width,50,gr::filter::firdes::WIN_HAMMING) );
     _agc = gr::analog::agc2_cc::make(0.6e-1, 1e-3, 1, 1);
     _complex_to_real = gr::blocks::complex_to_real::make();
-    _audio_gain = gr::blocks::multiply_const_ff::make(0.8);
+    _audio_gain = gr::blocks::multiply_const_ff::make(0.9);
     _audio_sink = gr::audio::sink::make(_target_samp_rate,"", true);
 
     _rssi_valve = gr::blocks::copy::make(8);
