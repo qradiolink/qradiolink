@@ -27,7 +27,7 @@ AudioInterface::AudioInterface(QObject *parent, unsigned sample_rate, unsigned c
     int rand_len = 4;
     char rand[5];
     genRandomStr(rand,rand_len);
-    static QString instance_name = QString::fromLocal8Bit(rand);
+    //static QString instance_name = QString::fromLocal8Bit(rand);
 
     QString dtmf_rec = "qradiolink_dtmf";
     QString q_play = "qradiolink";
