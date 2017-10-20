@@ -65,7 +65,7 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
                                                                                  0,-1,CC_STREAMING);
     _fec_decoder = gr::fec::decoder::make(cc_decoder,1,1);
     _fec_decoder2 = gr::fec::decoder::make(cc_decoder,1,1);
-    _multiply_const_fec = gr::blocks::multiply_const_ff::make(127.0);
+    _multiply_const_fec = gr::blocks::multiply_const_ff::make(64.0);
     _float_to_uchar = gr::blocks::float_to_uchar::make();
     _add_const_fec = gr::blocks::add_const_ff::make(128.0);
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
