@@ -51,10 +51,10 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     QObject::connect(_modem,SIGNAL(dataFrameReceived()),this,SLOT(dataFrameReceived()));
     QObject::connect(_modem,SIGNAL(receiveEnd()),this,SLOT(receiveEnd()));
     QObject::connect(_modem,SIGNAL(endAudioTransmission()),this,SLOT(endAudioTransmission()));
-    QObject::connect(this,SIGNAL(audioData(unsigned char*,int)),_modem,SLOT(processC2Data(unsigned char*,int)));
+    QObject::connect(this,SIGNAL(audioData(unsigned char*,int)),_modem,SLOT(processAudioData(unsigned char*,int)));
     QObject::connect(this,SIGNAL(videoData(unsigned char*,int)),_modem,SLOT(processVideoData(unsigned char*,int)));
     QObject::connect(this,SIGNAL(netData(unsigned char*,int)),_modem,SLOT(processNetData(unsigned char*,int)));
-    QObject::connect(_modem,SIGNAL(codec2Audio(unsigned char*,int)),this,SLOT(receiveAudioData(unsigned char*,int)));
+    QObject::connect(_modem,SIGNAL(digitalAudio(unsigned char*,int)),this,SLOT(receiveAudioData(unsigned char*,int)));
     QObject::connect(_modem,SIGNAL(videoData(unsigned char*,int)),this,SLOT(receiveVideoData(unsigned char*,int)));
     QObject::connect(_modem,SIGNAL(netData(unsigned char*,int)),this,SLOT(receiveNetData(unsigned char*,int)));
     for (int j = 0;j<5000;j++)
@@ -333,23 +333,29 @@ void RadioOp::receiveAudioData(unsigned char *data, int size)
         _audio->write_short(audio_out,samples*sizeof(short));
 }
 
-void RadioOp::receiveVideoData(unsigned char *data, int size)
+int RadioOp::getFrameLength(unsigned char *data)
 {
     unsigned long frame_size1;
     unsigned long frame_size2;
     unsigned long frame_size3;
-    int frame_size;
 
     memcpy(&frame_size1, &data[0], 4);
     memcpy(&frame_size2, &data[4], 4);
     memcpy(&frame_size3, &data[8], 4);
     if(frame_size1 == frame_size2)
-        frame_size = (int)frame_size1;
+        return (int)frame_size1;
     else if(frame_size1 == frame_size3)
-        frame_size = (int)frame_size1;
+        return (int)frame_size1;
     else if(frame_size2 == frame_size3)
-        frame_size = (int)frame_size2;
+        return (int)frame_size2;
     else
+        return 0;
+}
+
+void RadioOp::receiveVideoData(unsigned char *data, int size)
+{
+    int frame_size = getFrameLength(data);
+    if(frame_size == 0)
     {
         qDebug() << "received corrupted frame size, dropping frame ";
         delete[] data;
@@ -378,21 +384,8 @@ void RadioOp::receiveVideoData(unsigned char *data, int size)
 
 void RadioOp::receiveNetData(unsigned char *data, int size)
 {
-    unsigned long frame_size1;
-    unsigned long frame_size2;
-    unsigned long frame_size3;
-    int frame_size;
-
-    memcpy(&frame_size1, &data[0], 4);
-    memcpy(&frame_size2, &data[4], 4);
-    memcpy(&frame_size3, &data[8], 4);
-    if(frame_size1 == frame_size2)
-        frame_size = (int)frame_size1;
-    else if(frame_size1 == frame_size3)
-        frame_size = (int)frame_size1;
-    else if(frame_size2 == frame_size3)
-        frame_size = (int)frame_size2;
-    else
+    int frame_size = getFrameLength(data);
+    if(frame_size == 0)
     {
         qDebug() << "received corrupted frame size, dropping frame ";
         delete[] data;
@@ -439,13 +432,13 @@ void RadioOp::callsignReceived(QString callsign)
 void RadioOp::audioFrameReceived()
 {
     emit displayReceiveStatus(true);
-    _led_timer->start(25);
+    _led_timer->start(45);
 }
 
 void RadioOp::dataFrameReceived()
 {
     emit displayDataReceiveStatus(true);
-    _led_timer->start(25);
+    _led_timer->start(45);
 }
 
 void RadioOp::receiveEnd()

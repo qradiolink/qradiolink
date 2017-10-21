@@ -145,6 +145,7 @@ private:
                     std::string &rx_antenna, std::string &tx_antenna, int &rx_freq_corr,
                     int &tx_freq_corr, std::string &callsign);
     int tun_init();
+    int getFrameLength(unsigned char *data);
 
 };
 

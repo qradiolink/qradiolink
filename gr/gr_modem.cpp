@@ -637,7 +637,7 @@ void gr_modem::endTransmission(QString callsign, int size)
     transmit(frames);
 }
 
-void gr_modem::processC2Data(unsigned char *data, int size)
+void gr_modem::processAudioData(unsigned char *data, int size)
 {
     std::vector<unsigned char> *one_frame = frame(data, size, FrameTypeVoice);
     QVector<std::vector<unsigned char>*> frames;
@@ -1008,7 +1008,7 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
             memcpy(codec2_data, received_data, _frame_length);
         else
             memcpy(codec2_data, received_data+1, _frame_length);
-        emit codec2Audio(codec2_data,_frame_length);
+        emit digitalAudio(codec2_data,_frame_length);
     }
     else if (current_frame_type == FrameTypeVideo )
     {
