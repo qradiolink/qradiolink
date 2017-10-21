@@ -23,9 +23,9 @@
 #include <gnuradio/filter/freq_xlating_fir_filter_ccf.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/digital/descrambler_bb.h>
-#include <gnuradio/blocks/float_to_uchar.h>
 #include <gnuradio/blocks/add_const_ff.h>
 #include <gnuradio/fec/decoder.h>
+#include <gnuradio/fec/decode_ccsds_27_fb.h>
 #include <gnuradio/fec/cc_decoder.h>
 #include <gnuradio/fec/cc_common.h>
 #include <gnuradio/qtgui/const_sink_c.h>
@@ -83,6 +83,7 @@ private:
     gr::digital::binary_slicer_fb::sptr _binary_slicer;
     gr::digital::costas_loop_cc::sptr _costas_loop;
     gr::blocks::packed_to_unpacked_bb::sptr _packed_to_unpacked;
+    gr::blocks::packed_to_unpacked_bb::sptr _packed_to_unpacked2;
 
     //gr::filter::pfb_arb_resampler_ccf::sptr _resampler;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
@@ -92,9 +93,8 @@ private:
     gr::blocks::delay::sptr _delay;
     gr::blocks::multiply_const_ff::sptr _multiply_const_fec;
     gr::blocks::add_const_ff::sptr _add_const_fec;
-    gr::blocks::float_to_uchar::sptr _float_to_uchar;
-    gr::fec::decoder::sptr _fec_decoder;
-    gr::fec::decoder::sptr _fec_decoder2;
+    gr::fec::decode_ccsds_27_fb::sptr _cc_decoder;
+    gr::fec::decode_ccsds_27_fb::sptr _cc_decoder2;
     gr::qtgui::const_sink_c::sptr _constellation;
     gr::qtgui::sink_c::sptr _fft_gui;
     gr::blocks::copy::sptr _rssi_valve;

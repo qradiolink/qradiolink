@@ -60,20 +60,21 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _fll = gr::digital::fll_band_edge_cc::make(sps, 0.35, 32, 0.000628);
     _complex_to_real = gr::blocks::complex_to_real::make();
     _binary_slicer = gr::digital::binary_slicer_fb::make();
+    _packed_to_unpacked = gr::blocks::packed_to_unpacked_bb::make(1,gr::GR_MSB_FIRST);
+    _packed_to_unpacked2 = gr::blocks::packed_to_unpacked_bb::make(1,gr::GR_MSB_FIRST);
 
-    gr::fec::code::cc_decoder::sptr cc_decoder = gr::fec::code::cc_decoder::make(320,7,2,polys,
-                                                                                 0,-1,CC_STREAMING);
-    _fec_decoder = gr::fec::decoder::make(cc_decoder,1,1);
-    _fec_decoder2 = gr::fec::decoder::make(cc_decoder,1,1);
-    _multiply_const_fec = gr::blocks::multiply_const_ff::make(64.0);
-    _float_to_uchar = gr::blocks::float_to_uchar::make();
-    _add_const_fec = gr::blocks::add_const_ff::make(128.0);
+    gr::fec::decode_ccsds_27_fb::sptr _cc_decoder = gr::fec::decode_ccsds_27_fb::make();
+    gr::fec::decode_ccsds_27_fb::sptr _cc_decoder2 = gr::fec::decode_ccsds_27_fb::make();
+
+    _multiply_const_fec = gr::blocks::multiply_const_ff::make(0.5);
+
+    _add_const_fec = gr::blocks::add_const_ff::make(0.0);
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
     _deframer1 = make_gr_deframer_bb(modem_type);
     _deframer2 = make_gr_deframer_bb(modem_type);
 
 
-    _delay = gr::blocks::delay::make(1,1);
+    _delay = gr::blocks::delay::make(4,1);
     _descrambler2 = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
 
     _rssi_valve = gr::blocks::copy::make(8);
@@ -120,20 +121,21 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _top_block->connect(_filter,0,_agc,0);
     _top_block->connect(_agc,0,_clock_recovery,0);
     //_top_block->connect(_fll,0,_clock_recovery,0);
-    _top_block->connect(_clock_recovery,0,_costas_loop,0);
-    //_top_block->connect(_equalizer,0,_costas_loop,0);
+    _top_block->connect(_clock_recovery,0,_equalizer,0);
+    _top_block->connect(_equalizer,0,_costas_loop,0);
     _top_block->connect(_costas_loop,0,_complex_to_real,0);
     _top_block->connect(_costas_loop,0,_const_valve,0);
     _top_block->connect(_const_valve,0,_constellation,0);
     _top_block->connect(_complex_to_real,0,_multiply_const_fec,0);
     _top_block->connect(_multiply_const_fec,0,_add_const_fec,0);
-    _top_block->connect(_add_const_fec,0,_float_to_uchar,0);
-    _top_block->connect(_float_to_uchar,0,_fec_decoder,0);
-    _top_block->connect(_fec_decoder,0,_descrambler,0);
+    _top_block->connect(_add_const_fec,0,_cc_decoder,0);
+    _top_block->connect(_cc_decoder,0,_packed_to_unpacked,0);
+    _top_block->connect(_packed_to_unpacked,0,_descrambler,0);
     _top_block->connect(_descrambler,0,_deframer1,0);
-    _top_block->connect(_float_to_uchar,0,_delay,0);
-    _top_block->connect(_delay,0,_fec_decoder2,0);
-    _top_block->connect(_fec_decoder2,0,_descrambler2,0);
+    _top_block->connect(_add_const_fec,0,_delay,0);
+    _top_block->connect(_delay,0,_cc_decoder2,0);
+    _top_block->connect(_cc_decoder2,0,_packed_to_unpacked2,0);
+    _top_block->connect(_packed_to_unpacked2,0,_descrambler2,0);
     _top_block->connect(_descrambler2,0,_deframer2,0);
 
     _top_block->connect(_filter,0,_rssi_valve,0);
