@@ -111,6 +111,8 @@ public:
     ~gr_modem();
     long _frequency_found;
     long _requested_frequency_hz;
+
+    void sendCallsign(int size, QString callsign);
 signals:
     void pcmAudio(short *pcm, short size);
     void codec2Audio(unsigned char *c2data, int size);
@@ -154,6 +156,7 @@ private:
     void handleStreamEnd();
     int findSync(unsigned char bit);
     void transmit(QVector<std::vector<unsigned char>*> frames);
+    void synchronize(int v_size, std::vector<unsigned char> *data);
 
 
     gr_mod_gmsk *_gr_mod_gmsk;

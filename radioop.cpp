@@ -42,7 +42,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _tx_modem_started = false;
     _led_timer = new QTimer(this);
     _rand_frame_data = new unsigned char[5000];
-    QObject::connect(_led_timer, SIGNAL(timeout()), this, SLOT(syncIssue()));
+    QObject::connect(_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));
     _modem = new gr_modem(_settings, fft_gui,const_gui, rssi_gui);
 
     QObject::connect(_modem,SIGNAL(textReceived(QString)),this,SLOT(textReceived(QString)));
@@ -54,7 +54,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     QObject::connect(this,SIGNAL(audioData(unsigned char*,int)),_modem,SLOT(processC2Data(unsigned char*,int)));
     QObject::connect(this,SIGNAL(videoData(unsigned char*,int)),_modem,SLOT(processVideoData(unsigned char*,int)));
     QObject::connect(this,SIGNAL(netData(unsigned char*,int)),_modem,SLOT(processNetData(unsigned char*,int)));
-    QObject::connect(_modem,SIGNAL(codec2Audio(unsigned char*,int)),this,SLOT(receiveC2Data(unsigned char*,int)));
+    QObject::connect(_modem,SIGNAL(codec2Audio(unsigned char*,int)),this,SLOT(receiveAudioData(unsigned char*,int)));
     QObject::connect(_modem,SIGNAL(videoData(unsigned char*,int)),this,SLOT(receiveVideoData(unsigned char*,int)));
     QObject::connect(_modem,SIGNAL(netData(unsigned char*,int)),this,SLOT(receiveNetData(unsigned char*,int)));
     for (int j = 0;j<5000;j++)
@@ -69,6 +69,7 @@ RadioOp::~RadioOp()
     delete _audio;
     delete _led_timer;
     delete _modem;
+    delete[] _rand_frame_data;
 }
 
 void RadioOp::stop()
@@ -312,7 +313,7 @@ void RadioOp::run()
     emit finished();
 }
 
-void RadioOp::receiveC2Data(unsigned char *data, int size)
+void RadioOp::receiveAudioData(unsigned char *data, int size)
 {
     short *audio_out;
     int samples;
@@ -438,13 +439,13 @@ void RadioOp::callsignReceived(QString callsign)
 void RadioOp::audioFrameReceived()
 {
     emit displayReceiveStatus(true);
-    _led_timer->start(1000);
+    _led_timer->start(25);
 }
 
 void RadioOp::dataFrameReceived()
 {
     emit displayDataReceiveStatus(true);
-    _led_timer->start(1000);
+    _led_timer->start(25);
 }
 
 void RadioOp::receiveEnd()

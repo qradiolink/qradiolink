@@ -575,10 +575,33 @@ void gr_modem::enableGUI(bool value)
         _gr_demod_ssb_sdr->enable_gui(value);
 }
 
+void gr_modem::sendCallsign(int size, QString callsign)
+{
+    std::vector<unsigned char> *send_callsign = new std::vector<unsigned char>;
+    QVector<std::vector<unsigned char>*> callsign_frames;
+
+    send_callsign->push_back(0x8C);
+    send_callsign->push_back(0xC8);
+    send_callsign->push_back(0xDD);
+    for(int i = 0;i<size;i++)
+    {
+        send_callsign->push_back(callsign.toStdString().c_str()[i]);
+    }
+
+    for(int i = 0;i<_frame_length-size;i++)
+    {
+        send_callsign->push_back(0x00);
+    }
+
+
+    callsign_frames.append(send_callsign);
+    transmit(callsign_frames);
+}
+
 void gr_modem::startTransmission(QString callsign, int size)
 {
     _transmitting = true;
-    for(int i = 0;i<3;i++)
+    for(int i = 0;i<5;i++)
     {
         std::vector<unsigned char> *tx_start = new std::vector<unsigned char>;
         tx_start->push_back(0x8C);
@@ -595,24 +618,14 @@ void gr_modem::startTransmission(QString callsign, int size)
         frames.append(tx_start);
         transmit(frames);
     }
-    std::vector<unsigned char> *send_callsign = new std::vector<unsigned char>;
-    QVector<std::vector<unsigned char>*> callsign_frames;
-
-    send_callsign->push_back(0x8C);
-    send_callsign->push_back(0xC8);
-    send_callsign->push_back(0xDD);
-    for(int i = 0;i<size;i++)
-    {
-        send_callsign->push_back(callsign.toStdString().c_str()[i]);
-    }
-    callsign_frames.append(send_callsign);
-    transmit(callsign_frames);
+    sendCallsign(size, callsign);
 }
 
 void gr_modem::endTransmission(QString callsign, int size)
 {
     _frame_counter = 0;
     _transmitting = false;
+    sendCallsign(size, callsign);
     std::vector<unsigned char> *tx_end = new std::vector<unsigned char>;
     tx_end->push_back(0x4C);
     tx_end->push_back(0x8A);
@@ -622,18 +635,6 @@ void gr_modem::endTransmission(QString callsign, int size)
     QVector<std::vector<unsigned char>*> frames;
     frames.append(tx_end);
     transmit(frames);
-
-    std::vector<unsigned char> *send_callsign = new std::vector<unsigned char>;
-    QVector<std::vector<unsigned char>*> callsign_frames;
-    send_callsign->push_back(0x8C);
-    send_callsign->push_back(0xC8);
-    send_callsign->push_back(0xDD);
-    for(int i = 0;i<size;i++)
-    {
-        send_callsign->push_back(callsign.toStdString().c_str()[i]);
-    }
-    callsign_frames.append(send_callsign);
-    transmit(callsign_frames);
 }
 
 void gr_modem::processC2Data(unsigned char *data, int size)
@@ -844,6 +845,19 @@ void gr_modem::demodulate()
         v_size = demod_data->size();
         data = demod_data;
     }
+    synchronize(v_size, data);
+    demod_data->clear();
+    delete demod_data;
+    if((_modem_type == gr_modem_types::ModemTypeBPSK2000)
+            || (_modem_type == gr_modem_types::ModemTypeBPSK1000))
+    {
+        delete demod_data2;
+    }
+
+}
+
+void gr_modem::synchronize(int v_size, std::vector<unsigned char> *data)
+{
     for(int i=0;i < v_size;i++)
     {
         if(!_sync_found)
@@ -884,16 +898,7 @@ void gr_modem::demodulate()
             }
         }
     }
-    demod_data->clear();
-    delete demod_data;
-    if((_modem_type == gr_modem_types::ModemTypeBPSK2000)
-            || (_modem_type == gr_modem_types::ModemTypeBPSK1000))
-    {
-        delete demod_data2;
-    }
-
 }
-
 
 int gr_modem::findSync(unsigned char bit)
 {
@@ -987,10 +992,6 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
             if(x.unicode()==0)
             {
                 string_length--;
-            }
-            else
-            {
-                break;
             }
         }
 

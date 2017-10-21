@@ -93,7 +93,7 @@ public slots:
     void dataFrameReceived();
     void receiveEnd();
     void syncIssue();
-    void receiveC2Data(unsigned char *data, int size);
+    void receiveAudioData(unsigned char *data, int size);
     void receiveVideoData(unsigned char *data, int size);
     void receiveNetData(unsigned char *data, int size);
     void toggleRX(bool value);
