@@ -58,8 +58,6 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
 
     gr::digital::constellation_dqpsk::sptr constellation = gr::digital::constellation_dqpsk::make();
 
-    float rerate = (float)_target_samp_rate/(float)_samp_rate;
-
     unsigned int flt_size = 32;
     /*
     gr::digital::constellation_expl_rect::sptr constellation = gr::digital::constellation_expl_rect::make(
@@ -69,8 +67,6 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     std::vector<float> taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, _filter_width, 12000);
 
     _resampler = gr::filter::rational_resampler_base_ccf::make(interpolation, decimation, taps);
-
-    //_resampler_pfb = gr::filter::pfb_arb_resampler_ccf::make(rerate, taps, flt_size);
 
     _agc = gr::analog::agc2_cc::make(0.06e-1, 1e-3, 1, 1);
     _signal_source = gr::analog::sig_source_c::make(_samp_rate,gr::analog::GR_COS_WAVE,-250000,1);

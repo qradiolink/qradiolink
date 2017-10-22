@@ -32,8 +32,6 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _modulation_index = mod_index;
     _top_block = gr::make_top_block("bpsk demodulator sdr");
 
-    float rerate = (float)_target_samp_rate/(float)_samp_rate;
-
     std::vector<int> polys;
     polys.push_back(109);
     polys.push_back(79);
@@ -41,7 +39,6 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     unsigned int flt_size = 32;
 
     std::vector<float> taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, _filter_width, 12000);
-    //_resampler = gr::filter::pfb_arb_resampler_ccf::make(rerate, taps, flt_size);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1, 50, taps);
     _agc = gr::analog::agc2_cc::make(0.006e-1, 1e-3, 1, 1);
     _signal_source = gr::analog::sig_source_c::make(_samp_rate,gr::analog::GR_COS_WAVE,-25000,1);
