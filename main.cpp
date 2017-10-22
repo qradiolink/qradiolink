@@ -152,7 +152,7 @@ int main(int argc, char *argv[])
 
     const std::string const_name = "const";
     gr::qtgui::const_sink_c::sptr const_gui = gr::qtgui::const_sink_c::make(256, const_name,1, (&w)->get_const_gui());
-    const_gui->set_size(700,400);
+    const_gui->set_size(600,400);
     const_gui->set_update_time(0.2);
 
 
