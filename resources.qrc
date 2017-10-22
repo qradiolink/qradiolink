@@ -5,9 +5,9 @@
         <file>res/Button-Blank-Green-icon.png</file>
         <file>res/Button-Blank-Red-icon.png</file>
         <file>res/Button-Blank-Yellow-icon.png</file>
-        <file>res/end_beep.wav</file>
         <file>res/main-bg.png</file>
         <file>res/white-bg.png</file>
         <file>res/transparent-bg.png</file>
+        <file>res/end_beep.raw</file>
     </qresource>
 </RCC>

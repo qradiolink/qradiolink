@@ -248,7 +248,7 @@ void RadioOp::run()
             {
                 if(_radio_type == radio_type::RADIO_TYPE_DIGITAL)
                     _modem->endTransmission(_callsign, _callsign.size());
-                usleep(50000);
+                usleep(1000000);
                 _modem->stopTX();
                 _tx_modem_started = false;
             }
@@ -450,7 +450,14 @@ void RadioOp::receiveEnd()
 void RadioOp::endAudioTransmission()
 {
     emit printText("<<<< end transmission <<<<\n");
-    emit endAudio(9);
+    QFile resfile(":/res/end_beep.raw");
+    if(resfile.open(QIODevice::ReadOnly))
+    {
+        QByteArray *data = new QByteArray(resfile.readAll());
+        short *samples = (short*) data->data();
+        _audio->write_short(samples,data->size());
+
+    }
 }
 
 void RadioOp::syncIssue()

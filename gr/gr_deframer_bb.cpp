@@ -80,6 +80,12 @@ int gr_deframer_bb::findSync(unsigned char bit)
         _sync_found = true;
         return temp;
     }
+    temp = _shift_reg & 0xFFFFFF;
+    if((temp == 0x4C8A2B))
+    {
+        _sync_found = true;
+        return temp;
+    }
     return 0;
 }
 
@@ -100,9 +106,13 @@ int gr_deframer_bb::work(int noutput_items, gr_vector_const_void_star &input_ite
             if(_sync_found)
             {
                 int bits;
-                if(_modem_type == 1)
+                if(_modem_type == 1 && (current_frame_type != 0x4C8A2B))
                 {
                     bits = 16;
+                }
+                else if(_modem_type == 1 && (current_frame_type == 0x4C8A2B))
+                {
+                    bits = 24;
                 }
                 else
                 {

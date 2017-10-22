@@ -601,23 +601,15 @@ void gr_modem::sendCallsign(int size, QString callsign)
 void gr_modem::startTransmission(QString callsign, int size)
 {
     _transmitting = true;
-    for(int i = 0;i<5;i++)
+    std::vector<unsigned char> *tx_start = new std::vector<unsigned char>;
+    for(int i = 0;i<_frame_length;i++)
     {
-        std::vector<unsigned char> *tx_start = new std::vector<unsigned char>;
+
         tx_start->push_back(0x8C);
-        tx_start->push_back(0x8C);
-        tx_start->push_back(0x8C);
-        tx_start->push_back(0x8C);
-        tx_start->push_back(0x8C);
-        tx_start->push_back(0x8C);
-        tx_start->push_back(0x8C);
-        tx_start->push_back(0x8C);
-        tx_start->push_back(0x8C);
-        tx_start->push_back(0x8C);
-        QVector<std::vector<unsigned char>*> frames;
-        frames.append(tx_start);
-        transmit(frames);
     }
+    QVector<std::vector<unsigned char>*> frames;
+    frames.append(tx_start);
+    transmit(frames);
     sendCallsign(size, callsign);
 }
 
@@ -630,8 +622,10 @@ void gr_modem::endTransmission(QString callsign, int size)
     tx_end->push_back(0x4C);
     tx_end->push_back(0x8A);
     tx_end->push_back(0x2B);
-    tx_end->push_back(0x4C);
-    tx_end->push_back(0x00);
+    for(int i = 0;i<_frame_length;i++)
+    {
+        tx_end->push_back(0x00);
+    }
     QVector<std::vector<unsigned char>*> frames;
     frames.append(tx_end);
     transmit(frames);
@@ -1036,6 +1030,10 @@ void gr_modem::handleStreamEnd()
         emit textReceived( QString("\n"));
     }
     else if(_last_frame_type == FrameTypeVoice)
+    {
+        emit endAudioTransmission();
+    }
+    else if(_last_frame_type == FrameTypeCallsign)
     {
         emit endAudioTransmission();
     }
