@@ -1,3 +1,19 @@
+// Written by Adrian Musceac YO8RZZ , started March 2016.
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License as
+// published by the Free Software Foundation; either version 3 of the
+// License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 #include "netdevice.h"
 
 NetDevice::NetDevice(QObject *parent) :
@@ -58,7 +74,7 @@ int NetDevice::tun_init()
     strncpy(ifr.ifr_name, dev, IFNAMSIZ);
     if( (err = ioctl(s, SIOCSIFFLAGS, &ifr)) < 0 )
     {
-        qDebug() << "could not bring tun if up";
+        qDebug() << "could not bring tap interface up";
         return err;
     }
 
@@ -71,7 +87,7 @@ unsigned char* NetDevice::read_buffered(int &nread)
     nread = read(_fd_tun,buffer,1500);
     if(nread < 0)
     {
-      qDebug() << "error reading from tun if";
+      qDebug() << "error reading from tap interface";
     }
     return buffer;
 }
@@ -81,7 +97,7 @@ int NetDevice::write_buffered(unsigned char *data, int len)
     int nwrite = write(_fd_tun,data,len);
     if(nwrite < 0)
     {
-      qDebug() << "error reading from tun if";
+      qDebug() << "error writing to tap interface";
     }
     delete[] data;
     return nwrite;

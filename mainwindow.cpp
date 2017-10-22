@@ -1,8 +1,8 @@
-// Written by Adrian Musceac YO8RZZ at gmail dot com, started October 2013.
+// Written by Adrian Musceac YO8RZZ , started October 2013.
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License as
-// published by the Free Software Foundation; either version 2 of the
+// published by the Free Software Foundation; either version 3 of the
 // License, or (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful, but
@@ -57,12 +57,8 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
     _constellation_gui = ui->widget_const;
     _rssi_gui = ui->widget_rssi;
     _fft_gui = ui->widget_fft;
-
-    //QFileInfo new_file = setupSounds("end_beep.wav");
     _config_file = setupConfig();
     readConfig(_config_file);
-    //_end_beep = Phonon::createPlayer(Phonon::MusicCategory,
-    //                             Phonon::MediaSource(new_file.absoluteFilePath()));
     _video_img = new QPixmap;
 
 }
@@ -138,6 +134,8 @@ void MainWindow::saveConfig()
     }
 }
 
+/**
+* remove
 QFileInfo MainWindow::setupSounds(QString name)
 {
     QDir files = QDir::current();
@@ -160,6 +158,7 @@ QFileInfo MainWindow::setupSounds(QString name)
 
     return new_file;
 }
+*/
 
 QFileInfo* MainWindow::setupConfig()
 {

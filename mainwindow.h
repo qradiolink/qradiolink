@@ -1,8 +1,8 @@
-// Written by Adrian Musceac YO8RZZ at gmail dot com, started October 2013.
+// Written by Adrian Musceac YO8RZZ , started October 2013.
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License as
-// published by the Free Software Foundation; either version 2 of the
+// published by the Free Software Foundation; either version 3 of the
 // License, or (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful, but
@@ -21,7 +21,6 @@
 #include <QFile>
 #include <QFileDialog>
 #include <QScrollBar>
-//#include <phonon/MediaObject>
 #include <QDir>
 #include <QFileInfo>
 #include "mumbleclient.h"
@@ -103,10 +102,9 @@ private:
     QWidget *_constellation_gui;
     QWidget *_rssi_gui;
     QWidget *_fft_gui;
-    //Phonon::MediaObject *_end_beep;
     QPixmap *_video_img;
     QFileInfo *_config_file;
-    QFileInfo setupSounds(QString name);
+    //QFileInfo setupSounds(QString name);
     QFileInfo *setupConfig();
 
 
