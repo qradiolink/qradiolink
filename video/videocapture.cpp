@@ -533,44 +533,44 @@ static void init_device(void)
         control.value = 3;
         if (ioctl(fd, VIDIOC_S_CTRL, &control) < 0) {
             printf("Couldn't set v4l exposure!\n");
-            errno_exit("VIDIOC_S_FMT");
+            //errno_exit("VIDIOC_S_FMT");
         }
 
 
         control.id = V4L2_CID_BRIGHTNESS;
         control.value = 1;
         if (ioctl(fd, VIDIOC_S_CTRL, &control) < 0) {
-            printf("Couldn't set v4l exposure!\n");
-            errno_exit("VIDIOC_S_FMT");
+            printf("Couldn't set v4l brightness!\n");
+            //errno_exit("VIDIOC_S_FMT");
         }
 
         control.id = V4L2_CID_CONTRAST;
         control.value = 50;
         if (ioctl(fd, VIDIOC_S_CTRL, &control) < 0) {
-            printf("Couldn't set v4l exposure!\n");
-            errno_exit("VIDIOC_S_FMT");
+            printf("Couldn't set v4l contrast!\n");
+            //errno_exit("VIDIOC_S_FMT");
         }
 
         control.id = V4L2_CID_SATURATION;
         control.value = 50;
         if (ioctl(fd, VIDIOC_S_CTRL, &control) < 0) {
-            printf("Couldn't set v4l exposure!\n");
-            errno_exit("VIDIOC_S_FMT");
+            printf("Couldn't set v4l saturation!\n");
+            //errno_exit("VIDIOC_S_FMT");
         }
 
         control.id = V4L2_CID_HUE;
         control.value = 50;
         if (ioctl(fd, VIDIOC_S_CTRL, &control) < 0) {
-            printf("Couldn't set v4l exposure!\n");
-            errno_exit("VIDIOC_S_FMT");
+            printf("Couldn't set v4l hue!\n");
+            //errno_exit("VIDIOC_S_FMT");
         }
 
 
         control.id = V4L2_CID_GAMMA;
         control.value = 250;
         if (ioctl(fd, VIDIOC_S_CTRL, &control) < 0) {
-            printf("Couldn't set v4l exposure!\n");
-            errno_exit("VIDIOC_S_FMT");
+            printf("Couldn't set v4l gamma!\n");
+            //errno_exit("VIDIOC_S_FMT");
         }
 
 

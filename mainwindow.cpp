@@ -98,6 +98,7 @@ void MainWindow::readConfig(QFileInfo *config_file)
         ui->lineEditRXFreqCorrection->setText(QString::number(rx_freq_corr));
         ui->lineEditTXFreqCorrection->setText(QString::number(tx_freq_corr));
         ui->lineEditCallsign->setText(QString(cfg.lookup("callsign")));
+        ui->lineEditVideoDevice->setText(QString(cfg.lookup("video_device")));
     }
     catch(const libconfig::SettingNotFoundException &nfex)
     {
@@ -108,6 +109,7 @@ void MainWindow::readConfig(QFileInfo *config_file)
         ui->lineEditRXFreqCorrection->setText("39");
         ui->lineEditTXFreqCorrection->setText("0");
         ui->lineEditCallsign->setText("CALL");
+        ui->lineEditVideoDevice->setText("/dev/video0");
         std::cerr << "Settings not found in configuration file." << std::endl;
     }
 }
@@ -123,6 +125,7 @@ void MainWindow::saveConfig()
     root.add("rx_freq_corr",libconfig::Setting::TypeInt) = ui->lineEditRXFreqCorrection->text().toInt();
     root.add("tx_freq_corr",libconfig::Setting::TypeInt) = ui->lineEditTXFreqCorrection->text().toInt();
     root.add("callsign",libconfig::Setting::TypeString) = ui->lineEditCallsign->text().toStdString();
+    root.add("video_device",libconfig::Setting::TypeString) = ui->lineEditVideoDevice->text().toStdString();
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());

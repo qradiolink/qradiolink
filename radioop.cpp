@@ -79,7 +79,7 @@ void RadioOp::stop()
 
 void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_args,
                          std::string &rx_antenna, std::string &tx_antenna, int &rx_freq_corr,
-                         int &tx_freq_corr, std::string &callsign)
+                         int &tx_freq_corr, std::string &callsign, std::string &video_device)
 {
     QDir files = QDir::homePath();
 
@@ -110,6 +110,7 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
         root.lookupValue("rx_freq_corr", rx_freq_corr);
         root.lookupValue("tx_freq_corr", tx_freq_corr);
         root.lookupValue("callsign", callsign);
+        root.lookupValue("video_device", video_device);
         _callsign = QString::fromStdString(callsign);
         if(_callsign.size() < 7)
         {
@@ -477,9 +478,10 @@ void RadioOp::toggleRX(bool value)
         int rx_freq_corr;
         int tx_freq_corr;
         std::string callsign;
+        std::string video_device;
         readConfig(rx_device_args, tx_device_args,
                                  rx_antenna, tx_antenna, rx_freq_corr,
-                                 tx_freq_corr, callsign);
+                                 tx_freq_corr, callsign, video_device);
         _rx_inited = true;
         _modem->initRX(_mode, rx_device_args, rx_antenna, rx_freq_corr);
         _modem->startRX();
@@ -512,13 +514,14 @@ void RadioOp::toggleTX(bool value)
         int rx_freq_corr;
         int tx_freq_corr;
         std::string callsign;
+        std::string video_device;
         readConfig(rx_device_args, tx_device_args,
                                  rx_antenna, tx_antenna, rx_freq_corr,
-                                 tx_freq_corr, callsign);
+                                 tx_freq_corr, callsign, video_device);
         _tx_inited = true;
         _modem->initTX(_mode, tx_device_args, tx_antenna, tx_freq_corr);
         if(_mode == gr_modem_types::ModemTypeQPSKVideo)
-            _video = new VideoEncoder;
+            _video = new VideoEncoder(QString::fromStdString(video_device));
         if(_mode == gr_modem_types::ModemTypeQPSK250000)
         {
             _net_device = new NetDevice;

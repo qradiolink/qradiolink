@@ -143,7 +143,7 @@ private:
 
     void readConfig(std::string &rx_device_args, std::string &tx_device_args,
                     std::string &rx_antenna, std::string &tx_antenna, int &rx_freq_corr,
-                    int &tx_freq_corr, std::string &callsign);
+                    int &tx_freq_corr, std::string &callsign, std::string &video_device);
     int tun_init();
     int getFrameLength(unsigned char *data);
 
