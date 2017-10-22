@@ -881,7 +881,7 @@ void gr_modem::synchronize(int v_size, std::vector<unsigned char> *data)
             {
                 int frame_length = _frame_length;
                 if((_modem_type != gr_modem_types::ModemTypeBPSK1000)
-                        && (_modem_type != gr_modem_types::ModemTypeQPSK250000))
+                        && (_current_frame_type == FrameTypeVoice))
                     frame_length++;
                 unsigned char *frame_data = new unsigned char[frame_length];
                 packBytes(frame_data,_bit_buf,_bit_buf_index);
@@ -900,9 +900,7 @@ int gr_modem::findSync(unsigned char bit)
 
     _shift_reg = (_shift_reg << 1) | (bit & 0x1);
     u_int32_t temp;
-    if(_modem_type == gr_modem_types::ModemTypeQPSK250000)
-        temp = _shift_reg & 0xFFFFFF;
-    else if(_modem_type != gr_modem_types::ModemTypeBPSK1000)
+    if(_modem_type != gr_modem_types::ModemTypeBPSK1000)
         temp = _shift_reg & 0xFFFF;
     else
         temp = _shift_reg & 0xFF;
@@ -911,22 +909,24 @@ int gr_modem::findSync(unsigned char bit)
         _sync_found = true;
         return FrameTypeVoice;
     }
-    if((temp == 0x89ED))
-    {
-        _sync_found = true;
-        return FrameTypeText;
-    }
     if((temp == 0xED89))
     {
         _sync_found = true;
         return FrameTypeVoice;
     }
-    if((temp == 0x98DE))
+    temp = _shift_reg & 0xFFFFFF;
+    if((temp == 0x89EDAA))
+    {
+        _sync_found = true;
+        return FrameTypeText;
+    }
+
+    if((temp == 0x98DEAA))
     {
         _sync_found = true;
         return FrameTypeVideo;
     }
-    if((temp == 0x8CC8))
+    if((temp == 0x8CC8DD))
     {
         _sync_found = true;
         return FrameTypeCallsign;
@@ -936,7 +936,6 @@ int gr_modem::findSync(unsigned char bit)
         _sync_found = true;
         return FrameTypeData;
     }
-    temp = _shift_reg & 0xFFFFFF;
     if((temp == 0x4C8A2B))
     {
         _stream_ended = true;
@@ -953,7 +952,7 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
         emit dataFrameReceived();
         _last_frame_type = FrameTypeText;
         char *text_data = new char[_frame_length];
-        memcpy(text_data, received_data+1, _frame_length);
+        memcpy(text_data, received_data, _frame_length);
         quint8 string_length = _frame_length;
 
         for(int ii=_frame_length-1;ii>=0;ii--)
@@ -977,7 +976,7 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
         emit dataFrameReceived();
         _last_frame_type = FrameTypeCallsign;
         char *text_data = new char[_frame_length];
-        memcpy(text_data, received_data+1, _frame_length);
+        memcpy(text_data, received_data, _frame_length);
         quint8 string_length = _frame_length;
 
         for(int ii=_frame_length-1;ii>=0;ii--)
@@ -1009,7 +1008,7 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
         emit audioFrameReceived();
         _last_frame_type = FrameTypeVideo;
         unsigned char *video_data = new unsigned char[_frame_length];
-        memcpy(video_data, received_data+1, _frame_length);
+        memcpy(video_data, received_data, _frame_length);
         emit videoData(video_data,_frame_length);
     }
     else if (current_frame_type == FrameTypeData )
