@@ -5,12 +5,12 @@ QRadioLink
 
 About
 -----
-- QRadioLink is a building platform based on Gnuradio for hobbyists, tinkerers and radio enthusiasts
-which allows experimenting with SDR hardware using different modulation schemes for digital 
-data transmissions and analog modes.
+- QRadioLink is a GUI for a collection of Gnuradio modems, built for hobbyists, tinkerers and radio enthusiasts,
+which allows experimenting with SDR hardware using different digital and analog modes
 - Possible applications: digital walkie talkie, baby monitor, video camera streaming, IoT devices which are RF
 enabled, radio LAN, robotics.
-- Receives and transmits analog voice, digital voice, low resolution video and text, IP protocol.
+- Receives and transmits analog voice, digital voice, low resolution video, text, IP protocol.
+- Somewhat touchscreen friendly user interface.
 - Digital audio transmission uses either a narrow band modem and Codec2 or a high bandwidth modem and Opus.
 - Modems: BPSK, QPSK, 2FSK, 4FSK
 - Modes: narrow FM, SSB, digital voice, digital video, digital data
@@ -68,9 +68,6 @@ cd ext/
 protoc --cpp_out=. Mumble.proto
 protoc --cpp_out=. QRadioLink.proto
 cd ..
-sudo sed -i 's/qwt_symbol.h/qwt\/qwt_symbol.h/g' /usr/include/gnuradio/qtgui/sink_c.h
-sudo sed -i 's/qwt_color_map.h/qwt\/qwt_color_map.h/g' /usr/include/gnuradio/qtgui/qtgui_types.h
-sudo sed -i 's/qwt_scale_draw.h/qwt\/qwt_scale_draw.h/g' /usr/include/gnuradio/qtgui/qtgui_types.h 
 cd build/
 qmake-qt4 ..
 make
@@ -78,9 +75,11 @@ make
 </pre>
 
 Known issues:
-- Build fails due to include error in /usr/include/gnuradio/qtgui/qtgui_types.h (Debian): 
-- #include <qwt/qwt_color_map.h>
-- #include <qwt/qwt_scale_draw.h>
+- Segmentation fault when starting TX or RX modes. 
+Check that you have clicked save in the configuration page
+and that device settings are correct.
+- In low light, the automatic adjustment of ISO in the video camera can cause very long times to capture a frame.
+Solution: use plenty of lighting.
 
 
 
@@ -90,21 +89,21 @@ Running
 - Please see the Setup tab first and make sure to click Save before starting TX or RX modes, otherwise you may get a segmentation fault
 - Setup options include RX and TX frequency correction (in PPM), device access strings, 
 RX and TX antenna settings as a string and your callsign which will be sent at the start of the transmission.
-- The configuration file is located in $HOME/.config/
+- The configuration file is located in $HOME/.config/qradiolink.cfg
 - By default the device will operate in the 433 MHz ISM band.
 - Adjust TX gain in dB and RX sensitivity from the TX tab. If you are driving an external amplifier check the waveform for distorsion.
-- Adjust the frequency from the TX tab either by using the dial widget or by entering it in the text box. 
 - The select input in the lower right corner toggles between different operating modes.
-- Enable the TX and/or RX buttons depending on whether you want only RX, only TX or both. 
+- Enable the TX and/or RX buttons depending on whether you want only RX, only TX or both.
+- Adjust the frequency from the TX tab either by using the dial widget or by entering it in the text box. 
 - The Tune page allows fine tuning 5-5000 KHz around the frequency with the slider, and monitoring the 
-signal with the constellation or the spectrum display
+signal with the constellation sink or the spectrum display (FFT/waterfall).
 - Video page will display received video stream. Right now only a limited number of cameras are 
 supported for TX, and ISO settings/ exposure of the camera might cause too low a framerate, which can't be transmitted properly.
 
 
-Running the code on Android devices for portable VHF-UHF SDR in amateur radio scope
------------------------------------------------------------------------------------
-- The current master branch supports running the application on recent Android mobile phones or tablets [1].
+Running the code on Android devices
+-----------------------------------
+- The current master branch supports running the application on recent Android mobile phones or tablets.
 - Requires some knowledge of Android internals.
 - You will need to have the device fully unlocked and root access. A SIM card is not necessary.
 - First install an Android application which can create a Linux chroot and an Android VNC viewer.
