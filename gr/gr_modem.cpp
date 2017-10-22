@@ -44,7 +44,7 @@ gr_modem::gr_modem(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgu
     _rssi_gui = rssi_gui;
     _fft_gui = fft_gui;
     _frequency_found =0;
-    _requested_frequency_hz = 434025000;
+    _requested_frequency_hz = 433500000;
     _gr_mod_bpsk_sdr = 0;
     _gr_mod_qpsk_sdr = 0;
     _gr_mod_4fsk_sdr = 0;

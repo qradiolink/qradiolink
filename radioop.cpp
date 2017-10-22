@@ -33,7 +33,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _process_text = false;
     _repeat_text = false;
     _settings = settings;
-    _tune_center_freq = 0;
+    _tune_center_freq = 433500000;
     _tune_limit_lower = -5000;
     _tune_limit_upper = 5000;
     _step_hz = 1;
@@ -485,6 +485,7 @@ void RadioOp::toggleRX(bool value)
         _rx_inited = true;
         _modem->initRX(_mode, rx_device_args, rx_antenna, rx_freq_corr);
         _modem->startRX();
+        _modem->tune(_tune_center_freq);
         _tune_center_freq = _modem->_requested_frequency_hz;
         if(_mode == gr_modem_types::ModemTypeQPSK250000)
         {
@@ -520,6 +521,7 @@ void RadioOp::toggleTX(bool value)
                                  tx_freq_corr, callsign, video_device);
         _tx_inited = true;
         _modem->initTX(_mode, tx_device_args, tx_antenna, tx_freq_corr);
+        _modem->tune(_tune_center_freq);
         if(_mode == gr_modem_types::ModemTypeQPSKVideo)
             _video = new VideoEncoder(QString::fromStdString(video_device));
         if(_mode == gr_modem_types::ModemTypeQPSK250000)
