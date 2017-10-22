@@ -21,7 +21,6 @@
 #include <gnuradio/digital/scrambler_bb.h>
 #include <gnuradio/fec/encode_ccsds_27_bb.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
-#include <gnuradio/fec/cc_common.h>
 #include <osmosdr/sink.h>
 #include <vector>
 #include "gr_vector_source.h"
