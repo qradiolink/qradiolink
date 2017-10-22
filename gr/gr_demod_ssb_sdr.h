@@ -52,7 +52,8 @@ public slots:
     void stop();
     void tune(long center_freq);
     void set_rx_sensitivity(float value);
-    void enable_gui(bool value);
+    void enable_gui_const(bool value);
+    void enable_gui_fft(bool value);
 
 private:
     gr::top_block_sptr _top_block;

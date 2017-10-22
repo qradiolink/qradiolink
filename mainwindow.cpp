@@ -356,8 +356,12 @@ void MainWindow::playEndBeep(int seconds)
 void MainWindow::mainTabChanged(int value)
 {
     if(value == 1)
-        emit enableGUI(true);
+        emit enableGUIConst(true);
     else
-        emit enableGUI(false);
+        emit enableGUIConst(false);
+    if(value == 2)
+        emit enableGUIFFT(true);
+    else
+        emit enableGUIFFT(false);
 }
 

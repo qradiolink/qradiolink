@@ -152,7 +152,7 @@ int main(int argc, char *argv[])
 
     const std::string const_name = "const";
     gr::qtgui::const_sink_c::sptr const_gui = gr::qtgui::const_sink_c::make(256, const_name,1, (&w)->get_const_gui());
-    const_gui->set_size(550,300);
+    const_gui->set_size(700,400);
     const_gui->set_update_time(0.2);
 
 
@@ -168,8 +168,8 @@ int main(int argc, char *argv[])
                                                           0,1000000,fft_name,true,true,false,false,(&w)->get_fft_gui());
 
     fft_gui->set_update_time(0.1);
-    fft_gui->set_fft_power_db(-120,-30);
-    fft_gui->qwidget()->resize(900,450);
+    fft_gui->set_fft_power_db(-120,-10);
+    fft_gui->qwidget()->resize(1024,500);
 
     QThread *t4 = new QThread;
     t4->setObjectName("radioop");
@@ -193,7 +193,8 @@ int main(int argc, char *argv[])
     QObject::connect(&w,SIGNAL(fineTuneFreq(long)),radio_op,SLOT(fineTuneFreq(long)));
     QObject::connect(&w,SIGNAL(setTxPower(int)),radio_op,SLOT(setTxPower(int)));
     QObject::connect(&w,SIGNAL(setRxSensitivity(int)),radio_op,SLOT(setRxSensitivity(int)));
-    QObject::connect(&w,SIGNAL(enableGUI(bool)),radio_op,SLOT(enableGUI(bool)));
+    QObject::connect(&w,SIGNAL(enableGUIConst(bool)),radio_op,SLOT(enableGUIConst(bool)));
+    QObject::connect(&w,SIGNAL(enableGUIFFT(bool)),radio_op,SLOT(enableGUIFFT(bool)));
     QObject::connect(radio_op, SIGNAL(printText(QString)), &w, SLOT(displayText(QString)));
     QObject::connect(radio_op, SIGNAL(printCallsign(QString)), &w, SLOT(displayCallsign(QString)));
     QObject::connect(radio_op, SIGNAL(videoImage(QImage)), &w, SLOT(displayImage(QImage)));

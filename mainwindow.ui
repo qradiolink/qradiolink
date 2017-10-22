@@ -769,6 +769,55 @@ QSlider::handle:vertical {
             <property name="sizeConstraint">
              <enum>QLayout::SetDefaultConstraint</enum>
             </property>
+            <item row="3" column="1">
+             <widget class="QWidget" name="widget_rssi" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>400</width>
+                <height>50</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>50</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QCommandLinkButton" name="autotuneButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>40</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">font: 10pt &quot;Sans Serif&quot;;
+background: none;
+color: rgb(203, 0, 0);</string>
+              </property>
+              <property name="text">
+               <string>Autotune</string>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
             <item row="0" column="1">
              <widget class="QSlider" name="tuneSlider">
               <property name="sizePolicy">
@@ -819,158 +868,85 @@ QSlider::handle:horizontal {
               </property>
              </widget>
             </item>
-            <item row="4" column="1">
-             <widget class="QWidget" name="widget_rssi" native="true">
+            <item row="1" column="1">
+             <widget class="QWidget" name="widget_const" native="true">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
               <property name="minimumSize">
                <size>
-                <width>400</width>
-                <height>50</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>50</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QCommandLinkButton" name="autotuneButton">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>100</width>
-                <height>40</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">font: 10pt &quot;Sans Serif&quot;;
-background: none;
-color: rgb(203, 0, 0);</string>
-              </property>
-              <property name="text">
-               <string>Autotune</string>
-              </property>
-              <property name="checkable">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QTabWidget" name="tabWidget_2">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>600</width>
+                <width>550</width>
                 <height>250</height>
                </size>
               </property>
-              <property name="styleSheet">
-               <string notr="true">font: 14pt &quot;Sans Serif&quot;;</string>
+              <property name="maximumSize">
+               <size>
+                <width>550</width>
+                <height>550</height>
+               </size>
               </property>
-              <property name="currentIndex">
-               <number>0</number>
-              </property>
-              <widget class="QWidget" name="tab_7">
-               <attribute name="title">
-                <string>Constellation</string>
-               </attribute>
-               <widget class="QWidget" name="widget_const" native="true">
-                <property name="geometry">
-                 <rect>
-                  <x>-10</x>
-                  <y>-30</y>
-                  <width>550</width>
-                  <height>258</height>
-                 </rect>
-                </property>
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>550</width>
-                  <height>250</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>550</width>
-                  <height>550</height>
-                 </size>
-                </property>
-               </widget>
-              </widget>
-              <widget class="QWidget" name="tab_8">
-               <attribute name="title">
-                <string>Spectrum</string>
-               </attribute>
-               <widget class="QWidget" name="widget_fft" native="true">
-                <property name="geometry">
-                 <rect>
-                  <x>1</x>
-                  <y>1</y>
-                  <width>1024</width>
-                  <height>450</height>
-                 </rect>
-                </property>
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>550</width>
-                  <height>250</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>1024</width>
-                  <height>450</height>
-                 </size>
-                </property>
-                <property name="font">
-                 <font>
-                  <family>Sans Serif</family>
-                  <pointsize>10</pointsize>
-                  <weight>50</weight>
-                  <italic>false</italic>
-                  <bold>false</bold>
-                 </font>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true">font: 10pt &quot;Sans Serif&quot;;</string>
-                </property>
-               </widget>
-              </widget>
              </widget>
             </item>
            </layout>
           </item>
          </layout>
+        </widget>
+        <widget class="QWidget" name="tab_9">
+         <attribute name="title">
+          <string>Spectrum</string>
+         </attribute>
+         <widget class="QWidget" name="verticalLayoutWidget_2">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>1081</width>
+            <height>461</height>
+           </rect>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_6">
+           <property name="sizeConstraint">
+            <enum>QLayout::SetNoConstraint</enum>
+           </property>
+           <item row="0" column="0">
+            <widget class="QWidget" name="widget_fft" native="true">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>720</width>
+               <height>350</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>1024</width>
+               <height>1024</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <family>Sans Serif</family>
+               <pointsize>10</pointsize>
+               <weight>50</weight>
+               <italic>false</italic>
+               <bold>false</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">font: 10pt &quot;Sans Serif&quot;;</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </widget>
         <widget class="QWidget" name="tab_2">
          <property name="sizePolicy">

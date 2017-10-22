@@ -145,7 +145,8 @@ public slots:
     void stopTX();
     void setTxPower(int value);
     void setRxSensitivity(float value);
-    void enableGUI(bool value);
+    void enableGUIConst(bool value);
+    void enableGUIFFT(bool value);
 private:
 
     Settings *_settings;

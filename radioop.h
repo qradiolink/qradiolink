@@ -103,7 +103,8 @@ public slots:
     void tuneFreq(qint64 center_freq);
     void setTxPower(int dbm);
     void setRxSensitivity(int value);
-    void enableGUI(bool value);
+    void enableGUIConst(bool value);
+    void enableGUIFFT(bool value);
     void syncFrequency();
     void autoTune();
     void startAutoTune();

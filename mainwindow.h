@@ -83,7 +83,8 @@ signals:
     void toggleModemMode(int value);
     void setTxPower(int value);
     void setRxSensitivity(int value);
-    void enableGUI(bool value);
+    void enableGUIConst(bool value);
+    void enableGUIFFT(bool value);
     void startAutoTuneFreq();
     void stopAutoTuneFreq();
 

@@ -659,9 +659,14 @@ void RadioOp::setRxSensitivity(int value)
     _modem->setRxSensitivity((float)value/100);
 }
 
-void RadioOp::enableGUI(bool value)
+void RadioOp::enableGUIConst(bool value)
 {
-    _modem->enableGUI(value);
+    _modem->enableGUIConst(value);
+}
+
+void RadioOp::enableGUIFFT(bool value)
+{
+    _modem->enableGUIFFT(value);
 }
 
 void RadioOp::syncFrequency()

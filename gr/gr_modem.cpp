@@ -558,20 +558,36 @@ void gr_modem::setRxSensitivity(float value)
         _gr_demod_2fsk_sdr->set_rx_sensitivity(value);
 }
 
-void gr_modem::enableGUI(bool value)
+void gr_modem::enableGUIConst(bool value)
 {
     if(_gr_demod_bpsk_sdr)
-        _gr_demod_bpsk_sdr->enable_gui(value);
+        _gr_demod_bpsk_sdr->enable_gui_const(value);
     if(_gr_demod_qpsk_sdr)
-        _gr_demod_qpsk_sdr->enable_gui(value);
+        _gr_demod_qpsk_sdr->enable_gui_const(value);
     if(_gr_demod_4fsk_sdr)
-        _gr_demod_4fsk_sdr->enable_gui(value);
+        _gr_demod_4fsk_sdr->enable_gui_const(value);
     if(_gr_demod_2fsk_sdr)
-        _gr_demod_2fsk_sdr->enable_gui(value);
+        _gr_demod_2fsk_sdr->enable_gui_const(value);
     if(_gr_demod_nbfm_sdr)
-        _gr_demod_nbfm_sdr->enable_gui(value);
+        _gr_demod_nbfm_sdr->enable_gui_const(value);
     if(_gr_demod_ssb_sdr)
-        _gr_demod_ssb_sdr->enable_gui(value);
+        _gr_demod_ssb_sdr->enable_gui_const(value);
+}
+
+void gr_modem::enableGUIFFT(bool value)
+{
+    if(_gr_demod_bpsk_sdr)
+        _gr_demod_bpsk_sdr->enable_gui_fft(value);
+    if(_gr_demod_qpsk_sdr)
+        _gr_demod_qpsk_sdr->enable_gui_fft(value);
+    if(_gr_demod_4fsk_sdr)
+        _gr_demod_4fsk_sdr->enable_gui_fft(value);
+    if(_gr_demod_2fsk_sdr)
+        _gr_demod_2fsk_sdr->enable_gui_fft(value);
+    if(_gr_demod_nbfm_sdr)
+        _gr_demod_nbfm_sdr->enable_gui_fft(value);
+    if(_gr_demod_ssb_sdr)
+        _gr_demod_ssb_sdr->enable_gui_fft(value);
 }
 
 void gr_modem::sendCallsign(int size, QString callsign)

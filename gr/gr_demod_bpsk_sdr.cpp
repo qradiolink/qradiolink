@@ -186,9 +186,13 @@ void gr_demod_bpsk_sdr::set_rx_sensitivity(float value)
     }
 }
 
-void gr_demod_bpsk_sdr::enable_gui(bool value)
+void gr_demod_bpsk_sdr::enable_gui_const(bool value)
 {
     _rssi_valve->set_enabled(value);
-    _fft_valve->set_enabled(value);
     _const_valve->set_enabled(value);
+}
+
+void gr_demod_bpsk_sdr::enable_gui_fft(bool value)
+{
+    _fft_valve->set_enabled(value);
 }
