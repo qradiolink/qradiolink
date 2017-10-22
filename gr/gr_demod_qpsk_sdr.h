@@ -115,6 +115,7 @@ private:
     float _modulation_index;
     float _device_frequency;
     int _target_samp_rate;
+    float _center_spacing;
 
 };
 
