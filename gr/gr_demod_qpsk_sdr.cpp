@@ -192,7 +192,7 @@ std::vector<unsigned char>* gr_demod_qpsk_sdr::getData()
 void gr_demod_qpsk_sdr::tune(long center_freq)
 {
     _device_frequency = center_freq;
-    _osmosdr_source->set_center_freq(_device_frequency-250000);
+    _osmosdr_source->set_center_freq(_device_frequency - 250000.0);
 }
 
 void gr_demod_qpsk_sdr::set_rx_sensitivity(float value)

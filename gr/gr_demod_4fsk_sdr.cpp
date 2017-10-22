@@ -98,7 +98,7 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _add_const = gr::blocks::add_const_ff::make(-110);
 
     _osmosdr_source = osmosdr::source::make(device_args);
-    _osmosdr_source->set_center_freq(_device_frequency-25000);
+    _osmosdr_source->set_center_freq(_device_frequency - 25000.0);
     _osmosdr_source->set_sample_rate(_samp_rate);
     _osmosdr_source->set_freq_corr(freq_corr);
     _osmosdr_source->set_gain_mode(false);
