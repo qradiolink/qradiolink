@@ -187,8 +187,6 @@ private:
     unsigned char *_bit_buf;
     int _bit_buf_len;
     unsigned long long _shift_reg;
-    bool _stream_started;
-    bool _stream_ended;
 
     gr::qtgui::const_sink_c::sptr _const_gui;
     gr::qtgui::number_sink::sptr _rssi_gui;

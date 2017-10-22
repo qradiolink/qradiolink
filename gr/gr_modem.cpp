@@ -38,7 +38,6 @@ gr_modem::gr_modem(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgu
     _bit_buf_len = 8 *8;
     _bit_buf_index = 0;
     _sync_found = false;
-    _stream_ended = false;
     _current_frame_type = FrameTypeNone;
     _const_gui = const_gui;
     _rssi_gui = rssi_gui;
@@ -862,9 +861,8 @@ void gr_modem::synchronize(int v_size, std::vector<unsigned char> *data)
                 _bit_buf_index = 0;
                 continue;
             }
-            if(_stream_ended)
+            if(_current_frame_type == FrameTypeEnd)
             {
-                _stream_ended = false;
                 handleStreamEnd();
                 continue;
             }
@@ -877,12 +875,20 @@ void gr_modem::synchronize(int v_size, std::vector<unsigned char> *data)
                 _frequency_found += 1; // 80 bits + counter
             _bit_buf[_bit_buf_index] =  (data->at(i)) & 0x1;
             _bit_buf_index++;
-            if(_bit_buf_index >= _bit_buf_len)
+            int frame_length = _frame_length;
+            int bit_buf_len = _bit_buf_len;
+            if((_modem_type != gr_modem_types::ModemTypeBPSK1000)
+                    && (_current_frame_type == FrameTypeVoice))
             {
-                int frame_length = _frame_length;
-                if((_modem_type != gr_modem_types::ModemTypeBPSK1000)
-                        && (_current_frame_type == FrameTypeVoice))
-                    frame_length++;
+                frame_length++;
+            }
+            else
+            {
+                bit_buf_len = _bit_buf_len - 8;
+            }
+            if(_bit_buf_index >= bit_buf_len)
+            {
+
                 unsigned char *frame_data = new unsigned char[frame_length];
                 packBytes(frame_data,_bit_buf,_bit_buf_index);
                 processReceivedData(frame_data, _current_frame_type);
@@ -896,19 +902,18 @@ void gr_modem::synchronize(int v_size, std::vector<unsigned char> *data)
 
 int gr_modem::findSync(unsigned char bit)
 {
-
-
     _shift_reg = (_shift_reg << 1) | (bit & 0x1);
     u_int32_t temp;
-    if(_modem_type != gr_modem_types::ModemTypeBPSK1000)
-        temp = _shift_reg & 0xFFFF;
-    else
-        temp = _shift_reg & 0xFF;
-    if((_modem_type == gr_modem_types::ModemTypeBPSK1000) && (temp == 0xB5))
+    if(_modem_type == gr_modem_types::ModemTypeBPSK1000)
     {
-        _sync_found = true;
-        return FrameTypeVoice;
+        temp = _shift_reg & 0xFF;
+        if (temp == 0xB5)
+        {
+            _sync_found = true;
+            return FrameTypeVoice;
+        }
     }
+    temp = _shift_reg & 0xFFFF;
     if((temp == 0xED89))
     {
         _sync_found = true;
@@ -938,7 +943,6 @@ int gr_modem::findSync(unsigned char bit)
     }
     if((temp == 0x4C8A2B))
     {
-        _stream_ended = true;
         return FrameTypeEnd;
     }
     return FrameTypeNone;
