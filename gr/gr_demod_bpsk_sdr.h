@@ -24,7 +24,6 @@
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/digital/descrambler_bb.h>
 #include <gnuradio/blocks/add_const_ff.h>
-#include <gnuradio/fec/decoder.h>
 #include <gnuradio/fec/decode_ccsds_27_fb.h>
 #include <gnuradio/fec/cc_decoder.h>
 #include <gnuradio/fec/cc_common.h>
