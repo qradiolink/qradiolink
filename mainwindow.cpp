@@ -39,6 +39,7 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
     QObject::connect(ui->voipTalkButton,SIGNAL(pressed()),this,SLOT(GUIstartTalkVOIP()));
     QObject::connect(ui->voipTalkButton,SIGNAL(released()),this,SLOT(GUIstopTalkVOIP()));
     QObject::connect(ui->chooseFileButton,SIGNAL(clicked()),this,SLOT(chooseFile()));
+    QObject::connect(ui->clearReceivedTextButton,SIGNAL(clicked()),this,SLOT(clearTextArea()));
     QObject::connect(ui->rxStatusButton,SIGNAL(toggled(bool)),this,SLOT(toggleRXwin(bool)));
     QObject::connect(ui->txStatusButton,SIGNAL(toggled(bool)),this,SLOT(toggleTXwin(bool)));
     QObject::connect(ui->tuneSlider,SIGNAL(valueChanged(int)),this,SLOT(tuneCenterFreq(int)));
@@ -137,32 +138,6 @@ void MainWindow::saveConfig()
     }
 }
 
-/**
-* remove
-QFileInfo MainWindow::setupSounds(QString name)
-{
-    QDir files = QDir::current();
-
-    QFileInfo new_file = files.filePath(name);
-    if(!new_file.exists())
-    {
-        QFile resfile(":/res/" + name);
-        QFile newfile(new_file.absoluteFilePath());
-        if(resfile.open(QIODevice::ReadOnly))
-        {
-            if (newfile.open(QIODevice::ReadWrite))
-            {
-                newfile.write(resfile.readAll());
-                newfile.close();
-            }
-            resfile.close();
-        }
-    }
-
-    return new_file;
-}
-*/
-
 QFileInfo* MainWindow::setupConfig()
 {
     QDir files = QDir::homePath();
@@ -222,6 +197,12 @@ void MainWindow::displayText(QString text)
     ui->receivedTextEdit->setPlainText(ui->receivedTextEdit->toPlainText() + text);
     ui->receivedTextEdit->verticalScrollBar()->setValue(ui->receivedTextEdit->verticalScrollBar()->maximum());
     //ui->tabWidget->setCurrentIndex(1);
+}
+
+void MainWindow::clearTextArea()
+{
+    ui->receivedTextEdit->setPlainText("");
+    ui->receivedTextEdit->verticalScrollBar()->setValue(ui->receivedTextEdit->verticalScrollBar()->maximum());
 }
 
 void MainWindow::displayCallsign(QString callsign)

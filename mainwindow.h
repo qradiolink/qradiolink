@@ -66,6 +66,7 @@ public slots:
     void enterFreq();
     void saveConfig();
     void mainTabChanged(int value);
+    void clearTextArea();
 
 signals:
     void startTransmission();
@@ -105,7 +106,6 @@ private:
     QWidget *_fft_gui;
     QPixmap *_video_img;
     QFileInfo *_config_file;
-    //QFileInfo setupSounds(QString name);
     QFileInfo *setupConfig();
 
 

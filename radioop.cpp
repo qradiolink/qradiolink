@@ -432,13 +432,13 @@ void RadioOp::callsignReceived(QString callsign)
 void RadioOp::audioFrameReceived()
 {
     emit displayReceiveStatus(true);
-    _led_timer->start(45);
+    _led_timer->start(100);
 }
 
 void RadioOp::dataFrameReceived()
 {
     emit displayDataReceiveStatus(true);
-    _led_timer->start(45);
+    _led_timer->start(200);
 }
 
 void RadioOp::receiveEnd()
@@ -676,7 +676,6 @@ void RadioOp::syncFrequency()
         _tune_counter = 0;
         _modem->_frequency_found = 10;
     }
-    qDebug() << "modem counter: " << _modem->_frequency_found << " op counter: " << _tune_counter;
     if((_modem->_frequency_found > 20) && (_modem->_frequency_found >= _tune_counter))
     {
         _tune_counter = _modem->_frequency_found;
