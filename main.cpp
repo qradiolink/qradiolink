@@ -161,7 +161,7 @@ int main(int argc, char *argv[])
     rssi_gui->set_min(0,-120);
     rssi_gui->set_label(0,"RSSI");
     rssi_gui->qwidget()->resize(700,50);
-    rssi_gui->set_update_time(0.2);
+    rssi_gui->set_update_time(0.3);
 
     const std::string fft_name = "fft";
     gr::qtgui::sink_c::sptr fft_gui = gr::qtgui::sink_c::make(8096,gr::filter::firdes::WIN_BLACKMAN_HARRIS,
