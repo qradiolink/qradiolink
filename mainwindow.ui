@@ -341,6 +341,12 @@ background-color: rgb(0, 0, 230,130);</string>
               </property>
               <property name="minimumSize">
                <size>
+                <width>100</width>
+                <height>50</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
                 <width>120</width>
                 <height>50</height>
                </size>
@@ -360,6 +366,9 @@ font: 18pt &quot;Sans Serif&quot;;</string>
               </property>
               <property name="text">
                <string>434025</string>
+              </property>
+              <property name="maxLength">
+               <number>8</number>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>
