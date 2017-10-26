@@ -134,6 +134,7 @@ private:
     int _mode;
     int _radio_type;
     long _tune_center_freq;
+    int _tx_power;
     int _step_hz;
     int _tune_limit_lower;
     int _tune_limit_upper;
