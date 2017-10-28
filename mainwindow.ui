@@ -325,7 +325,7 @@ background-color: rgb(0, 0, 230,130);</string>
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>40</width>
+                <width>20</width>
                 <height>20</height>
                </size>
               </property>
@@ -382,7 +382,7 @@ font: 18pt &quot;Sans Serif&quot;;</string>
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>40</width>
+                <width>20</width>
                 <height>20</height>
                </size>
               </property>
