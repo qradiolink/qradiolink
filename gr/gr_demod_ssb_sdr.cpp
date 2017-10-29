@@ -8,7 +8,7 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(gr::qtgui::sink_c::sptr fft_gui,
                                    std::string device_args, std::string device_antenna, int freq_corr) :
     QObject(parent)
 {
-    _target_samp_rate = 48000;
+    _target_samp_rate = 8000;
     _rssi = rssi_gui;
     _device_frequency = device_frequency;
     _samp_rate = samp_rate;
