@@ -68,8 +68,15 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
 
 RadioOp::~RadioOp()
 {
+    if(_rx_inited)
+        toggleRX(false);
+    if(_tx_inited)
+        toggleTX(false);
     delete _codec;
-    delete _video;
+    if(_video != 0)
+        delete _video;
+    if(_net_device != 0)
+        delete _net_device;
     delete _audio;
     delete _led_timer;
     delete _modem;
@@ -529,10 +536,6 @@ void RadioOp::toggleRX(bool value)
         _rx_inited = false;
         _modem->stopRX();
         _modem->deinitRX(_mode);
-        if(_mode == gr_modem_types::ModemTypeQPSK250000)
-        {
-            delete _net_device;
-        }
     }
 }
 
@@ -567,10 +570,9 @@ void RadioOp::toggleTX(bool value)
         _tx_inited = false;
         _modem->deinitTX(_mode);
         if(_mode == gr_modem_types::ModemTypeQPSKVideo)
-            delete _video;
-        if(_mode == gr_modem_types::ModemTypeQPSK250000)
         {
-            delete _net_device;
+            delete _video;
+            _video = 0;
         }
     }
 }
