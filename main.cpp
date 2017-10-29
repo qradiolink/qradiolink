@@ -170,6 +170,7 @@ int main(int argc, char *argv[])
     fft_gui->set_update_time(0.1);
     fft_gui->set_fft_power_db(-120,-10);
     fft_gui->qwidget()->resize(1024,500);
+    fft_gui->enable_rf_freq(true);
 
     QThread *t4 = new QThread;
     t4->setObjectName("radioop");

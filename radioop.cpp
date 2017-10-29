@@ -45,6 +45,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _tx_modem_started = false;
     _led_timer = new QTimer(this);
     _rand_frame_data = new unsigned char[5000];
+    _fft_gui = fft_gui;
     QObject::connect(_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));
     _modem = new gr_modem(_settings, fft_gui,const_gui, rssi_gui);
 
@@ -514,6 +515,7 @@ void RadioOp::toggleRX(bool value)
         _modem->initRX(_mode, rx_device_args, rx_antenna, rx_freq_corr);
         _modem->startRX();
         _modem->tune(_tune_center_freq);
+        _fft_gui->set_frequency_range(_tune_center_freq, 1000000);
         _modem->setRxSensitivity(_rx_sensitivity);
         _modem->setSquelch(_squelch);
         _tune_center_freq = _modem->_requested_frequency_hz;
@@ -679,6 +681,7 @@ void RadioOp::tuneFreq(qint64 center_freq)
 {
     _tune_center_freq = center_freq;
     _modem->tune(center_freq, false);
+    _fft_gui->set_frequency_range(center_freq, 1000000);
 }
 
 void RadioOp::setTxPower(int dbm)
