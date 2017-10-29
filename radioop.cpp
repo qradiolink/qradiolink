@@ -597,62 +597,70 @@ void RadioOp::toggleMode(int value)
         _step_hz = 1;
         break;
     case 1:
-        _mode = gr_modem_types::ModemTypeQPSK20000;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
-        _step_hz = 10;
-        break;
-    case 2:
-        _mode = gr_modem_types::ModemType4FSK20000;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
-        _step_hz = 10;
-        break;
-    case 3:
-        _mode = gr_modem_types::ModemType4FSK2000;
+        _mode = gr_modem_types::ModemTypeBPSK1000;
         _tune_limit_lower = -5000;
         _tune_limit_upper = 5000;
         _step_hz = 1;
         break;
-    case 4:
+    case 2:
         _mode = gr_modem_types::ModemTypeQPSK2000;
         _tune_limit_lower = -5000;
         _tune_limit_upper = 5000;
         _step_hz = 1;
         break;
+    case 3:
+        _mode = gr_modem_types::ModemTypeQPSK20000;
+        _tune_limit_lower = -5000;
+        _tune_limit_upper = 5000;
+        _step_hz = 10;
+        break;
+    case 4:
+        _mode = gr_modem_types::ModemType4FSK2000;
+        _tune_limit_lower = -5000;
+        _tune_limit_upper = 5000;
+        _step_hz = 1;
+        break;
     case 5:
+        _mode = gr_modem_types::ModemType4FSK20000;
+        _tune_limit_lower = -5000;
+        _tune_limit_upper = 5000;
+        _step_hz = 10;
+        break;
+    case 6:
+        _mode = gr_modem_types::ModemType2FSK2000;
+        _tune_limit_lower = -5000;
+        _tune_limit_upper = 5000;
+        _step_hz = 1;
+        break;
+    case 7:
         _radio_type = radio_type::RADIO_TYPE_ANALOG;
         _mode = gr_modem_types::ModemTypeNBFM2500;
         _tune_limit_lower = -5000;
         _tune_limit_upper = 5000;
         _step_hz = 5;
         break;
-    case 6:
+    case 8:
+        _radio_type = radio_type::RADIO_TYPE_ANALOG;
+        _mode = gr_modem_types::ModemTypeNBFM5000;
+        _tune_limit_lower = -5000;
+        _tune_limit_upper = 5000;
+        _step_hz = 5;
+
+        break;
+    case 9:
         _radio_type = radio_type::RADIO_TYPE_ANALOG;
         _mode = gr_modem_types::ModemTypeSSB2500;
         _tune_limit_lower = -1500;
         _tune_limit_upper = 1500;
         _step_hz = 1;
         break;
-    case 7:
+    case 10:
         _mode = gr_modem_types::ModemTypeQPSKVideo;
         _tune_limit_lower = -15000;
         _tune_limit_upper = 15000;
         _step_hz = 100;
         break;
-    case 8:
-        _mode = gr_modem_types::ModemType2FSK2000;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
-        _step_hz = 1;
-        break;
-    case 9:
-        _mode = gr_modem_types::ModemTypeBPSK1000;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
-        _step_hz = 1;
-        break;
-    case 10:
+    case 11:
         _mode = gr_modem_types::ModemTypeQPSK250000;
         _tune_limit_lower = -5000;
         _tune_limit_upper = 5000;
