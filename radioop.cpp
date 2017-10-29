@@ -33,7 +33,10 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _process_text = false;
     _repeat_text = false;
     _settings = settings;
-    _tune_center_freq = 433500000;
+    _tx_power = 0;
+    _rx_sensitivity = 0;
+    _squelch = 0;
+    _tune_center_freq = 0;
     _tune_limit_lower = -5000;
     _tune_limit_upper = 5000;
     _step_hz = 1;
@@ -42,6 +45,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _tx_modem_started = false;
     _led_timer = new QTimer(this);
     _rand_frame_data = new unsigned char[5000];
+    _fft_gui = fft_gui;
     QObject::connect(_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));
     _modem = new gr_modem(_settings, fft_gui,const_gui, rssi_gui);
 
@@ -81,6 +85,8 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
                          std::string &rx_antenna, std::string &tx_antenna, int &rx_freq_corr,
                          int &tx_freq_corr, std::string &callsign, std::string &video_device)
 {
+    int tx_power, rx_sensitivity, squelch;
+    long long rx_frequency;
     QDir files = QDir::homePath();
 
     QFileInfo config_file = files.filePath(".config/qradiolink.cfg");
@@ -111,11 +117,35 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
         root.lookupValue("tx_freq_corr", tx_freq_corr);
         root.lookupValue("callsign", callsign);
         root.lookupValue("video_device", video_device);
+        root.lookupValue("tx_power", tx_power);
+        root.lookupValue("rx_sensitivity", rx_sensitivity);
+        root.lookupValue("squelch", squelch);
+        root.lookupValue("rx_frequency", rx_frequency);
         _callsign = QString::fromStdString(callsign);
         if(_callsign.size() < 7)
         {
             QString pad = QString(" ").repeated(7 - _callsign.size());
             _callsign = _callsign + pad;
+        }
+        if(_callsign.size() > 7)
+        {
+            _callsign = _callsign.mid(0,7);
+        }
+        if(_tx_power == 0)
+        {
+            _tx_power = tx_power;
+        }
+        if(_rx_sensitivity == 0)
+        {
+            _rx_sensitivity = rx_sensitivity;
+        }
+        if(_tune_center_freq == 0)
+        {
+            _tune_center_freq = rx_frequency;
+        }
+        if(_squelch == 0)
+        {
+            _squelch = squelch;
         }
     }
     catch(const libconfig::SettingNotFoundException &nfex)
@@ -306,7 +336,7 @@ void RadioOp::run()
             emit displayTransmitStatus(false);
         }
 
-        usleep(5000);
+        usleep(1000);
         if(_stop)
             break;
     }
@@ -485,8 +515,11 @@ void RadioOp::toggleRX(bool value)
         _modem->initRX(_mode, rx_device_args, rx_antenna, rx_freq_corr);
         _modem->startRX();
         _modem->tune(_tune_center_freq);
+        _fft_gui->set_frequency_range(_tune_center_freq, 1000000);
+        _modem->setRxSensitivity(_rx_sensitivity);
+        _modem->setSquelch(_squelch);
         _tune_center_freq = _modem->_requested_frequency_hz;
-        if(_mode == gr_modem_types::ModemTypeQPSK250000)
+        if(_mode == gr_modem_types::ModemTypeQPSK250000 && _net_device == 0)
         {
             _net_device = new NetDevice;
         }
@@ -521,9 +554,10 @@ void RadioOp::toggleTX(bool value)
         _tx_inited = true;
         _modem->initTX(_mode, tx_device_args, tx_antenna, tx_freq_corr);
         _modem->tune(_tune_center_freq);
+        _modem->setTxPower(_tx_power);
         if(_mode == gr_modem_types::ModemTypeQPSKVideo)
             _video = new VideoEncoder(QString::fromStdString(video_device));
-        if(_mode == gr_modem_types::ModemTypeQPSK250000)
+        if(_mode == gr_modem_types::ModemTypeQPSK250000 && _net_device == 0)
         {
             _net_device = new NetDevice;
         }
@@ -647,16 +681,25 @@ void RadioOp::tuneFreq(qint64 center_freq)
 {
     _tune_center_freq = center_freq;
     _modem->tune(center_freq, false);
+    _fft_gui->set_frequency_range(center_freq, 1000000);
 }
 
 void RadioOp::setTxPower(int dbm)
 {
+    _tx_power = dbm;
     _modem->setTxPower(dbm);
 }
 
 void RadioOp::setRxSensitivity(int value)
 {
+    _rx_sensitivity = (float)value/100;
     _modem->setRxSensitivity((float)value/100);
+}
+
+void RadioOp::setSquelch(int value)
+{
+    _squelch = value;
+    _modem->setSquelch(value);
 }
 
 void RadioOp::enableGUIConst(bool value)

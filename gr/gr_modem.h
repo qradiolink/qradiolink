@@ -144,6 +144,7 @@ public slots:
     void startTX();
     void stopTX();
     void setTxPower(int value);
+    void setSquelch(int value);
     void setRxSensitivity(float value);
     void enableGUIConst(bool value);
     void enableGUIFFT(bool value);

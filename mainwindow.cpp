@@ -25,7 +25,7 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
 {
     ui->setupUi(this);
     ui->frameCtrlFreq->setup(10, 10U, 9000000000U, 1, UNITS_MHZ );
-    ui->frameCtrlFreq->setFrequency(433500000);
+    ui->frameCtrlFreq->setFrequency(434000000);
     ui->frameCtrlFreq->setBkColor(QColor(0,0,127,255));
     ui->frameCtrlFreq->setHighlightColor(QColor(127,0,0,255));
     ui->frameCtrlFreq->setDigitColor(QColor(230,230,230,240));
@@ -46,12 +46,14 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
     QObject::connect(ui->frequencyEdit,SIGNAL(returnPressed()),this,SLOT(enterFreq()));
     QObject::connect(ui->txPowerSlider,SIGNAL(valueChanged(int)),this,SLOT(setTxPowerDisplay(int)));
     QObject::connect(ui->rxSensitivitySlider,SIGNAL(valueChanged(int)),this,SLOT(setRxSensitivityDisplay(int)));
+    QObject::connect(ui->rxSquelchSlider,SIGNAL(valueChanged(int)),this,SLOT(setSquelchDisplay(int)));
     QObject::connect(ui->modemTypeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(toggleMode(int)));
     QObject::connect(ui->autotuneButton,SIGNAL(toggled(bool)),this,SLOT(autoTune(bool)));
     QObject::connect(ui->saveOptionsButton,SIGNAL(clicked()),this,SLOT(saveConfig()));
     QObject::connect(ui->tabWidget,SIGNAL(currentChanged(int)),this,SLOT(mainTabChanged(int)));
 
     QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
+
 
     //ui->tuneSlider->setRange(-100,100);
     _transmitting_radio = false;
@@ -67,6 +69,12 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::closeEvent (QCloseEvent *event)
+{
+    saveConfig();
+    event->accept();
 }
 
 void MainWindow::readConfig(QFileInfo *config_file)
@@ -100,6 +108,11 @@ void MainWindow::readConfig(QFileInfo *config_file)
         ui->lineEditTXFreqCorrection->setText(QString::number(tx_freq_corr));
         ui->lineEditCallsign->setText(QString(cfg.lookup("callsign")));
         ui->lineEditVideoDevice->setText(QString(cfg.lookup("video_device")));
+        ui->txPowerSlider->setValue(cfg.lookup("tx_power"));
+        ui->rxSensitivitySlider->setValue(cfg.lookup("rx_sensitivity"));
+        ui->rxSquelchSlider->setValue(cfg.lookup("squelch"));
+        ui->frameCtrlFreq->setFrequency(cfg.lookup("rx_frequency"));
+        _rx_frequency = cfg.lookup("rx_frequency");
     }
     catch(const libconfig::SettingNotFoundException &nfex)
     {
@@ -111,6 +124,8 @@ void MainWindow::readConfig(QFileInfo *config_file)
         ui->lineEditTXFreqCorrection->setText("0");
         ui->lineEditCallsign->setText("CALL");
         ui->lineEditVideoDevice->setText("/dev/video0");
+        _rx_frequency = 434000000;
+        ui->frameCtrlFreq->setFrequency(_rx_frequency);
         std::cerr << "Settings not found in configuration file." << std::endl;
     }
 }
@@ -127,6 +142,10 @@ void MainWindow::saveConfig()
     root.add("tx_freq_corr",libconfig::Setting::TypeInt) = ui->lineEditTXFreqCorrection->text().toInt();
     root.add("callsign",libconfig::Setting::TypeString) = ui->lineEditCallsign->text().toStdString();
     root.add("video_device",libconfig::Setting::TypeString) = ui->lineEditVideoDevice->text().toStdString();
+    root.add("tx_power",libconfig::Setting::TypeInt) = (int)ui->txPowerSlider->value();
+    root.add("rx_sensitivity",libconfig::Setting::TypeInt) = (int)ui->rxSensitivitySlider->value();
+    root.add("squelch",libconfig::Setting::TypeInt) = (int)ui->rxSquelchSlider->value();
+    root.add("rx_frequency",libconfig::Setting::TypeInt64) = _rx_frequency;
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());
@@ -291,6 +310,7 @@ void MainWindow::tuneCenterFreq(int value)
 
 void MainWindow::tuneMainFreq(qint64 freq)
 {
+    _rx_frequency = freq;
     ui->frequencyEdit->setText(QString::number(ceil(freq/1000)));
     emit tuneFreq(freq);
 }
@@ -313,6 +333,12 @@ void MainWindow::setRxSensitivityDisplay(int value)
     emit setRxSensitivity(value);
 }
 
+void MainWindow::setSquelchDisplay(int value)
+{
+    ui->rxSquelchDisplay->display(value);
+    emit setSquelch(value);
+}
+
 void MainWindow::autoTune(bool value)
 {
     if(value)
@@ -328,11 +354,6 @@ void MainWindow::displayImage(QImage img)
     ui->videoLabel->setPixmap(*_video_img);
 }
 
-void MainWindow::playEndBeep(int seconds)
-{
-
-    //_end_beep->play();
-}
 
 void MainWindow::mainTabChanged(int value)
 {

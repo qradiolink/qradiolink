@@ -161,7 +161,7 @@ int main(int argc, char *argv[])
     rssi_gui->set_min(0,-120);
     rssi_gui->set_label(0,"RSSI");
     rssi_gui->qwidget()->resize(700,50);
-    rssi_gui->set_update_time(0.2);
+    rssi_gui->set_update_time(0.3);
 
     const std::string fft_name = "fft";
     gr::qtgui::sink_c::sptr fft_gui = gr::qtgui::sink_c::make(8096,gr::filter::firdes::WIN_BLACKMAN_HARRIS,
@@ -170,6 +170,7 @@ int main(int argc, char *argv[])
     fft_gui->set_update_time(0.1);
     fft_gui->set_fft_power_db(-120,-10);
     fft_gui->qwidget()->resize(1024,500);
+    fft_gui->enable_rf_freq(true);
 
     QThread *t4 = new QThread;
     t4->setObjectName("radioop");
@@ -193,6 +194,7 @@ int main(int argc, char *argv[])
     QObject::connect(&w,SIGNAL(fineTuneFreq(long)),radio_op,SLOT(fineTuneFreq(long)));
     QObject::connect(&w,SIGNAL(setTxPower(int)),radio_op,SLOT(setTxPower(int)));
     QObject::connect(&w,SIGNAL(setRxSensitivity(int)),radio_op,SLOT(setRxSensitivity(int)));
+    QObject::connect(&w,SIGNAL(setSquelch(int)),radio_op,SLOT(setSquelch(int)));
     QObject::connect(&w,SIGNAL(enableGUIConst(bool)),radio_op,SLOT(enableGUIConst(bool)));
     QObject::connect(&w,SIGNAL(enableGUIFFT(bool)),radio_op,SLOT(enableGUIFFT(bool)));
     QObject::connect(radio_op, SIGNAL(printText(QString)), &w, SLOT(displayText(QString)));
@@ -201,7 +203,7 @@ int main(int argc, char *argv[])
     QObject::connect(radio_op, SIGNAL(displayReceiveStatus(bool)), &w, SLOT(displayReceiveStatus(bool)));
     QObject::connect(radio_op, SIGNAL(displayTransmitStatus(bool)), &w, SLOT(displayTransmitStatus(bool)));
     QObject::connect(radio_op, SIGNAL(displayDataReceiveStatus(bool)), &w, SLOT(displayDataReceiveStatus(bool)));
-    QObject::connect(radio_op, SIGNAL(endAudio(int)), &w, SLOT(playEndBeep(int)));
+
     //QObject::connect(&w,SIGNAL(startTalkVOIP()),audio_op,SLOT(startTransmission()));
     //QObject::connect(&w,SIGNAL(stopTalkVOIP()),audio_op,SLOT(endTransmission()));
 

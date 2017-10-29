@@ -102,6 +102,7 @@ public slots:
     void fineTuneFreq(long center_freq);
     void tuneFreq(qint64 center_freq);
     void setTxPower(int dbm);
+    void setSquelch(int value);
     void setRxSensitivity(int value);
     void enableGUIConst(bool value);
     void enableGUIFFT(bool value);
@@ -133,13 +134,17 @@ private:
     gr_modem *_modem;
     int _mode;
     int _radio_type;
-    long _tune_center_freq;
+    long long _tune_center_freq;
+    int _tx_power;
+    int _squelch;
+    int _rx_sensitivity;
     int _step_hz;
     int _tune_limit_lower;
     int _tune_limit_upper;
     bool _tuning_done;
     bool _tx_modem_started;
     int _tune_counter;
+    gr::qtgui::sink_c::sptr _fft_gui;
     unsigned char *_rand_frame_data;
 
     void readConfig(std::string &rx_device_args, std::string &tx_device_args,
