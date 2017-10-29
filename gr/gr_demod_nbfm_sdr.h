@@ -23,9 +23,11 @@
 #include <gnuradio/analog/sig_source_c.h>
 #include <gnuradio/top_block.h>
 #include <gnuradio/filter/firdes.h>
+#include <gnuradio/analog/agc2_ff.h>
 #include <gnuradio/filter/pfb_arb_resampler_ccf.h>
 #include <gnuradio/analog/quadrature_demod_cf.h>
 #include <gnuradio/analog/simple_squelch_cc.h>
+#include <gnuradio/analog/ctcss_squelch_ff.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/qtgui/const_sink_c.h>
 #include <gnuradio/qtgui/sink_c.h>
@@ -55,6 +57,7 @@ public slots:
     void tune(long center_freq);
     void set_rx_sensitivity(float value);
     void set_squelch(int value);
+    void set_ctcss(float value);
     void enable_gui_const(bool value);
     void enable_gui_fft(bool value);
 
@@ -65,6 +68,9 @@ private:
     gr::blocks::multiply_cc::sptr _multiply;
     gr::analog::quadrature_demod_cf::sptr _fm_demod;
     gr::analog::simple_squelch_cc::sptr _squelch;
+    gr::blocks::multiply_const_ff::sptr _amplify;
+    gr::analog::ctcss_squelch_ff::sptr _ctcss;
+    gr::analog::agc2_ff::sptr _agc;
     gr::filter::pfb_arb_resampler_ccf::sptr _resampler;
     gr::filter::fft_filter_ccf::sptr _filter;
     gr::qtgui::const_sink_c::sptr _constellation;

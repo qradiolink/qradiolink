@@ -8,7 +8,7 @@ gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(gr::qtgui::sink_c::sptr fft_gui,
                                      std::string device_args, std::string device_antenna, int freq_corr) :
     QObject(parent)
 {
-    _target_samp_rate = 48000;
+    _target_samp_rate = 8000;
     _rssi = rssi_gui;
     _device_frequency = device_frequency;
     _samp_rate = samp_rate;
@@ -29,7 +29,10 @@ gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(gr::qtgui::sink_c::sptr fft_gui,
                             1, _target_samp_rate, _filter_width,600,gr::filter::firdes::WIN_HAMMING) );
     _audio_sink = gr::audio::sink::make(_target_samp_rate,"", true);
     _fm_demod = gr::analog::quadrature_demod_cf::make(_target_samp_rate/(4*M_PI* _filter_width));
-    _squelch = gr::analog::simple_squelch_cc::make(-140,0.002);
+    _squelch = gr::analog::simple_squelch_cc::make(-140,0.001);
+    _ctcss = gr::analog::ctcss_squelch_ff::make(_target_samp_rate,0,1,1,1,false);
+    _agc = gr::analog::agc2_ff::make(0.006e-1, 1e-3,0.8, 1);
+    _amplify = gr::blocks::multiply_const_ff::make(0.8);
 
     _rssi_valve = gr::blocks::copy::make(8);
     _rssi_valve->set_enabled(false);
@@ -70,7 +73,9 @@ gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(gr::qtgui::sink_c::sptr fft_gui,
     _top_block->connect(_resampler,0,_filter,0);
     _top_block->connect(_filter,0,_squelch,0);
     _top_block->connect(_squelch,0,_fm_demod,0);
-    _top_block->connect(_fm_demod,0,_audio_sink,0);
+    _top_block->connect(_fm_demod,0,_agc,0);
+    _top_block->connect(_agc,0,_amplify,0);
+    _top_block->connect(_amplify,0,_audio_sink,0);
 
 
     _top_block->connect(_filter,0,_rssi_valve,0);
@@ -124,4 +129,17 @@ void gr_demod_nbfm_sdr::enable_gui_fft(bool value)
 void gr_demod_nbfm_sdr::set_squelch(int value)
 {
     _squelch->set_threshold(value);
+}
+
+void gr_demod_nbfm_sdr::set_ctcss(float value)
+{
+    if(value == -1.0)
+    {
+        _ctcss->set_gate(false);
+    }
+    else
+    {
+        _ctcss->set_frequency(value);
+        _ctcss->set_gate(true);
+    }
 }
