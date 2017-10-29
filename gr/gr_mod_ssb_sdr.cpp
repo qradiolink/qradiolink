@@ -24,24 +24,25 @@ gr_mod_ssb_sdr::gr_mod_ssb_sdr(QObject *parent, int samp_rate, int carrier_freq,
 
     _device_frequency = device_frequency;
     _samp_rate =samp_rate;
+    float target_samp_rate = 8000.0;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
     _modulation_index = mod_index;
     _top_block = gr::make_top_block("ssb modulator sdr");
 
-    _audio_source = gr::audio::source::make(48000,"",false);
-    _signal_source = gr::analog::sig_source_f::make(48000,gr::analog::GR_COS_WAVE, 0, 1);
-    _carrier_suppress = gr::analog::sig_source_c::make(48000,gr::analog::GR_SIN_WAVE,0,1);
+    _audio_source = gr::audio::source::make(target_samp_rate,"",false);
+    _signal_source = gr::analog::sig_source_f::make(target_samp_rate,gr::analog::GR_COS_WAVE, 0, 1);
+    _carrier_suppress = gr::analog::sig_source_c::make(target_samp_rate,gr::analog::GR_SIN_WAVE,0,1);
     _delay = gr::blocks::delay::make(8,125000);
     _multiply = gr::blocks::multiply_ff::make();
     _multiply2 = gr::blocks::multiply_cc::make();
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::low_pass(
-                    1, 48000, _filter_width, 600, gr::filter::firdes::WIN_HAMMING));
+                    1, target_samp_rate, _filter_width, 600, gr::filter::firdes::WIN_HAMMING));
     _float_to_complex = gr::blocks::float_to_complex::make();
-    std::vector<float> interp_taps = gr::filter::firdes::low_pass(1, 48000,
-                                                        10000, 10000);
-    float rerate = (float)_samp_rate/48000.0;
+    std::vector<float> interp_taps = gr::filter::firdes::low_pass(1, target_samp_rate,
+                                                        4000, 4000);
+    float rerate = (float)_samp_rate/target_samp_rate;
     _resampler = gr::filter::pfb_arb_resampler_ccf::make(rerate, interp_taps, 16);
     _amplify = gr::blocks::multiply_const_cc::make(90,1);
     _filter = gr::filter::fft_filter_ccc::make(

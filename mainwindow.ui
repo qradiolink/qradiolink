@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1111</width>
-    <height>624</height>
+    <height>676</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -1589,17 +1589,7 @@ font: 18pt &quot;Sans Serif&quot;;</string>
             </item>
             <item>
              <property name="text">
-              <string>QPSK  10K</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>4FSK  10K</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>4FSK  2K</string>
+              <string>BPSK 1K (700B)</string>
              </property>
             </item>
             <item>
@@ -1609,7 +1599,32 @@ font: 18pt &quot;Sans Serif&quot;;</string>
             </item>
             <item>
              <property name="text">
-              <string>Analog FM</string>
+              <string>QPSK  10K</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>4FSK  2K</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>4FSK  10K</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>2FSK 2K</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Narrow FM</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>FM</string>
              </property>
             </item>
             <item>
@@ -1620,16 +1635,6 @@ font: 18pt &quot;Sans Serif&quot;;</string>
             <item>
              <property name="text">
               <string>Video (640x480)</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>2FSK 2K</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>BPSK 1K (700B)</string>
              </property>
             </item>
             <item>

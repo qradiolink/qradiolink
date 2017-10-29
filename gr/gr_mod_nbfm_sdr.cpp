@@ -23,36 +23,28 @@ gr_mod_nbfm_sdr::gr_mod_nbfm_sdr(QObject *parent, int samp_rate, int carrier_fre
 {
     _device_frequency = device_frequency;
     _samp_rate =samp_rate;
+    float target_samp_rate = 8000;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
     _modulation_index = mod_index;
     _top_block = gr::make_top_block("nbfm modulator sdr");
 
-    _fm_modulator = gr::analog::frequency_modulator_fc::make(4*M_PI*_filter_width/48000);
-    _audio_source = gr::audio::source::make(48000,"",true);
-    _signal_source = gr::analog::sig_source_f::make(48000,gr::analog::GR_COS_WAVE, 0, 1);
+    _fm_modulator = gr::analog::frequency_modulator_fc::make(4*M_PI*_filter_width/target_samp_rate);
+    _audio_source = gr::audio::source::make(target_samp_rate,"",true);
+    _signal_source = gr::analog::sig_source_f::make(target_samp_rate,gr::analog::GR_COS_WAVE, 0, 1);
     _multiply = gr::blocks::multiply_ff::make();
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::band_pass(
-                    1, 48000, 300, _filter_width, 600, gr::filter::firdes::WIN_HAMMING));
+                    1, target_samp_rate, 300, _filter_width, 600, gr::filter::firdes::WIN_HAMMING));
 
-    static const float coeff[] = {-0.004698328208178282, -0.0059243254363536835, -0.0087096206843853,
-                                -0.013337517157196999, -0.01995571330189705, -0.02855188399553299,
-                                -0.038942500948905945, -0.050776369869709015, -0.06355307996273041,
-                                -0.07665517926216125, -0.08939168602228165, -0.10104917734861374,
-                                -0.11094631999731064, -0.11848713457584381, -0.12320811301469803,
-                                2.8707525730133057, -0.12320811301469803, -0.11848713457584381,
-                                -0.11094631999731064, -0.10104917734861374, -0.08939168602228165,
-                                -0.07665517926216125, -0.06355307996273041, -0.050776369869709015,
-                                -0.038942500948905945, -0.02855188399553299, -0.01995571330189705,
-                                -0.013337517157196999, -0.0087096206843853, -0.0059243254363536835,
-                                -0.004698328208178282};
+    static const float coeff[] =  {-0.026316914707422256, -0.2512197494506836, 1.5501943826675415,
+                                   -0.2512197494506836, -0.026316914707422256};
     std::vector<float> iir_taps(coeff, coeff + sizeof(coeff) / sizeof(coeff[0]) );
     _emphasis_filter = gr::filter::fft_filter_ccf::make(1,iir_taps);
 
-    std::vector<float> interp_taps = gr::filter::firdes::low_pass(1, 48000,
+    std::vector<float> interp_taps = gr::filter::firdes::low_pass(1, target_samp_rate,
                                                         _filter_width, 2000);
-    float rerate = (float)_samp_rate/48000.0;
+    float rerate = (float)_samp_rate/target_samp_rate;
     _resampler = gr::filter::pfb_arb_resampler_ccf::make(rerate, interp_taps, 32);
     _amplify = gr::blocks::multiply_const_cc::make(10,1);
     _filter = gr::filter::fft_filter_ccf::make(
