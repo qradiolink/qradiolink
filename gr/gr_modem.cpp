@@ -562,6 +562,8 @@ void gr_modem::setSquelch(int value)
 {
     if(_gr_demod_nbfm_sdr)
         _gr_demod_nbfm_sdr->set_squelch(value);
+    if(_gr_demod_ssb_sdr)
+        _gr_demod_ssb_sdr->set_squelch(value);
 }
 
 void gr_modem::enableGUIConst(bool value)
