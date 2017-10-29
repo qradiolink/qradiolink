@@ -33,8 +33,9 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _process_text = false;
     _repeat_text = false;
     _settings = settings;
-    _tx_power = 50;
-    _tune_center_freq = 433500000;
+    _tx_power = 0;
+    _rx_sensitivity = 0;
+    _tune_center_freq = 0;
     _tune_limit_lower = -5000;
     _tune_limit_upper = 5000;
     _step_hz = 1;
@@ -82,6 +83,8 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
                          std::string &rx_antenna, std::string &tx_antenna, int &rx_freq_corr,
                          int &tx_freq_corr, std::string &callsign, std::string &video_device)
 {
+    int tx_power, rx_sensitivity;
+    long long rx_frequency;
     QDir files = QDir::homePath();
 
     QFileInfo config_file = files.filePath(".config/qradiolink.cfg");
@@ -112,11 +115,30 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
         root.lookupValue("tx_freq_corr", tx_freq_corr);
         root.lookupValue("callsign", callsign);
         root.lookupValue("video_device", video_device);
+        root.lookupValue("tx_power", tx_power);
+        root.lookupValue("rx_sensitivity", rx_sensitivity);
+        root.lookupValue("rx_frequency", rx_frequency);
         _callsign = QString::fromStdString(callsign);
         if(_callsign.size() < 7)
         {
             QString pad = QString(" ").repeated(7 - _callsign.size());
             _callsign = _callsign + pad;
+        }
+        if(_callsign.size() > 7)
+        {
+            _callsign = _callsign.mid(0,7);
+        }
+        if(_tx_power == 0)
+        {
+            _tx_power = tx_power;
+        }
+        if(_rx_sensitivity == 0)
+        {
+            _rx_sensitivity = rx_sensitivity;
+        }
+        if(_tune_center_freq == 0)
+        {
+            _tune_center_freq = rx_frequency;
         }
     }
     catch(const libconfig::SettingNotFoundException &nfex)
@@ -486,8 +508,9 @@ void RadioOp::toggleRX(bool value)
         _modem->initRX(_mode, rx_device_args, rx_antenna, rx_freq_corr);
         _modem->startRX();
         _modem->tune(_tune_center_freq);
+        _modem->setRxSensitivity(_rx_sensitivity);
         _tune_center_freq = _modem->_requested_frequency_hz;
-        if(_mode == gr_modem_types::ModemTypeQPSK250000)
+        if(_mode == gr_modem_types::ModemTypeQPSK250000 && _net_device == 0)
         {
             _net_device = new NetDevice;
         }
@@ -525,7 +548,7 @@ void RadioOp::toggleTX(bool value)
         _modem->setTxPower(_tx_power);
         if(_mode == gr_modem_types::ModemTypeQPSKVideo)
             _video = new VideoEncoder(QString::fromStdString(video_device));
-        if(_mode == gr_modem_types::ModemTypeQPSK250000)
+        if(_mode == gr_modem_types::ModemTypeQPSK250000 && _net_device == 0)
         {
             _net_device = new NetDevice;
         }
@@ -659,6 +682,7 @@ void RadioOp::setTxPower(int dbm)
 
 void RadioOp::setRxSensitivity(int value)
 {
+    _rx_sensitivity = (float)value/100;
     _modem->setRxSensitivity((float)value/100);
 }
 

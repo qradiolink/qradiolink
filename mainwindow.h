@@ -18,6 +18,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QCloseEvent>
 #include <QFile>
 #include <QFileDialog>
 #include <QScrollBar>
@@ -106,7 +107,9 @@ private:
     QWidget *_fft_gui;
     QPixmap *_video_img;
     QFileInfo *_config_file;
+    qint64 _rx_frequency;
     QFileInfo *setupConfig();
+    void closeEvent(QCloseEvent *);
 
 
 

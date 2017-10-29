@@ -53,6 +53,7 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
 
     QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
 
+
     //ui->tuneSlider->setRange(-100,100);
     _transmitting_radio = false;
     _constellation_gui = ui->widget_const;
@@ -67,6 +68,12 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::closeEvent (QCloseEvent *event)
+{
+    saveConfig();
+    event->accept();
 }
 
 void MainWindow::readConfig(QFileInfo *config_file)
@@ -100,6 +107,10 @@ void MainWindow::readConfig(QFileInfo *config_file)
         ui->lineEditTXFreqCorrection->setText(QString::number(tx_freq_corr));
         ui->lineEditCallsign->setText(QString(cfg.lookup("callsign")));
         ui->lineEditVideoDevice->setText(QString(cfg.lookup("video_device")));
+        ui->txPowerSlider->setValue(cfg.lookup("tx_power"));
+        ui->rxSensitivitySlider->setValue(cfg.lookup("rx_sensitivity"));
+        ui->frameCtrlFreq->setFrequency(cfg.lookup("rx_frequency"));
+        _rx_frequency = cfg.lookup("rx_frequency");
     }
     catch(const libconfig::SettingNotFoundException &nfex)
     {
@@ -127,6 +138,9 @@ void MainWindow::saveConfig()
     root.add("tx_freq_corr",libconfig::Setting::TypeInt) = ui->lineEditTXFreqCorrection->text().toInt();
     root.add("callsign",libconfig::Setting::TypeString) = ui->lineEditCallsign->text().toStdString();
     root.add("video_device",libconfig::Setting::TypeString) = ui->lineEditVideoDevice->text().toStdString();
+    root.add("tx_power",libconfig::Setting::TypeInt) = (int)ui->txPowerSlider->value();
+    root.add("rx_sensitivity",libconfig::Setting::TypeInt) = (int)ui->rxSensitivitySlider->value();
+    root.add("rx_frequency",libconfig::Setting::TypeInt64) = _rx_frequency;
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());
@@ -291,6 +305,7 @@ void MainWindow::tuneCenterFreq(int value)
 
 void MainWindow::tuneMainFreq(qint64 freq)
 {
+    _rx_frequency = freq;
     ui->frequencyEdit->setText(QString::number(ceil(freq/1000)));
     emit tuneFreq(freq);
 }

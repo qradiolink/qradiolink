@@ -133,8 +133,9 @@ private:
     gr_modem *_modem;
     int _mode;
     int _radio_type;
-    long _tune_center_freq;
+    long long _tune_center_freq;
     int _tx_power;
+    int _rx_sensitivity;
     int _step_hz;
     int _tune_limit_lower;
     int _tune_limit_upper;
