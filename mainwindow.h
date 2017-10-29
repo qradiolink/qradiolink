@@ -61,9 +61,9 @@ public slots:
     void toggleMode(int value);
     void setTxPowerDisplay(int value);
     void setRxSensitivityDisplay(int value);
+    void setSquelchDisplay(int value);
     void autoTune(bool value);
     void displayImage(QImage img);
-    void playEndBeep(int seconds);
     void enterFreq();
     void saveConfig();
     void mainTabChanged(int value);
@@ -85,6 +85,7 @@ signals:
     void toggleModemMode(int value);
     void setTxPower(int value);
     void setRxSensitivity(int value);
+    void setSquelch(int value);
     void enableGUIConst(bool value);
     void enableGUIFFT(bool value);
     void startAutoTuneFreq();

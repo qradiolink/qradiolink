@@ -193,6 +193,7 @@ int main(int argc, char *argv[])
     QObject::connect(&w,SIGNAL(fineTuneFreq(long)),radio_op,SLOT(fineTuneFreq(long)));
     QObject::connect(&w,SIGNAL(setTxPower(int)),radio_op,SLOT(setTxPower(int)));
     QObject::connect(&w,SIGNAL(setRxSensitivity(int)),radio_op,SLOT(setRxSensitivity(int)));
+    QObject::connect(&w,SIGNAL(setSquelch(int)),radio_op,SLOT(setSquelch(int)));
     QObject::connect(&w,SIGNAL(enableGUIConst(bool)),radio_op,SLOT(enableGUIConst(bool)));
     QObject::connect(&w,SIGNAL(enableGUIFFT(bool)),radio_op,SLOT(enableGUIFFT(bool)));
     QObject::connect(radio_op, SIGNAL(printText(QString)), &w, SLOT(displayText(QString)));
@@ -201,7 +202,7 @@ int main(int argc, char *argv[])
     QObject::connect(radio_op, SIGNAL(displayReceiveStatus(bool)), &w, SLOT(displayReceiveStatus(bool)));
     QObject::connect(radio_op, SIGNAL(displayTransmitStatus(bool)), &w, SLOT(displayTransmitStatus(bool)));
     QObject::connect(radio_op, SIGNAL(displayDataReceiveStatus(bool)), &w, SLOT(displayDataReceiveStatus(bool)));
-    QObject::connect(radio_op, SIGNAL(endAudio(int)), &w, SLOT(playEndBeep(int)));
+
     //QObject::connect(&w,SIGNAL(startTalkVOIP()),audio_op,SLOT(startTransmission()));
     //QObject::connect(&w,SIGNAL(stopTalkVOIP()),audio_op,SLOT(endTransmission()));
 

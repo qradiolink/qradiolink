@@ -102,6 +102,7 @@ public slots:
     void fineTuneFreq(long center_freq);
     void tuneFreq(qint64 center_freq);
     void setTxPower(int dbm);
+    void setSquelch(int value);
     void setRxSensitivity(int value);
     void enableGUIConst(bool value);
     void enableGUIFFT(bool value);
@@ -135,6 +136,7 @@ private:
     int _radio_type;
     long long _tune_center_freq;
     int _tx_power;
+    int _squelch;
     int _rx_sensitivity;
     int _step_hz;
     int _tune_limit_lower;

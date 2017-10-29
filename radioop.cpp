@@ -35,6 +35,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _settings = settings;
     _tx_power = 0;
     _rx_sensitivity = 0;
+    _squelch = 0;
     _tune_center_freq = 0;
     _tune_limit_lower = -5000;
     _tune_limit_upper = 5000;
@@ -83,7 +84,7 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
                          std::string &rx_antenna, std::string &tx_antenna, int &rx_freq_corr,
                          int &tx_freq_corr, std::string &callsign, std::string &video_device)
 {
-    int tx_power, rx_sensitivity;
+    int tx_power, rx_sensitivity, squelch;
     long long rx_frequency;
     QDir files = QDir::homePath();
 
@@ -117,6 +118,7 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
         root.lookupValue("video_device", video_device);
         root.lookupValue("tx_power", tx_power);
         root.lookupValue("rx_sensitivity", rx_sensitivity);
+        root.lookupValue("squelch", squelch);
         root.lookupValue("rx_frequency", rx_frequency);
         _callsign = QString::fromStdString(callsign);
         if(_callsign.size() < 7)
@@ -139,6 +141,10 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
         if(_tune_center_freq == 0)
         {
             _tune_center_freq = rx_frequency;
+        }
+        if(_squelch == 0)
+        {
+            _squelch = squelch;
         }
     }
     catch(const libconfig::SettingNotFoundException &nfex)
@@ -509,6 +515,7 @@ void RadioOp::toggleRX(bool value)
         _modem->startRX();
         _modem->tune(_tune_center_freq);
         _modem->setRxSensitivity(_rx_sensitivity);
+        _modem->setSquelch(_squelch);
         _tune_center_freq = _modem->_requested_frequency_hz;
         if(_mode == gr_modem_types::ModemTypeQPSK250000 && _net_device == 0)
         {
@@ -684,6 +691,12 @@ void RadioOp::setRxSensitivity(int value)
 {
     _rx_sensitivity = (float)value/100;
     _modem->setRxSensitivity((float)value/100);
+}
+
+void RadioOp::setSquelch(int value)
+{
+    _squelch = value;
+    _modem->setSquelch(value);
 }
 
 void RadioOp::enableGUIConst(bool value)

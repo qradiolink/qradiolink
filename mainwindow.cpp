@@ -46,6 +46,7 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
     QObject::connect(ui->frequencyEdit,SIGNAL(returnPressed()),this,SLOT(enterFreq()));
     QObject::connect(ui->txPowerSlider,SIGNAL(valueChanged(int)),this,SLOT(setTxPowerDisplay(int)));
     QObject::connect(ui->rxSensitivitySlider,SIGNAL(valueChanged(int)),this,SLOT(setRxSensitivityDisplay(int)));
+    QObject::connect(ui->rxSquelchSlider,SIGNAL(valueChanged(int)),this,SLOT(setSquelchDisplay(int)));
     QObject::connect(ui->modemTypeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(toggleMode(int)));
     QObject::connect(ui->autotuneButton,SIGNAL(toggled(bool)),this,SLOT(autoTune(bool)));
     QObject::connect(ui->saveOptionsButton,SIGNAL(clicked()),this,SLOT(saveConfig()));
@@ -109,6 +110,7 @@ void MainWindow::readConfig(QFileInfo *config_file)
         ui->lineEditVideoDevice->setText(QString(cfg.lookup("video_device")));
         ui->txPowerSlider->setValue(cfg.lookup("tx_power"));
         ui->rxSensitivitySlider->setValue(cfg.lookup("rx_sensitivity"));
+        ui->rxSquelchSlider->setValue(cfg.lookup("squelch"));
         ui->frameCtrlFreq->setFrequency(cfg.lookup("rx_frequency"));
         _rx_frequency = cfg.lookup("rx_frequency");
     }
@@ -140,6 +142,7 @@ void MainWindow::saveConfig()
     root.add("video_device",libconfig::Setting::TypeString) = ui->lineEditVideoDevice->text().toStdString();
     root.add("tx_power",libconfig::Setting::TypeInt) = (int)ui->txPowerSlider->value();
     root.add("rx_sensitivity",libconfig::Setting::TypeInt) = (int)ui->rxSensitivitySlider->value();
+    root.add("squelch",libconfig::Setting::TypeInt) = (int)ui->rxSquelchSlider->value();
     root.add("rx_frequency",libconfig::Setting::TypeInt64) = _rx_frequency;
     try
     {
@@ -328,6 +331,12 @@ void MainWindow::setRxSensitivityDisplay(int value)
     emit setRxSensitivity(value);
 }
 
+void MainWindow::setSquelchDisplay(int value)
+{
+    ui->rxSquelchDisplay->display(value);
+    emit setSquelch(value);
+}
+
 void MainWindow::autoTune(bool value)
 {
     if(value)
@@ -343,11 +352,6 @@ void MainWindow::displayImage(QImage img)
     ui->videoLabel->setPixmap(*_video_img);
 }
 
-void MainWindow::playEndBeep(int seconds)
-{
-
-    //_end_beep->play();
-}
 
 void MainWindow::mainTabChanged(int value)
 {

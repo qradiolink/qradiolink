@@ -29,6 +29,7 @@ gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(gr::qtgui::sink_c::sptr fft_gui,
                             1, _target_samp_rate, _filter_width,600,gr::filter::firdes::WIN_HAMMING) );
     _audio_sink = gr::audio::sink::make(_target_samp_rate,"", true);
     _fm_demod = gr::analog::quadrature_demod_cf::make(_target_samp_rate/(4*M_PI* _filter_width));
+    _squelch = gr::analog::simple_squelch_cc::make(-140,0.002);
 
     _rssi_valve = gr::blocks::copy::make(8);
     _rssi_valve->set_enabled(false);
@@ -67,7 +68,8 @@ gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(gr::qtgui::sink_c::sptr fft_gui,
     _top_block->connect(_multiply,0,_fft_valve,0);
     _top_block->connect(_fft_valve,0,_fft_gui,0);
     _top_block->connect(_resampler,0,_filter,0);
-    _top_block->connect(_filter,0,_fm_demod,0);
+    _top_block->connect(_filter,0,_squelch,0);
+    _top_block->connect(_squelch,0,_fm_demod,0);
     _top_block->connect(_fm_demod,0,_audio_sink,0);
 
 
@@ -117,4 +119,9 @@ void gr_demod_nbfm_sdr::enable_gui_const(bool value)
 void gr_demod_nbfm_sdr::enable_gui_fft(bool value)
 {
     _fft_valve->set_enabled(value);
+}
+
+void gr_demod_nbfm_sdr::set_squelch(int value)
+{
+    _squelch->set_threshold(value);
 }

@@ -558,6 +558,12 @@ void gr_modem::setRxSensitivity(float value)
         _gr_demod_2fsk_sdr->set_rx_sensitivity(value);
 }
 
+void gr_modem::setSquelch(int value)
+{
+    if(_gr_demod_nbfm_sdr)
+        _gr_demod_nbfm_sdr->set_squelch(value);
+}
+
 void gr_modem::enableGUIConst(bool value)
 {
     if(_gr_demod_bpsk_sdr)
