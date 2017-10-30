@@ -1089,6 +1089,12 @@ QSlider::handle:horizontal {
          </layout>
         </widget>
         <widget class="QWidget" name="tab_9">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <attribute name="title">
           <string>Spectrum</string>
          </attribute>
@@ -1097,18 +1103,18 @@ QSlider::handle:horizontal {
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>1081</width>
-            <height>461</height>
+            <width>1091</width>
+            <height>722</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_6">
            <property name="sizeConstraint">
             <enum>QLayout::SetNoConstraint</enum>
            </property>
-           <item row="0" column="0">
+           <item row="1" column="0">
             <widget class="QWidget" name="widget_fft" native="true">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
@@ -1116,12 +1122,12 @@ QSlider::handle:horizontal {
              <property name="minimumSize">
               <size>
                <width>720</width>
-               <height>350</height>
+               <height>540</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
-               <width>1024</width>
+               <width>1920</width>
                <height>1024</height>
               </size>
              </property>
@@ -1137,6 +1143,7 @@ QSlider::handle:horizontal {
              <property name="styleSheet">
               <string notr="true">font: 10pt &quot;Sans Serif&quot;;</string>
              </property>
+             <layout class="QGridLayout" name="gridLayout_7"/>
             </widget>
            </item>
           </layout>
