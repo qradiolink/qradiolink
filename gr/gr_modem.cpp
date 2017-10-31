@@ -247,7 +247,7 @@ void gr_modem::initRX(int modem_type, std::string device_args, std::string devic
         _gr_demod_qpsk_sdr = new gr_demod_qpsk_sdr(_fft_gui,
                     _const_gui,_rssi_gui, 0,2,1000000,250000,1700,70000,1,
                                                    _requested_frequency_hz, 0.9, device_args, device_antenna, freq_corr);
-        _bit_buf_len = 1512 *8;
+        _bit_buf_len = 1513 *8;
         _frame_length = 1512;
         _bit_buf = new unsigned char[_bit_buf_len];
     }
@@ -932,29 +932,33 @@ int gr_modem::findSync(unsigned char bit)
             return FrameTypeVoice;
         }
     }
-    temp = _shift_reg & 0xFFFF;
-    if((temp == 0xED89))
+    if(_modem_type != gr_modem_types::ModemTypeQPSK250000)
     {
-        _sync_found = true;
-        return FrameTypeVoice;
+        temp = _shift_reg & 0xFFFF;
+        if((temp == 0xED89))
+        {
+            _sync_found = true;
+            return FrameTypeVoice;
+        }
+        temp = _shift_reg & 0xFFFFFF;
+        if((temp == 0x89EDAA))
+        {
+            _sync_found = true;
+            return FrameTypeText;
+        }
+
+        if((temp == 0x98DEAA))
+        {
+            _sync_found = true;
+            return FrameTypeVideo;
+        }
+        if((temp == 0x8CC8DD))
+        {
+            _sync_found = true;
+            return FrameTypeCallsign;
+        }
     }
     temp = _shift_reg & 0xFFFFFF;
-    if((temp == 0x89EDAA))
-    {
-        _sync_found = true;
-        return FrameTypeText;
-    }
-
-    if((temp == 0x98DEAA))
-    {
-        _sync_found = true;
-        return FrameTypeVideo;
-    }
-    if((temp == 0x8CC8DD))
-    {
-        _sync_found = true;
-        return FrameTypeCallsign;
-    }
     if((temp == 0xDE98AA))
     {
         _sync_found = true;

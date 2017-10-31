@@ -30,6 +30,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _rx_inited = false;
     _settings = settings;
     _transmitting = false;
+    _net_lock = false;
     _process_text = false;
     _repeat_text = false;
     _settings = settings;
@@ -232,6 +233,7 @@ int RadioOp::processVideoStream(bool &frame_flag)
 
 void RadioOp::processNetStream()
 {
+    _net_lock = true;
     int max_frame_size = 1512;
     unsigned char *netbuffer = (unsigned char*)calloc(max_frame_size, sizeof(unsigned char));
     int nread;
@@ -243,6 +245,11 @@ void RadioOp::processNetStream()
         memcpy(&(netbuffer[4]), &nread, 4);
         memcpy(&(netbuffer[8]), &nread, 4);
         memcpy(&(netbuffer[12]), buffer, nread);
+        for(int k=nread+12,i=0;k<max_frame_size;k++,i++)
+        {
+            netbuffer[k] = _rand_frame_data[i];
+        }
+
         emit netData(netbuffer,max_frame_size);
         delete[] buffer;
     }
@@ -251,6 +258,7 @@ void RadioOp::processNetStream()
         delete[] netbuffer;
         delete[] buffer;
     }
+    _net_lock = false;
 }
 
 void RadioOp::run()
@@ -269,7 +277,7 @@ void RadioOp::run()
             ptt_activated = true;
             if(_tx_inited)
             {
-                if(_rx_inited)
+                if(_rx_inited && (_mode != gr_modem_types::ModemTypeQPSK250000))
                     _modem->stopRX();
                 if(_tx_modem_started)
                     _modem->stopTX();
@@ -298,9 +306,14 @@ void RadioOp::run()
         {
             if(_mode == gr_modem_types::ModemTypeQPSKVideo)
                 processVideoStream(frame_flag);
-            else if(_mode == gr_modem_types::ModemTypeQPSK250000)
+            else if((_mode == gr_modem_types::ModemTypeQPSK250000) && (_net_device != 0))
             {
-                processNetStream();
+                if(_rx_inited)
+                {
+                    _modem->demodulate();
+                }
+                if(!_net_lock)
+                    processNetStream();
             }
             else
             {
@@ -311,11 +324,6 @@ void RadioOp::run()
         {
             if(_rx_inited)
             {
-                if(_modem->_frequency_found == 0)
-                {
-                    emit displayReceiveStatus(false);
-                    emit displayDataReceiveStatus(false);
-                }
                 if(!_tuning_done)
                     autoTune();
                 if(_radio_type == radio_type::RADIO_TYPE_DIGITAL)
