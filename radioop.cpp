@@ -30,7 +30,6 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _rx_inited = false;
     _settings = settings;
     _transmitting = false;
-    _net_lock = false;
     _process_text = false;
     _repeat_text = false;
     _settings = settings;
@@ -233,7 +232,6 @@ int RadioOp::processVideoStream(bool &frame_flag)
 
 void RadioOp::processNetStream()
 {
-    _net_lock = true;
     int max_frame_size = 1512;
     unsigned char *netbuffer = (unsigned char*)calloc(max_frame_size, sizeof(unsigned char));
     int nread;
@@ -258,7 +256,6 @@ void RadioOp::processNetStream()
         delete[] netbuffer;
         delete[] buffer;
     }
-    _net_lock = false;
 }
 
 void RadioOp::run()
@@ -312,8 +309,7 @@ void RadioOp::run()
                 {
                     _modem->demodulate();
                 }
-                if(!_net_lock)
-                    processNetStream();
+                processNetStream();
             }
             else
             {
