@@ -154,6 +154,26 @@ int main(int argc, char *argv[])
     gr::qtgui::const_sink_c::sptr const_gui = gr::qtgui::const_sink_c::make(256, const_name,1, (&w)->get_const_gui());
     const_gui->set_size(600,400);
     const_gui->set_update_time(0.2);
+    const_gui->qwidget()->setStyleSheet(
+                "QwtPlotCanvas { background-color: #E1DFFF;  \
+                border: 1px solid White; \
+                border-radius: 10px; \
+                } \
+                DisplayPlot { \
+                qproperty-zoomer_color: black; \
+                qproperty-line_color1: #01147F; \
+                qproperty-line_color2: magenta; \
+                qproperty-line_color3: #FF6905; \
+                qproperty-line_style2: DashLine; \
+                qproperty-line_style3: DotLine; \
+                qproperty-line_width1: 1; \
+                qproperty-line_width2: 1; \
+                qproperty-line_width3: 1; \
+                qproperty-marker_alpha1: 210; \
+                qproperty-marker_alpha2: 0; \
+                qproperty-marker_alpha3: 0; \
+                qproperty-axes_label_font_size: 12; \
+                } ");
 
 
     gr::qtgui::number_sink::sptr rssi_gui = gr::qtgui::number_sink::make(4,0.5,gr::qtgui::NUM_GRAPH_HORIZ,1,(&w)->get_rssi_gui());
@@ -168,9 +188,43 @@ int main(int argc, char *argv[])
                                                           0,1000000,fft_name,true,true,false,false,(&w)->get_fft_gui());
 
     fft_gui->set_update_time(0.1);
-    fft_gui->set_fft_power_db(-200,50);
+    fft_gui->set_fft_power_db(-140,0);
     QRect xy = w.geometry();
-    fft_gui->qwidget()->resize(xy.right() -xy.left(),xy.bottom()-xy.top()-100);
+    (&w)->get_fft_gui()->resize(xy.right() -xy.left(),xy.bottom()-xy.top()-100);
+    fft_gui->qwidget()->resize(xy.right() -xy.left()-6,xy.bottom()-xy.top()-106);
+    fft_gui->qwidget()->setStyleSheet(
+                "QwtPlotCanvas { background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #FFFEA2, stop: 1 #0385FF); \
+                border: 1px solid White; \
+                border-radius: 10px; } \
+                DisplayPlot { \
+                qproperty-zoomer_color: black; \
+                qproperty-line_color1: #A4051F; \
+                qproperty-line_color2: magenta; \
+                qproperty-line_color3: #FF6905; \
+                qproperty-line_style1: SolidLine; \
+                qproperty-line_style2: DashLine; \
+                qproperty-line_style3: DotLine; \
+                qproperty-line_width1: 1; \
+                qproperty-line_width2: 2; \
+                qproperty-line_width3: 2; \
+                qproperty-marker_alpha1: 100; \
+                qproperty-marker_alpha2: 150; \
+                qproperty-marker_alpha3: 150; \
+                qproperty-axes_label_font_size: 12; \
+                } \
+                WaterfallDisplayPlot { \
+                qproperty-intensity_color_map_type1: 5; \
+                    qproperty-low_intensity_color: #0B0041; \
+                qproperty-high_intensity_color: #FFFB00; \
+                } \
+                FrequencyDisplayPlot { \
+                    qproperty-marker_lower_intensity_color: white; \
+                        qproperty-marker_upper_intensity_color: black; \
+                        qproperty-marker_lower_intensity_visible: false; \
+                        qproperty-marker_upper_intensity_visible: true; \
+                        qproperty-marker_noise_floor_amplitude_color: red; \
+                    qproperty-marker_noise_floor_amplitude_visible: true; \
+            }");
     fft_gui->enable_rf_freq(true);
 
     QThread *t4 = new QThread;

@@ -1098,23 +1098,29 @@ QSlider::handle:horizontal {
          <attribute name="title">
           <string>Spectrum</string>
          </attribute>
-         <widget class="QWidget" name="verticalLayoutWidget_2">
+         <widget class="QFrame" name="verticalFrame_2">
           <property name="geometry">
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>1091</width>
+            <width>1191</width>
             <height>722</height>
            </rect>
           </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <layout class="QGridLayout" name="gridLayout_6">
            <property name="sizeConstraint">
-            <enum>QLayout::SetNoConstraint</enum>
+            <enum>QLayout::SetMinimumSize</enum>
            </property>
            <item row="1" column="0">
             <widget class="QWidget" name="widget_fft" native="true">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
@@ -1127,7 +1133,7 @@ QSlider::handle:horizontal {
              </property>
              <property name="maximumSize">
               <size>
-               <width>1920</width>
+               <width>2200</width>
                <height>1024</height>
               </size>
              </property>
@@ -1141,9 +1147,17 @@ QSlider::handle:horizontal {
               </font>
              </property>
              <property name="styleSheet">
-              <string notr="true">font: 10pt &quot;Sans Serif&quot;;</string>
+              <string notr="true">font: 10pt &quot;Sans Serif&quot;;
+color: rgb(240, 240, 119);
+background-color: rgb(0, 0, 67);
+
+</string>
              </property>
-             <layout class="QGridLayout" name="gridLayout_7"/>
+             <layout class="QGridLayout" name="gridLayout_7">
+              <property name="sizeConstraint">
+               <enum>QLayout::SetNoConstraint</enum>
+              </property>
+             </layout>
             </widget>
            </item>
           </layout>
