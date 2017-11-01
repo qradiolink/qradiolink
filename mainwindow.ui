@@ -239,7 +239,7 @@ background-color: rgb(0, 85, 127);
                <string notr="true">font: 14pt &quot;Sans Serif&quot;;</string>
               </property>
               <property name="text">
-               <string>TX power</string>
+               <string>TX gain</string>
               </property>
              </widget>
             </item>
@@ -253,7 +253,7 @@ background-color: rgb(0, 85, 127);
               </property>
               <property name="minimumSize">
                <size>
-                <width>70</width>
+                <width>60</width>
                 <height>0</height>
                </size>
               </property>
@@ -451,7 +451,7 @@ font: 12pt &quot;Sans Serif&quot;;
                   <string notr="true">font: 14pt &quot;Sans Serif&quot;;</string>
                  </property>
                  <property name="text">
-                  <string>RX sensitivity</string>
+                  <string>RX gain</string>
                  </property>
                 </widget>
                </item>

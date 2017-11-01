@@ -47,7 +47,7 @@ gr_mod_ssb_sdr::gr_mod_ssb_sdr(QObject *parent, int samp_rate, int carrier_freq,
     _amplify = gr::blocks::multiply_const_cc::make(80,1);
     _filter = gr::filter::fft_filter_ccc::make(
                 1,gr::filter::firdes::complex_band_pass_2(
-                    1, _samp_rate, 400, _filter_width, 10, 120, gr::filter::firdes::WIN_HAMMING));
+                    1, _samp_rate, 400, _filter_width, 10, 120, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
 
 
     _osmosdr_sink = osmosdr::sink::make(device_args);

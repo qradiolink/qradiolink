@@ -63,7 +63,7 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
     _config_file = setupConfig();
     readConfig(_config_file);
     _video_img = new QPixmap;
-
+    setWindowIcon(QIcon(":/res/logo.png"));
 
 }
 

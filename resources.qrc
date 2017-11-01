@@ -9,5 +9,6 @@
         <file>res/white-bg.png</file>
         <file>res/transparent-bg.png</file>
         <file>res/end_beep.raw</file>
+        <file>res/logo.png</file>
     </qresource>
 </RCC>

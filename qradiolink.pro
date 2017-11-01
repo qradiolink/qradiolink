@@ -13,6 +13,9 @@ TEMPLATE = app
 
 CONFIG  += thread
 
+QMAKE_CXXFLAGS += $$(CXXFLAGS)
+QMAKE_CFLAGS += $$(CFLAGS)
+QMAKE_LFLAGS += $$(LDFLAGS)
 
 SOURCES += main.cpp\
         mainwindow.cpp\
