@@ -90,7 +90,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     else
     {
         gain_mu = 0.0025;
-        omega_rel_limit = 0.0015;
+        omega_rel_limit = 0.0001;
     }
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
                                                               omega_rel_limit);
@@ -149,8 +149,15 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _top_block->connect(_filter,0,_clock_recovery,0);
     _top_block->connect(_clock_recovery,0,_agc,0);
     //_top_block->connect(_fll,0,_clock_recovery,0);
-    _top_block->connect(_agc,0,_equalizer,0);
-    _top_block->connect(_equalizer,0,_costas_loop,0);
+    if(_target_samp_rate == 20000)
+    {
+        _top_block->connect(_agc,0,_equalizer,0);
+        _top_block->connect(_equalizer,0,_costas_loop,0);
+    }
+    else
+    {
+        _top_block->connect(_agc,0,_costas_loop,0);
+    }
     _top_block->connect(_costas_loop,0,_const_valve,0);
     _top_block->connect(_const_valve,0,_constellation,0);
     _top_block->connect(_costas_loop,0,_constellation_receiver,0);

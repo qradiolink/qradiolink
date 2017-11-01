@@ -130,7 +130,7 @@ void gr_modem::initTX(int modem_type, std::string device_args, std::string devic
     }
     else if(modem_type == gr_modem_types::ModemTypeQPSKVideo)
     {
-        _gr_mod_qpsk_sdr = new gr_mod_qpsk_sdr(0, 2, 250000, 1700, 70000, 1,
+        _gr_mod_qpsk_sdr = new gr_mod_qpsk_sdr(0, 2, 250000, 1700, 65000, 1,
                                                _requested_frequency_hz, 50, device_args, device_antenna, freq_corr);
         _frame_length = 3122;
     }
@@ -142,7 +142,7 @@ void gr_modem::initTX(int modem_type, std::string device_args, std::string devic
     }
     else if(modem_type == gr_modem_types::ModemTypeQPSK250000)
     {
-        _gr_mod_qpsk_sdr = new gr_mod_qpsk_sdr(0, 2, 250000, 1700, 70000, 1,
+        _gr_mod_qpsk_sdr = new gr_mod_qpsk_sdr(0, 2, 250000, 1700, 65000, 1,
                                                _requested_frequency_hz, 50, device_args, device_antenna, freq_corr);
         _frame_length = 1512;
     }
@@ -227,7 +227,7 @@ void gr_modem::initRX(int modem_type, std::string device_args, std::string devic
     else if (modem_type == gr_modem_types::ModemTypeQPSKVideo)
     {
         _gr_demod_qpsk_sdr = new gr_demod_qpsk_sdr(_fft_gui,
-                    _const_gui,_rssi_gui, 0,2,1000000,250000,1700,70000,1,
+                    _const_gui,_rssi_gui, 0,2,1000000,250000,1700,65000,1,
                                                    _requested_frequency_hz, 0.9, device_args, device_antenna, freq_corr);
         _bit_buf_len = 3123 *8;
         _frame_length = 3122;
@@ -245,7 +245,7 @@ void gr_modem::initRX(int modem_type, std::string device_args, std::string devic
     else if (modem_type == gr_modem_types::ModemTypeQPSK250000)
     {
         _gr_demod_qpsk_sdr = new gr_demod_qpsk_sdr(_fft_gui,
-                    _const_gui,_rssi_gui, 0,2,1000000,250000,1700,70000,1,
+                    _const_gui,_rssi_gui, 0,2,1000000,250000,1700,65000,1,
                                                    _requested_frequency_hz, 0.9, device_args, device_antenna, freq_corr);
         _bit_buf_len = 1513 *8;
         _frame_length = 1512;
@@ -1032,7 +1032,7 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
     }
     else if (current_frame_type == FrameTypeVideo )
     {
-        emit audioFrameReceived();
+        emit dataFrameReceived();
         _last_frame_type = FrameTypeVideo;
         unsigned char *video_data = new unsigned char[_frame_length];
         memcpy(video_data, received_data, _frame_length);

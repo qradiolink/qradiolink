@@ -207,7 +207,7 @@ int RadioOp::processVideoStream(bool &frame_flag)
     microsec = (quint64)timer.nsecsElapsed()/1000;
     if(microsec < 100000)
     {
-        usleep((100000 - microsec) - 7000);
+        usleep((100000 - microsec) - 2000);
     }
 
     //qDebug() << "video out " << microsec << " / " << encoded_size;

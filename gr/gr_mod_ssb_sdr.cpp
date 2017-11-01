@@ -44,7 +44,7 @@ gr_mod_ssb_sdr::gr_mod_ssb_sdr(QObject *parent, int samp_rate, int carrier_freq,
                                                         4000, 4000);
     float rerate = (float)_samp_rate/target_samp_rate;
     _resampler = gr::filter::pfb_arb_resampler_ccf::make(rerate, interp_taps, 16);
-    _amplify = gr::blocks::multiply_const_cc::make(90,1);
+    _amplify = gr::blocks::multiply_const_cc::make(80,1);
     _filter = gr::filter::fft_filter_ccc::make(
                 1,gr::filter::firdes::complex_band_pass_2(
                     1, _samp_rate, 400, _filter_width, 10, 120, gr::filter::firdes::WIN_HAMMING));
