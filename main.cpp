@@ -168,8 +168,9 @@ int main(int argc, char *argv[])
                                                           0,1000000,fft_name,true,true,false,false,(&w)->get_fft_gui());
 
     fft_gui->set_update_time(0.1);
-    fft_gui->set_fft_power_db(-120,-10);
-    fft_gui->qwidget()->resize(1024,500);
+    fft_gui->set_fft_power_db(-200,50);
+    QRect xy = w.geometry();
+    fft_gui->qwidget()->resize(xy.right() -xy.left(),xy.bottom()-xy.top()-100);
     fft_gui->enable_rf_freq(true);
 
     QThread *t4 = new QThread;

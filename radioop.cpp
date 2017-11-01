@@ -207,7 +207,7 @@ int RadioOp::processVideoStream(bool &frame_flag)
     microsec = (quint64)timer.nsecsElapsed()/1000;
     if(microsec < 100000)
     {
-        usleep((100000 - microsec) - 7000);
+        usleep((100000 - microsec) - 2000);
     }
 
     //qDebug() << "video out " << microsec << " / " << encoded_size;
@@ -243,6 +243,11 @@ void RadioOp::processNetStream()
         memcpy(&(netbuffer[4]), &nread, 4);
         memcpy(&(netbuffer[8]), &nread, 4);
         memcpy(&(netbuffer[12]), buffer, nread);
+        for(int k=nread+12,i=0;k<max_frame_size;k++,i++)
+        {
+            netbuffer[k] = _rand_frame_data[i];
+        }
+
         emit netData(netbuffer,max_frame_size);
         delete[] buffer;
     }
@@ -269,7 +274,7 @@ void RadioOp::run()
             ptt_activated = true;
             if(_tx_inited)
             {
-                if(_rx_inited)
+                if(_rx_inited && (_mode != gr_modem_types::ModemTypeQPSK250000))
                     _modem->stopRX();
                 if(_tx_modem_started)
                     _modem->stopTX();
@@ -298,8 +303,12 @@ void RadioOp::run()
         {
             if(_mode == gr_modem_types::ModemTypeQPSKVideo)
                 processVideoStream(frame_flag);
-            else if(_mode == gr_modem_types::ModemTypeQPSK250000)
+            else if((_mode == gr_modem_types::ModemTypeQPSK250000) && (_net_device != 0))
             {
+                if(_rx_inited)
+                {
+                    _modem->demodulate();
+                }
                 processNetStream();
             }
             else
@@ -311,11 +320,6 @@ void RadioOp::run()
         {
             if(_rx_inited)
             {
-                if(_modem->_frequency_found == 0)
-                {
-                    emit displayReceiveStatus(false);
-                    emit displayDataReceiveStatus(false);
-                }
                 if(!_tuning_done)
                     autoTune();
                 if(_radio_type == radio_type::RADIO_TYPE_DIGITAL)
@@ -469,13 +473,13 @@ void RadioOp::callsignReceived(QString callsign)
 void RadioOp::audioFrameReceived()
 {
     emit displayReceiveStatus(true);
-    _led_timer->start(100);
+    _led_timer->start(50);
 }
 
 void RadioOp::dataFrameReceived()
 {
     emit displayDataReceiveStatus(true);
-    _led_timer->start(200);
+    _led_timer->start(50);
 }
 
 void RadioOp::receiveEnd()

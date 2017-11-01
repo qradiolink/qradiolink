@@ -64,6 +64,7 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
     readConfig(_config_file);
     _video_img = new QPixmap;
 
+
 }
 
 MainWindow::~MainWindow()
@@ -362,8 +363,12 @@ void MainWindow::mainTabChanged(int value)
     else
         emit enableGUIConst(false);
     if(value == 2)
+    {
         emit enableGUIFFT(true);
+    }
     else
+    {
         emit enableGUIFFT(false);
+    }
 }
 
