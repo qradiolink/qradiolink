@@ -84,8 +84,8 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     float gain_mu, omega_rel_limit;
     if(_target_samp_rate == 20000)
     {
-        gain_mu = 0.05;
-        omega_rel_limit = 0.025;
+        gain_mu = 0.025;
+        omega_rel_limit = 0.0005;
     }
     else
     {
