@@ -68,6 +68,7 @@ public slots:
     void saveConfig();
     void mainTabChanged(int value);
     void clearTextArea();
+    void updateFreqGUI(long freq);
 
 signals:
     void startTransmission();

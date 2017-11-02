@@ -319,6 +319,7 @@ void MainWindow::tuneMainFreq(qint64 freq)
 void MainWindow::enterFreq()
 {
     ui->frameCtrlFreq->setFrequency(ui->frequencyEdit->text().toLong()*1000);
+    _rx_frequency = ui->frequencyEdit->text().toLong()*1000;
     emit tuneFreq(ui->frequencyEdit->text().toLong()*1000);
 }
 
@@ -370,5 +371,12 @@ void MainWindow::mainTabChanged(int value)
     {
         emit enableGUIFFT(false);
     }
+}
+
+void MainWindow::updateFreqGUI(long freq)
+{
+    ui->frameCtrlFreq->setFrequency(freq);
+    _rx_frequency = freq;
+    ui->frequencyEdit->setText(QString::number(ceil(freq/1000)));
 }
 

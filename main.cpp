@@ -224,7 +224,8 @@ int main(int argc, char *argv[])
                         qproperty-marker_upper_intensity_visible: true; \
                         qproperty-marker_noise_floor_amplitude_color: red; \
                     qproperty-marker_noise_floor_amplitude_visible: true; \
-            }");
+            } \
+                ");
     fft_gui->enable_rf_freq(true);
 
     QThread *t4 = new QThread;
@@ -258,7 +259,7 @@ int main(int argc, char *argv[])
     QObject::connect(radio_op, SIGNAL(displayReceiveStatus(bool)), &w, SLOT(displayReceiveStatus(bool)));
     QObject::connect(radio_op, SIGNAL(displayTransmitStatus(bool)), &w, SLOT(displayTransmitStatus(bool)));
     QObject::connect(radio_op, SIGNAL(displayDataReceiveStatus(bool)), &w, SLOT(displayDataReceiveStatus(bool)));
-
+    QObject::connect(radio_op, SIGNAL(freqFromGUI(long)), &w, SLOT(updateFreqGUI(long)));
     //QObject::connect(&w,SIGNAL(startTalkVOIP()),audio_op,SLOT(startTransmission()));
     //QObject::connect(&w,SIGNAL(stopTalkVOIP()),audio_op,SLOT(endTransmission()));
 

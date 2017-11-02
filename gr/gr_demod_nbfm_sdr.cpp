@@ -8,7 +8,7 @@ gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(gr::qtgui::sink_c::sptr fft_gui,
                                      std::string device_args, std::string device_antenna, int freq_corr) :
     QObject(parent)
 {
-
+    _msg_nr = 0;
     _target_samp_rate = 8000;
     _rssi = rssi_gui;
     _device_frequency = device_frequency;
@@ -32,8 +32,9 @@ gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(gr::qtgui::sink_c::sptr fft_gui,
     _fm_demod = gr::analog::quadrature_demod_cf::make(_target_samp_rate/(4*M_PI* _filter_width));
     _squelch = gr::analog::simple_squelch_cc::make(-140,0.001);
     _ctcss = gr::analog::ctcss_squelch_ff::make(_target_samp_rate,0,1,1,1,false);
-    _agc = gr::analog::agc2_ff::make(0.006e-1, 1e-3,0.5, 1);
-    _amplify = gr::blocks::multiply_const_ff::make(0.8);
+    _amplify = gr::blocks::multiply_const_ff::make(0.6);
+
+    _message_sink = gr::blocks::message_debug::make();
 
     _rssi_valve = gr::blocks::copy::make(8);
     _rssi_valve->set_enabled(false);
@@ -71,11 +72,11 @@ gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(gr::qtgui::sink_c::sptr fft_gui,
     _top_block->connect(_multiply,0,_resampler,0);
     _top_block->connect(_multiply,0,_fft_valve,0);
     _top_block->connect(_fft_valve,0,_fft_gui,0);
+    _top_block->msg_connect(_fft_gui,"freq",_message_sink,"store");
     _top_block->connect(_resampler,0,_filter,0);
     _top_block->connect(_filter,0,_squelch,0);
     _top_block->connect(_squelch,0,_fm_demod,0);
-    _top_block->connect(_fm_demod,0,_agc,0);
-    _top_block->connect(_agc,0,_amplify,0);
+    _top_block->connect(_fm_demod,0,_amplify,0);
     _top_block->connect(_amplify,0,_audio_sink,0);
 
 
@@ -105,6 +106,21 @@ void gr_demod_nbfm_sdr::tune(long center_freq)
 {
     _device_frequency = center_freq;
     _osmosdr_source->set_center_freq(_device_frequency-25000);
+}
+
+double gr_demod_nbfm_sdr::get_freq()
+{
+    int n = _message_sink->num_messages();
+    if(n > _msg_nr)
+    {
+        _msg_nr = n;
+        pmt::pmt_t msg = _message_sink->get_message(n - 1);
+        return pmt::to_double(pmt::cdr(msg));
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 void gr_demod_nbfm_sdr::set_rx_sensitivity(float value)

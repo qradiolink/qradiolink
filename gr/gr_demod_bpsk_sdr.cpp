@@ -22,6 +22,7 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
                                      std::string device_args, std::string device_antenna, int freq_corr, int modem_type) :
     QObject(parent)
 {
+    _msg_nr = 0;
     _target_samp_rate = 20000;
     _rssi = rssi_gui;
     _device_frequency = device_frequency;
@@ -74,6 +75,8 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _delay = gr::blocks::delay::make(4,1);
     _descrambler2 = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
 
+    _message_sink = gr::blocks::message_debug::make();
+
     _rssi_valve = gr::blocks::copy::make(8);
     _rssi_valve->set_enabled(false);
     _fft_valve = gr::blocks::copy::make(8);
@@ -114,6 +117,7 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _top_block->connect(_multiply,0,_resampler,0);
     _top_block->connect(_multiply,0,_fft_valve,0);
     _top_block->connect(_fft_valve,0,_fft_gui,0);
+    _top_block->msg_connect(_fft_gui,"freq",_message_sink,"store");
     _top_block->connect(_resampler,0,_filter,0);
     _top_block->connect(_filter,0,_clock_recovery,0);
     _top_block->connect(_clock_recovery,0,_agc,0);
@@ -173,6 +177,21 @@ void gr_demod_bpsk_sdr::tune(long center_freq)
 {
     _device_frequency = center_freq;
     _osmosdr_source->set_center_freq(_device_frequency-25000);
+}
+
+double gr_demod_bpsk_sdr::get_freq()
+{
+    int n = _message_sink->num_messages();
+    if(n > _msg_nr)
+    {
+        _msg_nr = n;
+        pmt::pmt_t msg = _message_sink->get_message(n - 1);
+        return pmt::to_double(pmt::cdr(msg));
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 void gr_demod_bpsk_sdr::set_rx_sensitivity(float value)

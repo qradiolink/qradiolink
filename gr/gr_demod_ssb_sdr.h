@@ -38,6 +38,7 @@
 #include <gnuradio/blocks/add_const_ff.h>
 #include <gnuradio/blocks/copy.h>
 #include <gnuradio/blocks/complex_to_real.h>
+#include <gnuradio/blocks/message_debug.h>
 #include <osmosdr/source.h>
 
 class gr_demod_ssb_sdr : public QObject
@@ -56,6 +57,7 @@ public slots:
     void set_squelch(int value);
     void enable_gui_const(bool value);
     void enable_gui_fft(bool value);
+    double get_freq();
 
 private:
     gr::top_block_sptr _top_block;
@@ -70,6 +72,7 @@ private:
     gr::blocks::multiply_const_ff::sptr _audio_gain;
     gr::qtgui::const_sink_c::sptr _constellation;
     gr::qtgui::sink_c::sptr _fft_gui;
+    gr::blocks::message_debug::sptr _message_sink;
     gr::blocks::copy::sptr _rssi_valve;
     gr::blocks::copy::sptr _fft_valve;
     gr::blocks::complex_to_mag_squared::sptr _mag_squared;
@@ -88,6 +91,7 @@ private:
     float _modulation_index;
     float _device_frequency;
     int _target_samp_rate;
+    int _msg_nr;
 
 };
 

@@ -81,6 +81,7 @@ signals:
     void videoImage(QImage img);
     void endAudio(int secs);
     void startAudio();
+    void freqFromGUI(long freq);
 public slots:
     void run();
     void startTransmission();

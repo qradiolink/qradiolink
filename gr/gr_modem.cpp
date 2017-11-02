@@ -486,6 +486,23 @@ void gr_modem::stopTX()
     }
 }
 
+double gr_modem::getFreqGUI()
+{
+    if(_gr_demod_bpsk_sdr)
+        return _gr_demod_bpsk_sdr->get_freq();
+    if(_gr_demod_qpsk_sdr)
+        return _gr_demod_qpsk_sdr->get_freq();
+    if(_gr_demod_4fsk_sdr)
+        return _gr_demod_4fsk_sdr->get_freq();
+    if(_gr_demod_nbfm_sdr)
+        return _gr_demod_nbfm_sdr->get_freq();
+    if(_gr_demod_ssb_sdr)
+        return _gr_demod_ssb_sdr->get_freq();
+    if(_gr_demod_2fsk_sdr)
+        return _gr_demod_2fsk_sdr->get_freq();
+    return 0;
+}
+
 void gr_modem::tune(long center_freq, bool sync)
 {
     _requested_frequency_hz = center_freq;

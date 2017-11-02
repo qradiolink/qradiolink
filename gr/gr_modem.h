@@ -149,6 +149,7 @@ public slots:
     void setRxSensitivity(float value);
     void enableGUIConst(bool value);
     void enableGUIFFT(bool value);
+    double getFreqGUI();
 private:
 
     Settings *_settings;

@@ -269,6 +269,13 @@ void RadioOp::run()
         bool transmitting = _transmitting;
         QCoreApplication::processEvents();
 
+        long long freq = (long long)_modem->getFreqGUI();
+        if(freq != 0 && freq != _tune_center_freq)
+        {
+            _tune_center_freq = freq;
+            _modem->tune(_tune_center_freq, false);
+            emit freqFromGUI(_tune_center_freq);
+        }
         if(transmitting && !ptt_activated)
         {
             ptt_activated = true;
