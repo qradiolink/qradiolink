@@ -518,24 +518,23 @@ void gr_modem::tune(long center_freq, bool sync)
         _gr_demod_ssb_sdr->tune(center_freq);
     if(_gr_demod_2fsk_sdr)
         _gr_demod_2fsk_sdr->tune(center_freq);
+}
 
+void gr_modem::tuneTx(long center_freq)
+{
 
-    if(!sync)
-    {
-
-        if(_gr_mod_bpsk_sdr)
-            _gr_mod_bpsk_sdr->tune(center_freq);
-        if(_gr_mod_qpsk_sdr)
-            _gr_mod_qpsk_sdr->tune(center_freq);
-        if(_gr_mod_4fsk_sdr)
-            _gr_mod_4fsk_sdr->tune(center_freq);
-        if(_gr_mod_nbfm_sdr)
-            _gr_mod_nbfm_sdr->tune(center_freq);
-        if(_gr_mod_ssb_sdr)
-            _gr_mod_ssb_sdr->tune(center_freq);
-        if(_gr_mod_2fsk_sdr)
-            _gr_mod_2fsk_sdr->tune(center_freq);
-    }
+    if(_gr_mod_bpsk_sdr)
+        _gr_mod_bpsk_sdr->tune(center_freq);
+    if(_gr_mod_qpsk_sdr)
+        _gr_mod_qpsk_sdr->tune(center_freq);
+    if(_gr_mod_4fsk_sdr)
+        _gr_mod_4fsk_sdr->tune(center_freq);
+    if(_gr_mod_nbfm_sdr)
+        _gr_mod_nbfm_sdr->tune(center_freq);
+    if(_gr_mod_ssb_sdr)
+        _gr_mod_ssb_sdr->tune(center_freq);
+    if(_gr_mod_2fsk_sdr)
+        _gr_mod_2fsk_sdr->tune(center_freq);
 }
 
 void gr_modem::setTxPower(int value)

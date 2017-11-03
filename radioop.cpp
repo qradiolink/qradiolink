@@ -37,6 +37,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _rx_sensitivity = 0;
     _squelch = 0;
     _tune_center_freq = 0;
+    _tune_shift_freq = 0;
     _tune_limit_lower = -5000;
     _tune_limit_upper = 5000;
     _step_hz = 1;
@@ -93,7 +94,7 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
                          int &tx_freq_corr, std::string &callsign, std::string &video_device)
 {
     int tx_power, rx_sensitivity, squelch;
-    long long rx_frequency;
+    long long rx_frequency, tx_shift;
     QDir files = QDir::homePath();
 
     QFileInfo config_file = files.filePath(".config/qradiolink.cfg");
@@ -128,6 +129,7 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
         root.lookupValue("rx_sensitivity", rx_sensitivity);
         root.lookupValue("squelch", squelch);
         root.lookupValue("rx_frequency", rx_frequency);
+        root.lookupValue("tx_shift", tx_shift);
         _callsign = QString::fromStdString(callsign);
         if(_callsign.size() < 7)
         {
@@ -149,6 +151,10 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
         if(_tune_center_freq == 0)
         {
             _tune_center_freq = rx_frequency;
+        }
+        if(_tune_shift_freq == 0)
+        {
+            _tune_shift_freq = tx_shift;
         }
         if(_squelch == 0)
         {
@@ -274,6 +280,7 @@ void RadioOp::run()
         {
             _tune_center_freq = freq;
             _modem->tune(_tune_center_freq, false);
+            _modem->tuneTx(_tune_center_freq + _tune_shift_freq);
             emit freqFromGUI(_tune_center_freq);
         }
         if(transmitting && !ptt_activated)
@@ -567,7 +574,7 @@ void RadioOp::toggleTX(bool value)
                                  tx_freq_corr, callsign, video_device);
         _tx_inited = true;
         _modem->initTX(_mode, tx_device_args, tx_antenna, tx_freq_corr);
-        _modem->tune(_tune_center_freq);
+        _modem->tuneTx(_tune_center_freq + _tune_shift_freq);
         _modem->setTxPower(_tx_power);
         if(_mode == gr_modem_types::ModemTypeQPSKVideo)
             _video = new VideoEncoder(QString::fromStdString(video_device));
@@ -696,13 +703,21 @@ void RadioOp::toggleMode(int value)
 void RadioOp::fineTuneFreq(long center_freq)
 {
     _modem->tune(_tune_center_freq + center_freq*10, false);
+    _modem->tuneTx(_tune_center_freq + _tune_shift_freq + center_freq*10);
 }
 
 void RadioOp::tuneFreq(qint64 center_freq)
 {
     _tune_center_freq = center_freq;
-    _modem->tune(center_freq, false);
+    _modem->tune(_tune_center_freq, false);
+    _modem->tuneTx(_tune_center_freq + _tune_shift_freq);
     _fft_gui->set_frequency_range(center_freq, 1000000);
+}
+
+void RadioOp::tuneTxFreq(qint64 center_freq)
+{
+    _tune_shift_freq = center_freq;
+    _modem->tuneTx(_tune_center_freq + _tune_shift_freq);
 }
 
 void RadioOp::setTxPower(int dbm)
@@ -763,6 +778,7 @@ void RadioOp::autoTune()
         usleep(10);
     _tune_center_freq = _tune_center_freq + _step_hz;
     _modem->tune(_tune_center_freq, true);
+    _modem->tuneTx(_tune_center_freq + _tune_shift_freq);
     if(_tune_center_freq >= (_modem->_requested_frequency_hz + _tune_limit_upper))
         _tune_center_freq = _modem->_requested_frequency_hz + _tune_limit_lower;
 }

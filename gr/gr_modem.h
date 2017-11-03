@@ -140,6 +140,7 @@ public slots:
     void deinitTX(int modem_type);
     void deinitRX(int modem_type);
     void tune(long center_freq, bool sync=false);
+    void tuneTx(long center_freq);
     void startRX();
     void stopRX();
     void startTX();
