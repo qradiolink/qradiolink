@@ -30,9 +30,9 @@ gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(gr::qtgui::sink_c::sptr fft_gui,
                             1, _target_samp_rate, _filter_width,600,gr::filter::firdes::WIN_HAMMING) );
     _audio_sink = gr::audio::sink::make(_target_samp_rate,"", true);
     _fm_demod = gr::analog::quadrature_demod_cf::make(_target_samp_rate/(4*M_PI* _filter_width));
-    _squelch = gr::analog::simple_squelch_cc::make(-140,0.001);
+    _squelch = gr::analog::simple_squelch_cc::make(-140,0.01);
     _ctcss = gr::analog::ctcss_squelch_ff::make(_target_samp_rate,0,1,1,1,false);
-    _amplify = gr::blocks::multiply_const_ff::make(0.6);
+    _amplify = gr::blocks::multiply_const_ff::make(0.9);
 
     _message_sink = gr::blocks::message_debug::make();
 
