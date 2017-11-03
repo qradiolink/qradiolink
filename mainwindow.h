@@ -68,6 +68,8 @@ public slots:
     void saveConfig();
     void mainTabChanged(int value);
     void clearTextArea();
+    void updateFreqGUI(long freq);
+    void enterShift();
 
 signals:
     void startTransmission();
@@ -80,6 +82,7 @@ signals:
     void toggleRX(bool value);
     void toggleTX(bool value);
     void tuneFreq(qint64 center_freq);
+    void tuneTxFreq(qint64 center_freq);
     void fineTuneFreq(long center_freq);
     void toggleWidebandMode(bool value);
     void toggleModemMode(int value);
@@ -109,6 +112,7 @@ private:
     QPixmap *_video_img;
     QFileInfo *_config_file;
     qint64 _rx_frequency;
+    qint64 _tx_frequency;
     QFileInfo *setupConfig();
     void closeEvent(QCloseEvent *);
 

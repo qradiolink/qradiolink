@@ -96,7 +96,7 @@ void gr_modem::initTX(int modem_type, std::string device_args, std::string devic
     }
     else if(modem_type == gr_modem_types::ModemTypeQPSK2000)
     {
-        _gr_mod_qpsk_sdr = new gr_mod_qpsk_sdr(0, 250, 250000, 1700, 650, 1,
+        _gr_mod_qpsk_sdr = new gr_mod_qpsk_sdr(0, 250, 250000, 1700, 800, 1,
                                                _requested_frequency_hz, 50, device_args, device_antenna, freq_corr);
         _frame_length = 7;
     }
@@ -486,6 +486,23 @@ void gr_modem::stopTX()
     }
 }
 
+double gr_modem::getFreqGUI()
+{
+    if(_gr_demod_bpsk_sdr)
+        return _gr_demod_bpsk_sdr->get_freq();
+    if(_gr_demod_qpsk_sdr)
+        return _gr_demod_qpsk_sdr->get_freq();
+    if(_gr_demod_4fsk_sdr)
+        return _gr_demod_4fsk_sdr->get_freq();
+    if(_gr_demod_nbfm_sdr)
+        return _gr_demod_nbfm_sdr->get_freq();
+    if(_gr_demod_ssb_sdr)
+        return _gr_demod_ssb_sdr->get_freq();
+    if(_gr_demod_2fsk_sdr)
+        return _gr_demod_2fsk_sdr->get_freq();
+    return 0;
+}
+
 void gr_modem::tune(long center_freq, bool sync)
 {
     _requested_frequency_hz = center_freq;
@@ -501,24 +518,23 @@ void gr_modem::tune(long center_freq, bool sync)
         _gr_demod_ssb_sdr->tune(center_freq);
     if(_gr_demod_2fsk_sdr)
         _gr_demod_2fsk_sdr->tune(center_freq);
+}
 
+void gr_modem::tuneTx(long center_freq)
+{
 
-    if(!sync)
-    {
-
-        if(_gr_mod_bpsk_sdr)
-            _gr_mod_bpsk_sdr->tune(center_freq);
-        if(_gr_mod_qpsk_sdr)
-            _gr_mod_qpsk_sdr->tune(center_freq);
-        if(_gr_mod_4fsk_sdr)
-            _gr_mod_4fsk_sdr->tune(center_freq);
-        if(_gr_mod_nbfm_sdr)
-            _gr_mod_nbfm_sdr->tune(center_freq);
-        if(_gr_mod_ssb_sdr)
-            _gr_mod_ssb_sdr->tune(center_freq);
-        if(_gr_mod_2fsk_sdr)
-            _gr_mod_2fsk_sdr->tune(center_freq);
-    }
+    if(_gr_mod_bpsk_sdr)
+        _gr_mod_bpsk_sdr->tune(center_freq);
+    if(_gr_mod_qpsk_sdr)
+        _gr_mod_qpsk_sdr->tune(center_freq);
+    if(_gr_mod_4fsk_sdr)
+        _gr_mod_4fsk_sdr->tune(center_freq);
+    if(_gr_mod_nbfm_sdr)
+        _gr_mod_nbfm_sdr->tune(center_freq);
+    if(_gr_mod_ssb_sdr)
+        _gr_mod_ssb_sdr->tune(center_freq);
+    if(_gr_mod_2fsk_sdr)
+        _gr_mod_2fsk_sdr->tune(center_freq);
 }
 
 void gr_modem::setTxPower(int value)

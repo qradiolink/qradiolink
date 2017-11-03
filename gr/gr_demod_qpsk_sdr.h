@@ -50,6 +50,7 @@
 #include <gnuradio/blocks/moving_average_ff.h>
 #include <gnuradio/blocks/add_const_ff.h>
 #include <gnuradio/blocks/copy.h>
+#include <gnuradio/blocks/message_debug.h>
 #include <osmosdr/source.h>
 #include <vector>
 #include "gr_vector_sink.h"
@@ -74,6 +75,7 @@ public slots:
     void set_rx_sensitivity(float value);
     void enable_gui_const(bool value);
     void enable_gui_fft(bool value);
+    double get_freq();
 
 private:
     gr::top_block_sptr _top_block;
@@ -97,6 +99,7 @@ private:
     gr::digital::descrambler_bb::sptr _descrambler;
     gr::qtgui::const_sink_c::sptr _constellation;
     gr::qtgui::sink_c::sptr _fft_gui;
+    gr::blocks::message_debug::sptr _message_sink;
     gr::blocks::copy::sptr _rssi_valve;
     gr::blocks::copy::sptr _fft_valve;
     gr::blocks::copy::sptr _const_valve;
@@ -117,6 +120,7 @@ private:
     float _device_frequency;
     int _target_samp_rate;
     float _center_spacing;
+    int _msg_nr;
 
 };
 

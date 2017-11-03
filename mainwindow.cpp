@@ -44,6 +44,7 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
     QObject::connect(ui->txStatusButton,SIGNAL(toggled(bool)),this,SLOT(toggleTXwin(bool)));
     QObject::connect(ui->tuneSlider,SIGNAL(valueChanged(int)),this,SLOT(tuneCenterFreq(int)));
     QObject::connect(ui->frequencyEdit,SIGNAL(returnPressed()),this,SLOT(enterFreq()));
+    QObject::connect(ui->shiftEdit,SIGNAL(returnPressed()),this,SLOT(enterShift()));
     QObject::connect(ui->txPowerSlider,SIGNAL(valueChanged(int)),this,SLOT(setTxPowerDisplay(int)));
     QObject::connect(ui->rxSensitivitySlider,SIGNAL(valueChanged(int)),this,SLOT(setRxSensitivityDisplay(int)));
     QObject::connect(ui->rxSquelchSlider,SIGNAL(valueChanged(int)),this,SLOT(setSquelchDisplay(int)));
@@ -101,6 +102,7 @@ void MainWindow::readConfig(QFileInfo *config_file)
         int rx_freq_corr, tx_freq_corr;
         cfg.lookupValue("rx_freq_corr", rx_freq_corr);
         cfg.lookupValue("tx_freq_corr", tx_freq_corr);
+
         ui->lineEditRXDev->setText(QString(cfg.lookup("rx_device_args")));
         ui->lineEditTXDev->setText(QString(cfg.lookup("tx_device_args")));
         ui->lineEditRXAntenna->setText(QString(cfg.lookup("rx_antenna")));
@@ -114,6 +116,9 @@ void MainWindow::readConfig(QFileInfo *config_file)
         ui->rxSquelchSlider->setValue(cfg.lookup("squelch"));
         ui->frameCtrlFreq->setFrequency(cfg.lookup("rx_frequency"));
         _rx_frequency = cfg.lookup("rx_frequency");
+        _tx_frequency = cfg.lookup("tx_shift");
+        ui->shiftEdit->setText(QString::number(_tx_frequency / 1000));
+
     }
     catch(const libconfig::SettingNotFoundException &nfex)
     {
@@ -127,6 +132,9 @@ void MainWindow::readConfig(QFileInfo *config_file)
         ui->lineEditVideoDevice->setText("/dev/video0");
         _rx_frequency = 434000000;
         ui->frameCtrlFreq->setFrequency(_rx_frequency);
+        _tx_frequency = 0;
+        ui->shiftEdit->setText(QString::number(_tx_frequency,10));
+
         std::cerr << "Settings not found in configuration file." << std::endl;
     }
 }
@@ -147,6 +155,7 @@ void MainWindow::saveConfig()
     root.add("rx_sensitivity",libconfig::Setting::TypeInt) = (int)ui->rxSensitivitySlider->value();
     root.add("squelch",libconfig::Setting::TypeInt) = (int)ui->rxSquelchSlider->value();
     root.add("rx_frequency",libconfig::Setting::TypeInt64) = _rx_frequency;
+    root.add("tx_shift",libconfig::Setting::TypeInt64) = _tx_frequency;
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());
@@ -319,7 +328,14 @@ void MainWindow::tuneMainFreq(qint64 freq)
 void MainWindow::enterFreq()
 {
     ui->frameCtrlFreq->setFrequency(ui->frequencyEdit->text().toLong()*1000);
+    _rx_frequency = ui->frequencyEdit->text().toLong()*1000;
     emit tuneFreq(ui->frequencyEdit->text().toLong()*1000);
+}
+
+void MainWindow::enterShift()
+{
+    _tx_frequency = ui->shiftEdit->text().toLong()*1000;
+    emit tuneTxFreq(_tx_frequency);
 }
 
 void MainWindow::setTxPowerDisplay(int value)
@@ -370,5 +386,12 @@ void MainWindow::mainTabChanged(int value)
     {
         emit enableGUIFFT(false);
     }
+}
+
+void MainWindow::updateFreqGUI(long freq)
+{
+    ui->frameCtrlFreq->setFrequency(freq);
+    _rx_frequency = freq;
+    ui->frequencyEdit->setText(QString::number(ceil(freq/1000)));
 }
 

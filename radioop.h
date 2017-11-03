@@ -81,6 +81,7 @@ signals:
     void videoImage(QImage img);
     void endAudio(int secs);
     void startAudio();
+    void freqFromGUI(long freq);
 public slots:
     void run();
     void startTransmission();
@@ -101,6 +102,7 @@ public slots:
     void toggleMode(int value);
     void fineTuneFreq(long center_freq);
     void tuneFreq(qint64 center_freq);
+    void tuneTxFreq(qint64 center_freq);
     void setTxPower(int dbm);
     void setSquelch(int value);
     void setRxSensitivity(int value);
@@ -135,6 +137,7 @@ private:
     int _mode;
     int _radio_type;
     long long _tune_center_freq;
+    long long _tune_shift_freq;
     int _tx_power;
     int _squelch;
     int _rx_sensitivity;

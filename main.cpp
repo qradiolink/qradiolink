@@ -182,6 +182,10 @@ int main(int argc, char *argv[])
     rssi_gui->set_label(0,"RSSI");
     rssi_gui->qwidget()->resize(700,50);
     rssi_gui->set_update_time(0.3);
+    rssi_gui->set_color(0, "#ff0000", "#0000cc");
+    rssi_gui->qwidget()->setStyleSheet(
+            "QwtThermo { background-color: #E1DFFF;" \
+            "color: #FF6905;}");
 
     const std::string fft_name = "fft";
     gr::qtgui::sink_c::sptr fft_gui = gr::qtgui::sink_c::make(8096,gr::filter::firdes::WIN_BLACKMAN_HARRIS,
@@ -224,7 +228,8 @@ int main(int argc, char *argv[])
                         qproperty-marker_upper_intensity_visible: true; \
                         qproperty-marker_noise_floor_amplitude_color: red; \
                     qproperty-marker_noise_floor_amplitude_visible: true; \
-            }");
+            } \
+                ");
     fft_gui->enable_rf_freq(true);
 
     QThread *t4 = new QThread;
@@ -244,6 +249,7 @@ int main(int argc, char *argv[])
     QObject::connect(&w,SIGNAL(toggleTX(bool)),radio_op,SLOT(toggleTX(bool)));
     QObject::connect(&w,SIGNAL(toggleModemMode(int)),radio_op,SLOT(toggleMode(int)));
     QObject::connect(&w,SIGNAL(tuneFreq(qint64)),radio_op,SLOT(tuneFreq(qint64)));
+    QObject::connect(&w,SIGNAL(tuneTxFreq(qint64)),radio_op,SLOT(tuneTxFreq(qint64)));
     QObject::connect(&w,SIGNAL(startAutoTuneFreq()),radio_op,SLOT(startAutoTune()));
     QObject::connect(&w,SIGNAL(stopAutoTuneFreq()),radio_op,SLOT(stopAutoTune()));
     QObject::connect(&w,SIGNAL(fineTuneFreq(long)),radio_op,SLOT(fineTuneFreq(long)));
@@ -258,7 +264,7 @@ int main(int argc, char *argv[])
     QObject::connect(radio_op, SIGNAL(displayReceiveStatus(bool)), &w, SLOT(displayReceiveStatus(bool)));
     QObject::connect(radio_op, SIGNAL(displayTransmitStatus(bool)), &w, SLOT(displayTransmitStatus(bool)));
     QObject::connect(radio_op, SIGNAL(displayDataReceiveStatus(bool)), &w, SLOT(displayDataReceiveStatus(bool)));
-
+    QObject::connect(radio_op, SIGNAL(freqFromGUI(long)), &w, SLOT(updateFreqGUI(long)));
     //QObject::connect(&w,SIGNAL(startTalkVOIP()),audio_op,SLOT(startTransmission()));
     //QObject::connect(&w,SIGNAL(stopTalkVOIP()),audio_op,SLOT(endTransmission()));
 
