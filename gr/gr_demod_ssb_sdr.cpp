@@ -42,7 +42,7 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(gr::qtgui::sink_c::sptr fft_gui,
     _log10 = gr::blocks::nlog10_ff::make();
     _multiply_const_ff = gr::blocks::multiply_const_ff::make(10);
     _moving_average = gr::blocks::moving_average_ff::make(25000,1,2000);
-    _add_const = gr::blocks::add_const_ff::make(-110);
+    _add_const = gr::blocks::add_const_ff::make(-50);
 
     _message_sink = gr::blocks::message_debug::make();
 

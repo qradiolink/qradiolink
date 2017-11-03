@@ -361,7 +361,7 @@ void RadioOp::run()
             emit displayTransmitStatus(false);
         }
 
-        usleep(1000);
+        usleep(2000);
         if(_stop)
             break;
     }
