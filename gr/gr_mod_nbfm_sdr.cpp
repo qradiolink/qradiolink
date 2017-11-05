@@ -30,9 +30,8 @@ gr_mod_nbfm_sdr::gr_mod_nbfm_sdr(QObject *parent, int samp_rate, int carrier_fre
     _top_block = gr::make_top_block("nbfm modulator sdr");
 
     _fm_modulator = gr::analog::frequency_modulator_fc::make(4*M_PI*_filter_width/target_samp_rate);
-    _audio_source = gr::audio::source::make(target_samp_rate,"",true);
-    _signal_source = gr::analog::sig_source_f::make(target_samp_rate,gr::analog::GR_COS_WAVE, 0, 1);
-    _multiply = gr::blocks::multiply_ff::make();
+    _audio_source = make_gr_audio_source();
+    _audio_amplify = gr::blocks::multiply_const_ff::make(0.9,1);
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::band_pass(
                     1, target_samp_rate, 300, _filter_width, 600, gr::filter::firdes::WIN_HAMMING));
@@ -60,7 +59,7 @@ gr_mod_nbfm_sdr::gr_mod_nbfm_sdr(QObject *parent, int samp_rate, int carrier_fre
 
 
     _top_block->connect(_audio_source,0,_audio_filter,0);
-    //_top_block->connect(_signal_source,0,_multiply,1);
+    //_top_block->connect(_audio_amplify,0,_audio_filter,0);
     _top_block->connect(_audio_filter,0,_fm_modulator,0);
     _top_block->connect(_fm_modulator,0,_emphasis_filter,0);
     _top_block->connect(_emphasis_filter,0,_resampler,0);
@@ -79,6 +78,12 @@ void gr_mod_nbfm_sdr::stop()
 {
     _top_block->stop();
     _top_block->wait();
+}
+
+int gr_mod_nbfm_sdr::setData(std::vector<float> *data)
+{
+    return _audio_source->set_data(data);
+
 }
 
 void gr_mod_nbfm_sdr::tune(long center_freq)

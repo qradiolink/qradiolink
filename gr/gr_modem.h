@@ -112,10 +112,11 @@ public:
     ~gr_modem();
     long _frequency_found;
     long _requested_frequency_hz;
+    void demodulateAnalog();
 
     void sendCallsign(int size, QString callsign);
 signals:
-    void pcmAudio(short *pcm, short size);
+    void pcmAudio(std::vector<float>* pcm);
     void digitalAudio(unsigned char *c2data, int size);
     void videoData(unsigned char *video_data, int size);
     void netData(unsigned char *net_data, int size);
@@ -128,6 +129,7 @@ signals:
     void receiveEnd();
     void endAudioTransmission();
 public slots:
+    void processPCMAudio(float *audio_data, int size);
     void processAudioData(unsigned char *data, int size);
     void processVideoData(unsigned char *data, int size);
     void processNetData(unsigned char *data, int size);

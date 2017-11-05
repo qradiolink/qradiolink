@@ -18,7 +18,7 @@
 #define GR_DEMOD_NBFM_SDR_H
 
 #include <QObject>
-#include <gnuradio/audio/sink.h>
+#include "gr_audio_sink.h"
 #include <gnuradio/blocks/multiply_cc.h>
 #include <gnuradio/analog/sig_source_c.h>
 #include <gnuradio/top_block.h>
@@ -39,6 +39,7 @@
 #include <gnuradio/blocks/moving_average_ff.h>
 #include <gnuradio/blocks/add_const_ff.h>
 #include <gnuradio/blocks/copy.h>
+#include <gnuradio/blocks/float_to_short.h>
 #include <gnuradio/blocks/message_debug.h>
 #include <osmosdr/source.h>
 
@@ -62,10 +63,12 @@ public slots:
     void enable_gui_const(bool value);
     void enable_gui_fft(bool value);
     double get_freq();
+    std::vector<float> *getData();
 
 private:
     gr::top_block_sptr _top_block;
-    gr::audio::sink::sptr _audio_sink;
+    gr_audio_sink_sptr _audio_sink;
+    gr::blocks::float_to_short::sptr _float_to_short;
     gr::analog::sig_source_c::sptr _signal_source;
     gr::blocks::multiply_cc::sptr _multiply;
     gr::analog::quadrature_demod_cf::sptr _fm_demod;

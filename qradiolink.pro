@@ -67,7 +67,9 @@ SOURCES += main.cpp\
     gr/gr_mod_2fsk_sdr.cpp \
     gr/gr_demod_2fsk_sdr.cpp \
     net/netdevice.cpp \
-    gr/gr_deframer_bb.cpp
+    gr/gr_deframer_bb.cpp \
+    gr/gr_audio_source.cpp \
+    gr/gr_audio_sink.cpp
 
 HEADERS  += mainwindow.h\
         audio/audioencoder.h\
@@ -122,7 +124,9 @@ HEADERS  += mainwindow.h\
     gr/gr_mod_2fsk_sdr.h \
     gr/gr_demod_2fsk_sdr.h \
     net/netdevice.h \
-    gr/gr_deframer_bb.h
+    gr/gr_deframer_bb.h \
+    gr/gr_audio_source.h \
+    gr/gr_audio_sink.h
 
 
 FORMS    += mainwindow.ui

@@ -34,7 +34,7 @@ AudioEncoder::AudioEncoder()
     _codec2_700 = codec2_create(CODEC2_MODE_700B);
 
     _gsm = gsm_create();
-    _agc = hvdi::initAGC(0.7);
+    _agc = hvdi::initAGC(0.5);
 
     int opus_bandwidth;
     opus_encoder_ctl(_enc, OPUS_SET_VBR(0));

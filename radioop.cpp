@@ -24,6 +24,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _radio_type = radio_type::RADIO_TYPE_DIGITAL;
     _codec = new AudioEncoder;
     _audio = new AudioInterface;
+    _mutex = new QMutex;
     _net_device = 0;
     _stop =false;
     _tx_inited = false;
@@ -57,9 +58,11 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     QObject::connect(_modem,SIGNAL(receiveEnd()),this,SLOT(receiveEnd()));
     QObject::connect(_modem,SIGNAL(endAudioTransmission()),this,SLOT(endAudioTransmission()));
     QObject::connect(this,SIGNAL(audioData(unsigned char*,int)),_modem,SLOT(processAudioData(unsigned char*,int)));
+    QObject::connect(this,SIGNAL(pcmData(float*,int)),_modem,SLOT(processPCMAudio(float*,int)));
     QObject::connect(this,SIGNAL(videoData(unsigned char*,int)),_modem,SLOT(processVideoData(unsigned char*,int)));
     QObject::connect(this,SIGNAL(netData(unsigned char*,int)),_modem,SLOT(processNetData(unsigned char*,int)));
     QObject::connect(_modem,SIGNAL(digitalAudio(unsigned char*,int)),this,SLOT(receiveAudioData(unsigned char*,int)));
+    QObject::connect(_modem,SIGNAL(pcmAudio(std::vector<float>*)),this,SLOT(receivePCMAudio(std::vector<float>*)));
     QObject::connect(_modem,SIGNAL(videoData(unsigned char*,int)),this,SLOT(receiveVideoData(unsigned char*,int)));
     QObject::connect(_modem,SIGNAL(netData(unsigned char*,int)),this,SLOT(receiveNetData(unsigned char*,int)));
     for (int j = 0;j<5000;j++)
@@ -176,8 +179,22 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
 void RadioOp::processAudioStream()
 {
     int audiobuffer_size = 640; //40 ms @ 8k
-    short *audiobuffer = new short[audiobuffer_size/2];
+    short *audiobuffer = new short[audiobuffer_size/sizeof(short)];
     _audio->read_short(audiobuffer,audiobuffer_size);
+    if(_radio_type == radio_type::RADIO_TYPE_ANALOG)
+    {
+        float *pcm = new float[audiobuffer_size/sizeof(short)];
+
+        for(int i=0;i<audiobuffer_size/sizeof(short);i++)
+        {
+            pcm[i] = (float)audiobuffer[i] / 32767.0f;
+        }
+
+        emit pcmData(pcm, audiobuffer_size/sizeof(short));
+        delete[] audiobuffer;
+        return;
+    }
+
     int packet_size = 0;
     unsigned char *encoded_audio;
     if((_mode == gr_modem_types::ModemTypeBPSK2000) ||
@@ -267,7 +284,6 @@ void RadioOp::processNetStream()
 void RadioOp::run()
 {
 
-
     bool ptt_activated = false;
     bool frame_flag = true;
     while(true)
@@ -313,7 +329,7 @@ void RadioOp::run()
             if(_rx_inited)
                 _modem->startRX();
         }
-        if(transmitting && (_radio_type == radio_type::RADIO_TYPE_DIGITAL))
+        if(transmitting)
         {
             if(_mode == gr_modem_types::ModemTypeQPSKVideo)
                 processVideoStream(frame_flag);
@@ -338,6 +354,11 @@ void RadioOp::run()
                     autoTune();
                 if(_radio_type == radio_type::RADIO_TYPE_DIGITAL)
                     _modem->demodulate();
+                else if(_radio_type == radio_type::RADIO_TYPE_ANALOG)
+                {
+                    _modem->demodulateAnalog();
+                }
+
             }
         }
         if(_process_text && (_radio_type == radio_type::RADIO_TYPE_DIGITAL))
@@ -354,9 +375,9 @@ void RadioOp::run()
             }
             if(!_repeat_text)
             {
-                _mutex.lock();
+                _mutex->lock();
                 _process_text = false;
-                _mutex.unlock();
+                _mutex->unlock();
             }
             emit displayTransmitStatus(false);
         }
@@ -387,6 +408,23 @@ void RadioOp::receiveAudioData(unsigned char *data, int size)
     delete[] data;
     if(samples > 0)
         _audio->write_short(audio_out,samples*sizeof(short));
+}
+
+void RadioOp::receivePCMAudio(std::vector<float> *audio_data)
+{
+    if(audio_data->size() > 4096)
+    {
+        delete audio_data;
+        return;
+    }
+    short *pcm = new short[audio_data->size()];
+    for(int i=0;i<audio_data->size();i++)
+    {
+        pcm[i] = (short)(audio_data->at(i) * 32767.0f);
+    }
+    _audio->write_short(pcm, audio_data->size()*sizeof(short));
+    audio_data->clear();
+    delete audio_data;
 }
 
 int RadioOp::getFrameLength(unsigned char *data)
@@ -466,10 +504,10 @@ void RadioOp::endTransmission()
 void RadioOp::textData(QString text, bool repeat)
 {
     _repeat_text = repeat;
-    _mutex.lock();
+    _mutex->lock();
     _text_out = text;
     _process_text = true;
-    _mutex.unlock();
+    _mutex->unlock();
 
 }
 void RadioOp::textReceived(QString text)
@@ -543,7 +581,6 @@ void RadioOp::toggleRX(bool value)
         _fft_gui->set_frequency_range(_tune_center_freq, 1000000);
         _modem->setRxSensitivity(_rx_sensitivity);
         _modem->setSquelch(_squelch);
-        _tune_center_freq = _modem->_requested_frequency_hz;
         if(_mode == gr_modem_types::ModemTypeQPSK250000 && _net_device == 0)
         {
             _net_device = new NetDevice;
@@ -614,64 +651,64 @@ void RadioOp::toggleMode(int value)
         _mode = gr_modem_types::ModemTypeBPSK2000;
         _tune_limit_lower = -5000;
         _tune_limit_upper = 5000;
-        _step_hz = 1;
+        _step_hz = 10;
         break;
     case 1:
         _mode = gr_modem_types::ModemTypeBPSK1000;
         _tune_limit_lower = -5000;
         _tune_limit_upper = 5000;
-        _step_hz = 1;
+        _step_hz = 10;
         break;
     case 2:
         _mode = gr_modem_types::ModemTypeQPSK2000;
         _tune_limit_lower = -5000;
         _tune_limit_upper = 5000;
-        _step_hz = 1;
+        _step_hz = 10;
         break;
     case 3:
         _mode = gr_modem_types::ModemTypeQPSK20000;
         _tune_limit_lower = -5000;
         _tune_limit_upper = 5000;
-        _step_hz = 10;
+        _step_hz = 20;
         break;
     case 4:
         _mode = gr_modem_types::ModemType4FSK2000;
         _tune_limit_lower = -5000;
         _tune_limit_upper = 5000;
-        _step_hz = 1;
+        _step_hz = 10;
         break;
     case 5:
         _mode = gr_modem_types::ModemType4FSK20000;
         _tune_limit_lower = -5000;
         _tune_limit_upper = 5000;
-        _step_hz = 10;
+        _step_hz = 20;
         break;
     case 6:
         _mode = gr_modem_types::ModemType2FSK2000;
         _tune_limit_lower = -5000;
         _tune_limit_upper = 5000;
-        _step_hz = 1;
+        _step_hz = 10;
         break;
     case 7:
         _radio_type = radio_type::RADIO_TYPE_ANALOG;
         _mode = gr_modem_types::ModemTypeNBFM2500;
         _tune_limit_lower = -5000;
         _tune_limit_upper = 5000;
-        _step_hz = 5;
+        _step_hz = 10;
         break;
     case 8:
         _radio_type = radio_type::RADIO_TYPE_ANALOG;
         _mode = gr_modem_types::ModemTypeNBFM5000;
         _tune_limit_lower = -5000;
         _tune_limit_upper = 5000;
-        _step_hz = 5;
+        _step_hz = 10;
 
         break;
     case 9:
         _radio_type = radio_type::RADIO_TYPE_ANALOG;
         _mode = gr_modem_types::ModemTypeSSB2500;
-        _tune_limit_lower = -1500;
-        _tune_limit_upper = 1500;
+        _tune_limit_lower = -2500;
+        _tune_limit_upper = 2500;
         _step_hz = 1;
         break;
     case 10:
@@ -690,7 +727,7 @@ void RadioOp::toggleMode(int value)
         _mode = gr_modem_types::ModemTypeBPSK2000;
         _tune_limit_lower = -2000;
         _tune_limit_upper = 2000;
-        _step_hz = 1;
+        _step_hz = 10;
         break;
     }
     if(rx_inited_before)
@@ -702,22 +739,28 @@ void RadioOp::toggleMode(int value)
 
 void RadioOp::fineTuneFreq(long center_freq)
 {
-    _modem->tune(_tune_center_freq + center_freq*10, false);
-    _modem->tuneTx(_tune_center_freq + _tune_shift_freq + center_freq*10);
+    _mutex->lock();
+    _modem->tune(_tune_center_freq + center_freq*_step_hz);
+    _modem->tuneTx(_tune_center_freq + _tune_shift_freq + center_freq*_step_hz);
+    _mutex->unlock();
 }
 
 void RadioOp::tuneFreq(qint64 center_freq)
 {
+    _mutex->lock();
     _tune_center_freq = center_freq;
     _modem->tune(_tune_center_freq, false);
     _modem->tuneTx(_tune_center_freq + _tune_shift_freq);
-    _fft_gui->set_frequency_range(center_freq, 1000000);
+    _mutex->unlock();
+    _fft_gui->set_frequency_range(_tune_center_freq, 1000000);
 }
 
 void RadioOp::tuneTxFreq(qint64 center_freq)
 {
+    _mutex->lock();
     _tune_shift_freq = center_freq;
     _modem->tuneTx(_tune_center_freq + _tune_shift_freq);
+    _mutex->unlock();
 }
 
 void RadioOp::setTxPower(int dbm)
@@ -779,8 +822,8 @@ void RadioOp::autoTune()
     _tune_center_freq = _tune_center_freq + _step_hz;
     _modem->tune(_tune_center_freq, true);
     _modem->tuneTx(_tune_center_freq + _tune_shift_freq);
-    if(_tune_center_freq >= (_modem->_requested_frequency_hz + _tune_limit_upper))
-        _tune_center_freq = _modem->_requested_frequency_hz + _tune_limit_lower;
+    if(_tune_center_freq >= (_tune_center_freq + _tune_limit_upper))
+        _tune_center_freq = _tune_center_freq + _tune_limit_lower;
 }
 
 void RadioOp::startAutoTune()
