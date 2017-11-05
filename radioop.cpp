@@ -25,7 +25,6 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _codec = new AudioEncoder;
     _audio = new AudioInterface;
     _mutex = new QMutex;
-    _audio_float = new AudioInterface(0,8000,1,0);
     _net_device = 0;
     _stop =false;
     _tx_inited = false;
@@ -83,7 +82,6 @@ RadioOp::~RadioOp()
     if(_net_device != 0)
         delete _net_device;
     delete _audio;
-    delete _audio_float;
     delete _led_timer;
     delete _modem;
     delete[] _rand_frame_data;
@@ -180,17 +178,23 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
 
 void RadioOp::processAudioStream()
 {
+    int audiobuffer_size = 640; //40 ms @ 8k
+    short *audiobuffer = new short[audiobuffer_size/sizeof(short)];
+    _audio->read_short(audiobuffer,audiobuffer_size);
     if(_radio_type == radio_type::RADIO_TYPE_ANALOG)
     {
-        int audiobuffer_size = 640;
-        float *audiobuffer = new float[audiobuffer_size/sizeof(float)];
-        _audio_float->read(audiobuffer,audiobuffer_size);
-        emit pcmData(audiobuffer, audiobuffer_size/sizeof(float));
+        float *pcm = new float[audiobuffer_size/sizeof(short)];
+
+        for(int i=0;i<audiobuffer_size/sizeof(short);i++)
+        {
+            pcm[i] = (float)audiobuffer[i] / 32767.0f;
+        }
+
+        emit pcmData(pcm, audiobuffer_size/sizeof(short));
+        delete[] audiobuffer;
         return;
     }
-    int audiobuffer_size = 640; //40 ms @ 8k
-    short *audiobuffer = new short[audiobuffer_size/2];
-    _audio->read_short(audiobuffer,audiobuffer_size);
+
     int packet_size = 0;
     unsigned char *encoded_audio;
     if((_mode == gr_modem_types::ModemTypeBPSK2000) ||
@@ -279,7 +283,6 @@ void RadioOp::processNetStream()
 
 void RadioOp::run()
 {
-
 
     bool ptt_activated = false;
     bool frame_flag = true;
@@ -409,14 +412,18 @@ void RadioOp::receiveAudioData(unsigned char *data, int size)
 
 void RadioOp::receivePCMAudio(std::vector<float> *audio_data)
 {
-    if(audio_data->size() > 2048)
+    if(audio_data->size() > 4096)
     {
         delete audio_data;
         return;
     }
-    float *pcm = new float[audio_data->size()];
-    memcpy(pcm,audio_data->data(),audio_data->size()*sizeof(float));
-    _audio_float->write(pcm, audio_data->size()*sizeof(float));
+    short *pcm = new short[audio_data->size()];
+    for(int i=0;i<audio_data->size();i++)
+    {
+        pcm[i] = (short)(audio_data->at(i) * 32767.0f);
+    }
+    _audio->write_short(pcm, audio_data->size()*sizeof(short));
+    audio_data->clear();
     delete audio_data;
 }
 
@@ -574,7 +581,6 @@ void RadioOp::toggleRX(bool value)
         _fft_gui->set_frequency_range(_tune_center_freq, 1000000);
         _modem->setRxSensitivity(_rx_sensitivity);
         _modem->setSquelch(_squelch);
-        _tune_center_freq = _modem->_requested_frequency_hz;
         if(_mode == gr_modem_types::ModemTypeQPSK250000 && _net_device == 0)
         {
             _net_device = new NetDevice;
@@ -733,9 +739,12 @@ void RadioOp::toggleMode(int value)
 
 void RadioOp::fineTuneFreq(long center_freq)
 {
+    _tune_center_freq = _tune_center_freq + center_freq*10;
     _mutex->lock();
-    _modem->tune(_tune_center_freq + center_freq*10, false);
-    _modem->tuneTx(_tune_center_freq + _tune_shift_freq + center_freq*10);
+    _modem->tune(_tune_center_freq);
+    _modem->tuneTx(_tune_center_freq + _tune_shift_freq);
+    _fft_gui->set_frequency_range(center_freq, 1000000);
+    emit freqFromGUI(_tune_center_freq);
     _mutex->unlock();
 }
 
@@ -816,8 +825,8 @@ void RadioOp::autoTune()
     _tune_center_freq = _tune_center_freq + _step_hz;
     _modem->tune(_tune_center_freq, true);
     _modem->tuneTx(_tune_center_freq + _tune_shift_freq);
-    if(_tune_center_freq >= (_modem->_requested_frequency_hz + _tune_limit_upper))
-        _tune_center_freq = _modem->_requested_frequency_hz + _tune_limit_lower;
+    if(_tune_center_freq >= (_tune_center_freq + _tune_limit_upper))
+        _tune_center_freq = _tune_center_freq + _tune_limit_lower;
 }
 
 void RadioOp::startAutoTune()

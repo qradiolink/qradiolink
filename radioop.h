@@ -124,7 +124,6 @@ private:
     AlsaAudio *_audio;
 #endif
     AudioInterface *_audio;
-    AudioInterface *_audio_float;
     Settings *_settings;
     bool _transmitting;
     bool _process_text;
