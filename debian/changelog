@@ -1,6 +1,8 @@
-qradiolink (0.2.29-1) UNRELEASED; urgency=medium
+qradiolink (0.2.32-1) UNRELEASED; urgency=medium
 
   [ Adrian Musceac ]
+  * Fix some tuning bugs
+  * Unify sound interface, prepare for VOIP integration
   * Shift TX operation
   * Click to tune
   * UI changes (spectrum, waterfall)
