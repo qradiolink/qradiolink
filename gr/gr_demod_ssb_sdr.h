@@ -18,7 +18,7 @@
 #define GR_DEMOD_SSB_SDR_H
 
 #include <QObject>
-#include <gnuradio/audio/sink.h>
+#include "gr_audio_sink.h"
 #include <gnuradio/blocks/multiply_cc.h>
 #include <gnuradio/analog/sig_source_c.h>
 #include <gnuradio/top_block.h>
@@ -58,10 +58,11 @@ public slots:
     void enable_gui_const(bool value);
     void enable_gui_fft(bool value);
     double get_freq();
+    std::vector<float> *getData();
 
 private:
     gr::top_block_sptr _top_block;
-    gr::audio::sink::sptr _audio_sink;
+    gr_audio_sink_sptr _audio_sink;
     gr::analog::sig_source_c::sptr _signal_source;
     gr::blocks::multiply_cc::sptr _multiply;
     gr::filter::pfb_arb_resampler_ccf::sptr _resampler;

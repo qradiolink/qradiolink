@@ -76,6 +76,7 @@ signals:
     void displayTransmitStatus(bool status);
     void displayDataReceiveStatus(bool status);
     void audioData(unsigned char *buf, int size);
+    void pcmData(float *audiobuffer, int size);
     void videoData(unsigned char *buf, int size);
     void netData(unsigned char *buf, int size);
     void videoImage(QImage img);
@@ -97,6 +98,7 @@ public slots:
     void receiveAudioData(unsigned char *data, int size);
     void receiveVideoData(unsigned char *data, int size);
     void receiveNetData(unsigned char *data, int size);
+    void receivePCMAudio(std::vector<float>* audio_data);
     void toggleRX(bool value);
     void toggleTX(bool value);
     void toggleMode(int value);
@@ -122,13 +124,14 @@ private:
     AlsaAudio *_audio;
 #endif
     AudioInterface *_audio;
+    AudioInterface *_audio_float;
     Settings *_settings;
     bool _transmitting;
     bool _process_text;
     bool _repeat_text;
     QString _text_out;
     QString _callsign;
-    QMutex _mutex;
+    QMutex *_mutex;
     QTimer *_led_timer;
     AudioEncoder *_codec;
     VideoEncoder *_video;

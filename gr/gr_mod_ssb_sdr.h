@@ -19,7 +19,7 @@
 
 #include <QObject>
 #include <gnuradio/top_block.h>
-#include <gnuradio/audio/source.h>
+#include "gr_audio_source.h"
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/filter/fft_filter_ccc.h>
 #include <gnuradio/filter/fft_filter_fff.h>
@@ -46,11 +46,12 @@ public slots:
     void stop();
     void tune(long center_freq);
     void set_power(int dbm);
+    int setData(std::vector<float> *data);
 
 
 private:
     gr::top_block_sptr _top_block;
-    gr::audio::source::sptr _audio_source;
+    gr_audio_source_sptr _audio_source;
     gr::filter::pfb_arb_resampler_ccf::sptr _resampler;
     gr::blocks::multiply_const_cc::sptr _amplify;
     gr::filter::fft_filter_fff::sptr _audio_filter;

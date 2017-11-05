@@ -32,7 +32,7 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(gr::qtgui::sink_c::sptr fft_gui,
     _agc = gr::analog::agc2_cc::make(0.6e-1, 1e-3, 1, 1);
     _complex_to_real = gr::blocks::complex_to_real::make();
     _audio_gain = gr::blocks::multiply_const_ff::make(0.9);
-    _audio_sink = gr::audio::sink::make(_target_samp_rate,"", true);
+    _audio_sink = make_gr_audio_sink();
 
     _rssi_valve = gr::blocks::copy::make(8);
     _rssi_valve->set_enabled(false);
@@ -101,6 +101,11 @@ void gr_demod_ssb_sdr::stop()
     _top_block->wait();
 }
 
+std::vector<float>* gr_demod_ssb_sdr::getData()
+{
+    std::vector<float> *data = _audio_sink->get_data();
+    return data;
+}
 
 void gr_demod_ssb_sdr::tune(long center_freq)
 {

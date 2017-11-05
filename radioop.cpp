@@ -24,6 +24,8 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _radio_type = radio_type::RADIO_TYPE_DIGITAL;
     _codec = new AudioEncoder;
     _audio = new AudioInterface;
+    _mutex = new QMutex;
+    _audio_float = new AudioInterface(0,8000,1,0);
     _net_device = 0;
     _stop =false;
     _tx_inited = false;
@@ -57,9 +59,11 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     QObject::connect(_modem,SIGNAL(receiveEnd()),this,SLOT(receiveEnd()));
     QObject::connect(_modem,SIGNAL(endAudioTransmission()),this,SLOT(endAudioTransmission()));
     QObject::connect(this,SIGNAL(audioData(unsigned char*,int)),_modem,SLOT(processAudioData(unsigned char*,int)));
+    QObject::connect(this,SIGNAL(pcmData(float*,int)),_modem,SLOT(processPCMAudio(float*,int)));
     QObject::connect(this,SIGNAL(videoData(unsigned char*,int)),_modem,SLOT(processVideoData(unsigned char*,int)));
     QObject::connect(this,SIGNAL(netData(unsigned char*,int)),_modem,SLOT(processNetData(unsigned char*,int)));
     QObject::connect(_modem,SIGNAL(digitalAudio(unsigned char*,int)),this,SLOT(receiveAudioData(unsigned char*,int)));
+    QObject::connect(_modem,SIGNAL(pcmAudio(std::vector<float>*)),this,SLOT(receivePCMAudio(std::vector<float>*)));
     QObject::connect(_modem,SIGNAL(videoData(unsigned char*,int)),this,SLOT(receiveVideoData(unsigned char*,int)));
     QObject::connect(_modem,SIGNAL(netData(unsigned char*,int)),this,SLOT(receiveNetData(unsigned char*,int)));
     for (int j = 0;j<5000;j++)
@@ -79,6 +83,7 @@ RadioOp::~RadioOp()
     if(_net_device != 0)
         delete _net_device;
     delete _audio;
+    delete _audio_float;
     delete _led_timer;
     delete _modem;
     delete[] _rand_frame_data;
@@ -175,6 +180,14 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
 
 void RadioOp::processAudioStream()
 {
+    if(_radio_type == radio_type::RADIO_TYPE_ANALOG)
+    {
+        int audiobuffer_size = 640;
+        float *audiobuffer = new float[audiobuffer_size/sizeof(float)];
+        _audio_float->read(audiobuffer,audiobuffer_size);
+        emit pcmData(audiobuffer, audiobuffer_size/sizeof(float));
+        return;
+    }
     int audiobuffer_size = 640; //40 ms @ 8k
     short *audiobuffer = new short[audiobuffer_size/2];
     _audio->read_short(audiobuffer,audiobuffer_size);
@@ -313,7 +326,7 @@ void RadioOp::run()
             if(_rx_inited)
                 _modem->startRX();
         }
-        if(transmitting && (_radio_type == radio_type::RADIO_TYPE_DIGITAL))
+        if(transmitting)
         {
             if(_mode == gr_modem_types::ModemTypeQPSKVideo)
                 processVideoStream(frame_flag);
@@ -338,6 +351,11 @@ void RadioOp::run()
                     autoTune();
                 if(_radio_type == radio_type::RADIO_TYPE_DIGITAL)
                     _modem->demodulate();
+                else if(_radio_type == radio_type::RADIO_TYPE_ANALOG)
+                {
+                    _modem->demodulateAnalog();
+                }
+
             }
         }
         if(_process_text && (_radio_type == radio_type::RADIO_TYPE_DIGITAL))
@@ -354,14 +372,14 @@ void RadioOp::run()
             }
             if(!_repeat_text)
             {
-                _mutex.lock();
+                _mutex->lock();
                 _process_text = false;
-                _mutex.unlock();
+                _mutex->unlock();
             }
             emit displayTransmitStatus(false);
         }
 
-        usleep(10000);
+        usleep(2000);
         if(_stop)
             break;
     }
@@ -387,6 +405,19 @@ void RadioOp::receiveAudioData(unsigned char *data, int size)
     delete[] data;
     if(samples > 0)
         _audio->write_short(audio_out,samples*sizeof(short));
+}
+
+void RadioOp::receivePCMAudio(std::vector<float> *audio_data)
+{
+    if(audio_data->size() > 2048)
+    {
+        delete audio_data;
+        return;
+    }
+    float *pcm = new float[audio_data->size()];
+    memcpy(pcm,audio_data->data(),audio_data->size()*sizeof(float));
+    _audio_float->write(pcm, audio_data->size()*sizeof(float));
+    delete audio_data;
 }
 
 int RadioOp::getFrameLength(unsigned char *data)
@@ -466,10 +497,10 @@ void RadioOp::endTransmission()
 void RadioOp::textData(QString text, bool repeat)
 {
     _repeat_text = repeat;
-    _mutex.lock();
+    _mutex->lock();
     _text_out = text;
     _process_text = true;
-    _mutex.unlock();
+    _mutex->unlock();
 
 }
 void RadioOp::textReceived(QString text)
@@ -702,22 +733,28 @@ void RadioOp::toggleMode(int value)
 
 void RadioOp::fineTuneFreq(long center_freq)
 {
+    _mutex->lock();
     _modem->tune(_tune_center_freq + center_freq*10, false);
     _modem->tuneTx(_tune_center_freq + _tune_shift_freq + center_freq*10);
+    _mutex->unlock();
 }
 
 void RadioOp::tuneFreq(qint64 center_freq)
 {
+    _mutex->lock();
     _tune_center_freq = center_freq;
     _modem->tune(_tune_center_freq, false);
     _modem->tuneTx(_tune_center_freq + _tune_shift_freq);
+    _mutex->unlock();
     _fft_gui->set_frequency_range(center_freq, 1000000);
 }
 
 void RadioOp::tuneTxFreq(qint64 center_freq)
 {
+    _mutex->lock();
     _tune_shift_freq = center_freq;
     _modem->tuneTx(_tune_center_freq + _tune_shift_freq);
+    _mutex->unlock();
 }
 
 void RadioOp::setTxPower(int dbm)

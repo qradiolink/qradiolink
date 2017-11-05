@@ -30,7 +30,7 @@ gr_mod_ssb_sdr::gr_mod_ssb_sdr(QObject *parent, int samp_rate, int carrier_freq,
     _modulation_index = mod_index;
     _top_block = gr::make_top_block("ssb modulator sdr");
 
-    _audio_source = gr::audio::source::make(target_samp_rate,"",false);
+    _audio_source = make_gr_audio_source();
     _signal_source = gr::analog::sig_source_f::make(target_samp_rate,gr::analog::GR_COS_WAVE, 0, 1);
     _carrier_suppress = gr::analog::sig_source_c::make(target_samp_rate,gr::analog::GR_SIN_WAVE,0,1);
     _delay = gr::blocks::delay::make(8,125000);
@@ -84,6 +84,12 @@ void gr_mod_ssb_sdr::stop()
 {
     _top_block->stop();
     _top_block->wait();
+}
+
+int gr_mod_ssb_sdr::setData(std::vector<float> *data)
+{
+    return _audio_source->set_data(data);
+
 }
 
 void gr_mod_ssb_sdr::tune(long center_freq)

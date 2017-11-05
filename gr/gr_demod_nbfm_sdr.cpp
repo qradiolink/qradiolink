@@ -22,17 +22,19 @@ gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(gr::qtgui::sink_c::sptr fft_gui,
 
     unsigned int flt_size = 32;
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width, 2000);
+    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width, 12000);
     _resampler = gr::filter::pfb_arb_resampler_ccf::make(rerate, taps, flt_size);
     _signal_source = gr::analog::sig_source_c::make(_samp_rate,gr::analog::GR_COS_WAVE,-25000,1);
     _multiply = gr::blocks::multiply_cc::make();
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
                             1, _target_samp_rate, _filter_width,600,gr::filter::firdes::WIN_HAMMING) );
-    _audio_sink = gr::audio::sink::make(_target_samp_rate,"", true);
+
+    _audio_sink = make_gr_audio_sink();
     _fm_demod = gr::analog::quadrature_demod_cf::make(_target_samp_rate/(4*M_PI* _filter_width));
     _squelch = gr::analog::simple_squelch_cc::make(-140,0.01);
     _ctcss = gr::analog::ctcss_squelch_ff::make(_target_samp_rate,0,1,1,1,false);
     _amplify = gr::blocks::multiply_const_ff::make(0.9);
+    _float_to_short = gr::blocks::float_to_short::make();
 
     _message_sink = gr::blocks::message_debug::make();
 
@@ -101,6 +103,11 @@ void gr_demod_nbfm_sdr::stop()
     _top_block->wait();
 }
 
+std::vector<float>* gr_demod_nbfm_sdr::getData()
+{
+    std::vector<float> *data = _audio_sink->get_data();
+    return data;
+}
 
 void gr_demod_nbfm_sdr::tune(long center_freq)
 {

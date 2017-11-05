@@ -505,7 +505,6 @@ double gr_modem::getFreqGUI()
 
 void gr_modem::tune(long center_freq, bool sync)
 {
-    _requested_frequency_hz = center_freq;
     if(_gr_demod_bpsk_sdr)
         _gr_demod_bpsk_sdr->tune(center_freq);
     if(_gr_demod_qpsk_sdr)
@@ -674,6 +673,35 @@ void gr_modem::processAudioData(unsigned char *data, int size)
     delete[] data;
 }
 
+void gr_modem::processPCMAudio(float *audio_data, int size)
+{
+    std::vector<float> *data = new std::vector<float>;
+    for(int i=0; i<size;i++)
+    {
+        data->push_back(audio_data[i]);
+    }
+    if((_modem_type == gr_modem_types::ModemTypeNBFM2500)
+            || (_modem_type == gr_modem_types::ModemTypeNBFM5000))
+    {
+        int ret = 1;
+        while(ret)
+        {
+            usleep(1);
+            ret = _gr_mod_nbfm_sdr->setData(data);
+        }
+    }
+    if(_modem_type == gr_modem_types::ModemTypeSSB2500)
+    {
+        int ret = 1;
+        while(ret)
+        {
+            usleep(1);
+            ret = _gr_mod_ssb_sdr->setData(data);
+        }
+    }
+    delete[] audio_data;
+}
+
 void gr_modem::processVideoData(unsigned char *data, int size)
 {
     std::vector<unsigned char> *one_frame = frame(data, size, FrameTypeVideo);
@@ -831,11 +859,35 @@ static void unpackBytes(unsigned char *bitbuf, const unsigned char *bytebuf, int
     }
 }
 
+void gr_modem::demodulateAnalog()
+{
+    std::vector<float> *audio_data;
+    if((_modem_type == gr_modem_types::ModemTypeNBFM2500)
+            || (_modem_type == gr_modem_types::ModemTypeNBFM5000))
+    {
+        audio_data = _gr_demod_nbfm_sdr->getData();
+    }
+    else if(_modem_type == gr_modem_types::ModemTypeSSB2500)
+    {
+        audio_data = _gr_demod_ssb_sdr->getData();
+    }
+    if(audio_data->size() > 0)
+    {
+        emit pcmAudio(audio_data);
+    }
+    else
+    {
+        delete audio_data;
+    }
+
+}
+
 void gr_modem::demodulate()
 {
     std::vector<unsigned char> *demod_data;
     std::vector<unsigned char> *demod_data2;
     std::vector<unsigned char> *data;
+
     if((_modem_type == gr_modem_types::ModemTypeBPSK2000)
             || (_modem_type == gr_modem_types::ModemTypeBPSK1000))
     {
@@ -879,6 +931,7 @@ void gr_modem::demodulate()
     if((_modem_type == gr_modem_types::ModemTypeBPSK2000)
             || (_modem_type == gr_modem_types::ModemTypeBPSK1000))
     {
+        demod_data2->clear();
         delete demod_data2;
     }
 
