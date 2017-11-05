@@ -322,6 +322,7 @@ void MainWindow::tuneMainFreq(qint64 freq)
 {
     _rx_frequency = freq;
     ui->frequencyEdit->setText(QString::number(ceil(freq/1000)));
+    ui->tuneSlider->setValue(0);
     emit tuneFreq(freq);
 }
 

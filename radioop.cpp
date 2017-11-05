@@ -651,64 +651,64 @@ void RadioOp::toggleMode(int value)
         _mode = gr_modem_types::ModemTypeBPSK2000;
         _tune_limit_lower = -5000;
         _tune_limit_upper = 5000;
-        _step_hz = 1;
+        _step_hz = 10;
         break;
     case 1:
         _mode = gr_modem_types::ModemTypeBPSK1000;
         _tune_limit_lower = -5000;
         _tune_limit_upper = 5000;
-        _step_hz = 1;
+        _step_hz = 10;
         break;
     case 2:
         _mode = gr_modem_types::ModemTypeQPSK2000;
         _tune_limit_lower = -5000;
         _tune_limit_upper = 5000;
-        _step_hz = 1;
+        _step_hz = 10;
         break;
     case 3:
         _mode = gr_modem_types::ModemTypeQPSK20000;
         _tune_limit_lower = -5000;
         _tune_limit_upper = 5000;
-        _step_hz = 10;
+        _step_hz = 20;
         break;
     case 4:
         _mode = gr_modem_types::ModemType4FSK2000;
         _tune_limit_lower = -5000;
         _tune_limit_upper = 5000;
-        _step_hz = 1;
+        _step_hz = 10;
         break;
     case 5:
         _mode = gr_modem_types::ModemType4FSK20000;
         _tune_limit_lower = -5000;
         _tune_limit_upper = 5000;
-        _step_hz = 10;
+        _step_hz = 20;
         break;
     case 6:
         _mode = gr_modem_types::ModemType2FSK2000;
         _tune_limit_lower = -5000;
         _tune_limit_upper = 5000;
-        _step_hz = 1;
+        _step_hz = 10;
         break;
     case 7:
         _radio_type = radio_type::RADIO_TYPE_ANALOG;
         _mode = gr_modem_types::ModemTypeNBFM2500;
         _tune_limit_lower = -5000;
         _tune_limit_upper = 5000;
-        _step_hz = 5;
+        _step_hz = 10;
         break;
     case 8:
         _radio_type = radio_type::RADIO_TYPE_ANALOG;
         _mode = gr_modem_types::ModemTypeNBFM5000;
         _tune_limit_lower = -5000;
         _tune_limit_upper = 5000;
-        _step_hz = 5;
+        _step_hz = 10;
 
         break;
     case 9:
         _radio_type = radio_type::RADIO_TYPE_ANALOG;
         _mode = gr_modem_types::ModemTypeSSB2500;
-        _tune_limit_lower = -1500;
-        _tune_limit_upper = 1500;
+        _tune_limit_lower = -2500;
+        _tune_limit_upper = 2500;
         _step_hz = 1;
         break;
     case 10:
@@ -727,7 +727,7 @@ void RadioOp::toggleMode(int value)
         _mode = gr_modem_types::ModemTypeBPSK2000;
         _tune_limit_lower = -2000;
         _tune_limit_upper = 2000;
-        _step_hz = 1;
+        _step_hz = 10;
         break;
     }
     if(rx_inited_before)
@@ -739,12 +739,9 @@ void RadioOp::toggleMode(int value)
 
 void RadioOp::fineTuneFreq(long center_freq)
 {
-    _tune_center_freq = _tune_center_freq + center_freq*10;
     _mutex->lock();
-    _modem->tune(_tune_center_freq);
-    _modem->tuneTx(_tune_center_freq + _tune_shift_freq);
-    _fft_gui->set_frequency_range(center_freq, 1000000);
-    emit freqFromGUI(_tune_center_freq);
+    _modem->tune(_tune_center_freq + center_freq*_step_hz);
+    _modem->tuneTx(_tune_center_freq + _tune_shift_freq + center_freq*_step_hz);
     _mutex->unlock();
 }
 
@@ -755,7 +752,7 @@ void RadioOp::tuneFreq(qint64 center_freq)
     _modem->tune(_tune_center_freq, false);
     _modem->tuneTx(_tune_center_freq + _tune_shift_freq);
     _mutex->unlock();
-    _fft_gui->set_frequency_range(center_freq, 1000000);
+    _fft_gui->set_frequency_range(_tune_center_freq, 1000000);
 }
 
 void RadioOp::tuneTxFreq(qint64 center_freq)
