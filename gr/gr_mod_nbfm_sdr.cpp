@@ -39,7 +39,7 @@ gr_mod_nbfm_sdr::gr_mod_nbfm_sdr(QObject *parent, int samp_rate, int carrier_fre
     static const float coeff[] =  {-0.026316914707422256, -0.2512197494506836, 1.5501943826675415,
                                    -0.2512197494506836, -0.026316914707422256};
     std::vector<float> iir_taps(coeff, coeff + sizeof(coeff) / sizeof(coeff[0]) );
-    _emphasis_filter = gr::filter::fft_filter_ccf::make(1,iir_taps);
+    _emphasis_filter = gr::filter::fft_filter_fff::make(1,iir_taps);
 
     std::vector<float> interp_taps = gr::filter::firdes::low_pass(1, target_samp_rate,
                                                         _filter_width, 2000);
@@ -60,9 +60,9 @@ gr_mod_nbfm_sdr::gr_mod_nbfm_sdr(QObject *parent, int samp_rate, int carrier_fre
 
     _top_block->connect(_audio_source,0,_audio_filter,0);
     //_top_block->connect(_audio_amplify,0,_audio_filter,0);
-    _top_block->connect(_audio_filter,0,_fm_modulator,0);
-    _top_block->connect(_fm_modulator,0,_emphasis_filter,0);
-    _top_block->connect(_emphasis_filter,0,_resampler,0);
+    _top_block->connect(_audio_filter,0,_emphasis_filter,0);
+    _top_block->connect(_emphasis_filter,0,_fm_modulator,0);
+    _top_block->connect(_fm_modulator,0,_resampler,0);
     _top_block->connect(_resampler,0,_amplify,0);
     _top_block->connect(_amplify,0,_filter,0);
 

@@ -29,6 +29,7 @@
 #include <gnuradio/analog/simple_squelch_cc.h>
 #include <gnuradio/analog/ctcss_squelch_ff.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
+#include <gnuradio/filter/fft_filter_fff.h>
 #include <gnuradio/qtgui/const_sink_c.h>
 #include <gnuradio/qtgui/sink_c.h>
 #include <gnuradio/qtgui/number_sink.h>
@@ -77,6 +78,7 @@ private:
     gr::analog::ctcss_squelch_ff::sptr _ctcss;
     gr::filter::pfb_arb_resampler_ccf::sptr _resampler;
     gr::filter::fft_filter_ccf::sptr _filter;
+    gr::filter::fft_filter_fff::sptr _deemphasis_filter;
     gr::qtgui::const_sink_c::sptr _constellation;
     gr::qtgui::sink_c::sptr _fft_gui;
     gr::blocks::message_debug::sptr _message_sink;

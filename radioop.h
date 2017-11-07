@@ -67,6 +67,7 @@ public:
     void processAudioStream();
     int processVideoStream(bool &frame_flag);
     void processNetStream();
+    void sendEndBeep();
 signals:
     void finished();
     void printText(QString text);

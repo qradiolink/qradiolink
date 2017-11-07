@@ -22,6 +22,10 @@ gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(gr::qtgui::sink_c::sptr fft_gui,
 
     unsigned int flt_size = 32;
 
+    static const float coeff[] = {0.13683246076107025, 1.726335048675537, 0.13683246076107025};
+    std::vector<float> iir_taps(coeff, coeff + sizeof(coeff) / sizeof(coeff[0]) );
+    _deemphasis_filter = gr::filter::fft_filter_fff::make(1,iir_taps);
+
     std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width, 12000);
     _resampler = gr::filter::pfb_arb_resampler_ccf::make(rerate, taps, flt_size);
     _signal_source = gr::analog::sig_source_c::make(_samp_rate,gr::analog::GR_COS_WAVE,-25000,1);
@@ -33,7 +37,7 @@ gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(gr::qtgui::sink_c::sptr fft_gui,
     _fm_demod = gr::analog::quadrature_demod_cf::make(_target_samp_rate/(4*M_PI* _filter_width));
     _squelch = gr::analog::simple_squelch_cc::make(-140,0.01);
     _ctcss = gr::analog::ctcss_squelch_ff::make(_target_samp_rate,0,1,1,1,false);
-    _amplify = gr::blocks::multiply_const_ff::make(0.9);
+    _amplify = gr::blocks::multiply_const_ff::make(0.6);
     _float_to_short = gr::blocks::float_to_short::make();
 
     _message_sink = gr::blocks::message_debug::make();
@@ -78,7 +82,8 @@ gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(gr::qtgui::sink_c::sptr fft_gui,
     _top_block->connect(_resampler,0,_filter,0);
     _top_block->connect(_filter,0,_squelch,0);
     _top_block->connect(_squelch,0,_fm_demod,0);
-    _top_block->connect(_fm_demod,0,_amplify,0);
+    _top_block->connect(_fm_demod,0,_deemphasis_filter,0);
+    _top_block->connect(_deemphasis_filter,0,_amplify,0);
     _top_block->connect(_amplify,0,_audio_sink,0);
 
 

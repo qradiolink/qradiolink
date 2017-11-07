@@ -56,7 +56,7 @@ private:
     gr::blocks::multiply_const_cc::sptr _amplify;
     gr::blocks::multiply_const_ff::sptr _audio_amplify;
     gr::filter::fft_filter_fff::sptr _audio_filter;
-    gr::filter::fft_filter_ccf::sptr _emphasis_filter;
+    gr::filter::fft_filter_fff::sptr _emphasis_filter;
     gr::filter::fft_filter_ccf::sptr _filter;
     gr::analog::sig_source_f::sptr _signal_source;
     gr::blocks::multiply_ff::sptr _multiply;

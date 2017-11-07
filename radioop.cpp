@@ -281,6 +281,25 @@ void RadioOp::processNetStream()
     }
 }
 
+void RadioOp::sendEndBeep()
+{
+    QFile resfile(":/res/end_beep.raw");
+    if(resfile.open(QIODevice::ReadOnly))
+    {
+        QByteArray *data = new QByteArray(resfile.readAll());
+        short *samples = (short*) data->data();
+        float *pcm = new float[data->size()/sizeof(short)];
+
+        for(int i=0;i<data->size()/sizeof(short);i++)
+        {
+            pcm[i] = (float)samples[i] / 32767.0f;
+        }
+
+        emit pcmData(pcm, data->size()/sizeof(short));
+        delete data;
+    }
+}
+
 void RadioOp::run()
 {
 
@@ -321,6 +340,10 @@ void RadioOp::run()
             {
                 if(_radio_type == radio_type::RADIO_TYPE_DIGITAL)
                     _modem->endTransmission(_callsign, _callsign.size());
+                if(_radio_type == radio_type::RADIO_TYPE_ANALOG)
+                {
+                    sendEndBeep();
+                }
                 usleep(1000000);
                 _modem->stopTX();
                 _tx_modem_started = false;
