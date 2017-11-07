@@ -22,7 +22,8 @@ gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(gr::qtgui::sink_c::sptr fft_gui,
 
     unsigned int flt_size = 32;
 
-    static const float coeff[] = {0.13683246076107025, 1.726335048675537, 0.13683246076107025};
+    static const float coeff[] = {8.23112713987939e-05, 0.30221322178840637,
+                                  1.3954089879989624, 0.302213191986084, 8.23112713987939e-05};
     std::vector<float> iir_taps(coeff, coeff + sizeof(coeff) / sizeof(coeff[0]) );
     _deemphasis_filter = gr::filter::fft_filter_fff::make(1,iir_taps);
 

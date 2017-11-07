@@ -176,11 +176,41 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
     }
 }
 
+void RadioOp::vox(short *audiobuffer, int audiobuffer_size)
+{
+    double treshhold = -136;
+    double hyst = 0.5;
+    bool treshhold_set = false;
+    bool hyst_active = false;
+    int hyst_counter = 0;
+    float sum = 0;
+    short max = 0;
+
+    for(int j=0;j< audiobuffer_size;j++)
+    {
+        sum += ((audiobuffer[j]/32768.0f)*(audiobuffer[j]/32768.0f));
+        max = (max > abs(audiobuffer[j])) ? max : abs(audiobuffer[j]);
+
+    }
+
+    float rms = sqrt(sum/audiobuffer_size);
+    double power = 20*log10(rms/32768.0f);
+
+    qDebug() << power;
+    if((power < treshhold+hyst))
+    {
+        delete[] audiobuffer;
+        return;
+    }
+}
+
 void RadioOp::processAudioStream()
 {
     int audiobuffer_size = 640; //40 ms @ 8k
     short *audiobuffer = new short[audiobuffer_size/sizeof(short)];
     _audio->read_short(audiobuffer,audiobuffer_size);
+
+
     if(_radio_type == radio_type::RADIO_TYPE_ANALOG)
     {
         float *pcm = new float[audiobuffer_size/sizeof(short)];
@@ -340,11 +370,12 @@ void RadioOp::run()
             {
                 if(_radio_type == radio_type::RADIO_TYPE_DIGITAL)
                     _modem->endTransmission(_callsign, _callsign.size());
-                if(_radio_type == radio_type::RADIO_TYPE_ANALOG)
+                if((_radio_type == radio_type::RADIO_TYPE_ANALOG)
+                        && ((_mode == gr_modem_types::ModemTypeNBFM2500) || (_mode == gr_modem_types::ModemTypeNBFM5000)))
                 {
                     sendEndBeep();
                 }
-                usleep(1000000);
+                usleep(400000);
                 _modem->stopTX();
                 _tx_modem_started = false;
             }
