@@ -78,6 +78,7 @@ private:
     gr::analog::ctcss_squelch_ff::sptr _ctcss;
     gr::filter::pfb_arb_resampler_ccf::sptr _resampler;
     gr::filter::fft_filter_ccf::sptr _filter;
+    gr::filter::fft_filter_fff::sptr _audio_filter;
     gr::filter::fft_filter_fff::sptr _deemphasis_filter;
     gr::qtgui::const_sink_c::sptr _constellation;
     gr::qtgui::sink_c::sptr _fft_gui;

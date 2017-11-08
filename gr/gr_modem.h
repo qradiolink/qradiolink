@@ -150,6 +150,8 @@ public slots:
     void setTxPower(int value);
     void setSquelch(int value);
     void setRxSensitivity(float value);
+    void setRxCTCSS(float value);
+    void setTxCTCSS(float value);
     void enableGUIConst(bool value);
     void enableGUIFFT(bool value);
     double getFreqGUI();

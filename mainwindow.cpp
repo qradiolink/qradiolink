@@ -24,6 +24,19 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
     _mumble_client(client)
 {
     ui->setupUi(this);
+
+    static float tone_list[]= {67.0, 71.9, 74.4, 77.0, 79.7, 82.5, 85.4, 88.5, 81.5, 87.4, 94.8, 100.0, 103.5, 107.2, 110.9,
+                         114.8, 118.8, 123.0, 127.3, 131.8, 136.5, 141.3, 146.2, 151.4, 156.7, 162.2,
+                          167.9, 173.8, 179.9, 186.2, 192.8, 203.5, 210.7, 218.1, 225.7, 233.6, 241.8, 250.3};
+    QStringList tones;
+    tones.append("Disabled");
+    for(int i=0;i<38;i++)
+    {
+        tones.append(QString::number(tone_list[i]));
+    }
+
+    ui->comboBoxCTCSS->addItems(tones);
+
     ui->frameCtrlFreq->setup(10, 10U, 9000000000U, 1, UNITS_MHZ );
     ui->frameCtrlFreq->setFrequency(434000000);
     ui->frameCtrlFreq->setBkColor(QColor(0,0,127,255));
@@ -52,6 +65,7 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
     QObject::connect(ui->autotuneButton,SIGNAL(toggled(bool)),this,SLOT(autoTune(bool)));
     QObject::connect(ui->saveOptionsButton,SIGNAL(clicked()),this,SLOT(saveConfig()));
     QObject::connect(ui->tabWidget,SIGNAL(currentChanged(int)),this,SLOT(mainTabChanged(int)));
+    QObject::connect(ui->comboBoxCTCSS,SIGNAL(currentIndexChanged(int)),this,SLOT(updateCTCSS(int)));
 
     QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
 
@@ -396,3 +410,8 @@ void MainWindow::updateFreqGUI(long freq)
     ui->frequencyEdit->setText(QString::number(ceil(freq/1000)));
 }
 
+void MainWindow::updateCTCSS(int value)
+{
+    emit setRxCTCSS(ui->comboBoxCTCSS->currentText().toFloat());
+    emit setTxCTCSS(ui->comboBoxCTCSS->currentText().toFloat());
+}

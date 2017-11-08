@@ -41,6 +41,9 @@ gr_mod_nbfm_sdr::gr_mod_nbfm_sdr(QObject *parent, int samp_rate, int carrier_fre
     std::vector<float> iir_taps(coeff, coeff + sizeof(coeff) / sizeof(coeff[0]) );
     _emphasis_filter = gr::filter::fft_filter_fff::make(1,iir_taps);
 
+    _tone_source = gr::analog::sig_source_f::make(target_samp_rate,gr::analog::GR_COS_WAVE,88.5,0.1);
+    _add = gr::blocks::add_ff::make();
+
     std::vector<float> interp_taps = gr::filter::firdes::low_pass(1, target_samp_rate,
                                                         _filter_width, 2000);
     float rerate = (float)_samp_rate/target_samp_rate;
@@ -95,4 +98,37 @@ void gr_mod_nbfm_sdr::tune(long center_freq)
 void gr_mod_nbfm_sdr::set_power(int dbm)
 {
     _osmosdr_sink->set_gain(dbm);
+}
+
+void gr_mod_nbfm_sdr::set_ctcss(float value)
+{
+    if(value == 0)
+    {
+        _top_block->lock();
+        try {
+            _top_block->disconnect(_emphasis_filter,0,_add,0);
+            _top_block->disconnect(_add,0,_fm_modulator,0);
+            _top_block->disconnect(_tone_source,0,_add,1);
+            _top_block->connect(_emphasis_filter,0,_fm_modulator,0);
+        }
+        catch(std::invalid_argument e)
+        {
+        }
+        _top_block->unlock();
+    }
+    else
+    {
+        _tone_source->set_frequency(value);
+        _top_block->lock();
+        try {
+            _top_block->disconnect(_emphasis_filter,0,_fm_modulator,0);
+            _top_block->connect(_emphasis_filter,0,_add,0);
+            _top_block->connect(_add,0,_fm_modulator,0);
+            _top_block->connect(_tone_source,0,_add,1);
+        }
+        catch(std::invalid_argument e)
+        {
+        }
+        _top_block->unlock();
+    }
 }

@@ -109,6 +109,8 @@ public slots:
     void setTxPower(int dbm);
     void setSquelch(int value);
     void setRxSensitivity(int value);
+    void setRxCTCSS(float value);
+    void setTxCTCSS(float value);
     void enableGUIConst(bool value);
     void enableGUIFFT(bool value);
     void syncFrequency();
@@ -150,6 +152,8 @@ private:
     bool _tuning_done;
     bool _tx_modem_started;
     int _tune_counter;
+    float _rx_ctcss;
+    float _tx_ctcss;
     gr::qtgui::sink_c::sptr _fft_gui;
     unsigned char *_rand_frame_data;
 

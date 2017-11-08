@@ -27,6 +27,10 @@ gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(gr::qtgui::sink_c::sptr fft_gui,
     std::vector<float> iir_taps(coeff, coeff + sizeof(coeff) / sizeof(coeff[0]) );
     _deemphasis_filter = gr::filter::fft_filter_fff::make(1,iir_taps);
 
+    _audio_filter = gr::filter::fft_filter_fff::make(
+                1,gr::filter::firdes::high_pass(
+                    1, _target_samp_rate, 300, 600, gr::filter::firdes::WIN_HAMMING));
+
     std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width, 12000);
     _resampler = gr::filter::pfb_arb_resampler_ccf::make(rerate, taps, flt_size);
     _signal_source = gr::analog::sig_source_c::make(_samp_rate,gr::analog::GR_COS_WAVE,-25000,1);
@@ -37,7 +41,7 @@ gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(gr::qtgui::sink_c::sptr fft_gui,
     _audio_sink = make_gr_audio_sink();
     _fm_demod = gr::analog::quadrature_demod_cf::make(_target_samp_rate/(4*M_PI* _filter_width));
     _squelch = gr::analog::pwr_squelch_cc::make(-140,0.01,0,true);
-    _ctcss = gr::analog::ctcss_squelch_ff::make(_target_samp_rate,0,1,1,1,false);
+    _ctcss = gr::analog::ctcss_squelch_ff::make(_target_samp_rate,88.5,0.02,800,0,true);
     _amplify = gr::blocks::multiply_const_ff::make(0.6);
     _float_to_short = gr::blocks::float_to_short::make();
 
@@ -85,7 +89,8 @@ gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(gr::qtgui::sink_c::sptr fft_gui,
     _top_block->connect(_squelch,0,_fm_demod,0);
     _top_block->connect(_fm_demod,0,_deemphasis_filter,0);
     _top_block->connect(_deemphasis_filter,0,_amplify,0);
-    _top_block->connect(_amplify,0,_audio_sink,0);
+    _top_block->connect(_amplify,0,_audio_filter,0);
+    _top_block->connect(_audio_filter,0,_audio_sink,0);
 
 
     _top_block->connect(_filter,0,_rssi_valve,0);
@@ -163,13 +168,33 @@ void gr_demod_nbfm_sdr::set_squelch(int value)
 
 void gr_demod_nbfm_sdr::set_ctcss(float value)
 {
-    if(value == -1.0)
+    if(value == 0)
     {
-        _ctcss->set_gate(false);
+        _top_block->lock();
+        try {
+            _top_block->disconnect(_fm_demod,0,_ctcss,0);
+            _top_block->disconnect(_ctcss,0,_deemphasis_filter,0);
+            _top_block->connect(_fm_demod,0,_deemphasis_filter,0);
+        }
+        catch(std::invalid_argument e)
+        {
+
+        }
+        _top_block->unlock();
     }
     else
     {
         _ctcss->set_frequency(value);
-        _ctcss->set_gate(true);
+        _top_block->lock();
+        try {
+            _top_block->disconnect(_fm_demod,0,_deemphasis_filter,0);
+            _top_block->connect(_fm_demod,0,_ctcss,0);
+            _top_block->connect(_ctcss,0,_deemphasis_filter,0);
+        }
+        catch(std::invalid_argument e)
+        {
+
+        }
+        _top_block->unlock();
     }
 }

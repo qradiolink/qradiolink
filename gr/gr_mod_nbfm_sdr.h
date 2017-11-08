@@ -21,6 +21,8 @@
 #include <gnuradio/top_block.h>
 #include "gr_audio_source.h"
 #include <gnuradio/analog/frequency_modulator_fc.h>
+#include <gnuradio/analog/sig_source_f.h>
+#include <gnuradio/blocks/add_ff.h>
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/filter/fft_filter_fff.h>
@@ -45,6 +47,7 @@ public slots:
     void stop();
     void tune(long center_freq);
     void set_power(int dbm);
+    void set_ctcss(float value);
     int setData(std::vector<float> *data);
 
 
@@ -52,6 +55,8 @@ private:
     gr::top_block_sptr _top_block;
     gr_audio_source_sptr _audio_source;
     gr::analog::frequency_modulator_fc::sptr _fm_modulator;
+    gr::analog::sig_source_f::sptr _tone_source;
+    gr::blocks::add_ff::sptr _add;
     gr::filter::pfb_arb_resampler_ccf::sptr _resampler;
     gr::blocks::multiply_const_cc::sptr _amplify;
     gr::blocks::multiply_const_ff::sptr _audio_amplify;

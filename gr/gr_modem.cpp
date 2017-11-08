@@ -576,6 +576,18 @@ void gr_modem::setSquelch(int value)
         _gr_demod_ssb_sdr->set_squelch(value);
 }
 
+void gr_modem::setRxCTCSS(float value)
+{
+    if(_gr_demod_nbfm_sdr)
+        _gr_demod_nbfm_sdr->set_ctcss(value);
+}
+
+void gr_modem::setTxCTCSS(float value)
+{
+    if(_gr_mod_nbfm_sdr)
+        _gr_mod_nbfm_sdr->set_ctcss(value);
+}
+
 void gr_modem::enableGUIConst(bool value)
 {
     if(_gr_demod_bpsk_sdr)
