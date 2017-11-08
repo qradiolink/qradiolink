@@ -26,7 +26,7 @@
 #include <gnuradio/analog/agc2_ff.h>
 #include <gnuradio/filter/pfb_arb_resampler_ccf.h>
 #include <gnuradio/analog/quadrature_demod_cf.h>
-#include <gnuradio/analog/simple_squelch_cc.h>
+#include <gnuradio/analog/pwr_squelch_cc.h>
 #include <gnuradio/analog/ctcss_squelch_ff.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/filter/fft_filter_fff.h>
@@ -73,7 +73,7 @@ private:
     gr::analog::sig_source_c::sptr _signal_source;
     gr::blocks::multiply_cc::sptr _multiply;
     gr::analog::quadrature_demod_cf::sptr _fm_demod;
-    gr::analog::simple_squelch_cc::sptr _squelch;
+    gr::analog::pwr_squelch_cc::sptr _squelch;
     gr::blocks::multiply_const_ff::sptr _amplify;
     gr::analog::ctcss_squelch_ff::sptr _ctcss;
     gr::filter::pfb_arb_resampler_ccf::sptr _resampler;
