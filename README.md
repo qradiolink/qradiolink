@@ -7,15 +7,14 @@ About
 -----
 - QRadioLink is a GUI for a collection of Gnuradio modems, built for hobbyists, tinkerers and radio enthusiasts,
 which allows experimenting with SDR hardware using different digital and analog modes
-- Possible applications: digital walkie talkie, baby monitor, video camera streaming, IoT devices which are RF
-enabled, radio LAN, robotics.
+- It can also be used as an amateur radio SDR transceiver
+- Possible applications: digital/analog walkie talkie, baby monitor, video camera streaming, IoT devices, radio LAN, robotics.
 - Receives and transmits analog voice, digital voice, low resolution video, text, IP protocol.
-- Somewhat touchscreen friendly user interface.
 - Digital audio transmission uses either a narrow band modem and Codec2 or a high bandwidth modem and Opus.
 - Modems: BPSK, QPSK, 2FSK, 4FSK
 - Modes: narrow FM, SSB, digital voice, digital video, digital data
-- Audio formats: Codec2 700B, Codec2 1400, Opus 10 kbit/s
-- Video formats: JPEG, x264 (work in progress)
+- Digital audio formats: Codec2 700B, Codec2 1400, Opus 
+- Video formats: JPEG
 - Supported hardware: Ettus USRP, RTL-SDR, HackRF, BladeRF and in general all devices 
 supported by libgnuradio-osmosdr
  
