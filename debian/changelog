@@ -1,6 +1,7 @@
-qradiolink (0.2.32-1) UNRELEASED; urgency=medium
+qradiolink (0.2.33-1) UNRELEASED; urgency=medium
 
   [ Adrian Musceac ]
+  * FM CTCSS encoding and decoding
   * Fix some tuning bugs
   * Unify sound interface, prepare for VOIP integration
   * Shift TX operation
