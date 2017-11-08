@@ -37,6 +37,8 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _tx_power = 0;
     _rx_sensitivity = 0;
     _squelch = 0;
+    _rx_ctcss = 0.0;
+    _tx_ctcss = 0.0;
     _tune_center_freq = 0;
     _tune_shift_freq = 0;
     _tune_limit_lower = -5000;
@@ -176,11 +178,41 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
     }
 }
 
+void RadioOp::vox(short *audiobuffer, int audiobuffer_size)
+{
+    double treshhold = -136;
+    double hyst = 0.5;
+    bool treshhold_set = false;
+    bool hyst_active = false;
+    int hyst_counter = 0;
+    float sum = 0;
+    short max = 0;
+
+    for(int j=0;j< audiobuffer_size;j++)
+    {
+        sum += ((audiobuffer[j]/32768.0f)*(audiobuffer[j]/32768.0f));
+        max = (max > abs(audiobuffer[j])) ? max : abs(audiobuffer[j]);
+
+    }
+
+    float rms = sqrt(sum/audiobuffer_size);
+    double power = 20*log10(rms/32768.0f);
+
+    qDebug() << power;
+    if((power < treshhold+hyst))
+    {
+        delete[] audiobuffer;
+        return;
+    }
+}
+
 void RadioOp::processAudioStream()
 {
     int audiobuffer_size = 640; //40 ms @ 8k
     short *audiobuffer = new short[audiobuffer_size/sizeof(short)];
     _audio->read_short(audiobuffer,audiobuffer_size);
+
+
     if(_radio_type == radio_type::RADIO_TYPE_ANALOG)
     {
         float *pcm = new float[audiobuffer_size/sizeof(short)];
@@ -281,6 +313,25 @@ void RadioOp::processNetStream()
     }
 }
 
+void RadioOp::sendEndBeep()
+{
+    QFile resfile(":/res/end_beep.raw");
+    if(resfile.open(QIODevice::ReadOnly))
+    {
+        QByteArray *data = new QByteArray(resfile.readAll());
+        short *samples = (short*) data->data();
+        float *pcm = new float[data->size()/sizeof(short)];
+
+        for(int i=0;i<data->size()/sizeof(short);i++)
+        {
+            pcm[i] = (float)samples[i] / 32767.0f;
+        }
+
+        emit pcmData(pcm, data->size()/sizeof(short));
+        delete data;
+    }
+}
+
 void RadioOp::run()
 {
 
@@ -321,7 +372,12 @@ void RadioOp::run()
             {
                 if(_radio_type == radio_type::RADIO_TYPE_DIGITAL)
                     _modem->endTransmission(_callsign, _callsign.size());
-                usleep(1000000);
+                if((_radio_type == radio_type::RADIO_TYPE_ANALOG)
+                        && ((_mode == gr_modem_types::ModemTypeNBFM2500) || (_mode == gr_modem_types::ModemTypeNBFM5000)))
+                {
+                    sendEndBeep();
+                }
+                usleep(400000);
                 _modem->stopTX();
                 _tx_modem_started = false;
             }
@@ -425,6 +481,7 @@ void RadioOp::receivePCMAudio(std::vector<float> *audio_data)
     _audio->write_short(pcm, audio_data->size()*sizeof(short));
     audio_data->clear();
     delete audio_data;
+    audioFrameReceived();
 }
 
 int RadioOp::getFrameLength(unsigned char *data)
@@ -581,6 +638,7 @@ void RadioOp::toggleRX(bool value)
         _fft_gui->set_frequency_range(_tune_center_freq, 1000000);
         _modem->setRxSensitivity(_rx_sensitivity);
         _modem->setSquelch(_squelch);
+        _modem->setRxCTCSS(_rx_ctcss);
         if(_mode == gr_modem_types::ModemTypeQPSK250000 && _net_device == 0)
         {
             _net_device = new NetDevice;
@@ -613,6 +671,7 @@ void RadioOp::toggleTX(bool value)
         _modem->initTX(_mode, tx_device_args, tx_antenna, tx_freq_corr);
         _modem->tuneTx(_tune_center_freq + _tune_shift_freq);
         _modem->setTxPower(_tx_power);
+        _modem->setTxCTCSS(_tx_ctcss);
         if(_mode == gr_modem_types::ModemTypeQPSKVideo)
             _video = new VideoEncoder(QString::fromStdString(video_device));
         if(_mode == gr_modem_types::ModemTypeQPSK250000 && _net_device == 0)
@@ -779,6 +838,18 @@ void RadioOp::setSquelch(int value)
 {
     _squelch = value;
     _modem->setSquelch(value);
+}
+
+void RadioOp::setRxCTCSS(float value)
+{
+    _rx_ctcss = value;
+    _modem->setRxCTCSS(value);
+}
+
+void RadioOp::setTxCTCSS(float value)
+{
+    _tx_ctcss = value;
+    _modem->setTxCTCSS(value);
 }
 
 void RadioOp::enableGUIConst(bool value)

@@ -67,6 +67,7 @@ public:
     void processAudioStream();
     int processVideoStream(bool &frame_flag);
     void processNetStream();
+    void sendEndBeep();
 signals:
     void finished();
     void printText(QString text);
@@ -108,6 +109,8 @@ public slots:
     void setTxPower(int dbm);
     void setSquelch(int value);
     void setRxSensitivity(int value);
+    void setRxCTCSS(float value);
+    void setTxCTCSS(float value);
     void enableGUIConst(bool value);
     void enableGUIFFT(bool value);
     void syncFrequency();
@@ -149,6 +152,8 @@ private:
     bool _tuning_done;
     bool _tx_modem_started;
     int _tune_counter;
+    float _rx_ctcss;
+    float _tx_ctcss;
     gr::qtgui::sink_c::sptr _fft_gui;
     unsigned char *_rand_frame_data;
 
@@ -156,6 +161,7 @@ private:
                     std::string &rx_antenna, std::string &tx_antenna, int &rx_freq_corr,
                     int &tx_freq_corr, std::string &callsign, std::string &video_device);
     int getFrameLength(unsigned char *data);
+    void vox(short *audiobuffer, int audiobuffer_size);
 
 };
 

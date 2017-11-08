@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1111</width>
+    <width>1183</width>
     <height>676</height>
    </rect>
   </property>
@@ -122,19 +122,6 @@ background-color: rgb(0, 0, 230,130);</string>
              </widget>
             </item>
             <item>
-             <spacer name="horizontalSpacer_2">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
              <widget class="QLineEdit" name="frequencyEdit">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -181,8 +168,7 @@ font: 18pt &quot;Sans Serif&quot;;</string>
             <item>
              <widget class="QLabel" name="label_12">
               <property name="styleSheet">
-               <string notr="true">
-font: 14pt &quot;Sans Serif&quot;;</string>
+               <string notr="true">font: 12pt &quot;Sans Serif&quot;;</string>
               </property>
               <property name="text">
                <string>Split</string>
@@ -225,17 +211,24 @@ font: 18pt &quot;Sans Serif&quot;;</string>
              </widget>
             </item>
             <item>
-             <spacer name="horizontalSpacer">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
+             <widget class="QLabel" name="label_13">
+              <property name="styleSheet">
+               <string notr="true">font: 12pt &quot;Sans Serif&quot;;</string>
               </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>20</height>
-               </size>
+              <property name="text">
+               <string>CTCSS</string>
               </property>
-             </spacer>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="comboBoxCTCSS">
+              <property name="styleSheet">
+               <string notr="true">font: 14pt &quot;Sans Serif&quot;;</string>
+              </property>
+             </widget>
             </item>
             <item>
              <widget class="QLabel" name="labelDisplayCallsign">
@@ -1724,7 +1717,7 @@ font: 18pt &quot;Sans Serif&quot;;</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1111</width>
+     <width>1183</width>
      <height>19</height>
     </rect>
    </property>

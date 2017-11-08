@@ -70,6 +70,7 @@ public slots:
     void clearTextArea();
     void updateFreqGUI(long freq);
     void enterShift();
+    void updateCTCSS(int value);
 
 signals:
     void startTransmission();
@@ -89,6 +90,8 @@ signals:
     void setTxPower(int value);
     void setRxSensitivity(int value);
     void setSquelch(int value);
+    void setRxCTCSS(float value);
+    void setTxCTCSS(float value);
     void enableGUIConst(bool value);
     void enableGUIFFT(bool value);
     void startAutoTuneFreq();
