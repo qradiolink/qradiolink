@@ -44,10 +44,10 @@ gr_demod_am_sdr::gr_demod_am_sdr(gr::qtgui::sink_c::sptr fft_gui,
     _multiply = gr::blocks::multiply_cc::make();
     _filter = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
                             1, _target_samp_rate, -_filter_width, _filter_width,50,gr::filter::firdes::WIN_HAMMING) );
-    _squelch = gr::analog::simple_squelch_cc::make(-140,0.002);
-    _agc = gr::analog::agc2_cc::make(0.6e-1, 1e-3, 1, 1);
+    _squelch = gr::analog::pwr_squelch_cc::make(-140,0.01,0,true);
+    _agc = gr::analog::agc2_cc::make(0.6e-1, 1e-3, 0.5, 1);
     _complex_to_real = gr::blocks::complex_to_real::make();
-    _audio_gain = gr::blocks::multiply_const_ff::make(0.9);
+    _audio_gain = gr::blocks::multiply_const_ff::make(0.8);
     _audio_sink = make_gr_audio_sink();
 
     _rssi_valve = gr::blocks::copy::make(8);
