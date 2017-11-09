@@ -633,12 +633,12 @@ void RadioOp::toggleRX(bool value)
                                  tx_freq_corr, callsign, video_device);
         _rx_inited = true;
         _modem->initRX(_mode, rx_device_args, rx_antenna, rx_freq_corr);
-        _modem->startRX();
         _modem->tune(_tune_center_freq);
         _fft_gui->set_frequency_range(_tune_center_freq, 1000000);
         _modem->setRxSensitivity(_rx_sensitivity);
         _modem->setSquelch(_squelch);
         _modem->setRxCTCSS(_rx_ctcss);
+        _modem->startRX();
         if(_mode == gr_modem_types::ModemTypeQPSK250000 && _net_device == 0)
         {
             _net_device = new NetDevice;
