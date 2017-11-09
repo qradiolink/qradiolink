@@ -464,7 +464,13 @@ void RadioOp::receiveAudioData(unsigned char *data, int size)
         audio_out = _codec->decode_opus(data, size, samples);
     delete[] data;
     if(samples > 0)
+    {
+        for(int i=0;i<samples;i++)
+        {
+            audio_out[i] = (short)((float)audio_out[i] * _rx_volume);
+        }
         _audio->write_short(audio_out,samples*sizeof(short));
+    }
 }
 
 void RadioOp::receivePCMAudio(std::vector<float> *audio_data)
