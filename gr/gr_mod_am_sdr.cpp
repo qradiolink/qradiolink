@@ -32,9 +32,7 @@ gr_mod_am_sdr::gr_mod_am_sdr(QObject *parent, int samp_rate, int carrier_freq, i
 
     _audio_source = make_gr_audio_source();
     _signal_source = gr::analog::sig_source_f::make(target_samp_rate,gr::analog::GR_COS_WAVE, 0, 0.01);
-    _delay = gr::blocks::delay::make(8,125000);
     _multiply = gr::blocks::multiply_cc::make();
-    _add = gr::blocks::add_ff::make();
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::low_pass(
                     1, target_samp_rate, _filter_width, 600, gr::filter::firdes::WIN_HAMMING));
@@ -57,9 +55,8 @@ gr_mod_am_sdr::gr_mod_am_sdr(QObject *parent, int samp_rate, int carrier_freq, i
 
 
     _top_block->connect(_audio_source,0,_audio_filter,0);
-    _top_block->connect(_audio_filter,0,_add,0);
-    _top_block->connect(_signal_source,0,_add,1);
-    _top_block->connect(_add,0,_float_to_complex,0);
+    _top_block->connect(_audio_filter,0,_float_to_complex,0);
+    _top_block->connect(_signal_source,0,_float_to_complex,1);
     _top_block->connect(_float_to_complex,0,_resampler,0);
     _top_block->connect(_resampler,0,_amplify,0);
     _top_block->connect(_amplify,0,_filter,0);
