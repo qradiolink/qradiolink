@@ -36,6 +36,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _settings = settings;
     _tx_power = 0;
     _rx_sensitivity = 0;
+    _rx_volume = 1.0;
     _squelch = 0;
     _rx_ctcss = 0.0;
     _tx_ctcss = 0.0;
@@ -476,7 +477,7 @@ void RadioOp::receivePCMAudio(std::vector<float> *audio_data)
     short *pcm = new short[audio_data->size()];
     for(int i=0;i<audio_data->size();i++)
     {
-        pcm[i] = (short)(audio_data->at(i) * 32767.0f);
+        pcm[i] = (short)(audio_data->at(i) *_rx_volume * 32767.0f);
     }
     _audio->write_short(pcm, audio_data->size()*sizeof(short));
     audio_data->clear();
@@ -838,6 +839,11 @@ void RadioOp::setSquelch(int value)
 {
     _squelch = value;
     _modem->setSquelch(value);
+}
+
+void RadioOp::setVolume(int value)
+{
+    _rx_volume = (float)value/10.0;
 }
 
 void RadioOp::setRxCTCSS(float value)

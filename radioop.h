@@ -108,6 +108,7 @@ public slots:
     void tuneTxFreq(qint64 center_freq);
     void setTxPower(int dbm);
     void setSquelch(int value);
+    void setVolume(int value);
     void setRxSensitivity(int value);
     void setRxCTCSS(float value);
     void setTxCTCSS(float value);
@@ -154,6 +155,7 @@ private:
     int _tune_counter;
     float _rx_ctcss;
     float _tx_ctcss;
+    float _rx_volume;
     gr::qtgui::sink_c::sptr _fft_gui;
     unsigned char *_rand_frame_data;
 

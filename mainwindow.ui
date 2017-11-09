@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1183</width>
-    <height>676</height>
+    <height>750</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -91,345 +91,6 @@
          </attribute>
          <layout class="QGridLayout" name="gridLayout">
           <item row="4" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout_3">
-            <property name="spacing">
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="CFreqCtrl" name="frameCtrlFreq">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>600</width>
-                <height>70</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">font: 35pt &quot;Sans Serif&quot;;
-background-color: rgb(0, 0, 230,130);</string>
-              </property>
-              <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
-              </property>
-              <property name="frameShadow">
-               <enum>QFrame::Raised</enum>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLineEdit" name="frequencyEdit">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>100</width>
-                <height>50</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>120</width>
-                <height>50</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <family>Sans Serif</family>
-                <pointsize>18</pointsize>
-                <weight>50</weight>
-                <italic>false</italic>
-                <bold>false</bold>
-               </font>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">background-color: rgba(255, 255, 255, 180);
-font: 18pt &quot;Sans Serif&quot;;</string>
-              </property>
-              <property name="text">
-               <string>434025</string>
-              </property>
-              <property name="maxLength">
-               <number>8</number>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_12">
-              <property name="styleSheet">
-               <string notr="true">font: 12pt &quot;Sans Serif&quot;;</string>
-              </property>
-              <property name="text">
-               <string>Split</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
-              </property>
-              <property name="margin">
-               <number>2</number>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLineEdit" name="shiftEdit">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>100</width>
-                <height>50</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">background-color: rgba(255, 255, 255, 180);
-font: 18pt &quot;Sans Serif&quot;;</string>
-              </property>
-              <property name="text">
-               <string>0</string>
-              </property>
-              <property name="maxLength">
-               <number>7</number>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_13">
-              <property name="styleSheet">
-               <string notr="true">font: 12pt &quot;Sans Serif&quot;;</string>
-              </property>
-              <property name="text">
-               <string>CTCSS</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="comboBoxCTCSS">
-              <property name="styleSheet">
-               <string notr="true">font: 14pt &quot;Sans Serif&quot;;</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="labelDisplayCallsign">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>120</width>
-                <height>50</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>15</pointsize>
-               </font>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">color: rgb(255, 255, 255);
-background-color: rgb(0, 85, 127);
-</string>
-              </property>
-              <property name="frameShape">
-               <enum>QFrame::Box</enum>
-              </property>
-              <property name="frameShadow">
-               <enum>QFrame::Sunken</enum>
-              </property>
-              <property name="lineWidth">
-               <number>2</number>
-              </property>
-              <property name="text">
-               <string>Callsign</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="1" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout_4">
-            <item>
-             <widget class="QLabel" name="label">
-              <property name="styleSheet">
-               <string notr="true">font: 14pt &quot;Sans Serif&quot;;</string>
-              </property>
-              <property name="text">
-               <string>TX gain</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLCDNumber" name="txPowerDisplay">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>60</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>40</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">color: rgb(255, 0, 0);
-background-color: rgb(35, 35, 35);</string>
-              </property>
-              <property name="lineWidth">
-               <number>1</number>
-              </property>
-              <property name="midLineWidth">
-               <number>1</number>
-              </property>
-              <property name="digitCount">
-               <number>2</number>
-              </property>
-              <property name="segmentStyle">
-               <enum>QLCDNumber::Filled</enum>
-              </property>
-              <property name="value" stdset="0">
-               <double>50.000000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QSlider" name="txPowerSlider">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>512</width>
-                <height>40</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">QSlider::groove:horizontal {
-    border: 3px solid #0000FF;
-    height: 38px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #BCBCBC, stop:1 #c9c9c9);
-    margin: 0px 0;
-}
-
-QSlider::handle:horizontal {
-    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #b4b4b4, stop:1 #8f8f8f);
-    border: 2px solid #5c5c5c;
-    width: 35px;
-    height: 39px;
-    margin: -2px 0; /* handle is placed by default on the contents rect of the groove. Expand outside the groove */
-    border-radius: 1px;
-}
-QSlider::groove:horizontal {
-    background: #AB3A26;
-    position: absolute; /* absolutely position 4px from the left and right of the widget. setting margins on the widget should work too... */
-    left: 4px; right: 4px;
-}
-
-QSlider::handle:horizontal {
-    height: 10px;
-    background: #3B39AB;
-    position: absolute; /* absolutely position 4px from the left and right of the widget. setting margins on the widget should work too... */
-    margin: 0 -4px; /* expand outside the groove */
-}
-
-
-QSlider::add-page:horizontal {
-    background: white;
-}
-
-QSlider::sub-page:horizontal {
-    background: #AB3A26;
-}
-
-QSlider::handle:vertical {
-    height: 10px;
-    background: green;
-    margin: 0 -4px; /* expand outside the groove */
-}
-</string>
-              </property>
-              <property name="maximum">
-               <number>80</number>
-              </property>
-              <property name="pageStep">
-               <number>1</number>
-              </property>
-              <property name="value">
-               <number>50</number>
-              </property>
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="tickPosition">
-               <enum>QSlider::TicksBelow</enum>
-              </property>
-              <property name="tickInterval">
-               <number>10</number>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="10" column="0" colspan="2">
-           <widget class="QPlainTextEdit" name="sendTextEdit">
-            <property name="minimumSize">
-             <size>
-              <width>600</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="font">
-             <font>
-              <family>Sans Serif</family>
-              <pointsize>12</pointsize>
-              <weight>50</weight>
-              <italic>false</italic>
-              <bold>false</bold>
-             </font>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">background: transparent;
-background-color: rgba(255, 255, 255, 180);
-font: 12pt &quot;Sans Serif&quot;;
-</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
            <layout class="QHBoxLayout" name="horizontalLayout_5">
             <property name="spacing">
              <number>0</number>
@@ -552,7 +213,7 @@ background-color: rgb(35, 35, 35);</string>
                  <property name="styleSheet">
                   <string notr="true">QSlider::groove:horizontal {
     border: 3px solid #0000FF;
-    height: 37px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */
+    height: 28px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */
     background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #BCBCBC, stop:1 #c9c9c9);
     margin: 0px 0;
 }
@@ -561,7 +222,7 @@ QSlider::handle:horizontal {
     background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #b4b4b4, stop:1 #8f8f8f);
     border: 2px solid #5c5c5c;
     width: 35px;
-    height: 37px;
+    height: 27px;
     margin: -2px 0 -2px 0; /* handle is placed by default on the contents rect of the groove. Expand outside the groove */
     border-radius: 1px;
 }
@@ -583,7 +244,7 @@ QSlider::add-page:horizontal {
 }
 
 QSlider::sub-page:horizontal {
-    background: #2B9B03;
+    background: #2B6524;
 }
 
 QSlider::handle:vertical {
@@ -621,130 +282,122 @@ QSlider::handle:vertical {
             </item>
            </layout>
           </item>
-          <item row="12" column="0">
+          <item row="8" column="0">
+           <widget class="QFrame" name="frame_5">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>60</height>
+             </size>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_10">
+             <item>
+              <widget class="QLabel" name="label_12">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">font: 14pt &quot;Sans Serif&quot;;</string>
+               </property>
+               <property name="text">
+                <string>Split</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+               <property name="margin">
+                <number>2</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="shiftEdit">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>130</width>
+                 <height>50</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">background-color: rgba(255, 255, 255, 180);
+font: 14pt &quot;Sans Serif&quot;;</string>
+               </property>
+               <property name="text">
+                <string>0</string>
+               </property>
+               <property name="maxLength">
+                <number>10</number>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_2">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_13">
+               <property name="styleSheet">
+                <string notr="true">font: 14pt &quot;Sans Serif&quot;;</string>
+               </property>
+               <property name="text">
+                <string>CTCSS</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="comboBoxCTCSS">
+               <property name="styleSheet">
+                <string notr="true">font: 14pt &quot;Sans Serif&quot;;</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item row="16" column="0">
            <layout class="QGridLayout" name="gridLayout_4">
-            <item row="0" column="1">
-             <widget class="QPushButton" name="sendTextButton">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>150</width>
-                <height>64</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">font: 14pt &quot;Sans Serif&quot;;
-background: none;
-color: rgb(203, 0, 0);
-
-</string>
-              </property>
-              <property name="text">
-               <string>Text</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QPushButton" name="buttonTransmit">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>150</width>
-                <height>64</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">font: 14pt &quot;Sans Serif&quot;;
-color: rgb(203, 0, 0);
-background: none;
-</string>
-              </property>
-              <property name="text">
-               <string>PTT</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="3">
-             <widget class="QCommandLinkButton" name="rxStatusButton">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>60</width>
-                <height>64</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>60</width>
-                <height>64</height>
-               </size>
-              </property>
-              <property name="cursor">
-               <cursorShape>PointingHandCursor</cursorShape>
-              </property>
-              <property name="autoFillBackground">
-               <bool>false</bool>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">font: 14pt &quot;Sans Serif&quot;;
-border-width: 4px;
-background: rgb(183, 77, 77);
-color: rgb(255, 255, 255);</string>
-              </property>
-              <property name="text">
-               <string>RX</string>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>16</width>
-                <height>16</height>
-               </size>
-              </property>
-              <property name="checkable">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="2">
-             <widget class="QPushButton" name="chooseFileButton">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>150</width>
-                <height>64</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">font: 14pt &quot;Sans Serif&quot;;
-background: none;
-color: rgb(203, 0, 0);
-</string>
-              </property>
-              <property name="text">
-               <string>File</string>
-              </property>
-             </widget>
-            </item>
             <item row="0" column="4">
              <widget class="QCommandLinkButton" name="txStatusButton">
               <property name="sizePolicy">
@@ -755,7 +408,7 @@ color: rgb(203, 0, 0);
               </property>
               <property name="minimumSize">
                <size>
-                <width>60</width>
+                <width>90</width>
                 <height>64</height>
                </size>
               </property>
@@ -791,9 +444,572 @@ color: rgb(255, 255, 255);</string>
               </property>
              </widget>
             </item>
+            <item row="0" column="3">
+             <widget class="QCommandLinkButton" name="rxStatusButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>90</width>
+                <height>64</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>60</width>
+                <height>64</height>
+               </size>
+              </property>
+              <property name="cursor">
+               <cursorShape>PointingHandCursor</cursorShape>
+              </property>
+              <property name="autoFillBackground">
+               <bool>false</bool>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">font: 14pt &quot;Sans Serif&quot;;
+border-width: 4px;
+background: rgb(183, 77, 77);
+color: rgb(255, 255, 255);</string>
+              </property>
+              <property name="text">
+               <string>RX</string>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>16</width>
+                <height>16</height>
+               </size>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QPushButton" name="buttonTransmit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>150</width>
+                <height>64</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">font: 14pt &quot;Sans Serif&quot;;
+color: rgb(203, 0, 0);
+background: none;
+</string>
+              </property>
+              <property name="text">
+               <string>PTT</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <spacer name="horizontalSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
            </layout>
           </item>
-          <item row="3" column="0">
+          <item row="6" column="0">
+           <widget class="QFrame" name="frame_4">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>46</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>42</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_9">
+             <property name="spacing">
+              <number>5</number>
+             </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="label_14">
+               <property name="styleSheet">
+                <string notr="true">font: 14pt &quot;Sans Serif&quot;;</string>
+               </property>
+               <property name="text">
+                <string>Volume</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLCDNumber" name="rxVolumeDisplay">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>60</width>
+                 <height>40</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>40</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">color: rgb(0, 85, 127);
+background-color: rgb(35, 35, 35);</string>
+               </property>
+               <property name="lineWidth">
+                <number>1</number>
+               </property>
+               <property name="midLineWidth">
+                <number>1</number>
+               </property>
+               <property name="digitCount">
+                <number>2</number>
+               </property>
+               <property name="segmentStyle">
+                <enum>QLCDNumber::Filled</enum>
+               </property>
+               <property name="value" stdset="0">
+                <double>10.000000000000000</double>
+               </property>
+               <property name="intValue" stdset="0">
+                <number>10</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSlider" name="rxVolumeSlider">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>512</width>
+                 <height>40</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QSlider::groove:horizontal {
+    border: 3px solid #0000FF;
+    height: 28px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FF0033, stop:1 #c9c9c9);
+    margin: 0px 0;
+}
+
+QSlider::handle:horizontal {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #b4b4b4, stop:1 #8f8f8f);
+    border: 2px solid #5c5c5c;
+    width: 35px;
+    height: 27px;
+    margin: -2px 0 -2px 0; /* handle is placed by default on the contents rect of the groove. Expand outside the groove */
+    border-radius: 1px;
+}
+QSlider::groove:horizontal {
+    background: #FF0033;
+    position: absolute; /* absolutely position 4px from the left and right of the widget. setting margins on the widget should work too... */
+}
+
+QSlider::handle:horizontal {
+    height: 10px;
+    background: #3B39AB;
+    position: absolute; /* absolutely position 4px from the left and right of the widget. setting margins on the widget should work too... */
+    margin: 0 -4px 0; /* expand outside the groove */
+}
+
+
+QSlider::add-page:horizontal {
+    background: white;
+}
+
+QSlider::sub-page:horizontal {
+    background: #000090;
+}
+
+QSlider::handle:vertical {
+    height: 10px;
+    background: red;
+    margin: 0 -4px; /* expand outside the groove */
+}
+</string>
+               </property>
+               <property name="minimum">
+                <number>0</number>
+               </property>
+               <property name="maximum">
+                <number>20</number>
+               </property>
+               <property name="pageStep">
+                <number>1</number>
+               </property>
+               <property name="value">
+                <number>10</number>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="invertedAppearance">
+                <bool>false</bool>
+               </property>
+               <property name="tickPosition">
+                <enum>QSlider::NoTicks</enum>
+               </property>
+               <property name="tickInterval">
+                <number>1</number>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <property name="sizeConstraint">
+             <enum>QLayout::SetMaximumSize</enum>
+            </property>
+            <item>
+             <widget class="QLabel" name="label">
+              <property name="styleSheet">
+               <string notr="true">font: 14pt &quot;Sans Serif&quot;;</string>
+              </property>
+              <property name="text">
+               <string>TX gain</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLCDNumber" name="txPowerDisplay">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>60</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>40</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">color: rgb(255, 0, 0);
+background-color: rgb(35, 35, 35);</string>
+              </property>
+              <property name="lineWidth">
+               <number>1</number>
+              </property>
+              <property name="midLineWidth">
+               <number>1</number>
+              </property>
+              <property name="digitCount">
+               <number>2</number>
+              </property>
+              <property name="segmentStyle">
+               <enum>QLCDNumber::Filled</enum>
+              </property>
+              <property name="value" stdset="0">
+               <double>50.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSlider" name="txPowerSlider">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>512</width>
+                <height>40</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QSlider::groove:horizontal {
+    border: 3px solid #0000FF;
+    height: 28px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #BCBCBC, stop:1 #c9c9c9);
+    margin: 0px 0;
+}
+
+QSlider::handle:horizontal {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #b4b4b4, stop:1 #8f8f8f);
+    border: 2px solid #5c5c5c;
+    width: 35px;
+    height: 29px;
+    margin: -2px 0; /* handle is placed by default on the contents rect of the groove. Expand outside the groove */
+    border-radius: 1px;
+}
+QSlider::groove:horizontal {
+    background: #AB3A26;
+    position: absolute; /* absolutely position 4px from the left and right of the widget. setting margins on the widget should work too... */
+    left: 4px; right: 4px;
+}
+
+QSlider::handle:horizontal {
+    height: 10px;
+    background: #3B39AB;
+    position: absolute; /* absolutely position 4px from the left and right of the widget. setting margins on the widget should work too... */
+    margin: 0 -4px; /* expand outside the groove */
+}
+
+
+QSlider::add-page:horizontal {
+    background: white;
+}
+
+QSlider::sub-page:horizontal {
+    background: #DA1605;
+}
+
+QSlider::handle:vertical {
+    height: 10px;
+    background: green;
+    margin: 0 -4px; /* expand outside the groove */
+}
+</string>
+              </property>
+              <property name="maximum">
+               <number>80</number>
+              </property>
+              <property name="pageStep">
+               <number>1</number>
+              </property>
+              <property name="value">
+               <number>50</number>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="tickPosition">
+               <enum>QSlider::TicksBelow</enum>
+              </property>
+              <property name="tickInterval">
+               <number>10</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="7" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="CFreqCtrl" name="frameCtrlFreq">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>850</width>
+                <height>110</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">font: 35pt &quot;Sans Serif&quot;;
+background-color: rgb(0, 0, 230,130);</string>
+              </property>
+              <property name="frameShape">
+               <enum>QFrame::StyledPanel</enum>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Raised</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_4">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="frequencyEdit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>100</width>
+                <height>50</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>120</width>
+                <height>50</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <family>Sans Serif</family>
+                <pointsize>18</pointsize>
+                <weight>50</weight>
+                <italic>false</italic>
+                <bold>false</bold>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">background-color: rgba(255, 255, 255, 180);
+font: 18pt &quot;Sans Serif&quot;;</string>
+              </property>
+              <property name="text">
+               <string>434025</string>
+              </property>
+              <property name="maxLength">
+               <number>8</number>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLabel" name="labelDisplayCallsign">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>120</width>
+                <height>50</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>15</pointsize>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(0, 85, 127);
+</string>
+              </property>
+              <property name="frameShape">
+               <enum>QFrame::Box</enum>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Sunken</enum>
+              </property>
+              <property name="lineWidth">
+               <number>2</number>
+              </property>
+              <property name="text">
+               <string>Callsign</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="9" column="0">
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="5" column="0">
            <widget class="QFrame" name="frame_3">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -908,7 +1124,7 @@ background-color: rgb(35, 35, 35);</string>
                <property name="styleSheet">
                 <string notr="true">QSlider::groove:horizontal {
     border: 3px solid #0000FF;
-    height: 37px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */
+    height: 28px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */
     background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FF0033, stop:1 #c9c9c9);
     margin: 0px 0;
 }
@@ -917,7 +1133,7 @@ QSlider::handle:horizontal {
     background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #b4b4b4, stop:1 #8f8f8f);
     border: 2px solid #5c5c5c;
     width: 35px;
-    height: 37px;
+    height: 27px;
     margin: -2px 0 -2px 0; /* handle is placed by default on the contents rect of the groove. Expand outside the groove */
     border-radius: 1px;
 }
@@ -939,7 +1155,7 @@ QSlider::add-page:horizontal {
 }
 
 QSlider::sub-page:horizontal {
-    background: #FF0033;
+    background: #007A7A;
 }
 
 QSlider::handle:vertical {
@@ -1212,9 +1428,40 @@ background-color: rgb(0, 0, 67);
          <attribute name="title">
           <string>Data</string>
          </attribute>
-         <layout class="QVBoxLayout" name="verticalLayout_3">
-          <item>
+         <layout class="QGridLayout" name="gridLayout_8">
+          <item row="0" column="3">
+           <widget class="QPlainTextEdit" name="sendTextEdit">
+            <property name="minimumSize">
+             <size>
+              <width>600</width>
+              <height>50</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <family>Sans Serif</family>
+              <pointsize>12</pointsize>
+              <weight>50</weight>
+              <italic>false</italic>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">background: transparent;
+background-color: rgba(255, 255, 255, 180);
+font: 12pt &quot;Sans Serif&quot;;
+</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3">
            <widget class="QPlainTextEdit" name="receivedTextEdit">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>300</height>
+             </size>
+            </property>
             <property name="styleSheet">
              <string notr="true">background: transparent;
 background-color: rgb(255, 255, 255, 180);
@@ -1226,24 +1473,79 @@ font: 12pt &quot;Sans Serif&quot;;
             </property>
            </widget>
           </item>
-          <item>
-           <widget class="QPushButton" name="clearReceivedTextButton">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>64</height>
-             </size>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">font: 14pt &quot;Sans Serif&quot;;
+          <item row="2" column="3">
+           <layout class="QHBoxLayout" name="horizontalLayout_8">
+            <item>
+             <widget class="QPushButton" name="sendTextButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>150</width>
+                <height>64</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">font: 14pt &quot;Sans Serif&quot;;
+background: none;
+color: rgb(203, 0, 0);
+
+</string>
+              </property>
+              <property name="text">
+               <string>Text</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="clearReceivedTextButton">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>64</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">font: 14pt &quot;Sans Serif&quot;;
 background: none;
 
 </string>
-            </property>
-            <property name="text">
-             <string>Clear</string>
-            </property>
-           </widget>
+              </property>
+              <property name="text">
+               <string>Clear</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="chooseFileButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>150</width>
+                <height>64</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">font: 14pt &quot;Sans Serif&quot;;
+background: none;
+color: rgb(203, 0, 0);
+</string>
+              </property>
+              <property name="text">
+               <string>File</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
@@ -1401,7 +1703,7 @@ background-color: rgb(0, 85, 127);</string>
             <widget class="QLineEdit" name="lineEditTXAntenna">
              <property name="styleSheet">
               <string notr="true">background-color: rgb(255, 255, 255);
-font: 18pt &quot;Sans Serif&quot;;</string>
+font: 13pt &quot;Sans Serif&quot;;</string>
              </property>
             </widget>
            </item>
@@ -1427,7 +1729,7 @@ font: 18pt &quot;Sans Serif&quot;;</string>
             <widget class="QLineEdit" name="lineEditRXAntenna">
              <property name="styleSheet">
               <string notr="true">background-color: rgb(255, 255, 255);
-font: 18pt &quot;Sans Serif&quot;;</string>
+font: 13pt &quot;Sans Serif&quot;;</string>
              </property>
             </widget>
            </item>
@@ -1435,7 +1737,7 @@ font: 18pt &quot;Sans Serif&quot;;</string>
             <widget class="QLineEdit" name="lineEditRXDev">
              <property name="styleSheet">
               <string notr="true">background-color: rgb(255, 255, 255);
-font: 18pt &quot;Sans Serif&quot;;</string>
+font: 13pt &quot;Sans Serif&quot;;</string>
              </property>
             </widget>
            </item>
@@ -1450,7 +1752,7 @@ font: 18pt &quot;Sans Serif&quot;;</string>
             <widget class="QLineEdit" name="lineEditTXDev">
              <property name="styleSheet">
               <string notr="true">background-color: rgb(255, 255, 255);
-font: 18pt &quot;Sans Serif&quot;;</string>
+font: 13pt &quot;Sans Serif&quot;;</string>
              </property>
             </widget>
            </item>
@@ -1479,7 +1781,7 @@ font: 18pt &quot;Sans Serif&quot;;</string>
             <widget class="QLineEdit" name="lineEditCallsign">
              <property name="styleSheet">
               <string notr="true">background-color: rgb(255, 255, 255);
-font: 18pt &quot;Sans Serif&quot;;</string>
+font: 13pt &quot;Sans Serif&quot;;</string>
              </property>
             </widget>
            </item>
@@ -1501,7 +1803,7 @@ font: 18pt &quot;Sans Serif&quot;;</string>
             <widget class="QLineEdit" name="lineEditRXFreqCorrection">
              <property name="styleSheet">
               <string notr="true">background-color: rgb(255, 255, 255);
-font: 18pt &quot;Sans Serif&quot;;</string>
+font: 13pt &quot;Sans Serif&quot;;</string>
              </property>
             </widget>
            </item>
@@ -1509,7 +1811,7 @@ font: 18pt &quot;Sans Serif&quot;;</string>
             <widget class="QLineEdit" name="lineEditTXFreqCorrection">
              <property name="styleSheet">
               <string notr="true">background-color: rgb(255, 255, 255);
-font: 18pt &quot;Sans Serif&quot;;</string>
+font: 13pt &quot;Sans Serif&quot;;</string>
              </property>
             </widget>
            </item>
@@ -1517,7 +1819,7 @@ font: 18pt &quot;Sans Serif&quot;;</string>
             <widget class="QLineEdit" name="lineEditVideoDevice">
              <property name="styleSheet">
               <string notr="true">background-color: rgb(255, 255, 255);
-font: 18pt &quot;Sans Serif&quot;;</string>
+font: 13pt &quot;Sans Serif&quot;;</string>
              </property>
             </widget>
            </item>

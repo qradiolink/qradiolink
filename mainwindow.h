@@ -62,6 +62,7 @@ public slots:
     void setTxPowerDisplay(int value);
     void setRxSensitivityDisplay(int value);
     void setSquelchDisplay(int value);
+    void setVolumeDisplay(int value);
     void autoTune(bool value);
     void displayImage(QImage img);
     void enterFreq();
@@ -90,6 +91,7 @@ signals:
     void setTxPower(int value);
     void setRxSensitivity(int value);
     void setSquelch(int value);
+    void setVolume(int value);
     void setRxCTCSS(float value);
     void setTxCTCSS(float value);
     void enableGUIConst(bool value);

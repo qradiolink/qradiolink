@@ -61,6 +61,7 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
     QObject::connect(ui->txPowerSlider,SIGNAL(valueChanged(int)),this,SLOT(setTxPowerDisplay(int)));
     QObject::connect(ui->rxSensitivitySlider,SIGNAL(valueChanged(int)),this,SLOT(setRxSensitivityDisplay(int)));
     QObject::connect(ui->rxSquelchSlider,SIGNAL(valueChanged(int)),this,SLOT(setSquelchDisplay(int)));
+    QObject::connect(ui->rxVolumeSlider,SIGNAL(valueChanged(int)),this,SLOT(setVolumeDisplay(int)));
     QObject::connect(ui->modemTypeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(toggleMode(int)));
     QObject::connect(ui->autotuneButton,SIGNAL(toggled(bool)),this,SLOT(autoTune(bool)));
     QObject::connect(ui->saveOptionsButton,SIGNAL(clicked()),this,SLOT(saveConfig()));
@@ -369,6 +370,12 @@ void MainWindow::setSquelchDisplay(int value)
 {
     ui->rxSquelchDisplay->display(value);
     emit setSquelch(value);
+}
+
+void MainWindow::setVolumeDisplay(int value)
+{
+    ui->rxVolumeDisplay->display(value);
+    emit setVolume(value);
 }
 
 void MainWindow::autoTune(bool value)
