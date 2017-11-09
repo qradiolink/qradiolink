@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1183</width>
+    <width>1214</width>
     <height>750</height>
    </rect>
   </property>
@@ -1235,7 +1235,7 @@ QSlider::handle:vertical {
               <property name="maximumSize">
                <size>
                 <width>16777215</width>
-                <height>50</height>
+                <height>90</height>
                </size>
               </property>
              </widget>
@@ -1333,8 +1333,8 @@ QSlider::handle:horizontal {
               </property>
               <property name="maximumSize">
                <size>
-                <width>550</width>
-                <height>550</height>
+                <width>600</width>
+                <height>400</height>
                </size>
               </property>
              </widget>
@@ -2019,7 +2019,7 @@ font: 13pt &quot;Sans Serif&quot;;</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1183</width>
+     <width>1214</width>
      <height>19</height>
     </rect>
    </property>

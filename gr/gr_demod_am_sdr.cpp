@@ -14,9 +14,9 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#include "gr_demod_ssb_sdr.h"
+#include "gr_demod_am_sdr.h"
 
-gr_demod_ssb_sdr::gr_demod_ssb_sdr(gr::qtgui::sink_c::sptr fft_gui,
+gr_demod_am_sdr::gr_demod_am_sdr(gr::qtgui::sink_c::sptr fft_gui,
                                    gr::qtgui::const_sink_c::sptr const_gui,
                                    gr::qtgui::number_sink::sptr rssi_gui, QObject *parent,
                                    int samp_rate, int carrier_freq, int filter_width,
@@ -32,7 +32,7 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(gr::qtgui::sink_c::sptr fft_gui,
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
     _modulation_index = mod_index;
-    _top_block = gr::make_top_block("ssb demodulator sdr");
+    _top_block = gr::make_top_block("am demodulator sdr");
 
     float rerate = (float)_target_samp_rate/(float)_samp_rate;
 
@@ -43,7 +43,7 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(gr::qtgui::sink_c::sptr fft_gui,
     _signal_source = gr::analog::sig_source_c::make(_samp_rate,gr::analog::GR_COS_WAVE,-25000,1);
     _multiply = gr::blocks::multiply_cc::make();
     _filter = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
-                            1, _target_samp_rate, 300, _filter_width,50,gr::filter::firdes::WIN_HAMMING) );
+                            1, _target_samp_rate, -_filter_width, _filter_width,50,gr::filter::firdes::WIN_HAMMING) );
     _squelch = gr::analog::simple_squelch_cc::make(-140,0.002);
     _agc = gr::analog::agc2_cc::make(0.6e-1, 1e-3, 1, 1);
     _complex_to_real = gr::blocks::complex_to_real::make();
@@ -106,30 +106,30 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(gr::qtgui::sink_c::sptr fft_gui,
 }
 
 
-void gr_demod_ssb_sdr::start()
+void gr_demod_am_sdr::start()
 {
     _top_block->start();
 }
 
-void gr_demod_ssb_sdr::stop()
+void gr_demod_am_sdr::stop()
 {
     _top_block->stop();
     _top_block->wait();
 }
 
-std::vector<float>* gr_demod_ssb_sdr::getData()
+std::vector<float>* gr_demod_am_sdr::getData()
 {
     std::vector<float> *data = _audio_sink->get_data();
     return data;
 }
 
-void gr_demod_ssb_sdr::tune(long center_freq)
+void gr_demod_am_sdr::tune(long center_freq)
 {
     _device_frequency = center_freq;
     _osmosdr_source->set_center_freq(_device_frequency-25000);
 }
 
-double gr_demod_ssb_sdr::get_freq()
+double gr_demod_am_sdr::get_freq()
 {
     int n = _message_sink->num_messages();
     if(n > _msg_nr)
@@ -144,7 +144,7 @@ double gr_demod_ssb_sdr::get_freq()
     }
 }
 
-void gr_demod_ssb_sdr::set_rx_sensitivity(float value)
+void gr_demod_am_sdr::set_rx_sensitivity(float value)
 {
     osmosdr::gain_range_t range = _osmosdr_source->get_gain_range();
     if (!range.empty())
@@ -154,17 +154,17 @@ void gr_demod_ssb_sdr::set_rx_sensitivity(float value)
     }
 }
 
-void gr_demod_ssb_sdr::enable_gui_const(bool value)
+void gr_demod_am_sdr::enable_gui_const(bool value)
 {
     _rssi_valve->set_enabled(value);
 }
 
-void gr_demod_ssb_sdr::enable_gui_fft(bool value)
+void gr_demod_am_sdr::enable_gui_fft(bool value)
 {
     _fft_valve->set_enabled(value);
 }
 
-void gr_demod_ssb_sdr::set_squelch(int value)
+void gr_demod_am_sdr::set_squelch(int value)
 {
     _squelch->set_threshold(value);
 }

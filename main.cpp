@@ -180,7 +180,8 @@ int main(int argc, char *argv[])
     rssi_gui->set_max(0,10);
     rssi_gui->set_min(0,-120);
     rssi_gui->set_label(0,"RSSI");
-    rssi_gui->qwidget()->resize(700,50);
+    (&w)->get_rssi_gui()->resize(700,90);
+    rssi_gui->qwidget()->resize(700,90);
     rssi_gui->set_update_time(0.3);
     rssi_gui->set_color(0, "#ff0000", "#0000cc");
     rssi_gui->qwidget()->setStyleSheet(

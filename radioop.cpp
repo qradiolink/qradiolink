@@ -589,13 +589,13 @@ void RadioOp::callsignReceived(QString callsign)
 void RadioOp::audioFrameReceived()
 {
     emit displayReceiveStatus(true);
-    _led_timer->start(50);
+    _led_timer->start(100);
 }
 
 void RadioOp::dataFrameReceived()
 {
     emit displayDataReceiveStatus(true);
-    _led_timer->start(50);
+    _led_timer->start(100);
 }
 
 void RadioOp::receiveEnd()
