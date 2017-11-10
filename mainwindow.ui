@@ -1991,6 +1991,11 @@ font: 13pt &quot;Sans Serif&quot;;</string>
             </item>
             <item>
              <property name="text">
+              <string>Wide FM</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
               <string>SSB</string>
              </property>
             </item>

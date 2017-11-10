@@ -45,6 +45,7 @@
 #include "gr_demod_2fsk_sdr.h"
 #include "gr_mod_nbfm_sdr.h"
 #include "gr_demod_nbfm_sdr.h"
+#include "gr_demod_wbfm_sdr.h"
 #include "gr_mod_ssb_sdr.h"
 #include "gr_demod_ssb_sdr.h"
 #include "gr_mod_am_sdr.h"
@@ -87,6 +88,7 @@ namespace gr_modem_types {
         ModemTypeQPSK2000,
         ModemTypeNBFM2500,
         ModemTypeNBFM5000,
+        ModemTypeWBFM,
         ModemTypeSSB2500,
         ModemTypeAM5000,
         ModemType2FSK2000,
@@ -189,6 +191,7 @@ private:
     gr_demod_4fsk_sdr *_gr_demod_4fsk_sdr;
     gr_demod_2fsk_sdr *_gr_demod_2fsk_sdr;
     gr_demod_nbfm_sdr *_gr_demod_nbfm_sdr;
+    gr_demod_wbfm_sdr *_gr_demod_wbfm_sdr;
     gr_demod_ssb_sdr *_gr_demod_ssb_sdr;
     gr_demod_am_sdr *_gr_demod_am_sdr;
     int _modem_type;
