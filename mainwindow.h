@@ -71,7 +71,8 @@ public slots:
     void clearTextArea();
     void updateFreqGUI(long freq);
     void enterShift();
-    void updateCTCSS(int value);
+    void updateRxCTCSS(int value);
+    void updateTxCTCSS(int value);
 
 signals:
     void startTransmission();

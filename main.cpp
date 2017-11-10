@@ -190,7 +190,7 @@ int main(int argc, char *argv[])
 
     const std::string fft_name = "fft";
     gr::qtgui::sink_c::sptr fft_gui = gr::qtgui::sink_c::make(8096,gr::filter::firdes::WIN_BLACKMAN_HARRIS,
-                                                          0,1000000,fft_name,true,true,false,false,(&w)->get_fft_gui());
+                                                          0,1000000,fft_name,true,true,true,false,(&w)->get_fft_gui());
 
     fft_gui->set_update_time(0.1);
     fft_gui->set_fft_power_db(-140,0);
@@ -204,7 +204,7 @@ int main(int argc, char *argv[])
                 DisplayPlot { \
                 qproperty-zoomer_color: black; \
                 qproperty-line_color1: #A4051F; \
-                qproperty-line_color2: magenta; \
+                qproperty-line_color2: #FF710C; \
                 qproperty-line_color3: #FF6905; \
                 qproperty-line_style1: SolidLine; \
                 qproperty-line_style2: DashLine; \

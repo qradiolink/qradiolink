@@ -99,7 +99,7 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
                          std::string &rx_antenna, std::string &tx_antenna, int &rx_freq_corr,
                          int &tx_freq_corr, std::string &callsign, std::string &video_device)
 {
-    int tx_power, rx_sensitivity, squelch;
+    int tx_power, rx_sensitivity, squelch, rx_volume;
     long long rx_frequency, tx_shift;
     QDir files = QDir::homePath();
 
@@ -134,6 +134,7 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
         root.lookupValue("tx_power", tx_power);
         root.lookupValue("rx_sensitivity", rx_sensitivity);
         root.lookupValue("squelch", squelch);
+        root.lookupValue("rx_volume", rx_volume);
         root.lookupValue("rx_frequency", rx_frequency);
         root.lookupValue("tx_shift", tx_shift);
         _callsign = QString::fromStdString(callsign);
@@ -165,6 +166,10 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
         if(_squelch == 0)
         {
             _squelch = squelch;
+        }
+        if(_rx_volume == 0)
+        {
+            _rx_volume = (float)rx_volume / 10.0;
         }
     }
     catch(const libconfig::SettingNotFoundException &nfex)

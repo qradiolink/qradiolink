@@ -374,12 +374,29 @@ font: 14pt &quot;Sans Serif&quot;;</string>
               </spacer>
              </item>
              <item>
+              <widget class="QLabel" name="label_15">
+               <property name="styleSheet">
+                <string notr="true">font: 14pt &quot;Sans Serif&quot;;</string>
+               </property>
+               <property name="text">
+                <string>RX CTCSS</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="comboBoxRxCTCSS">
+               <property name="styleSheet">
+                <string notr="true">font: 14pt &quot;Sans Serif&quot;;</string>
+               </property>
+              </widget>
+             </item>
+             <item>
               <widget class="QLabel" name="label_13">
                <property name="styleSheet">
                 <string notr="true">font: 14pt &quot;Sans Serif&quot;;</string>
                </property>
                <property name="text">
-                <string>CTCSS</string>
+                <string>TX CTCSS</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
@@ -387,7 +404,7 @@ font: 14pt &quot;Sans Serif&quot;;</string>
               </widget>
              </item>
              <item>
-              <widget class="QComboBox" name="comboBoxCTCSS">
+              <widget class="QComboBox" name="comboBoxTxCTCSS">
                <property name="styleSheet">
                 <string notr="true">font: 14pt &quot;Sans Serif&quot;;</string>
                </property>
