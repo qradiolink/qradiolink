@@ -75,6 +75,7 @@ private:
     gr::filter::pfb_arb_resampler_fff::sptr _audio_resampler;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
     gr::filter::fft_filter_ccf::sptr _filter;
+    gr::filter::fft_filter_fff::sptr _pilot_filter;
     gr::filter::fft_filter_fff::sptr _deemphasis_filter;
     gr::qtgui::const_sink_c::sptr _constellation;
     gr::qtgui::sink_c::sptr _fft_gui;

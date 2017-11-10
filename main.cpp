@@ -196,7 +196,7 @@ int main(int argc, char *argv[])
     fft_gui->set_fft_power_db(-140,0);
     QRect xy = w.geometry();
     (&w)->get_fft_gui()->resize(xy.right() -xy.left(),xy.bottom()-xy.top()-100);
-    fft_gui->qwidget()->resize(xy.right() -xy.left()-20,xy.bottom()-xy.top()-206);
+    fft_gui->qwidget()->resize(xy.right() -xy.left()-50,xy.bottom()-xy.top()-206);
     fft_gui->qwidget()->setStyleSheet(
                 "QwtPlotCanvas { background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #FFFEA2, stop: 1 #0385FF); \
                 border: 1px solid White; \

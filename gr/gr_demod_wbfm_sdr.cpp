@@ -53,6 +53,9 @@ gr_demod_wbfm_sdr::gr_demod_wbfm_sdr(gr::qtgui::sink_c::sptr fft_gui,
                             1, _target_samp_rate, _filter_width,600,gr::filter::firdes::WIN_HAMMING) );
 
     _audio_sink = make_gr_audio_sink();
+    _pilot_filter = gr::filter::fft_filter_fff::make(1,gr::filter::firdes::band_reject(
+                                                         2.0,_target_samp_rate,18000,20000,
+                                                         500,gr::filter::firdes::WIN_BLACKMAN_HARRIS));
     _fm_demod = gr::analog::quadrature_demod_cf::make(_target_samp_rate/(2*M_PI* _filter_width));
     _squelch = gr::analog::pwr_squelch_cc::make(-140,0.01,0,true);
     _amplify = gr::blocks::multiply_const_ff::make(5);
@@ -99,8 +102,8 @@ gr_demod_wbfm_sdr::gr_demod_wbfm_sdr(gr::qtgui::sink_c::sptr fft_gui,
     _top_block->connect(_resampler,0,_filter,0);
     _top_block->connect(_filter,0,_squelch,0);
     _top_block->connect(_squelch,0,_fm_demod,0);
-    _top_block->connect(_fm_demod,0,_amplify,0);
-    //_top_block->connect(_deemphasis_filter,0,_amplify,0);
+    _top_block->connect(_fm_demod,0,_pilot_filter,0);
+    _top_block->connect(_pilot_filter,0,_amplify,0);
     _top_block->connect(_amplify,0,_audio_resampler,0);
     _top_block->connect(_audio_resampler,0,_audio_sink,0);
 
