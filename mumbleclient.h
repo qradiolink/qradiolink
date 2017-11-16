@@ -58,7 +58,7 @@ public:
     void setMute(bool mute);
 signals:
     void channelName(QString name);
-    void pcmAudio(short *pcm, short size);
+    void pcmAudio(short *pcm, int size);
     void onlineStations(StationList);
     void newStation(Station*);
     void leftStation(Station*);
@@ -71,7 +71,7 @@ public slots:
     void processProtoMessage(QByteArray data);
     void processUDPData(QByteArray data);
     void sendUDPPing();
-    void processAudio(short *audiobuffer, short audiobuffersize);
+    void processAudio(short *audiobuffer, int audiobuffersize);
 
 private:
     void sendUDPMessage(quint8 *message, int size);

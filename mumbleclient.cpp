@@ -77,7 +77,7 @@ void MumbleClient::sendVersion()
     v.set_version(PROTOCOL_VERSION);
     v.set_release("QRadioLink 0.2");
     v.set_os("GNU/Linux");
-    v.set_os_version("3.2");
+    v.set_os_version("3.16");
     int size = v.ByteSize();
     quint8 data[size];
     v.SerializeToArray(data,size);
@@ -123,8 +123,8 @@ void MumbleClient::pingServer()
     quint8 data[size];
     ping.SerializeToArray(data,size);
     this->sendMessage(data,3,size);
-
-    sendUDPPing();
+    if(!_settings->_mumble_tcp)
+        sendUDPPing();
 
 }
 
@@ -148,6 +148,9 @@ void MumbleClient::processProtoMessage(QByteArray data)
         setupEncryption(message,message_size);
         break;
     case 5: // ServerSync
+        processServerSync(message,message_size);
+        break;
+    case 0: // ServerSync
         processServerSync(message,message_size);
         break;
     case 3: // ping
@@ -539,7 +542,7 @@ void MumbleClient::setMute(bool mute)
     this->sendMessage(mdata,9,msize);
 }
 
-void MumbleClient::processAudio(short *audiobuffer, short audiobuffersize)
+void MumbleClient::processAudio(short *audiobuffer, int audiobuffersize)
 {
     if(!_synchronized)
         return;
@@ -556,6 +559,7 @@ void MumbleClient::processAudio(short *audiobuffer, short audiobuffersize)
 
     createVoicePacket(encoded_audio, packet_size);
     delete[] encoded_audio;
+    delete[] audiobuffer;
 }
 
 void MumbleClient::createVoicePacket(unsigned char *encoded_audio, int packet_size)

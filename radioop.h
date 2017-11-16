@@ -73,7 +73,6 @@ signals:
     void printText(QString text);
     void printCallsign(QString text);
     void displayReceiveStatus(bool status);
-    void displaySyncIssue(bool status);
     void displayTransmitStatus(bool status);
     void displayDataReceiveStatus(bool status);
     void audioData(unsigned char *buf, int size);
@@ -84,6 +83,8 @@ signals:
     void endAudio(int secs);
     void startAudio();
     void freqFromGUI(long freq);
+    void pingServer();
+    void voipData(short *pcm, int samples);
 public slots:
     void run();
     void startTransmission();
@@ -95,7 +96,6 @@ public slots:
     void audioFrameReceived();
     void dataFrameReceived();
     void receiveEnd();
-    void syncIssue();
     void receiveAudioData(unsigned char *data, int size);
     void receiveVideoData(unsigned char *data, int size);
     void receiveNetData(unsigned char *data, int size);
@@ -119,11 +119,13 @@ public slots:
     void startAutoTune();
     void stopAutoTune();
     void endAudioTransmission();
+    void processVoipAudioFrame(short *pcm, int samples);
 
 private:
     bool _stop;
     bool _tx_inited;
     bool _rx_inited;
+    bool _voip_enabled;
 #if 0
     AlsaAudio *_audio;
 #endif

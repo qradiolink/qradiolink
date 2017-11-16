@@ -29,6 +29,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _stop =false;
     _tx_inited = false;
     _rx_inited = false;
+    _voip_enabled = true;
     _settings = settings;
     _transmitting = false;
     _process_text = false;
@@ -217,7 +218,11 @@ void RadioOp::processAudioStream()
     int audiobuffer_size = 640; //40 ms @ 8k
     short *audiobuffer = new short[audiobuffer_size/sizeof(short)];
     _audio->read_short(audiobuffer,audiobuffer_size);
-
+    if(_voip_enabled)
+    {
+        emit voipData(audiobuffer,audiobuffer_size);
+        return;
+    }
 
     if(_radio_type == radio_type::RADIO_TYPE_ANALOG)
     {
@@ -343,10 +348,17 @@ void RadioOp::run()
 
     bool ptt_activated = false;
     bool frame_flag = true;
+    int last_ping_time = 0;
     while(true)
     {
         bool transmitting = _transmitting;
         QCoreApplication::processEvents();
+        int time = QDateTime::currentDateTime().toTime_t();
+        if((time - last_ping_time) > 5)
+        {
+            emit pingServer();
+            last_ping_time = time;
+        }
 
         long long freq = (long long)_modem->getFreqGUI();
         if(freq != 0 && freq != _tune_center_freq)
@@ -559,9 +571,14 @@ void RadioOp::receiveNetData(unsigned char *data, int size)
     int res = _net_device->write_buffered(net_frame,frame_size);
 }
 
+void RadioOp::processVoipAudioFrame(short *pcm, int samples)
+{
+    _audio->write_short(pcm, samples*sizeof(short));
+}
+
 void RadioOp::startTransmission()
 {
-    if(_tx_inited)
+    if(_tx_inited || _voip_enabled)
         _transmitting = true;
 }
 
@@ -586,7 +603,8 @@ void RadioOp::textReceived(QString text)
 
 void RadioOp::callsignReceived(QString callsign)
 {
-    QString text = "\n>>>> " + callsign + " start transmission >>>>\n";
+    QString time= QDateTime::currentDateTime().toString("d/MMM/yyyy hh:mm:ss");
+    QString text = "\n" + time +">>>> " + callsign + " start transmission >>>>\n";
     emit printText(text);
     emit printCallsign(callsign);
 }
@@ -611,7 +629,8 @@ void RadioOp::receiveEnd()
 
 void RadioOp::endAudioTransmission()
 {
-    emit printText("<<<< end transmission <<<<\n");
+    QString time= QDateTime::currentDateTime().toString("d/MMM/yyyy hh:mm:ss");
+    emit printText(time + "<<<< end transmission <<<<\n");
     QFile resfile(":/res/end_beep.raw");
     if(resfile.open(QIODevice::ReadOnly))
     {
@@ -622,10 +641,6 @@ void RadioOp::endAudioTransmission()
     }
 }
 
-void RadioOp::syncIssue()
-{
-    emit displaySyncIssue(true);
-}
 
 void RadioOp::toggleRX(bool value)
 {
