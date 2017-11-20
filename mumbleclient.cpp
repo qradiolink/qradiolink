@@ -622,7 +622,7 @@ void MumbleClient::processIncomingAudioPacket(quint8 *data, quint64 size, quint8
     QByteArray qba = pds.dataBlock(pds.left());
     unsigned char *encoded_audio = reinterpret_cast<unsigned char*>(qba.data());
 
-    decodeAudio(encoded_audio,audio_size, type);
+    decodeAudio(encoded_audio,audio_size, type, session);
 
 }
 
@@ -646,7 +646,7 @@ void MumbleClient::processUDPData(QByteArray data)
 #endif
 }
 
-void MumbleClient::decodeAudio(unsigned char *audiobuffer, short audiobuffersize, quint8 type)
+void MumbleClient::decodeAudio(unsigned char *audiobuffer, short audiobuffersize, quint8 type, quint64 session_id)
 {
 
     int samples =0;
@@ -661,7 +661,7 @@ void MumbleClient::decodeAudio(unsigned char *audiobuffer, short audiobuffersize
     }
     if(pcm == NULL)
         return;
-    emit pcmAudio(pcm, samples);
+    emit pcmAudio(pcm, samples, session_id);
 
 }
 

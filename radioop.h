@@ -119,7 +119,8 @@ public slots:
     void startAutoTune();
     void stopAutoTune();
     void endAudioTransmission();
-    void processVoipAudioFrame(short *pcm, int samples);
+    void processVoipAudioFrame(short *pcm, int samples, quint64 sid);
+    void usePTTForVOIP(bool value);
 
 private:
     bool _stop;
@@ -158,8 +159,11 @@ private:
     float _rx_ctcss;
     float _tx_ctcss;
     float _rx_volume;
+    QElapsedTimer _last_voiced_frame_timer;
     gr::qtgui::sink_c::sptr _fft_gui;
     unsigned char *_rand_frame_data;
+    std::vector<short> *_m_queue;
+    quint64 _last_session_id;
 
     void readConfig(std::string &rx_device_args, std::string &tx_device_args,
                     std::string &rx_antenna, std::string &tx_antenna, int &rx_freq_corr,

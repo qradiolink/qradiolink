@@ -50,8 +50,6 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
     QObject::connect(ui->sendTextButton,SIGNAL(clicked()),this,SLOT(GUIsendText()));
     QObject::connect(ui->voipConnectButton,SIGNAL(clicked()),this,SLOT(GUIconnectVOIP()));
     QObject::connect(ui->voipDisconnectButton,SIGNAL(clicked()),this,SLOT(GUIdisconnectVOIP()));
-    QObject::connect(ui->voipTalkButton,SIGNAL(pressed()),this,SLOT(GUIstartTalkVOIP()));
-    QObject::connect(ui->voipTalkButton,SIGNAL(released()),this,SLOT(GUIstopTalkVOIP()));
     QObject::connect(ui->chooseFileButton,SIGNAL(clicked()),this,SLOT(chooseFile()));
     QObject::connect(ui->clearReceivedTextButton,SIGNAL(clicked()),this,SLOT(clearTextArea()));
     QObject::connect(ui->rxStatusButton,SIGNAL(toggled(bool)),this,SLOT(toggleRXwin(bool)));
@@ -69,6 +67,8 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
     QObject::connect(ui->tabWidget,SIGNAL(currentChanged(int)),this,SLOT(mainTabChanged(int)));
     QObject::connect(ui->comboBoxRxCTCSS,SIGNAL(currentIndexChanged(int)),this,SLOT(updateRxCTCSS(int)));
     QObject::connect(ui->comboBoxTxCTCSS,SIGNAL(currentIndexChanged(int)),this,SLOT(updateTxCTCSS(int)));
+    QObject::connect(ui->pttVoipButton,SIGNAL(toggled(bool)),this,SLOT(togglePTTVOIP(bool)));
+    QObject::connect(ui->voipForwardButton,SIGNAL(toggled(bool)),this,SLOT(toggleVOIPForwarding(bool)));
 
     QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
 
@@ -296,15 +296,6 @@ void MainWindow::GUIdisconnectVOIP()
     _mumble_client->disconnectFromServer();
 }
 
-void MainWindow::GUIstartTalkVOIP()
-{
-    emit startTalkVOIP();
-}
-
-void MainWindow::GUIstopTalkVOIP()
-{
-    emit stopTalkVOIP();
-}
 
 void MainWindow::updateOnlineStations(StationList stations)
 {
@@ -429,4 +420,14 @@ void MainWindow::updateRxCTCSS(int value)
 void MainWindow::updateTxCTCSS(int value)
 {
     emit setTxCTCSS(ui->comboBoxTxCTCSS->currentText().toFloat());
+}
+
+void MainWindow::togglePTTVOIP(bool value)
+{
+    emit usePTTForVOIP(value);
+}
+
+void MainWindow::toggleVOIPForwarding(bool value)
+{
+    emit setVOIPForwarding(value);
 }

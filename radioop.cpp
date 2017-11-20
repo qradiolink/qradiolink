@@ -25,11 +25,14 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _codec = new AudioEncoder;
     _audio = new AudioInterface;
     _mutex = new QMutex;
+    _m_queue = new std::vector<short>;
+    _last_session_id = 0;
     _net_device = 0;
     _stop =false;
     _tx_inited = false;
     _rx_inited = false;
-    _voip_enabled = true;
+    _voip_enabled = false;
+    _last_voiced_frame_timer.start();
     _settings = settings;
     _transmitting = false;
     _process_text = false;
@@ -571,9 +574,45 @@ void RadioOp::receiveNetData(unsigned char *data, int size)
     int res = _net_device->write_buffered(net_frame,frame_size);
 }
 
-void RadioOp::processVoipAudioFrame(short *pcm, int samples)
+void RadioOp::processVoipAudioFrame(short *pcm, int samples, quint64 sid)
 {
-    _audio->write_short(pcm, samples*sizeof(short));
+
+    if(_m_queue->empty())
+    {
+        for(int i=0;i<samples;i++)
+        {
+            _m_queue->push_back(pcm[i]);
+        }
+    }
+    else
+    {
+        int size = (_m_queue->size() > samples) ? samples : _m_queue->size();
+        for(int i=0;i<size;i++)
+        {
+            _m_queue->at(i) = _m_queue->at(i)/2-1 + pcm[i]/2-1;
+        }
+        if(_m_queue->size() < samples)
+        {
+            for(int i=_m_queue->size();i<samples;i++)
+            {
+                _m_queue->push_back(pcm[i]);
+            }
+        }
+    }
+    delete[] pcm;
+    quint64 milisec = (quint64)_last_voiced_frame_timer.nsecsElapsed()/1000000;
+    if((milisec >= 20) || (sid == _last_session_id))
+    {
+
+        short *pcm = new short[_m_queue->size()];
+        for(int i = 0;i<_m_queue->size();i++)
+        {
+            pcm[i] = (short)((float)_m_queue->at(i) * _rx_volume);
+        }
+        _audio->write_short(pcm, samples*sizeof(short));
+        _last_voiced_frame_timer.restart();
+        _m_queue->clear();
+    }
 }
 
 void RadioOp::startTransmission()
@@ -834,6 +873,11 @@ void RadioOp::toggleMode(int value)
 
     if(tx_inited_before)
         toggleTX(true);
+}
+
+void RadioOp::usePTTForVOIP(bool value)
+{
+    _voip_enabled = value;
 }
 
 void RadioOp::fineTuneFreq(long center_freq)

@@ -262,6 +262,8 @@ int main(int argc, char *argv[])
     QObject::connect(&w,SIGNAL(setTxCTCSS(float)),radio_op,SLOT(setTxCTCSS(float)));
     QObject::connect(&w,SIGNAL(enableGUIConst(bool)),radio_op,SLOT(enableGUIConst(bool)));
     QObject::connect(&w,SIGNAL(enableGUIFFT(bool)),radio_op,SLOT(enableGUIFFT(bool)));
+    QObject::connect(&w,SIGNAL(usePTTForVOIP(bool)),radio_op,SLOT(usePTTForVOIP(bool)));
+    QObject::connect(&w,SIGNAL(setVOIPForwarding(bool)),radio_op,SLOT(setVOIPForwarding(bool)));
     QObject::connect(radio_op, SIGNAL(printText(QString)), &w, SLOT(displayText(QString)));
     QObject::connect(radio_op, SIGNAL(printCallsign(QString)), &w, SLOT(displayCallsign(QString)));
     QObject::connect(radio_op, SIGNAL(videoImage(QImage)), &w, SLOT(displayImage(QImage)));
@@ -270,10 +272,8 @@ int main(int argc, char *argv[])
     QObject::connect(radio_op, SIGNAL(displayDataReceiveStatus(bool)), &w, SLOT(displayDataReceiveStatus(bool)));
     QObject::connect(radio_op, SIGNAL(freqFromGUI(long)), &w, SLOT(updateFreqGUI(long)));
     QObject::connect(radio_op, SIGNAL(pingServer()), &client, SLOT(pingServer()));
-    QObject::connect(&client, SIGNAL(pcmAudio(short*,int)), radio_op, SLOT(processVoipAudioFrame(short*, int)));
+    QObject::connect(&client, SIGNAL(pcmAudio(short*,int,quint64)), radio_op, SLOT(processVoipAudioFrame(short*, int, quint64)));
     QObject::connect(radio_op, SIGNAL(voipData(short*,int)), &client, SLOT(processAudio(short*,int)));
-    //QObject::connect(&w,SIGNAL(startTalkVOIP()),audio_op,SLOT(startTransmission()));
-    //QObject::connect(&w,SIGNAL(stopTalkVOIP()),audio_op,SLOT(endTransmission()));
 
     QObject::connect(&client,SIGNAL(onlineStations(StationList)),&w,SLOT(updateOnlineStations(StationList)));
 

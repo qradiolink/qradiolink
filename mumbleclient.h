@@ -58,7 +58,7 @@ public:
     void setMute(bool mute);
 signals:
     void channelName(QString name);
-    void pcmAudio(short *pcm, int size);
+    void pcmAudio(short *pcm, int size, quint64 session_id);
     void onlineStations(StationList);
     void newStation(Station*);
     void leftStation(Station*);
@@ -84,7 +84,7 @@ private:
     void processUserRemove(quint8 *message, quint64 size);
     void createVoicePacket(unsigned char *encoded_audio, int packet_size);
     void processIncomingAudioPacket(quint8 *data, quint64 size, quint8 type);
-    void decodeAudio(unsigned char *audiobuffer, short audiobuffersize, quint8 type);
+    void decodeAudio(unsigned char *audiobuffer, short audiobuffersize, quint8 type, quint64 session_id);
 
     SSLClient *_telnet;
 #ifndef NO_CRYPT
