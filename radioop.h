@@ -121,12 +121,14 @@ public slots:
     void endAudioTransmission();
     void processVoipAudioFrame(short *pcm, int samples, quint64 sid);
     void usePTTForVOIP(bool value);
+    void setVOIPForwarding(bool value);
 
 private:
     bool _stop;
     bool _tx_inited;
     bool _rx_inited;
     bool _voip_enabled;
+    bool _voip_forwarding;
 #if 0
     AlsaAudio *_audio;
 #endif
@@ -169,6 +171,7 @@ private:
                     std::string &rx_antenna, std::string &tx_antenna, int &rx_freq_corr,
                     int &tx_freq_corr, std::string &callsign, std::string &video_device);
     int getFrameLength(unsigned char *data);
+    void txAudio(short *audiobuffer, int audiobuffer_size);
     void vox(short *audiobuffer, int audiobuffer_size);
 
 };

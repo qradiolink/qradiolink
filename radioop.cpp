@@ -32,6 +32,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _tx_inited = false;
     _rx_inited = false;
     _voip_enabled = false;
+    _voip_forwarding = false;
     _last_voiced_frame_timer.start();
     _settings = settings;
     _transmitting = false;
@@ -226,7 +227,11 @@ void RadioOp::processAudioStream()
         emit voipData(audiobuffer,audiobuffer_size);
         return;
     }
+    txAudio(audiobuffer, audiobuffer_size);
+}
 
+void RadioOp::txAudio(short *audiobuffer, int audiobuffer_size)
+{
     if(_radio_type == radio_type::RADIO_TYPE_ANALOG)
     {
         float *pcm = new float[audiobuffer_size/sizeof(short)];
@@ -489,7 +494,14 @@ void RadioOp::receiveAudioData(unsigned char *data, int size)
         {
             audio_out[i] = (short)((float)audio_out[i] * _rx_volume);
         }
-        _audio->write_short(audio_out,samples*sizeof(short));
+        if(_voip_forwarding)
+        {
+            emit voipData(audio_out,samples*sizeof(short));
+        }
+        else
+        {
+            _audio->write_short(audio_out,samples*sizeof(short));
+        }
     }
 }
 
@@ -505,7 +517,14 @@ void RadioOp::receivePCMAudio(std::vector<float> *audio_data)
     {
         pcm[i] = (short)(audio_data->at(i) *_rx_volume * 32767.0f);
     }
-    _audio->write_short(pcm, audio_data->size()*sizeof(short));
+    if(_voip_forwarding)
+    {
+        emit voipData(pcm,audio_data->size()*sizeof(short));
+    }
+    else
+    {
+        _audio->write_short(pcm, audio_data->size()*sizeof(short));
+    }
     audio_data->clear();
     delete audio_data;
     audioFrameReceived();
@@ -600,8 +619,9 @@ void RadioOp::processVoipAudioFrame(short *pcm, int samples, quint64 sid)
         }
     }
     delete[] pcm;
-    quint64 milisec = (quint64)_last_voiced_frame_timer.nsecsElapsed()/1000000;
-    if((milisec >= 20) || (sid == _last_session_id))
+    quint64 milisec = (quint64)_last_voiced_frame_timer.nsecsElapsed()/1000;
+    qDebug() << milisec;
+    if((milisec >= 40) || (sid == _last_session_id))
     {
 
         short *pcm = new short[_m_queue->size()];
@@ -609,9 +629,17 @@ void RadioOp::processVoipAudioFrame(short *pcm, int samples, quint64 sid)
         {
             pcm[i] = (short)((float)_m_queue->at(i) * _rx_volume);
         }
-        _audio->write_short(pcm, samples*sizeof(short));
+        if(_voip_forwarding)
+        {
+            txAudio(pcm, samples*sizeof(short));
+        }
+        else
+        {
+            _audio->write_short(pcm, samples*sizeof(short));
+        }
         _last_voiced_frame_timer.restart();
         _m_queue->clear();
+        _last_session_id = sid;
     }
 }
 
@@ -878,6 +906,11 @@ void RadioOp::toggleMode(int value)
 void RadioOp::usePTTForVOIP(bool value)
 {
     _voip_enabled = value;
+}
+
+void RadioOp::setVOIPForwarding(bool value)
+{
+    _voip_forwarding = value;
 }
 
 void RadioOp::fineTuneFreq(long center_freq)
