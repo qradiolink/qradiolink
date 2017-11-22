@@ -68,6 +68,7 @@ public:
     int processVideoStream(bool &frame_flag);
     void processNetStream();
     void sendEndBeep();
+
 signals:
     void finished();
     void printText(QString text);
@@ -122,6 +123,9 @@ public slots:
     void processVoipAudioFrame(short *pcm, int samples, quint64 sid);
     void usePTTForVOIP(bool value);
     void setVOIPForwarding(bool value);
+    void startTx();
+    void stopTx();
+    void updateFrequency();
 
 private:
     bool _stop;
@@ -162,6 +166,7 @@ private:
     float _tx_ctcss;
     float _rx_volume;
     QElapsedTimer _last_voiced_frame_timer;
+    QTimer *_voip_tx_timer;
     gr::qtgui::sink_c::sptr _fft_gui;
     unsigned char *_rand_frame_data;
     std::vector<short> *_m_queue;
