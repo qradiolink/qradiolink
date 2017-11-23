@@ -99,9 +99,12 @@ signals:
     void stopAutoTuneFreq();
     void usePTTForVOIP(bool value);
     void setVOIPForwarding(bool value);
+    void connectToServer(QString server, unsigned port);
+    void disconnectFromServer();
+    void setMute(bool value);
 
 public:
-    explicit MainWindow(MumbleClient *client, QWidget *parent = 0);
+    explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     QWidget* get_const_gui() {return _constellation_gui;}
     QWidget* get_rssi_gui() {return _rssi_gui;}
@@ -110,7 +113,6 @@ public:
     void readConfig(QFileInfo *config_file);
 private:
     Ui::MainWindow *ui;
-    MumbleClient *_mumble_client;
     bool _transmitting_radio;
     QWidget *_constellation_gui;
     QWidget *_rssi_gui;

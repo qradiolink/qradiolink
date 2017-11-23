@@ -18,10 +18,9 @@
 #include "ui_mainwindow.h"
 
 
-MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
+MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow),
-    _mumble_client(client)
+    ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
@@ -287,13 +286,13 @@ void MainWindow::displayTransmitStatus(bool status)
 
 void MainWindow::GUIconnectVOIP()
 {
-    _mumble_client->connectToServer(ui->voipServerEdit->text(), 64738);
-    _mumble_client->setMute(false);
+    emit connectToServer(ui->voipServerEdit->text(), 64738);
+    emit setMute(false);
 }
 
 void MainWindow::GUIdisconnectVOIP()
 {
-    _mumble_client->disconnectFromServer();
+    emit disconnectFromServer();
 }
 
 

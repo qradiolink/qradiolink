@@ -45,17 +45,6 @@ public:
     ~MumbleClient();
 
 
-    void connectToServer(QString address, unsigned port);
-    void disconnectFromServer();
-    QString getChannelName();
-    int getChannelId();
-    QString createChannel(QString channel_name="");
-    void joinChannel(int id);
-    int callStation(QString radio_id);
-    void disconnectFromCall();
-    int disconnectStation(QString radio_id);
-    void disconnectAllStations();
-    void setMute(bool mute);
 signals:
     void channelName(QString name);
     void pcmAudio(short *pcm, int size, quint64 session_id);
@@ -65,6 +54,8 @@ signals:
     void channelReady(int chan_number);
     
 public slots:
+    void connectToServer(QString address, unsigned port);
+    void disconnectFromServer();
     void sendVersion();
     void authenticate();
     void pingServer();
@@ -72,6 +63,15 @@ public slots:
     void processUDPData(QByteArray data);
     void sendUDPPing();
     void processAudio(short *audiobuffer, int audiobuffersize);
+    QString getChannelName();
+    int getChannelId();
+    QString createChannel(QString channel_name="");
+    void joinChannel(int id);
+    int callStation(QString radio_id);
+    void disconnectFromCall();
+    int disconnectStation(QString radio_id);
+    void disconnectAllStations();
+    void setMute(bool mute);
 
 private:
     void sendUDPMessage(quint8 *message, int size);

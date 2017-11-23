@@ -91,10 +91,9 @@ int main(int argc, char *argv[])
     DatabaseApi db;
     Settings *settings = db.get_settings();
     MumbleClient client(settings);
-    MainWindow w(&client);
+    MainWindow w;
     w.setWindowTitle("QRadioLink");
-    //client.connectToServer(settings->_voice_server_ip, settings->_voice_server_port);
-    //client.setMute(false);
+
     /* Uncomment later
     DtmfCommand *dtmfcommand = new DtmfCommand(settings, &db,&client);
     QObject::connect(&client,SIGNAL(channelReady(int)),dtmfcommand,SLOT(channelReady(int)));
@@ -276,6 +275,9 @@ int main(int argc, char *argv[])
     QObject::connect(radio_op, SIGNAL(voipData(short*,int)), &client, SLOT(processAudio(short*,int)));
 
     QObject::connect(&client,SIGNAL(onlineStations(StationList)),&w,SLOT(updateOnlineStations(StationList)));
+    QObject::connect(&w,SIGNAL(connectToServer(QString, unsigned)),&client,SLOT(connectToServer(QString, unsigned)));
+    QObject::connect(&w,SIGNAL(disconnectFromServer()),&client,SLOT(disconnectFromServer()));
+    QObject::connect(&w,SIGNAL(setMute(bool)),&client,SLOT(setMute(bool)));
 
     w.show();
     w.showMaximized();

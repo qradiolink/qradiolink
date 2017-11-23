@@ -411,7 +411,7 @@ void RadioOp::run()
         bool transmitting = _transmitting;
         QCoreApplication::processEvents();
         int time = QDateTime::currentDateTime().toTime_t();
-        if((time - last_ping_time) > 5)
+        if((time - last_ping_time) > 20)
         {
             emit pingServer();
             last_ping_time = time;
@@ -636,9 +636,8 @@ void RadioOp::processVoipAudioFrame(short *pcm, int samples, quint64 sid)
         }
     }
     delete[] pcm;
-    quint64 milisec = (quint64)_last_voiced_frame_timer.nsecsElapsed()/1000;
-    qDebug() << milisec;
-    if((milisec >= 40) || (sid == _last_session_id))
+    quint64 milisec = (quint64)_last_voiced_frame_timer.nsecsElapsed()/1000000;
+    if((milisec >= 20) || (sid == _last_session_id))
     {
 
         short *pcm = new short[_m_queue->size()];
@@ -693,7 +692,7 @@ void RadioOp::textReceived(QString text)
 void RadioOp::callsignReceived(QString callsign)
 {
     QString time= QDateTime::currentDateTime().toString("d/MMM/yyyy hh:mm:ss");
-    QString text = "\n" + time +">>>> " + callsign + " start transmission >>>>\n";
+    QString text = "\n" + time +" >>>> " + callsign + " >>>>\n";
     emit printText(text);
     emit printCallsign(callsign);
 }
@@ -719,7 +718,7 @@ void RadioOp::receiveEnd()
 void RadioOp::endAudioTransmission()
 {
     QString time= QDateTime::currentDateTime().toString("d/MMM/yyyy hh:mm:ss");
-    emit printText(time + "<<<< end transmission <<<<\n");
+    emit printText(time + " <<<< end transmission <<<<\n");
     QFile resfile(":/res/end_beep.raw");
     if(resfile.open(QIODevice::ReadOnly))
     {

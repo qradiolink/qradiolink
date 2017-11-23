@@ -141,7 +141,6 @@ void MumbleClient::processProtoMessage(QByteArray data)
     int message_size = total_size-6;
     quint8 message[message_size];
     memcpy(message,bin_data+6,message_size);
-
     switch(type)
     {
     case 15:
