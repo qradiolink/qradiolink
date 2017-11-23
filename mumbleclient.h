@@ -45,8 +45,24 @@ public:
     ~MumbleClient();
 
 
+signals:
+    void channelName(QString name);
+    void pcmAudio(short *pcm, int size, quint64 session_id);
+    void onlineStations(StationList);
+    void newStation(Station*);
+    void leftStation(Station*);
+    void channelReady(int chan_number);
+    
+public slots:
     void connectToServer(QString address, unsigned port);
     void disconnectFromServer();
+    void sendVersion();
+    void authenticate();
+    void pingServer();
+    void processProtoMessage(QByteArray data);
+    void processUDPData(QByteArray data);
+    void sendUDPPing();
+    void processAudio(short *audiobuffer, int audiobuffersize);
     QString getChannelName();
     int getChannelId();
     QString createChannel(QString channel_name="");
@@ -56,22 +72,6 @@ public:
     int disconnectStation(QString radio_id);
     void disconnectAllStations();
     void setMute(bool mute);
-signals:
-    void channelName(QString name);
-    void pcmAudio(short *pcm, short size);
-    void onlineStations(StationList);
-    void newStation(Station*);
-    void leftStation(Station*);
-    void channelReady(int chan_number);
-    
-public slots:
-    void sendVersion();
-    void authenticate();
-    void pingServer();
-    void processProtoMessage(QByteArray data);
-    void processUDPData(QByteArray data);
-    void sendUDPPing();
-    void processAudio(short *audiobuffer, short audiobuffersize);
 
 private:
     void sendUDPMessage(quint8 *message, int size);
@@ -84,7 +84,7 @@ private:
     void processUserRemove(quint8 *message, quint64 size);
     void createVoicePacket(unsigned char *encoded_audio, int packet_size);
     void processIncomingAudioPacket(quint8 *data, quint64 size, quint8 type);
-    void decodeAudio(unsigned char *audiobuffer, short audiobuffersize, quint8 type);
+    void decodeAudio(unsigned char *audiobuffer, short audiobuffersize, quint8 type, quint64 session_id);
 
     SSLClient *_telnet;
 #ifndef NO_CRYPT

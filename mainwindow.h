@@ -43,8 +43,6 @@ public slots:
     void GUIendTransmission();
     void GUIconnectVOIP();
     void GUIdisconnectVOIP();
-    void GUIstartTalkVOIP();
-    void GUIstopTalkVOIP();
     void GUIsendText();
     void chooseFile();
     void displayText(QString text);
@@ -71,7 +69,10 @@ public slots:
     void clearTextArea();
     void updateFreqGUI(long freq);
     void enterShift();
-    void updateCTCSS(int value);
+    void updateRxCTCSS(int value);
+    void updateTxCTCSS(int value);
+    void togglePTTVOIP(bool value);
+    void toggleVOIPForwarding(bool value);
 
 signals:
     void startTransmission();
@@ -79,8 +80,6 @@ signals:
     void connectVOIP(QString host, unsigned port);
     void disconnectVOIP();
     void sendText(QString text, bool repeat);
-    void startTalkVOIP();
-    void stopTalkVOIP();
     void toggleRX(bool value);
     void toggleTX(bool value);
     void tuneFreq(qint64 center_freq);
@@ -98,9 +97,14 @@ signals:
     void enableGUIFFT(bool value);
     void startAutoTuneFreq();
     void stopAutoTuneFreq();
+    void usePTTForVOIP(bool value);
+    void setVOIPForwarding(bool value);
+    void connectToServer(QString server, unsigned port);
+    void disconnectFromServer();
+    void setMute(bool value);
 
 public:
-    explicit MainWindow(MumbleClient *client, QWidget *parent = 0);
+    explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     QWidget* get_const_gui() {return _constellation_gui;}
     QWidget* get_rssi_gui() {return _rssi_gui;}
@@ -109,7 +113,6 @@ public:
     void readConfig(QFileInfo *config_file);
 private:
     Ui::MainWindow *ui;
-    MumbleClient *_mumble_client;
     bool _transmitting_radio;
     QWidget *_constellation_gui;
     QWidget *_rssi_gui;

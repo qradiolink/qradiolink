@@ -91,10 +91,9 @@ int main(int argc, char *argv[])
     DatabaseApi db;
     Settings *settings = db.get_settings();
     MumbleClient client(settings);
-    MainWindow w(&client);
+    MainWindow w;
     w.setWindowTitle("QRadioLink");
-    //client.connectToServer(settings->_voice_server_ip, settings->_voice_server_port);
-    //client.setMute(false);
+
     /* Uncomment later
     DtmfCommand *dtmfcommand = new DtmfCommand(settings, &db,&client);
     QObject::connect(&client,SIGNAL(channelReady(int)),dtmfcommand,SLOT(channelReady(int)));
@@ -190,7 +189,7 @@ int main(int argc, char *argv[])
 
     const std::string fft_name = "fft";
     gr::qtgui::sink_c::sptr fft_gui = gr::qtgui::sink_c::make(8096,gr::filter::firdes::WIN_BLACKMAN_HARRIS,
-                                                          0,1000000,fft_name,true,true,false,false,(&w)->get_fft_gui());
+                                                          0,1000000,fft_name,true,true,true,false,(&w)->get_fft_gui());
 
     fft_gui->set_update_time(0.1);
     fft_gui->set_fft_power_db(-140,0);
@@ -204,7 +203,7 @@ int main(int argc, char *argv[])
                 DisplayPlot { \
                 qproperty-zoomer_color: black; \
                 qproperty-line_color1: #A4051F; \
-                qproperty-line_color2: magenta; \
+                qproperty-line_color2: #FF710C; \
                 qproperty-line_color3: #FF6905; \
                 qproperty-line_style1: SolidLine; \
                 qproperty-line_style2: DashLine; \
@@ -262,6 +261,8 @@ int main(int argc, char *argv[])
     QObject::connect(&w,SIGNAL(setTxCTCSS(float)),radio_op,SLOT(setTxCTCSS(float)));
     QObject::connect(&w,SIGNAL(enableGUIConst(bool)),radio_op,SLOT(enableGUIConst(bool)));
     QObject::connect(&w,SIGNAL(enableGUIFFT(bool)),radio_op,SLOT(enableGUIFFT(bool)));
+    QObject::connect(&w,SIGNAL(usePTTForVOIP(bool)),radio_op,SLOT(usePTTForVOIP(bool)));
+    QObject::connect(&w,SIGNAL(setVOIPForwarding(bool)),radio_op,SLOT(setVOIPForwarding(bool)));
     QObject::connect(radio_op, SIGNAL(printText(QString)), &w, SLOT(displayText(QString)));
     QObject::connect(radio_op, SIGNAL(printCallsign(QString)), &w, SLOT(displayCallsign(QString)));
     QObject::connect(radio_op, SIGNAL(videoImage(QImage)), &w, SLOT(displayImage(QImage)));
@@ -269,15 +270,21 @@ int main(int argc, char *argv[])
     QObject::connect(radio_op, SIGNAL(displayTransmitStatus(bool)), &w, SLOT(displayTransmitStatus(bool)));
     QObject::connect(radio_op, SIGNAL(displayDataReceiveStatus(bool)), &w, SLOT(displayDataReceiveStatus(bool)));
     QObject::connect(radio_op, SIGNAL(freqFromGUI(long)), &w, SLOT(updateFreqGUI(long)));
-    //QObject::connect(&w,SIGNAL(startTalkVOIP()),audio_op,SLOT(startTransmission()));
-    //QObject::connect(&w,SIGNAL(stopTalkVOIP()),audio_op,SLOT(endTransmission()));
+    QObject::connect(radio_op, SIGNAL(pingServer()), &client, SLOT(pingServer()));
+    QObject::connect(&client, SIGNAL(pcmAudio(short*,int,quint64)), radio_op, SLOT(processVoipAudioFrame(short*, int, quint64)));
+    QObject::connect(radio_op, SIGNAL(voipData(short*,int)), &client, SLOT(processAudio(short*,int)));
 
-    //QObject::connect(&client,SIGNAL(onlineStations(StationList)),&w,SLOT(updateOnlineStations(StationList)));
+    QObject::connect(&client,SIGNAL(onlineStations(StationList)),&w,SLOT(updateOnlineStations(StationList)));
+    QObject::connect(&w,SIGNAL(connectToServer(QString, unsigned)),&client,SLOT(connectToServer(QString, unsigned)));
+    QObject::connect(&w,SIGNAL(disconnectFromServer()),&client,SLOT(disconnectFromServer()));
+    QObject::connect(&w,SIGNAL(setMute(bool)),&client,SLOT(setMute(bool)));
 
     w.show();
     w.showMaximized();
     w.activateWindow();
     w.raise();
 
-    return a.exec();
+    int ret = a.exec();
+    client.disconnectFromServer();
+    return ret;
 }

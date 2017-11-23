@@ -25,10 +25,17 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _codec = new AudioEncoder;
     _audio = new AudioInterface;
     _mutex = new QMutex;
+    _m_queue = new std::vector<short>;
+    _last_session_id = 0;
     _net_device = 0;
     _stop =false;
     _tx_inited = false;
     _rx_inited = false;
+    _voip_enabled = false;
+    _voip_forwarding = false;
+    _last_voiced_frame_timer.start();
+    _voip_tx_timer = new QTimer(this);
+    _voip_tx_timer->setSingleShot(true);
     _settings = settings;
     _transmitting = false;
     _process_text = false;
@@ -52,6 +59,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _rand_frame_data = new unsigned char[5000];
     _fft_gui = fft_gui;
     QObject::connect(_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));
+    QObject::connect(_voip_tx_timer, SIGNAL(timeout()), this, SLOT(stopTx()));
     _modem = new gr_modem(_settings, fft_gui,const_gui, rssi_gui);
 
     QObject::connect(_modem,SIGNAL(textReceived(QString)),this,SLOT(textReceived(QString)));
@@ -99,7 +107,7 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
                          std::string &rx_antenna, std::string &tx_antenna, int &rx_freq_corr,
                          int &tx_freq_corr, std::string &callsign, std::string &video_device)
 {
-    int tx_power, rx_sensitivity, squelch;
+    int tx_power, rx_sensitivity, squelch, rx_volume;
     long long rx_frequency, tx_shift;
     QDir files = QDir::homePath();
 
@@ -134,6 +142,7 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
         root.lookupValue("tx_power", tx_power);
         root.lookupValue("rx_sensitivity", rx_sensitivity);
         root.lookupValue("squelch", squelch);
+        root.lookupValue("rx_volume", rx_volume);
         root.lookupValue("rx_frequency", rx_frequency);
         root.lookupValue("tx_shift", tx_shift);
         _callsign = QString::fromStdString(callsign);
@@ -165,6 +174,10 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
         if(_squelch == 0)
         {
             _squelch = squelch;
+        }
+        if(_rx_volume == 0)
+        {
+            _rx_volume = (float)rx_volume / 10.0;
         }
     }
     catch(const libconfig::SettingNotFoundException &nfex)
@@ -212,8 +225,16 @@ void RadioOp::processAudioStream()
     int audiobuffer_size = 640; //40 ms @ 8k
     short *audiobuffer = new short[audiobuffer_size/sizeof(short)];
     _audio->read_short(audiobuffer,audiobuffer_size);
+    if(_voip_enabled)
+    {
+        emit voipData(audiobuffer,audiobuffer_size);
+        return;
+    }
+    txAudio(audiobuffer, audiobuffer_size);
+}
 
-
+void RadioOp::txAudio(short *audiobuffer, int audiobuffer_size)
+{
     if(_radio_type == radio_type::RADIO_TYPE_ANALOG)
     {
         float *pcm = new float[audiobuffer_size/sizeof(short)];
@@ -333,58 +354,79 @@ void RadioOp::sendEndBeep()
     }
 }
 
+void RadioOp::startTx()
+{
+    if(_tx_inited)
+    {
+        if(_rx_inited && (_mode != gr_modem_types::ModemTypeQPSK250000))
+            _modem->stopRX();
+        if(_tx_modem_started)
+            _modem->stopTX();
+        _modem->startTX();
+        _tx_modem_started = false;
+        if(_radio_type == radio_type::RADIO_TYPE_DIGITAL)
+            _modem->startTransmission(_callsign,_callsign.size());
+    }
+}
+
+void RadioOp::stopTx()
+{
+    if(_tx_inited)
+    {
+        if(_radio_type == radio_type::RADIO_TYPE_DIGITAL)
+            _modem->endTransmission(_callsign, _callsign.size());
+        if((_radio_type == radio_type::RADIO_TYPE_ANALOG)
+                && ((_mode == gr_modem_types::ModemTypeNBFM2500) || (_mode == gr_modem_types::ModemTypeNBFM5000)))
+        {
+            sendEndBeep();
+        }
+        usleep(400000);
+        _modem->stopTX();
+        _tx_modem_started = false;
+        if(_rx_inited)
+            _modem->startRX();
+    }
+}
+
+void RadioOp::updateFrequency()
+{
+    long long freq = (long long)_modem->getFreqGUI();
+    if(freq != 0 && freq != _tune_center_freq)
+    {
+        _tune_center_freq = freq;
+        _modem->tune(_tune_center_freq, false);
+        _modem->tuneTx(_tune_center_freq + _tune_shift_freq);
+        emit freqFromGUI(_tune_center_freq);
+    }
+}
+
 void RadioOp::run()
 {
 
     bool ptt_activated = false;
     bool frame_flag = true;
+    int last_ping_time = 0;
     while(true)
     {
         bool transmitting = _transmitting;
         QCoreApplication::processEvents();
-
-        long long freq = (long long)_modem->getFreqGUI();
-        if(freq != 0 && freq != _tune_center_freq)
+        int time = QDateTime::currentDateTime().toTime_t();
+        if((time - last_ping_time) > 20)
         {
-            _tune_center_freq = freq;
-            _modem->tune(_tune_center_freq, false);
-            _modem->tuneTx(_tune_center_freq + _tune_shift_freq);
-            emit freqFromGUI(_tune_center_freq);
+            emit pingServer();
+            last_ping_time = time;
         }
+
+        updateFrequency();
         if(transmitting && !ptt_activated)
         {
             ptt_activated = true;
-            if(_tx_inited)
-            {
-                if(_rx_inited && (_mode != gr_modem_types::ModemTypeQPSK250000))
-                    _modem->stopRX();
-                if(_tx_modem_started)
-                    _modem->stopTX();
-                _modem->startTX();
-                _tx_modem_started = false;
-                if(_radio_type == radio_type::RADIO_TYPE_DIGITAL)
-                    _modem->startTransmission(_callsign,_callsign.size());
-            }
+            startTx();
         }
         if(!transmitting && ptt_activated)
         {
             ptt_activated = false;
-            if(_tx_inited)
-            {
-                if(_radio_type == radio_type::RADIO_TYPE_DIGITAL)
-                    _modem->endTransmission(_callsign, _callsign.size());
-                if((_radio_type == radio_type::RADIO_TYPE_ANALOG)
-                        && ((_mode == gr_modem_types::ModemTypeNBFM2500) || (_mode == gr_modem_types::ModemTypeNBFM5000)))
-                {
-                    sendEndBeep();
-                }
-                usleep(400000);
-                _modem->stopTX();
-                _tx_modem_started = false;
-            }
-
-            if(_rx_inited)
-                _modem->startRX();
+            stopTx();
         }
         if(transmitting)
         {
@@ -469,7 +511,14 @@ void RadioOp::receiveAudioData(unsigned char *data, int size)
         {
             audio_out[i] = (short)((float)audio_out[i] * _rx_volume);
         }
-        _audio->write_short(audio_out,samples*sizeof(short));
+        if(_voip_forwarding)
+        {
+            emit voipData(audio_out,samples*sizeof(short));
+        }
+        else
+        {
+            _audio->write_short(audio_out,samples*sizeof(short));
+        }
     }
 }
 
@@ -485,7 +534,14 @@ void RadioOp::receivePCMAudio(std::vector<float> *audio_data)
     {
         pcm[i] = (short)(audio_data->at(i) *_rx_volume * 32767.0f);
     }
-    _audio->write_short(pcm, audio_data->size()*sizeof(short));
+    if(_voip_forwarding)
+    {
+        emit voipData(pcm,audio_data->size()*sizeof(short));
+    }
+    else
+    {
+        _audio->write_short(pcm, audio_data->size()*sizeof(short));
+    }
     audio_data->clear();
     delete audio_data;
     audioFrameReceived();
@@ -554,9 +610,63 @@ void RadioOp::receiveNetData(unsigned char *data, int size)
     int res = _net_device->write_buffered(net_frame,frame_size);
 }
 
+void RadioOp::processVoipAudioFrame(short *pcm, int samples, quint64 sid)
+{
+
+    if(_m_queue->empty())
+    {
+        for(int i=0;i<samples;i++)
+        {
+            _m_queue->push_back(pcm[i]);
+        }
+    }
+    else
+    {
+        int size = (_m_queue->size() > samples) ? samples : _m_queue->size();
+        for(int i=0;i<size;i++)
+        {
+            _m_queue->at(i) = _m_queue->at(i)/2-1 + pcm[i]/2-1;
+        }
+        if(_m_queue->size() < samples)
+        {
+            for(int i=_m_queue->size();i<samples;i++)
+            {
+                _m_queue->push_back(pcm[i]);
+            }
+        }
+    }
+    delete[] pcm;
+    quint64 milisec = (quint64)_last_voiced_frame_timer.nsecsElapsed()/1000000;
+    if((milisec >= 20) || (sid == _last_session_id))
+    {
+
+        short *pcm = new short[_m_queue->size()];
+        for(int i = 0;i<_m_queue->size();i++)
+        {
+            pcm[i] = (short)((float)_m_queue->at(i) * _rx_volume);
+        }
+        if(_voip_forwarding && _tx_inited)
+        {
+            if(!_voip_tx_timer->isActive())
+            {
+                startTx();
+            }
+            _voip_tx_timer->start(200);
+            txAudio(pcm, samples*sizeof(short));
+        }
+        else
+        {
+            _audio->write_short(pcm, samples*sizeof(short));
+        }
+        _last_voiced_frame_timer.restart();
+        _m_queue->clear();
+        _last_session_id = sid;
+    }
+}
+
 void RadioOp::startTransmission()
 {
-    if(_tx_inited)
+    if(_tx_inited || _voip_enabled)
         _transmitting = true;
 }
 
@@ -581,7 +691,8 @@ void RadioOp::textReceived(QString text)
 
 void RadioOp::callsignReceived(QString callsign)
 {
-    QString text = "\n>>>> " + callsign + " start transmission >>>>\n";
+    QString time= QDateTime::currentDateTime().toString("d/MMM/yyyy hh:mm:ss");
+    QString text = "\n" + time +" >>>> " + callsign + " >>>>\n";
     emit printText(text);
     emit printCallsign(callsign);
 }
@@ -606,7 +717,8 @@ void RadioOp::receiveEnd()
 
 void RadioOp::endAudioTransmission()
 {
-    emit printText("<<<< end transmission <<<<\n");
+    QString time= QDateTime::currentDateTime().toString("d/MMM/yyyy hh:mm:ss");
+    emit printText(time + " <<<< end transmission <<<<\n");
     QFile resfile(":/res/end_beep.raw");
     if(resfile.open(QIODevice::ReadOnly))
     {
@@ -617,10 +729,6 @@ void RadioOp::endAudioTransmission()
     }
 }
 
-void RadioOp::syncIssue()
-{
-    emit displaySyncIssue(true);
-}
 
 void RadioOp::toggleRX(bool value)
 {
@@ -814,6 +922,16 @@ void RadioOp::toggleMode(int value)
 
     if(tx_inited_before)
         toggleTX(true);
+}
+
+void RadioOp::usePTTForVOIP(bool value)
+{
+    _voip_enabled = value;
+}
+
+void RadioOp::setVOIPForwarding(bool value)
+{
+    _voip_forwarding = value;
 }
 
 void RadioOp::fineTuneFreq(long center_freq)

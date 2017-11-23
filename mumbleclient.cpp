@@ -77,7 +77,7 @@ void MumbleClient::sendVersion()
     v.set_version(PROTOCOL_VERSION);
     v.set_release("QRadioLink 0.2");
     v.set_os("GNU/Linux");
-    v.set_os_version("3.2");
+    v.set_os_version("3.16");
     int size = v.ByteSize();
     quint8 data[size];
     v.SerializeToArray(data,size);
@@ -123,8 +123,8 @@ void MumbleClient::pingServer()
     quint8 data[size];
     ping.SerializeToArray(data,size);
     this->sendMessage(data,3,size);
-
-    sendUDPPing();
+    if(!_settings->_mumble_tcp)
+        sendUDPPing();
 
 }
 
@@ -141,13 +141,15 @@ void MumbleClient::processProtoMessage(QByteArray data)
     int message_size = total_size-6;
     quint8 message[message_size];
     memcpy(message,bin_data+6,message_size);
-
     switch(type)
     {
     case 15:
         setupEncryption(message,message_size);
         break;
     case 5: // ServerSync
+        processServerSync(message,message_size);
+        break;
+    case 0: // ServerSync
         processServerSync(message,message_size);
         break;
     case 3: // ping
@@ -539,7 +541,7 @@ void MumbleClient::setMute(bool mute)
     this->sendMessage(mdata,9,msize);
 }
 
-void MumbleClient::processAudio(short *audiobuffer, short audiobuffersize)
+void MumbleClient::processAudio(short *audiobuffer, int audiobuffersize)
 {
     if(!_synchronized)
         return;
@@ -556,6 +558,7 @@ void MumbleClient::processAudio(short *audiobuffer, short audiobuffersize)
 
     createVoicePacket(encoded_audio, packet_size);
     delete[] encoded_audio;
+    delete[] audiobuffer;
 }
 
 void MumbleClient::createVoicePacket(unsigned char *encoded_audio, int packet_size)
@@ -618,7 +621,7 @@ void MumbleClient::processIncomingAudioPacket(quint8 *data, quint64 size, quint8
     QByteArray qba = pds.dataBlock(pds.left());
     unsigned char *encoded_audio = reinterpret_cast<unsigned char*>(qba.data());
 
-    decodeAudio(encoded_audio,audio_size, type);
+    decodeAudio(encoded_audio,audio_size, type, session);
 
 }
 
@@ -642,7 +645,7 @@ void MumbleClient::processUDPData(QByteArray data)
 #endif
 }
 
-void MumbleClient::decodeAudio(unsigned char *audiobuffer, short audiobuffersize, quint8 type)
+void MumbleClient::decodeAudio(unsigned char *audiobuffer, short audiobuffersize, quint8 type, quint64 session_id)
 {
 
     int samples =0;
@@ -657,7 +660,7 @@ void MumbleClient::decodeAudio(unsigned char *audiobuffer, short audiobuffersize
     }
     if(pcm == NULL)
         return;
-    emit pcmAudio(pcm, samples);
+    emit pcmAudio(pcm, samples, session_id);
 
 }
 

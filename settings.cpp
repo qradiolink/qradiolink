@@ -4,8 +4,8 @@ Settings::Settings()
 {
     _id = 0;
     _use_mumble = 1;
-    _mumble_tcp = 0; // used
-    _use_codec2 = 1; // used
+    _mumble_tcp = 1; // used
+    _use_codec2 = 0; // used
     _use_dtmf = 0; // used
     _audio_treshhold = -15; // used
     _voice_activation = 0.5; // used

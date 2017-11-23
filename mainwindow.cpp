@@ -18,10 +18,9 @@
 #include "ui_mainwindow.h"
 
 
-MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
+MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow),
-    _mumble_client(client)
+    ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
@@ -35,7 +34,8 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
         tones.append(QString::number(tone_list[i]));
     }
 
-    ui->comboBoxCTCSS->addItems(tones);
+    ui->comboBoxTxCTCSS->addItems(tones);
+    ui->comboBoxRxCTCSS->addItems(tones);
 
     ui->frameCtrlFreq->setup(10, 10U, 9000000000U, 1, UNITS_MHZ );
     ui->frameCtrlFreq->setFrequency(434000000);
@@ -49,8 +49,6 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
     QObject::connect(ui->sendTextButton,SIGNAL(clicked()),this,SLOT(GUIsendText()));
     QObject::connect(ui->voipConnectButton,SIGNAL(clicked()),this,SLOT(GUIconnectVOIP()));
     QObject::connect(ui->voipDisconnectButton,SIGNAL(clicked()),this,SLOT(GUIdisconnectVOIP()));
-    QObject::connect(ui->voipTalkButton,SIGNAL(pressed()),this,SLOT(GUIstartTalkVOIP()));
-    QObject::connect(ui->voipTalkButton,SIGNAL(released()),this,SLOT(GUIstopTalkVOIP()));
     QObject::connect(ui->chooseFileButton,SIGNAL(clicked()),this,SLOT(chooseFile()));
     QObject::connect(ui->clearReceivedTextButton,SIGNAL(clicked()),this,SLOT(clearTextArea()));
     QObject::connect(ui->rxStatusButton,SIGNAL(toggled(bool)),this,SLOT(toggleRXwin(bool)));
@@ -66,7 +64,10 @@ MainWindow::MainWindow(MumbleClient *client, QWidget *parent) :
     QObject::connect(ui->autotuneButton,SIGNAL(toggled(bool)),this,SLOT(autoTune(bool)));
     QObject::connect(ui->saveOptionsButton,SIGNAL(clicked()),this,SLOT(saveConfig()));
     QObject::connect(ui->tabWidget,SIGNAL(currentChanged(int)),this,SLOT(mainTabChanged(int)));
-    QObject::connect(ui->comboBoxCTCSS,SIGNAL(currentIndexChanged(int)),this,SLOT(updateCTCSS(int)));
+    QObject::connect(ui->comboBoxRxCTCSS,SIGNAL(currentIndexChanged(int)),this,SLOT(updateRxCTCSS(int)));
+    QObject::connect(ui->comboBoxTxCTCSS,SIGNAL(currentIndexChanged(int)),this,SLOT(updateTxCTCSS(int)));
+    QObject::connect(ui->pttVoipButton,SIGNAL(toggled(bool)),this,SLOT(togglePTTVOIP(bool)));
+    QObject::connect(ui->voipForwardButton,SIGNAL(toggled(bool)),this,SLOT(toggleVOIPForwarding(bool)));
 
     QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
 
@@ -129,6 +130,7 @@ void MainWindow::readConfig(QFileInfo *config_file)
         ui->txPowerSlider->setValue(cfg.lookup("tx_power"));
         ui->rxSensitivitySlider->setValue(cfg.lookup("rx_sensitivity"));
         ui->rxSquelchSlider->setValue(cfg.lookup("squelch"));
+        ui->rxVolumeSlider->setValue(cfg.lookup("rx_volume"));
         ui->frameCtrlFreq->setFrequency(cfg.lookup("rx_frequency"));
         _rx_frequency = cfg.lookup("rx_frequency");
         _tx_frequency = cfg.lookup("tx_shift");
@@ -169,6 +171,7 @@ void MainWindow::saveConfig()
     root.add("tx_power",libconfig::Setting::TypeInt) = (int)ui->txPowerSlider->value();
     root.add("rx_sensitivity",libconfig::Setting::TypeInt) = (int)ui->rxSensitivitySlider->value();
     root.add("squelch",libconfig::Setting::TypeInt) = (int)ui->rxSquelchSlider->value();
+    root.add("rx_volume",libconfig::Setting::TypeInt) = (int)ui->rxVolumeSlider->value();
     root.add("rx_frequency",libconfig::Setting::TypeInt64) = _rx_frequency;
     root.add("tx_shift",libconfig::Setting::TypeInt64) = _tx_frequency;
     try
@@ -283,24 +286,15 @@ void MainWindow::displayTransmitStatus(bool status)
 
 void MainWindow::GUIconnectVOIP()
 {
-    _mumble_client->connectToServer(ui->voipServerEdit->text(), 64738);
-    _mumble_client->setMute(false);
+    emit connectToServer(ui->voipServerEdit->text(), 64738);
+    emit setMute(false);
 }
 
 void MainWindow::GUIdisconnectVOIP()
 {
-    _mumble_client->disconnectFromServer();
+    emit disconnectFromServer();
 }
 
-void MainWindow::GUIstartTalkVOIP()
-{
-    emit startTalkVOIP();
-}
-
-void MainWindow::GUIstopTalkVOIP()
-{
-    emit stopTalkVOIP();
-}
 
 void MainWindow::updateOnlineStations(StationList stations)
 {
@@ -417,8 +411,22 @@ void MainWindow::updateFreqGUI(long freq)
     ui->frequencyEdit->setText(QString::number(ceil(freq/1000)));
 }
 
-void MainWindow::updateCTCSS(int value)
+void MainWindow::updateRxCTCSS(int value)
 {
-    emit setRxCTCSS(ui->comboBoxCTCSS->currentText().toFloat());
-    emit setTxCTCSS(ui->comboBoxCTCSS->currentText().toFloat());
+    emit setRxCTCSS(ui->comboBoxRxCTCSS->currentText().toFloat());
+}
+
+void MainWindow::updateTxCTCSS(int value)
+{
+    emit setTxCTCSS(ui->comboBoxTxCTCSS->currentText().toFloat());
+}
+
+void MainWindow::togglePTTVOIP(bool value)
+{
+    emit usePTTForVOIP(value);
+}
+
+void MainWindow::toggleVOIPForwarding(bool value)
+{
+    emit setVOIPForwarding(value);
 }

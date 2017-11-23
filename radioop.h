@@ -68,12 +68,12 @@ public:
     int processVideoStream(bool &frame_flag);
     void processNetStream();
     void sendEndBeep();
+
 signals:
     void finished();
     void printText(QString text);
     void printCallsign(QString text);
     void displayReceiveStatus(bool status);
-    void displaySyncIssue(bool status);
     void displayTransmitStatus(bool status);
     void displayDataReceiveStatus(bool status);
     void audioData(unsigned char *buf, int size);
@@ -84,6 +84,8 @@ signals:
     void endAudio(int secs);
     void startAudio();
     void freqFromGUI(long freq);
+    void pingServer();
+    void voipData(short *pcm, int samples);
 public slots:
     void run();
     void startTransmission();
@@ -95,7 +97,6 @@ public slots:
     void audioFrameReceived();
     void dataFrameReceived();
     void receiveEnd();
-    void syncIssue();
     void receiveAudioData(unsigned char *data, int size);
     void receiveVideoData(unsigned char *data, int size);
     void receiveNetData(unsigned char *data, int size);
@@ -119,11 +120,19 @@ public slots:
     void startAutoTune();
     void stopAutoTune();
     void endAudioTransmission();
+    void processVoipAudioFrame(short *pcm, int samples, quint64 sid);
+    void usePTTForVOIP(bool value);
+    void setVOIPForwarding(bool value);
+    void startTx();
+    void stopTx();
+    void updateFrequency();
 
 private:
     bool _stop;
     bool _tx_inited;
     bool _rx_inited;
+    bool _voip_enabled;
+    bool _voip_forwarding;
 #if 0
     AlsaAudio *_audio;
 #endif
@@ -156,13 +165,18 @@ private:
     float _rx_ctcss;
     float _tx_ctcss;
     float _rx_volume;
+    QElapsedTimer _last_voiced_frame_timer;
+    QTimer *_voip_tx_timer;
     gr::qtgui::sink_c::sptr _fft_gui;
     unsigned char *_rand_frame_data;
+    std::vector<short> *_m_queue;
+    quint64 _last_session_id;
 
     void readConfig(std::string &rx_device_args, std::string &tx_device_args,
                     std::string &rx_antenna, std::string &tx_antenna, int &rx_freq_corr,
                     int &tx_freq_corr, std::string &callsign, std::string &video_device);
     int getFrameLength(unsigned char *data);
+    void txAudio(short *audiobuffer, int audiobuffer_size);
     void vox(short *audiobuffer, int audiobuffer_size);
 
 };
