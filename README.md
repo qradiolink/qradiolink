@@ -5,23 +5,55 @@ QRadioLink
 
 About
 -----
-- QRadioLink is a GUI for a collection of Gnuradio modems, built for hobbyists, tinkerers and radio enthusiasts,
-which allows experimenting with SDR hardware using different digital and analog modes
-- It can also be used as an amateur radio SDR transceiver
-- Possible applications: digital/analog walkie talkie, baby monitor, video camera streaming, IoT devices, radio LAN, robotics.
-- Receives and transmits analog voice, digital voice, low resolution video, text, IP protocol.
-- Digital audio transmission uses either a narrow band modem and Codec2 or a high bandwidth modem and Opus.
-- Modems: BPSK, QPSK, 2FSK, 4FSK
-- Modes: narrow FM, SSB, digital voice, digital video, digital data
-- Digital audio formats: Codec2 700B, Codec2 1400, Opus 
+
+*QRadioLink* is a Linux SDR/VOIP application built on top of [Gnuradio](https://www.gnuradio.org/), 
+made for hobbyists, tinkerers and radio enthusiasts,
+which allows experimenting with software defined radio hardware using different digital and analog modes and 
+an easy to use user interface.
+
+Its primary purpose is educational, but it can also be customized for low power private and public data communications
+on various frequency bands.
+Can also be used as an amateur radio SDR transceiver for teaching students about radio communications.
+
+Possible applications:
+
+- ISM band communications
+- IoT devices
+- digital/analog walkie talkie
+- Raspberry Pi hobby RF communications
+- remote sensors monitoring
+- remote audio and video monitoring
+- robotics
+- sattelite radio communications
+- point to point private radio systems
+- portable VHF-UHF SDR transceiver
+
+
+Features
+---
+
+- VOIP connection between two or more stations operating in simplex or semi-duplex mode
+- Direct VOIP talk-around
+- Radio forwarding over VOIP
+- TLS session encryption
+- Transmit and receive analog voice, digital voice, text messages, digital video, IP protocol.
+- Digital voice codecs: Codec2 700 bit/s, Codec2 1400 bit/s, Opus 9600 bit/s
+- Narrow band digital voice mode with [Codec2](http://rowetel.com/codec2.html) audio codec
+- Wideband digital voice mode with [Opus](https://xiph.org) audio codec
+- Digital modulation:  **BPSK**, **DQPSK**, **2FSK**, **4FSK**
+- Analog modulation: narrow FM (5 kHz), FM (10 kHz), Wide FM (broadcast, receive-only), AM, SSB
+- CTCSS encoder and decoder for analog FM
 - Video formats: JPEG
-- Supported hardware: Ettus USRP, RTL-SDR, HackRF, BladeRF and in general all devices 
-supported by libgnuradio-osmosdr
+- Touch screen friendly interface
+- Supported hardware: [**Ettus USRP**](https://ettus.com), [**RTL-SDR**](https://osmocom.org/projects/sdr/wiki/rtl-sdr), HackRF, BladeRF, other devices 
+supported by [**gr-osmosdr**](https://osmocom.org/projects/sdr/wiki/GrOsmoSDR)
  
 
 Requirements
-------------
-- Build deps: libasound2 (>= 1.0.16), libboost-program-options1.62.0, libboost-system1.62.0, 
+----
+- Build dependencies on Debian Stretch: 
+
+<pre>libasound2 (>= 1.0.16), libboost-program-options1.62.0, libboost-system1.62.0, 
 libboost-thread1.62.0, libc6 (>= 2.15), libcodec2-0.4, libconfig++9v5, libgcc1 (>= 1:3.0), 
 libgnuradio-analog3.7.10, libgnuradio-audio3.7.10, libgnuradio-blocks3.7.10, 
 libgnuradio-digital3.7.10, libgnuradio-fec3.7.10, libgnuradio-filter3.7.10, 
@@ -32,31 +64,34 @@ libqt4-sql (>= 4:4.5.3), libqtcore4 (>= 4:4.8.0), libqtgui4 (>= 4:4.6.1),
  libstdc++6 (>= 5.2), gnuradio-dev, gr-osmosdr, libgsm1-dev, libprotobuf-dev,
  libopus-dev, libpulse-dev, libcodec2-dev, libasound2-dev, libjpeg62-turbo-dev,
  libconfig++-dev, qt4-qmake, libqt4-dev, libqt4-phonon, libqt4-sql-sqlite, qt4-dev-tools
+</pre>
 
-- Please make sure you have the development packages installed before building QRadioLink
+- Please make sure you have all the development packages installed before building QRadioLink
 
-- QT >= 4.8 (QT>=5.3 does not work on Debian 8, it may work on other distributions)
+- QT >= 4.8 (QT 5 does not work on Debian 8, it may work on other distributions)
 - qmake (used as qmake-qt4)
 - Pulseaudio (native Alsa support is not fully implemented) 
-- Gnuradio >= 3.7.10 built with OsmoSDR and UHD support (On Debian 8 you can find it in jessie-backports)
+- Gnuradio >= 3.7.10 built with OsmoSDR and UHD support
 - Boost 
-- libgnuradio-osmosdr built with UHD, HackRF, BladeRF or LimeSDR support
+- libgnuradio-osmosdr built with UHD or HackRF, BladeRF support
 - libgsm, libprotobuf, libopus, libpulse-simple, libpulse, libasound, libcodec2, libsqlite3, libjpeg,
-- optional protoc compiler for development work only (libprotoc 2.6.1)
+- protoc compiler for development work only (libprotoc 2.6.1 or greater)
 
 [Downloads](https://github.com/kantooon/qradiolink/releases "Downloads")
----------
+----
 
 Debian Stretch (stable) x86_64 packages are provided via Travis CI automated builds
-Please see the [Github releases page](https://github.com/kantooon/qradiolink/releases)
+Please see the [Github releases page](https://github.com/kantooon/qradiolink/releases) for binary downloads.
 
-Building the software
----------------------
+Opensuse packages are available from [Opensuse builds](https://build.opensuse.org/package/show/hardware:sdr/qradiolink)
+thanks to Martin Hauke.
+
+Building the software from source
+-----
 
 The guide assumes you are using Debian Stetch.
 - Clone the Github repository into a directory of your choice
 - Compile the protobuf sources for your system
-- Work around the Debian issue with the QWT include paths in Gnuradio
 - Run qmake to generate the Makefile
 - Run make (with the optional -j flag)
 
@@ -74,11 +109,12 @@ make
 </pre>
 
 Known issues:
+- FFT display has incorrect size (too small)
+Workaround: switch to waterfall and back
 - Segmentation fault when starting TX or RX modes. 
-Check that you have clicked save in the configuration page
-and that device settings are correct.
+Check that that device settings are correct and you have clicked save in the configuration page.
 - In low light, the automatic adjustment of ISO in the video camera can cause very long times to capture a frame.
-Solution: use plenty of lighting.
+Solution: use plenty of lighting for video.
 
 
 
@@ -94,8 +130,8 @@ RX and TX antenna settings as a string and your callsign which will be sent at t
 - The select input in the lower right corner toggles between different operating modes.
 - Enable the TX and/or RX buttons depending on whether you want only RX, only TX or both.
 - Adjust the frequency from the TX tab either by using the dial widget or by entering it in the text box. 
-- The Tune page allows fine tuning 5-5000 KHz around the frequency with the slider, and monitoring the 
-signal with the constellation sink or the spectrum display (FFT/waterfall).
+- The Tune page allows fine tuning 5-5000 KHz around the center frequency with the slider, and monitoring the 
+signal with the constellation sink and the RSSI display.
 - Video page will display received video stream. Right now only a limited number of cameras are 
 supported for TX, and ISO settings/ exposure of the camera might cause too low a framerate, which can't be transmitted properly.
 
@@ -110,20 +146,19 @@ Install Debian Jessie in the chroot using a fresh SDcard. Configure it so you ca
 Install all required packages on the phone and compile QRadioLink. In the future a ready built SD card 
 image may be provided.
 - Note: a phone may not be able to provide enough power to your SDR peripheral, so you may require an 
-external battery pack. Only the RTL-SDR is confirmed to be powered correctly by the phone through the 
-USB OTG interface.
+external battery pack.
 
-[QRadioLink running on a mobile phone](https://www.youtube.com/watch?v=93nWWASt5a4)
+[QRadioLink mobile phone SDR transceiver](https://www.youtube.com/watch?v=93nWWASt5a4)
 
 
 Credits and License
 -------------------
-- QRadioLink is based on a fork of a RoIP software and was redesigned by Adrian Musceac YO8RZZ with some help from others,
-and it is licensed under the GNU General Public License version 3.
+- QRadioLink is designed by Adrian Musceac, based on a fork of a RoIP software and is released under an Open Source License,
+ the GNU General Public License version 3.
 - It makes use of other code under compatible licenses, and the authors are credited in the source files.
 - The CFreqCtrl widget is Copyright 2010 Moe Wheatley.
-- Codec2 is developed by David Rowe
-- Opus is developed by the Xiph foundation
-- Gnuradio https://www.gnuradio.org/
-- There is no claim that this software can be suitable for any purposes.
+- [Codec2](http://rowetel.com/codec2.html) is developed by David Rowe
+- [Opus](https://xiph.org) is developed by the Xiph foundation
+- [Gnuradio](https://www.gnuradio.org/)  is a free software development toolkit that provides signal processing
+blocks to implement software-defined radios and signal-processing systems.
 
