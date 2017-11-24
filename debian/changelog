@@ -1,6 +1,7 @@
-qradiolink (0.2.35-1) UNRELEASED; urgency=medium
+qradiolink (0.3.1-1) UNRELEASED; urgency=medium
 
   [ Adrian Musceac ]
+  * Fix several important issues
   * VOIP integration
   * AM and WideFM modes
   * FM CTCSS encoding and decoding
