@@ -162,7 +162,7 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
         }
         if(_rx_sensitivity == 0)
         {
-            _rx_sensitivity = rx_sensitivity;
+            _rx_sensitivity = (float)rx_sensitivity/100.0;
         }
         if(_tune_center_freq == 0)
         {

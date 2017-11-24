@@ -52,7 +52,7 @@ public:
                                QObject *parent = 0, int samp_rate=8000, int carrier_freq=1600,
                                int filter_width=1200, float mod_index=1, float device_frequency=434000000,
                                float rf_gain=50, std::string device_args="rtl=0", std::string device_antenna="RX2", int freq_corr=0);
-
+    ~gr_demod_wbfm_sdr();
 public slots:
     void start();
     void stop();

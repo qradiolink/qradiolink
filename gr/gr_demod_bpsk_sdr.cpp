@@ -152,6 +152,11 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
 
 }
 
+gr_demod_bpsk_sdr::~gr_demod_bpsk_sdr()
+{
+    _osmosdr_source.reset();
+}
+
 void gr_demod_bpsk_sdr::start()
 {
     _top_block->start();
@@ -201,7 +206,6 @@ void gr_demod_bpsk_sdr::set_rx_sensitivity(float value)
     osmosdr::gain_range_t range = _osmosdr_source->get_gain_range();
     if (!range.empty())
     {
-
         double gain =  range.start() + value*(range.stop()-range.start());
         _osmosdr_source->set_gain(gain);
     }

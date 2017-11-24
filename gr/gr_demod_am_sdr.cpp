@@ -106,6 +106,11 @@ gr_demod_am_sdr::gr_demod_am_sdr(gr::qtgui::sink_c::sptr fft_gui,
     _top_block->connect(_add_const,0,_rssi,0);
 }
 
+gr_demod_am_sdr::~gr_demod_am_sdr()
+{
+    _osmosdr_source.reset();
+}
+
 
 void gr_demod_am_sdr::start()
 {
