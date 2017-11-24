@@ -750,7 +750,6 @@ void RadioOp::toggleRX(bool value)
         readConfig(rx_device_args, tx_device_args,
                                  rx_antenna, tx_antenna, rx_freq_corr,
                                  tx_freq_corr, callsign, video_device);
-        _rx_inited = true;
         _modem->initRX(_mode, rx_device_args, rx_antenna, rx_freq_corr);
         _fft_gui->set_frequency_range(_tune_center_freq, 1000000);
         _modem->setRxSensitivity(_rx_sensitivity);
@@ -762,12 +761,14 @@ void RadioOp::toggleRX(bool value)
         {
             _net_device = new NetDevice;
         }
+        _rx_inited = true;
     }
     else
     {
-        _rx_inited = false;
+
         _modem->stopRX();
         _modem->deinitRX(_mode);
+        _rx_inited = false;
     }
 }
 
@@ -786,7 +787,7 @@ void RadioOp::toggleTX(bool value)
         readConfig(rx_device_args, tx_device_args,
                                  rx_antenna, tx_antenna, rx_freq_corr,
                                  tx_freq_corr, callsign, video_device);
-        _tx_inited = true;
+
         _modem->initTX(_mode, tx_device_args, tx_antenna, tx_freq_corr);
         _modem->setTxPower(_tx_power);
         _modem->setTxCTCSS(_tx_ctcss);
@@ -797,16 +798,17 @@ void RadioOp::toggleTX(bool value)
         {
             _net_device = new NetDevice;
         }
+        _tx_inited = true;
     }
     else
     {
-        _tx_inited = false;
         _modem->deinitTX(_mode);
         if(_mode == gr_modem_types::ModemTypeQPSKVideo)
         {
             delete _video;
             _video = 0;
         }
+        _tx_inited = false;
     }
 }
 

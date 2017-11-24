@@ -51,7 +51,6 @@ gr_mod_am_sdr::gr_mod_am_sdr(QObject *parent, int samp_rate, int carrier_freq, i
     _osmosdr_sink->set_sample_rate(_samp_rate);
     _osmosdr_sink->set_antenna(device_antenna);
     _osmosdr_sink->set_center_freq(_device_frequency);
-    _osmosdr_sink->set_bandwidth(_samp_rate*20);
     osmosdr::gain_range_t range = _osmosdr_sink->get_gain_range();
     if (!range.empty())
     {

@@ -36,7 +36,6 @@ gr_mod_2fsk_sdr::gr_mod_2fsk_sdr(QObject *parent, int sps, int samp_rate, int ca
     _osmosdr_sink = osmosdr::sink::make(device_args);
     _osmosdr_sink->set_sample_rate(_samp_rate);
     _osmosdr_sink->set_antenna(device_antenna);
-    _osmosdr_sink->set_bandwidth(_samp_rate*20);
 
     _osmosdr_sink->set_center_freq(_device_frequency);
 
