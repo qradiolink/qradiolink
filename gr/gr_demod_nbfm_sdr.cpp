@@ -36,8 +36,6 @@ gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(gr::qtgui::sink_c::sptr fft_gui,
 
     float rerate = (float)_target_samp_rate/(float)_samp_rate;
 
-    unsigned int flt_size = 32;
-
     static const float coeff[] = {8.23112713987939e-05, 0.30221322178840637,
                                   1.3954089879989624, 0.302213191986084, 8.23112713987939e-05};
     std::vector<float> iir_taps(coeff, coeff + sizeof(coeff) / sizeof(coeff[0]) );
