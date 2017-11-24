@@ -25,7 +25,7 @@ gr_demod_am_sdr::gr_demod_am_sdr(gr::qtgui::sink_c::sptr fft_gui,
     QObject(parent)
 {
     _msg_nr = 0;
-    _target_samp_rate = 8000;
+    _target_samp_rate = 20000;
     _rssi = rssi_gui;
     _device_frequency = device_frequency;
     _samp_rate = samp_rate;
@@ -38,8 +38,10 @@ gr_demod_am_sdr::gr_demod_am_sdr(gr::qtgui::sink_c::sptr fft_gui,
 
     unsigned int flt_size = 32;
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width, 1200);
+    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width, 10000);
+    std::vector<float> audio_taps = gr::filter::firdes::low_pass(1, _target_samp_rate, _filter_width, 10000);
     _resampler = gr::filter::pfb_arb_resampler_ccf::make(rerate, taps, flt_size);
+    _audio_resampler = gr::filter::rational_resampler_base_fff::make(2,5, audio_taps);
     _signal_source = gr::analog::sig_source_c::make(_samp_rate,gr::analog::GR_COS_WAVE,-25000,1);
     _multiply = gr::blocks::multiply_cc::make();
     _filter = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
@@ -47,7 +49,7 @@ gr_demod_am_sdr::gr_demod_am_sdr(gr::qtgui::sink_c::sptr fft_gui,
     _squelch = gr::analog::pwr_squelch_cc::make(-140,0.01,0,true);
     _agc = gr::analog::agc2_cc::make(0.6e-1, 1e-3, 0.5, 1);
     _complex_to_real = gr::blocks::complex_to_real::make();
-    _audio_gain = gr::blocks::multiply_const_ff::make(0.8);
+    _audio_gain = gr::blocks::multiply_const_ff::make(20);
     _audio_sink = make_gr_audio_sink();
 
     _rssi_valve = gr::blocks::copy::make(8);
@@ -94,7 +96,8 @@ gr_demod_am_sdr::gr_demod_am_sdr(gr::qtgui::sink_c::sptr fft_gui,
     _top_block->connect(_squelch,0,_agc,0);
     _top_block->connect(_agc,0,_complex_to_real,0);
     _top_block->connect(_complex_to_real,0,_audio_gain,0);
-    _top_block->connect(_audio_gain,0,_audio_sink,0);
+    _top_block->connect(_audio_gain,0,_audio_resampler,0);
+    _top_block->connect(_audio_resampler,0,_audio_sink,0);
 
     _top_block->connect(_filter,0,_rssi_valve,0);
     _top_block->connect(_rssi_valve,0,_mag_squared,0);

@@ -25,6 +25,7 @@
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/analog/agc2_cc.h>
 #include <gnuradio/filter/pfb_arb_resampler_ccf.h>
+#include <gnuradio/filter/rational_resampler_base_fff.h>
 #include <gnuradio/analog/pwr_squelch_cc.h>
 #include <gnuradio/filter/fft_filter_ccc.h>
 #include <gnuradio/qtgui/const_sink_c.h>
@@ -66,6 +67,7 @@ private:
     gr::analog::sig_source_c::sptr _signal_source;
     gr::blocks::multiply_cc::sptr _multiply;
     gr::filter::pfb_arb_resampler_ccf::sptr _resampler;
+    gr::filter::rational_resampler_base_fff::sptr _audio_resampler;
     gr::analog::pwr_squelch_cc::sptr _squelch;
     gr::filter::fft_filter_ccc::sptr _filter;
     gr::analog::agc2_cc::sptr _agc;
