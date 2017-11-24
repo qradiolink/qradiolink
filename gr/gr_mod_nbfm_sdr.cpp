@@ -67,8 +67,8 @@ gr_mod_nbfm_sdr::gr_mod_nbfm_sdr(QObject *parent, int samp_rate, int carrier_fre
 
 
     _top_block->connect(_audio_source,0,_audio_filter,0);
-    //_top_block->connect(_audio_amplify,0,_audio_filter,0);
-    _top_block->connect(_audio_filter,0,_emphasis_filter,0);
+    _top_block->connect(_audio_filter,0,_audio_amplify,0);
+    _top_block->connect(_audio_amplify,0,_emphasis_filter,0);
     _top_block->connect(_emphasis_filter,0,_fm_modulator,0);
     _top_block->connect(_fm_modulator,0,_resampler,0);
     _top_block->connect(_resampler,0,_amplify,0);

@@ -49,7 +49,7 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(gr::qtgui::sink_c::sptr fft_gui,
     _squelch = gr::analog::pwr_squelch_cc::make(-140,0.01,0,true);
     _agc = gr::analog::agc2_cc::make(0.6e-1, 1e-3, 1, 1);
     _complex_to_real = gr::blocks::complex_to_real::make();
-    _audio_gain = gr::blocks::multiply_const_ff::make(80);
+    _audio_gain = gr::blocks::multiply_const_ff::make(5);
     _audio_sink = make_gr_audio_sink();
 
     _rssi_valve = gr::blocks::copy::make(8);

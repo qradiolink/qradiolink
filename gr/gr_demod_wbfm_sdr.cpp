@@ -55,7 +55,7 @@ gr_demod_wbfm_sdr::gr_demod_wbfm_sdr(gr::qtgui::sink_c::sptr fft_gui,
     _audio_sink = make_gr_audio_sink();
     _pilot_filter = gr::filter::fft_filter_fff::make(1,gr::filter::firdes::low_pass(
                                                          1,_target_samp_rate,4000,
-                                                         2000,gr::filter::firdes::WIN_HAMMING));
+                                                         600,gr::filter::firdes::WIN_HAMMING));
     _fm_demod = gr::analog::quadrature_demod_cf::make(_target_samp_rate/(2*M_PI* _filter_width));
     _squelch = gr::analog::pwr_squelch_cc::make(-140,0.01,0,true);
     _amplify = gr::blocks::multiply_const_ff::make(10);
