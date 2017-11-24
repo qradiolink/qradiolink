@@ -45,7 +45,7 @@ Features
 - CTCSS encoder and decoder for analog FM
 - Video formats: JPEG
 - Touch screen friendly interface
-- Supported hardware: [**Ettus USRP**](https://ettus.com), [**RTL-SDR**](https://osmocom.org/projects/sdr/wiki/rtl-sdr), HackRF, BladeRF, other devices 
+- Supported hardware: [**Ettus USRP**](https://ettus.com), [**RTL-SDR**](https://osmocom.org/projects/sdr/wiki/rtl-sdr), LimeSDR (through SoapySDR), HackRF, BladeRF, other devices 
 supported by [**gr-osmosdr**](https://osmocom.org/projects/sdr/wiki/GrOsmoSDR)
  
 
@@ -73,7 +73,7 @@ libqt4-sql (>= 4:4.5.3), libqtcore4 (>= 4:4.8.0), libqtgui4 (>= 4:4.6.1),
 - Pulseaudio (native Alsa support is not fully implemented) 
 - Gnuradio >= 3.7.10 built with OsmoSDR and UHD support
 - Boost 
-- libgnuradio-osmosdr built with UHD or HackRF, BladeRF support
+- libgnuradio-osmosdr built with UHD, RTL-SDR, SoapySDR or HackRF support
 - libgsm, libprotobuf, libopus, libpulse-simple, libpulse, libasound, libcodec2, libsqlite3, libjpeg,
 - protoc compiler for development work only (libprotoc 2.6.1 or greater)
 
