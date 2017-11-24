@@ -56,10 +56,12 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _tuning_done = true;
     _tune_counter = 0;
     _tx_modem_started = false;
-    _led_timer = new QTimer(this);
+    _voice_led_timer = new QTimer(this);
+    _data_led_timer = new QTimer(this);
     _rand_frame_data = new unsigned char[5000];
     _fft_gui = fft_gui;
-    QObject::connect(_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));
+    QObject::connect(_voice_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));
+    QObject::connect(_data_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));
     QObject::connect(_voip_tx_timer, SIGNAL(timeout()), this, SLOT(stopTx()));
     _modem = new gr_modem(_settings, fft_gui,const_gui, rssi_gui);
 
@@ -94,7 +96,8 @@ RadioOp::~RadioOp()
     if(_net_device != 0)
         delete _net_device;
     delete _audio;
-    delete _led_timer;
+    delete _voice_led_timer;
+    delete _data_led_timer;
     delete _modem;
     delete[] _rand_frame_data;
 }
@@ -701,13 +704,13 @@ void RadioOp::callsignReceived(QString callsign)
 void RadioOp::audioFrameReceived()
 {
     emit displayReceiveStatus(true);
-    _led_timer->start(100);
+    _voice_led_timer->start(100);
 }
 
 void RadioOp::dataFrameReceived()
 {
     emit displayDataReceiveStatus(true);
-    _led_timer->start(100);
+    _data_led_timer->start(100);
 }
 
 void RadioOp::receiveEnd()

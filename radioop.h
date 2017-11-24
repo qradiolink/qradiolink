@@ -144,7 +144,8 @@ private:
     QString _text_out;
     QString _callsign;
     QMutex *_mutex;
-    QTimer *_led_timer;
+    QTimer *_voice_led_timer;
+    QTimer *_data_led_timer;
     AudioEncoder *_codec;
     VideoEncoder *_video;
     NetDevice *_net_device;
