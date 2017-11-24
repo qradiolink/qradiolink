@@ -28,6 +28,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _m_queue = new std::vector<short>;
     _last_session_id = 0;
     _net_device = 0;
+    _video = 0;
     _stop =false;
     _tx_inited = false;
     _rx_inited = false;
@@ -55,10 +56,12 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _tuning_done = true;
     _tune_counter = 0;
     _tx_modem_started = false;
-    _led_timer = new QTimer(this);
+    _voice_led_timer = new QTimer(this);
+    _data_led_timer = new QTimer(this);
     _rand_frame_data = new unsigned char[5000];
     _fft_gui = fft_gui;
-    QObject::connect(_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));
+    QObject::connect(_voice_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));
+    QObject::connect(_data_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));
     QObject::connect(_voip_tx_timer, SIGNAL(timeout()), this, SLOT(stopTx()));
     _modem = new gr_modem(_settings, fft_gui,const_gui, rssi_gui);
 
@@ -93,7 +96,8 @@ RadioOp::~RadioOp()
     if(_net_device != 0)
         delete _net_device;
     delete _audio;
-    delete _led_timer;
+    delete _voice_led_timer;
+    delete _data_led_timer;
     delete _modem;
     delete[] _rand_frame_data;
 }
@@ -157,11 +161,11 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
         }
         if(_tx_power == 0)
         {
-            _tx_power = tx_power;
+            _tx_power = (float)tx_power/100;
         }
         if(_rx_sensitivity == 0)
         {
-            _rx_sensitivity = rx_sensitivity;
+            _rx_sensitivity = (float)rx_sensitivity/100.0;
         }
         if(_tune_center_freq == 0)
         {
@@ -700,13 +704,13 @@ void RadioOp::callsignReceived(QString callsign)
 void RadioOp::audioFrameReceived()
 {
     emit displayReceiveStatus(true);
-    _led_timer->start(100);
+    _voice_led_timer->start(100);
 }
 
 void RadioOp::dataFrameReceived()
 {
     emit displayDataReceiveStatus(true);
-    _led_timer->start(100);
+    _data_led_timer->start(100);
 }
 
 void RadioOp::receiveEnd()
@@ -746,24 +750,25 @@ void RadioOp::toggleRX(bool value)
         readConfig(rx_device_args, tx_device_args,
                                  rx_antenna, tx_antenna, rx_freq_corr,
                                  tx_freq_corr, callsign, video_device);
-        _rx_inited = true;
         _modem->initRX(_mode, rx_device_args, rx_antenna, rx_freq_corr);
-        _modem->tune(_tune_center_freq);
         _fft_gui->set_frequency_range(_tune_center_freq, 1000000);
         _modem->setRxSensitivity(_rx_sensitivity);
         _modem->setSquelch(_squelch);
         _modem->setRxCTCSS(_rx_ctcss);
         _modem->startRX();
+        _modem->tune(_tune_center_freq);
         if(_mode == gr_modem_types::ModemTypeQPSK250000 && _net_device == 0)
         {
             _net_device = new NetDevice;
         }
+        _rx_inited = true;
     }
     else
     {
-        _rx_inited = false;
+
         _modem->stopRX();
         _modem->deinitRX(_mode);
+        _rx_inited = false;
     }
 }
 
@@ -782,27 +787,28 @@ void RadioOp::toggleTX(bool value)
         readConfig(rx_device_args, tx_device_args,
                                  rx_antenna, tx_antenna, rx_freq_corr,
                                  tx_freq_corr, callsign, video_device);
-        _tx_inited = true;
+
         _modem->initTX(_mode, tx_device_args, tx_antenna, tx_freq_corr);
-        _modem->tuneTx(_tune_center_freq + _tune_shift_freq);
         _modem->setTxPower(_tx_power);
         _modem->setTxCTCSS(_tx_ctcss);
+        _modem->tuneTx(_tune_center_freq + _tune_shift_freq);
         if(_mode == gr_modem_types::ModemTypeQPSKVideo)
             _video = new VideoEncoder(QString::fromStdString(video_device));
         if(_mode == gr_modem_types::ModemTypeQPSK250000 && _net_device == 0)
         {
             _net_device = new NetDevice;
         }
+        _tx_inited = true;
     }
     else
     {
-        _tx_inited = false;
         _modem->deinitTX(_mode);
         if(_mode == gr_modem_types::ModemTypeQPSKVideo)
         {
             delete _video;
             _video = 0;
         }
+        _tx_inited = false;
     }
 }
 
@@ -962,14 +968,14 @@ void RadioOp::tuneTxFreq(qint64 center_freq)
 
 void RadioOp::setTxPower(int dbm)
 {
-    _tx_power = dbm;
-    _modem->setTxPower(dbm);
+    _tx_power = (float)dbm/100.0;
+    _modem->setTxPower(_tx_power);
 }
 
 void RadioOp::setRxSensitivity(int value)
 {
-    _rx_sensitivity = (float)value/100;
-    _modem->setRxSensitivity((float)value/100);
+    _rx_sensitivity = (float)value/100.0;
+    _modem->setRxSensitivity(_rx_sensitivity);
 }
 
 void RadioOp::setSquelch(int value)

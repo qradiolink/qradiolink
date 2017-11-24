@@ -82,76 +82,76 @@ void gr_modem::initTX(int modem_type, std::string device_args, std::string devic
     if(modem_type == gr_modem_types::ModemTypeBPSK2000)
     {
         _gr_mod_bpsk_sdr = new gr_mod_bpsk_sdr(0, 125, 500000, 1700, 2400, 1,
-                                               _requested_frequency_hz, 50, device_args, device_antenna, freq_corr);
+                                               _requested_frequency_hz, 0.5, device_args, device_antenna, freq_corr);
         _frame_length = 7;
     }
     else if(modem_type == gr_modem_types::ModemTypeBPSK1000)
     {
         _gr_mod_bpsk_sdr = new gr_mod_bpsk_sdr(0, 250, 500000, 1700, 1200, 1,
-                                               _requested_frequency_hz, 50, device_args, device_antenna, freq_corr);
+                                               _requested_frequency_hz, 0.5, device_args, device_antenna, freq_corr);
         _frame_length = 4;
     }
     else if(modem_type == gr_modem_types::ModemTypeQPSK20000)
     {
         _gr_mod_qpsk_sdr = new gr_mod_qpsk_sdr(0, 50, 250000, 1700, 4000, 1,
-                                               _requested_frequency_hz, 50, device_args, device_antenna, freq_corr);
+                                               _requested_frequency_hz, 0.5, device_args, device_antenna, freq_corr);
         _frame_length = 47;
     }
     else if(modem_type == gr_modem_types::ModemTypeQPSK2000)
     {
         _gr_mod_qpsk_sdr = new gr_mod_qpsk_sdr(0, 250, 250000, 1700, 800, 1,
-                                               _requested_frequency_hz, 50, device_args, device_antenna, freq_corr);
+                                               _requested_frequency_hz, 0.5, device_args, device_antenna, freq_corr);
         _frame_length = 7;
     }
     else if(modem_type == gr_modem_types::ModemType4FSK20000)
     {
         _gr_mod_4fsk_sdr = new gr_mod_4fsk_sdr(0, 50, 250000, 1700, 12500, 1,
-                                               _requested_frequency_hz, 50, device_args, device_antenna, freq_corr);
+                                               _requested_frequency_hz, 0.5, device_args, device_antenna, freq_corr);
         _frame_length = 47;
     }
     else if(modem_type == gr_modem_types::ModemType4FSK2000)
     {
         _gr_mod_4fsk_sdr = new gr_mod_4fsk_sdr(0, 250, 250000, 1700, 2500, 1,
-                                               _requested_frequency_hz, 50, device_args, device_antenna, freq_corr);
+                                               _requested_frequency_hz, 0.5, device_args, device_antenna, freq_corr);
         _frame_length = 7;
     }
 
     else if(modem_type == gr_modem_types::ModemTypeNBFM2500)
     {
         _gr_mod_nbfm_sdr = new gr_mod_nbfm_sdr(0,250000, 1700, 2500, 1,
-                                               _requested_frequency_hz, 50, device_args, device_antenna, freq_corr);
+                                               _requested_frequency_hz, 0.5, device_args, device_antenna, freq_corr);
     }
     else if(modem_type == gr_modem_types::ModemTypeNBFM5000)
     {
         _gr_mod_nbfm_sdr = new gr_mod_nbfm_sdr(0,250000, 1700, 4000, 1,
-                                               _requested_frequency_hz, 50, device_args, device_antenna, freq_corr);
+                                               _requested_frequency_hz, 0.5, device_args, device_antenna, freq_corr);
     }
     else if(modem_type == gr_modem_types::ModemTypeSSB2500)
     {
         _gr_mod_ssb_sdr = new gr_mod_ssb_sdr(0,250000, 1700, 2500, 1,
-                                             _requested_frequency_hz, 50, device_args, device_antenna, freq_corr);
+                                             _requested_frequency_hz, 0.5, device_args, device_antenna, freq_corr);
     }
     else if(modem_type == gr_modem_types::ModemTypeAM5000)
     {
         _gr_mod_am_sdr = new gr_mod_am_sdr(0,250000, 1700, 4000, 1,
-                                             _requested_frequency_hz, 50, device_args, device_antenna, freq_corr);
+                                             _requested_frequency_hz, 0.5, device_args, device_antenna, freq_corr);
     }
     else if(modem_type == gr_modem_types::ModemTypeQPSKVideo)
     {
         _gr_mod_qpsk_sdr = new gr_mod_qpsk_sdr(0, 2, 250000, 1700, 65000, 1,
-                                               _requested_frequency_hz, 50, device_args, device_antenna, freq_corr);
+                                               _requested_frequency_hz, 0.5, device_args, device_antenna, freq_corr);
         _frame_length = 3122;
     }
     else if(modem_type == gr_modem_types::ModemType2FSK2000)
     {
         _gr_mod_2fsk_sdr = new gr_mod_2fsk_sdr(0, 125, 250000, 1700, 2000, 1,
-                                               _requested_frequency_hz, 50, device_args, device_antenna, freq_corr);
+                                               _requested_frequency_hz, 0.5, device_args, device_antenna, freq_corr);
         _frame_length = 7;
     }
     else if(modem_type == gr_modem_types::ModemTypeQPSK250000)
     {
         _gr_mod_qpsk_sdr = new gr_mod_qpsk_sdr(0, 2, 250000, 1700, 65000, 1,
-                                               _requested_frequency_hz, 50, device_args, device_antenna, freq_corr);
+                                               _requested_frequency_hz, 0.5, device_args, device_antenna, freq_corr);
         _frame_length = 1512;
     }
 
@@ -608,7 +608,7 @@ void gr_modem::tuneTx(long center_freq)
         _gr_mod_2fsk_sdr->tune(center_freq);
 }
 
-void gr_modem::setTxPower(int value)
+void gr_modem::setTxPower(float value)
 {
     if(_gr_mod_bpsk_sdr)
         _gr_mod_bpsk_sdr->set_power(value);

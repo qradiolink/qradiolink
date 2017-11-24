@@ -63,7 +63,13 @@ gr_mod_4fsk_sdr::gr_mod_4fsk_sdr(QObject *parent, int sps, int samp_rate, int ca
 
     _osmosdr_sink->set_center_freq(_device_frequency);
 
-    _osmosdr_sink->set_gain(rf_gain);
+    osmosdr::gain_range_t range = _osmosdr_sink->get_gain_range();
+    if (!range.empty())
+    {
+        double gain =  range.start() + rf_gain*(range.stop()-range.start());
+        _osmosdr_sink->set_gain(gain);
+    }
+
     _top_block->connect(_vector_source,0,_packed_to_unpacked,0);
     _top_block->connect(_packed_to_unpacked,0,_scrambler,0);
     _top_block->connect(_scrambler,0,_packer,0);
@@ -80,7 +86,10 @@ gr_mod_4fsk_sdr::gr_mod_4fsk_sdr(QObject *parent, int sps, int samp_rate, int ca
 
 }
 
-
+gr_mod_4fsk_sdr::~gr_mod_4fsk_sdr()
+{
+    _osmosdr_sink.reset();
+}
 
 
 void gr_mod_4fsk_sdr::start()
@@ -106,7 +115,12 @@ void gr_mod_4fsk_sdr::tune(long center_freq)
     _osmosdr_sink->set_center_freq(_device_frequency);
 }
 
-void gr_mod_4fsk_sdr::set_power(int dbm)
+void gr_mod_4fsk_sdr::set_power(float dbm)
 {
-    _osmosdr_sink->set_gain(dbm);
+    osmosdr::gain_range_t range = _osmosdr_sink->get_gain_range();
+    if (!range.empty())
+    {
+        double gain =  range.start() + dbm*(range.stop()-range.start());
+        _osmosdr_sink->set_gain(gain);
+    }
 }

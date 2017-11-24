@@ -124,6 +124,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
 
     _osmosdr_source = osmosdr::source::make(device_args);
     _osmosdr_source->set_center_freq(_device_frequency - _center_spacing);
+    _osmosdr_source->set_bandwidth(_samp_rate*2);
     _osmosdr_source->set_sample_rate(_samp_rate);
     _osmosdr_source->set_freq_corr(freq_corr);
     _osmosdr_source->set_gain_mode(false);
@@ -179,6 +180,11 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _top_block->connect(_log10,0,_multiply_const_ff,0);
     _top_block->connect(_multiply_const_ff,0,_add_const,0);
     _top_block->connect(_add_const,0,_rssi,0);
+}
+
+gr_demod_qpsk_sdr::~gr_demod_qpsk_sdr()
+{
+    _osmosdr_source.reset();
 }
 
 void gr_demod_qpsk_sdr::start()

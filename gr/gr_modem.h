@@ -152,7 +152,7 @@ public slots:
     void stopRX();
     void startTX();
     void stopTX();
-    void setTxPower(int value);
+    void setTxPower(float value);
     void setSquelch(int value);
     void setRxSensitivity(float value);
     void setRxCTCSS(float value);

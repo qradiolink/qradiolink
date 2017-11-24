@@ -102,6 +102,7 @@ signals:
     void connectToServer(QString server, unsigned port);
     void disconnectFromServer();
     void setMute(bool value);
+    void stopRadio();
 
 public:
     explicit MainWindow(QWidget *parent = 0);

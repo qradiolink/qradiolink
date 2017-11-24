@@ -25,6 +25,7 @@
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/analog/agc2_cc.h>
 #include <gnuradio/filter/pfb_arb_resampler_ccf.h>
+#include <gnuradio/filter/rational_resampler_base_fff.h>
 #include <gnuradio/analog/pwr_squelch_cc.h>
 #include <gnuradio/filter/fft_filter_ccc.h>
 #include <gnuradio/qtgui/const_sink_c.h>
@@ -48,7 +49,7 @@ public:
     explicit gr_demod_ssb_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui::const_sink_c::sptr const_gui, gr::qtgui::number_sink::sptr rssi_gui, QObject *parent = 0, int samp_rate=8000, int carrier_freq=1600,
                               int filter_width=1200, float mod_index=1, float device_frequency=434000000,
                               float rf_gain=50, std::string device_args="rtl=0", std::string device_antenna="RX2", int freq_corr=0);
-
+    ~gr_demod_ssb_sdr();
 public slots:
     void start();
     void stop();
@@ -66,6 +67,7 @@ private:
     gr::analog::sig_source_c::sptr _signal_source;
     gr::blocks::multiply_cc::sptr _multiply;
     gr::filter::pfb_arb_resampler_ccf::sptr _resampler;
+    gr::filter::rational_resampler_base_fff::sptr _audio_resampler;
     gr::analog::pwr_squelch_cc::sptr _squelch;
     gr::filter::fft_filter_ccc::sptr _filter;
     gr::analog::agc2_cc::sptr _agc;

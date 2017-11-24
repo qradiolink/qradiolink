@@ -92,6 +92,9 @@ MainWindow::~MainWindow()
 void MainWindow::closeEvent (QCloseEvent *event)
 {
     saveConfig();
+    emit stopRadio();
+    emit disconnectFromServer();
+    usleep(200000);
     event->accept();
 }
 

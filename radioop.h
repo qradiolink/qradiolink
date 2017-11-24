@@ -144,7 +144,8 @@ private:
     QString _text_out;
     QString _callsign;
     QMutex *_mutex;
-    QTimer *_led_timer;
+    QTimer *_voice_led_timer;
+    QTimer *_data_led_timer;
     AudioEncoder *_codec;
     VideoEncoder *_video;
     NetDevice *_net_device;
@@ -153,9 +154,9 @@ private:
     int _radio_type;
     long long _tune_center_freq;
     long long _tune_shift_freq;
-    int _tx_power;
+    float _tx_power;
     int _squelch;
-    int _rx_sensitivity;
+    float _rx_sensitivity;
     int _step_hz;
     int _tune_limit_lower;
     int _tune_limit_upper;

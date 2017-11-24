@@ -94,6 +94,7 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
 
     _osmosdr_source = osmosdr::source::make(device_args);
     _osmosdr_source->set_center_freq(_device_frequency - 25000.0);
+    _osmosdr_source->set_bandwidth(_samp_rate*2);
     _osmosdr_source->set_sample_rate(_samp_rate);
     _osmosdr_source->set_freq_corr(freq_corr);
     _osmosdr_source->set_gain_mode(false);
@@ -151,6 +152,11 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
 
 }
 
+gr_demod_bpsk_sdr::~gr_demod_bpsk_sdr()
+{
+    _osmosdr_source.reset();
+}
+
 void gr_demod_bpsk_sdr::start()
 {
     _top_block->start();
@@ -200,7 +206,6 @@ void gr_demod_bpsk_sdr::set_rx_sensitivity(float value)
     osmosdr::gain_range_t range = _osmosdr_source->get_gain_range();
     if (!range.empty())
     {
-
         double gain =  range.start() + value*(range.stop()-range.start());
         _osmosdr_source->set_gain(gain);
     }

@@ -31,7 +31,7 @@ gr_mod_am_sdr::gr_mod_am_sdr(QObject *parent, int samp_rate, int carrier_freq, i
     _top_block = gr::make_top_block("am modulator sdr");
 
     _audio_source = make_gr_audio_source();
-    _signal_source = gr::analog::sig_source_f::make(target_samp_rate,gr::analog::GR_COS_WAVE, 0, 0.01);
+    _signal_source = gr::analog::sig_source_f::make(target_samp_rate,gr::analog::GR_COS_WAVE, 0, 0.09);
     _multiply = gr::blocks::multiply_cc::make();
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::low_pass(
@@ -41,7 +41,7 @@ gr_mod_am_sdr::gr_mod_am_sdr(QObject *parent, int samp_rate, int carrier_freq, i
                                                         4000, 4000);
     float rerate = (float)_samp_rate/target_samp_rate;
     _resampler = gr::filter::pfb_arb_resampler_ccf::make(rerate, interp_taps, 16);
-    _amplify = gr::blocks::multiply_const_cc::make(80,1);
+    _amplify = gr::blocks::multiply_const_cc::make(20,1);
     _filter = gr::filter::fft_filter_ccc::make(
                 1,gr::filter::firdes::complex_band_pass_2(
                     1, _samp_rate, -_filter_width, _filter_width, 600, 120, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
@@ -51,7 +51,12 @@ gr_mod_am_sdr::gr_mod_am_sdr(QObject *parent, int samp_rate, int carrier_freq, i
     _osmosdr_sink->set_sample_rate(_samp_rate);
     _osmosdr_sink->set_antenna(device_antenna);
     _osmosdr_sink->set_center_freq(_device_frequency);
-    _osmosdr_sink->set_gain(rf_gain);
+    osmosdr::gain_range_t range = _osmosdr_sink->get_gain_range();
+    if (!range.empty())
+    {
+        double gain =  range.start() + rf_gain*(range.stop()-range.start());
+        _osmosdr_sink->set_gain(gain);
+    }
 
 
     _top_block->connect(_audio_source,0,_audio_filter,0);
@@ -62,6 +67,11 @@ gr_mod_am_sdr::gr_mod_am_sdr(QObject *parent, int samp_rate, int carrier_freq, i
     _top_block->connect(_amplify,0,_filter,0);
 
     _top_block->connect(_filter,0,_osmosdr_sink,0);
+}
+
+gr_mod_am_sdr::~gr_mod_am_sdr()
+{
+    _osmosdr_sink.reset();
 }
 
 void gr_mod_am_sdr::start()
@@ -87,7 +97,12 @@ void gr_mod_am_sdr::tune(long center_freq)
     _osmosdr_sink->set_center_freq(_device_frequency);
 }
 
-void gr_mod_am_sdr::set_power(int dbm)
+void gr_mod_am_sdr::set_power(float dbm)
 {
-    _osmosdr_sink->set_gain(dbm);
+    osmosdr::gain_range_t range = _osmosdr_sink->get_gain_range();
+    if (!range.empty())
+    {
+        double gain =  range.start() + dbm*(range.stop()-range.start());
+        _osmosdr_sink->set_gain(gain);
+    }
 }
