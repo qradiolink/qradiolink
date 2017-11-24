@@ -25,7 +25,7 @@ gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(gr::qtgui::sink_c::sptr fft_gui,
     QObject(parent)
 {
     _msg_nr = 0;
-    _target_samp_rate = 8000;
+    _target_samp_rate = 40000;
     _rssi = rssi_gui;
     _device_frequency = device_frequency;
     _samp_rate = samp_rate;
@@ -48,7 +48,9 @@ gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(gr::qtgui::sink_c::sptr fft_gui,
                     1, _target_samp_rate, 300, 100, gr::filter::firdes::WIN_HAMMING));
 
     std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width, 10000);
-    _resampler = gr::filter::pfb_arb_resampler_ccf::make(rerate, taps, flt_size);
+    std::vector<float> audio_taps = gr::filter::firdes::low_pass(1, _target_samp_rate, _filter_width, 10000);
+    _resampler = gr::filter::rational_resampler_base_ccf::make(4,100, taps);
+    _audio_resampler = gr::filter::rational_resampler_base_fff::make(1,5, audio_taps);
     _signal_source = gr::analog::sig_source_c::make(_samp_rate,gr::analog::GR_COS_WAVE,-25000,1);
     _multiply = gr::blocks::multiply_cc::make();
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
@@ -107,7 +109,8 @@ gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(gr::qtgui::sink_c::sptr fft_gui,
     _top_block->connect(_fm_demod,0,_deemphasis_filter,0);
     _top_block->connect(_deemphasis_filter,0,_amplify,0);
     _top_block->connect(_amplify,0,_audio_filter,0);
-    _top_block->connect(_audio_filter,0,_audio_sink,0);
+    _top_block->connect(_audio_filter,0,_audio_resampler,0);
+    _top_block->connect(_audio_resampler,0,_audio_sink,0);
 
 
     _top_block->connect(_filter,0,_rssi_valve,0);

@@ -24,7 +24,8 @@
 #include <gnuradio/top_block.h>
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/analog/agc2_ff.h>
-#include <gnuradio/filter/pfb_arb_resampler_ccf.h>
+#include <gnuradio/filter/rational_resampler_base_ccf.h>
+#include <gnuradio/filter/rational_resampler_base_fff.h>
 #include <gnuradio/analog/quadrature_demod_cf.h>
 #include <gnuradio/analog/pwr_squelch_cc.h>
 #include <gnuradio/analog/ctcss_squelch_ff.h>
@@ -76,7 +77,8 @@ private:
     gr::analog::pwr_squelch_cc::sptr _squelch;
     gr::blocks::multiply_const_ff::sptr _amplify;
     gr::analog::ctcss_squelch_ff::sptr _ctcss;
-    gr::filter::pfb_arb_resampler_ccf::sptr _resampler;
+    gr::filter::rational_resampler_base_ccf::sptr _resampler;
+    gr::filter::rational_resampler_base_fff::sptr _audio_resampler;
     gr::filter::fft_filter_ccf::sptr _filter;
     gr::filter::fft_filter_fff::sptr _audio_filter;
     gr::filter::fft_filter_fff::sptr _deemphasis_filter;
