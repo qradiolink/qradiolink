@@ -60,7 +60,7 @@ gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(gr::qtgui::sink_c::sptr fft_gui,
     _fm_demod = gr::analog::quadrature_demod_cf::make(_target_samp_rate/(4*M_PI* _filter_width));
     _squelch = gr::analog::pwr_squelch_cc::make(-140,0.01,0,true);
     _ctcss = gr::analog::ctcss_squelch_ff::make(_target_samp_rate,88.5,0.02,4000,0,true);
-    _amplify = gr::blocks::multiply_const_ff::make(0.6);
+    _amplify = gr::blocks::multiply_const_ff::make(0.3);
     _float_to_short = gr::blocks::float_to_short::make();
 
     _message_sink = gr::blocks::message_debug::make();
