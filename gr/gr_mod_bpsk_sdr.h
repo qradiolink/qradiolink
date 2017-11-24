@@ -49,14 +49,14 @@ class gr_mod_bpsk_sdr : public QObject
 public:
     explicit gr_mod_bpsk_sdr(QObject *parent = 0, int sps=125, int samp_rate=250000, int carrier_freq=1700,
                              int filter_width=1200, float mod_index=1, float device_frequency=434000000,
-                             float rf_gain=70, std::string device_args="uhd", std::string device_antenna="TX/RX", int freq_corr=0);
-
+                             float rf_gain=0.5, std::string device_args="uhd", std::string device_antenna="TX/RX", int freq_corr=0);
+    ~gr_mod_bpsk_sdr();
 public slots:
     void start();
     void stop();
     int setData(std::vector<u_int8_t> *data);
     void tune(long center_freq);
-    void set_power(int dbm);
+    void set_power(float dbm);
 
 
 private:

@@ -57,7 +57,13 @@ gr_mod_nbfm_sdr::gr_mod_nbfm_sdr(QObject *parent, int samp_rate, int carrier_fre
     _osmosdr_sink->set_sample_rate(_samp_rate);
     _osmosdr_sink->set_antenna(device_antenna);
     _osmosdr_sink->set_center_freq(_device_frequency);
-    _osmosdr_sink->set_gain(rf_gain);
+    _osmosdr_sink->set_bandwidth(_samp_rate*20);
+    osmosdr::gain_range_t range = _osmosdr_sink->get_gain_range();
+    if (!range.empty())
+    {
+        double gain =  range.start() + rf_gain*(range.stop()-range.start());
+        _osmosdr_sink->set_gain(gain);
+    }
 
 
 
@@ -70,6 +76,11 @@ gr_mod_nbfm_sdr::gr_mod_nbfm_sdr(QObject *parent, int samp_rate, int carrier_fre
     _top_block->connect(_amplify,0,_filter,0);
 
     _top_block->connect(_filter,0,_osmosdr_sink,0);
+}
+
+gr_mod_nbfm_sdr::~gr_mod_nbfm_sdr()
+{
+    _osmosdr_sink.reset();
 }
 
 void gr_mod_nbfm_sdr::start()
@@ -95,9 +106,14 @@ void gr_mod_nbfm_sdr::tune(long center_freq)
     _osmosdr_sink->set_center_freq(_device_frequency);
 }
 
-void gr_mod_nbfm_sdr::set_power(int dbm)
+void gr_mod_nbfm_sdr::set_power(float dbm)
 {
-    _osmosdr_sink->set_gain(dbm);
+    osmosdr::gain_range_t range = _osmosdr_sink->get_gain_range();
+    if (!range.empty())
+    {
+        double gain =  range.start() + dbm*(range.stop()-range.start());
+        _osmosdr_sink->set_gain(gain);
+    }
 }
 
 void gr_mod_nbfm_sdr::set_ctcss(float value)

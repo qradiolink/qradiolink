@@ -153,7 +153,7 @@ private:
     int _radio_type;
     long long _tune_center_freq;
     long long _tune_shift_freq;
-    int _tx_power;
+    float _tx_power;
     int _squelch;
     int _rx_sensitivity;
     int _step_hz;

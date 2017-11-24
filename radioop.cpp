@@ -28,6 +28,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _m_queue = new std::vector<short>;
     _last_session_id = 0;
     _net_device = 0;
+    _video = 0;
     _stop =false;
     _tx_inited = false;
     _rx_inited = false;
@@ -157,7 +158,7 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
         }
         if(_tx_power == 0)
         {
-            _tx_power = tx_power;
+            _tx_power = (float)tx_power/100;
         }
         if(_rx_sensitivity == 0)
         {
@@ -748,12 +749,12 @@ void RadioOp::toggleRX(bool value)
                                  tx_freq_corr, callsign, video_device);
         _rx_inited = true;
         _modem->initRX(_mode, rx_device_args, rx_antenna, rx_freq_corr);
-        _modem->tune(_tune_center_freq);
         _fft_gui->set_frequency_range(_tune_center_freq, 1000000);
         _modem->setRxSensitivity(_rx_sensitivity);
         _modem->setSquelch(_squelch);
         _modem->setRxCTCSS(_rx_ctcss);
         _modem->startRX();
+        _modem->tune(_tune_center_freq);
         if(_mode == gr_modem_types::ModemTypeQPSK250000 && _net_device == 0)
         {
             _net_device = new NetDevice;
@@ -784,9 +785,9 @@ void RadioOp::toggleTX(bool value)
                                  tx_freq_corr, callsign, video_device);
         _tx_inited = true;
         _modem->initTX(_mode, tx_device_args, tx_antenna, tx_freq_corr);
-        _modem->tuneTx(_tune_center_freq + _tune_shift_freq);
         _modem->setTxPower(_tx_power);
         _modem->setTxCTCSS(_tx_ctcss);
+        _modem->tuneTx(_tune_center_freq + _tune_shift_freq);
         if(_mode == gr_modem_types::ModemTypeQPSKVideo)
             _video = new VideoEncoder(QString::fromStdString(video_device));
         if(_mode == gr_modem_types::ModemTypeQPSK250000 && _net_device == 0)
@@ -962,14 +963,14 @@ void RadioOp::tuneTxFreq(qint64 center_freq)
 
 void RadioOp::setTxPower(int dbm)
 {
-    _tx_power = dbm;
-    _modem->setTxPower(dbm);
+    _tx_power = (float)dbm/100.0;
+    _modem->setTxPower(_tx_power);
 }
 
 void RadioOp::setRxSensitivity(int value)
 {
-    _rx_sensitivity = (float)value/100;
-    _modem->setRxSensitivity((float)value/100);
+    _rx_sensitivity = (float)value/100.0;
+    _modem->setRxSensitivity(_rx_sensitivity);
 }
 
 void RadioOp::setSquelch(int value)
