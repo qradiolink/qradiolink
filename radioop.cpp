@@ -367,6 +367,7 @@ void RadioOp::startTx()
         if(_tx_modem_started)
             _modem->stopTX();
         _modem->startTX();
+        usleep(100000);
         _tx_modem_started = false;
         if(_radio_type == radio_type::RADIO_TYPE_DIGITAL)
             _modem->startTransmission(_callsign,_callsign.size());
