@@ -368,6 +368,7 @@ void RadioOp::startTx()
             _modem->stopTX();
         _modem->startTX();
         usleep(100000);
+        _modem->tuneTx(_tune_center_freq + _tune_shift_freq);
         _tx_modem_started = false;
         if(_radio_type == radio_type::RADIO_TYPE_DIGITAL)
             _modem->startTransmission(_callsign,_callsign.size());
@@ -385,8 +386,9 @@ void RadioOp::stopTx()
         {
             sendEndBeep();
         }
-        usleep(400000);
+        usleep(1000000);
         _modem->stopTX();
+        _modem->tuneTx(50000000);
         _tx_modem_started = false;
         if(_rx_inited)
             _modem->startRX();
@@ -792,7 +794,7 @@ void RadioOp::toggleTX(bool value)
         _modem->initTX(_mode, tx_device_args, tx_antenna, tx_freq_corr);
         _modem->setTxPower(_tx_power);
         _modem->setTxCTCSS(_tx_ctcss);
-        _modem->tuneTx(_tune_center_freq + _tune_shift_freq);
+        _modem->tuneTx(50000000);
         if(_mode == gr_modem_types::ModemTypeQPSKVideo)
             _video = new VideoEncoder(QString::fromStdString(video_device));
         if(_mode == gr_modem_types::ModemTypeQPSK250000 && _net_device == 0)
@@ -954,7 +956,7 @@ void RadioOp::tuneFreq(qint64 center_freq)
     _mutex->lock();
     _tune_center_freq = center_freq;
     _modem->tune(_tune_center_freq, false);
-    _modem->tuneTx(_tune_center_freq + _tune_shift_freq);
+    //_modem->tuneTx(_tune_center_freq + _tune_shift_freq);
     _mutex->unlock();
     _fft_gui->set_frequency_range(_tune_center_freq, 1000000);
 }
