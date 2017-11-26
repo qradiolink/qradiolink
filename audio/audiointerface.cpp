@@ -39,7 +39,7 @@ AudioInterface::AudioInterface(QObject *parent, unsigned sample_rate, unsigned c
     attr.maxlength = 2048;
     attr.minreq = -1;
     attr.prebuf = -1;
-    attr.tlength = 2048;
+    attr.tlength = 1024;
 
     if(!normal)
     {
