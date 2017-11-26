@@ -24,7 +24,7 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
 
     std::vector<float> taps = gr::filter::firdes::low_pass(32, _samp_rate, _filter_width, 12000);
     std::vector<float> symbol_filter_taps = gr::filter::firdes::low_pass(1.0,
-                                 _target_samp_rate, _target_samp_rate*0.75/_samples_per_symbol, _target_samp_rate*0.25/_samples_per_symbol);
+                                 _target_samp_rate, _target_samp_rate/_samples_per_symbol, _target_samp_rate*0.05/_samples_per_symbol);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1, 25, taps);
     _signal_source = gr::analog::sig_source_c::make(_samp_rate,gr::analog::GR_COS_WAVE,-25000,1);
     _multiply = gr::blocks::multiply_cc::make();
@@ -48,7 +48,7 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _symbol_filter = gr::filter::fft_filter_ccf::make(1,symbol_filter_taps);
     float gain_mu = 0.025;
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
-                                                              0.035);
+                                                              0.005);
     _complex_to_real = gr::blocks::complex_to_real::make();
     _binary_slicer = gr::digital::binary_slicer_fb::make();
     _diff_decoder = gr::digital::diff_decoder_bb::make(2);
