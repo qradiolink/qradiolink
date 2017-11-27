@@ -72,7 +72,8 @@ SOURCES += main.cpp\
     net/netdevice.cpp \
     gr/gr_deframer_bb.cpp \
     gr/gr_audio_source.cpp \
-    gr/gr_audio_sink.cpp
+    gr/gr_audio_sink.cpp \
+    gr/gr_4fsk_discriminator.cpp
 
 HEADERS  += mainwindow.h\
         audio/audioencoder.h\
@@ -132,7 +133,8 @@ HEADERS  += mainwindow.h\
     net/netdevice.h \
     gr/gr_deframer_bb.h \
     gr/gr_audio_source.h \
-    gr/gr_audio_sink.h
+    gr/gr_audio_sink.h \
+    gr/gr_4fsk_discriminator.h
 
 
 FORMS    += mainwindow.ui
