@@ -144,7 +144,7 @@ void gr_modem::initTX(int modem_type, std::string device_args, std::string devic
     }
     else if(modem_type == gr_modem_types::ModemType2FSK2000)
     {
-        _gr_mod_2fsk_sdr = new gr_mod_2fsk_sdr(0, 125, 250000, 1700, 2000, 1,
+        _gr_mod_2fsk_sdr = new gr_mod_2fsk_sdr(0, 125, 500000, 1700, 4000, 1,
                                                _requested_frequency_hz, 0.5, device_args, device_antenna, freq_corr);
         _frame_length = 7;
     }
@@ -256,7 +256,7 @@ void gr_modem::initRX(int modem_type, std::string device_args, std::string devic
     else if(modem_type == gr_modem_types::ModemType2FSK2000)
     {
         _gr_demod_2fsk_sdr = new gr_demod_2fsk_sdr(_fft_gui,
-                    _const_gui, _rssi_gui, 0,125,1000000,1700,2000,1,
+                    _const_gui, _rssi_gui, 0,125,1000000,1700,4000,1,
                                                    _requested_frequency_hz, 0.9, device_args, device_antenna, freq_corr);
         _bit_buf_len = 8 *8;
         _frame_length = 7;
@@ -737,7 +737,7 @@ void gr_modem::startTransmission(QString callsign, int size)
 {
     _transmitting = true;
     std::vector<unsigned char> *tx_start = new std::vector<unsigned char>;
-    for(int i = 0;i<_frame_length;i++)
+    for(int i = 0;i<_frame_length*2;i++)
     {
 
         tx_start->push_back(0x8C);
@@ -1021,12 +1021,16 @@ void gr_modem::demodulate()
     else if((_modem_type == gr_modem_types::ModemType4FSK20000)
             || (_modem_type == gr_modem_types::ModemType4FSK2000))
         demod_data = _gr_demod_4fsk_sdr->getData();
-    else if(_modem_type == gr_modem_types::ModemType2FSK2000)
+    else if((_modem_type == gr_modem_types::ModemType2FSK2000))
+    {
         demod_data = _gr_demod_2fsk_sdr->getData();
+        demod_data2 = _gr_demod_2fsk_sdr->getData2();
+    }
 
     int v_size;
     if((_modem_type == gr_modem_types::ModemTypeBPSK2000)
-            || (_modem_type == gr_modem_types::ModemTypeBPSK1000))
+            || (_modem_type == gr_modem_types::ModemTypeBPSK1000)
+            || (_modem_type == gr_modem_types::ModemType2FSK2000))
     {
         if(demod_data->size() >= demod_data2->size())
         {
@@ -1048,7 +1052,8 @@ void gr_modem::demodulate()
     demod_data->clear();
     delete demod_data;
     if((_modem_type == gr_modem_types::ModemTypeBPSK2000)
-            || (_modem_type == gr_modem_types::ModemTypeBPSK1000))
+            || (_modem_type == gr_modem_types::ModemTypeBPSK1000)
+            || (_modem_type == gr_modem_types::ModemType2FSK2000))
     {
         demod_data2->clear();
         delete demod_data2;

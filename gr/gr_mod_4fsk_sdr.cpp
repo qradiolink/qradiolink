@@ -73,9 +73,9 @@ gr_mod_4fsk_sdr::gr_mod_4fsk_sdr(QObject *parent, int sps, int samp_rate, int ca
     _top_block->connect(_vector_source,0,_packed_to_unpacked,0);
     _top_block->connect(_packed_to_unpacked,0,_scrambler,0);
     _top_block->connect(_scrambler,0,_packer,0);
-    _top_block->connect(_packer,0,_map,0);
-    _top_block->connect(_map,0,_diff_encoder,0);
-    _top_block->connect(_diff_encoder,0,_chunks_to_symbols,0);
+    _top_block->connect(_packer,0,_chunks_to_symbols,0);
+    //_top_block->connect(_map,0,_diff_encoder,0);
+    //_top_block->connect(_diff_encoder,0,_chunks_to_symbols,0);
     _top_block->connect(_chunks_to_symbols,0,_repeat,0);
 
     _top_block->connect(_repeat,0,_freq_modulator,0);

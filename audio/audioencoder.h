@@ -21,6 +21,7 @@
 #include <opus/opus.h>
 #include <codec2/codec2.h>
 #include <gsm/gsm.h>
+#include "ext/agc.h"
 
 class AudioEncoder
 {
@@ -43,6 +44,7 @@ private:
     struct CODEC2 *_codec2;
     struct CODEC2 *_codec2_700;
     struct gsm_state *_gsm;
+    hvdi::agc_st *_agc;
 };
 
 #endif // AUDIOENCODER_H

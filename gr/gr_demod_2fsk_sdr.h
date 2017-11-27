@@ -36,6 +36,8 @@
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/filter/fft_filter_ccc.h>
 #include <gnuradio/digital/descrambler_bb.h>
+#include <gnuradio/fec/decode_ccsds_27_fb.h>
+#include <gnuradio/blocks/packed_to_unpacked_bb.h>
 #include <gnuradio/qtgui/const_sink_c.h>
 #include <gnuradio/qtgui/sink_c.h>
 #include <gnuradio/qtgui/number_sink.h>
@@ -46,10 +48,11 @@
 #include <gnuradio/blocks/moving_average_ff.h>
 #include <gnuradio/blocks/add_const_ff.h>
 #include <gnuradio/blocks/copy.h>
+#include <gnuradio/blocks/delay.h>
 #include <osmosdr/source.h>
 #include <gnuradio/blocks/message_debug.h>
 #include <vector>
-#include "gr_vector_sink.h"
+#include "gr_deframer_bb.h"
 #include <QObject>
 
 class gr_demod_2fsk_sdr : public QObject
@@ -68,6 +71,7 @@ public slots:
     void start();
     void stop();
     std::vector<unsigned char> *getData();
+    std::vector<unsigned char> *getData2();
     void tune(long center_freq);
     void set_rx_sensitivity(float value);
     void enable_gui_const(bool value);
@@ -76,7 +80,6 @@ public slots:
 
 private:
     gr::top_block_sptr _top_block;
-    gr_vector_sink_sptr _vector_sink;
     gr::analog::sig_source_c::sptr _signal_source;
     gr::blocks::multiply_cc::sptr _multiply;
     gr::blocks::multiply_const_cc::sptr _multiply_symbols;
@@ -97,6 +100,16 @@ private:
     gr::digital::binary_slicer_fb::sptr _binary_slicer;
     gr::blocks::complex_to_real::sptr _complex_to_real;
     gr::digital::descrambler_bb::sptr _descrambler;
+    gr::digital::descrambler_bb::sptr _descrambler2;
+    gr::blocks::delay::sptr _delay;
+    gr::blocks::multiply_const_ff::sptr _multiply_const_fec;
+    gr::blocks::add_const_ff::sptr _add_const_fec;
+    gr::fec::decode_ccsds_27_fb::sptr _cc_decoder;
+    gr::fec::decode_ccsds_27_fb::sptr _cc_decoder2;
+    gr::blocks::packed_to_unpacked_bb::sptr _packed_to_unpacked;
+    gr::blocks::packed_to_unpacked_bb::sptr _packed_to_unpacked2;
+    gr_deframer_bb_sptr _deframer1;
+    gr_deframer_bb_sptr _deframer2;
     gr::qtgui::const_sink_c::sptr _constellation;
     gr::qtgui::sink_c::sptr _fft_gui;
     gr::blocks::message_debug::sptr _message_sink;

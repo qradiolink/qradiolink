@@ -26,6 +26,9 @@ gr_mod_2fsk_sdr::gr_mod_2fsk_sdr(QObject *parent, int sps, int samp_rate, int ca
     _diff_encoder = gr::digital::diff_encoder_bb::make(2);
     _map = gr::digital::map_bb::make(map);
 
+    _unpacked_to_packed = gr::blocks::unpacked_to_packed_bb::make(1,gr::GR_MSB_FIRST);
+    _ccsds_encoder = gr::fec::encode_ccsds_27_bb::make();
+
     _chunks_to_symbols = gr::digital::chunks_to_symbols_bf::make(constellation);
     _freq_modulator = gr::analog::frequency_modulator_fc::make((2*M_PI/2)/(_samples_per_symbol));
     _repeat = gr::blocks::repeat::make(4, _samples_per_symbol);
@@ -49,7 +52,9 @@ gr_mod_2fsk_sdr::gr_mod_2fsk_sdr(QObject *parent, int sps, int samp_rate, int ca
     _top_block->connect(_packed_to_unpacked,0,_scrambler,0);
     //_top_block->connect(_scrambler,0,_map,0);
     //_top_block->connect(_map,0,_diff_encoder,0);
-    _top_block->connect(_scrambler,0,_chunks_to_symbols,0);
+    _top_block->connect(_scrambler,0,_unpacked_to_packed,0);
+    _top_block->connect(_unpacked_to_packed,0,_ccsds_encoder,0);
+    _top_block->connect(_ccsds_encoder,0,_chunks_to_symbols,0);
     _top_block->connect(_chunks_to_symbols,0,_repeat,0);
 
     _top_block->connect(_repeat,0,_freq_modulator,0);

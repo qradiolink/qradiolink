@@ -61,7 +61,7 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
 
     std::vector<float> taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, _filter_width, 12000);
     std::vector<float> symbol_filter_taps = gr::filter::firdes::low_pass(1.0,
-                                 _target_samp_rate, _target_samp_rate*0.75/_samples_per_symbol, _target_samp_rate*0.25/_samples_per_symbol);
+                                 _target_samp_rate, _target_samp_rate/_samples_per_symbol, _target_samp_rate*0.15/_samples_per_symbol);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1, 25, taps);
     _signal_source = gr::analog::sig_source_c::make(_samp_rate,gr::analog::GR_COS_WAVE,-25000,1);
     _multiply = gr::blocks::multiply_cc::make();
@@ -76,7 +76,7 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _symbol_filter = gr::filter::fft_filter_ccf::make(1,symbol_filter_taps);
     float gain_mu = 0.025;
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
-                                                              0.001);
+                                                              0.0005);
     _multiply_symbols = gr::blocks::multiply_const_cc::make(0.15);
     _diff_decoder = gr::digital::diff_decoder_bb::make(4);
     _map = gr::digital::map_bb::make(map);
@@ -136,9 +136,9 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _top_block->connect(_multiply_symbols,0,_const_valve,0);
     _top_block->connect(_const_valve,0,_constellation,0);
     _top_block->connect(_multiply_symbols,0,_constellation_receiver,0);
-    _top_block->connect(_constellation_receiver,0,_map,0);
-    _top_block->connect(_map,0,_diff_decoder,0);
-    _top_block->connect(_diff_decoder,0,_unpack,0);
+    _top_block->connect(_constellation_receiver,0,_unpack,0);
+    //_top_block->connect(_map,0,_diff_decoder,0);
+    //_top_block->connect(_diff_decoder,0,_unpack,0);
     _top_block->connect(_unpack,0,_descrambler,0);
     _top_block->connect(_descrambler,0,_vector_sink,0);
 

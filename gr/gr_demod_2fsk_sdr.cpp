@@ -11,7 +11,7 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _target_samp_rate = 40000;
     _rssi = rssi_gui;
     _device_frequency = device_frequency;
-    _samples_per_symbol = sps*4/25;
+    _samples_per_symbol = sps*2/25;
     _samp_rate =samp_rate;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
@@ -24,7 +24,7 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
 
     std::vector<float> taps = gr::filter::firdes::low_pass(32, _samp_rate, _filter_width, 12000);
     std::vector<float> symbol_filter_taps = gr::filter::firdes::low_pass(1.0,
-                                 _target_samp_rate, _target_samp_rate*0.75/_samples_per_symbol, _target_samp_rate*0.25/_samples_per_symbol);
+                                 _target_samp_rate, _target_samp_rate/_samples_per_symbol, _target_samp_rate*0.25/_samples_per_symbol);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1, 25, taps);
     _signal_source = gr::analog::sig_source_c::make(_samp_rate,gr::analog::GR_COS_WAVE,-25000,1);
     _multiply = gr::blocks::multiply_cc::make();
@@ -48,13 +48,29 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _symbol_filter = gr::filter::fft_filter_ccf::make(1,symbol_filter_taps);
     float gain_mu = 0.025;
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
-                                                              0.035);
+                                                              0.0005);
+
+    _multiply_const_fec = gr::blocks::multiply_const_ff::make(0.5);
+    _add_const_fec = gr::blocks::add_const_ff::make(0.0);
+
+
+    gr::fec::decode_ccsds_27_fb::sptr _cc_decoder = gr::fec::decode_ccsds_27_fb::make();
+    gr::fec::decode_ccsds_27_fb::sptr _cc_decoder2 = gr::fec::decode_ccsds_27_fb::make();
+
+
     _complex_to_real = gr::blocks::complex_to_real::make();
     _binary_slicer = gr::digital::binary_slicer_fb::make();
-    _diff_decoder = gr::digital::diff_decoder_bb::make(2);
-    _map = gr::digital::map_bb::make(map);
+
+
+
+    _packed_to_unpacked = gr::blocks::packed_to_unpacked_bb::make(1,gr::GR_MSB_FIRST);
+    _packed_to_unpacked2 = gr::blocks::packed_to_unpacked_bb::make(1,gr::GR_MSB_FIRST);
+    _delay = gr::blocks::delay::make(4,1);
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
-    _vector_sink = make_gr_vector_sink();
+    _descrambler2 = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
+    _deframer1 = make_gr_deframer_bb(1);
+    _deframer2 = make_gr_deframer_bb(1);
+
 
     _message_sink = gr::blocks::message_debug::make();
 
@@ -113,11 +129,19 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _top_block->connect(_clock_recovery,0,_const_valve,0);
     _top_block->connect(_const_valve,0,_constellation,0);
     _top_block->connect(_clock_recovery,0,_complex_to_real,0);
-    _top_block->connect(_complex_to_real,0,_binary_slicer,0);
-    //_top_block->connect(_binary_slicer,0,_diff_decoder,0);
-    //_top_block->connect(_diff_decoder,0,_map,0);
-    _top_block->connect(_binary_slicer,0,_descrambler,0);
-    _top_block->connect(_descrambler,0,_vector_sink,0);
+    //_top_block->connect(_complex_to_real,0,_binary_slicer,0);
+    _top_block->connect(_complex_to_real,0,_multiply_const_fec,0);
+    _top_block->connect(_multiply_const_fec,0,_add_const_fec,0);
+    _top_block->connect(_add_const_fec,0,_cc_decoder,0);
+    _top_block->connect(_cc_decoder,0,_packed_to_unpacked,0);
+    _top_block->connect(_packed_to_unpacked,0,_descrambler,0);
+    _top_block->connect(_descrambler,0,_deframer1,0);
+
+    _top_block->connect(_add_const_fec,0,_delay,0);
+    _top_block->connect(_delay,0,_cc_decoder2,0);
+    _top_block->connect(_cc_decoder2,0,_packed_to_unpacked2,0);
+    _top_block->connect(_packed_to_unpacked2,0,_descrambler2,0);
+    _top_block->connect(_descrambler2,0,_deframer2,0);
 
     _top_block->connect(_filter,0,_rssi_valve,0);
     _top_block->connect(_rssi_valve,0,_mag_squared,0);
@@ -147,7 +171,13 @@ void gr_demod_2fsk_sdr::stop()
 
 std::vector<unsigned char>* gr_demod_2fsk_sdr::getData()
 {
-    std::vector<unsigned char> *data = _vector_sink->get_data();
+    std::vector<unsigned char> *data = _deframer1->get_data();
+    return data;
+}
+
+std::vector<unsigned char>* gr_demod_2fsk_sdr::getData2()
+{
+    std::vector<unsigned char> *data = _deframer2->get_data();
     return data;
 }
 
