@@ -55,7 +55,6 @@
 #include <gnuradio/blocks/message_debug.h>
 #include <osmosdr/source.h>
 #include <vector>
-#include "gr_vector_sink.h"
 #include "gr_deframer_bb.h"
 
 class gr_demod_bpsk_sdr : public QObject
@@ -82,8 +81,6 @@ public slots:
 
 private:
     gr::top_block_sptr _top_block;
-    gr_vector_sink_sptr _vector_sink;
-    gr_vector_sink_sptr _vector_sink2;
     gr_deframer_bb_sptr _deframer1;
     gr_deframer_bb_sptr _deframer2;
     gr::blocks::unpacked_to_packed_bb::sptr _unpacked_to_packed;

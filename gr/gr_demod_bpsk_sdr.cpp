@@ -50,9 +50,9 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
                 _target_samp_rate);
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
                             1, _target_samp_rate, _filter_width,600,gr::filter::firdes::WIN_HAMMING) );
-    float gain_mu = 0.025;
+    float gain_mu = 0.0075;
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
-                                                              0.015);
+                                                              0.0005);
     _costas_loop = gr::digital::costas_loop_cc::make(0.0628,2);
     _equalizer = gr::digital::cma_equalizer_cc::make(8,2,0.00005,1);
     _fll = gr::digital::fll_band_edge_cc::make(sps, 0.35, 32, 0.000628);
@@ -68,12 +68,11 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
 
     _add_const_fec = gr::blocks::add_const_ff::make(0.0);
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
+    _delay = gr::blocks::delay::make(4,1);
+    _descrambler2 = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
     _deframer1 = make_gr_deframer_bb(modem_type);
     _deframer2 = make_gr_deframer_bb(modem_type);
 
-
-    _delay = gr::blocks::delay::make(4,1);
-    _descrambler2 = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
 
     _message_sink = gr::blocks::message_debug::make();
 
