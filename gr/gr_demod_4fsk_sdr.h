@@ -29,6 +29,7 @@
 #include <gnuradio/analog/quadrature_demod_cf.h>
 #include <gnuradio/digital/diff_decoder_bb.h>
 #include <gnuradio/blocks/multiply_const_cc.h>
+#include <gnuradio/blocks/complex_to_mag.h>
 #include <gnuradio/filter/rational_resampler_base_ccf.h>
 #include <gnuradio/filter/freq_xlating_fir_filter_ccf.h>
 #include <gnuradio/digital/map_bb.h>
@@ -87,10 +88,10 @@ private:
     gr::filter::fft_filter_ccc::sptr _filter2;
     gr::filter::fft_filter_ccc::sptr _filter3;
     gr::filter::fft_filter_ccc::sptr _filter4;
-    gr::blocks::complex_to_mag_squared::sptr _mag_squared1;
-    gr::blocks::complex_to_mag_squared::sptr _mag_squared2;
-    gr::blocks::complex_to_mag_squared::sptr _mag_squared3;
-    gr::blocks::complex_to_mag_squared::sptr _mag_squared4;
+    gr::blocks::complex_to_mag::sptr _mag_squared1;
+    gr::blocks::complex_to_mag::sptr _mag_squared2;
+    gr::blocks::complex_to_mag::sptr _mag_squared3;
+    gr::blocks::complex_to_mag::sptr _mag_squared4;
     gr_4fsk_discriminator_sptr _discriminator;
 
     gr::blocks::multiply_const_cc::sptr _multiply_symbols;

@@ -37,12 +37,12 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     if(sps == 50)
     {
         rs = 5000;
-        bw = 1000;
+        bw = 10000;
     }
     if(sps == 250)
     {
         rs = 1000;
-        bw = 600;
+        bw = 2500;
     }
 
     std::vector<unsigned int> const_map;
@@ -66,7 +66,7 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
 
     std::vector<float> taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, _filter_width, 12000);
     std::vector<float> symbol_filter_taps = gr::filter::firdes::low_pass(1.0,
-                                 _target_samp_rate, _target_samp_rate/_samples_per_symbol, _target_samp_rate*0.25/_samples_per_symbol);
+                                 _target_samp_rate, _target_samp_rate*0.75/_samples_per_symbol, _target_samp_rate*0.25/_samples_per_symbol);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1, 25, taps);
     _signal_source = gr::analog::sig_source_c::make(_samp_rate,gr::analog::GR_COS_WAVE,-25000,1);
     _multiply = gr::blocks::multiply_cc::make();
@@ -75,7 +75,7 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     //                1, _target_samp_rate, 2*_filter_width, 250000, gr::filter::firdes::WIN_HAMMING), 25000,
     //            _target_samp_rate);
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
-                                1, _target_samp_rate, _filter_width,5000,gr::filter::firdes::WIN_HAMMING) );
+                                1, _target_samp_rate, _filter_width,1200,gr::filter::firdes::WIN_HAMMING) );
     //_freq_demod = gr::analog::quadrature_demod_cf::make(sps/(4*M_PI/2));
 
     _filter1 = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
@@ -86,17 +86,17 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
                                 1, _target_samp_rate, 0,_filter_width-rs,bw,gr::filter::firdes::WIN_HAMMING) );
     _filter4 = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
                                 1, _target_samp_rate, _filter_width-rs,_filter_width, bw,gr::filter::firdes::WIN_HAMMING) );
-    _mag_squared1 = gr::blocks::complex_to_mag_squared::make();
-    _mag_squared2 = gr::blocks::complex_to_mag_squared::make();
-    _mag_squared3 = gr::blocks::complex_to_mag_squared::make();
-    _mag_squared4 = gr::blocks::complex_to_mag_squared::make();
+    _mag_squared1 = gr::blocks::complex_to_mag::make();
+    _mag_squared2 = gr::blocks::complex_to_mag::make();
+    _mag_squared3 = gr::blocks::complex_to_mag::make();
+    _mag_squared4 = gr::blocks::complex_to_mag::make();
     _discriminator = make_gr_4fsk_discriminator();
 
 
     _symbol_filter = gr::filter::fft_filter_fff::make(1,symbol_filter_taps);
     float gain_mu = 0.025;
     _clock_recovery = gr::digital::clock_recovery_mm_ff::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.0, gain_mu,
-                                                              0.005);
+                                                              0.0015);
     _float_to_complex = gr::blocks::float_to_complex::make();
     _multiply_symbols = gr::blocks::multiply_const_cc::make(0.5);
     _unpack = gr::blocks::unpack_k_bits_bb::make(2);
