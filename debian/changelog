@@ -1,6 +1,7 @@
-qradiolink (0.3.3-1) UNRELEASED; urgency=medium
+qradiolink (0.3.4-1) UNRELEASED; urgency=medium
 
   [ Adrian Musceac ]
+  * 4FSK mode improvements
   * Rate 1/2 FEC for 2FSK mode
   * Fix several important issues
   * VOIP integration
