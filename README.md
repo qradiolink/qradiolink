@@ -139,14 +139,13 @@ supported for TX, and ISO settings/ exposure of the camera might cause too low a
 Running the code on Android devices
 -----------------------------------
 - The current master branch supports running the application on recent Android mobile phones or tablets.
-- Requires some knowledge of Android internals.
 - You will need to have the device fully unlocked and root access. A SIM card is not necessary.
 - First install an Android application which can create a Linux chroot and an Android VNC viewer.
-Install Debian Jessie in the chroot using a fresh SDcard. Configure it so you can run SSH and an X server.
+Install Linux in the chroot using a fresh SDcard. Configure it so you can run SSH and an X server.
 Install all required packages on the phone and compile QRadioLink. In the future a ready built SD card 
 image may be provided.
 - Note: a phone may not be able to provide enough power to your SDR peripheral, so you may require an 
-external battery pack.
+external battery pack in some cases.
 
 [QRadioLink mobile phone SDR transceiver](https://www.youtube.com/watch?v=93nWWASt5a4)
 
