@@ -34,15 +34,18 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _modulation_index = mod_index;
     _top_block = gr::make_top_block("4fsk demodulator sdr");
     int rs,bw;
+    float gain_mu;
     if(sps == 50)
     {
         rs = 5000;
         bw = 10000;
+        gain_mu = 0.0025;
     }
     if(sps == 250)
     {
         rs = 1000;
         bw = 2500;
+        gain_mu = 0.125;
     }
 
     std::vector<unsigned int> const_map;
@@ -79,13 +82,13 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     //_freq_demod = gr::analog::quadrature_demod_cf::make(sps/(4*M_PI/2));
 
     _filter1 = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
-                                1, _target_samp_rate, -_filter_width,-_filter_width+rs,bw,gr::filter::firdes::WIN_HAMMING) );
+                                1, _target_samp_rate, -_filter_width,-_filter_width+rs,bw,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     _filter2 = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
-                                1, _target_samp_rate, -_filter_width+rs,0,bw,gr::filter::firdes::WIN_HAMMING) );
+                                1, _target_samp_rate, -_filter_width+rs,0,bw,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     _filter3 = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
-                                1, _target_samp_rate, 0,_filter_width-rs,bw,gr::filter::firdes::WIN_HAMMING) );
+                                1, _target_samp_rate, 0,_filter_width-rs,bw,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     _filter4 = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
-                                1, _target_samp_rate, _filter_width-rs,_filter_width, bw,gr::filter::firdes::WIN_HAMMING) );
+                                1, _target_samp_rate, _filter_width-rs,_filter_width, bw,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     _mag_squared1 = gr::blocks::complex_to_mag::make();
     _mag_squared2 = gr::blocks::complex_to_mag::make();
     _mag_squared3 = gr::blocks::complex_to_mag::make();
@@ -94,7 +97,7 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
 
 
     _symbol_filter = gr::filter::fft_filter_fff::make(1,symbol_filter_taps);
-    float gain_mu = 0.025;
+
     _clock_recovery = gr::digital::clock_recovery_mm_ff::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.0, gain_mu,
                                                               0.0015);
     _float_to_complex = gr::blocks::float_to_complex::make();
