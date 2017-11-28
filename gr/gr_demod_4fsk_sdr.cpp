@@ -39,7 +39,7 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     {
         rs = 5000;
         bw = 10000;
-        gain_mu = 0.0025;
+        gain_mu = 0.025;
     }
     if(sps == 250)
     {
