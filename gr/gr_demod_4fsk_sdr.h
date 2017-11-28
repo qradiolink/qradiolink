@@ -23,18 +23,21 @@
 #include <gnuradio/top_block.h>
 #include <gnuradio/endianness.h>
 #include <gnuradio/filter/firdes.h>
-#include <gnuradio/digital/clock_recovery_mm_cc.h>
+#include <gnuradio/digital/clock_recovery_mm_ff.h>
 #include <gnuradio/blocks/unpack_k_bits_bb.h>
 #include <gnuradio/blocks/float_to_complex.h>
 #include <gnuradio/analog/quadrature_demod_cf.h>
 #include <gnuradio/digital/diff_decoder_bb.h>
 #include <gnuradio/blocks/multiply_const_cc.h>
+#include <gnuradio/blocks/complex_to_mag.h>
 #include <gnuradio/filter/rational_resampler_base_ccf.h>
 #include <gnuradio/filter/freq_xlating_fir_filter_ccf.h>
 #include <gnuradio/digital/map_bb.h>
 #include <gnuradio/digital/constellation.h>
 #include <gnuradio/digital/constellation_decoder_cb.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
+#include <gnuradio/filter/fft_filter_ccc.h>
+#include <gnuradio/filter/fft_filter_fff.h>
 #include <gnuradio/digital/descrambler_bb.h>
 #include <gnuradio/qtgui/const_sink_c.h>
 #include <gnuradio/qtgui/sink_c.h>
@@ -50,6 +53,7 @@
 #include <osmosdr/source.h>
 #include <vector>
 #include "gr_vector_sink.h"
+#include "gr_4fsk_discriminator.h"
 
 class gr_demod_4fsk_sdr : public QObject
 {
@@ -79,11 +83,22 @@ private:
     gr::blocks::unpack_k_bits_bb::sptr _unpack;
     gr::analog::sig_source_c::sptr _signal_source;
     gr::blocks::multiply_cc::sptr _multiply;
+
+    gr::filter::fft_filter_ccc::sptr _filter1;
+    gr::filter::fft_filter_ccc::sptr _filter2;
+    gr::filter::fft_filter_ccc::sptr _filter3;
+    gr::filter::fft_filter_ccc::sptr _filter4;
+    gr::blocks::complex_to_mag::sptr _mag_squared1;
+    gr::blocks::complex_to_mag::sptr _mag_squared2;
+    gr::blocks::complex_to_mag::sptr _mag_squared3;
+    gr::blocks::complex_to_mag::sptr _mag_squared4;
+    gr_4fsk_discriminator_sptr _discriminator;
+
     gr::blocks::multiply_const_cc::sptr _multiply_symbols;
     gr::analog::quadrature_demod_cf::sptr _freq_demod;
     gr::blocks::float_to_complex::sptr _float_to_complex;
-    gr::filter::fft_filter_ccf::sptr _symbol_filter;
-    gr::digital::clock_recovery_mm_cc::sptr _clock_recovery;
+    gr::filter::fft_filter_fff::sptr _symbol_filter;
+    gr::digital::clock_recovery_mm_ff::sptr _clock_recovery;
     gr::digital::diff_decoder_bb::sptr _diff_decoder;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
     gr::digital::map_bb::sptr _map;

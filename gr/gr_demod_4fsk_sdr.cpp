@@ -33,12 +33,20 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _filter_width = filter_width;
     _modulation_index = mod_index;
     _top_block = gr::make_top_block("4fsk demodulator sdr");
-
-    std::vector<int> map;
-    map.push_back(0);
-    map.push_back(1);
-    map.push_back(2);
-    map.push_back(3);
+    int rs,bw;
+    float gain_mu;
+    if(sps == 50)
+    {
+        rs = 5000;
+        bw = 10000;
+        gain_mu = 0.025;
+    }
+    if(sps == 250)
+    {
+        rs = 1000;
+        bw = 2500;
+        gain_mu = 0.125;
+    }
 
     std::vector<unsigned int> const_map;
     const_map.push_back(0);
@@ -61,7 +69,7 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
 
     std::vector<float> taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, _filter_width, 12000);
     std::vector<float> symbol_filter_taps = gr::filter::firdes::low_pass(1.0,
-                                 _target_samp_rate, _target_samp_rate/_samples_per_symbol, _target_samp_rate*0.15/_samples_per_symbol);
+                                 _target_samp_rate, _target_samp_rate*0.75/_samples_per_symbol, _target_samp_rate*0.25/_samples_per_symbol);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1, 25, taps);
     _signal_source = gr::analog::sig_source_c::make(_samp_rate,gr::analog::GR_COS_WAVE,-25000,1);
     _multiply = gr::blocks::multiply_cc::make();
@@ -71,15 +79,29 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     //            _target_samp_rate);
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
                                 1, _target_samp_rate, _filter_width,1200,gr::filter::firdes::WIN_HAMMING) );
-    _freq_demod = gr::analog::quadrature_demod_cf::make(sps/(4*M_PI/2));
+    //_freq_demod = gr::analog::quadrature_demod_cf::make(sps/(4*M_PI/2));
+
+    _filter1 = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
+                                1, _target_samp_rate, -_filter_width,-_filter_width+rs,bw,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
+    _filter2 = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
+                                1, _target_samp_rate, -_filter_width+rs,0,bw,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
+    _filter3 = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
+                                1, _target_samp_rate, 0,_filter_width-rs,bw,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
+    _filter4 = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
+                                1, _target_samp_rate, _filter_width-rs,_filter_width, bw,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
+    _mag_squared1 = gr::blocks::complex_to_mag::make();
+    _mag_squared2 = gr::blocks::complex_to_mag::make();
+    _mag_squared3 = gr::blocks::complex_to_mag::make();
+    _mag_squared4 = gr::blocks::complex_to_mag::make();
+    _discriminator = make_gr_4fsk_discriminator();
+
+
+    _symbol_filter = gr::filter::fft_filter_fff::make(1,symbol_filter_taps);
+
+    _clock_recovery = gr::digital::clock_recovery_mm_ff::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.0, gain_mu,
+                                                              0.0015);
     _float_to_complex = gr::blocks::float_to_complex::make();
-    _symbol_filter = gr::filter::fft_filter_ccf::make(1,symbol_filter_taps);
-    float gain_mu = 0.025;
-    _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
-                                                              0.0005);
-    _multiply_symbols = gr::blocks::multiply_const_cc::make(0.15);
-    _diff_decoder = gr::digital::diff_decoder_bb::make(4);
-    _map = gr::digital::map_bb::make(map);
+    _multiply_symbols = gr::blocks::multiply_const_cc::make(0.5);
     _unpack = gr::blocks::unpack_k_bits_bb::make(2);
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
     _constellation_receiver = gr::digital::constellation_decoder_cb::make(constellation);
@@ -121,6 +143,8 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     }
     _constellation = const_gui;
     _fft_gui = fft_gui;
+
+
     _top_block->connect(_osmosdr_source,0,_multiply,0);
     _top_block->connect(_signal_source,0,_multiply,1);
     _top_block->connect(_multiply,0,_fft_valve,0);
@@ -128,17 +152,29 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _top_block->msg_connect(_fft_gui,"freq",_message_sink,"store");
     _top_block->connect(_multiply,0,_resampler,0);
     _top_block->connect(_resampler,0,_filter,0);
-    _top_block->connect(_filter,0,_freq_demod,0);
-    _top_block->connect(_freq_demod,0,_float_to_complex,0);
-    _top_block->connect(_float_to_complex,0,_symbol_filter,0);
+    _top_block->connect(_filter,0,_filter1,0);
+    _top_block->connect(_filter,0,_filter2,0);
+    _top_block->connect(_filter,0,_filter3,0);
+    _top_block->connect(_filter,0,_filter4,0);
+    _top_block->connect(_filter1,0,_mag_squared1,0);
+    _top_block->connect(_filter2,0,_mag_squared2,0);
+    _top_block->connect(_filter3,0,_mag_squared3,0);
+    _top_block->connect(_filter4,0,_mag_squared4,0);
+    _top_block->connect(_mag_squared1,0,_discriminator,0);
+    _top_block->connect(_mag_squared2,0,_discriminator,1);
+    _top_block->connect(_mag_squared3,0,_discriminator,2);
+    _top_block->connect(_mag_squared4,0,_discriminator,3);
+    _top_block->connect(_discriminator,0,_symbol_filter,0);
+
+    //_top_block->connect(_filter,0,_freq_demod,0);
+    //_top_block->connect(_freq_demod,0,_float_to_complex,0);
     _top_block->connect(_symbol_filter,0,_clock_recovery,0);
-    _top_block->connect(_clock_recovery,0,_multiply_symbols,0);
+    _top_block->connect(_clock_recovery,0,_float_to_complex,0);
+    _top_block->connect(_float_to_complex,0,_multiply_symbols,0);
     _top_block->connect(_multiply_symbols,0,_const_valve,0);
     _top_block->connect(_const_valve,0,_constellation,0);
     _top_block->connect(_multiply_symbols,0,_constellation_receiver,0);
     _top_block->connect(_constellation_receiver,0,_unpack,0);
-    //_top_block->connect(_map,0,_diff_decoder,0);
-    //_top_block->connect(_diff_decoder,0,_unpack,0);
     _top_block->connect(_unpack,0,_descrambler,0);
     _top_block->connect(_descrambler,0,_vector_sink,0);
 
