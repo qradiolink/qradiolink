@@ -19,9 +19,6 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
-  <property name="styleSheet">
-   <string notr="true"/>
-  </property>
   <widget class="QWidget" name="centralWidget">
    <property name="sizePolicy">
     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -54,7 +51,7 @@
         </property>
         <property name="font">
          <font>
-          <pointsize>16</pointsize>
+          <pointsize>12</pointsize>
          </font>
         </property>
         <property name="styleSheet">
@@ -2015,7 +2012,7 @@ font: 13pt &quot;Sans Serif&quot;;</string>
            <widget class="QComboBox" name="modemTypeComboBox">
             <property name="font">
              <font>
-              <pointsize>16</pointsize>
+              <pointsize>12</pointsize>
              </font>
             </property>
             <item>
