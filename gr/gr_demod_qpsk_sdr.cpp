@@ -85,12 +85,12 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     float gain_mu, omega_rel_limit;
     if(_target_samp_rate == 20000)
     {
-        gain_mu = 0.025;
+        gain_mu = 0.125;
         omega_rel_limit = 0.0005;
     }
     else
     {
-        gain_mu = 0.0025;
+        gain_mu = 0.0125;
         omega_rel_limit = 0.0001;
     }
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
