@@ -341,11 +341,16 @@ QSlider::handle:vertical {
                </property>
                <property name="font">
                 <font>
-                 <pointsize>12</pointsize>
+                 <family>Monospace</family>
+                 <pointsize>11</pointsize>
+                 <weight>50</weight>
+                 <italic>false</italic>
+                 <bold>false</bold>
                 </font>
                </property>
                <property name="styleSheet">
                 <string notr="true">color: rgb(255, 255, 255);
+font: 11pt &quot;Monospace&quot;;
 background-color: rgb(0, 85, 127);
 </string>
                </property>
@@ -378,7 +383,7 @@ background-color: rgb(0, 85, 127);
                 </sizepolicy>
                </property>
                <property name="styleSheet">
-                <string notr="true">font: 15px &quot;Sans Serif&quot;;</string>
+                <string notr="true">font: 10pt &quot;Sans Serif&quot;;</string>
                </property>
                <property name="text">
                 <string>Split</string>
@@ -407,7 +412,7 @@ background-color: rgb(0, 85, 127);
                </property>
                <property name="styleSheet">
                 <string notr="true">background-color: rgba(255, 255, 255, 180);
-font: 14px &quot;Sans Serif&quot;;</string>
+font: 11pt &quot;Sans Serif&quot;;</string>
                </property>
                <property name="text">
                 <string>0</string>
@@ -436,7 +441,7 @@ font: 14px &quot;Sans Serif&quot;;</string>
              <item>
               <widget class="QLabel" name="label_15">
                <property name="styleSheet">
-                <string notr="true">font: 12px &quot;Sans Serif&quot;;</string>
+                <string notr="true">font: 10pt &quot;Sans Serif&quot;;</string>
                </property>
                <property name="text">
                 <string>RX CTCSS</string>
@@ -446,14 +451,14 @@ font: 14px &quot;Sans Serif&quot;;</string>
              <item>
               <widget class="QComboBox" name="comboBoxRxCTCSS">
                <property name="styleSheet">
-                <string notr="true">font: 12pt &quot;Sans Serif&quot;;</string>
+                <string notr="true">font: 11pt &quot;Sans Serif&quot;;</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QLabel" name="label_13">
                <property name="styleSheet">
-                <string notr="true">font: 12px &quot;Sans Serif&quot;;</string>
+                <string notr="true">font: 10pt &quot;Sans Serif&quot;;</string>
                </property>
                <property name="text">
                 <string>TX CTCSS</string>
@@ -466,7 +471,7 @@ font: 14px &quot;Sans Serif&quot;;</string>
              <item>
               <widget class="QComboBox" name="comboBoxTxCTCSS">
                <property name="styleSheet">
-                <string notr="true">font: 12pt &quot;Sans Serif&quot;;</string>
+                <string notr="true">font: 11pt &quot;Sans Serif&quot;;</string>
                </property>
               </widget>
              </item>
@@ -1827,10 +1832,10 @@ background-color: rgb(85, 85, 127);</string>
          <widget class="QWidget" name="gridLayoutWidget">
           <property name="geometry">
            <rect>
-            <x>20</x>
+            <x>10</x>
             <y>10</y>
-            <width>621</width>
-            <height>281</height>
+            <width>881</width>
+            <height>331</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_5">
@@ -1838,7 +1843,7 @@ background-color: rgb(85, 85, 127);</string>
             <widget class="QLineEdit" name="lineEditTXAntenna">
              <property name="styleSheet">
               <string notr="true">background-color: rgb(255, 255, 255);
-font: 13pt &quot;Sans Serif&quot;;</string>
+font: 10pt &quot;Sans Serif&quot;;</string>
              </property>
             </widget>
            </item>
@@ -1864,7 +1869,7 @@ font: 18pt &quot;Sans Serif&quot;;</string>
             <widget class="QLineEdit" name="lineEditRXAntenna">
              <property name="styleSheet">
               <string notr="true">background-color: rgb(255, 255, 255);
-font: 13pt &quot;Sans Serif&quot;;</string>
+font: 10pt &quot;Sans Serif&quot;;</string>
              </property>
             </widget>
            </item>
@@ -1872,7 +1877,7 @@ font: 13pt &quot;Sans Serif&quot;;</string>
             <widget class="QLineEdit" name="lineEditRXDev">
              <property name="styleSheet">
               <string notr="true">background-color: rgb(255, 255, 255);
-font: 13pt &quot;Sans Serif&quot;;</string>
+font: 10pt &quot;Sans Serif&quot;;</string>
              </property>
             </widget>
            </item>
@@ -1887,7 +1892,7 @@ font: 13pt &quot;Sans Serif&quot;;</string>
             <widget class="QLineEdit" name="lineEditTXDev">
              <property name="styleSheet">
               <string notr="true">background-color: rgb(255, 255, 255);
-font: 13pt &quot;Sans Serif&quot;;</string>
+font: 10pt &quot;Sans Serif&quot;;</string>
              </property>
             </widget>
            </item>
@@ -1916,7 +1921,7 @@ font: 13pt &quot;Sans Serif&quot;;</string>
             <widget class="QLineEdit" name="lineEditCallsign">
              <property name="styleSheet">
               <string notr="true">background-color: rgb(255, 255, 255);
-font: 13pt &quot;Sans Serif&quot;;</string>
+font: 10pt &quot;Sans Serif&quot;;</string>
              </property>
             </widget>
            </item>
@@ -1938,7 +1943,7 @@ font: 13pt &quot;Sans Serif&quot;;</string>
             <widget class="QLineEdit" name="lineEditRXFreqCorrection">
              <property name="styleSheet">
               <string notr="true">background-color: rgb(255, 255, 255);
-font: 13pt &quot;Sans Serif&quot;;</string>
+font: 10pt &quot;Sans Serif&quot;;</string>
              </property>
             </widget>
            </item>
@@ -1946,7 +1951,7 @@ font: 13pt &quot;Sans Serif&quot;;</string>
             <widget class="QLineEdit" name="lineEditTXFreqCorrection">
              <property name="styleSheet">
               <string notr="true">background-color: rgb(255, 255, 255);
-font: 13pt &quot;Sans Serif&quot;;</string>
+font: 10pt &quot;Sans Serif&quot;;</string>
              </property>
             </widget>
            </item>
@@ -1954,7 +1959,7 @@ font: 13pt &quot;Sans Serif&quot;;</string>
             <widget class="QLineEdit" name="lineEditVideoDevice">
              <property name="styleSheet">
               <string notr="true">background-color: rgb(255, 255, 255);
-font: 13pt &quot;Sans Serif&quot;;</string>
+font: 10pt &quot;Sans Serif&quot;;</string>
              </property>
             </widget>
            </item>
