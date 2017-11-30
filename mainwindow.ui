@@ -69,7 +69,8 @@
         </property>
         <property name="font">
          <font>
-          <pointsize>12</pointsize>
+          <pointsize>13</pointsize>
+          <underline>false</underline>
          </font>
         </property>
         <property name="styleSheet">
@@ -163,7 +164,7 @@
                <item>
                 <widget class="QLabel" name="label_9">
                  <property name="styleSheet">
-                  <string notr="true">font: 14pt &quot;Sans Serif&quot;;</string>
+                  <string notr="true">font: 13pt &quot;Sans Serif&quot;;</string>
                  </property>
                  <property name="text">
                   <string>RX gain</string>
@@ -314,7 +315,7 @@ QSlider::handle:vertical {
             <property name="maximumSize">
              <size>
               <width>16777215</width>
-              <height>60</height>
+              <height>80</height>
              </size>
             </property>
             <property name="frameShape">
@@ -335,7 +336,7 @@ QSlider::handle:vertical {
                <property name="minimumSize">
                 <size>
                  <width>120</width>
-                 <height>30</height>
+                 <height>40</height>
                 </size>
                </property>
                <property name="font">
@@ -400,13 +401,13 @@ background-color: rgb(0, 85, 127);
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>130</width>
+                 <width>150</width>
                  <height>50</height>
                 </size>
                </property>
                <property name="styleSheet">
                 <string notr="true">background-color: rgba(255, 255, 255, 180);
-font: 14pt &quot;Sans Serif&quot;;</string>
+font: 13pt &quot;Sans Serif&quot;;</string>
                </property>
                <property name="text">
                 <string>0</string>
@@ -435,7 +436,7 @@ font: 14pt &quot;Sans Serif&quot;;</string>
              <item>
               <widget class="QLabel" name="label_15">
                <property name="styleSheet">
-                <string notr="true">font: 14pt &quot;Sans Serif&quot;;</string>
+                <string notr="true">font: 12pt &quot;Sans Serif&quot;;</string>
                </property>
                <property name="text">
                 <string>RX CTCSS</string>
@@ -445,14 +446,14 @@ font: 14pt &quot;Sans Serif&quot;;</string>
              <item>
               <widget class="QComboBox" name="comboBoxRxCTCSS">
                <property name="styleSheet">
-                <string notr="true">font: 14pt &quot;Sans Serif&quot;;</string>
+                <string notr="true">font: 12pt &quot;Sans Serif&quot;;</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QLabel" name="label_13">
                <property name="styleSheet">
-                <string notr="true">font: 14pt &quot;Sans Serif&quot;;</string>
+                <string notr="true">font: 12pt &quot;Sans Serif&quot;;</string>
                </property>
                <property name="text">
                 <string>TX CTCSS</string>
@@ -465,7 +466,7 @@ font: 14pt &quot;Sans Serif&quot;;</string>
              <item>
               <widget class="QComboBox" name="comboBoxTxCTCSS">
                <property name="styleSheet">
-                <string notr="true">font: 14pt &quot;Sans Serif&quot;;</string>
+                <string notr="true">font: 12pt &quot;Sans Serif&quot;;</string>
                </property>
               </widget>
              </item>
@@ -612,14 +613,20 @@ background: none;
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="minimumSize">
+               <size>
+                <width>120</width>
+                <height>64</height>
+               </size>
+              </property>
               <property name="maximumSize">
                <size>
-                <width>90</width>
+                <width>120</width>
                 <height>64</height>
                </size>
               </property>
               <property name="styleSheet">
-               <string notr="true">font: 14pt &quot;Sans Serif&quot;;
+               <string notr="true">font: 12pt &quot;Sans Serif&quot;;
 color: rgb(255, 255, 255);
 background-color: rgb(132, 0, 0);</string>
               </property>
@@ -680,7 +687,7 @@ background-color: rgb(132, 0, 0);</string>
              <item>
               <widget class="QLabel" name="label_14">
                <property name="styleSheet">
-                <string notr="true">font: 14pt &quot;Sans Serif&quot;;</string>
+                <string notr="true">font: 13pt &quot;Sans Serif&quot;;</string>
                </property>
                <property name="text">
                 <string>Volume</string>
@@ -825,8 +832,17 @@ QSlider::handle:vertical {
             </property>
             <item>
              <widget class="QLabel" name="label">
+              <property name="font">
+               <font>
+                <family>Sans Serif</family>
+                <pointsize>13</pointsize>
+                <weight>50</weight>
+                <italic>false</italic>
+                <bold>false</bold>
+               </font>
+              </property>
               <property name="styleSheet">
-               <string notr="true">font: 14pt &quot;Sans Serif&quot;;</string>
+               <string notr="true">font: 13pt &quot;Sans Serif&quot;;</string>
               </property>
               <property name="text">
                <string>TX gain</string>
@@ -1009,7 +1025,7 @@ background-color: rgb(0, 0, 230,130);</string>
               </property>
               <property name="minimumSize">
                <size>
-                <width>100</width>
+                <width>160</width>
                 <height>50</height>
                </size>
               </property>
@@ -1022,7 +1038,7 @@ background-color: rgb(0, 0, 230,130);</string>
               <property name="font">
                <font>
                 <family>Sans Serif</family>
-                <pointsize>18</pointsize>
+                <pointsize>13</pointsize>
                 <weight>50</weight>
                 <italic>false</italic>
                 <bold>false</bold>
@@ -1030,7 +1046,7 @@ background-color: rgb(0, 0, 230,130);</string>
               </property>
               <property name="styleSheet">
                <string notr="true">background-color: rgba(255, 255, 255, 180);
-font: 18pt &quot;Sans Serif&quot;;</string>
+font: 13pt &quot;Sans Serif&quot;;</string>
               </property>
               <property name="text">
                <string>434025</string>
@@ -1121,7 +1137,7 @@ font: 18pt &quot;Sans Serif&quot;;</string>
              <item>
               <widget class="QLabel" name="label_11">
                <property name="styleSheet">
-                <string notr="true">font: 14pt &quot;Sans Serif&quot;;</string>
+                <string notr="true">font: 13pt &quot;Sans Serif&quot;;</string>
                </property>
                <property name="text">
                 <string>Squelch</string>
