@@ -80,7 +80,9 @@ MainWindow::MainWindow(QWidget *parent) :
     _config_file = setupConfig();
     readConfig(_config_file);
     _video_img = new QPixmap;
+    ui->menuBar->hide();
     setWindowIcon(QIcon(":/res/logo.png"));
+    setWindowFlags( Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
 
 }
 
