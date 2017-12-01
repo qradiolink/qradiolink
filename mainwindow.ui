@@ -1982,10 +1982,16 @@ font: 10pt &quot;Sans Serif&quot;;</string>
         </property>
         <item>
          <widget class="QFrame" name="frame">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="minimumSize">
            <size>
-            <width>0</width>
-            <height>32</height>
+            <width>300</width>
+            <height>33</height>
            </size>
           </property>
           <property name="styleSheet">
@@ -2081,7 +2087,138 @@ font: 10pt &quot;Sans Serif&quot;;</string>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
-           <widget class="QComboBox" name="modemTypeComboBox">
+           <widget class="QLabel" name="label_16">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>40</width>
+              <height>32</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">font: 12pt &quot;Sans Serif&quot;;
+color: rgb(0, 0, 83);</string>
+            </property>
+            <property name="text">
+             <string>RX</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="rxModemTypeComboBox">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
+            <item>
+             <property name="text">
+              <string>BPSK  2K</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>BPSK 1K (700B)</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>QPSK  2K</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>QPSK  10K</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>4FSK  2K</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>4FSK  10K</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>2FSK 2K</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Narrow FM</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>FM</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Wide FM</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>SSB</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>AM</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Video (640x480)</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>QPSK 250K</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_17">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>40</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">font: 12pt &quot;Sans Serif&quot;;
+color: rgb(125, 0, 0);</string>
+            </property>
+            <property name="text">
+             <string>TX</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="txModemTypeComboBox">
             <property name="font">
              <font>
               <pointsize>12</pointsize>

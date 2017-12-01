@@ -182,6 +182,7 @@ void gr_demod_base::set_mode(int mode)
         _signal_source->set_sampling_freq(1000000);
         _osmosdr_source->set_sample_rate(1000000);
         _2fsk = make_gr_demod_2fsk_sdr(125,1000000,1700,4000);
+        _add_const->set_k(-110);
         _top_block->connect(_multiply,0,_2fsk,0);
         _top_block->connect(_2fsk,0,_rssi_valve,0);
         _top_block->connect(_2fsk,1,_const_valve,0);
@@ -193,6 +194,7 @@ void gr_demod_base::set_mode(int mode)
         _signal_source->set_sampling_freq(1000000);
         _osmosdr_source->set_sample_rate(1000000);
         _4fsk = make_gr_demod_4fsk_sdr(250,1000000,1700,2000);
+        _add_const->set_k(-110);
         _top_block->connect(_multiply,0,_4fsk,0);
         _top_block->connect(_4fsk,0,_rssi_valve,0);
         _top_block->connect(_4fsk,1,_const_valve,0);
@@ -203,6 +205,7 @@ void gr_demod_base::set_mode(int mode)
         _signal_source->set_sampling_freq(1000000);
         _osmosdr_source->set_sample_rate(1000000);
         _4fsk = make_gr_demod_4fsk_sdr(50,1000000,1700,10000);
+        _add_const->set_k(-110);
         _top_block->connect(_multiply,0,_4fsk,0);
         _top_block->connect(_4fsk,0,_rssi_valve,0);
         _top_block->connect(_4fsk,1,_const_valve,0);
@@ -213,6 +216,7 @@ void gr_demod_base::set_mode(int mode)
         _signal_source->set_sampling_freq(1000000);
         _osmosdr_source->set_sample_rate(1000000);
         _am = make_gr_demod_am_sdr(0, 1000000,1700,4000);
+        _add_const->set_k(-55);
         _top_block->connect(_multiply,0,_am,0);
         _top_block->connect(_am,0,_rssi_valve,0);
         _top_block->connect(_am,1,_audio_sink,0);
@@ -221,6 +225,7 @@ void gr_demod_base::set_mode(int mode)
         _signal_source->set_sampling_freq(1000000);
         _osmosdr_source->set_sample_rate(1000000);
         _bpsk = make_gr_demod_bpsk_sdr(250,1000000,1700,1300);
+        _add_const->set_k(-110);
         _top_block->connect(_multiply,0,_bpsk,0);
         _top_block->connect(_bpsk,0,_rssi_valve,0);
         _top_block->connect(_bpsk,1,_const_valve,0);
@@ -232,6 +237,7 @@ void gr_demod_base::set_mode(int mode)
         _signal_source->set_sampling_freq(1000000);
         _osmosdr_source->set_sample_rate(1000000);
         _bpsk = make_gr_demod_bpsk_sdr(125,1000000,1700,2500);
+        _add_const->set_k(-110);
         _top_block->connect(_multiply,0,_bpsk,0);
         _top_block->connect(_bpsk,0,_rssi_valve,0);
         _top_block->connect(_bpsk,1,_const_valve,0);
@@ -243,6 +249,7 @@ void gr_demod_base::set_mode(int mode)
         _signal_source->set_sampling_freq(1000000);
         _osmosdr_source->set_sample_rate(1000000);
         _fm = make_gr_demod_nbfm_sdr(0, 1000000,1700,2500);
+        _add_const->set_k(-55);
         _top_block->connect(_multiply,0,_fm,0);
         _top_block->connect(_fm,0,_rssi_valve,0);
         _top_block->connect(_fm,1,_audio_sink,0);
@@ -251,6 +258,7 @@ void gr_demod_base::set_mode(int mode)
         _signal_source->set_sampling_freq(1000000);
         _osmosdr_source->set_sample_rate(1000000);
         _fm = make_gr_demod_nbfm_sdr(0, 1000000,1700,4000);
+        _add_const->set_k(-55);
         _top_block->connect(_multiply,0,_fm,0);
         _top_block->connect(_fm,0,_rssi_valve,0);
         _top_block->connect(_fm,1,_audio_sink,0);
@@ -259,6 +267,7 @@ void gr_demod_base::set_mode(int mode)
         _signal_source->set_sampling_freq(1000000);
         _osmosdr_source->set_sample_rate(1000000);
         _qpsk = make_gr_demod_qpsk_sdr(250,1000000,1700,800);
+        _add_const->set_k(-110);
         _top_block->connect(_multiply,0,_qpsk,0);
         _top_block->connect(_qpsk,0,_rssi_valve,0);
         _top_block->connect(_qpsk,1,_const_valve,0);
@@ -269,6 +278,7 @@ void gr_demod_base::set_mode(int mode)
         _signal_source->set_sampling_freq(1000000);
         _osmosdr_source->set_sample_rate(1000000);
         _qpsk = make_gr_demod_qpsk_sdr(50,1000000,1700,4000);
+        _add_const->set_k(-110);
         _top_block->connect(_multiply,0,_qpsk,0);
         _top_block->connect(_qpsk,0,_rssi_valve,0);
         _top_block->connect(_qpsk,1,_const_valve,0);
@@ -279,6 +289,7 @@ void gr_demod_base::set_mode(int mode)
         _signal_source->set_sampling_freq(1000000);
         _osmosdr_source->set_sample_rate(1000000);
         _qpsk = make_gr_demod_qpsk_sdr(2,1000000,1700,65000);
+        _add_const->set_k(-110);
         _top_block->connect(_multiply,0,_qpsk,0);
         _top_block->connect(_qpsk,0,_rssi_valve,0);
         _top_block->connect(_qpsk,1,_const_valve,0);
@@ -289,6 +300,7 @@ void gr_demod_base::set_mode(int mode)
         _signal_source->set_sampling_freq(1000000);
         _osmosdr_source->set_sample_rate(1000000);
         _qpsk = make_gr_demod_qpsk_sdr(2,1000000,1700,65000);
+        _add_const->set_k(-110);
         _top_block->connect(_multiply,0,_qpsk,0);
         _top_block->connect(_qpsk,0,_rssi_valve,0);
         _top_block->connect(_qpsk,1,_const_valve,0);
@@ -299,6 +311,7 @@ void gr_demod_base::set_mode(int mode)
         _signal_source->set_sampling_freq(1000000);
         _osmosdr_source->set_sample_rate(1000000);
         _ssb = make_gr_demod_ssb_sdr(0, 1000000,1700,2500);
+        _add_const->set_k(-55);
         _top_block->connect(_multiply,0,_ssb,0);
         _top_block->connect(_ssb,0,_rssi_valve,0);
         _top_block->connect(_ssb,1,_audio_sink,0);
@@ -307,6 +320,7 @@ void gr_demod_base::set_mode(int mode)
         _signal_source->set_sampling_freq(1000000);
         _osmosdr_source->set_sample_rate(1000000);
         _wfm = make_gr_demod_wbfm_sdr(0, 1000000,1700,75000);
+        _add_const->set_k(-55);
         _top_block->connect(_multiply,0,_wfm,0);
         _top_block->connect(_wfm,0,_rssi_valve,0);
         _top_block->connect(_wfm,1,_audio_sink,0);
