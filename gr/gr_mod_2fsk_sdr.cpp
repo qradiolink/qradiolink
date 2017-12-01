@@ -1,30 +1,31 @@
 #include "gr_mod_2fsk_sdr.h"
 
-gr_mod_2fsk_sdr::gr_mod_2fsk_sdr(QObject *parent, int sps, int samp_rate, int carrier_freq,
-                                 int filter_width, float mod_index, float device_frequency, float rf_gain,
-                                 std::string device_args, std::string device_antenna, int freq_corr) :
-    QObject(parent)
+gr_mod_2fsk_sdr_sptr make_gr_mod_2fsk_sdr(int sps, int samp_rate, int carrier_freq,
+                                          int filter_width)
+{
+    return gnuradio::get_initial_sptr(new gr_mod_2fsk_sdr(sps, samp_rate, carrier_freq,
+                                                      filter_width));
+}
+
+gr_mod_2fsk_sdr::gr_mod_2fsk_sdr(int sps, int samp_rate, int carrier_freq,
+                                 int filter_width) :
+    gr::hier_block2 ("gr_mod_2fsk_sdr",
+                      gr::io_signature::make (1, 1, sizeof (char)),
+                      gr::io_signature::make (1, 1, sizeof (gr_complex)))
 {
     std::vector<float> constellation;
     constellation.push_back(-1);
     constellation.push_back(1);
-    std::vector<int> map;
-    map.push_back(0);
-    map.push_back(1);
 
-    _device_frequency = device_frequency;
+
     _samples_per_symbol = sps;
     _samp_rate =samp_rate;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
-    _modulation_index = mod_index;
-    _top_block = gr::make_top_block("2fsk modulator sdr");
-    _vector_source = make_gr_vector_source();
+
     _packed_to_unpacked = gr::blocks::packed_to_unpacked_bb::make(1,gr::GR_MSB_FIRST);
     _scrambler = gr::digital::scrambler_bb::make(0x8A, 0x7F ,7);
 
-    _diff_encoder = gr::digital::diff_encoder_bb::make(2);
-    _map = gr::digital::map_bb::make(map);
 
     _unpacked_to_packed = gr::blocks::unpacked_to_packed_bb::make(1,gr::GR_MSB_FIRST);
     _ccsds_encoder = gr::fec::encode_ccsds_27_bb::make();
@@ -36,69 +37,21 @@ gr_mod_2fsk_sdr::gr_mod_2fsk_sdr(QObject *parent, int sps, int samp_rate, int ca
     _filter = gr::filter::fft_filter_ccf::make(
                 1,gr::filter::firdes::low_pass(
                     1, _samp_rate, _filter_width, 600,gr::filter::firdes::WIN_HAMMING));
-    _osmosdr_sink = osmosdr::sink::make(device_args);
-    _osmosdr_sink->set_sample_rate(_samp_rate);
-    _osmosdr_sink->set_antenna(device_antenna);
 
-    _osmosdr_sink->set_center_freq(_device_frequency);
+    connect(self(),0,_packed_to_unpacked,0);
+    connect(_packed_to_unpacked,0,_scrambler,0);
+    connect(_scrambler,0,_unpacked_to_packed,0);
+    connect(_unpacked_to_packed,0,_ccsds_encoder,0);
+    connect(_ccsds_encoder,0,_chunks_to_symbols,0);
+    connect(_chunks_to_symbols,0,_repeat,0);
 
-    osmosdr::gain_range_t range = _osmosdr_sink->get_gain_range();
-    if (!range.empty())
-    {
-        double gain =  range.start() + rf_gain*(range.stop()-range.start());
-        _osmosdr_sink->set_gain(gain);
-    }
-    _top_block->connect(_vector_source,0,_packed_to_unpacked,0);
-    _top_block->connect(_packed_to_unpacked,0,_scrambler,0);
-    //_top_block->connect(_scrambler,0,_map,0);
-    //_top_block->connect(_map,0,_diff_encoder,0);
-    _top_block->connect(_scrambler,0,_unpacked_to_packed,0);
-    _top_block->connect(_unpacked_to_packed,0,_ccsds_encoder,0);
-    _top_block->connect(_ccsds_encoder,0,_chunks_to_symbols,0);
-    _top_block->connect(_chunks_to_symbols,0,_repeat,0);
+    connect(_repeat,0,_freq_modulator,0);
+    connect(_freq_modulator,0,_amplify,0);
+    connect(_amplify,0,_filter,0);
 
-    _top_block->connect(_repeat,0,_freq_modulator,0);
-    _top_block->connect(_freq_modulator,0,_amplify,0);
-    _top_block->connect(_amplify,0,_filter,0);
-
-    _top_block->connect(_filter,0,_osmosdr_sink,0);
+    connect(_filter,0,self(),0);
 }
 
-gr_mod_2fsk_sdr::~gr_mod_2fsk_sdr()
-{
-    _osmosdr_sink.reset();
-}
 
-void gr_mod_2fsk_sdr::start()
-{
-    _top_block->start();
-}
 
-void gr_mod_2fsk_sdr::stop()
-{
-    _top_block->stop();
-    _top_block->wait();
-}
-
-int gr_mod_2fsk_sdr::setData(std::vector<u_int8_t> *data)
-{
-    return _vector_source->set_data(data);
-
-}
-
-void gr_mod_2fsk_sdr::tune(long center_freq)
-{
-    _device_frequency = center_freq;
-    _osmosdr_sink->set_center_freq(_device_frequency);
-}
-
-void gr_mod_2fsk_sdr::set_power(float dbm)
-{
-    osmosdr::gain_range_t range = _osmosdr_sink->get_gain_range();
-    if (!range.empty())
-    {
-        double gain =  range.start() + dbm*(range.stop()-range.start());
-        _osmosdr_sink->set_gain(gain);
-    }
-}
 

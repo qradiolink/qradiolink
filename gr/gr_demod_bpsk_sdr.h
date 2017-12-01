@@ -17,10 +17,7 @@
 #ifndef GR_DEMOD_BPSK_SDR_H
 #define GR_DEMOD_BPSK_SDR_H
 
-#include <QObject>
-#include <gnuradio/blocks/multiply_cc.h>
-#include <gnuradio/analog/sig_source_c.h>
-#include <gnuradio/top_block.h>
+#include <gnuradio/hier_block2.h>
 #include <gnuradio/endianness.h>
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/blocks/complex_to_real.h>
@@ -41,51 +38,24 @@
 #include <gnuradio/digital/descrambler_bb.h>
 #include <gnuradio/blocks/add_const_ff.h>
 #include <gnuradio/fec/decode_ccsds_27_fb.h>
-#include <gnuradio/qtgui/const_sink_c.h>
-#include <gnuradio/qtgui/sink_c.h>
-#include <gnuradio/qtgui/number_sink.h>
-#include <gnuradio/blocks/complex_to_mag_squared.h>
-#include <gnuradio/blocks/nlog10_ff.h>
-#include <gnuradio/blocks/multiply_const_ff.h>
-#include <gnuradio/filter/single_pole_iir_filter_ff.h>
-#include <gnuradio/blocks/moving_average_ff.h>
-#include <gnuradio/blocks/add_const_ff.h>
 #include <gnuradio/blocks/delay.h>
-#include <gnuradio/blocks/copy.h>
-#include <gnuradio/blocks/message_debug.h>
-#include <osmosdr/source.h>
-#include <vector>
-#include "gr_deframer_bb.h"
+#include <gnuradio/blocks/multiply_const_ff.h>
 
-class gr_demod_bpsk_sdr : public QObject
+class gr_demod_bpsk_sdr;
+
+typedef boost::shared_ptr<gr_demod_bpsk_sdr> gr_demod_bpsk_sdr_sptr;
+gr_demod_bpsk_sdr_sptr make_gr_demod_bpsk_sdr(int sps=125, int samp_rate=250000, int carrier_freq=1700,
+                                          int filter_width=8000);
+
+class gr_demod_bpsk_sdr : public gr::hier_block2
 {
-    Q_OBJECT
 public:
-    explicit gr_demod_bpsk_sdr(gr::qtgui::sink_c::sptr fft_gui,
-                               gr::qtgui::const_sink_c::sptr const_gui, gr::qtgui::number_sink::sptr rssi_gui, QObject *parent = 0, int sps=4, int samp_rate=8000, int carrier_freq=1600,
-                               int filter_width=1200, float mod_index=1, float device_frequency=434000000,
-                               float rf_gain=50, std::string device_args="rtl=0", std::string device_antenna="RX2", int freq_corr=0, int modem_type=1);
-    ~gr_demod_bpsk_sdr();
-signals:
-
-public slots:
-    void start();
-    void stop();
-    std::vector<unsigned char> *getData();
-    std::vector<unsigned char> *getData2();
-    void tune(long center_freq);
-    void set_rx_sensitivity(float value);
-    void enable_gui_const(bool value);
-    void enable_gui_fft(bool value);
-    double get_freq();
+    explicit gr_demod_bpsk_sdr(std::vector<int> signature, int sps=4, int samp_rate=8000, int carrier_freq=1600,
+                               int filter_width=1800);
 
 private:
-    gr::top_block_sptr _top_block;
-    gr_deframer_bb_sptr _deframer1;
-    gr_deframer_bb_sptr _deframer2;
+
     gr::blocks::unpacked_to_packed_bb::sptr _unpacked_to_packed;
-    gr::analog::sig_source_c::sptr _signal_source;
-    gr::blocks::multiply_cc::sptr _multiply;
     gr::filter::freq_xlating_fir_filter_ccf::sptr _freq_transl_filter;
     gr::digital::cma_equalizer_cc::sptr _equalizer;
     gr::blocks::complex_to_real::sptr _complex_to_real;
@@ -108,29 +78,13 @@ private:
     gr::blocks::add_const_ff::sptr _add_const_fec;
     gr::fec::decode_ccsds_27_fb::sptr _cc_decoder;
     gr::fec::decode_ccsds_27_fb::sptr _cc_decoder2;
-    gr::qtgui::const_sink_c::sptr _constellation;
-    gr::qtgui::sink_c::sptr _fft_gui;
-    gr::blocks::message_debug::sptr _message_sink;
-    gr::blocks::copy::sptr _rssi_valve;
-    gr::blocks::copy::sptr _fft_valve;
-    gr::blocks::copy::sptr _const_valve;
-    gr::blocks::complex_to_mag_squared::sptr _mag_squared;
-    gr::blocks::nlog10_ff::sptr _log10;
-    gr::filter::single_pole_iir_filter_ff::sptr _single_pole_filter;
-    gr::blocks::multiply_const_ff::sptr _multiply_const_ff;
-    gr::blocks::moving_average_ff::sptr _moving_average;
-    gr::blocks::add_const_ff::sptr _add_const;
-    gr::qtgui::number_sink::sptr _rssi;
-    osmosdr::source::sptr _osmosdr_source;
+
 
     int _samples_per_symbol;
     int _samp_rate;
     int _carrier_freq;
     int _filter_width;
-    float _modulation_index;
-    float _device_frequency;
     int _target_samp_rate;
-    int _msg_nr;
 
 };
 

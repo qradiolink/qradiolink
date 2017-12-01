@@ -401,7 +401,7 @@ void RadioOp::updateFrequency()
     if(freq != 0 && freq != _tune_center_freq)
     {
         _tune_center_freq = freq;
-        _modem->tune(_tune_center_freq, false);
+        _modem->tune(_tune_center_freq);
         _modem->tuneTx(_tune_center_freq + _tune_shift_freq);
         emit freqFromGUI(_tune_center_freq);
     }
@@ -817,16 +817,7 @@ void RadioOp::toggleTX(bool value)
 
 void RadioOp::toggleMode(int value)
 {
-    bool rx_inited_before = _rx_inited;
-    bool tx_inited_before = _tx_inited;
-    if(_rx_inited)
-    {
-        toggleRX(false);
-    }
-    if(_tx_inited)
-    {
-        toggleTX(false);
-    }
+
     _radio_type = radio_type::RADIO_TYPE_DIGITAL;
     switch(value)
     {
@@ -926,11 +917,8 @@ void RadioOp::toggleMode(int value)
         _step_hz = 10;
         break;
     }
-    if(rx_inited_before)
-        toggleRX(true);
 
-    if(tx_inited_before)
-        toggleTX(true);
+    _modem->toggleMode(_mode);
 }
 
 void RadioOp::usePTTForVOIP(bool value)
@@ -955,7 +943,7 @@ void RadioOp::tuneFreq(qint64 center_freq)
 {
     _mutex->lock();
     _tune_center_freq = center_freq;
-    _modem->tune(_tune_center_freq, false);
+    _modem->tune(_tune_center_freq);
     //_modem->tuneTx(_tune_center_freq + _tune_shift_freq);
     _mutex->unlock();
     _fft_gui->set_frequency_range(_tune_center_freq, 1000000);
@@ -1043,7 +1031,7 @@ void RadioOp::autoTune()
     else
         usleep(10);
     _tune_center_freq = _tune_center_freq + _step_hz;
-    _modem->tune(_tune_center_freq, true);
+    _modem->tune(_tune_center_freq);
     _modem->tuneTx(_tune_center_freq + _tune_shift_freq);
     if(_tune_center_freq >= (_tune_center_freq + _tune_limit_upper))
         _tune_center_freq = _tune_center_freq + _tune_limit_lower;

@@ -134,7 +134,8 @@ HEADERS  += mainwindow.h\
     gr/gr_deframer_bb.h \
     gr/gr_audio_source.h \
     gr/gr_audio_sink.h \
-    gr/gr_4fsk_discriminator.h
+    gr/gr_4fsk_discriminator.h \
+    gr/modem_types.h
 
 
 FORMS    += mainwindow.ui

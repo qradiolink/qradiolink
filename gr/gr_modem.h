@@ -31,25 +31,13 @@
 #include "config_defines.h"
 #include "settings.h"
 #include "station.h"
+#include "modem_types.h"
+#include "gr/gr_mod_base.h"
+#include "gr/gr_demod_base.h"
 #include "gr_mod_gmsk.h"
 #include "gr_demod_gmsk.h"
 #include "gr_mod_bpsk.h"
 #include "gr_demod_bpsk.h"
-#include "gr_mod_bpsk_sdr.h"
-#include "gr_demod_bpsk_sdr.h"
-#include "gr_mod_qpsk_sdr.h"
-#include "gr_mod_4fsk_sdr.h"
-#include "gr_mod_2fsk_sdr.h"
-#include "gr_demod_qpsk_sdr.h"
-#include "gr_demod_4fsk_sdr.h"
-#include "gr_demod_2fsk_sdr.h"
-#include "gr_mod_nbfm_sdr.h"
-#include "gr_demod_nbfm_sdr.h"
-#include "gr_demod_wbfm_sdr.h"
-#include "gr_mod_ssb_sdr.h"
-#include "gr_demod_ssb_sdr.h"
-#include "gr_mod_am_sdr.h"
-#include "gr_demod_am_sdr.h"
 #include <gnuradio/qtgui/number_sink.h>
 #include <gnuradio/qtgui/const_sink_c.h>
 #include <gnuradio/qtgui/sink_c.h>
@@ -77,25 +65,6 @@
 
 #include <errno.h>
 
-namespace gr_modem_types {
-    enum
-    {
-        ModemTypeBPSK2000,
-        ModemTypeQPSK20000,
-        ModemTypeQPSKVideo,
-        ModemType4FSK20000,
-        ModemType4FSK2000,
-        ModemTypeQPSK2000,
-        ModemTypeNBFM2500,
-        ModemTypeNBFM5000,
-        ModemTypeWBFM,
-        ModemTypeSSB2500,
-        ModemTypeAM5000,
-        ModemType2FSK2000,
-        ModemTypeBPSK1000,
-        ModemTypeQPSK250000,
-    };
-}
 
 class gr_modem : public QObject
 {
@@ -146,7 +115,8 @@ public slots:
     void initRX(int modem_type, std::string device_args, std::string device_antenna, int freq_corr);
     void deinitTX(int modem_type);
     void deinitRX(int modem_type);
-    void tune(long center_freq, bool sync=false);
+    void toggleMode(int modem_type);
+    void tune(long center_freq);
     void tuneTx(long center_freq);
     void startRX();
     void stopRX();
@@ -172,28 +142,13 @@ private:
     void transmit(QVector<std::vector<unsigned char>*> frames);
     void synchronize(int v_size, std::vector<unsigned char> *data);
 
-
+    gr_mod_base *_gr_mod_base;
+    gr_demod_base *_gr_demod_base;
     gr_mod_gmsk *_gr_mod_gmsk;
     gr_demod_gmsk *_gr_demod_gmsk;
     gr_mod_bpsk *_gr_mod_bpsk;
     gr_demod_bpsk *_gr_demod_bpsk;
 
-    gr_mod_bpsk_sdr *_gr_mod_bpsk_sdr;
-    gr_mod_qpsk_sdr *_gr_mod_qpsk_sdr;
-    gr_mod_4fsk_sdr *_gr_mod_4fsk_sdr;
-    gr_mod_2fsk_sdr *_gr_mod_2fsk_sdr;
-    gr_mod_nbfm_sdr *_gr_mod_nbfm_sdr;
-    gr_mod_ssb_sdr *_gr_mod_ssb_sdr;
-    gr_mod_am_sdr *_gr_mod_am_sdr;
-
-    gr_demod_bpsk_sdr *_gr_demod_bpsk_sdr;
-    gr_demod_qpsk_sdr *_gr_demod_qpsk_sdr;
-    gr_demod_4fsk_sdr *_gr_demod_4fsk_sdr;
-    gr_demod_2fsk_sdr *_gr_demod_2fsk_sdr;
-    gr_demod_nbfm_sdr *_gr_demod_nbfm_sdr;
-    gr_demod_wbfm_sdr *_gr_demod_wbfm_sdr;
-    gr_demod_ssb_sdr *_gr_demod_ssb_sdr;
-    gr_demod_am_sdr *_gr_demod_am_sdr;
     int _modem_type;
     int _frame_length;
     quint64 _frame_counter;

@@ -17,9 +17,8 @@
 #ifndef GR_MOD_NBFM_SDR_H
 #define GR_MOD_NBFM_SDR_H
 
-#include <QObject>
-#include <gnuradio/top_block.h>
-#include "gr_audio_source.h"
+
+#include <gnuradio/hier_block2.h>
 #include <gnuradio/analog/frequency_modulator_fc.h>
 #include <gnuradio/analog/sig_source_f.h>
 #include <gnuradio/blocks/add_ff.h>
@@ -32,28 +31,22 @@
 #include <gnuradio/blocks/multiply_ff.h>
 #include <gnuradio/analog/sig_source_f.h>
 #include <gnuradio/analog/agc2_ff.h>
-#include <osmosdr/sink.h>
 
-class gr_mod_nbfm_sdr : public QObject
+
+class gr_mod_nbfm_sdr;
+
+typedef boost::shared_ptr<gr_mod_nbfm_sdr> gr_mod_nbfm_sdr_sptr;
+gr_mod_nbfm_sdr_sptr make_gr_mod_nbfm_sdr(int sps=125, int samp_rate=250000, int carrier_freq=1700,
+                                          int filter_width=8000);
+
+class gr_mod_nbfm_sdr : public gr::hier_block2
 {
-    Q_OBJECT
 public:
-    explicit gr_mod_nbfm_sdr(QObject *parent = 0, int samp_rate=250000, int carrier_freq=1700,
-                             int filter_width=1200, float mod_index=1, float device_frequency=434000000,
-                             float rf_gain=0.5, std::string device_args="uhd", std::string device_antenna="TX/RX", int freq_corr=0);
-    ~gr_mod_nbfm_sdr();
-public slots:
-    void start();
-    void stop();
-    void tune(long center_freq);
-    void set_power(float dbm);
+    explicit gr_mod_nbfm_sdr(int sps=125, int samp_rate=250000, int carrier_freq=1700,
+                             int filter_width=8000);
     void set_ctcss(float value);
-    int setData(std::vector<float> *data);
-
-
 private:
-    gr::top_block_sptr _top_block;
-    gr_audio_source_sptr _audio_source;
+
     gr::analog::frequency_modulator_fc::sptr _fm_modulator;
     gr::analog::sig_source_f::sptr _tone_source;
     gr::blocks::add_ff::sptr _add;
@@ -67,13 +60,11 @@ private:
     gr::blocks::multiply_ff::sptr _multiply;
     gr::analog::agc2_ff::sptr _agc;
 
-    osmosdr::sink::sptr _osmosdr_sink;
 
     int _samp_rate;
     int _carrier_freq;
     int _filter_width;
-    float _modulation_index;
-    float _device_frequency;
+
 };
 
 #endif // GR_MOD_NBFM_SDR_H

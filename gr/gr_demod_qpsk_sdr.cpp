@@ -16,25 +16,35 @@
 
 #include "gr_demod_qpsk_sdr.h"
 
-gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui::const_sink_c::sptr const_gui,
-                                     gr::qtgui::number_sink::sptr rssi_gui, QObject *parent,
-                                     int sps, int samp_rate, int target_samp_rate, int carrier_freq,
-                                     int filter_width, float mod_index, float device_frequency, float rf_gain,
-                                     std::string device_args, std::string device_antenna, int freq_corr) :
-    QObject(parent)
+gr_demod_qpsk_sdr_sptr make_gr_demod_qpsk_sdr(int sps, int samp_rate, int carrier_freq,
+                                          int filter_width)
 {
-    _msg_nr = 0;
-    _target_samp_rate = target_samp_rate;
-    _rssi = rssi_gui;
-    _device_frequency = device_frequency;
+    std::vector<int> signature;
+    signature.push_back(sizeof (gr_complex));
+    signature.push_back(sizeof (gr_complex));
+    signature.push_back(sizeof (char));
+    return gnuradio::get_initial_sptr(new gr_demod_qpsk_sdr(signature, sps, samp_rate, carrier_freq,
+                                                      filter_width));
+}
+
+
+
+gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int samp_rate, int carrier_freq,
+                                 int filter_width) :
+    gr::hier_block2 ("gr_demod_qpsk_sdr",
+                      gr::io_signature::make (1, 1, sizeof (gr_complex)),
+                      gr::io_signature::makev (3, 3, signature))
+{
+
     int decimation;
     int interpolation;
-    if(_target_samp_rate == 20000)
+    if(sps > 2)
     {
         interpolation = 1;
         decimation = 50;
         _samples_per_symbol = sps*2/25;
         _center_spacing = 25000;
+        _target_samp_rate = 20000;
     }
     else
     {
@@ -42,6 +52,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
         decimation = 4;
         _samples_per_symbol = sps;
         _center_spacing = 250000;
+        _target_samp_rate = 250000;
     }
     _samp_rate =samp_rate;
     _carrier_freq = carrier_freq;
@@ -50,8 +61,6 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     if(_target_samp_rate > 100000)
         filter_slope = 10000;
 
-    _modulation_index = mod_index;
-    _top_block = gr::make_top_block("qpsk demodulator sdr");
 
     std::vector<int> map;
     map.push_back(0);
@@ -72,8 +81,6 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _resampler = gr::filter::rational_resampler_base_ccf::make(interpolation, decimation, taps);
 
     _agc = gr::analog::agc2_cc::make(0.06e-1, 1e-3, 1, 1);
-    _signal_source = gr::analog::sig_source_c::make(_samp_rate,gr::analog::GR_COS_WAVE,-_center_spacing,1);
-    _multiply = gr::blocks::multiply_cc::make();
     /*
     _freq_transl_filter = gr::filter::freq_xlating_fir_filter_ccf::make(
                 1,gr::filter::firdes::low_pass(
@@ -105,143 +112,30 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _unpack = gr::blocks::unpack_k_bits_bb::make(2);
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
     _constellation_receiver = gr::digital::constellation_decoder_cb::make(constellation);
-    _vector_sink = make_gr_vector_sink();
 
-    _message_sink = gr::blocks::message_debug::make();
 
-    _rssi_valve = gr::blocks::copy::make(8);
-    _rssi_valve->set_enabled(false);
-    _fft_valve = gr::blocks::copy::make(8);
-    _fft_valve->set_enabled(false);
-    _const_valve = gr::blocks::copy::make(8);
-    _const_valve->set_enabled(false);
-    _mag_squared = gr::blocks::complex_to_mag_squared::make();
-    _single_pole_filter = gr::filter::single_pole_iir_filter_ff::make(0.04);
-    _log10 = gr::blocks::nlog10_ff::make();
-    _multiply_const_ff = gr::blocks::multiply_const_ff::make(10);
-    _moving_average = gr::blocks::moving_average_ff::make(25000,1,2000);
-    _add_const = gr::blocks::add_const_ff::make(-110);
-
-    _osmosdr_source = osmosdr::source::make(device_args);
-    _osmosdr_source->set_center_freq(_device_frequency - _center_spacing);
-    _osmosdr_source->set_bandwidth(_samp_rate*2);
-    _osmosdr_source->set_sample_rate(_samp_rate);
-    _osmosdr_source->set_freq_corr(freq_corr);
-    _osmosdr_source->set_gain_mode(false);
-    _osmosdr_source->set_dc_offset_mode(0);
-    _osmosdr_source->set_iq_balance_mode(0);
-    _osmosdr_source->set_antenna(device_antenna);
-    osmosdr::gain_range_t range = _osmosdr_source->get_gain_range();
-    if (!range.empty())
-    {
-        double gain =  range.start() + rf_gain*(range.stop()-range.start());
-        _osmosdr_source->set_gain(gain);
-    }
-    else
-    {
-        _osmosdr_source->set_gain_mode(true);
-    }
-    _constellation = const_gui;
-    _fft_gui = fft_gui;
-    _top_block->connect(_osmosdr_source,0,_multiply,0);
-    _top_block->connect(_signal_source,0,_multiply,1);
-    _top_block->connect(_multiply,0,_fft_valve,0);
-    _top_block->connect(_fft_valve,0,_fft_gui,0);
-    _top_block->msg_connect(_fft_gui,"freq",_message_sink,"store");
-    _top_block->connect(_multiply,0,_resampler,0);
-    _top_block->connect(_resampler,0,_filter,0);
-
-    _top_block->connect(_filter,0,_agc,0);
-    _top_block->connect(_agc,0,_clock_recovery,0);
-    //_top_block->connect(_fll,0,_clock_recovery,0);
+    connect(self(),0,_resampler,0);
+    connect(_resampler,0,_filter,0);
+    connect(_filter,0,self(),0);
+    connect(_filter,0,_agc,0);
+    connect(_agc,0,_clock_recovery,0);
+    //connect(_fll,0,_clock_recovery,0);
     if(_target_samp_rate == 20000)
     {
-        _top_block->connect(_clock_recovery,0,_equalizer,0);
-        _top_block->connect(_equalizer,0,_costas_loop,0);
+        connect(_clock_recovery,0,_equalizer,0);
+        connect(_equalizer,0,_costas_loop,0);
     }
     else
     {
-        _top_block->connect(_clock_recovery,0,_costas_loop,0);
+        connect(_clock_recovery,0,_costas_loop,0);
     }
-    _top_block->connect(_costas_loop,0,_const_valve,0);
-    _top_block->connect(_const_valve,0,_constellation,0);
-    _top_block->connect(_costas_loop,0,_constellation_receiver,0);
-    _top_block->connect(_constellation_receiver,0,_diff_decoder,0);
-    _top_block->connect(_diff_decoder,0,_map,0);
-    _top_block->connect(_map,0,_unpack,0);
-    _top_block->connect(_unpack,0,_descrambler,0);
-    _top_block->connect(_descrambler,0,_vector_sink,0);
+    connect(_costas_loop,0,self(),1);
 
-    _top_block->connect(_filter,0,_rssi_valve,0);
-    _top_block->connect(_rssi_valve,0,_mag_squared,0);
-    _top_block->connect(_mag_squared,0,_moving_average,0);
-    _top_block->connect(_moving_average,0,_single_pole_filter,0);
-    _top_block->connect(_single_pole_filter,0,_log10,0);
-    _top_block->connect(_log10,0,_multiply_const_ff,0);
-    _top_block->connect(_multiply_const_ff,0,_add_const,0);
-    _top_block->connect(_add_const,0,_rssi,0);
-}
+    connect(_costas_loop,0,_constellation_receiver,0);
+    connect(_constellation_receiver,0,_diff_decoder,0);
+    connect(_diff_decoder,0,_map,0);
+    connect(_map,0,_unpack,0);
+    connect(_unpack,0,_descrambler,0);
+    connect(_descrambler,0,self(),2);
 
-gr_demod_qpsk_sdr::~gr_demod_qpsk_sdr()
-{
-    _osmosdr_source.reset();
-}
-
-void gr_demod_qpsk_sdr::start()
-{
-    _top_block->start();
-}
-
-void gr_demod_qpsk_sdr::stop()
-{
-    _top_block->stop();
-    _top_block->wait();
-}
-
-std::vector<unsigned char>* gr_demod_qpsk_sdr::getData()
-{
-    std::vector<unsigned char> *data = _vector_sink->get_data();
-    return data;
-}
-
-void gr_demod_qpsk_sdr::tune(long center_freq)
-{
-    _device_frequency = center_freq;
-    _osmosdr_source->set_center_freq(_device_frequency - _center_spacing);
-}
-
-double gr_demod_qpsk_sdr::get_freq()
-{
-    int n = _message_sink->num_messages();
-    if(n > _msg_nr)
-    {
-        _msg_nr = n;
-        pmt::pmt_t msg = _message_sink->get_message(n - 1);
-        return pmt::to_double(pmt::cdr(msg));
-    }
-    else
-    {
-        return 0;
-    }
-}
-
-void gr_demod_qpsk_sdr::set_rx_sensitivity(float value)
-{
-    osmosdr::gain_range_t range = _osmosdr_source->get_gain_range();
-    if (!range.empty())
-    {
-        double gain =  range.start() + value*(range.stop()-range.start());
-        _osmosdr_source->set_gain(gain);
-    }
-}
-
-void gr_demod_qpsk_sdr::enable_gui_const(bool value)
-{
-    _rssi_valve->set_enabled(value);
-    _const_valve->set_enabled(value);
-}
-
-void gr_demod_qpsk_sdr::enable_gui_fft(bool value)
-{
-    _fft_valve->set_enabled(value);
 }
