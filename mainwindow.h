@@ -56,7 +56,8 @@ public slots:
     void tuneCenterFreq(int value);
     void tuneMainFreq(qint64 freq);
     void toggleWideband(bool value);
-    void toggleMode(int value);
+    void toggleRxMode(int value);
+    void toggleTxMode(int value);
     void setTxPowerDisplay(int value);
     void setRxSensitivityDisplay(int value);
     void setSquelchDisplay(int value);
@@ -86,7 +87,8 @@ signals:
     void tuneTxFreq(qint64 center_freq);
     void fineTuneFreq(long center_freq);
     void toggleWidebandMode(bool value);
-    void toggleModemMode(int value);
+    void toggleRxModemMode(int value);
+    void toggleTxModemMode(int value);
     void setTxPower(int value);
     void setRxSensitivity(int value);
     void setSquelch(int value);

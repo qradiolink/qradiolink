@@ -103,7 +103,8 @@ public slots:
     void receivePCMAudio(std::vector<float>* audio_data);
     void toggleRX(bool value);
     void toggleTX(bool value);
-    void toggleMode(int value);
+    void toggleRxMode(int value);
+    void toggleTxMode(int value);
     void fineTuneFreq(long center_freq);
     void tuneFreq(qint64 center_freq);
     void tuneTxFreq(qint64 center_freq);
@@ -150,8 +151,10 @@ private:
     VideoEncoder *_video;
     NetDevice *_net_device;
     gr_modem *_modem;
-    int _mode;
-    int _radio_type;
+    int _rx_mode;
+    int _tx_mode;
+    int _rx_radio_type;
+    int _tx_radio_type;
     long long _tune_center_freq;
     long long _tune_shift_freq;
     float _tx_power;

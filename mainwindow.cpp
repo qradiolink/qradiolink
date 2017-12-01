@@ -60,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->rxSensitivitySlider,SIGNAL(valueChanged(int)),this,SLOT(setRxSensitivityDisplay(int)));
     QObject::connect(ui->rxSquelchSlider,SIGNAL(valueChanged(int)),this,SLOT(setSquelchDisplay(int)));
     QObject::connect(ui->rxVolumeSlider,SIGNAL(valueChanged(int)),this,SLOT(setVolumeDisplay(int)));
-    QObject::connect(ui->modemTypeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(toggleMode(int)));
+    QObject::connect(ui->modemTypeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(toggleRxMode(int)));
     QObject::connect(ui->autotuneButton,SIGNAL(toggled(bool)),this,SLOT(autoTune(bool)));
     QObject::connect(ui->saveOptionsButton,SIGNAL(clicked()),this,SLOT(saveConfig()));
     QObject::connect(ui->tabWidget,SIGNAL(currentChanged(int)),this,SLOT(mainTabChanged(int)));
@@ -321,9 +321,15 @@ void MainWindow::toggleWideband(bool value)
     emit toggleWidebandMode(value);
 }
 
-void MainWindow::toggleMode(int value)
+void MainWindow::toggleRxMode(int value)
 {
-    emit toggleModemMode(value);
+    emit toggleRxModemMode(value);
+    mainTabChanged(ui->tabWidget->currentIndex());
+}
+
+void MainWindow::toggleTxMode(int value)
+{
+    emit toggleTxModemMode(value);
     mainTabChanged(ui->tabWidget->currentIndex());
 }
 

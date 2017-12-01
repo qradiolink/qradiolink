@@ -115,7 +115,8 @@ public slots:
     void initRX(int modem_type, std::string device_args, std::string device_antenna, int freq_corr);
     void deinitTX(int modem_type);
     void deinitRX(int modem_type);
-    void toggleMode(int modem_type);
+    void toggleRxMode(int modem_type);
+    void toggleTxMode(int modem_type);
     void tune(long center_freq);
     void tuneTx(long center_freq);
     void startRX();
@@ -149,7 +150,8 @@ private:
     gr_mod_bpsk *_gr_mod_bpsk;
     gr_demod_bpsk *_gr_demod_bpsk;
 
-    int _modem_type;
+    int _modem_type_rx;
+    int _modem_type_tx;
     int _frame_length;
     quint64 _frame_counter;
     quint8 _last_frame_type;
