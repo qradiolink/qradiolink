@@ -555,7 +555,6 @@ void MumbleClient::processAudio(short *audiobuffer, int audiobuffersize)
     {
         encoded_audio = _codec->encode_opus(audiobuffer, audiobuffersize, packet_size);
     }
-
     createVoicePacket(encoded_audio, packet_size);
     delete[] encoded_audio;
     delete[] audiobuffer;

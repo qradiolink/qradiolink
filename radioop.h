@@ -176,6 +176,7 @@ private:
     unsigned char *_rand_frame_data;
     std::vector<short> *_m_queue;
     quint64 _last_session_id;
+    QVector<short> *_voip_encode_buffer;
     bool _repeat;
 
     void readConfig(std::string &rx_device_args, std::string &tx_device_args,

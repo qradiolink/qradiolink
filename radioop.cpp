@@ -64,6 +64,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _data_led_timer = new QTimer(this);
     _data_led_timer->setSingleShot(true);
     _rand_frame_data = new unsigned char[5000];
+    _voip_encode_buffer = new QVector<short>;
     _fft_gui = fft_gui;
     QObject::connect(_voice_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));
     QObject::connect(_data_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));
@@ -422,6 +423,16 @@ void RadioOp::run()
     {
         bool transmitting = _transmitting;
         QCoreApplication::processEvents();
+        if(_voip_encode_buffer->size() > 320)
+        {
+            short *pcm = new short[320];
+            for(int i =0; i< 320;i++)
+            {
+                pcm[i] = _voip_encode_buffer->at(i);
+            }
+            _voip_encode_buffer->remove(0,320);
+            emit voipData(pcm,320*sizeof(short));
+        }
         int time = QDateTime::currentDateTime().toTime_t();
         if((time - last_ping_time) > 20)
         {
@@ -567,7 +578,11 @@ void RadioOp::receivePCMAudio(std::vector<float> *audio_data)
     }
     if(_voip_forwarding)
     {
-        emit voipData(pcm,size*sizeof(short));
+        for(int i=0;i<size;i++)
+        {
+            _voip_encode_buffer->push_back(pcm[i]);
+        }
+        delete[] pcm;
     }
     else
     {
