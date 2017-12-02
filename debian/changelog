@@ -1,6 +1,11 @@
-qradiolink (0.2.33-1) UNRELEASED; urgency=medium
+qradiolink (0.3.4-1) UNRELEASED; urgency=medium
 
   [ Adrian Musceac ]
+  * 4FSK mode improvements
+  * Rate 1/2 FEC for 2FSK mode
+  * Fix several important issues
+  * VOIP integration
+  * AM and WideFM modes
   * FM CTCSS encoding and decoding
   * Fix some tuning bugs
   * Unify sound interface, prepare for VOIP integration
