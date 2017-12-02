@@ -6,7 +6,7 @@ QRadioLink
 About
 -----
 
-*QRadioLink* is a Linux SDR/VOIP application built on top of [Gnuradio](https://www.gnuradio.org/), 
+*QRadioLink* is a Linux SDR transceiver application with VOIP support, built on top of [Gnuradio](https://www.gnuradio.org/), 
 made for hobbyists, tinkerers and radio enthusiasts,
 which allows experimenting with software defined radio hardware using different digital and analog modes and 
 an easy to use user interface.
@@ -34,12 +34,13 @@ Features
 
 - VOIP connection between two or more stations operating in simplex or semi-duplex mode
 - Direct VOIP talk-around
-- Radio forwarding over VOIP
+- Radio forwarding over VOIP - forward analog or digital radio to VOIP connection and viceversa
 - TLS session encryption
 - Transmit and receive analog voice, digital voice, text messages, digital video, IP protocol.
+- Mixed operation mode: transmit one mode and receive another
 - Digital voice codecs: Codec2 700 bit/s, Codec2 1400 bit/s, Opus 9600 bit/s
-- Narrow band digital voice mode with [Codec2](http://rowetel.com/codec2.html) audio codec
-- Wideband digital voice mode with [Opus](https://xiph.org) audio codec
+- Narrow band digital voice mode with the [Codec2](http://rowetel.com/codec2.html) audio codec
+- Wideband digital voice mode with the [Opus](https://xiph.org) audio codec
 - Digital modulation:  **BPSK**, **DQPSK**, **2FSK**, **4FSK**
 - Analog modulation: narrow FM (5 kHz), FM (10 kHz), Wide FM (broadcast, receive-only), AM, SSB
 - CTCSS encoder and decoder for analog FM
@@ -109,6 +110,7 @@ make
 </pre>
 
 Known issues:
+- Digital reception sometimes stops working after switching modes. Workaround: select RX mode before starting RX.
 - FFT display has incorrect size (too small)
 Workaround: switch to waterfall and back
 - Segmentation fault when starting TX or RX modes. 
