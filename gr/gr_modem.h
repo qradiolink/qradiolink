@@ -131,6 +131,7 @@ public slots:
     void enableGUIConst(bool value);
     void enableGUIFFT(bool value);
     double getFreqGUI();
+
 private:
 
     Settings *_settings;

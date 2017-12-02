@@ -59,7 +59,9 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _tune_counter = 0;
     _tx_modem_started = false;
     _voice_led_timer = new QTimer(this);
+    _voice_led_timer->setSingleShot(true);
     _data_led_timer = new QTimer(this);
+    _data_led_timer->setSingleShot(true);
     _rand_frame_data = new unsigned char[5000];
     _fft_gui = fft_gui;
     QObject::connect(_voice_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));
@@ -456,7 +458,10 @@ void RadioOp::run()
         }
         else
         {
-            if(_rx_inited)
+            _mutex->lock();
+            bool rx_inited = _rx_inited;
+            _mutex->unlock();
+            if(rx_inited)
             {
                 if(!_tuning_done)
                     autoTune();
@@ -471,11 +476,16 @@ void RadioOp::run()
         }
         if(_process_text && (_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL))
         {
-            if(_tx_inited) {
+            if(_tx_inited)
+            {
                 if(!_tx_modem_started)
                 {
-                    _modem->stopTX();
-                    _modem->startTX();
+                    stopTx();
+                    startTx();
+                }
+                else
+                {
+                    startTx();
                 }
                 _tx_modem_started = true;
                 _modem->startTransmission(_callsign,_callsign.size());
@@ -819,7 +829,9 @@ void RadioOp::toggleTX(bool value)
 
 void RadioOp::toggleRxMode(int value)
 {
-
+    _mutex->lock();
+    _rx_inited = false;
+    _mutex->unlock();
     _rx_radio_type = radio_type::RADIO_TYPE_DIGITAL;
     switch(value)
     {
@@ -921,11 +933,13 @@ void RadioOp::toggleRxMode(int value)
     }
 
     _modem->toggleRxMode(_rx_mode);
+    _mutex->lock();
+    _rx_inited = true;
+    _mutex->unlock();
 }
 
 void RadioOp::toggleTxMode(int value)
 {
-
     _tx_radio_type = radio_type::RADIO_TYPE_DIGITAL;
     switch(value)
     {
