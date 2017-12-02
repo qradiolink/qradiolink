@@ -2132,6 +2132,9 @@ color: rgb(0, 0, 83);</string>
               <pointsize>12</pointsize>
              </font>
             </property>
+            <property name="maxVisibleItems">
+             <number>25</number>
+            </property>
             <item>
              <property name="text">
               <string>BPSK  2K</string>
@@ -2236,6 +2239,9 @@ color: rgb(125, 0, 0);</string>
              <font>
               <pointsize>12</pointsize>
              </font>
+            </property>
+            <property name="maxVisibleItems">
+             <number>25</number>
             </property>
             <item>
              <property name="text">

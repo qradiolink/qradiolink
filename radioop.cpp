@@ -829,9 +829,13 @@ void RadioOp::toggleTX(bool value)
 
 void RadioOp::toggleRxMode(int value)
 {
-    _mutex->lock();
-    _rx_inited = false;
-    _mutex->unlock();
+    bool rx_inited_before = _rx_inited;
+    if(rx_inited_before)
+    {
+        _mutex->lock();
+        _rx_inited = false;
+        _mutex->unlock();
+    }
     _rx_radio_type = radio_type::RADIO_TYPE_DIGITAL;
     switch(value)
     {
@@ -933,9 +937,12 @@ void RadioOp::toggleRxMode(int value)
     }
 
     _modem->toggleRxMode(_rx_mode);
-    _mutex->lock();
-    _rx_inited = true;
-    _mutex->unlock();
+    if(rx_inited_before)
+    {
+        _mutex->lock();
+        _rx_inited = true;
+        _mutex->unlock();
+    }
 }
 
 void RadioOp::toggleTxMode(int value)
