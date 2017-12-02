@@ -108,11 +108,17 @@ private:
 
 
     gr_demod_2fsk_sdr_sptr _2fsk;
-    gr_demod_4fsk_sdr_sptr _4fsk;
+    gr_demod_4fsk_sdr_sptr _4fsk_2k;
+    gr_demod_4fsk_sdr_sptr _4fsk_10k;
     gr_demod_am_sdr_sptr _am;
-    gr_demod_bpsk_sdr_sptr _bpsk;
-    gr_demod_nbfm_sdr_sptr _fm;
-    gr_demod_qpsk_sdr_sptr _qpsk;
+    gr_demod_bpsk_sdr_sptr _bpsk_1k;
+    gr_demod_bpsk_sdr_sptr _bpsk_2k;
+    gr_demod_nbfm_sdr_sptr _fm_2500;
+    gr_demod_nbfm_sdr_sptr _fm_5000;
+    gr_demod_qpsk_sdr_sptr _qpsk_2k;
+    gr_demod_qpsk_sdr_sptr _qpsk_10k;
+    gr_demod_qpsk_sdr_sptr _qpsk_250k;
+    gr_demod_qpsk_sdr_sptr _qpsk_video;
     gr_demod_ssb_sdr_sptr _ssb;
     gr_demod_wbfm_sdr_sptr _wfm;
 

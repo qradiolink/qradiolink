@@ -22,12 +22,9 @@ gr_modem::gr_modem(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgu
 {
     _modem_type_rx = gr_modem_types::ModemTypeBPSK2000;
     _modem_type_tx = gr_modem_types::ModemTypeBPSK2000;
-    _frame_length = 7;
+
     _settings = settings;
     _transmitting = false;
-    _frame_counter = 0;
-    _shift_reg = 0;
-    _last_frame_type = FrameTypeNone;
     //_gr_mod_gmsk = new gr_mod_gmsk(0,24,48000,1600,1200,1);
     //_gr_mod_gmsk->start();
     //_gr_demod_gmsk = new gr_demod_gmsk(0,24,48000,1600,1200,1);
@@ -36,9 +33,13 @@ gr_modem::gr_modem(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgu
     //_gr_mod_bpsk->start();
     //_gr_demod_bpsk = new gr_demod_bpsk(0,24,48000,1700,1200,1);
     //_gr_demod_bpsk->start();
+    _frame_length = 7;
     _bit_buf_len = 8 *8;
     _bit_buf_index = 0;
     _sync_found = false;
+    _frame_counter = 0;
+    _shift_reg = 0;
+    _last_frame_type = FrameTypeNone;
     _current_frame_type = FrameTypeNone;
     _const_gui = const_gui;
     _rssi_gui = rssi_gui;
@@ -86,6 +87,7 @@ void gr_modem::toggleTxMode(int modem_type)
 {
     if(_gr_mod_base)
     {
+        _modem_type_tx = modem_type;
         _gr_mod_base->set_mode(modem_type);
         if(modem_type == gr_modem_types::ModemTypeBPSK2000)
         {
@@ -124,13 +126,14 @@ void gr_modem::toggleTxMode(int modem_type)
             _frame_length = 1512;
         }
     }
-    _modem_type_tx = modem_type;
+
 }
 
 void gr_modem::toggleRxMode(int modem_type)
 {
     if(_gr_demod_base)
     {
+        _modem_type_rx = modem_type;
         _gr_demod_base->set_mode(modem_type);
         if(modem_type == gr_modem_types::ModemTypeBPSK2000)
         {
@@ -187,7 +190,6 @@ void gr_modem::toggleRxMode(int modem_type)
             _bit_buf = new unsigned char[_bit_buf_len];
         }
     }
-    _modem_type_rx = modem_type;
 }
 
 void gr_modem::deinitTX(int modem_type)

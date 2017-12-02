@@ -93,9 +93,24 @@ gr_demod_base::gr_demod_base(gr::qtgui::sink_c::sptr fft_gui,
 
     _deframer1_1 = make_gr_deframer_bb(1);
     _deframer2_1 = make_gr_deframer_bb(1);
-
     _deframer1_2 = make_gr_deframer_bb(2);
     _deframer2_2 = make_gr_deframer_bb(2);
+
+    _2fsk = make_gr_demod_2fsk_sdr(125,1000000,1700,4000);
+    _4fsk_2k = make_gr_demod_4fsk_sdr(250,1000000,1700,2000);
+    _4fsk_10k = make_gr_demod_4fsk_sdr(50,1000000,1700,10000);
+    _am = make_gr_demod_am_sdr(0, 1000000,1700,4000);
+    _bpsk_1k = make_gr_demod_bpsk_sdr(250,1000000,1700,1300);
+    _bpsk_2k = make_gr_demod_bpsk_sdr(125,1000000,1700,2500);
+    _fm_2500 = make_gr_demod_nbfm_sdr(0, 1000000,1700,2500);
+    _fm_5000 = make_gr_demod_nbfm_sdr(0, 1000000,1700,4000);
+    _qpsk_2k = make_gr_demod_qpsk_sdr(250,1000000,1700,800);
+    _qpsk_10k = make_gr_demod_qpsk_sdr(50,1000000,1700,4000);
+    _qpsk_250k = make_gr_demod_qpsk_sdr(2,1000000,1700,65000);
+    _qpsk_video = make_gr_demod_qpsk_sdr(2,1000000,1700,65000);
+    _ssb = make_gr_demod_ssb_sdr(0, 1000000,1700,2500);
+    _wfm = make_gr_demod_wbfm_sdr(0, 1000000,1700,75000);
+
 }
 
 gr_demod_base::~gr_demod_base()
@@ -118,12 +133,18 @@ void gr_demod_base::set_mode(int mode)
         _top_block->disconnect(_2fsk,3,_deframer2_1,0);
         break;
     case gr_modem_types::ModemType4FSK2000:
-    case gr_modem_types::ModemType4FSK20000:
-        _top_block->disconnect(_multiply,0,_4fsk,0);
-        _top_block->disconnect(_4fsk,0,_rssi_valve,0);
-        _top_block->disconnect(_4fsk,1,_const_valve,0);
+        _top_block->disconnect(_multiply,0,_4fsk_2k,0);
+        _top_block->disconnect(_4fsk_2k,0,_rssi_valve,0);
+        _top_block->disconnect(_4fsk_2k,1,_const_valve,0);
         _top_block->disconnect(_const_valve,0,_constellation,0);
-        _top_block->disconnect(_4fsk,2,_vector_sink,0);
+        _top_block->disconnect(_4fsk_2k,2,_vector_sink,0);
+        break;
+    case gr_modem_types::ModemType4FSK20000:
+        _top_block->disconnect(_multiply,0,_4fsk_10k,0);
+        _top_block->disconnect(_4fsk_10k,0,_rssi_valve,0);
+        _top_block->disconnect(_4fsk_10k,1,_const_valve,0);
+        _top_block->disconnect(_const_valve,0,_constellation,0);
+        _top_block->disconnect(_4fsk_10k,2,_vector_sink,0);
         break;
     case gr_modem_types::ModemTypeAM5000:
         _top_block->disconnect(_multiply,0,_am,0);
@@ -131,36 +152,58 @@ void gr_demod_base::set_mode(int mode)
         _top_block->disconnect(_am,1,_audio_sink,0);
         break;
     case gr_modem_types::ModemTypeBPSK1000:
-        _top_block->disconnect(_multiply,0,_bpsk,0);
-        _top_block->disconnect(_bpsk,0,_rssi_valve,0);
-        _top_block->disconnect(_bpsk,1,_const_valve,0);
+        _top_block->disconnect(_multiply,0,_bpsk_1k,0);
+        _top_block->disconnect(_bpsk_1k,0,_rssi_valve,0);
+        _top_block->disconnect(_bpsk_1k,1,_const_valve,0);
         _top_block->disconnect(_const_valve,0,_constellation,0);
-        _top_block->disconnect(_bpsk,2,_deframer1_2,0);
-        _top_block->disconnect(_bpsk,3,_deframer2_2,0);
+        _top_block->disconnect(_bpsk_1k,2,_deframer1_2,0);
+        _top_block->disconnect(_bpsk_1k,3,_deframer2_2,0);
         break;
     case gr_modem_types::ModemTypeBPSK2000:
-        _top_block->disconnect(_multiply,0,_bpsk,0);
-        _top_block->disconnect(_bpsk,0,_rssi_valve,0);
-        _top_block->disconnect(_bpsk,1,_const_valve,0);
+        _top_block->disconnect(_multiply,0,_bpsk_2k,0);
+        _top_block->disconnect(_bpsk_2k,0,_rssi_valve,0);
+        _top_block->disconnect(_bpsk_2k,1,_const_valve,0);
         _top_block->disconnect(_const_valve,0,_constellation,0);
-        _top_block->disconnect(_bpsk,2,_deframer1_1,0);
-        _top_block->disconnect(_bpsk,3,_deframer2_1,0);
+        _top_block->disconnect(_bpsk_2k,2,_deframer1_1,0);
+        _top_block->disconnect(_bpsk_2k,3,_deframer2_1,0);
         break;
     case gr_modem_types::ModemTypeNBFM2500:
+        _top_block->disconnect(_multiply,0,_fm_2500,0);
+        _top_block->disconnect(_fm_2500,0,_rssi_valve,0);
+        _top_block->disconnect(_fm_2500,1,_audio_sink,0);
+        break;
     case gr_modem_types::ModemTypeNBFM5000:
-        _top_block->disconnect(_multiply,0,_fm,0);
-        _top_block->disconnect(_fm,0,_rssi_valve,0);
-        _top_block->disconnect(_fm,1,_audio_sink,0);
+        _top_block->disconnect(_multiply,0,_fm_5000,0);
+        _top_block->disconnect(_fm_5000,0,_rssi_valve,0);
+        _top_block->disconnect(_fm_5000,1,_audio_sink,0);
         break;
     case gr_modem_types::ModemTypeQPSK2000:
-    case gr_modem_types::ModemTypeQPSK20000:
-    case gr_modem_types::ModemTypeQPSK250000:
-    case gr_modem_types::ModemTypeQPSKVideo:
-        _top_block->disconnect(_multiply,0,_qpsk,0);
-        _top_block->disconnect(_qpsk,0,_rssi_valve,0);
-        _top_block->disconnect(_qpsk,1,_const_valve,0);
+        _top_block->disconnect(_multiply,0,_qpsk_2k,0);
+        _top_block->disconnect(_qpsk_2k,0,_rssi_valve,0);
+        _top_block->disconnect(_qpsk_2k,1,_const_valve,0);
         _top_block->disconnect(_const_valve,0,_constellation,0);
-        _top_block->disconnect(_qpsk,2,_vector_sink,0);
+        _top_block->disconnect(_qpsk_2k,2,_vector_sink,0);
+        break;
+    case gr_modem_types::ModemTypeQPSK20000:
+        _top_block->disconnect(_multiply,0,_qpsk_10k,0);
+        _top_block->disconnect(_qpsk_10k,0,_rssi_valve,0);
+        _top_block->disconnect(_qpsk_10k,1,_const_valve,0);
+        _top_block->disconnect(_const_valve,0,_constellation,0);
+        _top_block->disconnect(_qpsk_10k,2,_vector_sink,0);
+        break;
+    case gr_modem_types::ModemTypeQPSK250000:
+        _top_block->disconnect(_multiply,0,_qpsk_250k,0);
+        _top_block->disconnect(_qpsk_250k,0,_rssi_valve,0);
+        _top_block->disconnect(_qpsk_250k,1,_const_valve,0);
+        _top_block->disconnect(_const_valve,0,_constellation,0);
+        _top_block->disconnect(_qpsk_250k,2,_vector_sink,0);
+        break;
+    case gr_modem_types::ModemTypeQPSKVideo:
+        _top_block->disconnect(_multiply,0,_qpsk_video,0);
+        _top_block->disconnect(_qpsk_video,0,_rssi_valve,0);
+        _top_block->disconnect(_qpsk_video,1,_const_valve,0);
+        _top_block->disconnect(_const_valve,0,_constellation,0);
+        _top_block->disconnect(_qpsk_video,2,_vector_sink,0);
         break;
     case gr_modem_types::ModemTypeSSB2500:
         _top_block->disconnect(_multiply,0,_ssb,0);
@@ -181,7 +224,6 @@ void gr_demod_base::set_mode(int mode)
     case gr_modem_types::ModemType2FSK2000:
         _signal_source->set_sampling_freq(1000000);
         _osmosdr_source->set_sample_rate(1000000);
-        _2fsk = make_gr_demod_2fsk_sdr(125,1000000,1700,4000);
         _add_const->set_k(-110);
         _top_block->connect(_multiply,0,_2fsk,0);
         _top_block->connect(_2fsk,0,_rssi_valve,0);
@@ -193,29 +235,26 @@ void gr_demod_base::set_mode(int mode)
     case gr_modem_types::ModemType4FSK2000:
         _signal_source->set_sampling_freq(1000000);
         _osmosdr_source->set_sample_rate(1000000);
-        _4fsk = make_gr_demod_4fsk_sdr(250,1000000,1700,2000);
         _add_const->set_k(-110);
-        _top_block->connect(_multiply,0,_4fsk,0);
-        _top_block->connect(_4fsk,0,_rssi_valve,0);
-        _top_block->connect(_4fsk,1,_const_valve,0);
+        _top_block->connect(_multiply,0,_4fsk_2k,0);
+        _top_block->connect(_4fsk_2k,0,_rssi_valve,0);
+        _top_block->connect(_4fsk_2k,1,_const_valve,0);
         _top_block->connect(_const_valve,0,_constellation,0);
-        _top_block->connect(_4fsk,2,_vector_sink,0);
+        _top_block->connect(_4fsk_2k,2,_vector_sink,0);
         break;
     case gr_modem_types::ModemType4FSK20000:
         _signal_source->set_sampling_freq(1000000);
         _osmosdr_source->set_sample_rate(1000000);
-        _4fsk = make_gr_demod_4fsk_sdr(50,1000000,1700,10000);
         _add_const->set_k(-110);
-        _top_block->connect(_multiply,0,_4fsk,0);
-        _top_block->connect(_4fsk,0,_rssi_valve,0);
-        _top_block->connect(_4fsk,1,_const_valve,0);
+        _top_block->connect(_multiply,0,_4fsk_10k,0);
+        _top_block->connect(_4fsk_10k,0,_rssi_valve,0);
+        _top_block->connect(_4fsk_10k,1,_const_valve,0);
         _top_block->connect(_const_valve,0,_constellation,0);
-        _top_block->connect(_4fsk,2,_vector_sink,0);
+        _top_block->connect(_4fsk_10k,2,_vector_sink,0);
         break;
     case gr_modem_types::ModemTypeAM5000:
         _signal_source->set_sampling_freq(1000000);
         _osmosdr_source->set_sample_rate(1000000);
-        _am = make_gr_demod_am_sdr(0, 1000000,1700,4000);
         _add_const->set_k(-55);
         _top_block->connect(_multiply,0,_am,0);
         _top_block->connect(_am,0,_rssi_valve,0);
@@ -224,93 +263,84 @@ void gr_demod_base::set_mode(int mode)
     case gr_modem_types::ModemTypeBPSK1000:
         _signal_source->set_sampling_freq(1000000);
         _osmosdr_source->set_sample_rate(1000000);
-        _bpsk = make_gr_demod_bpsk_sdr(250,1000000,1700,1300);
         _add_const->set_k(-110);
-        _top_block->connect(_multiply,0,_bpsk,0);
-        _top_block->connect(_bpsk,0,_rssi_valve,0);
-        _top_block->connect(_bpsk,1,_const_valve,0);
+        _top_block->connect(_multiply,0,_bpsk_1k,0);
+        _top_block->connect(_bpsk_1k,0,_rssi_valve,0);
+        _top_block->connect(_bpsk_1k,1,_const_valve,0);
         _top_block->connect(_const_valve,0,_constellation,0);
-        _top_block->connect(_bpsk,2,_deframer1_2,0);
-        _top_block->connect(_bpsk,3,_deframer2_2,0);
+        _top_block->connect(_bpsk_1k,2,_deframer1_2,0);
+        _top_block->connect(_bpsk_1k,3,_deframer2_2,0);
         break;
     case gr_modem_types::ModemTypeBPSK2000:
         _signal_source->set_sampling_freq(1000000);
         _osmosdr_source->set_sample_rate(1000000);
-        _bpsk = make_gr_demod_bpsk_sdr(125,1000000,1700,2500);
         _add_const->set_k(-110);
-        _top_block->connect(_multiply,0,_bpsk,0);
-        _top_block->connect(_bpsk,0,_rssi_valve,0);
-        _top_block->connect(_bpsk,1,_const_valve,0);
+        _top_block->connect(_multiply,0,_bpsk_2k,0);
+        _top_block->connect(_bpsk_2k,0,_rssi_valve,0);
+        _top_block->connect(_bpsk_2k,1,_const_valve,0);
         _top_block->connect(_const_valve,0,_constellation,0);
-        _top_block->connect(_bpsk,2,_deframer1_1,0);
-        _top_block->connect(_bpsk,3,_deframer2_1,0);
+        _top_block->connect(_bpsk_2k,2,_deframer1_1,0);
+        _top_block->connect(_bpsk_2k,3,_deframer2_1,0);
         break;
     case gr_modem_types::ModemTypeNBFM2500:
         _signal_source->set_sampling_freq(1000000);
         _osmosdr_source->set_sample_rate(1000000);
-        _fm = make_gr_demod_nbfm_sdr(0, 1000000,1700,2500);
         _add_const->set_k(-55);
-        _top_block->connect(_multiply,0,_fm,0);
-        _top_block->connect(_fm,0,_rssi_valve,0);
-        _top_block->connect(_fm,1,_audio_sink,0);
+        _top_block->connect(_multiply,0,_fm_2500,0);
+        _top_block->connect(_fm_2500,0,_rssi_valve,0);
+        _top_block->connect(_fm_2500,1,_audio_sink,0);
         break;
     case gr_modem_types::ModemTypeNBFM5000:
         _signal_source->set_sampling_freq(1000000);
         _osmosdr_source->set_sample_rate(1000000);
-        _fm = make_gr_demod_nbfm_sdr(0, 1000000,1700,4000);
         _add_const->set_k(-55);
-        _top_block->connect(_multiply,0,_fm,0);
-        _top_block->connect(_fm,0,_rssi_valve,0);
-        _top_block->connect(_fm,1,_audio_sink,0);
+        _top_block->connect(_multiply,0,_fm_5000,0);
+        _top_block->connect(_fm_5000,0,_rssi_valve,0);
+        _top_block->connect(_fm_5000,1,_audio_sink,0);
         break;
     case gr_modem_types::ModemTypeQPSK2000:
         _signal_source->set_sampling_freq(1000000);
         _osmosdr_source->set_sample_rate(1000000);
-        _qpsk = make_gr_demod_qpsk_sdr(250,1000000,1700,800);
         _add_const->set_k(-110);
-        _top_block->connect(_multiply,0,_qpsk,0);
-        _top_block->connect(_qpsk,0,_rssi_valve,0);
-        _top_block->connect(_qpsk,1,_const_valve,0);
+        _top_block->connect(_multiply,0,_qpsk_2k,0);
+        _top_block->connect(_qpsk_2k,0,_rssi_valve,0);
+        _top_block->connect(_qpsk_2k,1,_const_valve,0);
         _top_block->connect(_const_valve,0,_constellation,0);
-        _top_block->connect(_qpsk,2,_vector_sink,0);
+        _top_block->connect(_qpsk_2k,2,_vector_sink,0);
         break;
     case gr_modem_types::ModemTypeQPSK20000:
         _signal_source->set_sampling_freq(1000000);
         _osmosdr_source->set_sample_rate(1000000);
-        _qpsk = make_gr_demod_qpsk_sdr(50,1000000,1700,4000);
         _add_const->set_k(-110);
-        _top_block->connect(_multiply,0,_qpsk,0);
-        _top_block->connect(_qpsk,0,_rssi_valve,0);
-        _top_block->connect(_qpsk,1,_const_valve,0);
+        _top_block->connect(_multiply,0,_qpsk_10k,0);
+        _top_block->connect(_qpsk_10k,0,_rssi_valve,0);
+        _top_block->connect(_qpsk_10k,1,_const_valve,0);
         _top_block->connect(_const_valve,0,_constellation,0);
-        _top_block->connect(_qpsk,2,_vector_sink,0);
+        _top_block->connect(_qpsk_10k,2,_vector_sink,0);
         break;
     case gr_modem_types::ModemTypeQPSK250000:
         _signal_source->set_sampling_freq(1000000);
         _osmosdr_source->set_sample_rate(1000000);
-        _qpsk = make_gr_demod_qpsk_sdr(2,1000000,1700,65000);
         _add_const->set_k(-110);
-        _top_block->connect(_multiply,0,_qpsk,0);
-        _top_block->connect(_qpsk,0,_rssi_valve,0);
-        _top_block->connect(_qpsk,1,_const_valve,0);
+        _top_block->connect(_multiply,0,_qpsk_250k,0);
+        _top_block->connect(_qpsk_250k,0,_rssi_valve,0);
+        _top_block->connect(_qpsk_250k,1,_const_valve,0);
         _top_block->connect(_const_valve,0,_constellation,0);
-        _top_block->connect(_qpsk,2,_vector_sink,0);
+        _top_block->connect(_qpsk_250k,2,_vector_sink,0);
         break;
     case gr_modem_types::ModemTypeQPSKVideo:
         _signal_source->set_sampling_freq(1000000);
         _osmosdr_source->set_sample_rate(1000000);
-        _qpsk = make_gr_demod_qpsk_sdr(2,1000000,1700,65000);
         _add_const->set_k(-110);
-        _top_block->connect(_multiply,0,_qpsk,0);
-        _top_block->connect(_qpsk,0,_rssi_valve,0);
-        _top_block->connect(_qpsk,1,_const_valve,0);
+        _top_block->connect(_multiply,0,_qpsk_video,0);
+        _top_block->connect(_qpsk_video,0,_rssi_valve,0);
+        _top_block->connect(_qpsk_video,1,_const_valve,0);
         _top_block->connect(_const_valve,0,_constellation,0);
-        _top_block->connect(_qpsk,2,_vector_sink,0);
+        _top_block->connect(_qpsk_video,2,_vector_sink,0);
         break;
     case gr_modem_types::ModemTypeSSB2500:
         _signal_source->set_sampling_freq(1000000);
         _osmosdr_source->set_sample_rate(1000000);
-        _ssb = make_gr_demod_ssb_sdr(0, 1000000,1700,2500);
         _add_const->set_k(-55);
         _top_block->connect(_multiply,0,_ssb,0);
         _top_block->connect(_ssb,0,_rssi_valve,0);
@@ -319,7 +349,6 @@ void gr_demod_base::set_mode(int mode)
     case gr_modem_types::ModemTypeWBFM:
         _signal_source->set_sampling_freq(1000000);
         _osmosdr_source->set_sample_rate(1000000);
-        _wfm = make_gr_demod_wbfm_sdr(0, 1000000,1700,75000);
         _add_const->set_k(-55);
         _top_block->connect(_multiply,0,_wfm,0);
         _top_block->connect(_wfm,0,_rssi_valve,0);
@@ -428,18 +457,17 @@ void gr_demod_base::enable_gui_fft(bool value)
 
 void gr_demod_base::set_squelch(int value)
 {
-    if(_fm)
-        _fm->set_squelch(value);
-    if(_am)
-        _am->set_squelch(value);
-    if(_ssb)
-        _ssb->set_squelch(value);
-    if(_wfm)
-        _wfm->set_squelch(value);
+    _fm_2500->set_squelch(value);
+    _fm_5000->set_squelch(value);
+    _am->set_squelch(value);
+    _ssb->set_squelch(value);
+    _wfm->set_squelch(value);
 }
 
 void gr_demod_base::set_ctcss(float value)
 {
-    if(_fm)
-        _fm->set_ctcss(value);
+    _top_block->lock();
+    _fm_2500->set_ctcss(value);
+    _fm_2500->set_ctcss(value);
+    _top_block->unlock();
 }

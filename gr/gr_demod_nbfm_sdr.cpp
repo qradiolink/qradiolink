@@ -91,7 +91,6 @@ void gr_demod_nbfm_sdr::set_ctcss(float value)
 {
     if(value == 0)
     {
-        lock();
         try {
             disconnect(_fm_demod,0,_ctcss,0);
             disconnect(_ctcss,0,_deemphasis_filter,0);
@@ -101,12 +100,10 @@ void gr_demod_nbfm_sdr::set_ctcss(float value)
         {
 
         }
-        unlock();
     }
     else
     {
         _ctcss->set_frequency(value);
-        lock();
         try {
             disconnect(_fm_demod,0,_deemphasis_filter,0);
             connect(_fm_demod,0,_ctcss,0);
@@ -116,6 +113,5 @@ void gr_demod_nbfm_sdr::set_ctcss(float value)
         {
 
         }
-        unlock();
     }
 }

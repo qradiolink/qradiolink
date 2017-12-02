@@ -22,8 +22,8 @@ gr_demod_2fsk_sdr_sptr make_gr_demod_2fsk_sdr(int sps, int samp_rate, int carrie
     std::vector<int> signature;
     signature.push_back(sizeof (gr_complex));
     signature.push_back(sizeof (gr_complex));
-    signature.push_back(sizeof (char));
-    signature.push_back(sizeof (char));
+    signature.push_back(sizeof (unsigned char));
+    signature.push_back(sizeof (unsigned char));
     return gnuradio::get_initial_sptr(new gr_demod_2fsk_sdr(signature, sps, samp_rate, carrier_freq,
                                                       filter_width));
 }

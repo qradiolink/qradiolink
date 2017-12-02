@@ -37,6 +37,20 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
         double gain =  range.start() + rf_gain*(range.stop()-range.start());
         _osmosdr_sink->set_gain(gain);
     }
+
+    _2fsk = make_gr_mod_2fsk_sdr(125, 500000, 1700, 4000);
+    _4fsk_2k = make_gr_mod_4fsk_sdr(250, 250000, 1700, 2000);
+    _4fsk_10k = make_gr_mod_4fsk_sdr(50, 250000, 1700, 10000);
+    _am = make_gr_mod_am_sdr(0,250000, 1700, 4000);
+    _bpsk_1k = make_gr_mod_bpsk_sdr(250, 500000, 1700, 1200);
+    _bpsk_2k = make_gr_mod_bpsk_sdr(125, 500000, 1700, 2400);
+    _fm_2500 = make_gr_mod_nbfm_sdr(0, 250000, 1700, 2500);
+    _fm_5000 = make_gr_mod_nbfm_sdr(0, 250000, 1700, 4000);
+    _qpsk_2k = make_gr_mod_qpsk_sdr(250, 250000, 1700, 800);
+    _qpsk_10k = make_gr_mod_qpsk_sdr(50, 250000, 1700, 4000);
+    _qpsk_250k = make_gr_mod_qpsk_sdr(2, 250000, 1700, 65000);
+    _qpsk_video = make_gr_mod_qpsk_sdr(2, 250000, 1700, 65000);
+    _ssb = make_gr_mod_ssb_sdr(0, 250000, 1700, 2500);
 }
 
 void gr_mod_base::set_mode(int mode)
@@ -50,30 +64,48 @@ void gr_mod_base::set_mode(int mode)
         _top_block->disconnect(_2fsk,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemType4FSK2000:
+        _top_block->disconnect(_vector_source,0,_4fsk_2k,0);
+        _top_block->disconnect(_4fsk_2k,0,_osmosdr_sink,0);
+        break;
     case gr_modem_types::ModemType4FSK20000:
-        _top_block->disconnect(_vector_source,0,_4fsk,0);
-        _top_block->disconnect(_4fsk,0,_osmosdr_sink,0);
+        _top_block->disconnect(_vector_source,0,_4fsk_10k,0);
+        _top_block->disconnect(_4fsk_10k,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeAM5000:
         _top_block->disconnect(_audio_source,0,_am,0);
         _top_block->disconnect(_am,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeBPSK1000:
+        _top_block->disconnect(_vector_source,0,_bpsk_1k,0);
+        _top_block->disconnect(_bpsk_1k,0,_osmosdr_sink,0);
+        break;
     case gr_modem_types::ModemTypeBPSK2000:
-        _top_block->disconnect(_vector_source,0,_bpsk,0);
-        _top_block->disconnect(_bpsk,0,_osmosdr_sink,0);
+        _top_block->disconnect(_vector_source,0,_bpsk_2k,0);
+        _top_block->disconnect(_bpsk_2k,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeNBFM2500:
+        _top_block->disconnect(_audio_source,0,_fm_2500,0);
+        _top_block->disconnect(_fm_2500,0,_osmosdr_sink,0);
+        break;
     case gr_modem_types::ModemTypeNBFM5000:
-        _top_block->disconnect(_audio_source,0,_fm,0);
-        _top_block->disconnect(_fm,0,_osmosdr_sink,0);
+        _top_block->disconnect(_audio_source,0,_fm_5000,0);
+        _top_block->disconnect(_fm_5000,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeQPSK2000:
+        _top_block->disconnect(_vector_source,0,_qpsk_2k,0);
+        _top_block->disconnect(_qpsk_2k,0,_osmosdr_sink,0);
+        break;
     case gr_modem_types::ModemTypeQPSK20000:
+        _top_block->disconnect(_vector_source,0,_qpsk_10k,0);
+        _top_block->disconnect(_qpsk_10k,0,_osmosdr_sink,0);
+        break;
     case gr_modem_types::ModemTypeQPSK250000:
+        _top_block->disconnect(_vector_source,0,_qpsk_250k,0);
+        _top_block->disconnect(_qpsk_250k,0,_osmosdr_sink,0);
+        break;
     case gr_modem_types::ModemTypeQPSKVideo:
-        _top_block->disconnect(_vector_source,0,_qpsk,0);
-        _top_block->disconnect(_qpsk,0,_osmosdr_sink,0);
+        _top_block->disconnect(_vector_source,0,_qpsk_video,0);
+        _top_block->disconnect(_qpsk_video,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeSSB2500:
         _top_block->disconnect(_audio_source,0,_ssb,0);
@@ -87,79 +119,66 @@ void gr_mod_base::set_mode(int mode)
     {
     case gr_modem_types::ModemType2FSK2000:
         _osmosdr_sink->set_sample_rate(500000);
-        _2fsk = make_gr_mod_2fsk_sdr(125, 500000, 1700, 4000);
         _top_block->connect(_vector_source,0,_2fsk,0);
         _top_block->connect(_2fsk,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemType4FSK2000:
         _osmosdr_sink->set_sample_rate(250000);
-        _4fsk = make_gr_mod_4fsk_sdr(250, 250000, 1700, 2000);
-        _top_block->connect(_vector_source,0,_4fsk,0);
-        _top_block->connect(_4fsk,0,_osmosdr_sink,0);
+        _top_block->connect(_vector_source,0,_4fsk_2k,0);
+        _top_block->connect(_4fsk_2k,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemType4FSK20000:
         _osmosdr_sink->set_sample_rate(250000);
-        _4fsk = make_gr_mod_4fsk_sdr(50, 250000, 1700, 10000);
-        _top_block->connect(_vector_source,0,_4fsk,0);
-        _top_block->connect(_4fsk,0,_osmosdr_sink,0);
+        _top_block->connect(_vector_source,0,_4fsk_10k,0);
+        _top_block->connect(_4fsk_10k,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeAM5000:
         _osmosdr_sink->set_sample_rate(250000);
-        _am = make_gr_mod_am_sdr(0,250000, 1700, 4000);
         _top_block->connect(_audio_source,0,_am,0);
         _top_block->connect(_am,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeBPSK1000:
         _osmosdr_sink->set_sample_rate(500000);
-        _bpsk = make_gr_mod_bpsk_sdr(250, 500000, 1700, 1200);
-        _top_block->connect(_vector_source,0,_bpsk,0);
-        _top_block->connect(_bpsk,0,_osmosdr_sink,0);
+        _top_block->connect(_vector_source,0,_bpsk_1k,0);
+        _top_block->connect(_bpsk_1k,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeBPSK2000:
         _osmosdr_sink->set_sample_rate(500000);
-        _bpsk = make_gr_mod_bpsk_sdr(125, 500000, 1700, 2400);
-        _top_block->connect(_vector_source,0,_bpsk,0);
-        _top_block->connect(_bpsk,0,_osmosdr_sink,0);
+        _top_block->connect(_vector_source,0,_bpsk_2k,0);
+        _top_block->connect(_bpsk_2k,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeNBFM2500:
         _osmosdr_sink->set_sample_rate(250000);
-        _fm = make_gr_mod_nbfm_sdr(0, 250000, 1700, 2500);
-        _top_block->connect(_audio_source,0,_fm,0);
-        _top_block->connect(_fm,0,_osmosdr_sink,0);
+        _top_block->connect(_audio_source,0,_fm_2500,0);
+        _top_block->connect(_fm_2500,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeNBFM5000:
         _osmosdr_sink->set_sample_rate(250000);
-        _fm = make_gr_mod_nbfm_sdr(0, 250000, 1700, 4000);
-        _top_block->connect(_audio_source,0,_fm,0);
-        _top_block->connect(_fm,0,_osmosdr_sink,0);
+        _top_block->connect(_audio_source,0,_fm_5000,0);
+        _top_block->connect(_fm_5000,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeQPSK2000:
         _osmosdr_sink->set_sample_rate(250000);
-        _qpsk = make_gr_mod_qpsk_sdr(250, 250000, 1700, 800);
-        _top_block->connect(_vector_source,0,_qpsk,0);
-        _top_block->connect(_qpsk,0,_osmosdr_sink,0);
+        _top_block->connect(_vector_source,0,_qpsk_2k,0);
+        _top_block->connect(_qpsk_2k,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeQPSK20000:
         _osmosdr_sink->set_sample_rate(250000);
-        _qpsk = make_gr_mod_qpsk_sdr(50, 250000, 1700, 4000);
-        _top_block->connect(_vector_source,0,_qpsk,0);
-        _top_block->connect(_qpsk,0,_osmosdr_sink,0);
+        _top_block->connect(_vector_source,0,_qpsk_10k,0);
+        _top_block->connect(_qpsk_10k,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeQPSK250000:
         _osmosdr_sink->set_sample_rate(250000);
-        _qpsk = make_gr_mod_qpsk_sdr(2, 250000, 1700, 65000);
-        _top_block->connect(_vector_source,0,_qpsk,0);
-        _top_block->connect(_qpsk,0,_osmosdr_sink,0);
+        _top_block->connect(_vector_source,0,_qpsk_250k,0);
+        _top_block->connect(_qpsk_250k,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeQPSKVideo:
         _osmosdr_sink->set_sample_rate(250000);
-        _qpsk = make_gr_mod_qpsk_sdr(2, 250000, 1700, 65000);
-        _top_block->connect(_vector_source,0,_qpsk,0);
-        _top_block->connect(_qpsk,0,_osmosdr_sink,0);
+        _top_block->connect(_vector_source,0,_qpsk_video,0);
+        _top_block->connect(_qpsk_video,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeSSB2500:
         _osmosdr_sink->set_sample_rate(250000);
-        _ssb = make_gr_mod_ssb_sdr(0, 250000, 1700, 2500);
         _top_block->connect(_audio_source,0,_ssb,0);
         _top_block->connect(_ssb,0,_osmosdr_sink,0);
         break;
@@ -212,8 +231,10 @@ void gr_mod_base::set_power(float dbm)
 
 void gr_mod_base::set_ctcss(float value)
 {
-    if(_fm)
-        _fm->set_ctcss(value);
+    _top_block->lock();
+    _fm_2500->set_ctcss(value);
+    _fm_5000->set_ctcss(value);
+    _top_block->unlock();
 }
 
 

@@ -56,11 +56,17 @@ private:
     osmosdr::sink::sptr _osmosdr_sink;
 
     gr_mod_2fsk_sdr_sptr _2fsk;
-    gr_mod_4fsk_sdr_sptr _4fsk;
+    gr_mod_4fsk_sdr_sptr _4fsk_2k;
+    gr_mod_4fsk_sdr_sptr _4fsk_10k;
     gr_mod_am_sdr_sptr _am;
-    gr_mod_bpsk_sdr_sptr _bpsk;
-    gr_mod_nbfm_sdr_sptr _fm;
-    gr_mod_qpsk_sdr_sptr _qpsk;
+    gr_mod_bpsk_sdr_sptr _bpsk_1k;
+    gr_mod_bpsk_sdr_sptr _bpsk_2k;
+    gr_mod_nbfm_sdr_sptr _fm_2500;
+    gr_mod_nbfm_sdr_sptr _fm_5000;
+    gr_mod_qpsk_sdr_sptr _qpsk_2k;
+    gr_mod_qpsk_sdr_sptr _qpsk_10k;
+    gr_mod_qpsk_sdr_sptr _qpsk_250k;
+    gr_mod_qpsk_sdr_sptr _qpsk_video;
     gr_mod_ssb_sdr_sptr _ssb;
 
     int _samples_per_symbol;

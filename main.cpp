@@ -247,7 +247,6 @@ int main(int argc, char *argv[])
     QObject::connect(&w,SIGNAL(sendText(QString, bool)),radio_op,SLOT(textData(QString, bool)));
     QObject::connect(&w,SIGNAL(toggleRX(bool)),radio_op,SLOT(toggleRX(bool)));
     QObject::connect(&w,SIGNAL(toggleTX(bool)),radio_op,SLOT(toggleTX(bool)));
-    QObject::connect(&w,SIGNAL(toggleModemMode(int)),radio_op,SLOT(toggleMode(int)));
     QObject::connect(&w,SIGNAL(toggleTxModemMode(int)),radio_op,SLOT(toggleTxMode(int)));
     QObject::connect(&w,SIGNAL(toggleRxModemMode(int)),radio_op,SLOT(toggleRxMode(int)));
     QObject::connect(&w,SIGNAL(tuneFreq(qint64)),radio_op,SLOT(tuneFreq(qint64)));

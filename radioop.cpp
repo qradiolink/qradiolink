@@ -759,8 +759,8 @@ void RadioOp::toggleRX(bool value)
         _fft_gui->set_frequency_range(_tune_center_freq, 1000000);
         _modem->setRxSensitivity(_rx_sensitivity);
         _modem->setSquelch(_squelch);
-        _modem->setRxCTCSS(_rx_ctcss);
         _modem->startRX();
+        _modem->setRxCTCSS(_rx_ctcss);
         _modem->tune(_tune_center_freq);
         if(_rx_mode == gr_modem_types::ModemTypeQPSK250000 && _net_device == 0)
         {
@@ -795,8 +795,8 @@ void RadioOp::toggleTX(bool value)
 
         _modem->initTX(_tx_mode, tx_device_args, tx_antenna, tx_freq_corr);
         _modem->setTxPower(_tx_power);
-        _modem->setTxCTCSS(_tx_ctcss);
         _modem->tuneTx(50000000);
+        _modem->setTxCTCSS(_tx_ctcss);
         if(_tx_mode == gr_modem_types::ModemTypeQPSKVideo)
             _video = new VideoEncoder(QString::fromStdString(video_device));
         if(_tx_mode == gr_modem_types::ModemTypeQPSK250000 && _net_device == 0)

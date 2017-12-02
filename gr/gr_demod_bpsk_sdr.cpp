@@ -22,8 +22,8 @@ gr_demod_bpsk_sdr_sptr make_gr_demod_bpsk_sdr(int sps, int samp_rate, int carrie
     std::vector<int> signature;
     signature.push_back(sizeof (gr_complex));
     signature.push_back(sizeof (gr_complex));
-    signature.push_back(sizeof (char));
-    signature.push_back(sizeof (char));
+    signature.push_back(sizeof (unsigned char));
+    signature.push_back(sizeof (unsigned char));
     return gnuradio::get_initial_sptr(new gr_demod_bpsk_sdr(signature, sps, samp_rate, carrier_freq,
                                                       filter_width));
 }
@@ -58,7 +58,7 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(std::vector<int>signature, int sps, int sam
                 _target_samp_rate);
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
                             1, _target_samp_rate, _filter_width,600,gr::filter::firdes::WIN_HAMMING) );
-    float gain_mu = 0.0075;
+    float gain_mu = 0.025;
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
                                                               0.0005);
     _costas_loop = gr::digital::costas_loop_cc::make(0.0628,2);
@@ -102,7 +102,6 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(std::vector<int>signature, int sps, int sam
     connect(_cc_decoder2,0,_packed_to_unpacked2,0);
     connect(_packed_to_unpacked2,0,_descrambler2,0);
     connect(_descrambler2,0,self(),3);
-
 
 }
 

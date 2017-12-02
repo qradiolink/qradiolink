@@ -77,7 +77,6 @@ void gr_mod_nbfm_sdr::set_ctcss(float value)
 {
     if(value == 0)
     {
-        lock();
         try {
             disconnect(_emphasis_filter,0,_add,0);
             disconnect(_add,0,_fm_modulator,0);
@@ -87,12 +86,10 @@ void gr_mod_nbfm_sdr::set_ctcss(float value)
         catch(std::invalid_argument e)
         {
         }
-        unlock();
     }
     else
     {
         _tone_source->set_frequency(value);
-        lock();
         try {
             disconnect(_emphasis_filter,0,_fm_modulator,0);
             connect(_emphasis_filter,0,_add,0);
@@ -102,6 +99,5 @@ void gr_mod_nbfm_sdr::set_ctcss(float value)
         catch(std::invalid_argument e)
         {
         }
-        unlock();
     }
 }
