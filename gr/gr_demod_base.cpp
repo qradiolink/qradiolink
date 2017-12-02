@@ -462,6 +462,6 @@ void gr_demod_base::set_ctcss(float value)
 {
     _top_block->lock();
     _fm_2500->set_ctcss(value);
-    _fm_2500->set_ctcss(value);
+    _fm_5000->set_ctcss(value);
     _top_block->unlock();
 }

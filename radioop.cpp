@@ -43,6 +43,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _transmitting = false;
     _process_text = false;
     _repeat_text = false;
+    _repeat = false;
     _settings = settings;
     _tx_power = 0;
     _rx_sensitivity = 0;
@@ -366,7 +367,7 @@ void RadioOp::startTx()
 {
     if(_tx_inited)
     {
-        if(_rx_inited && (_tx_mode != gr_modem_types::ModemTypeQPSK250000))
+        if(_rx_inited && !_repeat && (_tx_mode != gr_modem_types::ModemTypeQPSK250000))
             _modem->stopRX();
         if(_tx_modem_started)
             _modem->stopTX();
@@ -394,7 +395,7 @@ void RadioOp::stopTx()
         _modem->stopTX();
         _modem->tuneTx(50000000);
         _tx_modem_started = false;
-        if(_rx_inited)
+        if(_rx_inited && !_repeat)
             _modem->startRX();
     }
 }
@@ -510,6 +511,10 @@ void RadioOp::run()
 
 void RadioOp::receiveAudioData(unsigned char *data, int size)
 {
+    if(_repeat && (_tx_mode == _rx_mode))
+    {
+        emit audioData(data,size);
+    }
     short *audio_out;
     int samples;
     if((_rx_mode == gr_modem_types::ModemTypeBPSK2000) ||
@@ -543,23 +548,30 @@ void RadioOp::receiveAudioData(unsigned char *data, int size)
 
 void RadioOp::receivePCMAudio(std::vector<float> *audio_data)
 {
-    if(audio_data->size() > 4096)
+    int size = audio_data->size();
+    if(size > 4096)
     {
         delete audio_data;
         return;
     }
-    short *pcm = new short[audio_data->size()];
-    for(int i=0;i<audio_data->size();i++)
+    short *pcm = new short[size];
+    float *pcm_f = new float[size];
+    for(int i=0;i<size;i++)
     {
         pcm[i] = (short)(audio_data->at(i) *_rx_volume * 32767.0f);
+        pcm_f[i] = audio_data->at(i) *_rx_volume;
+    }
+    if(_repeat && (_tx_mode == _rx_mode))
+    {
+        emit pcmData(pcm_f, size);
     }
     if(_voip_forwarding)
     {
-        emit voipData(pcm,audio_data->size()*sizeof(short));
+        emit voipData(pcm,size*sizeof(short));
     }
     else
     {
-        _audio->write_short(pcm, audio_data->size()*sizeof(short));
+        _audio->write_short(pcm, size*sizeof(short));
     }
     audio_data->clear();
     delete audio_data;
@@ -1058,6 +1070,18 @@ void RadioOp::usePTTForVOIP(bool value)
 void RadioOp::setVOIPForwarding(bool value)
 {
     _voip_forwarding = value;
+}
+
+void RadioOp::toggleRepeat(bool value)
+{
+
+    if(value && !_repeat)
+        startTx();
+    else if(!value && _repeat)
+        stopTx();
+
+    _repeat = value;
+
 }
 
 void RadioOp::fineTuneFreq(long center_freq)

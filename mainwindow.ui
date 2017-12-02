@@ -640,6 +640,40 @@ background-color: rgb(132, 0, 0);</string>
               </property>
              </widget>
             </item>
+            <item row="0" column="2">
+             <widget class="QCommandLinkButton" name="toggleRepeaterButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>90</width>
+                <height>64</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>120</width>
+                <height>64</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">font: 14pt &quot;Sans Serif&quot;;
+border-width: 4px;
+background-color: rgb(0, 67, 98);
+color: rgb(255, 255, 255);</string>
+              </property>
+              <property name="text">
+               <string>Repeater</string>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
            </layout>
           </item>
           <item row="6" column="0">

@@ -74,6 +74,7 @@ public slots:
     void updateTxCTCSS(int value);
     void togglePTTVOIP(bool value);
     void toggleVOIPForwarding(bool value);
+    void toggleRepeater(bool value);
 
 signals:
     void startTransmission();
@@ -104,6 +105,7 @@ signals:
     void connectToServer(QString server, unsigned port);
     void disconnectFromServer();
     void setMute(bool value);
+    void toggleRepeat(bool value);
     void stopRadio();
 
 public:

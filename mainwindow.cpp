@@ -69,6 +69,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->comboBoxTxCTCSS,SIGNAL(currentIndexChanged(int)),this,SLOT(updateTxCTCSS(int)));
     QObject::connect(ui->pttVoipButton,SIGNAL(toggled(bool)),this,SLOT(togglePTTVOIP(bool)));
     QObject::connect(ui->voipForwardButton,SIGNAL(toggled(bool)),this,SLOT(toggleVOIPForwarding(bool)));
+    QObject::connect(ui->toggleRepeaterButton,SIGNAL(toggled(bool)),this,SLOT(toggleRepeater(bool)));
 
     QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
 
@@ -332,6 +333,11 @@ void MainWindow::toggleTxMode(int value)
 {
     emit toggleTxModemMode(value);
     mainTabChanged(ui->tabWidget->currentIndex());
+}
+
+void MainWindow::toggleRepeater(bool value)
+{
+    emit toggleRepeat(value);
 }
 
 void MainWindow::tuneCenterFreq(int value)
