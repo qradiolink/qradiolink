@@ -38,6 +38,7 @@
 #include <gnuradio/blocks/multiply_const_ff.h>
 #include <gnuradio/blocks/add_const_ff.h>
 #include <gnuradio/blocks/delay.h>
+#include "gr_deframer_bb.h"
 
 class gr_demod_2fsk_sdr;
 
@@ -50,6 +51,8 @@ class gr_demod_2fsk_sdr : public gr::hier_block2
 public:
     explicit gr_demod_2fsk_sdr(std::vector<int> signature, int sps=4, int samp_rate=8000, int carrier_freq=1600,
                                int filter_width=1800);
+    std::vector<unsigned char> *getFrame1();
+    std::vector<unsigned char> *getFrame2();
 
 private:
     gr::blocks::multiply_const_cc::sptr _multiply_symbols;
@@ -76,6 +79,8 @@ private:
     gr::fec::decode_ccsds_27_fb::sptr _cc_decoder2;
     gr::blocks::packed_to_unpacked_bb::sptr _packed_to_unpacked;
     gr::blocks::packed_to_unpacked_bb::sptr _packed_to_unpacked2;
+    gr_deframer_bb_sptr _deframer1;
+    gr_deframer_bb_sptr _deframer2;
 
 
     int _samples_per_symbol;

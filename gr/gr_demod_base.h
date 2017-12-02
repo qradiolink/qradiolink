@@ -41,7 +41,6 @@
 #include <vector>
 #include "gr_audio_sink.h"
 #include "gr_vector_sink.h"
-#include "gr_deframer_bb.h"
 #include "gr_demod_2fsk_sdr.h"
 #include "gr_demod_4fsk_sdr.h"
 #include "gr_demod_am_sdr.h"
@@ -68,8 +67,8 @@ public slots:
     void start();
     void stop();
     std::vector<unsigned char> *getData();
-    std::vector<unsigned char> *getFrame1(int t);
-    std::vector<unsigned char> *getFrame2(int t);
+    std::vector<unsigned char> *getFrame1();
+    std::vector<unsigned char> *getFrame2();
     std::vector<float> *getAudio();
     void tune(long center_freq);
     void set_rx_sensitivity(float value);
@@ -101,10 +100,7 @@ private:
 
     gr::analog::sig_source_c::sptr _signal_source;
     gr::blocks::multiply_cc::sptr _multiply;
-    gr_deframer_bb_sptr _deframer1_1;
-    gr_deframer_bb_sptr _deframer2_1;
-    gr_deframer_bb_sptr _deframer1_2;
-    gr_deframer_bb_sptr _deframer2_2;
+
 
 
     gr_demod_2fsk_sdr_sptr _2fsk;

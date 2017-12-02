@@ -40,18 +40,21 @@
 #include <gnuradio/fec/decode_ccsds_27_fb.h>
 #include <gnuradio/blocks/delay.h>
 #include <gnuradio/blocks/multiply_const_ff.h>
+#include "gr_deframer_bb.h"
 
 class gr_demod_bpsk_sdr;
 
 typedef boost::shared_ptr<gr_demod_bpsk_sdr> gr_demod_bpsk_sdr_sptr;
 gr_demod_bpsk_sdr_sptr make_gr_demod_bpsk_sdr(int sps=125, int samp_rate=250000, int carrier_freq=1700,
-                                          int filter_width=8000);
+                                          int filter_width=8000, int mode=1);
 
 class gr_demod_bpsk_sdr : public gr::hier_block2
 {
 public:
     explicit gr_demod_bpsk_sdr(std::vector<int> signature, int sps=4, int samp_rate=8000, int carrier_freq=1600,
-                               int filter_width=1800);
+                               int filter_width=1800, int mode=1);
+    std::vector<unsigned char> *getFrame1();
+    std::vector<unsigned char> *getFrame2();
 
 private:
 
@@ -78,6 +81,9 @@ private:
     gr::blocks::add_const_ff::sptr _add_const_fec;
     gr::fec::decode_ccsds_27_fb::sptr _cc_decoder;
     gr::fec::decode_ccsds_27_fb::sptr _cc_decoder2;
+    gr_deframer_bb_sptr _deframer1;
+    gr_deframer_bb_sptr _deframer2;
+
 
 
     int _samples_per_symbol;
