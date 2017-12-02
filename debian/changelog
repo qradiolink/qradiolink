@@ -1,6 +1,9 @@
-qradiolink (0.3.4-1) UNRELEASED; urgency=medium
+qradiolink (0.3.5-1) UNRELEASED; urgency=medium
 
   [ Adrian Musceac ]
+  * Enable mixed mode operation TX/RX
+  * Improve mode switching time
+  * Fix issue with VOIP forwarding of analog radio
   * 4FSK mode improvements
   * Rate 1/2 FEC for 2FSK mode
   * Fix several important issues
