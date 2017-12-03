@@ -103,7 +103,7 @@ signals:
     void receiveEnd();
     void endAudioTransmission();
 public slots:
-    void processPCMAudio(float *audio_data, int size);
+    void processPCMAudio(std::vector<float> *audio_data);
     void processAudioData(unsigned char *data, int size);
     void processVideoData(unsigned char *data, int size);
     void processNetData(unsigned char *data, int size);
@@ -131,6 +131,7 @@ public slots:
     void enableGUIConst(bool value);
     void enableGUIFFT(bool value);
     double getFreqGUI();
+    void setRepeater(bool value);
 
 private:
 
@@ -151,6 +152,7 @@ private:
     gr_mod_bpsk *_gr_mod_bpsk;
     gr_demod_bpsk *_gr_demod_bpsk;
 
+    bool _repeater;
     int _modem_type_rx;
     int _modem_type_tx;
     int _frame_length;

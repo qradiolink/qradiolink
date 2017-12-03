@@ -22,7 +22,7 @@ gr_modem::gr_modem(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgu
 {
     _modem_type_rx = gr_modem_types::ModemTypeBPSK2000;
     _modem_type_tx = gr_modem_types::ModemTypeBPSK2000;
-
+    _repeater = false;
     _settings = settings;
     _transmitting = false;
     //_gr_mod_gmsk = new gr_mod_gmsk(0,24,48000,1600,1200,1);
@@ -285,6 +285,11 @@ void gr_modem::enableGUIFFT(bool value)
         _gr_demod_base->enable_gui_fft(value);
 }
 
+void gr_modem::setRepeater(bool value)
+{
+    _repeater = value;
+}
+
 void gr_modem::sendCallsign(int size, QString callsign)
 {
     std::vector<unsigned char> *send_callsign = new std::vector<unsigned char>;
@@ -350,13 +355,9 @@ void gr_modem::processAudioData(unsigned char *data, int size)
     delete[] data;
 }
 
-void gr_modem::processPCMAudio(float *audio_data, int size)
+void gr_modem::processPCMAudio(std::vector<float> *audio_data)
 {
-    std::vector<float> *data = new std::vector<float>;
-    for(int i=0; i<size;i++)
-    {
-        data->push_back(audio_data[i]);
-    }
+
     if((_modem_type_tx == gr_modem_types::ModemTypeNBFM2500)
             || (_modem_type_tx == gr_modem_types::ModemTypeNBFM5000)
             || (_modem_type_tx == gr_modem_types::ModemTypeSSB2500)
@@ -366,10 +367,9 @@ void gr_modem::processPCMAudio(float *audio_data, int size)
         while(ret)
         {
             usleep(1);
-            ret = _gr_mod_base->setAudio(data);
+            ret = _gr_mod_base->setAudio(audio_data);
         }
     }
-    delete[] audio_data;
 }
 
 void gr_modem::processVideoData(unsigned char *data, int size)
@@ -530,6 +530,11 @@ void gr_modem::demodulateAnalog()
     }
     if(audio_data->size() > 0)
     {
+        if(_repeater)
+        {
+            std::vector<float> *repeated_audio = new std::vector<float>(audio_data->begin(),audio_data->end());
+            processPCMAudio(repeated_audio);
+        }
         emit pcmAudio(audio_data);
     }
     else
@@ -576,6 +581,7 @@ void gr_modem::demodulate()
         v_size = demod_data->size();
         data = demod_data;
     }
+
     synchronize(v_size, data);
     demod_data->clear();
     delete demod_data;
@@ -631,6 +637,12 @@ void gr_modem::synchronize(int v_size, std::vector<unsigned char> *data)
 
                 unsigned char *frame_data = new unsigned char[frame_length];
                 packBytes(frame_data,_bit_buf,_bit_buf_index);
+                if(_repeater && (_current_frame_type == gr_modem::FrameTypeVoice))
+                {
+                    unsigned char *repeated_frame = new unsigned char[frame_length];
+                    memcpy(repeated_frame,frame_data,frame_length);
+                    processAudioData(repeated_frame, frame_length); // TODO: clean up
+                }
                 processReceivedData(frame_data, _current_frame_type);
                 _sync_found = false;
                 _shift_reg = 0;
