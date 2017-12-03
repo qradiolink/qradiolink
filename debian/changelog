@@ -1,6 +1,7 @@
 qradiolink (0.3.5-1) UNRELEASED; urgency=medium
 
   [ Adrian Musceac ]
+  * Same mode repeater enabled
   * Enable mixed mode operation TX/RX
   * Improve mode switching time
   * Fix issue with VOIP forwarding of analog radio
