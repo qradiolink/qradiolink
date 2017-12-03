@@ -626,7 +626,7 @@ void gr_modem::synchronize(int v_size, std::vector<unsigned char> *data)
             if((_modem_type_rx != gr_modem_types::ModemTypeBPSK1000)
                     && (_current_frame_type == FrameTypeVoice))
             {
-                frame_length++;
+                frame_length++; // reserved data
             }
             else
             {
@@ -640,7 +640,10 @@ void gr_modem::synchronize(int v_size, std::vector<unsigned char> *data)
                 if(_repeater && (_current_frame_type == gr_modem::FrameTypeVoice))
                 {
                     unsigned char *repeated_frame = new unsigned char[frame_length];
-                    memcpy(repeated_frame,frame_data,frame_length);
+                    if(_modem_type_rx == gr_modem_types::ModemTypeBPSK1000)
+                        memcpy(repeated_frame, frame_data, _frame_length);
+                    else
+                        memcpy(repeated_frame, frame_data+1, _frame_length); // take into account reserved data
                     processAudioData(repeated_frame, frame_length); // TODO: clean up
                 }
                 processReceivedData(frame_data, _current_frame_type);

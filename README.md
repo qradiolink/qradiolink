@@ -26,17 +26,19 @@ Possible applications:
 - robotics
 - sattelite radio communications
 - point to point private radio systems
+- radio communications repeater
 - portable VHF-UHF SDR transceiver
 
 
 Features
 ---
 
+- Transmit and receive analog voice, digital voice, text messages, digital video, IP protocol.
+- Analog and digital mode repeater - full duplex mode, no mixed mode repeater
 - VOIP connection between two or more stations operating in simplex or semi-duplex mode
 - Direct VOIP talk-around
 - Radio forwarding over VOIP - forward analog or digital radio to VOIP connection and viceversa
 - TLS session encryption
-- Transmit and receive analog voice, digital voice, text messages, digital video, IP protocol.
 - Mixed operation mode: transmit one mode and receive another
 - Digital voice codecs: Codec2 700 bit/s, Codec2 1400 bit/s, Opus 9600 bit/s
 - Narrow band digital voice mode with the [Codec2](http://rowetel.com/codec2.html) audio codec
