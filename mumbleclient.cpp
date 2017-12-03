@@ -224,7 +224,6 @@ void MumbleClient::processChannelState(quint8 *message, quint64 size)
 
 void MumbleClient::processUserState(quint8 *message, quint64 size)
 {
-
     MumbleProto::UserState us;
     us.ParseFromArray(message,size);
     if((_session_id==-1) && (us.has_channel_id()))

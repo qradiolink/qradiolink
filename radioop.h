@@ -77,7 +77,7 @@ signals:
     void displayTransmitStatus(bool status);
     void displayDataReceiveStatus(bool status);
     void audioData(unsigned char *buf, int size);
-    void pcmData(float *audiobuffer, int size);
+    void pcmData(std::vector<float> *pcm);
     void videoData(unsigned char *buf, int size);
     void netData(unsigned char *buf, int size);
     void videoImage(QImage img);

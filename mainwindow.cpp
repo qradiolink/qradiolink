@@ -73,7 +73,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
 
-
+    ui->rxModemTypeComboBox->setAttribute(Qt::WA_AcceptTouchEvents);
+    ui->txModemTypeComboBox->setAttribute(Qt::WA_AcceptTouchEvents);
+    ui->sendTextEdit->setAttribute(Qt::WA_AcceptTouchEvents);
+    ui->receivedTextEdit->setAttribute(Qt::WA_AcceptTouchEvents);
     //ui->tuneSlider->setRange(-100,100);
     _transmitting_radio = false;
     _constellation_gui = ui->widget_const;
@@ -305,7 +308,10 @@ void MainWindow::GUIdisconnectVOIP()
 
 void MainWindow::updateOnlineStations(StationList stations)
 {
-
+    for(int i=0;i<stations.size();i++)
+    {
+        ui->receivedTextEdit->setPlainText(ui->receivedTextEdit->toPlainText() + stations.at(i)._radio_id + "\n");
+    }
 }
 
 void MainWindow::toggleRXwin(bool value)

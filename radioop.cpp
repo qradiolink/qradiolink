@@ -78,7 +78,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     QObject::connect(_modem,SIGNAL(receiveEnd()),this,SLOT(receiveEnd()));
     QObject::connect(_modem,SIGNAL(endAudioTransmission()),this,SLOT(endAudioTransmission()));
     QObject::connect(this,SIGNAL(audioData(unsigned char*,int)),_modem,SLOT(processAudioData(unsigned char*,int)));
-    QObject::connect(this,SIGNAL(pcmData(float*,int)),_modem,SLOT(processPCMAudio(float*,int)));
+    QObject::connect(this,SIGNAL(pcmData(std::vector<float>*)),_modem,SLOT(processPCMAudio(std::vector<float>*)));
     QObject::connect(this,SIGNAL(videoData(unsigned char*,int)),_modem,SLOT(processVideoData(unsigned char*,int)));
     QObject::connect(this,SIGNAL(netData(unsigned char*,int)),_modem,SLOT(processNetData(unsigned char*,int)));
     QObject::connect(_modem,SIGNAL(digitalAudio(unsigned char*,int)),this,SLOT(receiveAudioData(unsigned char*,int)));
@@ -247,14 +247,14 @@ void RadioOp::txAudio(short *audiobuffer, int audiobuffer_size)
 {
     if(_tx_radio_type == radio_type::RADIO_TYPE_ANALOG)
     {
-        float *pcm = new float[audiobuffer_size/sizeof(short)];
+        std::vector<float> *pcm = new std::vector<float>;
 
         for(int i=0;i<audiobuffer_size/sizeof(short);i++)
         {
-            pcm[i] = (float)audiobuffer[i] / 32767.0f;
+            pcm->push_back((float)audiobuffer[i] / 32767.0f);
         }
 
-        emit pcmData(pcm, audiobuffer_size/sizeof(short));
+        emit pcmData(pcm);
         delete[] audiobuffer;
         return;
     }
@@ -352,14 +352,14 @@ void RadioOp::sendEndBeep()
     {
         QByteArray *data = new QByteArray(resfile.readAll());
         short *samples = (short*) data->data();
-        float *pcm = new float[data->size()/sizeof(short)];
+        std::vector<float> *pcm = new std::vector<float>;
 
         for(int i=0;i<data->size()/sizeof(short);i++)
         {
-            pcm[i] = (float)samples[i] / 32767.0f;
+            pcm->push_back((float)samples[i] / 32767.0f);
         }
 
-        emit pcmData(pcm, data->size()/sizeof(short));
+        emit pcmData(pcm);
         delete data;
     }
 }
@@ -522,10 +522,6 @@ void RadioOp::run()
 
 void RadioOp::receiveAudioData(unsigned char *data, int size)
 {
-    if(_repeat && (_tx_mode == _rx_mode))
-    {
-        emit audioData(data,size);
-    }
     short *audio_out;
     int samples;
     if((_rx_mode == gr_modem_types::ModemTypeBPSK2000) ||
@@ -565,16 +561,11 @@ void RadioOp::receivePCMAudio(std::vector<float> *audio_data)
         delete audio_data;
         return;
     }
+
     short *pcm = new short[size];
-    float *pcm_f = new float[size];
     for(int i=0;i<size;i++)
     {
         pcm[i] = (short)(audio_data->at(i) *_rx_volume * 32767.0f);
-        pcm_f[i] = audio_data->at(i) *_rx_volume;
-    }
-    if(_repeat && (_tx_mode == _rx_mode))
-    {
-        emit pcmData(pcm_f, size);
     }
     if(_voip_forwarding)
     {
@@ -1090,12 +1081,19 @@ void RadioOp::setVOIPForwarding(bool value)
 void RadioOp::toggleRepeat(bool value)
 {
 
+    if((_rx_mode != _tx_mode) && value) // no mixed mode repeat
+        return;
     if(value && !_repeat)
+    {
+        _repeat = value;
         startTx();
+    }
     else if(!value && _repeat)
+    {
         stopTx();
-
-    _repeat = value;
+        _repeat = value;
+    }
+    _modem->setRepeater(value);
 
 }
 
