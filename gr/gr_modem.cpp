@@ -290,7 +290,7 @@ void gr_modem::setRepeater(bool value)
     _repeater = value;
 }
 
-void gr_modem::sendCallsign(int size, QString callsign)
+void gr_modem::sendCallsign(QString callsign)
 {
     std::vector<unsigned char> *send_callsign = new std::vector<unsigned char>;
     QVector<std::vector<unsigned char>*> callsign_frames;
@@ -298,12 +298,12 @@ void gr_modem::sendCallsign(int size, QString callsign)
     send_callsign->push_back(0x8C);
     send_callsign->push_back(0xC8);
     send_callsign->push_back(0xDD);
-    for(int i = 0;i<size;i++)
+    for(int i = 0;i<callsign.size();i++)
     {
         send_callsign->push_back(callsign.toStdString().c_str()[i]);
     }
 
-    for(int i = 0;i<_frame_length-size;i++)
+    for(int i = 0;i<_frame_length-callsign.size();i++)
     {
         send_callsign->push_back(0x00);
     }
@@ -313,7 +313,7 @@ void gr_modem::sendCallsign(int size, QString callsign)
     transmit(callsign_frames);
 }
 
-void gr_modem::startTransmission(QString callsign, int size)
+void gr_modem::startTransmission(QString callsign)
 {
     _transmitting = true;
     std::vector<unsigned char> *tx_start = new std::vector<unsigned char>;
@@ -325,14 +325,14 @@ void gr_modem::startTransmission(QString callsign, int size)
     QVector<std::vector<unsigned char>*> frames;
     frames.append(tx_start);
     transmit(frames);
-    sendCallsign(size, callsign);
+    sendCallsign(callsign);
 }
 
-void gr_modem::endTransmission(QString callsign, int size)
+void gr_modem::endTransmission(QString callsign)
 {
     _frame_counter = 0;
     _transmitting = false;
-    sendCallsign(size, callsign);
+    sendCallsign(callsign);
     std::vector<unsigned char> *tx_end = new std::vector<unsigned char>;
     tx_end->push_back(0x4C);
     tx_end->push_back(0x8A);
@@ -353,6 +353,30 @@ void gr_modem::processAudioData(unsigned char *data, int size)
     frames.append(one_frame);
     transmit(frames);
     delete[] data;
+}
+
+void gr_modem::textData(QString text)
+{
+    QStringList list;
+    QVector<std::vector<unsigned char>*> frames;
+    for( int k=0;k<text.length();k+=_frame_length)
+    {
+        list.append(text.mid(k,_frame_length));
+    }
+
+    for(int o = 0;o < list.length();o++)
+    {
+        QString chunk=list.at(o);
+        unsigned char *data = new unsigned char[_frame_length];
+        memset(data, 0, _frame_length);
+        memcpy(data,chunk.toStdString().c_str(),chunk.length());
+        std::vector<unsigned char> *one_frame = frame(data,_frame_length, FrameTypeText);
+
+        frames.append(one_frame);
+
+        delete[] data;
+    }
+    transmit(frames);
 }
 
 void gr_modem::processPCMAudio(std::vector<float> *audio_data)
@@ -463,31 +487,6 @@ std::vector<unsigned char>* gr_modem::frame(unsigned char *encoded_audio, int da
 
     return data;
 
-}
-
-void gr_modem::textData(QString text)
-{
-    QStringList list;
-    QVector<std::vector<unsigned char>*> frames;
-    for( int k=0;k<text.length();k+=_frame_length)
-    {
-        list.append(text.mid(k,_frame_length));
-    }
-
-    for(int o = 0;o < list.length();o++)
-    {
-        QString chunk=list.at(o);
-        unsigned char *data = new unsigned char[_frame_length];
-        memset(data, 0, _frame_length);
-        memcpy(data,chunk.toStdString().c_str(),chunk.length());
-        std::vector<unsigned char> *one_frame = frame(data,_frame_length, FrameTypeText);
-
-        frames.append(one_frame);
-
-        delete[] data;
-    }
-    transmit(frames);
-    endTransmission("",0);
 }
 
 static void packBytes(unsigned char *pktbuf, const unsigned char *bitbuf, int bitcount)
@@ -637,15 +636,6 @@ void gr_modem::synchronize(int v_size, std::vector<unsigned char> *data)
 
                 unsigned char *frame_data = new unsigned char[frame_length];
                 packBytes(frame_data,_bit_buf,_bit_buf_index);
-                if(_repeater && (_current_frame_type == gr_modem::FrameTypeVoice))
-                {
-                    unsigned char *repeated_frame = new unsigned char[frame_length];
-                    if(_modem_type_rx == gr_modem_types::ModemTypeBPSK1000)
-                        memcpy(repeated_frame, frame_data, _frame_length);
-                    else
-                        memcpy(repeated_frame, frame_data+1, _frame_length); // take into account reserved data
-                    processAudioData(repeated_frame, frame_length); // TODO: clean up
-                }
                 processReceivedData(frame_data, _current_frame_type);
                 _sync_found = false;
                 _shift_reg = 0;
@@ -730,8 +720,12 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
                 break;
             }
         }
-
-        emit textReceived( QString::fromLocal8Bit(text_data,string_length));
+        QString text = QString::fromLocal8Bit(text_data,string_length);
+        if(_repeater)
+        {
+            textData(text);
+        }
+        emit textReceived(text);
         delete[] text_data;
     }
     else if (current_frame_type == FrameTypeCallsign)
@@ -750,8 +744,12 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
                 string_length--;
             }
         }
-
-        emit callsignReceived( QString::fromLocal8Bit(text_data,string_length));
+        QString callsign = QString::fromLocal8Bit(text_data,string_length);
+        if(_repeater)
+        {
+            sendCallsign(callsign);
+        }
+        emit callsignReceived(callsign);
         delete[] text_data;
     }
     else if (current_frame_type == FrameTypeVoice )
@@ -764,6 +762,12 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
             memcpy(codec2_data, received_data, _frame_length);
         else
             memcpy(codec2_data, received_data+1, _frame_length);
+        if(_repeater)
+        {
+            unsigned char *repeated_frame = new unsigned char[_frame_length];
+            memcpy(repeated_frame, codec2_data, _frame_length);
+            processAudioData(repeated_frame, _frame_length);
+        }
         emit digitalAudio(codec2_data,_frame_length);
     }
     else if (current_frame_type == FrameTypeVideo )
@@ -781,6 +785,7 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
         unsigned char *net_data = new unsigned char[_frame_length];
         memcpy(net_data, received_data, _frame_length);
         emit netData(net_data,_frame_length);
+        // poke repeater here
     }
     delete[] received_data;
 }
