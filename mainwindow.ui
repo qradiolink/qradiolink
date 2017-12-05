@@ -839,7 +839,7 @@ QSlider::handle:vertical {
                 <number>0</number>
                </property>
                <property name="maximum">
-                <number>20</number>
+                <number>30</number>
                </property>
                <property name="pageStep">
                 <number>1</number>

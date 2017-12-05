@@ -88,7 +88,7 @@ public:
     long _requested_frequency_hz;
     void demodulateAnalog();
 
-    void sendCallsign(int size, QString callsign);
+    void sendCallsign(QString callsign);
 signals:
     void pcmAudio(std::vector<float>* pcm);
     void digitalAudio(unsigned char *c2data, int size);
@@ -108,8 +108,8 @@ public slots:
     void processVideoData(unsigned char *data, int size);
     void processNetData(unsigned char *data, int size);
     void demodulate();
-    void startTransmission(QString callsign, int size);
-    void endTransmission(QString callsign, int size);
+    void startTransmission(QString callsign);
+    void endTransmission(QString callsign);
     void textData(QString text);
     void initTX(int modem_type, std::string device_args, std::string device_antenna, int freq_corr);
     void initRX(int modem_type, std::string device_args, std::string device_antenna, int freq_corr);
@@ -155,7 +155,8 @@ private:
     bool _repeater;
     int _modem_type_rx;
     int _modem_type_tx;
-    int _frame_length;
+    int _tx_frame_length;
+    int _rx_frame_length;
     quint64 _frame_counter;
     quint8 _last_frame_type;
     bool _sync_found;

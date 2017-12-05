@@ -2,11 +2,20 @@
 #define SETTINGS_H
 
 #include <QObject>
+#include <QFile>
+#include <QFileDialog>
+#include <QDir>
+#include <QFileInfo>
+#include <libconfig.h++>
+#include <iostream>
 
 class Settings
 {
 public:
     Settings();
+    QFileInfo *setupConfig();
+    void readConfig(QFileInfo *config_file);
+    void saveConfig();
     quint32 _id;
     quint8 _use_mumble;
     quint8 _mumble_tcp;

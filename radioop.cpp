@@ -377,7 +377,7 @@ void RadioOp::startTx()
         _modem->tuneTx(_tune_center_freq + _tune_shift_freq);
         _tx_modem_started = false;
         if(_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL)
-            _modem->startTransmission(_callsign,_callsign.size());
+            _modem->startTransmission(_callsign);
     }
 }
 
@@ -386,7 +386,7 @@ void RadioOp::stopTx()
     if(_tx_inited)
     {
         if(_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL)
-            _modem->endTransmission(_callsign, _callsign.size());
+            _modem->endTransmission(_callsign);
         if((_tx_radio_type == radio_type::RADIO_TYPE_ANALOG)
                 && ((_tx_mode == gr_modem_types::ModemTypeNBFM2500) || (_tx_mode == gr_modem_types::ModemTypeNBFM5000)))
         {
@@ -500,8 +500,9 @@ void RadioOp::run()
                     startTx();
                 }
                 _tx_modem_started = true;
-                _modem->startTransmission(_callsign,_callsign.size());
+                _modem->startTransmission(_callsign);
                 _modem->textData(_text_out);
+                _modem->endTransmission(_callsign);
             }
             if(!_repeat_text)
             {

@@ -33,7 +33,8 @@ gr_modem::gr_modem(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgu
     //_gr_mod_bpsk->start();
     //_gr_demod_bpsk = new gr_demod_bpsk(0,24,48000,1700,1200,1);
     //_gr_demod_bpsk->start();
-    _frame_length = 7;
+    _rx_frame_length = 7;
+    _tx_frame_length = 7;
     _bit_buf_len = 8 *8;
     _bit_buf = new unsigned char[_bit_buf_len];
     _bit_buf_index = 0;
@@ -92,39 +93,39 @@ void gr_modem::toggleTxMode(int modem_type)
         _gr_mod_base->set_mode(modem_type);
         if(modem_type == gr_modem_types::ModemTypeBPSK2000)
         {
-            _frame_length = 7;
+            _tx_frame_length = 7;
         }
         else if(modem_type == gr_modem_types::ModemTypeBPSK1000)
         {
-            _frame_length = 4;
+            _tx_frame_length = 4;
         }
         else if(modem_type == gr_modem_types::ModemTypeQPSK20000)
         {
-            _frame_length = 47;
+            _tx_frame_length = 47;
         }
         else if(modem_type == gr_modem_types::ModemTypeQPSK2000)
         {
-            _frame_length = 7;
+            _tx_frame_length = 7;
         }
         else if(modem_type == gr_modem_types::ModemType4FSK20000)
         {
-            _frame_length = 47;
+            _tx_frame_length = 47;
         }
         else if(modem_type == gr_modem_types::ModemType4FSK2000)
         {
-            _frame_length = 7;
+            _tx_frame_length = 7;
         }
         else if(modem_type == gr_modem_types::ModemTypeQPSKVideo)
         {
-            _frame_length = 3122;
+            _tx_frame_length = 3122;
         }
         else if(modem_type == gr_modem_types::ModemType2FSK2000)
         {
-            _frame_length = 7;
+            _tx_frame_length = 7;
         }
         else if(modem_type == gr_modem_types::ModemTypeQPSK250000)
         {
-            _frame_length = 1512;
+            _tx_frame_length = 1512;
         }
     }
 
@@ -139,47 +140,47 @@ void gr_modem::toggleRxMode(int modem_type)
         if(modem_type == gr_modem_types::ModemTypeBPSK2000)
         {
             _bit_buf_len = 8 *8;
-            _frame_length = 7;
+            _rx_frame_length = 7;
         }
         else if(modem_type == gr_modem_types::ModemTypeBPSK1000)
         {
             _bit_buf_len = 4 *8;
-            _frame_length = 4;
+            _rx_frame_length = 4;
         }
         else if (modem_type == gr_modem_types::ModemTypeQPSK20000)
         {
             _bit_buf_len = 48 *8;
-            _frame_length = 47;
+            _rx_frame_length = 47;
         }
         else if (modem_type == gr_modem_types::ModemTypeQPSK2000)
         {
             _bit_buf_len = 8 *8;
-            _frame_length = 7;
+            _rx_frame_length = 7;
         }
         else if (modem_type == gr_modem_types::ModemType4FSK20000)
         {
             _bit_buf_len = 48 *8;
-            _frame_length = 47;
+            _rx_frame_length = 47;
         }
         else if (modem_type == gr_modem_types::ModemType4FSK2000)
         {
             _bit_buf_len = 8 *8;
-            _frame_length = 7;
+            _rx_frame_length = 7;
         }
         else if (modem_type == gr_modem_types::ModemTypeQPSKVideo)
         {
             _bit_buf_len = 3123 *8;
-            _frame_length = 3122;
+            _rx_frame_length = 3122;
         }
         else if(modem_type == gr_modem_types::ModemType2FSK2000)
         {
             _bit_buf_len = 8 *8;
-            _frame_length = 7;
+            _rx_frame_length = 7;
         }
         else if (modem_type == gr_modem_types::ModemTypeQPSK250000)
         {
             _bit_buf_len = 1513 *8;
-            _frame_length = 1512;
+            _rx_frame_length = 1512;
         }
         delete[] _bit_buf;
         _bit_buf = new unsigned char[_bit_buf_len];
@@ -290,7 +291,7 @@ void gr_modem::setRepeater(bool value)
     _repeater = value;
 }
 
-void gr_modem::sendCallsign(int size, QString callsign)
+void gr_modem::sendCallsign(QString callsign)
 {
     std::vector<unsigned char> *send_callsign = new std::vector<unsigned char>;
     QVector<std::vector<unsigned char>*> callsign_frames;
@@ -298,12 +299,12 @@ void gr_modem::sendCallsign(int size, QString callsign)
     send_callsign->push_back(0x8C);
     send_callsign->push_back(0xC8);
     send_callsign->push_back(0xDD);
-    for(int i = 0;i<size;i++)
+    for(int i = 0;i<callsign.size();i++)
     {
         send_callsign->push_back(callsign.toStdString().c_str()[i]);
     }
 
-    for(int i = 0;i<_frame_length-size;i++)
+    for(int i = 0;i<_tx_frame_length-callsign.size();i++)
     {
         send_callsign->push_back(0x00);
     }
@@ -313,11 +314,11 @@ void gr_modem::sendCallsign(int size, QString callsign)
     transmit(callsign_frames);
 }
 
-void gr_modem::startTransmission(QString callsign, int size)
+void gr_modem::startTransmission(QString callsign)
 {
     _transmitting = true;
     std::vector<unsigned char> *tx_start = new std::vector<unsigned char>;
-    for(int i = 0;i<_frame_length*2;i++)
+    for(int i = 0;i<_tx_frame_length*2;i++)
     {
 
         tx_start->push_back(0x8C);
@@ -325,19 +326,19 @@ void gr_modem::startTransmission(QString callsign, int size)
     QVector<std::vector<unsigned char>*> frames;
     frames.append(tx_start);
     transmit(frames);
-    sendCallsign(size, callsign);
+    sendCallsign(callsign);
 }
 
-void gr_modem::endTransmission(QString callsign, int size)
+void gr_modem::endTransmission(QString callsign)
 {
     _frame_counter = 0;
     _transmitting = false;
-    sendCallsign(size, callsign);
+    sendCallsign(callsign);
     std::vector<unsigned char> *tx_end = new std::vector<unsigned char>;
     tx_end->push_back(0x4C);
     tx_end->push_back(0x8A);
     tx_end->push_back(0x2B);
-    for(int i = 0;i<_frame_length;i++)
+    for(int i = 0;i<_tx_frame_length;i++)
     {
         tx_end->push_back(0x00);
     }
@@ -353,6 +354,30 @@ void gr_modem::processAudioData(unsigned char *data, int size)
     frames.append(one_frame);
     transmit(frames);
     delete[] data;
+}
+
+void gr_modem::textData(QString text)
+{
+    QStringList list;
+    QVector<std::vector<unsigned char>*> frames;
+    for( int k=0;k<text.length();k+=_tx_frame_length)
+    {
+        list.append(text.mid(k,_tx_frame_length));
+    }
+
+    for(int o = 0;o < list.length();o++)
+    {
+        QString chunk=list.at(o);
+        unsigned char *data = new unsigned char[_tx_frame_length];
+        memset(data, 0, _tx_frame_length);
+        memcpy(data,chunk.toStdString().c_str(),chunk.length());
+        std::vector<unsigned char> *one_frame = frame(data,_tx_frame_length, FrameTypeText);
+
+        frames.append(one_frame);
+
+        delete[] data;
+    }
+    transmit(frames);
 }
 
 void gr_modem::processPCMAudio(std::vector<float> *audio_data)
@@ -463,31 +488,6 @@ std::vector<unsigned char>* gr_modem::frame(unsigned char *encoded_audio, int da
 
     return data;
 
-}
-
-void gr_modem::textData(QString text)
-{
-    QStringList list;
-    QVector<std::vector<unsigned char>*> frames;
-    for( int k=0;k<text.length();k+=_frame_length)
-    {
-        list.append(text.mid(k,_frame_length));
-    }
-
-    for(int o = 0;o < list.length();o++)
-    {
-        QString chunk=list.at(o);
-        unsigned char *data = new unsigned char[_frame_length];
-        memset(data, 0, _frame_length);
-        memcpy(data,chunk.toStdString().c_str(),chunk.length());
-        std::vector<unsigned char> *one_frame = frame(data,_frame_length, FrameTypeText);
-
-        frames.append(one_frame);
-
-        delete[] data;
-    }
-    transmit(frames);
-    endTransmission("",0);
 }
 
 static void packBytes(unsigned char *pktbuf, const unsigned char *bitbuf, int bitcount)
@@ -621,7 +621,7 @@ void gr_modem::synchronize(int v_size, std::vector<unsigned char> *data)
                 _frequency_found += 1; // 80 bits + counter
             _bit_buf[_bit_buf_index] =  (data->at(i)) & 0x1;
             _bit_buf_index++;
-            int frame_length = _frame_length;
+            int frame_length = _rx_frame_length;
             int bit_buf_len = _bit_buf_len;
             if((_modem_type_rx != gr_modem_types::ModemTypeBPSK1000)
                     && (_current_frame_type == FrameTypeVoice))
@@ -637,15 +637,6 @@ void gr_modem::synchronize(int v_size, std::vector<unsigned char> *data)
 
                 unsigned char *frame_data = new unsigned char[frame_length];
                 packBytes(frame_data,_bit_buf,_bit_buf_index);
-                if(_repeater && (_current_frame_type == gr_modem::FrameTypeVoice))
-                {
-                    unsigned char *repeated_frame = new unsigned char[frame_length];
-                    if(_modem_type_rx == gr_modem_types::ModemTypeBPSK1000)
-                        memcpy(repeated_frame, frame_data, _frame_length);
-                    else
-                        memcpy(repeated_frame, frame_data+1, _frame_length); // take into account reserved data
-                    processAudioData(repeated_frame, frame_length); // TODO: clean up
-                }
                 processReceivedData(frame_data, _current_frame_type);
                 _sync_found = false;
                 _shift_reg = 0;
@@ -714,11 +705,11 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
     {
         emit dataFrameReceived();
         _last_frame_type = FrameTypeText;
-        char *text_data = new char[_frame_length];
-        memcpy(text_data, received_data, _frame_length);
-        quint8 string_length = _frame_length;
+        char *text_data = new char[_rx_frame_length];
+        memcpy(text_data, received_data, _rx_frame_length);
+        quint8 string_length = _rx_frame_length;
 
-        for(int ii=_frame_length-1;ii>=0;ii--)
+        for(int ii=_rx_frame_length-1;ii>=0;ii--)
         {
             QChar x(text_data[ii]);
             if(x.unicode()==0)
@@ -730,19 +721,23 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
                 break;
             }
         }
-
-        emit textReceived( QString::fromLocal8Bit(text_data,string_length));
+        QString text = QString::fromLocal8Bit(text_data,string_length);
+        if(_repeater)
+        {
+            textData(text);
+        }
+        emit textReceived(text);
         delete[] text_data;
     }
     else if (current_frame_type == FrameTypeCallsign)
     {
         emit dataFrameReceived();
         _last_frame_type = FrameTypeCallsign;
-        char *text_data = new char[_frame_length];
-        memcpy(text_data, received_data, _frame_length);
-        quint8 string_length = _frame_length;
+        char *text_data = new char[_rx_frame_length];
+        memcpy(text_data, received_data, _rx_frame_length);
+        quint8 string_length = _rx_frame_length;
 
-        for(int ii=_frame_length-1;ii>=0;ii--)
+        for(int ii=_rx_frame_length-1;ii>=0;ii--)
         {
             QChar x(text_data[ii]);
             if(x.unicode()==0)
@@ -750,37 +745,48 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
                 string_length--;
             }
         }
-
-        emit callsignReceived( QString::fromLocal8Bit(text_data,string_length));
+        QString callsign = QString::fromLocal8Bit(text_data,string_length);
+        if(_repeater)
+        {
+            sendCallsign(callsign);
+        }
+        emit callsignReceived(callsign);
         delete[] text_data;
     }
     else if (current_frame_type == FrameTypeVoice )
     {
         emit audioFrameReceived();
         _last_frame_type = FrameTypeVoice;
-        unsigned char *codec2_data = new unsigned char[_frame_length];
-        memset(codec2_data,0,_frame_length);
+        unsigned char *codec2_data = new unsigned char[_rx_frame_length];
+        memset(codec2_data,0,_rx_frame_length);
         if(_modem_type_rx == gr_modem_types::ModemTypeBPSK1000)
-            memcpy(codec2_data, received_data, _frame_length);
+            memcpy(codec2_data, received_data, _rx_frame_length);
         else
-            memcpy(codec2_data, received_data+1, _frame_length);
-        emit digitalAudio(codec2_data,_frame_length);
+            memcpy(codec2_data, received_data+1, _rx_frame_length);
+        if(_repeater)
+        {
+            unsigned char *repeated_frame = new unsigned char[_rx_frame_length];
+            memcpy(repeated_frame, codec2_data, _rx_frame_length);
+            processAudioData(repeated_frame, _rx_frame_length);
+        }
+        emit digitalAudio(codec2_data,_rx_frame_length);
     }
     else if (current_frame_type == FrameTypeVideo )
     {
         emit dataFrameReceived();
         _last_frame_type = FrameTypeVideo;
-        unsigned char *video_data = new unsigned char[_frame_length];
-        memcpy(video_data, received_data, _frame_length);
-        emit videoData(video_data,_frame_length);
+        unsigned char *video_data = new unsigned char[_rx_frame_length];
+        memcpy(video_data, received_data, _rx_frame_length);
+        emit videoData(video_data,_rx_frame_length);
     }
     else if (current_frame_type == FrameTypeData )
     {
         emit dataFrameReceived();
         _last_frame_type = FrameTypeData;
-        unsigned char *net_data = new unsigned char[_frame_length];
-        memcpy(net_data, received_data, _frame_length);
-        emit netData(net_data,_frame_length);
+        unsigned char *net_data = new unsigned char[_rx_frame_length];
+        memcpy(net_data, received_data, _rx_frame_length);
+        emit netData(net_data,_rx_frame_length);
+        // poke repeater here
     }
     delete[] received_data;
 }
