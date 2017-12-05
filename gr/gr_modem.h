@@ -155,7 +155,8 @@ private:
     bool _repeater;
     int _modem_type_rx;
     int _modem_type_tx;
-    int _frame_length;
+    int _tx_frame_length;
+    int _rx_frame_length;
     quint64 _frame_counter;
     quint8 _last_frame_type;
     bool _sync_found;
