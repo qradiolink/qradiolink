@@ -16,7 +16,7 @@ export PKGCONFS="""
        opus codec2
        libpulse libpulse-simple alsa
        libjpeg
-       qwt5-qt4
+       qwt
 """
 export CXXFLAGS=$(pkg-config --cflags ${PKGCONFS})
 export LIBFLAGS=$(pkg-config --libs $PKGCONFS)
