@@ -66,7 +66,7 @@ libopus0 (>= 1.1), libprotobuf10, libpulse0 (>= 0.99.1), libqt4-network (>= 4:4.
 libqt4-sql (>= 4:4.5.3), libqtcore4 (>= 4:4.8.0), libqtgui4 (>= 4:4.6.1),
  libstdc++6 (>= 5.2), gnuradio-dev, gr-osmosdr, libgsm1-dev, libprotobuf-dev,
  libopus-dev, libpulse-dev, libcodec2-dev, libasound2-dev, libjpeg62-turbo-dev,
- libconfig++-dev, qt4-qmake, libqt4-dev, libqt4-phonon, libqt4-sql-sqlite, qt4-dev-tools
+ libconfig++-dev, qt4-qmake, libqt4-dev, libqt4-phonon, libqwt5-qt4-dev, libqt4-sql-sqlite, qt4-dev-tools
 </pre>
 
 - Please make sure you have all the development packages installed before building QRadioLink
