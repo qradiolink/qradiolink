@@ -150,7 +150,7 @@ LIBS += -lrt  # need to include on some distros
 unix:!symbian: LIBS += -lprotobuf -lopus -lpulse-simple -lpulse -lcodec2 -lasound -ljpeg -lconfig++
                     #-lFestival -lestbase -leststring -lestools -lasound
 #INCLUDEPATH += /usr/include/speech_tools
-INCLUDEPATH += /usr/include/qwt
+INCLUDEPATH += /usr/include/qwt-qt4
 
 RESOURCES += \
     resources.qrc

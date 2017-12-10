@@ -1,4 +1,6 @@
 *.pro.user
+*.pb.cc
+*.pb.h
 .directory
 build/*
 .travis.yml-ubuntu

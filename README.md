@@ -66,7 +66,7 @@ libopus0 (>= 1.1), libprotobuf10, libpulse0 (>= 0.99.1), libqt4-network (>= 4:4.
 libqt4-sql (>= 4:4.5.3), libqtcore4 (>= 4:4.8.0), libqtgui4 (>= 4:4.6.1),
  libstdc++6 (>= 5.2), gnuradio-dev, gr-osmosdr, libgsm1-dev, libprotobuf-dev,
  libopus-dev, libpulse-dev, libcodec2-dev, libasound2-dev, libjpeg62-turbo-dev,
- libconfig++-dev, qt4-qmake, libqt4-dev, libqt4-phonon, libqt4-sql-sqlite, qt4-dev-tools
+ libconfig++-dev, qt4-qmake, libqt4-dev, libqt4-phonon, libqwt5-qt4-dev, libqt4-sql-sqlite, qt4-dev-tools
 </pre>
 
 - Please make sure you have all the development packages installed before building QRadioLink
@@ -79,6 +79,12 @@ libqt4-sql (>= 4:4.5.3), libqtcore4 (>= 4:4.8.0), libqtgui4 (>= 4:4.6.1),
 - libgnuradio-osmosdr built with UHD, RTL-SDR, SoapySDR or HackRF support
 - libgsm, libprotobuf, libopus, libpulse-simple, libpulse, libasound, libcodec2, libsqlite3, libjpeg,
 - protoc compiler for development work only (libprotoc 2.6.1 or greater)
+
+In order to build on Ubuntu 17.10 you have to install the following packages, assuming a full GNU Radio development environment is already installed.
+
+<pre>
+$ sudo apt install libconfig++-dev libgsm1-dev libprotobuf-dev libopus-dev libpulse-dev libasound2-dev libcodec2-dev libsqlite3-dev libjpeg-dev libprotoc-dev protobuf-compiler libqwt5-qt4-dev
+</pre>
 
 [Downloads](https://github.com/kantooon/qradiolink/releases "Downloads")
 ----
