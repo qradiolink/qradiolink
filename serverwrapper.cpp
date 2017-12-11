@@ -57,7 +57,7 @@ void ServerWrapper::run()
         int time = QDateTime::currentDateTime().toTime_t();
         if((time - last_time) > _settings->_ident_time)
         {
-            spp.fspeak(const_cast<char*>(QString("This is " + _settings->_callsign+  ", test U H F.").toStdString().c_str()));
+            spp.fspeak(const_cast<char*>(QString("This is " + _settings->callsign+  ", test U H F.").toStdString().c_str()));
             last_time = time;
         }
         if(((time - last_ping_time) > 5) )

@@ -788,9 +788,9 @@ void RadioOp::toggleRX(bool value)
         _fft_gui->set_frequency_range(_tune_center_freq, 1000000);
         _modem->setRxSensitivity(_rx_sensitivity);
         _modem->setSquelch(_squelch);
-        _modem->startRX();
         _modem->setRxCTCSS(_rx_ctcss);
         _modem->tune(_tune_center_freq);
+        _modem->startRX();
         if(_rx_mode == gr_modem_types::ModemTypeQPSK250000 && _net_device == 0)
         {
             _net_device = new NetDevice;

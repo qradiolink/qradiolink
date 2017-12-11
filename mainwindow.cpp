@@ -18,12 +18,12 @@
 #include "ui_mainwindow.h"
 
 
-MainWindow::MainWindow(QWidget *parent) :
+MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
+    _settings = settings;
     static float tone_list[]= {67.0, 71.9, 74.4, 77.0, 79.7, 82.5, 85.4, 88.5, 81.5, 87.4, 94.8, 100.0, 103.5, 107.2, 110.9,
                          114.8, 118.8, 123.0, 127.3, 131.8, 136.5, 141.3, 146.2, 151.4, 156.7, 162.2,
                           167.9, 173.8, 179.9, 186.2, 192.8, 203.5, 210.7, 218.1, 225.7, 233.6, 241.8, 250.3};
@@ -38,7 +38,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->comboBoxRxCTCSS->addItems(tones);
 
     ui->frameCtrlFreq->setup(10, 10U, 9000000000U, 1, UNITS_MHZ );
-    ui->frameCtrlFreq->setFrequency(434000000);
+    ui->frameCtrlFreq->setFrequency(_settings->rx_frequency);
     ui->frameCtrlFreq->setBkColor(QColor(0,0,127,255));
     ui->frameCtrlFreq->setHighlightColor(QColor(127,0,0,255));
     ui->frameCtrlFreq->setDigitColor(QColor(230,230,230,240));
@@ -82,8 +82,7 @@ MainWindow::MainWindow(QWidget *parent) :
     _constellation_gui = ui->widget_const;
     _rssi_gui = ui->widget_rssi;
     _fft_gui = ui->widget_fft;
-    _config_file = setupConfig();
-    readConfig(_config_file);
+    readConfig();
     _video_img = new QPixmap;
     ui->menuBar->hide();
     setWindowIcon(QIcon(":/res/logo.png"));
@@ -105,116 +104,49 @@ void MainWindow::closeEvent (QCloseEvent *event)
     event->accept();
 }
 
-void MainWindow::readConfig(QFileInfo *config_file)
+void MainWindow::readConfig()
 {
-    libconfig::Config cfg;
-    try
-    {
-        cfg.readFile(config_file->absoluteFilePath().toStdString().c_str());
-    }
-    catch(const libconfig::FileIOException &fioex)
-    {
-        std::cerr << "I/O error while reading configuration file." << std::endl;
-        exit(EXIT_FAILURE);
-    }
-    catch(const libconfig::ParseException &pex)
-    {
-        std::cerr << "Configuration parse error at " << pex.getFile() << ":" << pex.getLine()
-                  << " - " << pex.getError() << std::endl;
-        exit(EXIT_FAILURE);
-    }
-    try
-    {
-        int rx_freq_corr, tx_freq_corr;
-        cfg.lookupValue("rx_freq_corr", rx_freq_corr);
-        cfg.lookupValue("tx_freq_corr", tx_freq_corr);
+    ui->lineEditRXDev->setText(_settings->rx_device_args);
+    ui->lineEditTXDev->setText(_settings->tx_device_args);
+    ui->lineEditRXAntenna->setText(_settings->rx_antenna);
+    ui->lineEditTXAntenna->setText(_settings->tx_antenna);
+    ui->lineEditRXFreqCorrection->setText(QString::number(_settings->rx_freq_corr));
+    ui->lineEditTXFreqCorrection->setText(QString::number(_settings->tx_freq_corr));
+    ui->lineEditCallsign->setText(_settings->callsign);
+    ui->lineEditVideoDevice->setText(_settings->video_device);
+    ui->txPowerSlider->setValue(_settings->tx_power);
+    ui->rxSensitivitySlider->setValue(_settings->rx_sensitivity);
+    ui->rxSquelchSlider->setValue(_settings->squelch);
+    ui->rxVolumeSlider->setValue(_settings->rx_volume);
+    ui->frameCtrlFreq->setFrequency(_settings->rx_frequency);
+    _rx_frequency = _settings->rx_frequency;
+    ui->frequencyEdit->setText(QString::number(ceil(_rx_frequency/1000)));
+    _tx_frequency = _settings->tx_shift;
+    ui->shiftEdit->setText(QString::number(_tx_frequency / 1000));
+    ui->voipServerEdit->setText(_settings->voip_server);
 
-        ui->lineEditRXDev->setText(QString(cfg.lookup("rx_device_args")));
-        ui->lineEditTXDev->setText(QString(cfg.lookup("tx_device_args")));
-        ui->lineEditRXAntenna->setText(QString(cfg.lookup("rx_antenna")));
-        ui->lineEditTXAntenna->setText(QString(cfg.lookup("tx_antenna")));
-        ui->lineEditRXFreqCorrection->setText(QString::number(rx_freq_corr));
-        ui->lineEditTXFreqCorrection->setText(QString::number(tx_freq_corr));
-        ui->lineEditCallsign->setText(QString(cfg.lookup("callsign")));
-        ui->lineEditVideoDevice->setText(QString(cfg.lookup("video_device")));
-        ui->txPowerSlider->setValue(cfg.lookup("tx_power"));
-        ui->rxSensitivitySlider->setValue(cfg.lookup("rx_sensitivity"));
-        ui->rxSquelchSlider->setValue(cfg.lookup("squelch"));
-        ui->rxVolumeSlider->setValue(cfg.lookup("rx_volume"));
-        ui->frameCtrlFreq->setFrequency(cfg.lookup("rx_frequency"));
-        _rx_frequency = cfg.lookup("rx_frequency");
-        _tx_frequency = cfg.lookup("tx_shift");
-        ui->shiftEdit->setText(QString::number(_tx_frequency / 1000));
-
-    }
-    catch(const libconfig::SettingNotFoundException &nfex)
-    {
-        ui->lineEditRXDev->setText("rtl=0");
-        ui->lineEditTXDev->setText("uhd");
-        ui->lineEditRXAntenna->setText("RX2");
-        ui->lineEditTXAntenna->setText("TX/RX");
-        ui->lineEditRXFreqCorrection->setText("39");
-        ui->lineEditTXFreqCorrection->setText("0");
-        ui->lineEditCallsign->setText("CALL");
-        ui->lineEditVideoDevice->setText("/dev/video0");
-        _rx_frequency = 434000000;
-        ui->frameCtrlFreq->setFrequency(_rx_frequency);
-        _tx_frequency = 0;
-        ui->shiftEdit->setText(QString::number(_tx_frequency,10));
-
-        std::cerr << "Settings not found in configuration file." << std::endl;
-    }
 }
 
 void MainWindow::saveConfig()
 {
-    libconfig::Config cfg;
-    libconfig::Setting &root = cfg.getRoot();
-    root.add("rx_device_args",libconfig::Setting::TypeString) = ui->lineEditRXDev->text().toStdString();
-    root.add("tx_device_args",libconfig::Setting::TypeString) = ui->lineEditTXDev->text().toStdString();
-    root.add("rx_antenna",libconfig::Setting::TypeString) = ui->lineEditRXAntenna->text().toStdString();
-    root.add("tx_antenna",libconfig::Setting::TypeString) = ui->lineEditTXAntenna->text().toStdString();
-    root.add("rx_freq_corr",libconfig::Setting::TypeInt) = ui->lineEditRXFreqCorrection->text().toInt();
-    root.add("tx_freq_corr",libconfig::Setting::TypeInt) = ui->lineEditTXFreqCorrection->text().toInt();
-    root.add("callsign",libconfig::Setting::TypeString) = ui->lineEditCallsign->text().toStdString();
-    root.add("video_device",libconfig::Setting::TypeString) = ui->lineEditVideoDevice->text().toStdString();
-    root.add("tx_power",libconfig::Setting::TypeInt) = (int)ui->txPowerSlider->value();
-    root.add("rx_sensitivity",libconfig::Setting::TypeInt) = (int)ui->rxSensitivitySlider->value();
-    root.add("squelch",libconfig::Setting::TypeInt) = (int)ui->rxSquelchSlider->value();
-    root.add("rx_volume",libconfig::Setting::TypeInt) = (int)ui->rxVolumeSlider->value();
-    root.add("rx_frequency",libconfig::Setting::TypeInt64) = _rx_frequency;
-    root.add("tx_shift",libconfig::Setting::TypeInt64) = _tx_frequency;
-    try
-    {
-        cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());
-    }
-    catch(const libconfig::FileIOException &fioex)
-    {
-        std::cerr << "I/O error while writing configuration file: " << _config_file->absoluteFilePath().toStdString() << std::endl;
-        exit(EXIT_FAILURE);
-    }
+    _settings->rx_device_args = ui->lineEditRXDev->text();
+    _settings->tx_device_args = ui->lineEditTXDev->text();
+    _settings->rx_antenna = ui->lineEditRXAntenna->text();
+    _settings->tx_antenna = ui->lineEditTXAntenna->text();
+    _settings->rx_freq_corr = ui->lineEditRXFreqCorrection->text().toInt();
+    _settings->tx_freq_corr = ui->lineEditTXFreqCorrection->text().toInt();
+    _settings->callsign = ui->lineEditCallsign->text();
+    _settings->video_device = ui->lineEditVideoDevice->text();
+    _settings->tx_power = (int)ui->txPowerSlider->value();
+    _settings->rx_sensitivity = (int)ui->rxSensitivitySlider->value();
+    _settings->squelch = (int)ui->rxSquelchSlider->value();
+    _settings->rx_volume = (int)ui->rxVolumeSlider->value();
+    _settings->rx_frequency = _rx_frequency;
+    _settings->tx_shift = _tx_frequency;
+    _settings->voip_server = ui->voipServerEdit->text();
+    _settings->saveConfig();
 }
 
-QFileInfo* MainWindow::setupConfig()
-{
-    QDir files = QDir::homePath();
-
-    QFileInfo new_file = files.filePath(".config/qradiolink.cfg");
-    if(!new_file.exists())
-    {
-        QString config = "// Automatically generated\n";
-        QFile newfile(new_file.absoluteFilePath());
-
-        if (newfile.open(QIODevice::ReadWrite))
-        {
-            newfile.write(config.toStdString().c_str());
-            newfile.close();
-        }
-
-    }
-
-    return new QFileInfo(new_file);
-}
 
 void MainWindow::GUIendTransmission()
 {

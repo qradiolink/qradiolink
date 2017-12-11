@@ -206,7 +206,7 @@ void MumbleClient::processServerSync(quint8 *message, quint64 size)
     us.set_actor(_session_id);
     us.set_self_deaf(true);
     us.set_self_mute(true);
-    us.set_comment(_settings->_callsign.toStdString().c_str());
+    us.set_comment(_settings->callsign.toStdString().c_str());
     int msize = us.ByteSize();
     quint8 data[msize];
     us.SerializeToArray(data,msize);

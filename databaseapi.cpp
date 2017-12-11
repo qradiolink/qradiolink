@@ -256,23 +256,19 @@ Settings* DatabaseApi::get_settings()
     if(query.next())
     {
         settings->_id = query.value(id_idx).toInt();
-        settings->_use_mumble = query.value(use_mumble_idx).toInt();
+
         settings->_mumble_tcp = query.value(mumble_tcp_idx).toInt();
         settings->_use_codec2 = query.value(use_codec2_idx).toInt();
         settings->_audio_treshhold = query.value(audio_treshhold_idx).toFloat();
         settings->_voice_activation = query.value(voice_activation_idx).toFloat();
         settings->_voice_activation_timeout = query.value(voice_activation_timeout_idx).toInt();
         settings->_voice_server_port = query.value(voice_server_port_idx).toInt();
-        settings->_voice_server_ip = query.value(voice_server_ip_idx).toString();
         settings->_local_udp_port = query.value(local_udp_port_idx).toInt();
         settings->_control_port = query.value(control_port_idx).toInt();
-        settings->_opus_bitrate = query.value(opus_bitrate_idx).toInt();
-        settings->_codec2_bitrate = query.value(codec2_bitrate_idx).toInt();
         settings->_enable_vox = query.value(enable_vox_idx).toInt();
         settings->_enable_agc = query.value(enable_agc_idx).toInt();
         settings->_ident_time = query.value(ident_time_idx).toInt();
         settings->_radio_id = query.value(radio_id_idx).toString();
-        settings->_callsign = query.value(callsign_idx).toString();
     }
 
     return settings;

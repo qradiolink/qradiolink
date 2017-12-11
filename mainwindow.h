@@ -28,6 +28,7 @@
 #include <math.h>
 #include "qtgui/freqctrl.h"
 #include <libconfig.h++>
+#include "settings.h"
 #include <iostream>
 
 namespace Ui {
@@ -109,13 +110,13 @@ signals:
     void stopRadio();
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    explicit MainWindow(Settings *settings, QWidget *parent = 0);
     ~MainWindow();
     QWidget* get_const_gui() {return _constellation_gui;}
     QWidget* get_rssi_gui() {return _rssi_gui;}
     QWidget* get_fft_gui() {return _fft_gui;}
 
-    void readConfig(QFileInfo *config_file);
+    void readConfig();
 private:
     Ui::MainWindow *ui;
     bool _transmitting_radio;
@@ -128,6 +129,7 @@ private:
     qint64 _tx_frequency;
     QFileInfo *setupConfig();
     void closeEvent(QCloseEvent *);
+    Settings *_settings;
 
 
 

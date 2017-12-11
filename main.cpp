@@ -89,9 +89,10 @@ int main(int argc, char *argv[])
     QString start_time= QDateTime::currentDateTime().toString("d/MMM/yyyy hh:mm:ss");
     qDebug() << start_time;
     DatabaseApi db;
-    Settings *settings = db.get_settings();
+    Settings *settings = new Settings;
+    settings->readConfig();
     MumbleClient *client = new MumbleClient(settings);
-    MainWindow *w = new MainWindow;
+    MainWindow *w = new MainWindow(settings);
     w->setWindowTitle("QRadioLink");
 
     /* Uncomment later
