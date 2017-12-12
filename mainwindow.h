@@ -29,6 +29,7 @@
 #include "qtgui/freqctrl.h"
 #include <libconfig.h++>
 #include "settings.h"
+#include "channel.h"
 #include <iostream>
 
 namespace Ui {
@@ -76,6 +77,8 @@ public slots:
     void togglePTTVOIP(bool value);
     void toggleVOIPForwarding(bool value);
     void toggleRepeater(bool value);
+    void newChannel(Channel *chan);
+    void channelState(QTreeWidgetItem *item, int k);
 
 signals:
     void startTransmission();
@@ -108,6 +111,7 @@ signals:
     void setMute(bool value);
     void toggleRepeat(bool value);
     void stopRadio();
+    void changeChannel(int id);
 
 public:
     explicit MainWindow(Settings *settings, QWidget *parent = 0);
@@ -130,6 +134,7 @@ private:
     QFileInfo *setupConfig();
     void closeEvent(QCloseEvent *);
     Settings *_settings;
+    int _current_voip_channel;
 
 
 

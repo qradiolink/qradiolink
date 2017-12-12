@@ -24,6 +24,7 @@ SSLClient::SSLClient(QObject *parent) :
 {
     _connection_tries=0;
     _status=0;
+    _reconnect = false;
     _hostname = "127.0.0.1";
     _port= MUMBLE_PORT;
     QSslSocket::addDefaultCaCertificates(QSslSocket::systemCaCertificates());
@@ -66,6 +67,7 @@ SSLClient::SSLClient(QObject *parent) :
 
 SSLClient::~SSLClient()
 {
+    _reconnect = false;
     _socket->disconnectFromHost();
     delete _socket;
 }
@@ -78,9 +80,10 @@ int SSLClient::connectionStatus()
 
 void SSLClient::connectionSuccess()
 {
-    qDebug() << "Successfull outgoing connection";
+    std::cout << "Successfull server connection" << std::endl;
     _status=1;
     _connection_tries=0;
+    _reconnect = true;
     emit connectedToHost();
 }
 
@@ -94,7 +97,7 @@ void SSLClient::connectionFailed(QAbstractSocket::SocketError)
 {
 
 
-    qDebug() << "Outgoing connection failed" << _socket->errorString();
+    std::cerr << "Outgoing connection failed " << _socket->errorString().toStdString() << std::endl;
     if(_status==1)
     {
         _socket->close();
@@ -110,7 +113,9 @@ void SSLClient::connectionFailed(QAbstractSocket::SocketError)
 
 void SSLClient::tryReconnect()
 {
-    qDebug() << "Disconnected";
+    if(!_reconnect)
+        return;
+    std::cout << "Disconnected" << std::endl;
     _connection_tries++;
     usleep(2000000);
     if(_connection_tries < 2000000)
@@ -128,10 +133,10 @@ void SSLClient::tryReconnect()
 
 void SSLClient::sslError(QList<QSslError> errors)
 {
-    qDebug() << "SSL errors occured";
+    std::cerr << "SSL errors occured" << std::endl;
     for(int i =0;i<errors.size();i++)
     {
-        qDebug() << errors.at(i).errorString();
+        std::cerr << errors.at(i).errorString().toStdString() << std::endl;
     }
     const QSslCertificate cert = _socket->peerCertificate();
     _socket->peerCertificateChain() << cert;
@@ -146,7 +151,7 @@ void SSLClient::connectHost(const QString &host, const unsigned &port)
         _socket->close();
         _status=0;
     }
-    qDebug() << "trying " << host;
+    std::cout << "trying " << host.toStdString() << std::endl;
     _socket->connectToHostEncrypted(host, port);
     _hostname = host;
     _port = port;
@@ -158,6 +163,7 @@ void SSLClient::disconnectHost()
     if(_status==0)
         return;
     _socket->disconnectFromHost();
+    _reconnect = false;
     _status=0;
     _connection_tries=0;
     emit disconnectedFromHost();
@@ -239,7 +245,7 @@ void SSLClient::sendUDP(quint8 *payload, quint64 size)
     quint64 sent = _udp_socket->writeDatagram(message,size,QHostAddress(_hostname),_port);
     _udp_socket->flush();
     if(sent <= 0)
-        qDebug() << "UDP transmit error";
+        std::cerr << "UDP transmit error" << std::endl;
 
 }
 

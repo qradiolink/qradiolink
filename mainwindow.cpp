@@ -73,12 +73,15 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
 
     QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
 
+    QObject::connect(ui->voipTreeWidget,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this,SLOT(channelState(QTreeWidgetItem *,int)));
+
     ui->rxModemTypeComboBox->setAttribute(Qt::WA_AcceptTouchEvents);
     ui->txModemTypeComboBox->setAttribute(Qt::WA_AcceptTouchEvents);
     ui->sendTextEdit->setAttribute(Qt::WA_AcceptTouchEvents);
     ui->receivedTextEdit->setAttribute(Qt::WA_AcceptTouchEvents);
     //ui->tuneSlider->setRange(-100,100);
     _transmitting_radio = false;
+    _current_voip_channel = -1;
     _constellation_gui = ui->widget_const;
     _rssi_gui = ui->widget_rssi;
     _fft_gui = ui->widget_fft;
@@ -244,6 +247,43 @@ void MainWindow::updateOnlineStations(StationList stations)
     {
         ui->receivedTextEdit->setPlainText(ui->receivedTextEdit->toPlainText() + stations.at(i)._radio_id + "\n");
     }
+}
+
+void MainWindow::newChannel(Channel *chan)
+{
+    if(chan->name == "")
+    {
+        QList<QTreeWidgetItem*> channel_list = ui->voipTreeWidget->findItems(QString::number(_current_voip_channel),Qt::MatchExactly,0);
+        if(channel_list.size() > 0)
+        {
+            QTreeWidgetItem *old_item = channel_list.at(0);
+            old_item->setBackgroundColor(0,QColor("#ffffff"));
+            old_item->setBackgroundColor(1,QColor("#ffffff"));
+            old_item->setBackgroundColor(2,QColor("#ffffff"));
+        }
+        QTreeWidgetItem *item = ui->voipTreeWidget->findItems(QString::number(chan->id),Qt::MatchExactly,0).at(0);
+        item->setBackgroundColor(0,QColor("#cc0000"));
+        item->setBackgroundColor(1,QColor("#cc0000"));
+        item->setBackgroundColor(2,QColor("#cc0000"));
+        _current_voip_channel = chan->id;
+        delete chan;
+        return;
+    }
+    QTreeWidgetItem *t = new QTreeWidgetItem(0);
+    t->setText(0,QString::number(chan->id));
+    t->setText(1,chan->name);
+    t->setText(2,chan->description);
+    t->setBackgroundColor(0,QColor("#ffffff"));
+    t->setBackgroundColor(1,QColor("#ffffff"));
+    t->setBackgroundColor(2,QColor("#ffffff"));
+    ui->voipTreeWidget->addTopLevelItem(t);
+    delete chan;
+}
+
+void MainWindow::channelState(QTreeWidgetItem *item, int k)
+{
+    Q_UNUSED(k);
+    emit changeChannel((int)item->data(0,0).toInt());
 }
 
 void MainWindow::toggleRXwin(bool value)

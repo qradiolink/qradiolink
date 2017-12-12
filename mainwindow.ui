@@ -1750,6 +1750,85 @@ background-color: rgb(85, 85, 255);</string>
           <string>VOIP</string>
          </attribute>
          <layout class="QGridLayout" name="gridLayout_2">
+          <item row="3" column="0">
+           <spacer name="verticalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="0" column="2">
+           <widget class="QPushButton" name="voipDisconnectButton">
+            <property name="styleSheet">
+             <string notr="true">font: 14pt &quot;Sans Serif&quot;;
+background: none;
+background-color: rgb(127, 0, 0);
+color: rgb(255, 255, 255);</string>
+            </property>
+            <property name="text">
+             <string>Disconnect</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QPushButton" name="voipConnectButton">
+            <property name="styleSheet">
+             <string notr="true">font: 14pt &quot;Sans Serif&quot;;
+background: none;
+background-color: rgb(0, 50, 0);
+color: rgb(255, 255, 255);</string>
+            </property>
+            <property name="text">
+             <string>Connect</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QCommandLinkButton" name="voipForwardButton">
+            <property name="styleSheet">
+             <string notr="true">font: 14pt &quot;Sans Serif&quot;;
+border-width: 4px;
+color: rgb(255, 255, 255);
+background-color: rgb(85, 85, 127);</string>
+            </property>
+            <property name="text">
+             <string>Forward radio</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLineEdit" name="voipServerEdit">
+            <property name="styleSheet">
+             <string notr="true">background-color: rgb(255, 255, 255);
+font: 14pt &quot;Sans Serif&quot;;</string>
+            </property>
+            <property name="text">
+             <string>127.0.0.1</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <spacer name="horizontalSpacer_5">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
           <item row="1" column="0">
            <widget class="QCommandLinkButton" name="pttVoipButton">
             <property name="sizePolicy">
@@ -1778,83 +1857,44 @@ background-color: rgb(85, 85, 127);</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="3">
-           <spacer name="horizontalSpacer_5">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+          <item row="2" column="0" colspan="3">
+           <widget class="QTreeWidget" name="voipTreeWidget">
+            <property name="alternatingRowColors">
+             <bool>false</bool>
             </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
+            <property name="selectionBehavior">
+             <enum>QAbstractItemView::SelectItems</enum>
             </property>
-           </spacer>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLineEdit" name="voipServerEdit">
-            <property name="styleSheet">
-             <string notr="true">background-color: rgb(255, 255, 255);
-font: 14pt &quot;Sans Serif&quot;;</string>
-            </property>
-            <property name="text">
-             <string>127.0.0.1</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QPushButton" name="voipConnectButton">
-            <property name="styleSheet">
-             <string notr="true">font: 14pt &quot;Sans Serif&quot;;
-background: none;
-background-color: rgb(0, 50, 0);
-color: rgb(255, 255, 255);</string>
-            </property>
-            <property name="text">
-             <string>Connect</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QPushButton" name="voipDisconnectButton">
-            <property name="styleSheet">
-             <string notr="true">font: 14pt &quot;Sans Serif&quot;;
-background: none;
-background-color: rgb(127, 0, 0);
-color: rgb(255, 255, 255);</string>
-            </property>
-            <property name="text">
-             <string>Disconnect</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <spacer name="verticalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="1" column="1">
-           <widget class="QCommandLinkButton" name="voipForwardButton">
-            <property name="styleSheet">
-             <string notr="true">font: 14pt &quot;Sans Serif&quot;;
-border-width: 4px;
-color: rgb(255, 255, 255);
-background-color: rgb(85, 85, 127);</string>
-            </property>
-            <property name="text">
-             <string>Forward radio</string>
-            </property>
-            <property name="checkable">
+            <property name="wordWrap">
              <bool>true</bool>
             </property>
+            <property name="columnCount">
+             <number>3</number>
+            </property>
+            <attribute name="headerVisible">
+             <bool>false</bool>
+            </attribute>
+            <attribute name="headerDefaultSectionSize">
+             <number>120</number>
+            </attribute>
+            <attribute name="headerHighlightSections">
+             <bool>true</bool>
+            </attribute>
+            <column>
+             <property name="text">
+              <string notr="true">1</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string notr="true">2</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string notr="true">3</string>
+             </property>
+            </column>
            </widget>
           </item>
          </layout>

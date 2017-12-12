@@ -38,6 +38,7 @@
 #include "audioop.h"
 #include "dtmfcommand.h"
 #include "station.h"
+#include "channel.h"
 #include "radioop.h"
 #include <gnuradio/qtgui/const_sink_c.h>
 #include <gnuradio/qtgui/sink_c.h>
@@ -279,9 +280,13 @@ int main(int argc, char *argv[])
     QObject::connect(radio_op, SIGNAL(voipData(short*,int)), client, SLOT(processAudio(short*,int)));
 
     QObject::connect(client,SIGNAL(onlineStations(StationList)),w,SLOT(updateOnlineStations(StationList)));
+    QObject::connect(client,SIGNAL(textMessage(QString)),w,SLOT(displayText(QString)));
+    QObject::connect(client,SIGNAL(newChannel(Channel*)),w,SLOT(newChannel(Channel*)));
+
     QObject::connect(w,SIGNAL(connectToServer(QString, unsigned)),client,SLOT(connectToServer(QString, unsigned)));
     QObject::connect(w,SIGNAL(disconnectFromServer()),client,SLOT(disconnectFromServer()));
     QObject::connect(w,SIGNAL(setMute(bool)),client,SLOT(setMute(bool)));
+    QObject::connect(w,SIGNAL(changeChannel(int)),client,SLOT(joinChannel(int)));
 
     w->show();
     w->showMaximized();

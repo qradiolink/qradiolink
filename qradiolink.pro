@@ -73,7 +73,8 @@ SOURCES += main.cpp\
     gr/gr_deframer_bb.cpp \
     gr/gr_audio_source.cpp \
     gr/gr_audio_sink.cpp \
-    gr/gr_4fsk_discriminator.cpp
+    gr/gr_4fsk_discriminator.cpp \
+    channel.cpp
 
 HEADERS  += mainwindow.h\
         audio/audioencoder.h\
@@ -135,7 +136,8 @@ HEADERS  += mainwindow.h\
     gr/gr_audio_source.h \
     gr/gr_audio_sink.h \
     gr/gr_4fsk_discriminator.h \
-    gr/modem_types.h
+    gr/modem_types.h \
+    channel.h
 
 
 FORMS    += mainwindow.ui

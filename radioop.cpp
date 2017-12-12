@@ -434,7 +434,7 @@ void RadioOp::run()
             emit voipData(pcm,320*sizeof(short));
         }
         int time = QDateTime::currentDateTime().toTime_t();
-        if((time - last_ping_time) > 20)
+        if((time - last_ping_time) > 10)
         {
             emit pingServer();
             last_ping_time = time;

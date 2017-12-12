@@ -30,6 +30,7 @@
 #include <QTime>
 #include <QCoreApplication>
 #include <unistd.h>
+#include <iostream>
 #include "config_defines.h"
 
 class SSLClient : public QObject
@@ -65,6 +66,7 @@ private:
     unsigned _status;
     QString _hostname;
     unsigned _port;
+    bool _reconnect;
 
 
 private slots:
