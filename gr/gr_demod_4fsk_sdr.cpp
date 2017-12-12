@@ -55,7 +55,7 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
     {
         rs = 1000;
         bw = 2500;
-        gain_mu = 0.125;
+        gain_mu = 0.025;
     }
 
     std::vector<unsigned int> const_map;
