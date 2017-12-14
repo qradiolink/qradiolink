@@ -238,6 +238,7 @@ void MainWindow::GUIconnectVOIP()
 void MainWindow::GUIdisconnectVOIP()
 {
     emit disconnectFromServer();
+    ui->voipTreeWidget->clear();
 }
 
 
@@ -253,20 +254,27 @@ void MainWindow::newChannel(Channel *chan)
 {
     if(chan->name == "")
     {
-        QList<QTreeWidgetItem*> channel_list = ui->voipTreeWidget->findItems(QString::number(_current_voip_channel),Qt::MatchExactly,0);
+        QList<QTreeWidgetItem*> channel_list = ui->voipTreeWidget->findItems(QString::number(_current_voip_channel),Qt::MatchExactly | Qt::MatchRecursive,0);
         if(channel_list.size() > 0)
         {
             QTreeWidgetItem *old_item = channel_list.at(0);
             old_item->setBackgroundColor(0,QColor("#ffffff"));
             old_item->setBackgroundColor(1,QColor("#ffffff"));
             old_item->setBackgroundColor(2,QColor("#ffffff"));
+            old_item->setTextColor(0,QColor("#000000"));
+            old_item->setTextColor(1,QColor("#000000"));
+            old_item->setTextColor(2,QColor("#000000"));
         }
-        QTreeWidgetItem *item = ui->voipTreeWidget->findItems(QString::number(chan->id),Qt::MatchExactly,0).at(0);
-        item->setBackgroundColor(0,QColor("#cc0000"));
-        item->setBackgroundColor(1,QColor("#cc0000"));
-        item->setBackgroundColor(2,QColor("#cc0000"));
+        QTreeWidgetItem *item = ui->voipTreeWidget->findItems(QString::number(chan->id),Qt::MatchExactly | Qt::MatchRecursive,0).at(0);
+        item->setBackgroundColor(0,QColor("#770000"));
+        item->setBackgroundColor(1,QColor("#770000"));
+        item->setBackgroundColor(2,QColor("#770000"));
+        item->setTextColor(0,QColor("#ffffff"));
+        item->setTextColor(1,QColor("#ffffff"));
+        item->setTextColor(2,QColor("#ffffff"));
         _current_voip_channel = chan->id;
         delete chan;
+        ui->voipTreeWidget->expandAll();
         return;
     }
     QTreeWidgetItem *t = new QTreeWidgetItem(0);
@@ -276,7 +284,22 @@ void MainWindow::newChannel(Channel *chan)
     t->setBackgroundColor(0,QColor("#ffffff"));
     t->setBackgroundColor(1,QColor("#ffffff"));
     t->setBackgroundColor(2,QColor("#ffffff"));
-    ui->voipTreeWidget->addTopLevelItem(t);
+    t->setTextColor(0,QColor("#000000"));
+    t->setTextColor(1,QColor("#000000"));
+    t->setTextColor(2,QColor("#000000"));
+    if(chan->parent_id == 0)
+        ui->voipTreeWidget->addTopLevelItem(t);
+    else
+    {
+        QList<QTreeWidgetItem*> channel_list = ui->voipTreeWidget->findItems(QString::number(chan->parent_id),Qt::MatchExactly | Qt::MatchRecursive,0);
+        if(channel_list.size() > 0)
+        {
+            QTreeWidgetItem *parent = channel_list.at(0);
+            parent->addChild(t);
+            t->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
+        }
+    }
+    ui->voipTreeWidget->expandAll();
     delete chan;
 }
 

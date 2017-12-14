@@ -83,8 +83,6 @@ public slots:
 signals:
     void startTransmission();
     void endTransmission();
-    void connectVOIP(QString host, unsigned port);
-    void disconnectVOIP();
     void sendText(QString text, bool repeat);
     void toggleRX(bool value);
     void toggleTX(bool value);
@@ -108,10 +106,11 @@ signals:
     void setVOIPForwarding(bool value);
     void connectToServer(QString server, unsigned port);
     void disconnectFromServer();
+    void changeChannel(int id);
     void setMute(bool value);
     void toggleRepeat(bool value);
     void stopRadio();
-    void changeChannel(int id);
+
 
 public:
     explicit MainWindow(Settings *settings, QWidget *parent = 0);

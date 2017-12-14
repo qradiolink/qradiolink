@@ -67,6 +67,7 @@ void MumbleClient::disconnectFromServer()
         _authenticated = false;
         _synchronized = false;
         _session_id = -1;
+        std::cout << "Disconnected" << std::endl;
     }
 }
 

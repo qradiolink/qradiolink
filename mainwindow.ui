@@ -1859,14 +1859,28 @@ background-color: rgb(85, 85, 127);</string>
           </item>
           <item row="2" column="0" colspan="3">
            <widget class="QTreeWidget" name="voipTreeWidget">
+            <property name="styleSheet">
+             <string notr="true">color: rgb(0, 85, 127);
+background-color: rgb(223, 223, 223);
+font: 12pt &quot;Sans Serif&quot;;</string>
+            </property>
             <property name="alternatingRowColors">
              <bool>false</bool>
             </property>
             <property name="selectionBehavior">
              <enum>QAbstractItemView::SelectItems</enum>
             </property>
+            <property name="rootIsDecorated">
+             <bool>false</bool>
+            </property>
+            <property name="itemsExpandable">
+             <bool>true</bool>
+            </property>
             <property name="wordWrap">
              <bool>true</bool>
+            </property>
+            <property name="expandsOnDoubleClick">
+             <bool>false</bool>
             </property>
             <property name="columnCount">
              <number>3</number>
