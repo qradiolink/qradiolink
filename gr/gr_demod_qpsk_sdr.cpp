@@ -90,16 +90,11 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
                                 1, _target_samp_rate, _filter_width, filter_slope,gr::filter::firdes::WIN_HAMMING) );
     float gain_mu, omega_rel_limit;
-    if(_target_samp_rate == 20000)
-    {
-        gain_mu = 0.025;
-        omega_rel_limit = 0.0005;
-    }
-    else
-    {
-        gain_mu = 0.0125;
-        omega_rel_limit = 0.0001;
-    }
+
+    gain_mu = 0.025;
+    omega_rel_limit = 0.001;
+
+
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
                                                               omega_rel_limit);
     std::vector<float> pfb_taps = gr::filter::firdes::root_raised_cosine(flt_size,flt_size, 1, 0.35, flt_size * 11 * _samples_per_symbol);
@@ -120,15 +115,10 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
     connect(_filter,0,_agc,0);
     connect(_agc,0,_clock_recovery,0);
     //connect(_fll,0,_clock_recovery,0);
-    if(_target_samp_rate == 20000)
-    {
-        connect(_clock_recovery,0,_equalizer,0);
-        connect(_equalizer,0,_costas_loop,0);
-    }
-    else
-    {
-        connect(_clock_recovery,0,_costas_loop,0);
-    }
+
+    connect(_clock_recovery,0,_equalizer,0);
+    connect(_equalizer,0,_costas_loop,0);
+
     connect(_costas_loop,0,self(),1);
 
     connect(_costas_loop,0,_constellation_receiver,0);
