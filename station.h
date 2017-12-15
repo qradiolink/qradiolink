@@ -23,21 +23,21 @@ class Station
 {
 public:
     Station();
-    int _id;
-    QString _callsign;
-    QString _radio_id;
-    QString _ip;
-    QString _hostname;
-    int _in_call;
-    int _conference_id;
-    int _called_by;     // calling station id
-    int _call_time;     // time of call
-    int _repeater;
-    int _local;
-    int _active;
-    int _waiting;
-    bool _mute;
-    bool _deaf;
+    int id;
+    QString callsign;
+    QString radio_id;
+    QString ip;
+    QString hostname;
+    int in_call;
+    int channel_id;
+    int called_by;     // calling station id
+    int call_time;     // time of call
+    int repeater;
+    int local;
+    int active;
+    int waiting;
+    bool mute;
+    bool deaf;
 };
 
 #endif // STATION_H

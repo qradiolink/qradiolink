@@ -56,16 +56,8 @@ gr_modem::gr_modem(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgu
 
 gr_modem::~gr_modem()
 {
-    //_gr_demod_gmsk->stop();
-    //_gr_mod_gmsk->stop();
-    //_gr_demod_bpsk->stop();
-    //_gr_mod_bpsk->stop();
     //deinitRX();
     //deinitTX();
-    //delete _gr_mod_gmsk;
-    //delete _gr_demod_gmsk;
-    //delete _gr_mod_bpsk;
-    //delete _gr_demod_bpsk;
 }
 
 void gr_modem::initTX(int modem_type, std::string device_args, std::string device_antenna, int freq_corr)

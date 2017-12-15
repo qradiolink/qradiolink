@@ -79,6 +79,8 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     ui->txModemTypeComboBox->setAttribute(Qt::WA_AcceptTouchEvents);
     ui->sendTextEdit->setAttribute(Qt::WA_AcceptTouchEvents);
     ui->receivedTextEdit->setAttribute(Qt::WA_AcceptTouchEvents);
+    ui->voipTreeWidget->setColumnHidden(2,true);
+    ui->voipTreeWidget->setColumnHidden(3,true);
     //ui->tuneSlider->setRange(-100,100);
     _transmitting_radio = false;
     _current_voip_channel = -1;
@@ -246,7 +248,24 @@ void MainWindow::updateOnlineStations(StationList stations)
 {
     for(int i=0;i<stations.size();i++)
     {
-        ui->receivedTextEdit->setPlainText(ui->receivedTextEdit->toPlainText() + stations.at(i)._radio_id + "\n");
+        QList<QTreeWidgetItem*> list = ui->voipTreeWidget->findItems(".", Qt::MatchRegExp | Qt::MatchExactly | Qt::MatchRecursive,3);
+        if(list.size()>0)
+        {
+            delete list.at(0);
+        }
+    }
+    for(int i=0;i<stations.size();i++)
+    {
+        QList<QTreeWidgetItem*> channel_list = ui->voipTreeWidget->findItems(QString::number(stations.at(i).channel_id),
+                                                                             Qt::MatchExactly | Qt::MatchRecursive,2);
+        if(channel_list.size()>0)
+        {
+            QTreeWidgetItem *item = channel_list.at(0);
+            QTreeWidgetItem *st_item = new QTreeWidgetItem(0);
+            st_item->setText(0,stations.at(i).callsign);
+            st_item->setText(3,QString::number(stations.at(i).id));
+            item->addChild(st_item);
+        }
     }
 }
 
@@ -254,7 +273,7 @@ void MainWindow::newChannel(Channel *chan)
 {
     if(chan->name == "")
     {
-        QList<QTreeWidgetItem*> channel_list = ui->voipTreeWidget->findItems(QString::number(_current_voip_channel),Qt::MatchExactly | Qt::MatchRecursive,0);
+        QList<QTreeWidgetItem*> channel_list = ui->voipTreeWidget->findItems(QString::number(_current_voip_channel),Qt::MatchExactly | Qt::MatchRecursive,2);
         if(channel_list.size() > 0)
         {
             QTreeWidgetItem *old_item = channel_list.at(0);
@@ -265,7 +284,7 @@ void MainWindow::newChannel(Channel *chan)
             old_item->setTextColor(1,QColor("#000000"));
             old_item->setTextColor(2,QColor("#000000"));
         }
-        QTreeWidgetItem *item = ui->voipTreeWidget->findItems(QString::number(chan->id),Qt::MatchExactly | Qt::MatchRecursive,0).at(0);
+        QTreeWidgetItem *item = ui->voipTreeWidget->findItems(QString::number(chan->id),Qt::MatchExactly | Qt::MatchRecursive,2).at(0);
         item->setBackgroundColor(0,QColor("#770000"));
         item->setBackgroundColor(1,QColor("#770000"));
         item->setBackgroundColor(2,QColor("#770000"));
@@ -278,9 +297,9 @@ void MainWindow::newChannel(Channel *chan)
         return;
     }
     QTreeWidgetItem *t = new QTreeWidgetItem(0);
-    t->setText(0,QString::number(chan->id));
-    t->setText(1,chan->name);
-    t->setText(2,chan->description);
+    t->setText(2,QString::number(chan->id));
+    t->setText(0,chan->name);
+    t->setText(1,chan->description);
     t->setBackgroundColor(0,QColor("#ffffff"));
     t->setBackgroundColor(1,QColor("#ffffff"));
     t->setBackgroundColor(2,QColor("#ffffff"));
@@ -291,7 +310,7 @@ void MainWindow::newChannel(Channel *chan)
         ui->voipTreeWidget->addTopLevelItem(t);
     else
     {
-        QList<QTreeWidgetItem*> channel_list = ui->voipTreeWidget->findItems(QString::number(chan->parent_id),Qt::MatchExactly | Qt::MatchRecursive,0);
+        QList<QTreeWidgetItem*> channel_list = ui->voipTreeWidget->findItems(QString::number(chan->parent_id),Qt::MatchExactly | Qt::MatchRecursive,2);
         if(channel_list.size() > 0)
         {
             QTreeWidgetItem *parent = channel_list.at(0);
@@ -306,7 +325,7 @@ void MainWindow::newChannel(Channel *chan)
 void MainWindow::channelState(QTreeWidgetItem *item, int k)
 {
     Q_UNUSED(k);
-    emit changeChannel((int)item->data(0,0).toInt());
+    emit changeChannel((int)item->data(2,0).toInt());
 }
 
 void MainWindow::toggleRXwin(bool value)

@@ -54,18 +54,18 @@ Station* DatabaseApi::get_station_by_radio_id(QString radio_id)
     int active_idx = query.record().indexOf("active");
     if(query.next())
     {
-        station->_id = query.value(id_idx).toInt();
-        station->_callsign = query.value(callsign_idx).toString();
-        station->_radio_id = query.value(radio_id_idx).toString();
-        station->_ip = query.value(ip_idx).toString();
-        station->_hostname = query.value(hostname_idx).toString();
-        station->_in_call = query.value(in_call_idx).toInt();
-        station->_conference_id = query.value(conference_id_idx).toInt();
-        station->_called_by = query.value(called_by_idx).toInt();
-        station->_call_time = query.value(call_time_idx).toInt();
-        station->_repeater = query.value(repeater_idx).toInt();
-        station->_local = query.value(local_idx).toInt();
-        station->_active = query.value(active_idx).toInt();
+        station->id = query.value(id_idx).toInt();
+        station->callsign = query.value(callsign_idx).toString();
+        station->radio_id = query.value(radio_id_idx).toString();
+        station->ip = query.value(ip_idx).toString();
+        station->hostname = query.value(hostname_idx).toString();
+        station->in_call = query.value(in_call_idx).toInt();
+        station->channel_id = query.value(conference_id_idx).toInt();
+        station->called_by = query.value(called_by_idx).toInt();
+        station->call_time = query.value(call_time_idx).toInt();
+        station->repeater = query.value(repeater_idx).toInt();
+        station->local = query.value(local_idx).toInt();
+        station->active = query.value(active_idx).toInt();
     }
 
     return station;
@@ -93,18 +93,18 @@ Station* DatabaseApi::get_station_by_id(int id)
     int active_idx = query.record().indexOf("active");
     if(query.next())
     {
-        station->_id = query.value(id_idx).toInt();
-        station->_callsign = query.value(callsign_idx).toString();
-        station->_radio_id = query.value(radio_id_idx).toString();
-        station->_ip = query.value(ip_idx).toString();
-        station->_hostname = query.value(hostname_idx).toString();
-        station->_in_call = query.value(in_call_idx).toInt();
-        station->_conference_id = query.value(conference_id_idx).toInt();
-        station->_called_by = query.value(called_by_idx).toInt();
-        station->_call_time = query.value(call_time_idx).toInt();
-        station->_repeater = query.value(repeater_idx).toInt();
-        station->_local = query.value(local_idx).toInt();
-        station->_active = query.value(active_idx).toInt();
+        station->id = query.value(id_idx).toInt();
+        station->callsign = query.value(callsign_idx).toString();
+        station->radio_id = query.value(radio_id_idx).toString();
+        station->ip = query.value(ip_idx).toString();
+        station->hostname = query.value(hostname_idx).toString();
+        station->in_call = query.value(in_call_idx).toInt();
+        station->channel_id = query.value(conference_id_idx).toInt();
+        station->called_by = query.value(called_by_idx).toInt();
+        station->call_time = query.value(call_time_idx).toInt();
+        station->repeater = query.value(repeater_idx).toInt();
+        station->local = query.value(local_idx).toInt();
+        station->active = query.value(active_idx).toInt();
     }
 
     return station;
@@ -131,18 +131,18 @@ Station* DatabaseApi::get_local_station()
     int active_idx = query.record().indexOf("active");
     if(query.next())
     {
-        station->_id = query.value(id_idx).toInt();
-        station->_callsign = query.value(callsign_idx).toString();
-        station->_radio_id = query.value(radio_id_idx).toString();
-        station->_ip = query.value(ip_idx).toString();
-        station->_hostname = query.value(hostname_idx).toString();
-        station->_in_call = query.value(in_call_idx).toInt();
-        station->_conference_id = query.value(conference_id_idx).toInt();
-        station->_called_by = query.value(called_by_idx).toInt();
-        station->_call_time = query.value(call_time_idx).toInt();
-        station->_repeater = query.value(repeater_idx).toInt();
-        station->_local = query.value(local_idx).toInt();
-        station->_active = query.value(active_idx).toInt();
+        station->id = query.value(id_idx).toInt();
+        station->callsign = query.value(callsign_idx).toString();
+        station->radio_id = query.value(radio_id_idx).toString();
+        station->ip = query.value(ip_idx).toString();
+        station->hostname = query.value(hostname_idx).toString();
+        station->in_call = query.value(in_call_idx).toInt();
+        station->channel_id = query.value(conference_id_idx).toInt();
+        station->called_by = query.value(called_by_idx).toInt();
+        station->call_time = query.value(call_time_idx).toInt();
+        station->repeater = query.value(repeater_idx).toInt();
+        station->local = query.value(local_idx).toInt();
+        station->active = query.value(active_idx).toInt();
     }
 
     return station;
@@ -157,11 +157,11 @@ void DatabaseApi::update_station_parameters(Station *s)
                   "in_call =:in_call, conference_id=:conference_id, "
                   "called_by = :called_by, call_time=:call_time "
                   " WHERE id=:id");
-    query.bindValue(":in_call", s->_in_call);
-    query.bindValue(":conference_id", s->_conference_id);
-    query.bindValue(":called_by", s->_called_by);
-    query.bindValue(":call_time", s->_call_time);
-    query.bindValue(":id", s->_id);
+    query.bindValue(":in_call", s->in_call);
+    query.bindValue(":conference_id", s->channel_id);
+    query.bindValue(":called_by", s->called_by);
+    query.bindValue(":call_time", s->call_time);
+    query.bindValue(":id", s->id);
     query.exec();
 }
 
@@ -280,12 +280,12 @@ void DatabaseApi::insert_station(Station s)
     query.prepare("INSERT INTO stations (in_call, conference_id, called_by, call_time, callsign, radio_id) VALUES "
                   "(:in_call, :conference_id, :called_by, :call_time, "
                   ":callsign, :radio_id)");
-    query.bindValue(":in_call", s._in_call);
-    query.bindValue(":conference_id", s._conference_id);
-    query.bindValue(":called_by", s._called_by);
-    query.bindValue(":call_time", s._call_time);
-    query.bindValue(":callsign", s._callsign);
-    query.bindValue(":radio_id", s._radio_id);
+    query.bindValue(":in_call", s.in_call);
+    query.bindValue(":conference_id", s.channel_id);
+    query.bindValue(":called_by", s.called_by);
+    query.bindValue(":call_time", s.call_time);
+    query.bindValue(":callsign", s.callsign);
+    query.bindValue(":radio_id", s.radio_id);
     //query.bindValue(":id", s->_id);
     query.exec();
 }
@@ -321,18 +321,18 @@ QVector<Station> DatabaseApi::get_stations(int active)
     while(query.next())
     {
         Station station;
-        station._id = query.value(id_idx).toInt();
-        station._callsign = query.value(callsign_idx).toString();
-        station._radio_id = query.value(radio_id_idx).toString();
-        station._ip = query.value(ip_idx).toString();
-        station._hostname = query.value(hostname_idx).toString();
-        station._in_call = query.value(in_call_idx).toInt();
-        station._conference_id = query.value(conference_id_idx).toInt();
-        station._called_by = query.value(called_by_idx).toInt();
-        station._call_time = query.value(call_time_idx).toInt();
-        station._repeater = query.value(repeater_idx).toInt();
-        station._local = query.value(local_idx).toInt();
-        station._active = query.value(active_idx).toInt();
+        station.id = query.value(id_idx).toInt();
+        station.callsign = query.value(callsign_idx).toString();
+        station.radio_id = query.value(radio_id_idx).toString();
+        station.ip = query.value(ip_idx).toString();
+        station.hostname = query.value(hostname_idx).toString();
+        station.in_call = query.value(in_call_idx).toInt();
+        station.channel_id = query.value(conference_id_idx).toInt();
+        station.called_by = query.value(called_by_idx).toInt();
+        station.call_time = query.value(call_time_idx).toInt();
+        station.repeater = query.value(repeater_idx).toInt();
+        station.local = query.value(local_idx).toInt();
+        station.active = query.value(active_idx).toInt();
         stations.append(station);
     }
 

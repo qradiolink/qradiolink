@@ -249,7 +249,7 @@ void RadioOp::txAudio(short *audiobuffer, int audiobuffer_size)
     {
         std::vector<float> *pcm = new std::vector<float>;
 
-        for(int i=0;i<audiobuffer_size/sizeof(short);i++)
+        for(unsigned int i=0;i<audiobuffer_size/sizeof(short);i++)
         {
             pcm->push_back((float)audiobuffer[i] / 32767.0f);
         }
@@ -280,7 +280,7 @@ void RadioOp::txAudio(short *audiobuffer, int audiobuffer_size)
 
 int RadioOp::processVideoStream(bool &frame_flag)
 {
-    int max_video_frame_size = 3122;
+    unsigned int max_video_frame_size = 3122;
     unsigned long encoded_size;
 
     unsigned char *videobuffer = (unsigned char*)calloc(max_video_frame_size, sizeof(unsigned char));
@@ -306,7 +306,7 @@ int RadioOp::processVideoStream(bool &frame_flag)
     memcpy(&(videobuffer[0]), &encoded_size, 4);
     memcpy(&(videobuffer[4]), &encoded_size, 4);
     memcpy(&(videobuffer[8]), &encoded_size, 4);
-    for(int k=encoded_size+12,i=0;k<max_video_frame_size;k++,i++)
+    for(unsigned int k=encoded_size+12,i=0;k<max_video_frame_size;k++,i++)
     {
 
         videobuffer[k] = _rand_frame_data[i];
@@ -354,7 +354,7 @@ void RadioOp::sendEndBeep()
         short *samples = (short*) data->data();
         std::vector<float> *pcm = new std::vector<float>;
 
-        for(int i=0;i<data->size()/sizeof(short);i++)
+        for(unsigned int i=0;i<data->size()/sizeof(short);i++)
         {
             pcm->push_back((float)samples[i] / 32767.0f);
         }
@@ -660,8 +660,8 @@ void RadioOp::processVoipAudioFrame(short *pcm, int samples, quint64 sid)
     }
     else
     {
-        int size = (_m_queue->size() > samples) ? samples : _m_queue->size();
-        for(int i=0;i<size;i++)
+        unsigned int size = (_m_queue->size() > samples) ? samples : _m_queue->size();
+        for(unsigned int i=0;i<size;i++)
         {
             _m_queue->at(i) = _m_queue->at(i)/2-1 + pcm[i]/2-1;
         }
@@ -679,7 +679,7 @@ void RadioOp::processVoipAudioFrame(short *pcm, int samples, quint64 sid)
     {
 
         short *pcm = new short[_m_queue->size()];
-        for(int i = 0;i<_m_queue->size();i++)
+        for(unsigned int i = 0;i<_m_queue->size();i++)
         {
             pcm[i] = (short)((float)_m_queue->at(i) * _rx_volume);
         }

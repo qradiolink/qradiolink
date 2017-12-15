@@ -31,7 +31,7 @@ Controller::Controller(Settings *settings, DatabaseApi *db, MumbleClient *mumble
     _telnet = NULL;
     _current_station = NULL;
     Station *s = _db->get_local_station();
-    _id = s->_id;
+    _id = s->id;
     delete s;
     _telnet = new TelnetClient;
 
@@ -75,18 +75,18 @@ void Controller::haveCall(QVector<char> *dtmf)
     _dialing_number = number;
     Station *s  = _db->get_station_by_radio_id(QString::fromStdString(number));
 
-    if(s->_id != 0)
+    if(s->id != 0)
     {
-        if(s->_active != 1)
+        if(s->active != 1)
         {
             QString voice= "The station you have tried to call is not active.";
             emit speak(voice);
             return;
         }
-        if(!testConnection(s->_ip))
+        if(!testConnection(s->ip))
             return;
         getStationParameters(s);
-        while(_current_station->_waiting==1)
+        while(_current_station->waiting==1)
         {
             QCoreApplication::processEvents();
         }
@@ -114,7 +114,7 @@ void Controller::haveCall(QVector<char> *dtmf)
         }
         // TODO: how do we pick a server?
         Server *server = servers[0];
-        if(_current_station->_in_call == 1)
+        if(_current_station->in_call == 1)
         {
             // check if the station is already in conference;
             // if it is, just join it
@@ -126,19 +126,19 @@ void Controller::haveCall(QVector<char> *dtmf)
             emit speak(voice);
 #ifdef MUMBLE
             _mumble->connectToServer(server->_ip,_settings->_voice_server_port);
-            _mumble->joinChannel(_current_station->_conference_id);
+            _mumble->joinChannel(_current_station->channel_id);
 #else
             _client->init();
             _client->setProperties(server->_username,server->_password,server->_ip);
             _client->makeCall(s->_conference_id.toStdString());
 #endif
             _in_conference =1;
-            _conference_id = _current_station->_conference_id;
+            _conference_id = _current_station->channel_id;
             _conference_stations->append(_current_station);
             Station *st = _db->get_local_station();
-            st->_called_by=0;
-            st->_conference_id=_conference_id;
-            st->_in_call=1;
+            st->called_by=0;
+            st->channel_id=_conference_id;
+            st->in_call=1;
             _db->update_station_parameters(st);
             delete st;
         }
@@ -176,9 +176,9 @@ void Controller::haveCall(QVector<char> *dtmf)
             _in_conference =1;
             _conference_stations->append(s);
             Station *st = _db->get_local_station();
-            st->_called_by=0;
-            st->_conference_id=_conference_id;
-            st->_in_call=1;
+            st->called_by=0;
+            st->channel_id=_conference_id;
+            st->in_call=1;
             _db->update_station_parameters(st);
             delete st;
         }
@@ -273,11 +273,11 @@ void Controller::readyConnect()
 void Controller::getStationParameters(Station *s)
 {
     _current_station = s;
-    _current_station->_waiting=1;
+    _current_station->waiting=1;
     qDebug() << "Getting station information";
     QObject::connect(_telnet,SIGNAL(haveMessage(QByteArray)),this,SLOT(setStationParameters(QByteArray)));
     QRadioLink::Parameters params;
-    params.set_station_id(s->_id);
+    params.set_station_id(s->id);
     int size = params.ByteSize();
     char data[size+2];
     params.SerializeToArray(data+2, size);
@@ -299,10 +299,10 @@ void Controller::setStationParameters(QByteArray data)
     data.remove(0,2);
     QRadioLink::Parameters param;
     param.ParseFromArray(data.constData(),data.size());
-    _current_station->_in_call=param.in_call();
-    _current_station->_conference_id=param.channel_id();
-    _current_station->_called_by = param.caller_id();
-    _current_station->_waiting=0;
+    _current_station->in_call=param.in_call();
+    _current_station->channel_id=param.channel_id();
+    _current_station->called_by = param.caller_id();
+    _current_station->waiting=0;
     _db->update_station_parameters(_current_station);
     QObject::disconnect(_telnet,SIGNAL(haveMessage(QByteArray)),this,SLOT(setStationParameters(QByteArray)));
 }
@@ -331,13 +331,13 @@ void Controller::joinConference(int number, int id, int server_id)
     QString voice= "Joining conference.";
     emit speak(voice);
     Station *s = _db->get_local_station();
-    s->_called_by=id;
-    s->_conference_id=number;
-    s->_in_call=1;
+    s->called_by=id;
+    s->channel_id=number;
+    s->in_call=1;
     _db->update_station_parameters(s);
     delete s;
     s = _db->get_station_by_id(id);
-    QString caller = s->_callsign;
+    QString caller = s->callsign;
     delete s;
     voice = "Called by " + caller;
     emit speak(voice);
@@ -370,11 +370,11 @@ void Controller::disconnectedFromCall()
         for(int i =0;i<_conference_stations->size();i++)
         {
             Station *s=_conference_stations->at(i);
-            if(s->_called_by==_id)
+            if(s->called_by==_id)
             {
                 //FIXME:
                 _telnet->disconnectHost();
-                _telnet->connectHost(s->_ip,_settings->_control_port);
+                _telnet->connectHost(s->ip,_settings->_control_port);
                 int retries = 0;
                 while((_telnet->connectionStatus()!=1) && (retries<3))
                 {
@@ -394,9 +394,9 @@ void Controller::disconnectedFromCall()
                     _telnet->sendBin(bin_msg.constData(), bin_msg.size());
                 }
             }
-            s->_in_call=0;
-            s->_called_by=0;
-            s->_conference_id=-1;
+            s->in_call=0;
+            s->called_by=0;
+            s->channel_id=-1;
             _db->update_station_parameters(s);
             delete s;
         }
@@ -404,9 +404,9 @@ void Controller::disconnectedFromCall()
     }
     _in_conference=0;
     Station *s = _db->get_local_station();
-    s->_called_by=0;
-    s->_conference_id=-1;
-    s->_in_call=0;
+    s->called_by=0;
+    s->channel_id=-1;
+    s->in_call=0;
     _db->update_station_parameters(s);
     delete s;
 }

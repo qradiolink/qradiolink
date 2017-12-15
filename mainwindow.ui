@@ -1879,17 +1879,20 @@ font: 12pt &quot;Sans Serif&quot;;</string>
             <property name="wordWrap">
              <bool>true</bool>
             </property>
+            <property name="headerHidden">
+             <bool>true</bool>
+            </property>
             <property name="expandsOnDoubleClick">
              <bool>false</bool>
             </property>
             <property name="columnCount">
-             <number>3</number>
+             <number>4</number>
             </property>
             <attribute name="headerVisible">
              <bool>false</bool>
             </attribute>
             <attribute name="headerDefaultSectionSize">
-             <number>120</number>
+             <number>300</number>
             </attribute>
             <attribute name="headerHighlightSections">
              <bool>true</bool>
@@ -1907,6 +1910,11 @@ font: 12pt &quot;Sans Serif&quot;;</string>
             <column>
              <property name="text">
               <string notr="true">3</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string notr="true">4</string>
              </property>
             </column>
            </widget>

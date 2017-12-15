@@ -137,9 +137,9 @@ QByteArray TelnetServer::processCommand(QByteArray data)
         QRadioLink::Parameters param;
         param.ParseFromArray(command.data(),command.size());
         Station* s=_db->get_station_by_id(param.station_id());
-        param.set_caller_id(s->_called_by);
-        param.set_in_call(s->_in_call);
-        param.set_channel_id(s->_conference_id);
+        param.set_caller_id(s->called_by);
+        param.set_in_call(s->in_call);
+        param.set_channel_id(s->channel_id);
         quint8 size = param.ByteSize();
         char bin_data[size+2];
         param.SerializeToArray(bin_data+2, size);
