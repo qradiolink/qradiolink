@@ -524,7 +524,7 @@ void RadioOp::run()
 void RadioOp::receiveAudioData(unsigned char *data, int size)
 {
     short *audio_out;
-    unsigned int samples;
+    int samples;
     if((_rx_mode == gr_modem_types::ModemTypeBPSK2000) ||
             (_rx_mode == gr_modem_types::ModemType2FSK2000) ||
             (_rx_mode == gr_modem_types::ModemType4FSK2000) ||
@@ -539,7 +539,7 @@ void RadioOp::receiveAudioData(unsigned char *data, int size)
     delete[] data;
     if(samples > 0)
     {
-        for(unsigned int i=0;i<samples;i++)
+        for(int i=0;i<samples;i++)
         {
             audio_out[i] = (short)((float)audio_out[i] * _rx_volume);
         }
@@ -648,12 +648,12 @@ void RadioOp::receiveNetData(unsigned char *data, int size)
     int res = _net_device->write_buffered(net_frame,frame_size);
 }
 
-void RadioOp::processVoipAudioFrame(short *pcm, unsigned int samples, quint64 sid)
+void RadioOp::processVoipAudioFrame(short *pcm, int samples, quint64 sid)
 {
 
     if(_m_queue->empty())
     {
-        for(unsigned int i=0;i<samples;i++)
+        for(int i=0;i<samples;i++)
         {
             _m_queue->push_back(pcm[i]);
         }
@@ -667,7 +667,7 @@ void RadioOp::processVoipAudioFrame(short *pcm, unsigned int samples, quint64 si
         }
         if(_m_queue->size() < samples)
         {
-            for(unsigned int i=_m_queue->size();i<samples;i++)
+            for(int i=_m_queue->size();i<samples;i++)
             {
                 _m_queue->push_back(pcm[i]);
             }

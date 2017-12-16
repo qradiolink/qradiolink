@@ -68,7 +68,7 @@ unsigned char* AudioEncoder::encode_opus(short *audiobuffer, int audiobuffersize
 
 }
 
-short* AudioEncoder::decode_opus(unsigned char *audiobuffer, int audiobuffersize, unsigned int &samples)
+short* AudioEncoder::decode_opus(unsigned char *audiobuffer, int audiobuffersize, int &samples)
 {
     int fs = 320;
     short *pcm = new short[fs];
@@ -95,7 +95,7 @@ unsigned char* AudioEncoder::encode_codec2(short *audiobuffer, int audiobuffersi
     return encoded;
 }
 
-short* AudioEncoder::decode_codec2(unsigned char *audiobuffer, int audiobuffersize, unsigned int &samples)
+short* AudioEncoder::decode_codec2(unsigned char *audiobuffer, int audiobuffersize, int &samples)
 {
     Q_UNUSED(audiobuffersize);
     samples = codec2_samples_per_frame(_codec2);
@@ -117,7 +117,7 @@ unsigned char* AudioEncoder::encode_codec2_700(short *audiobuffer, int audiobuff
     return encoded;
 }
 
-short* AudioEncoder::decode_codec2_700(unsigned char *audiobuffer, int audiobuffersize, unsigned int &samples)
+short* AudioEncoder::decode_codec2_700(unsigned char *audiobuffer, int audiobuffersize, int &samples)
 {
     Q_UNUSED(audiobuffersize);
     samples = codec2_samples_per_frame(_codec2_700);
@@ -136,7 +136,7 @@ unsigned char* AudioEncoder::encode_gsm(short *audiobuffer, int audiobuffersize,
     return encoded;
 }
 
-short* AudioEncoder::decode_gsm(unsigned char *audiobuffer, int data_length, unsigned int &samples)
+short* AudioEncoder::decode_gsm(unsigned char *audiobuffer, int data_length, int &samples)
 {
     samples = 160;
     short* decoded = new short[160];

@@ -48,7 +48,7 @@ public:
 
 signals:
     void channelName(QString name);
-    void pcmAudio(short *pcm, unsigned int size, quint64 session_id);
+    void pcmAudio(short *pcm, int size, quint64 session_id);
     void onlineStations(StationList);
     void newStation(Station* s);
     void newChannel(Channel* chan);
@@ -65,7 +65,7 @@ public slots:
     void processProtoMessage(QByteArray data);
     void processUDPData(QByteArray data);
     void sendUDPPing();
-    void processAudio(short *audiobuffer, unsigned int audiobuffersize);
+    void processAudio(short *audiobuffer, int audiobuffersize);
     QString getChannelName();
     int getChannelId();
     QString createChannel(QString channel_name="");
