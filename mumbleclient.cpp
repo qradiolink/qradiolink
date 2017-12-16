@@ -549,7 +549,7 @@ void MumbleClient::setMute(bool mute)
     sendMessage(mdata,9,msize);
 }
 
-void MumbleClient::processAudio(short *audiobuffer, int audiobuffersize)
+void MumbleClient::processAudio(short *audiobuffer, unsigned int audiobuffersize)
 {
     if(!_synchronized)
         return;
@@ -655,7 +655,7 @@ void MumbleClient::processUDPData(QByteArray data)
 void MumbleClient::decodeAudio(unsigned char *audiobuffer, short audiobuffersize, quint8 type, quint64 session_id)
 {
 
-    int samples =0;
+    unsigned int samples =0;
     short *pcm = NULL;
     if(type == 5)
     {

@@ -85,7 +85,7 @@ signals:
     void startAudio();
     void freqFromGUI(long freq);
     void pingServer();
-    void voipData(short *pcm, int samples);
+    void voipData(short *pcm, unsigned int samples);
 public slots:
     void run();
     void startTransmission();
@@ -121,7 +121,7 @@ public slots:
     void startAutoTune();
     void stopAutoTune();
     void endAudioTransmission();
-    void processVoipAudioFrame(short *pcm, int samples, quint64 sid);
+    void processVoipAudioFrame(short *pcm, unsigned int samples, quint64 sid);
     void usePTTForVOIP(bool value);
     void setVOIPForwarding(bool value);
     void startTx();

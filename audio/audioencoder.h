@@ -29,11 +29,11 @@ public:
     AudioEncoder();
     ~AudioEncoder();
     unsigned char *encode_opus(short *audiobuffer, int audiobuffersize, int &encoded_size);
-    short *decode_opus(unsigned char *audiobuffer, int data_length, int &samples);
+    short *decode_opus(unsigned char *audiobuffer, int data_length, unsigned int &samples);
     unsigned char* encode_codec2(short *audiobuffer, int audiobuffersize, int &length);
-    short* decode_codec2(unsigned char *audiobuffer, int audiobuffersize, int &samples);
+    short* decode_codec2(unsigned char *audiobuffer, int audiobuffersize, unsigned int &samples);
     unsigned char* encode_codec2_700(short *audiobuffer, int audiobuffersize, int &length);
-    short* decode_codec2_700(unsigned char *audiobuffer, int audiobuffersize, int &samples);
+    short* decode_codec2_700(unsigned char *audiobuffer, int audiobuffersize, unsigned int &samples);
     unsigned char* encode_gsm(short *audiobuffer, int audiobuffersize, int &length);
     short* decode_gsm(unsigned char *audiobuffer, int data_length, int &samples);
 
