@@ -190,6 +190,9 @@ void gr_demod_base::set_mode(int mode)
         _top_block->disconnect(_qpsk_250k,1,_const_valve,0);
         _top_block->disconnect(_const_valve,0,_constellation,0);
         _top_block->disconnect(_qpsk_250k,2,_vector_sink,0);
+        _carrier_offset = 25000;
+        _signal_source->set_frequency(-_carrier_offset);
+        _osmosdr_source->set_center_freq(_device_frequency - _carrier_offset);
         break;
     case gr_modem_types::ModemTypeQPSKVideo:
         _top_block->disconnect(_multiply,0,_qpsk_video,0);
@@ -197,6 +200,9 @@ void gr_demod_base::set_mode(int mode)
         _top_block->disconnect(_qpsk_video,1,_const_valve,0);
         _top_block->disconnect(_const_valve,0,_constellation,0);
         _top_block->disconnect(_qpsk_video,2,_vector_sink,0);
+        _carrier_offset = 25000;
+        _signal_source->set_frequency(-_carrier_offset);
+        _osmosdr_source->set_center_freq(_device_frequency - _carrier_offset);
         break;
     case gr_modem_types::ModemTypeSSB2500:
         _top_block->disconnect(_multiply,0,_ssb,0);
@@ -311,6 +317,9 @@ void gr_demod_base::set_mode(int mode)
     case gr_modem_types::ModemTypeQPSK250000:
         _signal_source->set_sampling_freq(1000000);
         _osmosdr_source->set_sample_rate(1000000);
+        _carrier_offset = 250000;
+        _signal_source->set_frequency(-_carrier_offset);
+        _osmosdr_source->set_center_freq(_device_frequency - _carrier_offset);
         _add_const->set_k(-110);
         _top_block->connect(_multiply,0,_qpsk_250k,0);
         _top_block->connect(_qpsk_250k,0,_rssi_valve,0);
@@ -321,6 +330,9 @@ void gr_demod_base::set_mode(int mode)
     case gr_modem_types::ModemTypeQPSKVideo:
         _signal_source->set_sampling_freq(1000000);
         _osmosdr_source->set_sample_rate(1000000);
+        _carrier_offset = 250000;
+        _signal_source->set_frequency(-_carrier_offset);
+        _osmosdr_source->set_center_freq(_device_frequency - _carrier_offset);
         _add_const->set_k(-110);
         _top_block->connect(_multiply,0,_qpsk_video,0);
         _top_block->connect(_qpsk_video,0,_rssi_valve,0);
