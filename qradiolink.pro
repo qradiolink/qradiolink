@@ -144,15 +144,14 @@ FORMS    += mainwindow.ui
 
 
 LIBS += -lgnuradio-pmt -lgnuradio-audio -lgnuradio-analog -lgnuradio-blocks \
-        -lgnuradio-osmosdr -lgsm \
+        -lgnuradio-osmosdr \
         -lgnuradio-blocks -lgnuradio-filter -lgnuradio-digital -lgnuradio-runtime -lgnuradio-qtgui -lgnuradio-fec \
         -lboost_thread$$BOOST_SUFFIX -lboost_system$$BOOST_SUFFIX -lboost_program_options$$BOOST_SUFFIX
 LIBS += -lrt  # need to include on some distros
 
-unix:!symbian: LIBS += -lprotobuf -lopus -lpulse-simple -lpulse -lcodec2 -lasound -ljpeg -lconfig++
+unix:!symbian: LIBS += -lprotobuf -lopus -lpulse-simple -lpulse -lcodec2 -lgsm -lasound -ljpeg -lconfig++
                     #-lFestival -lestbase -leststring -lestools -lasound
 #INCLUDEPATH += /usr/include/speech_tools
 INCLUDEPATH += /usr/include/qwt-qt4
 
-RESOURCES += \
-    resources.qrc
+RESOURCES += resources.qrc

@@ -199,7 +199,7 @@ void MumbleClient::processServerSync(quint8 *message, quint64 size)
     msg = QString::fromStdString(welcome)
              + " max bandwidth: " + _max_bandwidth
              + " session: " + QString::number(_session_id);
-    emit textMessage(msg);
+    std::cout << msg.toStdString() << std::endl;
     return;
 #ifndef NO_CRYPT
     //createChannel();
