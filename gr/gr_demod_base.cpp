@@ -28,8 +28,9 @@ gr_demod_base::gr_demod_base(gr::qtgui::sink_c::sptr fft_gui,
     _device_frequency = device_frequency;
     _top_block = gr::make_top_block("demodulator");
     _mode = 9999;
+    _carrier_offset = 25000;
 
-    _signal_source = gr::analog::sig_source_c::make(1000000,gr::analog::GR_COS_WAVE,-25000,1);
+    _signal_source = gr::analog::sig_source_c::make(1000000,gr::analog::GR_COS_WAVE,-_carrier_offset,1);
     _multiply = gr::blocks::multiply_cc::make();
 
     _audio_sink = make_gr_audio_sink();
@@ -53,7 +54,7 @@ gr_demod_base::gr_demod_base(gr::qtgui::sink_c::sptr fft_gui,
 
 
     _osmosdr_source = osmosdr::source::make(device_args);
-    _osmosdr_source->set_center_freq(_device_frequency - 25000.0);
+    _osmosdr_source->set_center_freq(_device_frequency - _carrier_offset);
     _osmosdr_source->set_bandwidth(2000000);
     _osmosdr_source->set_sample_rate(1000000);
     _osmosdr_source->set_freq_corr(freq_corr);
@@ -189,6 +190,9 @@ void gr_demod_base::set_mode(int mode)
         _top_block->disconnect(_qpsk_250k,1,_const_valve,0);
         _top_block->disconnect(_const_valve,0,_constellation,0);
         _top_block->disconnect(_qpsk_250k,2,_vector_sink,0);
+        _carrier_offset = 25000;
+        _signal_source->set_frequency(-_carrier_offset);
+        _osmosdr_source->set_center_freq(_device_frequency - _carrier_offset);
         break;
     case gr_modem_types::ModemTypeQPSKVideo:
         _top_block->disconnect(_multiply,0,_qpsk_video,0);
@@ -196,6 +200,9 @@ void gr_demod_base::set_mode(int mode)
         _top_block->disconnect(_qpsk_video,1,_const_valve,0);
         _top_block->disconnect(_const_valve,0,_constellation,0);
         _top_block->disconnect(_qpsk_video,2,_vector_sink,0);
+        _carrier_offset = 25000;
+        _signal_source->set_frequency(-_carrier_offset);
+        _osmosdr_source->set_center_freq(_device_frequency - _carrier_offset);
         break;
     case gr_modem_types::ModemTypeSSB2500:
         _top_block->disconnect(_multiply,0,_ssb,0);
@@ -206,6 +213,9 @@ void gr_demod_base::set_mode(int mode)
         _top_block->disconnect(_multiply,0,_wfm,0);
         _top_block->disconnect(_wfm,0,_rssi_valve,0);
         _top_block->disconnect(_wfm,1,_audio_sink,0);
+        _carrier_offset = 25000;
+        _signal_source->set_frequency(-_carrier_offset);
+        _osmosdr_source->set_center_freq(_device_frequency - _carrier_offset);
         break;
     default:
         break;
@@ -307,6 +317,9 @@ void gr_demod_base::set_mode(int mode)
     case gr_modem_types::ModemTypeQPSK250000:
         _signal_source->set_sampling_freq(1000000);
         _osmosdr_source->set_sample_rate(1000000);
+        _carrier_offset = 250000;
+        _signal_source->set_frequency(-_carrier_offset);
+        _osmosdr_source->set_center_freq(_device_frequency - _carrier_offset);
         _add_const->set_k(-110);
         _top_block->connect(_multiply,0,_qpsk_250k,0);
         _top_block->connect(_qpsk_250k,0,_rssi_valve,0);
@@ -317,6 +330,9 @@ void gr_demod_base::set_mode(int mode)
     case gr_modem_types::ModemTypeQPSKVideo:
         _signal_source->set_sampling_freq(1000000);
         _osmosdr_source->set_sample_rate(1000000);
+        _carrier_offset = 250000;
+        _signal_source->set_frequency(-_carrier_offset);
+        _osmosdr_source->set_center_freq(_device_frequency - _carrier_offset);
         _add_const->set_k(-110);
         _top_block->connect(_multiply,0,_qpsk_video,0);
         _top_block->connect(_qpsk_video,0,_rssi_valve,0);
@@ -335,6 +351,9 @@ void gr_demod_base::set_mode(int mode)
     case gr_modem_types::ModemTypeWBFM:
         _signal_source->set_sampling_freq(1000000);
         _osmosdr_source->set_sample_rate(1000000);
+        _carrier_offset = 250000;
+        _signal_source->set_frequency(-_carrier_offset);
+        _osmosdr_source->set_center_freq(_device_frequency - _carrier_offset);
         _add_const->set_k(-55);
         _top_block->connect(_multiply,0,_wfm,0);
         _top_block->connect(_wfm,0,_rssi_valve,0);
@@ -410,7 +429,7 @@ std::vector<float>* gr_demod_base::getAudio()
 void gr_demod_base::tune(long center_freq)
 {
     _device_frequency = center_freq;
-    _osmosdr_source->set_center_freq(_device_frequency-25000);
+    _osmosdr_source->set_center_freq(_device_frequency-_carrier_offset);
 }
 
 double gr_demod_base::get_freq()

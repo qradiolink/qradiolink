@@ -35,11 +35,11 @@ AudioInterface::AudioInterface(QObject *parent, unsigned sample_rate, unsigned c
 
 
     pa_buffer_attr attr;
-    attr.fragsize = 2048;
-    attr.maxlength = 2048;
+    attr.fragsize = 4096;
+    attr.maxlength = 4096;
     attr.minreq = -1;
     attr.prebuf = -1;
-    attr.tlength = 1024;
+    attr.tlength = 2048;
 
     if(!normal)
     {

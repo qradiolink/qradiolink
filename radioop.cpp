@@ -88,6 +88,12 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     for (int j = 0;j<5000;j++)
         _rand_frame_data[j] = rand() % 256;
 
+    QFile resfile(":/res/data_rec.raw");
+    if(resfile.open(QIODevice::ReadOnly))
+    {
+        _data_rec_sound = new QByteArray(resfile.readAll());
+    }
+
 }
 
 RadioOp::~RadioOp()
@@ -745,6 +751,11 @@ void RadioOp::dataFrameReceived()
 {
     emit displayDataReceiveStatus(true);
     _data_led_timer->start(100);
+    short *sound = (short*) _data_rec_sound->data();
+    short *samples = new short[_data_rec_sound->size()];
+    memcpy(samples, sound, _data_rec_sound->size());
+    _audio->write_short(samples,_data_rec_sound->size());
+
 }
 
 void RadioOp::receiveEnd()

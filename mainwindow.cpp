@@ -44,6 +44,13 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     ui->frameCtrlFreq->setDigitColor(QColor(230,230,230,240));
     ui->frameCtrlFreq->setUnitsColor(QColor(254,254,254,255));
 
+    ui->txGainDial->setStyleSheet("background-color:#660000;");
+    ui->rxGainDial->setStyleSheet("background-color:#013E09;");
+    ui->rxSquelchDial->setStyleSheet("background-color:#040D55;");
+    ui->rxVolumeDial->setStyleSheet("background-color:#040D55;");
+    ui->tuneDial->setStyleSheet("background-color:#040D55;");
+
+
     QObject::connect(ui->buttonTransmit,SIGNAL(pressed()),this,SLOT(GUIstartTransmission()));
     //QObject::connect(ui->buttonTransmit,SIGNAL(released()),this,SLOT(GUIendTransmission()));
     QObject::connect(ui->sendTextButton,SIGNAL(clicked()),this,SLOT(GUIsendText()));
@@ -53,13 +60,13 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     QObject::connect(ui->clearReceivedTextButton,SIGNAL(clicked()),this,SLOT(clearTextArea()));
     QObject::connect(ui->rxStatusButton,SIGNAL(toggled(bool)),this,SLOT(toggleRXwin(bool)));
     QObject::connect(ui->txStatusButton,SIGNAL(toggled(bool)),this,SLOT(toggleTXwin(bool)));
-    QObject::connect(ui->tuneSlider,SIGNAL(valueChanged(int)),this,SLOT(tuneCenterFreq(int)));
+    QObject::connect(ui->tuneDial,SIGNAL(valueChanged(int)),this,SLOT(tuneCenterFreq(int)));
     QObject::connect(ui->frequencyEdit,SIGNAL(returnPressed()),this,SLOT(enterFreq()));
     QObject::connect(ui->shiftEdit,SIGNAL(returnPressed()),this,SLOT(enterShift()));
-    QObject::connect(ui->txPowerSlider,SIGNAL(valueChanged(int)),this,SLOT(setTxPowerDisplay(int)));
-    QObject::connect(ui->rxSensitivitySlider,SIGNAL(valueChanged(int)),this,SLOT(setRxSensitivityDisplay(int)));
-    QObject::connect(ui->rxSquelchSlider,SIGNAL(valueChanged(int)),this,SLOT(setSquelchDisplay(int)));
-    QObject::connect(ui->rxVolumeSlider,SIGNAL(valueChanged(int)),this,SLOT(setVolumeDisplay(int)));
+    QObject::connect(ui->txGainDial,SIGNAL(valueChanged(int)),this,SLOT(setTxPowerDisplay(int)));
+    QObject::connect(ui->rxGainDial,SIGNAL(valueChanged(int)),this,SLOT(setRxSensitivityDisplay(int)));
+    QObject::connect(ui->rxSquelchDial,SIGNAL(valueChanged(int)),this,SLOT(setSquelchDisplay(int)));
+    QObject::connect(ui->rxVolumeDial,SIGNAL(valueChanged(int)),this,SLOT(setVolumeDisplay(int)));
     QObject::connect(ui->rxModemTypeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(toggleRxMode(int)));
     QObject::connect(ui->txModemTypeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(toggleTxMode(int)));
     QObject::connect(ui->autotuneButton,SIGNAL(toggled(bool)),this,SLOT(autoTune(bool)));
@@ -81,7 +88,6 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     ui->receivedTextEdit->setAttribute(Qt::WA_AcceptTouchEvents);
     ui->voipTreeWidget->setColumnHidden(2,true);
     ui->voipTreeWidget->setColumnHidden(3,true);
-    //ui->tuneSlider->setRange(-100,100);
     _transmitting_radio = false;
     _current_voip_channel = -1;
     _constellation_gui = ui->widget_const;
@@ -119,10 +125,10 @@ void MainWindow::readConfig()
     ui->lineEditTXFreqCorrection->setText(QString::number(_settings->tx_freq_corr));
     ui->lineEditCallsign->setText(_settings->callsign);
     ui->lineEditVideoDevice->setText(_settings->video_device);
-    ui->txPowerSlider->setValue(_settings->tx_power);
-    ui->rxSensitivitySlider->setValue(_settings->rx_sensitivity);
-    ui->rxSquelchSlider->setValue(_settings->squelch);
-    ui->rxVolumeSlider->setValue(_settings->rx_volume);
+    ui->txGainDial->setValue(_settings->tx_power);
+    ui->rxGainDial->setValue(_settings->rx_sensitivity);
+    ui->rxSquelchDial->setValue(_settings->squelch);
+    ui->rxVolumeDial->setValue(_settings->rx_volume);
     ui->frameCtrlFreq->setFrequency(_settings->rx_frequency);
     _rx_frequency = _settings->rx_frequency;
     ui->frequencyEdit->setText(QString::number(ceil(_rx_frequency/1000)));
@@ -142,10 +148,10 @@ void MainWindow::saveConfig()
     _settings->tx_freq_corr = ui->lineEditTXFreqCorrection->text().toInt();
     _settings->callsign = ui->lineEditCallsign->text();
     _settings->video_device = ui->lineEditVideoDevice->text();
-    _settings->tx_power = (int)ui->txPowerSlider->value();
-    _settings->rx_sensitivity = (int)ui->rxSensitivitySlider->value();
-    _settings->squelch = (int)ui->rxSquelchSlider->value();
-    _settings->rx_volume = (int)ui->rxVolumeSlider->value();
+    _settings->tx_power = (int)ui->txGainDial->value();
+    _settings->rx_sensitivity = (int)ui->rxGainDial->value();
+    _settings->squelch = (int)ui->rxSquelchDial->value();
+    _settings->rx_volume = (int)ui->rxVolumeDial->value();
     _settings->rx_frequency = _rx_frequency;
     _settings->tx_shift = _tx_frequency;
     _settings->voip_server = ui->voipServerEdit->text();
@@ -362,14 +368,14 @@ void MainWindow::toggleRepeater(bool value)
 
 void MainWindow::tuneCenterFreq(int value)
 {
-    emit fineTuneFreq(ui->tuneSlider->value());
+    emit fineTuneFreq((int)ui->tuneDial->value());
 }
 
 void MainWindow::tuneMainFreq(qint64 freq)
 {
     _rx_frequency = freq;
     ui->frequencyEdit->setText(QString::number(ceil(freq/1000)));
-    ui->tuneSlider->setValue(0);
+    ui->tuneDial->setValue(0);
     emit tuneFreq(freq);
 }
 
@@ -389,25 +395,25 @@ void MainWindow::enterShift()
 void MainWindow::setTxPowerDisplay(int value)
 {
     ui->txPowerDisplay->display(value);
-    emit setTxPower(value);
+    emit setTxPower((int)value);
 }
 
 void MainWindow::setRxSensitivityDisplay(int value)
 {
     ui->rxSensitivityDisplay->display(value);
-    emit setRxSensitivity(value);
+    emit setRxSensitivity((int)value);
 }
 
 void MainWindow::setSquelchDisplay(int value)
 {
     ui->rxSquelchDisplay->display(value);
-    emit setSquelch(value);
+    emit setSquelch((int)value);
 }
 
 void MainWindow::setVolumeDisplay(int value)
 {
     ui->rxVolumeDisplay->display(value);
-    emit setVolume(value);
+    emit setVolume((int)value);
 }
 
 void MainWindow::autoTune(bool value)

@@ -123,6 +123,7 @@ private:
     float _device_frequency;
     int _msg_nr;
     int _mode;
+    int _carrier_offset;
 };
 
 #endif // GR_DEMOD_BASE_H

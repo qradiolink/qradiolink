@@ -184,7 +184,7 @@ int main(int argc, char *argv[])
     w->get_rssi_gui()->resize(700,90);
     rssi_gui->qwidget()->resize(700,90);
     rssi_gui->set_update_time(0.3);
-    rssi_gui->set_color(0, "#ff0000", "#0000cc");
+    rssi_gui->set_color(0, "#ff0000", "#A80000");
     rssi_gui->qwidget()->setStyleSheet(
             "QwtThermo { background-color: #E1DFFF;" \
             "color: #FF6905;}");

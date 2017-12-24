@@ -21,10 +21,12 @@
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/analog/agc2_cc.h>
 #include <gnuradio/filter/pfb_arb_resampler_ccf.h>
+#include <gnuradio/filter/iir_filter_ffd.h>
 #include <gnuradio/filter/rational_resampler_base_fff.h>
 #include <gnuradio/analog/pwr_squelch_cc.h>
 #include <gnuradio/filter/fft_filter_ccc.h>
 #include <gnuradio/blocks/complex_to_real.h>
+#include <gnuradio/blocks/complex_to_mag.h>
 #include <gnuradio/blocks/multiply_const_ff.h>
 
 
@@ -48,7 +50,8 @@ private:
     gr::analog::pwr_squelch_cc::sptr _squelch;
     gr::filter::fft_filter_ccc::sptr _filter;
     gr::analog::agc2_cc::sptr _agc;
-    gr::blocks::complex_to_real::sptr _complex_to_real;
+    gr::blocks::complex_to_mag::sptr _complex_to_mag;
+    gr::filter::iir_filter_ffd::sptr _audio_filter;
     gr::blocks::multiply_const_ff::sptr _audio_gain;
 
     int _samples_per_symbol;
