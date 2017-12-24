@@ -1,10 +1,19 @@
+qradiolink (0.3.10-1) UNRELEASED; urgency=medium
+
+  [ Adrian Musceac ]
+  * UI redesign
+  * Analog modes fixes
+
+ -- Adrian Musceac <kantooon@gmail.com>  Sun, 24 Dec 2017 17:37:02 +0300
+
+
 qradiolink (0.3.9-1) UNRELEASED; urgency=medium
 
   [ Adrian Musceac ]
   * VOIP channel interface
   * Fix regression in modems
 
- -- Adrian Musceac <kantooon@gmail.com>  Sun, 15 Oct 2017 17:37:02 +0300
+ -- Adrian Musceac <kantooon@gmail.com>  Sun, 15 Dec 2017 17:37:02 +0300
 
 
 qradiolink (0.3.8-1) UNRELEASED; urgency=medium
