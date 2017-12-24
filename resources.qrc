@@ -10,5 +10,6 @@
         <file>res/transparent-bg.png</file>
         <file>res/end_beep.raw</file>
         <file>res/logo.png</file>
+        <file>res/data_rec.raw</file>
     </qresource>
 </RCC>

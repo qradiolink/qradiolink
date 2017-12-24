@@ -177,6 +177,7 @@ private:
     std::vector<short> *_m_queue;
     quint64 _last_session_id;
     QVector<short> *_voip_encode_buffer;
+    QByteArray *_data_rec_sound;
     bool _repeat;
 
     void readConfig(std::string &rx_device_args, std::string &tx_device_args,
