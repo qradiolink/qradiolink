@@ -44,8 +44,8 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     ui->frameCtrlFreq->setDigitColor(QColor(230,230,230,240));
     ui->frameCtrlFreq->setUnitsColor(QColor(254,254,254,255));
 
-    ui->txGainDial->setStyleSheet("background-color:#040D55;");
-    ui->rxGainDial->setStyleSheet("background-color:#040D55;");
+    ui->txGainDial->setStyleSheet("background-color:#660000;");
+    ui->rxGainDial->setStyleSheet("background-color:#013E09;");
     ui->rxSquelchDial->setStyleSheet("background-color:#040D55;");
     ui->rxVolumeDial->setStyleSheet("background-color:#040D55;");
     ui->tuneDial->setStyleSheet("background-color:#040D55;");
@@ -88,7 +88,6 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     ui->receivedTextEdit->setAttribute(Qt::WA_AcceptTouchEvents);
     ui->voipTreeWidget->setColumnHidden(2,true);
     ui->voipTreeWidget->setColumnHidden(3,true);
-    //ui->tuneDial->setRange(-100,100);
     _transmitting_radio = false;
     _current_voip_channel = -1;
     _constellation_gui = ui->widget_const;
