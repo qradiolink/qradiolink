@@ -65,6 +65,7 @@ private:
     gr::analog::agc2_cc::sptr _agc;
     gr::analog::agc2_ff::sptr _agc2;
     gr::digital::fll_band_edge_cc::sptr _fll;
+    gr::filter::fft_filter_ccf::sptr _shaping_filter;
     gr::digital::clock_recovery_mm_cc::sptr _clock_recovery;
     gr::digital::binary_slicer_fb::sptr _binary_slicer;
     gr::digital::costas_loop_cc::sptr _costas_loop;
