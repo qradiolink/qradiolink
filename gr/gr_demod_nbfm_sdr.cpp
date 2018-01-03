@@ -58,7 +58,7 @@ gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(std::vector<int>signature, int sps, int sam
     _audio_resampler = gr::filter::rational_resampler_base_fff::make(1,5, audio_taps);
 
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
-                            1, _target_samp_rate, _filter_width,600,gr::filter::firdes::WIN_HAMMING) );
+                            1, _target_samp_rate, _filter_width,1200,gr::filter::firdes::WIN_HAMMING) );
 
     _fm_demod = gr::analog::quadrature_demod_cf::make(_target_samp_rate/(4*M_PI* _filter_width));
     _squelch = gr::analog::pwr_squelch_cc::make(-140,0.01,0,true);

@@ -58,7 +58,7 @@ gr_mod_nbfm_sdr::gr_mod_nbfm_sdr(int sps, int samp_rate, int carrier_freq,
     _amplify = gr::blocks::multiply_const_cc::make(10,1);
     _filter = gr::filter::fft_filter_ccf::make(
                 1,gr::filter::firdes::low_pass(
-                    1, _samp_rate, _filter_width, 600, gr::filter::firdes::WIN_HAMMING));
+                    1, _samp_rate, _filter_width, 1200, gr::filter::firdes::WIN_HAMMING));
 
 
     connect(self(),0,_audio_filter,0);

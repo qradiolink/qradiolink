@@ -55,7 +55,7 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(std::vector<int>signature, int sps, int sam
                     1, _target_samp_rate, 2*_filter_width ,250000, gr::filter::firdes::WIN_HAMMING), 25000,
                 _target_samp_rate);
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
-                            1, _target_samp_rate, _filter_width,600,gr::filter::firdes::WIN_HAMMING) );
+                            1, _target_samp_rate, _filter_width,1200,gr::filter::firdes::WIN_HAMMING) );
     float gain_mu = 0.025;
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
                                                               0.001);

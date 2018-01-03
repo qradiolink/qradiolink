@@ -41,9 +41,9 @@ gr_mod_qpsk_sdr::gr_mod_qpsk_sdr(int sps, int samp_rate, int carrier_freq,
     _samp_rate =samp_rate;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
-    int filter_slope = 600;
+    int filter_slope = 1200;
     if(_samp_rate > 250000)
-        filter_slope = 2000;
+        filter_slope = 10000;
 
     _packed_to_unpacked = gr::blocks::packed_to_unpacked_bb::make(1,gr::GR_MSB_FIRST);
     _packer = gr::blocks::pack_k_bits_bb::make(2);
