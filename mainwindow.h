@@ -24,6 +24,8 @@
 #include <QScrollBar>
 #include <QDir>
 #include <QFileInfo>
+#include <QTreeWidgetItem>
+
 #include "mumbleclient.h"
 #include <math.h>
 #include "qtgui/freqctrl.h"
