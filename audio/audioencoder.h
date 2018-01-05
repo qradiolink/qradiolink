@@ -20,7 +20,11 @@
 #include <QDebug>
 #include <opus/opus.h>
 #include <codec2/codec2.h>
-#include <gsm/gsm.h>
+
+extern "C" {
+    #include <gsm/gsm.h>
+}
+
 #include "ext/agc.h"
 
 class AudioEncoder
