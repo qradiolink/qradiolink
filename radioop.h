@@ -27,15 +27,14 @@
 #include <QCoreApplication>
 #include <QElapsedTimer>
 #include <QImage>
-#if 0
-#include <QSoundEffect>
-#endif
+#include <QXmlStreamWriter>
 #include <unistd.h>
 #include <math.h>
 #include "audio/audiointerface.h"
 #include "ext/agc.h"
 #include "ext/vox.h"
 #include "settings.h"
+#include "channel.h"
 #include "audio/audioencoder.h"
 #include "video/videoencoder.h"
 #include "audio/alsaaudio.h"
@@ -68,6 +67,7 @@ public:
     int processVideoStream(bool &frame_flag);
     void processNetStream();
     void sendEndBeep();
+    void sendChannels();
 
 signals:
     void finished();
@@ -128,6 +128,7 @@ public slots:
     void stopTx();
     void updateFrequency();
     void toggleRepeat(bool value);
+    void addChannel(Channel* chan);
 
 private:
     bool _stop;
@@ -145,6 +146,7 @@ private:
     bool _repeat_text;
     QString _text_out;
     QString _callsign;
+    QString _channels;
     QMutex *_mutex;
     QTimer *_voice_led_timer;
     QTimer *_data_led_timer;
@@ -175,6 +177,7 @@ private:
     gr::qtgui::sink_c::sptr _fft_gui;
     unsigned char *_rand_frame_data;
     std::vector<short> *_m_queue;
+    QVector<Channel*> *_voip_channels;
     quint64 _last_session_id;
     QVector<short> *_voip_encode_buffer;
     QByteArray *_data_rec_sound;

@@ -218,11 +218,27 @@ void MumbleClient::processServerSync(quint8 *message, quint64 size)
 
 void MumbleClient::processChannelState(quint8 *message, quint64 size)
 {
-
+    int id, parent_id;
+    QString name, description;
     MumbleProto::ChannelState ch;
     ch.ParseFromArray(message,size);
-    Channel *c = new Channel(ch.channel_id(), ch.parent(), QString::fromStdString(ch.name()),
-                                 QString::fromStdString(ch.description()));
+    if(ch.has_channel_id())
+        id = ch.channel_id();
+    else
+        id = -1;
+    if(ch.has_parent())
+        parent_id = ch.parent();
+    else
+        parent_id = -1;
+    if(ch.has_name())
+        name = QString::fromStdString(ch.name());
+    else
+        name = "";
+    if(ch.has_description())
+        description = QString::fromStdString(ch.description());
+    else
+        description = "";
+    Channel *c = new Channel(id, parent_id, name, description);
 
     emit newChannel(c);
 

@@ -277,7 +277,7 @@ void MainWindow::updateOnlineStations(StationList stations)
 
 void MainWindow::newChannel(Channel *chan)
 {
-    if(chan->name == "")
+    if(chan->name.isEmpty())
     {
         QList<QTreeWidgetItem*> channel_list = ui->voipTreeWidget->findItems(QString::number(_current_voip_channel),Qt::MatchExactly | Qt::MatchRecursive,2);
         if(channel_list.size() > 0)
@@ -298,7 +298,6 @@ void MainWindow::newChannel(Channel *chan)
         item->setTextColor(1,QColor("#ffffff"));
         item->setTextColor(2,QColor("#ffffff"));
         _current_voip_channel = chan->id;
-        delete chan;
         ui->voipTreeWidget->expandAll();
         return;
     }
@@ -312,7 +311,7 @@ void MainWindow::newChannel(Channel *chan)
     t->setTextColor(0,QColor("#000000"));
     t->setTextColor(1,QColor("#000000"));
     t->setTextColor(2,QColor("#000000"));
-    if(chan->parent_id == 0)
+    if(chan->parent_id <= 0)
         ui->voipTreeWidget->addTopLevelItem(t);
     else
     {
@@ -325,7 +324,6 @@ void MainWindow::newChannel(Channel *chan)
         }
     }
     ui->voipTreeWidget->expandAll();
-    delete chan;
 }
 
 void MainWindow::channelState(QTreeWidgetItem *item, int k)

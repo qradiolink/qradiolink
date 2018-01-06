@@ -65,6 +65,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _data_led_timer->setSingleShot(true);
     _rand_frame_data = new unsigned char[5000];
     _voip_encode_buffer = new QVector<short>;
+    _voip_channels = new QVector<Channel*>;
     _fft_gui = fft_gui;
     QObject::connect(_voice_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));
     QObject::connect(_data_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));
@@ -370,6 +371,25 @@ void RadioOp::sendEndBeep()
     }
 }
 
+void RadioOp::sendChannels()
+{
+    _channels = "";
+    QXmlStreamWriter stream(&_channels);
+    stream.setAutoFormatting(true);
+    stream.writeStartDocument();
+    for(int i=0;i <_voip_channels->size();i++)
+    {
+        stream.writeStartElement("channel");
+        stream.writeAttribute("id",QString::number(_voip_channels->at(i)->id));
+        stream.writeAttribute("parent_id",QString::number(_voip_channels->at(i)->parent_id));
+        stream.writeAttribute("name",_voip_channels->at(i)->name);
+        stream.writeAttribute("description",_voip_channels->at(i)->description);
+        stream.writeEndElement();
+    }
+    stream.writeEndDocument();
+    textData(_channels, false);
+}
+
 void RadioOp::startTx()
 {
     if(_tx_inited)
@@ -425,6 +445,7 @@ void RadioOp::run()
     bool ptt_activated = false;
     bool frame_flag = true;
     int last_ping_time = 0;
+    int last_channel_broadcast_time = 0;
     while(true)
     {
         bool transmitting = _transmitting;
@@ -439,11 +460,20 @@ void RadioOp::run()
             _voip_encode_buffer->remove(0,320);
             emit voipData(pcm,320*sizeof(short));
         }
+
         int time = QDateTime::currentDateTime().toTime_t();
         if((time - last_ping_time) > 10)
         {
             emit pingServer();
             last_ping_time = time;
+        }
+        if((time - last_channel_broadcast_time) > 60)
+        {
+            last_channel_broadcast_time = time;
+            if(_voip_forwarding && (_voip_channels->size()>0) && !transmitting && !ptt_activated)
+            {
+                sendChannels();
+            }
         }
 
         updateFrequency();
@@ -778,6 +808,11 @@ void RadioOp::endAudioTransmission()
     }
 }
 
+void RadioOp::addChannel(Channel *chan)
+{
+    if(!chan->name.isEmpty())
+        _voip_channels->push_back(chan);
+}
 
 void RadioOp::toggleRX(bool value)
 {
