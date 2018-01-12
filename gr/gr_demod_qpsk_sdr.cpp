@@ -76,7 +76,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
                 constellation->points(),pre_diff_code,4,2,2,1,1,const_map);
     */
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, _filter_width, 12000);
+    std::vector<float> taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, 2*_filter_width, 12000);
 
     _resampler = gr::filter::rational_resampler_base_ccf::make(interpolation, decimation, taps);
 
@@ -91,17 +91,20 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
                                 1, _target_samp_rate, _filter_width, filter_slope,gr::filter::firdes::WIN_HAMMING) );
     float gain_mu, omega_rel_limit;
 
+
     gain_mu = 0.025;
     omega_rel_limit = 0.001;
 
 
+    _shaping_filter = gr::filter::fft_filter_ccf::make(
+                1, gr::filter::firdes::root_raised_cosine(1,_target_samp_rate,_target_samp_rate/_samples_per_symbol,0.3,32));
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
                                                               omega_rel_limit);
     std::vector<float> pfb_taps = gr::filter::firdes::root_raised_cosine(flt_size,flt_size, 1, 0.35, flt_size * 11 * _samples_per_symbol);
     _clock_sync = gr::digital::pfb_clock_sync_ccf::make(_samples_per_symbol,0.0628,pfb_taps);
-    _costas_loop = gr::digital::costas_loop_cc::make(0.0628,4);
-    _equalizer = gr::digital::cma_equalizer_cc::make(8,4,0.00005,1);
-    _fll = gr::digital::fll_band_edge_cc::make(sps, 0.55, 32, 0.000628);
+    _costas_loop = gr::digital::costas_loop_cc::make(2*M_PI/100,4);
+    _equalizer = gr::digital::cma_equalizer_cc::make(8,2,0.00005,1);
+    _fll = gr::digital::fll_band_edge_cc::make(sps, 0.3, 16, M_PI/1600);
     _diff_decoder = gr::digital::diff_decoder_bb::make(4);
     _map = gr::digital::map_bb::make(map);
     _unpack = gr::blocks::unpack_k_bits_bb::make(2);
@@ -110,18 +113,19 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
 
 
     connect(self(),0,_resampler,0);
-    connect(_resampler,0,_filter,0);
+    connect(_resampler,0,_fll,0);
+    connect(_fll,0,_filter,0);
     connect(_filter,0,self(),0);
     connect(_filter,0,_agc,0);
+    //connect(_shaping_filter,0,_agc,0);
+
     connect(_agc,0,_clock_recovery,0);
-    //connect(_fll,0,_clock_recovery,0);
+    connect(_clock_recovery,0,_costas_loop,0);
+    connect(_costas_loop,0,_equalizer,0);
 
-    connect(_clock_recovery,0,_equalizer,0);
-    connect(_equalizer,0,_costas_loop,0);
+    connect(_equalizer,0,self(),1);
 
-    connect(_costas_loop,0,self(),1);
-
-    connect(_costas_loop,0,_constellation_receiver,0);
+    connect(_equalizer,0,_constellation_receiver,0);
     connect(_constellation_receiver,0,_diff_decoder,0);
     connect(_diff_decoder,0,_map,0);
     connect(_map,0,_unpack,0);

@@ -56,7 +56,8 @@ private:
 
     gr::blocks::packed_to_unpacked_bb::sptr _packed_to_unpacked;
     gr::digital::chunks_to_symbols_bc::sptr _chunks_to_symbols;
-    gr::filter::pfb_arb_resampler_ccf::sptr _shaping_filter;
+    //gr::filter::pfb_arb_resampler_ccf::sptr _shaping_filter;
+    gr::filter::fft_filter_ccf::sptr _shaping_filter;
     gr::blocks::multiply_const_cc::sptr _amplify;
     gr::digital::scrambler_bb::sptr _scrambler;
     gr::blocks::repeat::sptr _repeat;

@@ -30,6 +30,7 @@
 #include <gnuradio/digital/cma_equalizer_cc.h>
 #include <gnuradio/analog/agc2_cc.h>
 #include <gnuradio/analog/agc2_ff.h>
+#include <gnuradio/analog/pll_carriertracking_cc.h>
 #include <gnuradio/digital/fll_band_edge_cc.h>
 #include <gnuradio/filter/pfb_arb_resampler_ccf.h>
 #include <gnuradio/filter/rational_resampler_base_ccf.h>

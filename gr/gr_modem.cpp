@@ -348,7 +348,7 @@ void gr_modem::processAudioData(unsigned char *data, int size)
     delete[] data;
 }
 
-void gr_modem::textData(QString text)
+void gr_modem::textData(QString text, int frame_type)
 {
     QStringList list;
     QVector<std::vector<unsigned char>*> frames;
@@ -363,7 +363,7 @@ void gr_modem::textData(QString text)
         unsigned char *data = new unsigned char[_tx_frame_length];
         memset(data, 0, _tx_frame_length);
         memcpy(data,chunk.toStdString().c_str(),chunk.length());
-        std::vector<unsigned char> *one_frame = frame(data,_tx_frame_length, FrameTypeText);
+        std::vector<unsigned char> *one_frame = frame(data,_tx_frame_length, frame_type);
 
         frames.append(one_frame);
 
@@ -469,6 +469,11 @@ std::vector<unsigned char>* gr_modem::frame(unsigned char *encoded_audio, int da
     {
         data->push_back(0xDE);
         data->push_back(0x98);
+    }
+    else if(frame_type == FrameTypeRepeaterInfo)
+    {
+        data->push_back(0xED);
+        data->push_back(0x77);
     }
 
     if(_modem_type_tx != gr_modem_types::ModemTypeBPSK1000)
@@ -589,6 +594,8 @@ void gr_modem::demodulate()
 
 void gr_modem::synchronize(int v_size, std::vector<unsigned char> *data)
 {
+    int frame_length = _rx_frame_length;
+    int bit_buf_len = _bit_buf_len;
     for(int i=0;i < v_size;i++)
     {
         if(!_sync_found)
@@ -596,6 +603,11 @@ void gr_modem::synchronize(int v_size, std::vector<unsigned char> *data)
             _current_frame_type = findSync(data->at(i));
             if(_sync_found)
             {
+                if((_modem_type_rx != gr_modem_types::ModemTypeBPSK1000)
+                        && (_current_frame_type == FrameTypeVoice))
+                {
+                    frame_length++; // reserved data
+                }
                 _bit_buf_index = 0;
                 continue;
             }
@@ -613,14 +625,8 @@ void gr_modem::synchronize(int v_size, std::vector<unsigned char> *data)
                 _frequency_found += 1; // 80 bits + counter
             _bit_buf[_bit_buf_index] =  (data->at(i)) & 0x1;
             _bit_buf_index++;
-            int frame_length = _rx_frame_length;
-            int bit_buf_len = _bit_buf_len;
-            if((_modem_type_rx != gr_modem_types::ModemTypeBPSK1000)
-                    && (_current_frame_type == FrameTypeVoice))
-            {
-                frame_length++; // reserved data
-            }
-            else
+            if(!((_modem_type_rx != gr_modem_types::ModemTypeBPSK1000)
+                    && (_current_frame_type == FrameTypeVoice)))
             {
                 bit_buf_len = _bit_buf_len - 8;
             }
@@ -664,6 +670,11 @@ int gr_modem::findSync(unsigned char bit)
         {
             _sync_found = true;
             return FrameTypeText;
+        }
+        if((temp == 0xED77AA))
+        {
+            _sync_found = true;
+            return FrameTypeRepeaterInfo;
         }
 
         if((temp == 0x98DEAA))
@@ -719,6 +730,30 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
             textData(text);
         }
         emit textReceived(text);
+        delete[] text_data;
+    }
+    if (current_frame_type == FrameTypeRepeaterInfo)
+    {
+        emit dataFrameReceived();
+        _last_frame_type = FrameTypeRepeaterInfo;
+        char *text_data = new char[_rx_frame_length];
+        memcpy(text_data, received_data, _rx_frame_length);
+        quint8 string_length = _rx_frame_length;
+
+        for(int ii=_rx_frame_length-1;ii>=0;ii--)
+        {
+            QChar x(text_data[ii]);
+            if(x.unicode()==0)
+            {
+                string_length--;
+            }
+            else
+            {
+                break;
+            }
+        }
+        QString text = QString::fromLocal8Bit(text_data,string_length);
+        emit repeaterInfoReceived(text);
         delete[] text_data;
     }
     else if (current_frame_type == FrameTypeCallsign)

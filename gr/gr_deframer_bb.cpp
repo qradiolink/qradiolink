@@ -90,6 +90,11 @@ int gr_deframer_bb::findSync(unsigned char bit)
         _sync_found = true;
         return temp;
     }
+    if((temp == 0xED77))
+    {
+        _sync_found = true;
+        return temp;
+    }
     if((temp == 0x8CC8))
     {
 

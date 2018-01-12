@@ -28,6 +28,7 @@
 #include <QElapsedTimer>
 #include <QImage>
 #include <QXmlStreamWriter>
+#include <QXmlStreamReader>
 #include <unistd.h>
 #include <math.h>
 #include "audio/audiointerface.h"
@@ -69,6 +70,7 @@ public:
     void sendEndBeep();
     void sendChannels();
 
+    void sendTextData(QString text, int frame_type);
 signals:
     void finished();
     void printText(QString text);
@@ -93,6 +95,7 @@ public slots:
     void textData(QString text, bool repeat = false);
     void stop();
     void textReceived(QString text);
+    void repeaterInfoReceived(QString text);
     void callsignReceived(QString callsign);
     void audioFrameReceived();
     void dataFrameReceived();
@@ -146,7 +149,7 @@ private:
     bool _repeat_text;
     QString _text_out;
     QString _callsign;
-    QString _channels;
+    QString _repeater_info;
     QMutex *_mutex;
     QTimer *_voice_led_timer;
     QTimer *_data_led_timer;

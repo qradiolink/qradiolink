@@ -73,6 +73,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _modem = new gr_modem(_settings, fft_gui,const_gui, rssi_gui);
 
     QObject::connect(_modem,SIGNAL(textReceived(QString)),this,SLOT(textReceived(QString)));
+    QObject::connect(_modem,SIGNAL(repeaterInfoReceived(QString)),this,SLOT(repeaterInfoReceived(QString)));
     QObject::connect(_modem,SIGNAL(callsignReceived(QString)),this,SLOT(callsignReceived(QString)));
     QObject::connect(_modem,SIGNAL(audioFrameReceived()),this,SLOT(audioFrameReceived()));
     QObject::connect(_modem,SIGNAL(dataFrameReceived()),this,SLOT(dataFrameReceived()));
@@ -373,10 +374,11 @@ void RadioOp::sendEndBeep()
 
 void RadioOp::sendChannels()
 {
-    _channels = "";
-    QXmlStreamWriter stream(&_channels);
+    _repeater_info = "";
+    QXmlStreamWriter stream(&_repeater_info);
     stream.setAutoFormatting(true);
-    stream.writeStartDocument();
+    stream.writeStartElement("i");
+    stream.writeStartElement("channels");
     for(int i=0;i <_voip_channels->size();i++)
     {
         stream.writeStartElement("channel");
@@ -386,8 +388,9 @@ void RadioOp::sendChannels()
         stream.writeAttribute("description",_voip_channels->at(i)->description);
         stream.writeEndElement();
     }
-    stream.writeEndDocument();
-    textData(_channels, false);
+    stream.writeEndElement();
+    stream.writeEndElement();
+    sendTextData(_repeater_info, gr_modem::FrameTypeRepeaterInfo);
 }
 
 void RadioOp::startTx()
@@ -436,6 +439,32 @@ void RadioOp::updateFrequency()
         _modem->tune(_tune_center_freq);
         _modem->tuneTx(_tune_center_freq + _tune_shift_freq);
         emit freqFromGUI(_tune_center_freq);
+    }
+}
+
+void RadioOp::sendTextData(QString text, int frame_type)
+{
+    if(_tx_inited)
+    {
+        if(!_tx_modem_started)
+        {
+            stopTx();
+            startTx();
+        }
+        else
+        {
+            startTx();
+        }
+        _tx_modem_started = true;
+        _modem->startTransmission(_callsign);
+        _modem->textData(text, frame_type);
+        _modem->endTransmission(_callsign);
+    }
+    if(!_repeat_text)
+    {
+        _mutex->lock();
+        _process_text = false;
+        _mutex->unlock();
     }
 }
 
@@ -524,28 +553,7 @@ void RadioOp::run()
         }
         if(_process_text && (_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL))
         {
-            if(_tx_inited)
-            {
-                if(!_tx_modem_started)
-                {
-                    stopTx();
-                    startTx();
-                }
-                else
-                {
-                    startTx();
-                }
-                _tx_modem_started = true;
-                _modem->startTransmission(_callsign);
-                _modem->textData(_text_out);
-                _modem->endTransmission(_callsign);
-            }
-            if(!_repeat_text)
-            {
-                _mutex->lock();
-                _process_text = false;
-                _mutex->unlock();
-            }
+            sendTextData(_text_out, gr_modem::FrameTypeText);
             emit displayTransmitStatus(false);
         }
 
@@ -758,9 +766,19 @@ void RadioOp::textData(QString text, bool repeat)
     _mutex->unlock();
 
 }
+
 void RadioOp::textReceived(QString text)
 {
     emit printText(text);
+}
+
+void RadioOp::repeaterInfoReceived(QString text)
+{
+    if(text.contains("<i>"))
+        _repeater_info = "";
+    _repeater_info += text;
+    if(_repeater_info.contains("</i>"))
+       emit printText(_repeater_info);
 }
 
 void RadioOp::callsignReceived(QString callsign)

@@ -47,9 +47,9 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(std::vector<int>signature, int sps, int sam
 
     unsigned int flt_size = 32;
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, _filter_width, 12000);
+    std::vector<float> taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, 2*_filter_width, 12000);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1, 50, taps);
-    _agc = gr::analog::agc2_cc::make(0.006e-1, 1e-3, 1, 1);
+    _agc = gr::analog::agc2_cc::make(0.6e-1, 1e-3, 1, 1);
     _freq_transl_filter = gr::filter::freq_xlating_fir_filter_ccf::make(
                 1,gr::filter::firdes::low_pass(
                     1, _target_samp_rate, 2*_filter_width ,250000, gr::filter::firdes::WIN_HAMMING), 25000,
@@ -57,13 +57,13 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(std::vector<int>signature, int sps, int sam
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
                             1, _target_samp_rate, _filter_width,1200,gr::filter::firdes::WIN_HAMMING) );
     float gain_mu = 0.025;
-    _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
+    _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0, gain_mu,
                                                               0.001);
-    _costas_loop = gr::digital::costas_loop_cc::make(0.0628,2);
-    _equalizer = gr::digital::cma_equalizer_cc::make(8,2,0.00005,1);
-    _fll = gr::digital::fll_band_edge_cc::make(sps, 0.35, 32, 0.000628);
+    _costas_loop = gr::digital::costas_loop_cc::make(2*M_PI/100,2);
+    _equalizer = gr::digital::cma_equalizer_cc::make(8,1,0.00005,1);
+    _fll = gr::digital::fll_band_edge_cc::make(sps, 0.3, 16, M_PI/1600);
     _shaping_filter = gr::filter::fft_filter_ccf::make(
-                1, gr::filter::firdes::root_raised_cosine(1,_samp_rate,_samp_rate/_samples_per_symbol,0.3,32));
+                1, gr::filter::firdes::root_raised_cosine(1,_target_samp_rate,_target_samp_rate/_samples_per_symbol,0.3,32));
     _complex_to_real = gr::blocks::complex_to_real::make();
     _binary_slicer = gr::digital::binary_slicer_fb::make();
     _packed_to_unpacked = gr::blocks::packed_to_unpacked_bb::make(1,gr::GR_MSB_FIRST);
@@ -83,17 +83,17 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(std::vector<int>signature, int sps, int sam
 
 
     connect(self(),0,_resampler,0);
-    connect(_resampler,0,_filter,0);
+    connect(_resampler,0,_fll,0);
+    connect(_fll,0,_filter,0);
     connect(_filter,0,self(),0);
-    connect(_filter,0,_agc,0);
-    connect(_agc,0,_shaping_filter,0);
-    connect(_shaping_filter,0,_clock_recovery,0);
-    connect(_clock_recovery,0,_equalizer,0);
-    //connect(_fll,0,_clock_recovery,0);
+    connect(_filter,0,_shaping_filter,0);
+    connect(_shaping_filter,0,_agc,0);
+    connect(_agc,0,_clock_recovery,0);
+    connect(_clock_recovery,0,_costas_loop,0);
 
-    connect(_equalizer,0,_costas_loop,0);
-    connect(_costas_loop,0,_complex_to_real,0);
-    connect(_costas_loop,0,self(),1);
+    connect(_costas_loop,0,_equalizer,0);
+    connect(_equalizer,0,_complex_to_real,0);
+    connect(_equalizer,0,self(),1);
     connect(_complex_to_real,0,_multiply_const_fec,0);
     connect(_multiply_const_fec,0,_add_const_fec,0);
     connect(_add_const_fec,0,_cc_decoder,0);

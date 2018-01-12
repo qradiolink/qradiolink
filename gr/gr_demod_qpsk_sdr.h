@@ -66,6 +66,7 @@ private:
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
     gr::digital::map_bb::sptr _map;
     gr::digital::constellation_decoder_cb::sptr _constellation_receiver;
+    gr::filter::fft_filter_ccf::sptr _shaping_filter;
     gr::filter::fft_filter_ccf::sptr _filter;
     gr::digital::descrambler_bb::sptr _descrambler;
 
