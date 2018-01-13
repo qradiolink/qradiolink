@@ -66,7 +66,7 @@ int gr_vector_source::work(int noutput_items,
     if(_finished)
     {
         //guard.unlock();
-        usleep(5);
+        usleep(2000);
         return 0;
     }
 
