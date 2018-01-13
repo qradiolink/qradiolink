@@ -23,7 +23,6 @@
 #include <gnuradio/filter/rational_resampler_base_ccf.h>
 #include <gnuradio/filter/freq_xlating_fir_filter_ccf.h>
 #include <gnuradio/blocks/multiply_cc.h>
-#include <gnuradio/analog/sig_source_c.h>
 #include <gnuradio/qtgui/const_sink_c.h>
 #include <gnuradio/qtgui/sink_c.h>
 #include <gnuradio/qtgui/number_sink.h>
@@ -36,6 +35,7 @@
 #include <gnuradio/blocks/add_const_ff.h>
 #include <gnuradio/blocks/delay.h>
 #include <gnuradio/blocks/copy.h>
+#include <gnuradio/blocks/rotator_cc.h>
 #include <gnuradio/blocks/message_debug.h>
 #include <osmosdr/source.h>
 #include <vector>
@@ -97,9 +97,7 @@ private:
     gr::blocks::multiply_const_ff::sptr _multiply_const_ff;
     gr::blocks::moving_average_ff::sptr _moving_average;
     gr::blocks::add_const_ff::sptr _add_const;
-
-    gr::analog::sig_source_c::sptr _signal_source;
-    gr::blocks::multiply_cc::sptr _multiply;
+    gr::blocks::rotator_cc::sptr _rotator;
 
 
 

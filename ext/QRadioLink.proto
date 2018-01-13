@@ -4,6 +4,21 @@ package QRadioLink;
 
 option optimize_for = SPEED;
 
+message Channel {
+    optional uint32 channel_id = 1;
+    optional uint32 parent_id = 2;
+    optional string name = 3;
+    optional string description = 5;
+}
+
+message User {
+    optional uint32 session = 1;
+    optional string name = 3;
+    optional uint32 user_id = 4;
+    optional uint32 channel_id = 5;
+    optional string comment = 14;
+}
+
 message Parameters {
     required uint32 station_id = 1;
     optional uint32 in_call = 2;
