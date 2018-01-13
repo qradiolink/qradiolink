@@ -26,6 +26,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _tx_radio_type = radio_type::RADIO_TYPE_DIGITAL;
     _codec = new AudioEncoder;
     _audio = new AudioInterface;
+    _radio_protocol = new RadioProtocol;
     _mutex = new QMutex;
     _m_queue = new std::vector<short>;
     _last_session_id = 0;
@@ -65,7 +66,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _data_led_timer->setSingleShot(true);
     _rand_frame_data = new unsigned char[5000];
     _voip_encode_buffer = new QVector<short>;
-    _voip_channels = new QVector<Channel*>;
+
     _fft_gui = fft_gui;
     QObject::connect(_voice_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));
     QObject::connect(_data_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));
@@ -374,23 +375,7 @@ void RadioOp::sendEndBeep()
 
 void RadioOp::sendChannels()
 {
-    _repeater_info = "";
-    QXmlStreamWriter stream(&_repeater_info);
-    stream.setAutoFormatting(true);
-    stream.writeStartElement("i");
-    stream.writeStartElement("channels");
-    for(int i=0;i <_voip_channels->size();i++)
-    {
-        stream.writeStartElement("channel");
-        stream.writeAttribute("id",QString::number(_voip_channels->at(i)->id));
-        stream.writeAttribute("parent_id",QString::number(_voip_channels->at(i)->parent_id));
-        stream.writeAttribute("name",_voip_channels->at(i)->name);
-        stream.writeAttribute("description",_voip_channels->at(i)->description);
-        stream.writeEndElement();
-    }
-    stream.writeEndElement();
-    stream.writeEndElement();
-    sendTextData(_repeater_info, gr_modem::FrameTypeRepeaterInfo);
+
 }
 
 void RadioOp::startTx()
@@ -499,7 +484,7 @@ void RadioOp::run()
         if((time - last_channel_broadcast_time) > 60)
         {
             last_channel_broadcast_time = time;
-            if(_voip_forwarding && (_voip_channels->size()>0) && !transmitting && !ptt_activated)
+            if(_voip_forwarding && !transmitting && !ptt_activated)
             {
                 sendChannels();
             }
@@ -774,11 +759,7 @@ void RadioOp::textReceived(QString text)
 
 void RadioOp::repeaterInfoReceived(QString text)
 {
-    if(text.contains("<i>"))
-        _repeater_info = "";
-    _repeater_info += text;
-    if(_repeater_info.contains("</i>"))
-       emit printText(_repeater_info);
+    emit printText(text);
 }
 
 void RadioOp::callsignReceived(QString callsign)
@@ -828,8 +809,7 @@ void RadioOp::endAudioTransmission()
 
 void RadioOp::addChannel(Channel *chan)
 {
-    if(!chan->name.isEmpty())
-        _voip_channels->push_back(chan);
+    _radio_protocol->addChannel(chan);
 }
 
 void RadioOp::toggleRX(bool value)

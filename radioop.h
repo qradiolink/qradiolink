@@ -36,6 +36,7 @@
 #include "ext/vox.h"
 #include "settings.h"
 #include "channel.h"
+#include "radioprotocol.h"
 #include "audio/audioencoder.h"
 #include "video/videoencoder.h"
 #include "audio/alsaaudio.h"
@@ -149,7 +150,6 @@ private:
     bool _repeat_text;
     QString _text_out;
     QString _callsign;
-    QString _repeater_info;
     QMutex *_mutex;
     QTimer *_voice_led_timer;
     QTimer *_data_led_timer;
@@ -157,6 +157,7 @@ private:
     VideoEncoder *_video;
     NetDevice *_net_device;
     gr_modem *_modem;
+    RadioProtocol *_radio_protocol;
     int _rx_mode;
     int _tx_mode;
     int _rx_radio_type;
@@ -180,7 +181,6 @@ private:
     gr::qtgui::sink_c::sptr _fft_gui;
     unsigned char *_rand_frame_data;
     std::vector<short> *_m_queue;
-    QVector<Channel*> *_voip_channels;
     quint64 _last_session_id;
     QVector<short> *_voip_encode_buffer;
     QByteArray *_data_rec_sound;
