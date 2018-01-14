@@ -111,10 +111,16 @@ RadioOp::~RadioOp()
     if(_net_device != 0)
         delete _net_device;
     delete _audio;
+    delete _radio_protocol;
     delete _voice_led_timer;
     delete _data_led_timer;
+    delete _voip_tx_timer;
     delete _modem;
     delete[] _rand_frame_data;
+    _voip_encode_buffer->clear();
+    delete _voip_encode_buffer;
+    _m_queue->clear();
+    delete _m_queue;
 }
 
 void RadioOp::stop()
@@ -126,89 +132,58 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
                          std::string &rx_antenna, std::string &tx_antenna, int &rx_freq_corr,
                          int &tx_freq_corr, std::string &callsign, std::string &video_device)
 {
+    _settings->readConfig();
     int tx_power, rx_sensitivity, squelch, rx_volume;
     long long rx_frequency, tx_shift;
-    QDir files = QDir::homePath();
+    rx_device_args = _settings->rx_device_args.toStdString();
+    tx_device_args = _settings->tx_device_args.toStdString();
+    rx_antenna = _settings->rx_antenna.toStdString();
+    tx_antenna = _settings->tx_antenna.toStdString();
+    rx_freq_corr = _settings->rx_freq_corr;
+    tx_freq_corr = _settings->tx_freq_corr;
+    video_device = _settings->video_device.toStdString();
+    tx_power = _settings->tx_power;
+    rx_sensitivity = _settings->rx_sensitivity;
+    squelch = _settings->squelch;
+    rx_volume = _settings->rx_volume;
+    rx_frequency = _settings->rx_frequency;
+    tx_shift = _settings->tx_shift;
 
-    QFileInfo config_file = files.filePath(".config/qradiolink.cfg");
-    libconfig::Config cfg;
-    try
+    _callsign = _settings->callsign;
+    if(_callsign.size() < 7)
     {
-        cfg.readFile(config_file.absoluteFilePath().toStdString().c_str());
+        QString pad = QString(" ").repeated(7 - _callsign.size());
+        _callsign = _callsign + pad;
     }
-    catch(const libconfig::FileIOException &fioex)
+    if(_callsign.size() > 7)
     {
-        std::cerr << "I/O error while reading configuration file." << std::endl;
-        exit(EXIT_FAILURE);
+        _callsign = _callsign.mid(0,7);
     }
-    catch(const libconfig::ParseException &pex)
+    if(_tx_power == 0)
     {
-        std::cerr << "Configuration parse error at " << pex.getFile() << ":" << pex.getLine()
-                  << " - " << pex.getError() << std::endl;
-        exit(EXIT_FAILURE);
+        _tx_power = (float)tx_power/100;
     }
-    try
+    if(_rx_sensitivity == 0)
     {
-        const libconfig::Setting& root = cfg.getRoot();
-        root.lookupValue("rx_device_args", rx_device_args);
-        root.lookupValue("tx_device_args", tx_device_args);
-        root.lookupValue("rx_antenna", rx_antenna);
-        root.lookupValue("tx_antenna", tx_antenna);
-        root.lookupValue("rx_freq_corr", rx_freq_corr);
-        root.lookupValue("tx_freq_corr", tx_freq_corr);
-        root.lookupValue("callsign", callsign);
-        root.lookupValue("video_device", video_device);
-        root.lookupValue("tx_power", tx_power);
-        root.lookupValue("rx_sensitivity", rx_sensitivity);
-        root.lookupValue("squelch", squelch);
-        root.lookupValue("rx_volume", rx_volume);
-        root.lookupValue("rx_frequency", rx_frequency);
-        root.lookupValue("tx_shift", tx_shift);
-        _callsign = QString::fromStdString(callsign);
-        if(_callsign.size() < 7)
-        {
-            QString pad = QString(" ").repeated(7 - _callsign.size());
-            _callsign = _callsign + pad;
-        }
-        if(_callsign.size() > 7)
-        {
-            _callsign = _callsign.mid(0,7);
-        }
-        if(_tx_power == 0)
-        {
-            _tx_power = (float)tx_power/100;
-        }
-        if(_rx_sensitivity == 0)
-        {
-            _rx_sensitivity = (float)rx_sensitivity/100.0;
-        }
-        if(_tune_center_freq == 0)
-        {
-            _tune_center_freq = rx_frequency;
-        }
-        if(_tune_shift_freq == 0)
-        {
-            _tune_shift_freq = tx_shift;
-        }
-        if(_squelch == 0)
-        {
-            _squelch = squelch;
-        }
-        if(_rx_volume == 0)
-        {
-            _rx_volume = (float)rx_volume / 10.0;
-        }
+        _rx_sensitivity = (float)rx_sensitivity/100.0;
     }
-    catch(const libconfig::SettingNotFoundException &nfex)
+    if(_tune_center_freq == 0)
     {
-        std::cerr << "Settings not found in configuration file." << std::endl;
-        exit(EXIT_FAILURE);
+        _tune_center_freq = rx_frequency;
     }
-    catch(const libconfig::SettingTypeException &tex)
+    if(_tune_shift_freq == 0)
     {
-        std::cerr << "Configuration error." << std::endl;
-        exit(EXIT_FAILURE);
+        _tune_shift_freq = tx_shift;
     }
+    if(_squelch == 0)
+    {
+        _squelch = squelch;
+    }
+    if(_rx_volume == 0)
+    {
+        _rx_volume = (float)rx_volume / 10.0;
+    }
+
 }
 
 void RadioOp::vox(short *audiobuffer, int audiobuffer_size)
@@ -968,16 +943,16 @@ void RadioOp::toggleRxMode(int value)
     case 10:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _rx_mode = gr_modem_types::ModemTypeSSB2500;
-        _tune_limit_lower = -2500;
-        _tune_limit_upper = 2500;
-        _step_hz = 1;
+        _tune_limit_lower = -5000;
+        _tune_limit_upper = 5000;
+        _step_hz = 10;
         break;
     case 11:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _rx_mode = gr_modem_types::ModemTypeAM5000;
-        _tune_limit_lower = -2500;
-        _tune_limit_upper = 2500;
-        _step_hz = 1;
+        _tune_limit_lower = -5000;
+        _tune_limit_upper = 5000;
+        _step_hz = 10;
         break;
     case 12:
         _rx_mode = gr_modem_types::ModemTypeQPSKVideo;
@@ -993,8 +968,8 @@ void RadioOp::toggleRxMode(int value)
         break;
     default:
         _rx_mode = gr_modem_types::ModemTypeBPSK2000;
-        _tune_limit_lower = -2000;
-        _tune_limit_upper = 2000;
+        _tune_limit_lower = -5000;
+        _tune_limit_upper = 5000;
         _step_hz = 10;
         break;
     }
@@ -1079,16 +1054,16 @@ void RadioOp::toggleTxMode(int value)
     case 10:
         _tx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _tx_mode = gr_modem_types::ModemTypeSSB2500;
-        _tune_limit_lower = -2500;
-        _tune_limit_upper = 2500;
-        _step_hz = 1;
+        _tune_limit_lower = -5000;
+        _tune_limit_upper = 5000;
+        _step_hz = 10;
         break;
     case 11:
         _tx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _tx_mode = gr_modem_types::ModemTypeAM5000;
-        _tune_limit_lower = -2500;
-        _tune_limit_upper = 2500;
-        _step_hz = 1;
+        _tune_limit_lower = -5000;
+        _tune_limit_upper = 5000;
+        _step_hz = 10;
         break;
     case 12:
         _tx_mode = gr_modem_types::ModemTypeQPSKVideo;
@@ -1104,8 +1079,8 @@ void RadioOp::toggleTxMode(int value)
         break;
     default:
         _tx_mode = gr_modem_types::ModemTypeBPSK2000;
-        _tune_limit_lower = -2000;
-        _tune_limit_upper = 2000;
+        _tune_limit_lower = -5000;
+        _tune_limit_upper = 5000;
         _step_hz = 10;
         break;
     }
@@ -1155,7 +1130,6 @@ void RadioOp::tuneFreq(qint64 center_freq)
     _mutex->lock();
     _tune_center_freq = center_freq;
     _modem->tune(_tune_center_freq);
-    //_modem->tuneTx(_tune_center_freq + _tune_shift_freq);
     _mutex->unlock();
     _fft_gui->set_frequency_range(_tune_center_freq, 1000000);
 }
