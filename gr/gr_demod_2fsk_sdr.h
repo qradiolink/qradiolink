@@ -74,7 +74,6 @@ private:
     gr::blocks::delay::sptr _delay;
     gr::blocks::multiply_const_ff::sptr _multiply_const_fec;
     gr::blocks::add_const_ff::sptr _add;
-    gr::blocks::add_const_ff::sptr _add_const_fec;
     gr::fec::decode_ccsds_27_fb::sptr _cc_decoder;
     gr::fec::decode_ccsds_27_fb::sptr _cc_decoder2;
     gr::blocks::packed_to_unpacked_bb::sptr _packed_to_unpacked;

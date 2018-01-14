@@ -74,7 +74,6 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(std::vector<int>signature, int sps, int sam
 
     _multiply_const_fec = gr::blocks::multiply_const_ff::make(0.5);
 
-    _add_const_fec = gr::blocks::add_const_ff::make(0.0);
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
     _delay = gr::blocks::delay::make(4,1);
     _descrambler2 = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
@@ -95,12 +94,11 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(std::vector<int>signature, int sps, int sam
     connect(_equalizer,0,_complex_to_real,0);
     connect(_equalizer,0,self(),1);
     connect(_complex_to_real,0,_multiply_const_fec,0);
-    connect(_multiply_const_fec,0,_add_const_fec,0);
-    connect(_add_const_fec,0,_cc_decoder,0);
+    connect(_multiply_const_fec,0,_cc_decoder,0);
     connect(_cc_decoder,0,_packed_to_unpacked,0);
     connect(_packed_to_unpacked,0,_descrambler,0);
     connect(_descrambler,0,_deframer1,0);
-    connect(_add_const_fec,0,_delay,0);
+    connect(_multiply_const_fec,0,_delay,0);
     connect(_delay,0,_cc_decoder2,0);
     connect(_cc_decoder2,0,_packed_to_unpacked2,0);
     connect(_packed_to_unpacked2,0,_descrambler2,0);

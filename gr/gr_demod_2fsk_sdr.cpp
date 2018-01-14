@@ -73,7 +73,6 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(std::vector<int>signature, int sps, int sam
                                                               0.0005);
 
     _multiply_const_fec = gr::blocks::multiply_const_ff::make(0.5);
-    _add_const_fec = gr::blocks::add_const_ff::make(0.0);
 
 
     gr::fec::decode_ccsds_27_fb::sptr _cc_decoder = gr::fec::decode_ccsds_27_fb::make();
@@ -113,13 +112,12 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(std::vector<int>signature, int sps, int sam
     connect(_clock_recovery,0,_complex_to_real,0);
     //_top_block->connect(_complex_to_real,0,_binary_slicer,0);
     connect(_complex_to_real,0,_multiply_const_fec,0);
-    connect(_multiply_const_fec,0,_add_const_fec,0);
-    connect(_add_const_fec,0,_cc_decoder,0);
+    connect(_multiply_const_fec,0,_cc_decoder,0);
     connect(_cc_decoder,0,_packed_to_unpacked,0);
     connect(_packed_to_unpacked,0,_descrambler,0);
     connect(_descrambler,0,_deframer1,0);
 
-    connect(_add_const_fec,0,_delay,0);
+    connect(_multiply_const_fec,0,_delay,0);
     connect(_delay,0,_cc_decoder2,0);
     connect(_cc_decoder2,0,_packed_to_unpacked2,0);
     connect(_packed_to_unpacked2,0,_descrambler2,0);

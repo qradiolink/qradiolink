@@ -80,7 +80,6 @@ private:
     gr::digital::descrambler_bb::sptr _descrambler2;
     gr::blocks::delay::sptr _delay;
     gr::blocks::multiply_const_ff::sptr _multiply_const_fec;
-    gr::blocks::add_const_ff::sptr _add_const_fec;
     gr::fec::decode_ccsds_27_fb::sptr _cc_decoder;
     gr::fec::decode_ccsds_27_fb::sptr _cc_decoder2;
     gr_deframer_bb_sptr _deframer1;
