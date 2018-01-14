@@ -1,3 +1,12 @@
+qradiolink (0.3.11-1) UNRELEASED; urgency=medium
+
+  [ Adrian Musceac ]
+  * Modem improvements
+  * Performance improvements
+
+ -- Adrian Musceac <kantooon@gmail.com>  Sat, 13 Jan 2017 18:00:00 +0300
+
+
 qradiolink (0.3.10-1) UNRELEASED; urgency=medium
 
   [ Adrian Musceac ]
