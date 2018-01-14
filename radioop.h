@@ -27,8 +27,6 @@
 #include <QCoreApplication>
 #include <QElapsedTimer>
 #include <QImage>
-#include <QXmlStreamWriter>
-#include <QXmlStreamReader>
 #include <unistd.h>
 #include <math.h>
 #include "audio/audiointerface.h"
@@ -65,13 +63,6 @@ public:
                      gr::qtgui::const_sink_c::sptr const_gui, gr::qtgui::number_sink::sptr rssi_gui, QObject *parent = 0);
     ~RadioOp();
 
-    void processAudioStream();
-    int processVideoStream(bool &frame_flag);
-    void processNetStream();
-    void sendEndBeep();
-    void sendChannels();
-
-    void sendTextData(QString text, int frame_type);
 signals:
     void finished();
     void printText(QString text);
@@ -145,7 +136,7 @@ private:
 #endif
     AudioInterface *_audio;
     Settings *_settings;
-    bool _transmitting;
+    bool _transmitting_audio;
     bool _process_text;
     bool _repeat_text;
     QString _text_out;
@@ -192,6 +183,13 @@ private:
     int getFrameLength(unsigned char *data);
     void txAudio(short *audiobuffer, int audiobuffer_size);
     void vox(short *audiobuffer, int audiobuffer_size);
+
+    void processAudioStream();
+    int processVideoStream(bool &frame_flag);
+    void processNetStream();
+    void sendEndBeep();
+    void sendChannels();
+    void sendTextData(QString text, int frame_type);
 
 };
 

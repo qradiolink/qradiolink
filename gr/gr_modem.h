@@ -42,28 +42,20 @@
 #include <gnuradio/qtgui/const_sink_c.h>
 #include <gnuradio/qtgui/sink_c.h>
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-
 // posix interrupt timers
 #include <time.h>
-
 // needed for usleep
 #include <unistd.h>
-
-// for memset
 #include <strings.h>
 #include <math.h>
-
 // ioctl for CS driving serial port (PTT)
 #include <sys/ioctl.h>
-
 // for serial port out (PTT)
 #include <termios.h>
 
-#include <errno.h>
 
 
 class gr_modem : public QObject

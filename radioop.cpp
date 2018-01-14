@@ -41,7 +41,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _voip_tx_timer = new QTimer(this);
     _voip_tx_timer->setSingleShot(true);
     _settings = settings;
-    _transmitting = false;
+    _transmitting_audio = false;
     _process_text = false;
     _repeat_text = false;
     _repeat = false;
@@ -437,7 +437,7 @@ void RadioOp::run()
     int last_channel_broadcast_time = 0;
     while(true)
     {
-        bool transmitting = _transmitting;
+        bool transmitting = _transmitting_audio;
         QCoreApplication::processEvents();
         if(_voip_encode_buffer->size() > 320)
         {
@@ -709,12 +709,12 @@ void RadioOp::processVoipAudioFrame(short *pcm, int samples, quint64 sid)
 void RadioOp::startTransmission()
 {
     if(_tx_inited || _voip_enabled)
-        _transmitting = true;
+        _transmitting_audio = true;
 }
 
 void RadioOp::endTransmission()
 {
-    _transmitting = false;
+    _transmitting_audio = false;
 }
 
 void RadioOp::textData(QString text, bool repeat)
