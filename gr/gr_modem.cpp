@@ -594,8 +594,7 @@ void gr_modem::demodulate()
 
 void gr_modem::synchronize(int v_size, std::vector<unsigned char> *data)
 {
-    int frame_length = _rx_frame_length;
-    int bit_buf_len = _bit_buf_len;
+
     for(int i=0;i < v_size;i++)
     {
         if(!_sync_found)
@@ -603,11 +602,6 @@ void gr_modem::synchronize(int v_size, std::vector<unsigned char> *data)
             _current_frame_type = findSync(data->at(i));
             if(_sync_found)
             {
-                if((_modem_type_rx != gr_modem_types::ModemTypeBPSK1000)
-                        && (_current_frame_type == FrameTypeVoice))
-                {
-                    frame_length++; // reserved data
-                }
                 _bit_buf_index = 0;
                 continue;
             }
@@ -625,8 +619,14 @@ void gr_modem::synchronize(int v_size, std::vector<unsigned char> *data)
                 _frequency_found += 1; // 80 bits + counter
             _bit_buf[_bit_buf_index] =  (data->at(i)) & 0x1;
             _bit_buf_index++;
-            if(!((_modem_type_rx != gr_modem_types::ModemTypeBPSK1000)
-                    && (_current_frame_type == FrameTypeVoice)))
+            int frame_length = _rx_frame_length;
+            int bit_buf_len = _bit_buf_len;
+            if((_modem_type_rx != gr_modem_types::ModemTypeBPSK1000)
+                    && (_current_frame_type == FrameTypeVoice))
+            {
+                frame_length++; // reserved data
+            }
+            else if(_modem_type_rx != gr_modem_types::ModemTypeBPSK1000)
             {
                 bit_buf_len = _bit_buf_len - 8;
             }

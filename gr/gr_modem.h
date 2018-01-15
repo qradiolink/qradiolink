@@ -27,10 +27,7 @@
 #include <QCoreApplication>
 #include <string>
 #include "ext/utils.h"
-#include "sslclient.h"
-#include "config_defines.h"
 #include "settings.h"
-#include "station.h"
 #include "modem_types.h"
 #include "gr/gr_mod_base.h"
 #include "gr/gr_demod_base.h"
@@ -80,8 +77,8 @@ public:
     long _frequency_found;
     long _requested_frequency_hz;
     void demodulateAnalog();
-
     void sendCallsign(QString callsign);
+
 signals:
     void pcmAudio(std::vector<float>* pcm);
     void digitalAudio(unsigned char *c2data, int size);

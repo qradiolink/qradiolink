@@ -99,7 +99,6 @@ HEADERS  += mainwindow.h\
         ext/dec.h\
         ext/Goertzel.h\
         ext/Mumble.pb.h\
-        ext/murmur_pch.h\
         ext/PacketDataStream.h\
         ext/QRadioLink.pb.h\
         ext/vox.h\
