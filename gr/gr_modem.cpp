@@ -372,6 +372,26 @@ void gr_modem::textData(QString text, int frame_type)
     transmit(frames);
 }
 
+void gr_modem::binData(QByteArray bin_data, int frame_type)
+{
+    QVector<std::vector<unsigned char>*> frames;
+    for( int k=0;k<bin_data.length();k+=_tx_frame_length)
+    {
+        QByteArray d = bin_data.mid(k,_tx_frame_length);
+        int copy = _tx_frame_length;
+        if(d.size() < _tx_frame_length)
+            copy = d.size();
+        char * c = d.data();
+        unsigned char *data = new unsigned char[_tx_frame_length];
+        memset(data, 0, _tx_frame_length);
+        memcpy(data, c, copy);
+        std::vector<unsigned char> *one_frame = frame(data,_tx_frame_length, frame_type);
+
+        frames.append(one_frame);
+    }
+    transmit(frames);
+}
+
 void gr_modem::processPCMAudio(std::vector<float> *audio_data)
 {
 
@@ -736,25 +756,8 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
     {
         emit dataFrameReceived();
         _last_frame_type = FrameTypeRepeaterInfo;
-        char *text_data = new char[_rx_frame_length];
-        memcpy(text_data, received_data, _rx_frame_length);
-        quint8 string_length = _rx_frame_length;
-
-        for(int ii=_rx_frame_length-1;ii>=0;ii--)
-        {
-            QChar x(text_data[ii]);
-            if(x.unicode()==0)
-            {
-                string_length--;
-            }
-            else
-            {
-                break;
-            }
-        }
-        QString text = QString::fromLocal8Bit(text_data,string_length);
-        emit repeaterInfoReceived(text);
-        delete[] text_data;
+        QByteArray data((const char*)received_data, _rx_frame_length);
+        emit repeaterInfoReceived(data);
     }
     else if (current_frame_type == FrameTypeCallsign)
     {

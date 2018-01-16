@@ -280,6 +280,7 @@ int main(int argc, char *argv[])
     QObject::connect(radio_op, SIGNAL(voipData(short*,int)), client, SLOT(processAudio(short*,int)));
 
     QObject::connect(client,SIGNAL(onlineStations(StationList)),w,SLOT(updateOnlineStations(StationList)));
+    QObject::connect(client,SIGNAL(onlineStations(StationList)),radio_op,SLOT(setStations(StationList)));
     QObject::connect(client,SIGNAL(textMessage(QString)),w,SLOT(displayText(QString)));
     QObject::connect(client,SIGNAL(newChannel(Channel*)),w,SLOT(newChannel(Channel*)));
     QObject::connect(client,SIGNAL(newChannel(Channel*)),radio_op,SLOT(addChannel(Channel*)));

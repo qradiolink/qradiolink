@@ -24,6 +24,7 @@
 #include <QDateTime>
 #include <QtEndian>
 #include <QMutex>
+#include <QByteArray>
 #include <QCoreApplication>
 #include <string>
 #include "ext/utils.h"
@@ -86,7 +87,7 @@ signals:
     void netData(unsigned char *net_data, int size);
     void demodulated_audio(short *pcm, short size);
     void textReceived(QString text);
-    void repeaterInfoReceived(QString text);
+    void repeaterInfoReceived(QByteArray data);
     void callsignReceived(QString text);
     void audioFrameReceived();
     void dataFrameReceived();
@@ -102,6 +103,7 @@ public slots:
     void startTransmission(QString callsign);
     void endTransmission(QString callsign);
     void textData(QString text, int frame_type = FrameTypeText);
+    void binData(QByteArray bin_data, int frame_type = FrameTypeRepeaterInfo);
     void initTX(int modem_type, std::string device_args, std::string device_antenna, int freq_corr);
     void initRX(int modem_type, std::string device_args, std::string device_antenna, int freq_corr);
     void deinitTX(int modem_type);

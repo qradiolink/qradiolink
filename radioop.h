@@ -22,6 +22,7 @@
 #include <QTimer>
 #include <QMutex>
 #include <QDir>
+#include <QByteArray>
 #include <QFileInfo>
 #include <QDebug>
 #include <QCoreApplication>
@@ -35,6 +36,7 @@
 #include "settings.h"
 #include "channel.h"
 #include "radioprotocol.h"
+#include "station.h"
 #include "audio/audioencoder.h"
 #include "video/videoencoder.h"
 #include "audio/alsaaudio.h"
@@ -45,7 +47,7 @@
 #include <gnuradio/qtgui/number_sink.h>
 #include <libconfig.h++>
 
-
+typedef QVector<Station> StationList;
 namespace radio_type
 {
     enum
@@ -87,7 +89,7 @@ public slots:
     void textData(QString text, bool repeat = false);
     void stop();
     void textReceived(QString text);
-    void repeaterInfoReceived(QString text);
+    void repeaterInfoReceived(QByteArray data);
     void callsignReceived(QString callsign);
     void audioFrameReceived();
     void dataFrameReceived();
@@ -124,6 +126,7 @@ public slots:
     void updateFrequency();
     void toggleRepeat(bool value);
     void addChannel(Channel* chan);
+    void setStations(StationList list);
 
 private:
     bool _stop;
@@ -190,6 +193,7 @@ private:
     void sendEndBeep();
     void sendChannels();
     void sendTextData(QString text, int frame_type);
+    void sendBinData(QByteArray data, int frame_type);
 
 };
 

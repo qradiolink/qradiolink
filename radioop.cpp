@@ -74,7 +74,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _modem = new gr_modem(_settings, fft_gui,const_gui, rssi_gui);
 
     QObject::connect(_modem,SIGNAL(textReceived(QString)),this,SLOT(textReceived(QString)));
-    QObject::connect(_modem,SIGNAL(repeaterInfoReceived(QString)),this,SLOT(repeaterInfoReceived(QString)));
+    QObject::connect(_modem,SIGNAL(repeaterInfoReceived(QByteArray)),this,SLOT(repeaterInfoReceived(QByteArray)));
     QObject::connect(_modem,SIGNAL(callsignReceived(QString)),this,SLOT(callsignReceived(QString)));
     QObject::connect(_modem,SIGNAL(audioFrameReceived()),this,SLOT(audioFrameReceived()));
     QObject::connect(_modem,SIGNAL(dataFrameReceived()),this,SLOT(dataFrameReceived()));
@@ -350,7 +350,8 @@ void RadioOp::sendEndBeep()
 
 void RadioOp::sendChannels()
 {
-
+    QByteArray data = _radio_protocol->buildRepeaterInfo();
+    sendBinData(data,gr_modem::FrameTypeRepeaterInfo);
 }
 
 void RadioOp::startTx()
@@ -428,6 +429,31 @@ void RadioOp::sendTextData(QString text, int frame_type)
     }
 }
 
+void RadioOp::sendBinData(QByteArray data, int frame_type)
+{
+    if(_tx_inited)
+    {
+        if(!_tx_modem_started)
+        {
+            stopTx();
+            startTx();
+        }
+        else
+        {
+            startTx();
+        }
+        _tx_modem_started = true;
+        _modem->binData(data, frame_type);
+        _modem->endTransmission(_callsign);
+    }
+    if(!_repeat_text)
+    {
+        _mutex->lock();
+        _process_text = false;
+        _mutex->unlock();
+    }
+}
+
 void RadioOp::run()
 {
 
@@ -456,7 +482,7 @@ void RadioOp::run()
             emit pingServer();
             last_ping_time = time;
         }
-        if((time - last_channel_broadcast_time) > 60)
+        if((time - last_channel_broadcast_time) > 10)
         {
             last_channel_broadcast_time = time;
             if(_voip_forwarding && !transmitting && !ptt_activated)
@@ -732,9 +758,9 @@ void RadioOp::textReceived(QString text)
     emit printText(text);
 }
 
-void RadioOp::repeaterInfoReceived(QString text)
+void RadioOp::repeaterInfoReceived(QByteArray data)
 {
-    emit printText(text);
+    _radio_protocol->dataIn(data);
 }
 
 void RadioOp::callsignReceived(QString callsign)
@@ -785,6 +811,11 @@ void RadioOp::endAudioTransmission()
 void RadioOp::addChannel(Channel *chan)
 {
     _radio_protocol->addChannel(chan);
+}
+
+void RadioOp::setStations(StationList list)
+{
+    _radio_protocol->setStations(list);
 }
 
 void RadioOp::toggleRX(bool value)
