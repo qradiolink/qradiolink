@@ -73,8 +73,7 @@ QByteArray RadioProtocol::buildRepeaterInfo()
 
 void RadioProtocol::addChannel(Channel *chan)
 {
-    if(!chan->name.isEmpty())
-        _voip_channels->push_back(chan);
+    _voip_channels->push_back(chan);
 }
 
 void RadioProtocol::setStations(QVector<Station> list)
@@ -140,7 +139,9 @@ void RadioProtocol::processPayload(QByteArray data)
     {
         QRadioLink::Channel ch;
         ch.ParseFromArray(data,data.size());
-        qDebug() << QString::fromStdString(ch.name());
+        Channel *chan = new Channel(ch.channel_id(),ch.parent_id(),QString::fromStdString(ch.name()),
+                                    QString::fromStdString(ch.description()));
+        //emit newChannel(chan);
         break;
     }
     case 2:
