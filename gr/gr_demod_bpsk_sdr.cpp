@@ -45,9 +45,8 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(std::vector<int>signature, int sps, int sam
     polys.push_back(109);
     polys.push_back(79);
 
-    unsigned int flt_size = 32;
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, 2*_filter_width, 12000);
+    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, 2*_filter_width, 12000);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1, 50, taps);
     _agc = gr::analog::agc2_cc::make(0.06e-1, 1e-3, 1, 1);
     _freq_transl_filter = gr::filter::freq_xlating_fir_filter_ccf::make(
@@ -61,7 +60,7 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(std::vector<int>signature, int sps, int sam
                                                               0.001);
     _costas_loop = gr::digital::costas_loop_cc::make(2*M_PI/100,2);
     _equalizer = gr::digital::cma_equalizer_cc::make(8,1,0.00005,1);
-    _fll = gr::digital::fll_band_edge_cc::make(sps, 0.3, 16, M_PI/1600);
+    _fll = gr::digital::fll_band_edge_cc::make(sps, 0.35, 32, 2*M_PI/100);
     _shaping_filter = gr::filter::fft_filter_ccf::make(
                 1, gr::filter::firdes::root_raised_cosine(1,_target_samp_rate,_target_samp_rate/_samples_per_symbol,0.3,32));
     _complex_to_real = gr::blocks::complex_to_real::make();

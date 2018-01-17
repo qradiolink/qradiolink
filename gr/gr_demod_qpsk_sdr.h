@@ -76,7 +76,6 @@ private:
     int _carrier_freq;
     int _filter_width;
     int _target_samp_rate;
-    float _center_spacing;
 
 };
 

@@ -43,7 +43,6 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
         interpolation = 1;
         decimation = 50;
         _samples_per_symbol = sps*2/25;
-        _center_spacing = 25000;
         _target_samp_rate = 20000;
     }
     else
@@ -51,7 +50,6 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
         interpolation = 1;
         decimation = 4;
         _samples_per_symbol = sps;
-        _center_spacing = 250000;
         _target_samp_rate = 250000;
     }
     _samp_rate =samp_rate;
@@ -76,11 +74,11 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
                 constellation->points(),pre_diff_code,4,2,2,1,1,const_map);
     */
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(flt_size, _samp_rate, 2*_filter_width, 12000);
+    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, 2*_filter_width, 12000);
 
     _resampler = gr::filter::rational_resampler_base_ccf::make(interpolation, decimation, taps);
 
-    _agc = gr::analog::agc2_cc::make(0.06e-1, 1e-3, 1, 1);
+    _agc = gr::analog::agc2_cc::make(0.6e-2, 1e-3, 1, 1);
     /*
     _freq_transl_filter = gr::filter::freq_xlating_fir_filter_ccf::make(
                 1,gr::filter::firdes::low_pass(
@@ -104,7 +102,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
     _clock_sync = gr::digital::pfb_clock_sync_ccf::make(_samples_per_symbol,0.0628,pfb_taps);
     _costas_loop = gr::digital::costas_loop_cc::make(2*M_PI/100,4);
     _equalizer = gr::digital::cma_equalizer_cc::make(8,2,0.00005,1);
-    _fll = gr::digital::fll_band_edge_cc::make(sps, 0.3, 16, M_PI/1600);
+    _fll = gr::digital::fll_band_edge_cc::make(sps, 0.35, 32, 2*M_PI/100);
     _diff_decoder = gr::digital::diff_decoder_bb::make(4);
     _map = gr::digital::map_bb::make(map);
     _unpack = gr::blocks::unpack_k_bits_bb::make(2);

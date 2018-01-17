@@ -35,9 +35,9 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(std::vector<int>signature, int sps, int sam
                       gr::io_signature::makev (2, 2, signature))
 {
 
-    _target_samp_rate = 40000;
+    _target_samp_rate = 20000;
 
-    _samples_per_symbol = sps*2/25;
+    _samples_per_symbol = sps/25;
     _samp_rate =samp_rate;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
@@ -46,10 +46,10 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(std::vector<int>signature, int sps, int sam
     map.push_back(0);
     map.push_back(1);
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(32, _samp_rate, _filter_width, 12000);
+    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width, 12000);
     std::vector<float> symbol_filter_taps = gr::filter::firdes::low_pass(1.0,
                                  _target_samp_rate, _target_samp_rate*0.9/_samples_per_symbol, _target_samp_rate*0.1/_samples_per_symbol);
-    _resampler = gr::filter::rational_resampler_base_ccf::make(1, 25, taps);
+    _resampler = gr::filter::rational_resampler_base_ccf::make(1, 50, taps);
     //_freq_transl_filter = gr::filter::freq_xlating_fir_filter_ccf::make(
     //            1,gr::filter::firdes::low_pass(
     //                1, _target_samp_rate, 2*_filter_width, 250000, gr::filter::firdes::WIN_HAMMING), 25000,
