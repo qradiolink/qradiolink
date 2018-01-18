@@ -100,9 +100,9 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
 
 
     _symbol_filter = gr::filter::fft_filter_fff::make(1,symbol_filter_taps);
-
-    _clock_recovery = gr::digital::clock_recovery_mm_ff::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.0, gain_mu,
-                                                              0.001);
+    _costas_loop = gr::digital::costas_loop_cc::make(2*M_PI/100,2);
+    _clock_recovery = gr::digital::clock_recovery_mm_ff::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
+                                                              0.0001);
     _float_to_complex = gr::blocks::float_to_complex::make();
     _multiply_symbols = gr::blocks::multiply_const_cc::make(0.5);
     _unpack = gr::blocks::unpack_k_bits_bb::make(2);
@@ -131,7 +131,8 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
     //connect(_freq_demod,0,_float_to_complex,0);
     connect(_symbol_filter,0,_clock_recovery,0);
     connect(_clock_recovery,0,_float_to_complex,0);
-    connect(_float_to_complex,0,_multiply_symbols,0);
+    connect(_float_to_complex,0,_costas_loop,0);
+    connect(_costas_loop,0,_multiply_symbols,0);
     connect(_multiply_symbols,0,self(),1);
 
     connect(_multiply_symbols,0,_constellation_receiver,0);
