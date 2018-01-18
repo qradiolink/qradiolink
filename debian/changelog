@@ -1,3 +1,11 @@
+qradiolink (0.3.13-1) UNRELEASED; urgency=medium
+
+  [ Adrian Musceac ]
+  * Improved 4FSK demodulator
+
+ -- Adrian Musceac <kantooon@gmail.com>  Thu, 17 Jan 2017 23:00:00 +0300
+
+
 qradiolink (0.3.12-1) UNRELEASED; urgency=medium
 
   [ Adrian Musceac ]
