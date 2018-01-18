@@ -54,7 +54,7 @@ signals:
     void newChannel(Channel* chan);
     void leftStation(Station*);
     void channelReady(int chan_number);
-    void textMessage(QString msg);
+    void textMessage(QString msg, bool html);
     
 public slots:
     void connectToServer(QString address, unsigned port);

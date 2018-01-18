@@ -252,14 +252,14 @@ void MumbleClient::processUserState(quint8 *message, quint64 size)
     if((_session_id==-1) && (us.has_channel_id()))
     {
         _channel_id = us.channel_id();
-        emit textMessage(" Joined channel: " + _channel_id);
+        emit textMessage(" Joined channel: " + _channel_id, false);
     }
     if(us.session() == _session_id)
     {
         if(us.has_channel_id())
         {
             _channel_id = us.channel_id();
-            emit textMessage( " Joined channel: " + _channel_id);
+            emit textMessage( " Joined channel: " + _channel_id, false);
             Channel *c = new Channel(_channel_id,0,"","");
             emit newChannel(c);
             if(_channel_id > 1)

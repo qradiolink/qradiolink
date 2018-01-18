@@ -75,7 +75,7 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
     gr::digital::constellation_expl_rect::sptr constellation = gr::digital::constellation_expl_rect::make(
                 constellation_points,pre_diff_code,2,4,1,1,1,const_map);
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width, 12000);
+    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, 2*_filter_width, 12000);
     std::vector<float> symbol_filter_taps = gr::filter::firdes::low_pass(1.0,
                                  _target_samp_rate, _target_samp_rate*0.9/_samples_per_symbol, _target_samp_rate*0.1/_samples_per_symbol);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1, 25, taps);
@@ -92,10 +92,10 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
                                 1, _target_samp_rate, 0,_filter_width-rs,bw,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     _filter4 = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
                                 1, _target_samp_rate, _filter_width-rs,_filter_width, bw,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
-    _mag_squared1 = gr::blocks::complex_to_mag::make();
-    _mag_squared2 = gr::blocks::complex_to_mag::make();
-    _mag_squared3 = gr::blocks::complex_to_mag::make();
-    _mag_squared4 = gr::blocks::complex_to_mag::make();
+    _mag1 = gr::blocks::complex_to_mag::make();
+    _mag2 = gr::blocks::complex_to_mag::make();
+    _mag3 = gr::blocks::complex_to_mag::make();
+    _mag4 = gr::blocks::complex_to_mag::make();
     _discriminator = make_gr_4fsk_discriminator();
 
 
@@ -117,14 +117,14 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
     connect(_filter,0,_filter2,0);
     connect(_filter,0,_filter3,0);
     connect(_filter,0,_filter4,0);
-    connect(_filter1,0,_mag_squared1,0);
-    connect(_filter2,0,_mag_squared2,0);
-    connect(_filter3,0,_mag_squared3,0);
-    connect(_filter4,0,_mag_squared4,0);
-    connect(_mag_squared1,0,_discriminator,0);
-    connect(_mag_squared2,0,_discriminator,1);
-    connect(_mag_squared3,0,_discriminator,2);
-    connect(_mag_squared4,0,_discriminator,3);
+    connect(_filter1,0,_mag1,0);
+    connect(_filter2,0,_mag2,0);
+    connect(_filter3,0,_mag3,0);
+    connect(_filter4,0,_mag4,0);
+    connect(_mag1,0,_discriminator,0);
+    connect(_mag2,0,_discriminator,1);
+    connect(_mag3,0,_discriminator,2);
+    connect(_mag4,0,_discriminator,3);
     connect(_discriminator,0,_symbol_filter,0);
 
     //connect(_filter,0,_freq_demod,0);

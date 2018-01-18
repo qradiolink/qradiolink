@@ -57,10 +57,10 @@ private:
     gr::filter::fft_filter_ccc::sptr _filter2;
     gr::filter::fft_filter_ccc::sptr _filter3;
     gr::filter::fft_filter_ccc::sptr _filter4;
-    gr::blocks::complex_to_mag::sptr _mag_squared1;
-    gr::blocks::complex_to_mag::sptr _mag_squared2;
-    gr::blocks::complex_to_mag::sptr _mag_squared3;
-    gr::blocks::complex_to_mag::sptr _mag_squared4;
+    gr::blocks::complex_to_mag::sptr _mag1;
+    gr::blocks::complex_to_mag::sptr _mag2;
+    gr::blocks::complex_to_mag::sptr _mag3;
+    gr::blocks::complex_to_mag::sptr _mag4;
     gr_4fsk_discriminator_sptr _discriminator;
 
     gr::blocks::multiply_const_cc::sptr _multiply_symbols;

@@ -28,13 +28,14 @@
 #include <gnuradio/digital/binary_slicer_fb.h>
 #include <gnuradio/blocks/divide_ff.h>
 #include <gnuradio/blocks/threshold_ff.h>
+#include <gnuradio/analog/rail_ff.h>
 #include <gnuradio/blocks/complex_to_real.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/filter/fft_filter_ccc.h>
 #include <gnuradio/digital/descrambler_bb.h>
 #include <gnuradio/fec/decode_ccsds_27_fb.h>
 #include <gnuradio/blocks/packed_to_unpacked_bb.h>
-#include <gnuradio/blocks/complex_to_mag_squared.h>
+#include <gnuradio/blocks/complex_to_mag.h>
 #include <gnuradio/blocks/multiply_const_ff.h>
 #include <gnuradio/blocks/add_const_ff.h>
 #include <gnuradio/blocks/delay.h>
@@ -63,10 +64,11 @@ private:
     gr::filter::fft_filter_ccf::sptr _filter;
     gr::filter::fft_filter_ccc::sptr _lower_filter;
     gr::filter::fft_filter_ccc::sptr _upper_filter;
-    gr::blocks::complex_to_mag_squared::sptr _mag_squared_lower;
-    gr::blocks::complex_to_mag_squared::sptr _mag_squared_upper;
+    gr::blocks::complex_to_mag::sptr _mag_lower;
+    gr::blocks::complex_to_mag::sptr _mag_upper;
     gr::blocks::divide_ff::sptr _divide;
     gr::blocks::threshold_ff::sptr _threshhold;
+    gr::analog::rail_ff::sptr _rail;
     gr::digital::binary_slicer_fb::sptr _binary_slicer;
     gr::blocks::complex_to_real::sptr _complex_to_real;
     gr::digital::descrambler_bb::sptr _descrambler;
