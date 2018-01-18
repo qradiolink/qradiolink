@@ -755,7 +755,7 @@ void RadioOp::textData(QString text, bool repeat)
 
 void RadioOp::textReceived(QString text)
 {
-    emit printText(text);
+    emit printText(text, false);
 }
 
 void RadioOp::repeaterInfoReceived(QByteArray data)
@@ -766,8 +766,8 @@ void RadioOp::repeaterInfoReceived(QByteArray data)
 void RadioOp::callsignReceived(QString callsign)
 {
     QString time= QDateTime::currentDateTime().toString("d/MMM/yyyy hh:mm:ss");
-    QString text = "\n" + time +" >>>> " + callsign + " >>>>\n";
-    emit printText(text);
+    QString text = "<br/><b>" + time + "</b> " + "<font color=\"#770000\">" + callsign + " </font><br/>\n";
+    emit printText(text,true);
     emit printCallsign(callsign);
 }
 
@@ -797,7 +797,7 @@ void RadioOp::receiveEnd()
 void RadioOp::endAudioTransmission()
 {
     QString time= QDateTime::currentDateTime().toString("d/MMM/yyyy hh:mm:ss");
-    emit printText(time + " <<<< end transmission <<<<\n");
+    emit printText("<br/><b>" + time + "</b> <font color=\"#000077\">Transmission end</font><br/>\n",true);
     QFile resfile(":/res/end_beep.raw");
     if(resfile.open(QIODevice::ReadOnly))
     {

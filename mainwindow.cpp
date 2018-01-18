@@ -188,15 +188,17 @@ void MainWindow::GUIsendText()
     ui->redLED->setEnabled(true);
 }
 
-void MainWindow::displayText(QString text)
+void MainWindow::displayText(QString text, bool html)
 {
     if(ui->receivedTextEdit->toPlainText().size() > 1024*1024*1024)
     {
         // TODO: truncate text
     }
-    ui->receivedTextEdit->setPlainText(ui->receivedTextEdit->toPlainText() + text);
+    if(html)
+        ui->receivedTextEdit->insertHtml(text);
+    else
+        ui->receivedTextEdit->insertPlainText(text);
     ui->receivedTextEdit->verticalScrollBar()->setValue(ui->receivedTextEdit->verticalScrollBar()->maximum());
-    //ui->tabWidget->setCurrentIndex(1);
 }
 
 void MainWindow::clearTextArea()

@@ -48,7 +48,7 @@ public slots:
     void GUIdisconnectVOIP();
     void GUIsendText();
     void chooseFile();
-    void displayText(QString text);
+    void displayText(QString text, bool html);
     void displayCallsign(QString callsign);
     void displayReceiveStatus(bool status);
     void displayTransmitStatus(bool status);

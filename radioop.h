@@ -67,7 +67,7 @@ public:
 
 signals:
     void finished();
-    void printText(QString text);
+    void printText(QString text, bool html);
     void printCallsign(QString text);
     void displayReceiveStatus(bool status);
     void displayTransmitStatus(bool status);

@@ -1330,26 +1330,6 @@ font: 12pt &quot;Sans Serif&quot;;
             </property>
            </widget>
           </item>
-          <item row="1" column="3">
-           <widget class="QPlainTextEdit" name="receivedTextEdit">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>300</height>
-             </size>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">background: transparent;
-color: rgb(0, 0, 67);
-background-color: rgb(255, 255, 255, 180);
-font: 12pt &quot;Sans Serif&quot;;
-</string>
-            </property>
-            <property name="textInteractionFlags">
-             <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-            </property>
-           </widget>
-          </item>
           <item row="2" column="3">
            <layout class="QHBoxLayout" name="horizontalLayout_8">
             <item>
@@ -1423,6 +1403,26 @@ color: rgb(203, 0, 0);
              </widget>
             </item>
            </layout>
+          </item>
+          <item row="1" column="3">
+           <widget class="QTextEdit" name="receivedTextEdit">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>300</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">background: transparent;
+color: rgb(0, 0, 67);
+background-color: rgb(255, 255, 255, 180);
+font: 12pt &quot;Sans Serif&quot;;
+</string>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
