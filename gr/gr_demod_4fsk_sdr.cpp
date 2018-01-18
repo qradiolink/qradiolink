@@ -54,7 +54,7 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
     if(sps == 250)
     {
         rs = 1000;
-        bw = 2500;
+        bw = 2000;
         gain_mu = 0.025;
     }
 
