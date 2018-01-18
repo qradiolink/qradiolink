@@ -48,7 +48,7 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(std::vector<int>signature, int sps, int sam
 
     std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width, 12000);
     std::vector<float> symbol_filter_taps = gr::filter::firdes::low_pass(1.0,
-                                 _target_samp_rate, _target_samp_rate*0.9/_samples_per_symbol, _target_samp_rate*0.1/_samples_per_symbol);
+                                 _target_samp_rate, _target_samp_rate/_samples_per_symbol, _target_samp_rate/_samples_per_symbol);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1, 50, taps);
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
                                 1, _target_samp_rate, _filter_width,1200,gr::filter::firdes::WIN_HAMMING) );
