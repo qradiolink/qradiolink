@@ -56,7 +56,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _tune_shift_freq = 0;
     _tune_limit_lower = -5000;
     _tune_limit_upper = 5000;
-    _step_hz = 1;
+    _step_hz = 10;
     _tuning_done = true;
     _tune_counter = 0;
     _tx_modem_started = false;

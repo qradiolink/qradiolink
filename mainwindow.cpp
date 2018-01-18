@@ -96,6 +96,8 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     readConfig();
     _video_img = new QPixmap;
     ui->menuBar->hide();
+    ui->statusBar->hide();
+    ui->mainToolBar->hide();
     setWindowIcon(QIcon(":/res/logo.png"));
     setWindowFlags( Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
 

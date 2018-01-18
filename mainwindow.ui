@@ -33,7 +33,8 @@
     </size>
    </property>
    <property name="styleSheet">
-    <string notr="true">background-color: #88BCBC;</string>
+    <string notr="true">color: rgb(240, 240, 119);
+background-color: rgb(0, 0, 67);</string>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <property name="spacing">
@@ -2078,7 +2079,7 @@ font: 10pt &quot;Sans Serif&quot;;</string>
             </property>
             <property name="styleSheet">
              <string notr="true">font: 12pt &quot;Sans Serif&quot;;
-color: rgb(0, 0, 83);</string>
+color: rgb(0, 255, 0);</string>
             </property>
             <property name="text">
              <string>RX</string>
@@ -2186,7 +2187,7 @@ color: rgb(0, 0, 83);</string>
             </property>
             <property name="styleSheet">
              <string notr="true">font: 12pt &quot;Sans Serif&quot;;
-color: rgb(125, 0, 0);</string>
+color: rgb(255, 0, 0);</string>
             </property>
             <property name="text">
              <string>TX</string>
@@ -2311,7 +2312,14 @@ color: rgb(125, 0, 0);</string>
     <bool>false</bool>
    </attribute>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QStatusBar" name="statusBar">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+  </widget>
   <action name="actionClose">
    <property name="text">
     <string>Close</string>
