@@ -36,23 +36,26 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
                       gr::io_signature::makev (3, 3, signature))
 {
 
-    _target_samp_rate = 40000;
-
-    _samples_per_symbol = sps*4/25;
     _samp_rate =samp_rate;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
 
-    int rs,bw;
+    int rs,bw,decimation;
     float gain_mu;
     if(sps == 50)
     {
+        _target_samp_rate = 40000;
+        _samples_per_symbol = sps*4/25;
+        decimation = 25;
         rs = 5000;
         bw = 10000;
         gain_mu = 0.025;
     }
     if(sps == 250)
     {
+        _target_samp_rate = 10000;
+        _samples_per_symbol = sps/25;
+        decimation = 100;
         rs = 1000;
         bw = 2000;
         gain_mu = 0.025;
@@ -78,7 +81,7 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
     std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, 2*_filter_width, 12000);
     std::vector<float> symbol_filter_taps = gr::filter::firdes::low_pass(1.0,
                                  _target_samp_rate, _target_samp_rate/_samples_per_symbol, _target_samp_rate/_samples_per_symbol);
-    _resampler = gr::filter::rational_resampler_base_ccf::make(1, 25, taps);
+    _resampler = gr::filter::rational_resampler_base_ccf::make(1, decimation, taps);
 
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
                                 1, _target_samp_rate, _filter_width,1200,gr::filter::firdes::WIN_HAMMING) );
@@ -102,7 +105,7 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
     _symbol_filter = gr::filter::fft_filter_fff::make(1,symbol_filter_taps);
     _costas_loop = gr::digital::costas_loop_cc::make(2*M_PI/100,2);
     _clock_recovery = gr::digital::clock_recovery_mm_ff::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
-                                                              0.0001);
+                                                              0.001);
     _float_to_complex = gr::blocks::float_to_complex::make();
     _multiply_symbols = gr::blocks::multiply_const_cc::make(0.5);
     _unpack = gr::blocks::unpack_k_bits_bb::make(2);
