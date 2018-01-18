@@ -49,10 +49,6 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(std::vector<int>signature, int sps, int sam
     std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, 2*_filter_width, 12000);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1, 50, taps);
     _agc = gr::analog::agc2_cc::make(0.06e-1, 1e-3, 1, 1);
-    _freq_transl_filter = gr::filter::freq_xlating_fir_filter_ccf::make(
-                1,gr::filter::firdes::low_pass(
-                    1, _target_samp_rate, 2*_filter_width ,250000, gr::filter::firdes::WIN_HAMMING), 25000,
-                _target_samp_rate);
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
                             1, _target_samp_rate, _filter_width,1200,gr::filter::firdes::WIN_HAMMING) );
     float gain_mu = 0.025;
