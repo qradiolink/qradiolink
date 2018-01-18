@@ -268,7 +268,7 @@ int main(int argc, char *argv[])
     QObject::connect(w,SIGNAL(setVOIPForwarding(bool)),radio_op,SLOT(setVOIPForwarding(bool)));
     QObject::connect(w,SIGNAL(toggleRepeat(bool)),radio_op,SLOT(toggleRepeat(bool)));
     QObject::connect(w,SIGNAL(stopRadio()),radio_op,SLOT(stop()));
-    QObject::connect(radio_op, SIGNAL(printText(QString)), w, SLOT(displayText(QString)));
+    QObject::connect(radio_op, SIGNAL(printText(QString,bool)), w, SLOT(displayText(QString,bool)));
     QObject::connect(radio_op, SIGNAL(printCallsign(QString)), w, SLOT(displayCallsign(QString)));
     QObject::connect(radio_op, SIGNAL(videoImage(QImage)), w, SLOT(displayImage(QImage)));
     QObject::connect(radio_op, SIGNAL(displayReceiveStatus(bool)), w, SLOT(displayReceiveStatus(bool)));
@@ -281,7 +281,7 @@ int main(int argc, char *argv[])
 
     QObject::connect(client,SIGNAL(onlineStations(StationList)),w,SLOT(updateOnlineStations(StationList)));
     QObject::connect(client,SIGNAL(onlineStations(StationList)),radio_op,SLOT(setStations(StationList)));
-    QObject::connect(client,SIGNAL(textMessage(QString)),w,SLOT(displayText(QString)));
+    QObject::connect(client,SIGNAL(textMessage(QString,bool)),w,SLOT(displayText(QString,bool)));
     QObject::connect(client,SIGNAL(newChannel(Channel*)),w,SLOT(newChannel(Channel*)));
     QObject::connect(client,SIGNAL(newChannel(Channel*)),radio_op,SLOT(addChannel(Channel*)));
 

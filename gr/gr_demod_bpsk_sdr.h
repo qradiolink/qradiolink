@@ -64,16 +64,13 @@ private:
     gr::digital::cma_equalizer_cc::sptr _equalizer;
     gr::blocks::complex_to_real::sptr _complex_to_real;
     gr::analog::agc2_cc::sptr _agc;
-    gr::analog::agc2_ff::sptr _agc2;
     gr::digital::fll_band_edge_cc::sptr _fll;
     gr::filter::fft_filter_ccf::sptr _shaping_filter;
     gr::digital::clock_recovery_mm_cc::sptr _clock_recovery;
-    gr::digital::binary_slicer_fb::sptr _binary_slicer;
     gr::digital::costas_loop_cc::sptr _costas_loop;
     gr::blocks::packed_to_unpacked_bb::sptr _packed_to_unpacked;
     gr::blocks::packed_to_unpacked_bb::sptr _packed_to_unpacked2;
 
-    //gr::filter::pfb_arb_resampler_ccf::sptr _resampler;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
     gr::filter::fft_filter_ccf::sptr _filter;
     gr::digital::descrambler_bb::sptr _descrambler;

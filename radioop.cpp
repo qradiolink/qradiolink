@@ -56,7 +56,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _tune_shift_freq = 0;
     _tune_limit_lower = -5000;
     _tune_limit_upper = 5000;
-    _step_hz = 1;
+    _step_hz = 10;
     _tuning_done = true;
     _tune_counter = 0;
     _tx_modem_started = false;
@@ -755,7 +755,7 @@ void RadioOp::textData(QString text, bool repeat)
 
 void RadioOp::textReceived(QString text)
 {
-    emit printText(text);
+    emit printText(text, false);
 }
 
 void RadioOp::repeaterInfoReceived(QByteArray data)
@@ -766,8 +766,8 @@ void RadioOp::repeaterInfoReceived(QByteArray data)
 void RadioOp::callsignReceived(QString callsign)
 {
     QString time= QDateTime::currentDateTime().toString("d/MMM/yyyy hh:mm:ss");
-    QString text = "\n" + time +" >>>> " + callsign + " >>>>\n";
-    emit printText(text);
+    QString text = "<br/><b>" + time + "</b> " + "<font color=\"#770000\">" + callsign + " </font><br/>\n";
+    emit printText(text,true);
     emit printCallsign(callsign);
 }
 
@@ -797,7 +797,7 @@ void RadioOp::receiveEnd()
 void RadioOp::endAudioTransmission()
 {
     QString time= QDateTime::currentDateTime().toString("d/MMM/yyyy hh:mm:ss");
-    emit printText(time + " <<<< end transmission <<<<\n");
+    emit printText("<br/><b>" + time + "</b> <font color=\"#000077\">Transmission end</font><br/>\n",true);
     QFile resfile(":/res/end_beep.raw");
     if(resfile.open(QIODevice::ReadOnly))
     {
