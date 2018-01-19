@@ -47,11 +47,6 @@ gr_demod_bpsk::gr_demod_bpsk(QObject *parent, int sps, int samp_rate, int carrie
     _unpacked_to_packed = gr::blocks::unpacked_to_packed_bb::make(1,gr::GR_MSB_FIRST);
     _vector_sink = make_gr_vector_sink();
 
-
-
-
-
-
     _top_block->connect(_audio_source,0,_float_to_complex,0);
 
     _top_block->connect(_float_to_complex,0,_multiply,0);

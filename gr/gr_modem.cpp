@@ -571,8 +571,8 @@ void gr_modem::demodulate()
             || (_modem_type_rx == gr_modem_types::ModemType2FSK2000)
             || (_modem_type_rx == gr_modem_types::ModemTypeBPSK1000))
     {
-        demod_data = _gr_demod_base->getFrame1();
-        demod_data2 = _gr_demod_base->getFrame2();
+        demod_data = _gr_demod_base->getData(1);
+        demod_data2 = _gr_demod_base->getData(2);
     }     
     else
         demod_data = _gr_demod_base->getData();

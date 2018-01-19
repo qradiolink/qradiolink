@@ -46,7 +46,7 @@
 
 //Manual adjustment of Font size as percent of control height
 #define DIGIT_SIZE_PERCENT 90
-#define UNITS_SIZE_PERCENT 60
+#define UNITS_SIZE_PERCENT 50
 
 //adjustment for separation between digits
 #define SEPRATIO_N 100  //separation rectangle size ratio numerator times 100

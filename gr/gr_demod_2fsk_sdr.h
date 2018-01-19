@@ -27,7 +27,6 @@
 #include <gnuradio/filter/rational_resampler_base_ccf.h>
 #include <gnuradio/digital/binary_slicer_fb.h>
 #include <gnuradio/blocks/divide_ff.h>
-#include <gnuradio/blocks/threshold_ff.h>
 #include <gnuradio/analog/rail_ff.h>
 #include <gnuradio/blocks/complex_to_real.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
@@ -39,7 +38,6 @@
 #include <gnuradio/blocks/multiply_const_ff.h>
 #include <gnuradio/blocks/add_const_ff.h>
 #include <gnuradio/blocks/delay.h>
-#include "gr_deframer_bb.h"
 
 class gr_demod_2fsk_sdr;
 
@@ -52,8 +50,6 @@ class gr_demod_2fsk_sdr : public gr::hier_block2
 public:
     explicit gr_demod_2fsk_sdr(std::vector<int> signature, int sps=4, int samp_rate=8000, int carrier_freq=1600,
                                int filter_width=1800);
-    std::vector<unsigned char> *getFrame1();
-    std::vector<unsigned char> *getFrame2();
 
 private:
     gr::blocks::multiply_const_cc::sptr _multiply_symbols;
@@ -67,7 +63,6 @@ private:
     gr::blocks::complex_to_mag::sptr _mag_lower;
     gr::blocks::complex_to_mag::sptr _mag_upper;
     gr::blocks::divide_ff::sptr _divide;
-    gr::blocks::threshold_ff::sptr _threshhold;
     gr::analog::rail_ff::sptr _rail;
     gr::digital::binary_slicer_fb::sptr _binary_slicer;
     gr::blocks::complex_to_real::sptr _complex_to_real;
@@ -76,12 +71,10 @@ private:
     gr::blocks::delay::sptr _delay;
     gr::blocks::multiply_const_ff::sptr _multiply_const_fec;
     gr::blocks::add_const_ff::sptr _add;
-    gr::fec::decode_ccsds_27_fb::sptr _cc_decoder;
-    gr::fec::decode_ccsds_27_fb::sptr _cc_decoder2;
+    gr::fec::decode_ccsds_27_fb::sptr _conv_decoder;
+    gr::fec::decode_ccsds_27_fb::sptr _conv_decoder2;
     gr::blocks::packed_to_unpacked_bb::sptr _packed_to_unpacked;
     gr::blocks::packed_to_unpacked_bb::sptr _packed_to_unpacked2;
-    gr_deframer_bb_sptr _deframer1;
-    gr_deframer_bb_sptr _deframer2;
 
 
     int _samples_per_symbol;

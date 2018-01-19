@@ -249,7 +249,7 @@ void RadioOp::txAudio(short *audiobuffer, int audiobuffer_size)
             (_tx_mode == gr_modem_types::ModemType2FSK2000) ||
             (_tx_mode == gr_modem_types::ModemType4FSK2000) ||
             (_tx_mode == gr_modem_types::ModemTypeQPSK2000))
-        encoded_audio = _codec->encode_codec2(audiobuffer, audiobuffer_size, packet_size);
+        encoded_audio = _codec->encode_codec2_1400(audiobuffer, audiobuffer_size, packet_size);
     else if(_tx_mode == gr_modem_types::ModemTypeBPSK1000)
         encoded_audio = _codec->encode_codec2_700(audiobuffer, audiobuffer_size, packet_size);
     else
@@ -560,7 +560,7 @@ void RadioOp::receiveAudioData(unsigned char *data, int size)
             (_rx_mode == gr_modem_types::ModemType4FSK2000) ||
             (_rx_mode == gr_modem_types::ModemTypeQPSK2000))
     {
-        audio_out = _codec->decode_codec2(data, size, samples);
+        audio_out = _codec->decode_codec2_1400(data, size, samples);
     }
     else if((_rx_mode == gr_modem_types::ModemTypeBPSK1000))
         audio_out = _codec->decode_codec2_700(data, size, samples);
@@ -587,11 +587,6 @@ void RadioOp::receiveAudioData(unsigned char *data, int size)
 void RadioOp::receivePCMAudio(std::vector<float> *audio_data)
 {
     int size = audio_data->size();
-    if(size > 4096)
-    {
-        delete audio_data;
-        return;
-    }
 
     short *pcm = new short[size];
     for(int i=0;i<size;i++)
@@ -1216,23 +1211,6 @@ void RadioOp::enableGUIConst(bool value)
 void RadioOp::enableGUIFFT(bool value)
 {
     _modem->enableGUIFFT(value);
-}
-
-void RadioOp::syncFrequency()
-{
-    if(_modem->_frequency_found >= 254)
-    {
-        _tune_counter = 0;
-        _modem->_frequency_found = 10;
-    }
-    if((_modem->_frequency_found > 20) && (_modem->_frequency_found >= _tune_counter))
-    {
-        _tune_counter = _modem->_frequency_found;
-        return;
-    }
-    _tune_counter = _modem->_frequency_found;
-    autoTune();
-
 }
 
 void RadioOp::autoTune()

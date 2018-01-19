@@ -113,7 +113,6 @@ public slots:
     void setTxCTCSS(float value);
     void enableGUIConst(bool value);
     void enableGUIFFT(bool value);
-    void syncFrequency();
     void autoTune();
     void startAutoTune();
     void stopAutoTune();
