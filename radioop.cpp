@@ -587,11 +587,6 @@ void RadioOp::receiveAudioData(unsigned char *data, int size)
 void RadioOp::receivePCMAudio(std::vector<float> *audio_data)
 {
     int size = audio_data->size();
-    if(size > 4096)
-    {
-        delete audio_data;
-        return;
-    }
 
     short *pcm = new short[size];
     for(int i=0;i<size;i++)
