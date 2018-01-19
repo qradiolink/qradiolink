@@ -1218,23 +1218,6 @@ void RadioOp::enableGUIFFT(bool value)
     _modem->enableGUIFFT(value);
 }
 
-void RadioOp::syncFrequency()
-{
-    if(_modem->_frequency_found >= 254)
-    {
-        _tune_counter = 0;
-        _modem->_frequency_found = 10;
-    }
-    if((_modem->_frequency_found > 20) && (_modem->_frequency_found >= _tune_counter))
-    {
-        _tune_counter = _modem->_frequency_found;
-        return;
-    }
-    _tune_counter = _modem->_frequency_found;
-    autoTune();
-
-}
-
 void RadioOp::autoTune()
 {
     if((_rx_mode == gr_modem_types::ModemTypeBPSK2000)
