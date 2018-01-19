@@ -34,7 +34,6 @@
 #include <gnuradio/digital/fll_band_edge_cc.h>
 #include <gnuradio/filter/pfb_arb_resampler_ccf.h>
 #include <gnuradio/filter/rational_resampler_base_ccf.h>
-#include <gnuradio/filter/freq_xlating_fir_filter_ccf.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/digital/descrambler_bb.h>
 #include <gnuradio/blocks/add_const_ff.h>
@@ -60,7 +59,6 @@ public:
 private:
 
     gr::blocks::unpacked_to_packed_bb::sptr _unpacked_to_packed;
-    gr::filter::freq_xlating_fir_filter_ccf::sptr _freq_transl_filter;
     gr::digital::cma_equalizer_cc::sptr _equalizer;
     gr::blocks::complex_to_real::sptr _complex_to_real;
     gr::analog::agc2_cc::sptr _agc;

@@ -46,7 +46,7 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(std::vector<int>signature, int sps, int sam
     polys.push_back(79);
 
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, 2*_filter_width, 12000);
+    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width, 12000);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1, 50, taps);
     _agc = gr::analog::agc2_cc::make(0.06e-1, 1e-3, 1, 1);
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
@@ -76,14 +76,13 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(std::vector<int>signature, int sps, int sam
 
 
     connect(self(),0,_resampler,0);
-    connect(_resampler,0,_fll,0);
-    connect(_fll,0,_filter,0);
+    connect(_resampler,0,_filter,0);
     connect(_filter,0,self(),0);
-    connect(_filter,0,_agc,0);
+    connect(_filter,0,_fll,0);
+    connect(_fll,0,_agc,0);
     //connect(_shaping_filter,0,_agc,0);
     connect(_agc,0,_clock_recovery,0);
     connect(_clock_recovery,0,_costas_loop,0);
-
     connect(_costas_loop,0,_equalizer,0);
     connect(_equalizer,0,_complex_to_real,0);
     connect(_equalizer,0,self(),1);
