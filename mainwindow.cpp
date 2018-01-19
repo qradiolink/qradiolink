@@ -39,9 +39,9 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
 
     ui->frameCtrlFreq->setup(10, 10U, 9000000000U, 1, UNITS_MHZ );
     ui->frameCtrlFreq->setFrequency(_settings->rx_frequency);
-    ui->frameCtrlFreq->setBkColor(QColor(0,0,127,255));
+    ui->frameCtrlFreq->setBkColor(QColor(0,0,99,255));
     ui->frameCtrlFreq->setHighlightColor(QColor(127,0,0,255));
-    ui->frameCtrlFreq->setDigitColor(QColor(230,230,230,240));
+    ui->frameCtrlFreq->setDigitColor(QColor(200,200,200,240));
     ui->frameCtrlFreq->setUnitsColor(QColor(254,254,254,255));
 
     ui->txGainDial->setStyleSheet("background-color:#660000;");
