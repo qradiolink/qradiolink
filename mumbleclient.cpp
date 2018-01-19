@@ -573,7 +573,7 @@ void MumbleClient::processAudio(short *audiobuffer, int audiobuffersize)
     unsigned char *encoded_audio;
     if(_settings->_use_codec2)
     {
-        encoded_audio = _codec->encode_codec2(audiobuffer, audiobuffersize, packet_size);
+        encoded_audio = _codec->encode_codec2_1400(audiobuffer, audiobuffersize, packet_size);
     }
     else
     {
@@ -675,7 +675,7 @@ void MumbleClient::decodeAudio(unsigned char *audiobuffer, short audiobuffersize
     short *pcm = NULL;
     if(type == 5)
     {
-        pcm = _codec->decode_codec2(audiobuffer,audiobuffersize, samples);
+        pcm = _codec->decode_codec2_1400(audiobuffer,audiobuffersize, samples);
     }
     else
     {

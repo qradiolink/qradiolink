@@ -33,10 +33,12 @@ public:
     ~AudioEncoder();
     unsigned char *encode_opus(short *audiobuffer, int audiobuffersize, int &encoded_size);
     short *decode_opus(unsigned char *audiobuffer, int data_length, int &samples);
-    unsigned char* encode_codec2(short *audiobuffer, int audiobuffersize, int &length);
-    short* decode_codec2(unsigned char *audiobuffer, int audiobuffersize, int &samples);
+    unsigned char* encode_codec2_1400(short *audiobuffer, int audiobuffersize, int &length);
     unsigned char* encode_codec2_700(short *audiobuffer, int audiobuffersize, int &length);
+    unsigned char* encode_codec2_2400(short *audiobuffer, int audiobuffersize, int &length);
+    short* decode_codec2_1400(unsigned char *audiobuffer, int audiobuffersize, int &samples);
     short* decode_codec2_700(unsigned char *audiobuffer, int audiobuffersize, int &samples);
+    short* decode_codec2_2400(unsigned char *audiobuffer, int audiobuffersize, int &samples);
     unsigned char* encode_gsm(short *audiobuffer, int audiobuffersize, int &length);
     short* decode_gsm(unsigned char *audiobuffer, int data_length, int &samples);
 
@@ -44,8 +46,9 @@ public:
 private:
     OpusEncoder *_enc;
     OpusDecoder *_dec;
-    struct CODEC2 *_codec2;
+    struct CODEC2 *_codec2_1400;
     struct CODEC2 *_codec2_700;
+    struct CODEC2 *_codec2_2400;
     struct gsm_state *_gsm;
     hvdi::agc_st *_agc;
 };

@@ -249,7 +249,7 @@ void RadioOp::txAudio(short *audiobuffer, int audiobuffer_size)
             (_tx_mode == gr_modem_types::ModemType2FSK2000) ||
             (_tx_mode == gr_modem_types::ModemType4FSK2000) ||
             (_tx_mode == gr_modem_types::ModemTypeQPSK2000))
-        encoded_audio = _codec->encode_codec2(audiobuffer, audiobuffer_size, packet_size);
+        encoded_audio = _codec->encode_codec2_1400(audiobuffer, audiobuffer_size, packet_size);
     else if(_tx_mode == gr_modem_types::ModemTypeBPSK1000)
         encoded_audio = _codec->encode_codec2_700(audiobuffer, audiobuffer_size, packet_size);
     else
@@ -560,7 +560,7 @@ void RadioOp::receiveAudioData(unsigned char *data, int size)
             (_rx_mode == gr_modem_types::ModemType4FSK2000) ||
             (_rx_mode == gr_modem_types::ModemTypeQPSK2000))
     {
-        audio_out = _codec->decode_codec2(data, size, samples);
+        audio_out = _codec->decode_codec2_1400(data, size, samples);
     }
     else if((_rx_mode == gr_modem_types::ModemTypeBPSK1000))
         audio_out = _codec->decode_codec2_700(data, size, samples);

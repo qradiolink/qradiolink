@@ -30,8 +30,9 @@ AudioEncoder::AudioEncoder()
     {
         qDebug() << "audio decoder creation failed";
     }
-    _codec2 = codec2_create(CODEC2_MODE_1400);
+    _codec2_1400 = codec2_create(CODEC2_MODE_1400);
     _codec2_700 = codec2_create(CODEC2_MODE_700B);
+    _codec2_2400 = codec2_create(CODEC2_MODE_2400);
 
     _gsm = gsm_create();
     _agc = hvdi::initAGC(0.5);
@@ -54,7 +55,7 @@ AudioEncoder::~AudioEncoder()
 {
     opus_encoder_destroy(_enc);
     opus_decoder_destroy(_dec);
-    codec2_destroy(_codec2);
+    codec2_destroy(_codec2_1400);
     codec2_destroy(_codec2_700);
     gsm_destroy(_gsm);
 }
@@ -83,27 +84,16 @@ short* AudioEncoder::decode_opus(unsigned char *audiobuffer, int audiobuffersize
     return pcm;
 }
 
-unsigned char* AudioEncoder::encode_codec2(short *audiobuffer, int audiobuffersize, int &length)
+unsigned char* AudioEncoder::encode_codec2_1400(short *audiobuffer, int audiobuffersize, int &length)
 {
     Q_UNUSED(audiobuffersize);
-    int bits = codec2_bits_per_frame(_codec2);
+    int bits = codec2_bits_per_frame(_codec2_1400);
     //int bytes = (bits + 7) / 8;
     int bytes = bits / 8;
     unsigned char *encoded = new unsigned char[bytes];
-    codec2_encode(_codec2, encoded, audiobuffer);
+    codec2_encode(_codec2_1400, encoded, audiobuffer);
     length = bytes;
     return encoded;
-}
-
-short* AudioEncoder::decode_codec2(unsigned char *audiobuffer, int audiobuffersize, int &samples)
-{
-    Q_UNUSED(audiobuffersize);
-    samples = codec2_samples_per_frame(_codec2);
-    short* decoded = new short[samples];
-    memset(decoded,0,(samples)*sizeof(short));
-    codec2_decode(_codec2, decoded, audiobuffer);
-    hvdi::AGC(_agc,decoded,samples);
-    return decoded;
 }
 
 unsigned char* AudioEncoder::encode_codec2_700(short *audiobuffer, int audiobuffersize, int &length)
@@ -117,6 +107,28 @@ unsigned char* AudioEncoder::encode_codec2_700(short *audiobuffer, int audiobuff
     return encoded;
 }
 
+unsigned char* AudioEncoder::encode_codec2_2400(short *audiobuffer, int audiobuffersize, int &length)
+{
+    Q_UNUSED(audiobuffersize);
+    int bits = codec2_bits_per_frame(_codec2_2400);
+    int bytes = (bits + 4) / 8;
+    unsigned char *encoded = new unsigned char[bytes];
+    codec2_encode(_codec2_2400, encoded, audiobuffer);
+    length = bytes;
+    return encoded;
+}
+
+short* AudioEncoder::decode_codec2_1400(unsigned char *audiobuffer, int audiobuffersize, int &samples)
+{
+    Q_UNUSED(audiobuffersize);
+    samples = codec2_samples_per_frame(_codec2_1400);
+    short* decoded = new short[samples];
+    memset(decoded,0,(samples)*sizeof(short));
+    codec2_decode(_codec2_1400, decoded, audiobuffer);
+    hvdi::AGC(_agc,decoded,samples);
+    return decoded;
+}
+
 short* AudioEncoder::decode_codec2_700(unsigned char *audiobuffer, int audiobuffersize, int &samples)
 {
     Q_UNUSED(audiobuffersize);
@@ -124,6 +136,17 @@ short* AudioEncoder::decode_codec2_700(unsigned char *audiobuffer, int audiobuff
     short* decoded = new short[samples];
     memset(decoded,0,(samples)*sizeof(short));
     codec2_decode(_codec2_700, decoded, audiobuffer);
+    hvdi::AGC(_agc,decoded,samples);
+    return decoded;
+}
+
+short* AudioEncoder::decode_codec2_2400(unsigned char *audiobuffer, int audiobuffersize, int &samples)
+{
+    Q_UNUSED(audiobuffersize);
+    samples = codec2_samples_per_frame(_codec2_2400);
+    short* decoded = new short[samples];
+    memset(decoded,0,(samples)*sizeof(short));
+    codec2_decode(_codec2_2400, decoded, audiobuffer);
     hvdi::AGC(_agc,decoded,samples);
     return decoded;
 }
