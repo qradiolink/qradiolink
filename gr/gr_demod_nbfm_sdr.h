@@ -57,7 +57,6 @@ private:
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
     gr::filter::rational_resampler_base_fff::sptr _audio_resampler;
     gr::filter::fft_filter_ccf::sptr _filter;
-    gr::filter::fft_filter_fff::sptr _audio_filter;
     gr::filter::fft_filter_fff::sptr _deemphasis_filter;
 
     int _samples_per_symbol;
