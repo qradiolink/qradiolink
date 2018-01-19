@@ -40,7 +40,7 @@
 #include <gnuradio/fec/decode_ccsds_27_fb.h>
 #include <gnuradio/blocks/delay.h>
 #include <gnuradio/blocks/multiply_const_ff.h>
-#include "gr_deframer_bb.h"
+
 
 class gr_demod_bpsk_sdr;
 
@@ -77,8 +77,7 @@ private:
     gr::blocks::multiply_const_ff::sptr _multiply_const_fec;
     gr::fec::decode_ccsds_27_fb::sptr _cc_decoder;
     gr::fec::decode_ccsds_27_fb::sptr _cc_decoder2;
-    gr_deframer_bb_sptr _deframer1;
-    gr_deframer_bb_sptr _deframer2;
+
 
 
 

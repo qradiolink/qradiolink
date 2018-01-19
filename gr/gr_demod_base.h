@@ -41,6 +41,7 @@
 #include <vector>
 #include "gr_audio_sink.h"
 #include "gr_vector_sink.h"
+#include "gr_deframer_bb.h"
 #include "gr_demod_2fsk_sdr.h"
 #include "gr_demod_4fsk_sdr.h"
 #include "gr_demod_am_sdr.h"
@@ -99,7 +100,10 @@ private:
     gr::blocks::add_const_ff::sptr _add_const;
     gr::blocks::rotator_cc::sptr _rotator;
 
-
+    gr_deframer_bb_sptr _deframer1;
+    gr_deframer_bb_sptr _deframer2;
+    gr_deframer_bb_sptr _deframer_700_1;
+    gr_deframer_bb_sptr _deframer_700_2;
 
     gr_demod_2fsk_sdr_sptr _2fsk;
     gr_demod_4fsk_sdr_sptr _4fsk_2k;
@@ -122,6 +126,7 @@ private:
     int _msg_nr;
     int _mode;
     int _carrier_offset;
+    bool _demod_running;
 };
 
 #endif // GR_DEMOD_BASE_H
