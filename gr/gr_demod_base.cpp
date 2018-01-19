@@ -381,7 +381,7 @@ void gr_demod_base::stop()
     _top_block->wait();
 }
 
-std::vector<unsigned char>* gr_demod_base::getFrame(int nr)
+std::vector<unsigned char>* gr_demod_base::getData(int nr)
 {
     if(!_demod_running)
     {
