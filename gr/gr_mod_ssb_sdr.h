@@ -19,9 +19,10 @@
 
 #include <gnuradio/hier_block2.h>
 #include <gnuradio/filter/firdes.h>
+#include <gnuradio/analog/agc2_cc.h>
 #include <gnuradio/filter/fft_filter_ccc.h>
 #include <gnuradio/filter/fft_filter_fff.h>
-#include <gnuradio/filter/pfb_arb_resampler_ccf.h>
+#include <gnuradio/filter/rational_resampler_base_ccf.h>
 #include <gnuradio/blocks/multiply_const_cc.h>
 #include <gnuradio/blocks/multiply_ff.h>
 #include <gnuradio/blocks/multiply_cc.h>
@@ -44,9 +45,10 @@ public:
                              int filter_width=8000);
 private:
 
-    gr::filter::pfb_arb_resampler_ccf::sptr _resampler;
+    gr::filter::rational_resampler_base_ccf::sptr _resampler;
     gr::blocks::multiply_const_cc::sptr _amplify;
     gr::filter::fft_filter_fff::sptr _audio_filter;
+    gr::analog::agc2_cc::sptr _agc;
     gr::filter::fft_filter_ccc::sptr _filter;
     gr::analog::sig_source_f::sptr _signal_source;
     gr::analog::sig_source_c::sptr _carrier_suppress;

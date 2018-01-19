@@ -971,7 +971,7 @@ void RadioOp::toggleRxMode(int value)
         _rx_mode = gr_modem_types::ModemTypeSSB2500;
         _tune_limit_lower = -5000;
         _tune_limit_upper = 5000;
-        _step_hz = 10;
+        _step_hz = 2;
         break;
     case 11:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
@@ -1082,7 +1082,7 @@ void RadioOp::toggleTxMode(int value)
         _tx_mode = gr_modem_types::ModemTypeSSB2500;
         _tune_limit_lower = -5000;
         _tune_limit_upper = 5000;
-        _step_hz = 10;
+        _step_hz = 2;
         break;
     case 11:
         _tx_radio_type = radio_type::RADIO_TYPE_ANALOG;
