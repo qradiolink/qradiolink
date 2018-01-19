@@ -381,7 +381,7 @@ void gr_demod_base::stop()
     _top_block->wait();
 }
 
-std::vector<unsigned char>* gr_demod_base::getFrame1()
+std::vector<unsigned char>* gr_demod_base::getFrame(int nr)
 {
     if(!_demod_running)
     {
@@ -389,40 +389,35 @@ std::vector<unsigned char>* gr_demod_base::getFrame1()
         return dummy;
     }
     std::vector<unsigned char> *data;
-    switch(_mode)
+    if(nr == 1)
     {
-    case gr_modem_types::ModemType2FSK2000:
-        data = _deframer1->get_data();
-        break;
-    case gr_modem_types::ModemTypeBPSK1000:
-        data = _deframer_700_1->get_data();
-        break;
-    case gr_modem_types::ModemTypeBPSK2000:
-        data = _deframer1->get_data();
-        break;
+        switch(_mode)
+        {
+        case gr_modem_types::ModemType2FSK2000:
+            data = _deframer1->get_data();
+            break;
+        case gr_modem_types::ModemTypeBPSK1000:
+            data = _deframer_700_1->get_data();
+            break;
+        case gr_modem_types::ModemTypeBPSK2000:
+            data = _deframer1->get_data();
+            break;
+        }
     }
-    return data;
-}
-
-std::vector<unsigned char>* gr_demod_base::getFrame2()
-{
-    if(!_demod_running)
+    else if(nr == 2)
     {
-        std::vector<unsigned char> *dummy = new std::vector<unsigned char>;
-        return dummy;
-    }
-    std::vector<unsigned char> *data;
-    switch(_mode)
-    {
-    case gr_modem_types::ModemType2FSK2000:
-        data = _deframer2->get_data();
-        break;
-    case gr_modem_types::ModemTypeBPSK1000:
-        data = _deframer_700_2->get_data();
-        break;
-    case gr_modem_types::ModemTypeBPSK2000:
-        data = _deframer2->get_data();
-        break;
+        switch(_mode)
+        {
+        case gr_modem_types::ModemType2FSK2000:
+            data = _deframer2->get_data();
+            break;
+        case gr_modem_types::ModemTypeBPSK1000:
+            data = _deframer_700_2->get_data();
+            break;
+        case gr_modem_types::ModemTypeBPSK2000:
+            data = _deframer2->get_data();
+            break;
+        }
     }
     return data;
 }

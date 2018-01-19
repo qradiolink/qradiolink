@@ -68,8 +68,7 @@ public slots:
     void start();
     void stop();
     std::vector<unsigned char> *getData();
-    std::vector<unsigned char> *getFrame1();
-    std::vector<unsigned char> *getFrame2();
+    std::vector<unsigned char> *getFrame(int nr);
     std::vector<float> *getAudio();
     void tune(long center_freq);
     void set_rx_sensitivity(float value);
