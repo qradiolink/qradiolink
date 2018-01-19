@@ -1,7 +1,8 @@
-qradiolink (0.3.14-1) UNRELEASED; urgency=medium
+qradiolink (0.3.15-1) UNRELEASED; urgency=medium
 
   [ Adrian Musceac ]
   * Improved 4FSK demodulator
+  * Improved analog demodulator audio
 
  -- Adrian Musceac <kantooon@gmail.com>  Thu, 17 Jan 2017 23:00:00 +0300
 
