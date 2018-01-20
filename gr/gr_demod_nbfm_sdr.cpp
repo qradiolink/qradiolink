@@ -41,12 +41,10 @@ gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(std::vector<int>signature, int sps, int sam
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
 
-    float rerate = (float)_target_samp_rate/(float)_samp_rate;
-
     static const float coeff[] = {0.06306464970111847, 0.4777590036392212, 0.9183526635169983,
                                   0.4777590036392212, 0.06306464970111847};
-    std::vector<float> iir_taps(coeff, coeff + sizeof(coeff) / sizeof(coeff[0]) );
-    _deemphasis_filter = gr::filter::fft_filter_fff::make(1,iir_taps);
+    std::vector<float> deemph_taps(coeff, coeff + sizeof(coeff) / sizeof(coeff[0]) );
+    _deemphasis_filter = gr::filter::fft_filter_fff::make(1,deemph_taps);
 
     std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width, 10000);
     std::vector<float> audio_taps = gr::filter::firdes::low_pass(1, _target_samp_rate, _filter_width, 2000);

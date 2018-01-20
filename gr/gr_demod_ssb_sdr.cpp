@@ -58,9 +58,9 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(std::vector<int>signature, int sps, int samp_
     connect(self(),0,_resampler,0);
     connect(_resampler,0,_filter,0);
     connect(_filter,0,self(),0);
-    connect(_filter,0,_agc,0);
-    connect(_agc,0,_squelch,0);
-    connect(_squelch,0,_complex_to_real,0);
+    connect(_filter,0,_squelch,0);
+    connect(_squelch,0,_agc,0);
+    connect(_agc,0,_complex_to_real,0);
     connect(_complex_to_real,0,_audio_gain,0);
     connect(_audio_gain,0,_audio_resampler,0);
     connect(_audio_resampler,0,self(),1);
