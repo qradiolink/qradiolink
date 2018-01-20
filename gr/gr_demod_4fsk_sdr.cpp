@@ -84,7 +84,7 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
     _resampler = gr::filter::rational_resampler_base_ccf::make(1, decimation, taps);
 
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
-                                1, _target_samp_rate, _filter_width,1200,gr::filter::firdes::WIN_HAMMING) );
+                                1, _target_samp_rate, _filter_width,600,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     //_freq_demod = gr::analog::quadrature_demod_cf::make(sps/(4*M_PI/2));
 
     _filter1 = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(

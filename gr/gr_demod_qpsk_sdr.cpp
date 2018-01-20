@@ -55,7 +55,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
     _samp_rate =samp_rate;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
-    int filter_slope = 1200;
+    int filter_slope = 600;
     if(_target_samp_rate > 100000)
         filter_slope = 10000;
 
@@ -79,7 +79,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
 
     _agc = gr::analog::agc2_cc::make(10, 1e-1, 1, 1);
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
-                                1, _target_samp_rate, _filter_width, filter_slope,gr::filter::firdes::WIN_HAMMING) );
+                                1, _target_samp_rate, _filter_width, filter_slope,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     float gain_mu, omega_rel_limit;
 
     gain_mu = 0.025;

@@ -384,7 +384,7 @@ void RadioOp::stopTx()
         }
         usleep(1000000);
         _modem->stopTX();
-        _modem->tuneTx(50000000);
+        _modem->tuneTx(70000000);
         _tx_modem_started = false;
         if(_rx_inited && !_repeat)
             _modem->startRX();
@@ -869,7 +869,7 @@ void RadioOp::toggleTX(bool value)
 
         _modem->initTX(_tx_mode, tx_device_args, tx_antenna, tx_freq_corr);
         _modem->setTxPower(_tx_power);
-        _modem->tuneTx(50000000);
+        _modem->tuneTx(70000000);
         _modem->setTxCTCSS(_tx_ctcss);
         if(_tx_mode == gr_modem_types::ModemTypeQPSKVideo)
             _video = new VideoEncoder(QString::fromStdString(video_device));
