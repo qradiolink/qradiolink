@@ -49,13 +49,10 @@ private:
     gr::blocks::multiply_const_cc::sptr _amplify;
     gr::filter::fft_filter_fff::sptr _audio_filter;
     gr::analog::agc2_cc::sptr _agc;
-    gr::filter::fft_filter_ccc::sptr _filter;
-    gr::analog::sig_source_f::sptr _signal_source;
-    gr::analog::sig_source_c::sptr _carrier_suppress;
-    gr::blocks::multiply_ff::sptr _multiply;
-    gr::blocks::multiply_cc::sptr _multiply2;
+    gr::filter::fft_filter_ccc::sptr _filter_usb;
+    gr::filter::fft_filter_ccc::sptr _filter_lsb;
     gr::blocks::float_to_complex::sptr _float_to_complex;
-    gr::blocks::delay::sptr _delay;
+
 
 
     int _samp_rate;

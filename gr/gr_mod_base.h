@@ -67,7 +67,8 @@ private:
     gr_mod_qpsk_sdr_sptr _qpsk_10k;
     gr_mod_qpsk_sdr_sptr _qpsk_250k;
     gr_mod_qpsk_sdr_sptr _qpsk_video;
-    gr_mod_ssb_sdr_sptr _ssb;
+    gr_mod_ssb_sdr_sptr _usb;
+    gr_mod_ssb_sdr_sptr _lsb;
 
     int _samples_per_symbol;
     int _samp_rate;

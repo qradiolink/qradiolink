@@ -47,18 +47,29 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(std::vector<int>signature, int sps, int samp_
     _resampler = gr::filter::pfb_arb_resampler_ccf::make(rerate, taps, 32);
     _audio_resampler = gr::filter::rational_resampler_base_fff::make(2,5, audio_taps);
 
-    _filter = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
+    _filter_usb = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
                             1, _target_samp_rate, 300, _filter_width,100,gr::filter::firdes::WIN_HAMMING) );
+    _filter_lsb = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
+                            1, _target_samp_rate, -_filter_width, -300,100,gr::filter::firdes::WIN_HAMMING) );
     _squelch = gr::analog::pwr_squelch_cc::make(-140,0.01,0,true);
-    _agc = gr::analog::agc2_cc::make(100, 1e-1, 0.7, 0);
+    _agc = gr::analog::agc2_cc::make(300, 10, 0.7, 0);
     _complex_to_real = gr::blocks::complex_to_real::make();
     _audio_gain = gr::blocks::multiply_const_ff::make(0.2);
 
 
     connect(self(),0,_resampler,0);
-    connect(_resampler,0,_filter,0);
-    connect(_filter,0,self(),0);
-    connect(_filter,0,_squelch,0);
+    if(!sps)
+    {
+        connect(_resampler,0,_filter_usb,0);
+        connect(_filter_usb,0,self(),0);
+        connect(_filter_usb,0,_squelch,0);
+    }
+    else
+    {
+        connect(_resampler,0,_filter_lsb,0);
+        connect(_filter_lsb,0,self(),0);
+        connect(_filter_lsb,0,_squelch,0);
+    }
     connect(_squelch,0,_agc,0);
     connect(_agc,0,_complex_to_real,0);
     connect(_complex_to_real,0,_audio_gain,0);
