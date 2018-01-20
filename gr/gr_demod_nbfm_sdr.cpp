@@ -35,35 +35,29 @@ gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(std::vector<int>signature, int sps, int sam
                       gr::io_signature::makev (2, 2, signature))
 {
 
-    _target_samp_rate = 40000;
+    _target_samp_rate = 20000;
 
     _samp_rate = samp_rate;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
 
-    float rerate = (float)_target_samp_rate/(float)_samp_rate;
-
-    static const float coeff[] = {8.23112713987939e-05, 0.30221322178840637,
-                                  1.3954089879989624, 0.302213191986084, 8.23112713987939e-05};
-    std::vector<float> iir_taps(coeff, coeff + sizeof(coeff) / sizeof(coeff[0]) );
-    _deemphasis_filter = gr::filter::fft_filter_fff::make(1,iir_taps);
-
-    _audio_filter = gr::filter::fft_filter_fff::make(
-                1,gr::filter::firdes::high_pass(
-                    1, _target_samp_rate, 300, 50, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+    static const float coeff[] = {0.06306464970111847, 0.4777590036392212, 0.9183526635169983,
+                                  0.4777590036392212, 0.06306464970111847};
+    std::vector<float> deemph_taps(coeff, coeff + sizeof(coeff) / sizeof(coeff[0]) );
+    _deemphasis_filter = gr::filter::fft_filter_fff::make(1,deemph_taps);
 
     std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width, 10000);
     std::vector<float> audio_taps = gr::filter::firdes::low_pass(1, _target_samp_rate, _filter_width, 2000);
-    _resampler = gr::filter::rational_resampler_base_ccf::make(1,25, taps);
-    _audio_resampler = gr::filter::rational_resampler_base_fff::make(1,5, audio_taps);
+    _resampler = gr::filter::rational_resampler_base_ccf::make(1,50, taps);
+    _audio_resampler = gr::filter::rational_resampler_base_fff::make(2,5, audio_taps);
 
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
                             1, _target_samp_rate, _filter_width,1200,gr::filter::firdes::WIN_HAMMING) );
 
     _fm_demod = gr::analog::quadrature_demod_cf::make(_target_samp_rate/(4*M_PI* _filter_width));
     _squelch = gr::analog::pwr_squelch_cc::make(-140,0.01,0,true);
-    _ctcss = gr::analog::ctcss_squelch_ff::make(_target_samp_rate,88.5,0.02,4000,0,true);
-    _amplify = gr::blocks::multiply_const_ff::make(0.3);
+    _ctcss = gr::analog::ctcss_squelch_ff::make(8000,88.5,0.02,4000,0,true);
+    _amplify = gr::blocks::multiply_const_ff::make(0.9);
     _float_to_short = gr::blocks::float_to_short::make();
 
 
@@ -73,11 +67,10 @@ gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(std::vector<int>signature, int sps, int sam
     connect(_filter,0,self(),0);
     connect(_filter,0,_squelch,0);
     connect(_squelch,0,_fm_demod,0);
-    connect(_fm_demod,0,_deemphasis_filter,0);
+    connect(_fm_demod,0,_audio_resampler,0);
+    connect(_audio_resampler,0,_deemphasis_filter,0);
     connect(_deemphasis_filter,0,_amplify,0);
-    connect(_amplify,0,_audio_filter,0);
-    connect(_audio_filter,0,_audio_resampler,0);
-    connect(_audio_resampler,0,self(),1);
+    connect(_amplify,0,self(),1);
 
 }
 
@@ -92,9 +85,9 @@ void gr_demod_nbfm_sdr::set_ctcss(float value)
     if(value == 0)
     {
         try {
-            disconnect(_fm_demod,0,_ctcss,0);
-            disconnect(_ctcss,0,_deemphasis_filter,0);
-            connect(_fm_demod,0,_deemphasis_filter,0);
+            disconnect(_deemphasis_filter,0,_ctcss,0);
+            disconnect(_ctcss,0,_amplify,0);
+            connect(_deemphasis_filter,0,_amplify,0);
         }
         catch(std::invalid_argument e)
         {
@@ -105,9 +98,9 @@ void gr_demod_nbfm_sdr::set_ctcss(float value)
     {
         _ctcss->set_frequency(value);
         try {
-            disconnect(_fm_demod,0,_deemphasis_filter,0);
-            connect(_fm_demod,0,_ctcss,0);
-            connect(_ctcss,0,_deemphasis_filter,0);
+            disconnect(_deemphasis_filter,0,_amplify,0);
+            connect(_deemphasis_filter,0,_ctcss,0);
+            connect(_ctcss,0,_amplify,0);
         }
         catch(std::invalid_argument e)
         {

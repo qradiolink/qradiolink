@@ -48,7 +48,8 @@ private:
     gr::filter::pfb_arb_resampler_ccf::sptr _resampler;
     gr::filter::rational_resampler_base_fff::sptr _audio_resampler;
     gr::analog::pwr_squelch_cc::sptr _squelch;
-    gr::filter::fft_filter_ccc::sptr _filter;
+    gr::filter::fft_filter_ccc::sptr _filter_usb;
+    gr::filter::fft_filter_ccc::sptr _filter_lsb;
     gr::analog::agc2_cc::sptr _agc;
     gr::blocks::complex_to_real::sptr _complex_to_real;
     gr::blocks::multiply_const_ff::sptr _audio_gain;

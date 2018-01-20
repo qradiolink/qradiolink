@@ -17,7 +17,7 @@
 #include "gr_demod_bpsk_sdr.h"
 
 gr_demod_bpsk_sdr_sptr make_gr_demod_bpsk_sdr(int sps, int samp_rate, int carrier_freq,
-                                          int filter_width, int mode)
+                                          int filter_width)
 {
     std::vector<int> signature;
     signature.push_back(sizeof (gr_complex));
@@ -25,13 +25,13 @@ gr_demod_bpsk_sdr_sptr make_gr_demod_bpsk_sdr(int sps, int samp_rate, int carrie
     signature.push_back(sizeof (char));
     signature.push_back(sizeof (char));
     return gnuradio::get_initial_sptr(new gr_demod_bpsk_sdr(signature, sps, samp_rate, carrier_freq,
-                                                      filter_width, mode));
+                                                      filter_width));
 }
 
 
 
 gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(std::vector<int>signature, int sps, int samp_rate, int carrier_freq,
-                                 int filter_width, int mode) :
+                                 int filter_width) :
     gr::hier_block2 ("gr_demod_bpsk_sdr",
                       gr::io_signature::make (1, 1, sizeof (gr_complex)),
                       gr::io_signature::makev (4, 4, signature))
@@ -50,7 +50,7 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(std::vector<int>signature, int sps, int sam
 
     std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width, 12000);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1, 50, taps);
-    _agc = gr::analog::agc2_cc::make(0.06e-1, 1e-3, 1, 1);
+    _agc = gr::analog::agc2_cc::make(10, 1e-1, 1, 1);
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
                             1, _target_samp_rate, _filter_width,1200,gr::filter::firdes::WIN_HAMMING) );
     float gain_mu = 0.025;

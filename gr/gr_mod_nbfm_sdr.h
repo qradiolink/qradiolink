@@ -25,12 +25,11 @@
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/filter/fft_filter_fff.h>
-#include <gnuradio/filter/pfb_arb_resampler_ccf.h>
+#include <gnuradio/filter/rational_resampler_base_ccf.h>
 #include <gnuradio/blocks/multiply_const_cc.h>
 #include <gnuradio/blocks/multiply_const_ff.h>
 #include <gnuradio/blocks/multiply_ff.h>
 #include <gnuradio/analog/sig_source_f.h>
-#include <gnuradio/analog/agc2_ff.h>
 
 
 class gr_mod_nbfm_sdr;
@@ -50,7 +49,7 @@ private:
     gr::analog::frequency_modulator_fc::sptr _fm_modulator;
     gr::analog::sig_source_f::sptr _tone_source;
     gr::blocks::add_ff::sptr _add;
-    gr::filter::pfb_arb_resampler_ccf::sptr _resampler;
+    gr::filter::rational_resampler_base_ccf::sptr _resampler;
     gr::blocks::multiply_const_cc::sptr _amplify;
     gr::blocks::multiply_const_ff::sptr _audio_amplify;
     gr::filter::fft_filter_fff::sptr _audio_filter;
@@ -58,7 +57,6 @@ private:
     gr::filter::fft_filter_ccf::sptr _filter;
     gr::analog::sig_source_f::sptr _signal_source;
     gr::blocks::multiply_ff::sptr _multiply;
-    gr::analog::agc2_ff::sptr _agc;
 
 
     int _samp_rate;

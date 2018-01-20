@@ -35,26 +35,24 @@ gr_mod_nbfm_sdr::gr_mod_nbfm_sdr(int sps, int samp_rate, int carrier_freq,
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
 
-
     _fm_modulator = gr::analog::frequency_modulator_fc::make(4*M_PI*_filter_width/target_samp_rate);
 
     _audio_amplify = gr::blocks::multiply_const_ff::make(0.9,1);
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::band_pass(
-                    1, target_samp_rate, 300, _filter_width, 600, gr::filter::firdes::WIN_HAMMING));
+                    1, target_samp_rate, 150, _filter_width, 600, gr::filter::firdes::WIN_HAMMING));
 
     static const float coeff[] =  {-0.026316914707422256, -0.2512197494506836, 1.5501943826675415,
                                    -0.2512197494506836, -0.026316914707422256};
-    std::vector<float> iir_taps(coeff, coeff + sizeof(coeff) / sizeof(coeff[0]) );
-    _emphasis_filter = gr::filter::fft_filter_fff::make(1,iir_taps);
+    std::vector<float> emph_taps(coeff, coeff + sizeof(coeff) / sizeof(coeff[0]) );
+    _emphasis_filter = gr::filter::fft_filter_fff::make(1,emph_taps);
 
     _tone_source = gr::analog::sig_source_f::make(target_samp_rate,gr::analog::GR_COS_WAVE,88.5,0.1);
     _add = gr::blocks::add_ff::make();
 
-    std::vector<float> interp_taps = gr::filter::firdes::low_pass(1, target_samp_rate,
-                                                        _filter_width, 2000);
-    float rerate = (float)_samp_rate/target_samp_rate;
-    _resampler = gr::filter::pfb_arb_resampler_ccf::make(rerate, interp_taps, 32);
+    std::vector<float> interp_taps = gr::filter::firdes::low_pass(1, _samp_rate,
+                                                        _filter_width, 12000);
+    _resampler = gr::filter::rational_resampler_base_ccf::make(125,4, interp_taps);
     _amplify = gr::blocks::multiply_const_cc::make(10,1);
     _filter = gr::filter::fft_filter_ccf::make(
                 1,gr::filter::firdes::low_pass(

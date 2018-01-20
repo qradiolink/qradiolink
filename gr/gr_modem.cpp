@@ -397,7 +397,8 @@ void gr_modem::processPCMAudio(std::vector<float> *audio_data)
 
     if((_modem_type_tx == gr_modem_types::ModemTypeNBFM2500)
             || (_modem_type_tx == gr_modem_types::ModemTypeNBFM5000)
-            || (_modem_type_tx == gr_modem_types::ModemTypeSSB2500)
+            || (_modem_type_tx == gr_modem_types::ModemTypeUSB2500)
+            || (_modem_type_tx == gr_modem_types::ModemTypeLSB2500)
             || (_modem_type_tx == gr_modem_types::ModemTypeAM5000))
     {
         int ret = 1;
@@ -539,7 +540,8 @@ void gr_modem::demodulateAnalog()
     std::vector<float> *audio_data;
     if((_modem_type_rx == gr_modem_types::ModemTypeNBFM2500)
             || (_modem_type_rx == gr_modem_types::ModemTypeNBFM5000)
-            || (_modem_type_rx == gr_modem_types::ModemTypeSSB2500)
+            || (_modem_type_rx == gr_modem_types::ModemTypeUSB2500)
+            || (_modem_type_rx == gr_modem_types::ModemTypeLSB2500)
             || (_modem_type_rx == gr_modem_types::ModemTypeAM5000)
             || (_modem_type_rx == gr_modem_types::ModemTypeWBFM))
     {

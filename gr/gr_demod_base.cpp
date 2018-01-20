@@ -103,15 +103,16 @@ gr_demod_base::gr_demod_base(gr::qtgui::sink_c::sptr fft_gui,
     _4fsk_2k = make_gr_demod_4fsk_sdr(250,1000000,1700,2000);
     _4fsk_10k = make_gr_demod_4fsk_sdr(50,1000000,1700,10000);
     _am = make_gr_demod_am_sdr(0, 1000000,1700,4000);
-    _bpsk_1k = make_gr_demod_bpsk_sdr(250,1000000,1700,1300,2);
-    _bpsk_2k = make_gr_demod_bpsk_sdr(125,1000000,1700,2400,1);
+    _bpsk_1k = make_gr_demod_bpsk_sdr(250,1000000,1700,1300);
+    _bpsk_2k = make_gr_demod_bpsk_sdr(125,1000000,1700,2400);
     _fm_2500 = make_gr_demod_nbfm_sdr(0, 1000000,1700,2500);
     _fm_5000 = make_gr_demod_nbfm_sdr(0, 1000000,1700,4000);
     _qpsk_2k = make_gr_demod_qpsk_sdr(250,1000000,1700,800);
     _qpsk_10k = make_gr_demod_qpsk_sdr(50,1000000,1700,4000);
     _qpsk_250k = make_gr_demod_qpsk_sdr(2,1000000,1700,65000);
     _qpsk_video = make_gr_demod_qpsk_sdr(2,1000000,1700,65000);
-    _ssb = make_gr_demod_ssb_sdr(0, 1000000,1700,2500);
+    _usb = make_gr_demod_ssb_sdr(0, 1000000,1700,2500);
+    _lsb = make_gr_demod_ssb_sdr(1, 1000000,1700,2500);
     _wfm = make_gr_demod_wbfm_sdr(0, 1000000,1700,75000);
 
 }
@@ -215,10 +216,15 @@ void gr_demod_base::set_mode(int mode)
         _rotator->set_phase_inc(2*M_PI*-_carrier_offset/1000000);
         _osmosdr_source->set_center_freq(_device_frequency - _carrier_offset);
         break;
-    case gr_modem_types::ModemTypeSSB2500:
-        _top_block->disconnect(_rotator,0,_ssb,0);
-        _top_block->disconnect(_ssb,0,_rssi_valve,0);
-        _top_block->disconnect(_ssb,1,_audio_sink,0);
+    case gr_modem_types::ModemTypeUSB2500:
+        _top_block->disconnect(_rotator,0,_usb,0);
+        _top_block->disconnect(_usb,0,_rssi_valve,0);
+        _top_block->disconnect(_usb,1,_audio_sink,0);
+        break;
+    case gr_modem_types::ModemTypeLSB2500:
+        _top_block->disconnect(_rotator,0,_lsb,0);
+        _top_block->disconnect(_lsb,0,_rssi_valve,0);
+        _top_block->disconnect(_lsb,1,_audio_sink,0);
         break;
     case gr_modem_types::ModemTypeWBFM:
         _top_block->disconnect(_rotator,0,_wfm,0);
@@ -345,12 +351,19 @@ void gr_demod_base::set_mode(int mode)
         _top_block->connect(_const_valve,0,_constellation,0);
         _top_block->connect(_qpsk_video,2,_vector_sink,0);
         break;
-    case gr_modem_types::ModemTypeSSB2500:
+    case gr_modem_types::ModemTypeUSB2500:
         _osmosdr_source->set_sample_rate(1000000);
         _add_const->set_k(-55);
-        _top_block->connect(_rotator,0,_ssb,0);
-        _top_block->connect(_ssb,0,_rssi_valve,0);
-        _top_block->connect(_ssb,1,_audio_sink,0);
+        _top_block->connect(_rotator,0,_usb,0);
+        _top_block->connect(_usb,0,_rssi_valve,0);
+        _top_block->connect(_usb,1,_audio_sink,0);
+        break;
+    case gr_modem_types::ModemTypeLSB2500:
+        _osmosdr_source->set_sample_rate(1000000);
+        _add_const->set_k(-55);
+        _top_block->connect(_rotator,0,_lsb,0);
+        _top_block->connect(_lsb,0,_rssi_valve,0);
+        _top_block->connect(_lsb,1,_audio_sink,0);
         break;
     case gr_modem_types::ModemTypeWBFM:
         _osmosdr_source->set_sample_rate(1000000);
@@ -492,7 +505,8 @@ void gr_demod_base::set_squelch(int value)
     _fm_2500->set_squelch(value);
     _fm_5000->set_squelch(value);
     _am->set_squelch(value);
-    _ssb->set_squelch(value);
+    _usb->set_squelch(value);
+    _lsb->set_squelch(value);
     _wfm->set_squelch(value);
 }
 

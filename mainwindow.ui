@@ -2222,7 +2222,12 @@ color: rgb(0, 255, 0);</string>
             </item>
             <item>
              <property name="text">
-              <string>SSB</string>
+              <string>USB</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>LSB</string>
              </property>
             </item>
             <item>
@@ -2336,7 +2341,12 @@ color: rgb(255, 0, 0);</string>
             </item>
             <item>
              <property name="text">
-              <string>SSB</string>
+              <string>USB</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>LSB</string>
              </property>
             </item>
             <item>

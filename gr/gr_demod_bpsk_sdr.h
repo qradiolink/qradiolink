@@ -46,15 +46,13 @@ class gr_demod_bpsk_sdr;
 
 typedef boost::shared_ptr<gr_demod_bpsk_sdr> gr_demod_bpsk_sdr_sptr;
 gr_demod_bpsk_sdr_sptr make_gr_demod_bpsk_sdr(int sps=125, int samp_rate=250000, int carrier_freq=1700,
-                                          int filter_width=8000, int mode=1);
+                                          int filter_width=8000);
 
 class gr_demod_bpsk_sdr : public gr::hier_block2
 {
 public:
     explicit gr_demod_bpsk_sdr(std::vector<int> signature, int sps=4, int samp_rate=8000, int carrier_freq=1600,
-                               int filter_width=1800, int mode=1);
-    std::vector<unsigned char> *getFrame1();
-    std::vector<unsigned char> *getFrame2();
+                               int filter_width=1800);
 
 private:
 

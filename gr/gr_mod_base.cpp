@@ -50,7 +50,8 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
     _qpsk_10k = make_gr_mod_qpsk_sdr(50, 250000, 1700, 4000);
     _qpsk_250k = make_gr_mod_qpsk_sdr(2, 250000, 1700, 65000);
     _qpsk_video = make_gr_mod_qpsk_sdr(2, 250000, 1700, 65000);
-    _ssb = make_gr_mod_ssb_sdr(0, 250000, 1700, 2500);
+    _usb = make_gr_mod_ssb_sdr(0, 250000, 1700, 2500);
+    _lsb = make_gr_mod_ssb_sdr(1, 250000, 1700, 2500);
 }
 
 void gr_mod_base::set_mode(int mode)
@@ -107,9 +108,13 @@ void gr_mod_base::set_mode(int mode)
         _top_block->disconnect(_vector_source,0,_qpsk_video,0);
         _top_block->disconnect(_qpsk_video,0,_osmosdr_sink,0);
         break;
-    case gr_modem_types::ModemTypeSSB2500:
-        _top_block->disconnect(_audio_source,0,_ssb,0);
-        _top_block->disconnect(_ssb,0,_osmosdr_sink,0);
+    case gr_modem_types::ModemTypeUSB2500:
+        _top_block->disconnect(_audio_source,0,_usb,0);
+        _top_block->disconnect(_usb,0,_osmosdr_sink,0);
+        break;
+    case gr_modem_types::ModemTypeLSB2500:
+        _top_block->disconnect(_audio_source,0,_lsb,0);
+        _top_block->disconnect(_lsb,0,_osmosdr_sink,0);
         break;
     default:
         break;
@@ -177,10 +182,15 @@ void gr_mod_base::set_mode(int mode)
         _top_block->connect(_vector_source,0,_qpsk_video,0);
         _top_block->connect(_qpsk_video,0,_osmosdr_sink,0);
         break;
-    case gr_modem_types::ModemTypeSSB2500:
+    case gr_modem_types::ModemTypeUSB2500:
         _osmosdr_sink->set_sample_rate(250000);
-        _top_block->connect(_audio_source,0,_ssb,0);
-        _top_block->connect(_ssb,0,_osmosdr_sink,0);
+        _top_block->connect(_audio_source,0,_usb,0);
+        _top_block->connect(_usb,0,_osmosdr_sink,0);
+        break;
+    case gr_modem_types::ModemTypeLSB2500:
+        _osmosdr_sink->set_sample_rate(250000);
+        _top_block->connect(_audio_source,0,_lsb,0);
+        _top_block->connect(_lsb,0,_osmosdr_sink,0);
         break;
     default:
         break;

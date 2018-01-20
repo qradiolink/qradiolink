@@ -116,7 +116,8 @@ private:
     gr_demod_qpsk_sdr_sptr _qpsk_10k;
     gr_demod_qpsk_sdr_sptr _qpsk_250k;
     gr_demod_qpsk_sdr_sptr _qpsk_video;
-    gr_demod_ssb_sdr_sptr _ssb;
+    gr_demod_ssb_sdr_sptr _usb;
+    gr_demod_ssb_sdr_sptr _lsb;
     gr_demod_wbfm_sdr_sptr _wfm;
 
     osmosdr::source::sptr _osmosdr_source;
