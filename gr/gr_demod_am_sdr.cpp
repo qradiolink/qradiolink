@@ -45,13 +45,13 @@ gr_demod_am_sdr::gr_demod_am_sdr(std::vector<int>signature, int sps, int samp_ra
     float rerate = (float)_target_samp_rate/(float)_samp_rate;
 
     std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width, 10000);
-    std::vector<float> audio_taps = gr::filter::firdes::low_pass(1, _target_samp_rate, _filter_width, 10000);
+    std::vector<float> audio_taps = gr::filter::firdes::low_pass(1, _target_samp_rate, _filter_width, 1200);
     _resampler = gr::filter::pfb_arb_resampler_ccf::make(rerate, taps, 32);
     _audio_resampler = gr::filter::rational_resampler_base_fff::make(2,5, audio_taps);
     _filter = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
                             1, _target_samp_rate, -_filter_width, _filter_width,1200,gr::filter::firdes::WIN_HAMMING) );
     _squelch = gr::analog::pwr_squelch_cc::make(-140,0.01,0,true);
-    _agc = gr::analog::agc2_cc::make(0.6e-3, 1e-4, 1, 1);
+    _agc = gr::analog::agc2_cc::make(300, 10, 0.7, 1);
     _complex_to_mag = gr::blocks::complex_to_mag::make();
     std::vector<double> fft;
     fft.push_back(1);
@@ -60,7 +60,7 @@ gr_demod_am_sdr::gr_demod_am_sdr(std::vector<int>signature, int sps, int samp_ra
     ffd.push_back(0);
     ffd.push_back(0.9999);
     _audio_filter = gr::filter::iir_filter_ffd::make(fft,ffd);
-    _audio_gain = gr::blocks::multiply_const_ff::make(10);
+    _audio_gain = gr::blocks::multiply_const_ff::make(0.5);
 
 
     connect(self(),0,_resampler,0);

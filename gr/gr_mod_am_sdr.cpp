@@ -36,32 +36,29 @@ gr_mod_am_sdr::gr_mod_am_sdr(int sps, int samp_rate, int carrier_freq,
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
 
-    _signal_source = gr::analog::sig_source_c::make(target_samp_rate,gr::analog::GR_COS_WAVE, 2500, 1);
-    _audio_amplify = gr::blocks::multiply_const_ff::make(0.9,1);
+    _signal_source = gr::analog::sig_source_f::make(target_samp_rate,gr::analog::GR_COS_WAVE, 0, 1);
+    _add = gr::blocks::add_ff::make();
+    _audio_amplify = gr::blocks::multiply_const_ff::make(8,1);
     _agc = gr::analog::agc2_ff::make(10, 10, 1, 0);
-    _multiply = gr::blocks::multiply_cc::make();
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::low_pass(
                     1, target_samp_rate, _filter_width, 1200, gr::filter::firdes::WIN_HAMMING));
     _float_to_complex = gr::blocks::float_to_complex::make();
     std::vector<float> interp_taps = gr::filter::firdes::low_pass(1, _samp_rate,
-                                                        2500+_filter_width, 12000);
+                                                        _filter_width, 12000);
     _resampler = gr::filter::rational_resampler_base_ccf::make(125, 4, interp_taps);
-    _amplify = gr::blocks::multiply_const_cc::make(5,1);
+    _amplify = gr::blocks::multiply_const_cc::make(30,1);
     _filter = gr::filter::fft_filter_ccc::make(
                 1,gr::filter::firdes::complex_band_pass_2(
-                    1, _samp_rate, 2500-_filter_width, 2500+_filter_width, 1200, 120, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+                    1, _samp_rate, -_filter_width, _filter_width, 600, 120, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
 
 
 
-    connect(self(),0,_agc,0);
-    connect(_agc,0,_audio_amplify,0);
-    connect(_audio_amplify,0,_audio_filter,0);
-    connect(_audio_filter,0,_float_to_complex,0);
-    connect(_float_to_complex,0,_multiply,0);
-    connect(_signal_source,0,_multiply,1);
-
-    connect(_multiply,0,_resampler,0);
+    connect(self(),0,_audio_amplify,0);
+    connect(_audio_amplify,0,_add,0);
+    connect(_signal_source,0,_add,1);
+    connect(_add,0,_float_to_complex,0);
+    connect(_float_to_complex,0,_resampler,0);
     connect(_resampler,0,_amplify,0);
     connect(_amplify,0,_filter,0);
 
