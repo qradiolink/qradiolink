@@ -648,7 +648,8 @@ void gr_modem::synchronize(int v_size, std::vector<unsigned char> *data)
             {
                 frame_length++; // reserved data
             }
-            else if(_modem_type_rx != gr_modem_types::ModemTypeBPSK1000)
+            else if((_modem_type_rx != gr_modem_types::ModemTypeBPSK1000)
+                    && (_current_frame_type != FrameTypeVoice))
             {
                 bit_buf_len = _bit_buf_len - 8;
             }
