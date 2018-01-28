@@ -40,6 +40,7 @@ SOURCES += main.cpp\
         ext/QRadioLink.pb.cc\
         ext/vox.cpp\
         ext/utils.cpp\
+        ext/filt.cpp\
         video/videocapture.cpp\
     radioop.cpp \
     qtgui/freqctrl.cpp \
@@ -103,6 +104,7 @@ HEADERS  += mainwindow.h\
         ext/QRadioLink.pb.h\
         ext/vox.h\
         ext/utils.h \
+        ext/filt.h \
     radioop.h \
     qtgui/freqctrl.h \
     audio/alsaaudio.h \

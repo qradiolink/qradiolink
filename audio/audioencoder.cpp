@@ -36,6 +36,11 @@ AudioEncoder::AudioEncoder()
 
     _gsm = gsm_create();
     _agc = hvdi::initAGC(0.5);
+    _audio_filter = new Filter(BPF,90,8,0.2,3);
+    if( _audio_filter->get_error_flag() != 0 )
+    {
+        qDebug() << "audio filter creation failed";
+    }
 
     int opus_bandwidth;
     opus_encoder_ctl(_enc, OPUS_SET_VBR(0));
@@ -58,6 +63,7 @@ AudioEncoder::~AudioEncoder()
     codec2_destroy(_codec2_1400);
     codec2_destroy(_codec2_700);
     gsm_destroy(_gsm);
+    delete _audio_filter;
 }
 
 unsigned char* AudioEncoder::encode_opus(short *audiobuffer, int audiobuffersize, int &encoded_size)
@@ -86,7 +92,11 @@ short* AudioEncoder::decode_opus(unsigned char *audiobuffer, int audiobuffersize
 
 unsigned char* AudioEncoder::encode_codec2_1400(short *audiobuffer, int audiobuffersize, int &length)
 {
-    Q_UNUSED(audiobuffersize);
+    for(unsigned int i = 0;i<audiobuffersize/sizeof(short);i++)
+    {
+        double sample = (double) audiobuffer[i];
+        audiobuffer[i] = _audio_filter->do_sample(sample);
+    }
     int bits = codec2_bits_per_frame(_codec2_1400);
     //int bytes = (bits + 7) / 8;
     int bytes = bits / 8;
@@ -98,7 +108,11 @@ unsigned char* AudioEncoder::encode_codec2_1400(short *audiobuffer, int audiobuf
 
 unsigned char* AudioEncoder::encode_codec2_700(short *audiobuffer, int audiobuffersize, int &length)
 {
-    Q_UNUSED(audiobuffersize);
+    for(unsigned int i = 0;i<audiobuffersize/sizeof(short);i++)
+    {
+        double sample = (double) audiobuffer[i];
+        audiobuffer[i] = _audio_filter->do_sample(sample);
+    }
     int bits = codec2_bits_per_frame(_codec2_700);
     int bytes = (bits + 4) / 8;
     unsigned char *encoded = new unsigned char[bytes];
@@ -109,7 +123,11 @@ unsigned char* AudioEncoder::encode_codec2_700(short *audiobuffer, int audiobuff
 
 unsigned char* AudioEncoder::encode_codec2_2400(short *audiobuffer, int audiobuffersize, int &length)
 {
-    Q_UNUSED(audiobuffersize);
+    for(unsigned int i = 0;i<audiobuffersize/sizeof(short);i++)
+    {
+        double sample = (double) audiobuffer[i];
+        audiobuffer[i] = _audio_filter->do_sample(sample);
+    }
     int bits = codec2_bits_per_frame(_codec2_2400);
     int bytes = (bits + 4) / 8;
     unsigned char *encoded = new unsigned char[bytes];

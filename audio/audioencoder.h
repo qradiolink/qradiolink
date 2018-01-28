@@ -21,6 +21,7 @@
 #include <opus/opus.h>
 #include <codec2/codec2.h>
 #include "ext/agc.h"
+#include "ext/filt.h"
 extern "C"
 {
 #include <gsm/gsm.h>
@@ -51,6 +52,7 @@ private:
     struct CODEC2 *_codec2_2400;
     struct gsm_state *_gsm;
     hvdi::agc_st *_agc;
+    Filter *_audio_filter;
 };
 
 #endif // AUDIOENCODER_H
