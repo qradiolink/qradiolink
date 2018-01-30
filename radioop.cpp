@@ -569,9 +569,16 @@ void RadioOp::receiveAudioData(unsigned char *data, int size)
     delete[] data;
     if(samples > 0)
     {
+        float amplif = 1.0;
+        if((_rx_mode == gr_modem_types::ModemTypeBPSK2000) ||
+                (_rx_mode == gr_modem_types::ModemType2FSK2000) ||
+                (_rx_mode == gr_modem_types::ModemType4FSK2000) ||
+                (_rx_mode == gr_modem_types::ModemTypeQPSK2000) ||
+                (_rx_mode == gr_modem_types::ModemTypeBPSK1000))
+            amplif = 2.0;
         for(int i=0;i<samples;i++)
         {
-            audio_out[i] = (short)((float)audio_out[i] * _rx_volume);
+            audio_out[i] = (short)((float)audio_out[i] * amplif * _rx_volume);
         }
         if(_voip_forwarding)
         {

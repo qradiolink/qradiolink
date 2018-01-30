@@ -35,8 +35,8 @@ AudioEncoder::AudioEncoder()
     _codec2_2400 = codec2_create(CODEC2_MODE_2400);
 
     _gsm = gsm_create();
-    _agc = hvdi::initAGC(0.5);
-    _audio_filter = new Filter(BPF,90,8,0.2,3);
+    _agc = hvdi::initAGC(0.8);
+    _audio_filter = new Filter(BPF,20,8,0.3,3);
     if( _audio_filter->get_error_flag() != 0 )
     {
         qDebug() << "audio filter creation failed";
@@ -95,7 +95,7 @@ unsigned char* AudioEncoder::encode_codec2_1400(short *audiobuffer, int audiobuf
     for(unsigned int i = 0;i<audiobuffersize/sizeof(short);i++)
     {
         double sample = (double) audiobuffer[i];
-        audiobuffer[i] = _audio_filter->do_sample(sample);
+        audiobuffer[i] = (short) _audio_filter->do_sample(sample);
     }
     int bits = codec2_bits_per_frame(_codec2_1400);
     //int bytes = (bits + 7) / 8;
@@ -111,7 +111,7 @@ unsigned char* AudioEncoder::encode_codec2_700(short *audiobuffer, int audiobuff
     for(unsigned int i = 0;i<audiobuffersize/sizeof(short);i++)
     {
         double sample = (double) audiobuffer[i];
-        audiobuffer[i] = _audio_filter->do_sample(sample);
+        audiobuffer[i] = (short) _audio_filter->do_sample(sample);
     }
     int bits = codec2_bits_per_frame(_codec2_700);
     int bytes = (bits + 4) / 8;
@@ -126,7 +126,7 @@ unsigned char* AudioEncoder::encode_codec2_2400(short *audiobuffer, int audiobuf
     for(unsigned int i = 0;i<audiobuffersize/sizeof(short);i++)
     {
         double sample = (double) audiobuffer[i];
-        audiobuffer[i] = _audio_filter->do_sample(sample);
+        audiobuffer[i] = (short) _audio_filter->do_sample(sample);
     }
     int bits = codec2_bits_per_frame(_codec2_2400);
     int bytes = (bits + 4) / 8;
