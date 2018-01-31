@@ -1,3 +1,12 @@
+qradiolink (0.3.17-1) UNRELEASED; urgency=medium
+
+  [ Adrian Musceac ]
+  * Introduced Speex audio DSP
+  * Improved analog modes (AM, SSB)
+
+ -- Adrian Musceac <kantooon@gmail.com>  Wed, 31 Jan 2017 23:00:00 +0300
+
+
 qradiolink (0.3.16-1) UNRELEASED; urgency=medium
 
   [ Adrian Musceac ]
