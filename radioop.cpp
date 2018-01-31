@@ -186,34 +186,6 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
 
 }
 
-void RadioOp::vox(short *audiobuffer, int audiobuffer_size)
-{
-    double treshhold = -136;
-    double hyst = 0.5;
-    bool treshhold_set = false;
-    bool hyst_active = false;
-    int hyst_counter = 0;
-    float sum = 0;
-    short max = 0;
-
-    for(int j=0;j< audiobuffer_size;j++)
-    {
-        sum += ((audiobuffer[j]/32768.0f)*(audiobuffer[j]/32768.0f));
-        max = (max > abs(audiobuffer[j])) ? max : abs(audiobuffer[j]);
-
-    }
-
-    float rms = sqrt(sum/audiobuffer_size);
-    double power = 20*log10(rms/32768.0f);
-
-    qDebug() << power;
-    if((power < treshhold+hyst))
-    {
-        delete[] audiobuffer;
-        return;
-    }
-}
-
 void RadioOp::processAudioStream()
 {
     int audiobuffer_size = 640; //40 ms @ 8k
@@ -569,9 +541,18 @@ void RadioOp::receiveAudioData(unsigned char *data, int size)
     delete[] data;
     if(samples > 0)
     {
+        float amplif = 1.0;
+        if((_rx_mode == gr_modem_types::ModemTypeBPSK2000) ||
+                (_rx_mode == gr_modem_types::ModemType2FSK2000) ||
+                (_rx_mode == gr_modem_types::ModemType4FSK2000) ||
+                (_rx_mode == gr_modem_types::ModemTypeQPSK2000) ||
+                (_rx_mode == gr_modem_types::ModemTypeBPSK1000))
+        {
+            amplif = 2.0;
+        }
         for(int i=0;i<samples;i++)
         {
-            audio_out[i] = (short)((float)audio_out[i] * _rx_volume);
+            audio_out[i] = (short)((float)audio_out[i] * amplif * _rx_volume);
         }
         if(_voip_forwarding)
         {

@@ -36,7 +36,7 @@ AudioEncoder::AudioEncoder()
 
     _gsm = gsm_create();
     _agc = hvdi::initAGC(0.8);
-    _audio_filter = new Filter(BPF,20,8,0.3,3);
+    _audio_filter = new Filter(BPF,20,8,0.28,2.8);
     if( _audio_filter->get_error_flag() != 0 )
     {
         qDebug() << "audio filter creation failed";

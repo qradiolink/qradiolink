@@ -184,7 +184,6 @@ private:
                     int &tx_freq_corr, std::string &callsign, std::string &video_device);
     int getFrameLength(unsigned char *data);
     void txAudio(short *audiobuffer, int audiobuffer_size);
-    void vox(short *audiobuffer, int audiobuffer_size);
 
     void processAudioStream();
     int processVideoStream(bool &frame_flag);
