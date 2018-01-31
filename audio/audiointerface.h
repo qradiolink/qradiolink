@@ -23,6 +23,7 @@
 #include "ext/utils.h"
 #include <pulse/simple.h>
 #include <pulse/error.h>
+#include <speex/speex_preprocess.h>
 #include "unistd.h"
 
 class AudioInterface : public QObject
@@ -33,8 +34,8 @@ public:
     ~AudioInterface();
     int read(float *buf, short bufsize);
     int write(float *buf, short bufsize);
-    int write_short(short *buf, short bufsize);
-    int read_short(short *buf, short bufsize);
+    int write_short(short *buf, short bufsize, bool preprocess=false);
+    int read_short(short *buf, short bufsize, bool preprocess=false);
 signals:
     
 public slots:
@@ -44,6 +45,7 @@ private:
     pa_simple *_s_play;
     pa_simple *_s_short_play;
     pa_simple *_s_short_rec;
+    SpeexPreprocessState *_speex_preprocess;
     int _error;
     
 };

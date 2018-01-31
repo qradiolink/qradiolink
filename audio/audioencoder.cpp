@@ -46,7 +46,7 @@ AudioEncoder::AudioEncoder()
     opus_encoder_ctl(_enc, OPUS_SET_VBR(0));
     opus_encoder_ctl(_enc, OPUS_SET_BITRATE(9400));
     opus_encoder_ctl(_enc, OPUS_SET_COMPLEXITY(10));
-    //opus_encoder_ctl(_enc, OPUS_SET_DTX(1));
+    //opus_encoder_ctl(_enc, OPUS_SET_DTX(0));
     opus_encoder_ctl(_enc, OPUS_SET_LSB_DEPTH(16));
     opus_encoder_ctl(_enc, OPUS_SET_MAX_BANDWIDTH(OPUS_BANDWIDTH_FULLBAND));
     opus_encoder_ctl(_enc, OPUS_SET_PACKET_LOSS_PERC(100));

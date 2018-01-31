@@ -218,7 +218,7 @@ void RadioOp::processAudioStream()
 {
     int audiobuffer_size = 640; //40 ms @ 8k
     short *audiobuffer = new short[audiobuffer_size/sizeof(short)];
-    _audio->read_short(audiobuffer,audiobuffer_size);
+    _audio->read_short(audiobuffer,audiobuffer_size, true);
     if(_voip_enabled)
     {
         emit voipData(audiobuffer,audiobuffer_size);
@@ -569,16 +569,9 @@ void RadioOp::receiveAudioData(unsigned char *data, int size)
     delete[] data;
     if(samples > 0)
     {
-        float amplif = 1.0;
-        if((_rx_mode == gr_modem_types::ModemTypeBPSK2000) ||
-                (_rx_mode == gr_modem_types::ModemType2FSK2000) ||
-                (_rx_mode == gr_modem_types::ModemType4FSK2000) ||
-                (_rx_mode == gr_modem_types::ModemTypeQPSK2000) ||
-                (_rx_mode == gr_modem_types::ModemTypeBPSK1000))
-            amplif = 2.0;
         for(int i=0;i<samples;i++)
         {
-            audio_out[i] = (short)((float)audio_out[i] * amplif * _rx_volume);
+            audio_out[i] = (short)((float)audio_out[i] * _rx_volume);
         }
         if(_voip_forwarding)
         {
@@ -586,7 +579,7 @@ void RadioOp::receiveAudioData(unsigned char *data, int size)
         }
         else
         {
-            _audio->write_short(audio_out,samples*sizeof(short));
+            _audio->write_short(audio_out,samples*sizeof(short),true);
         }
     }
 }
@@ -610,7 +603,7 @@ void RadioOp::receivePCMAudio(std::vector<float> *audio_data)
     }
     else
     {
-        _audio->write_short(pcm, size*sizeof(short));
+        _audio->write_short(pcm, size*sizeof(short),false);
     }
     audio_data->clear();
     delete audio_data;

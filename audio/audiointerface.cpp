@@ -24,6 +24,23 @@ AudioInterface::AudioInterface(QObject *parent, unsigned sample_rate, unsigned c
     _s_short_play = NULL;
     _s_short_rec = NULL;
     _error=0;
+    _speex_preprocess = speex_preprocess_state_init(320, 8000);
+    int i;
+    float f;
+    i = 1;
+    speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_DENOISE, &i);
+    i = 12;
+    speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_NOISE_SUPPRESS, &i);
+    i = 0;
+    speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_AGC, &i);
+    i = 0.8;
+    speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_AGC_LEVEL, &i);
+    i=1;
+    speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_DEREVERB, &i);
+    f=.5;
+    speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_DEREVERB_DECAY, &f);
+    f=.5;
+    speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_DEREVERB_LEVEL, &f);
     int rand_len = 4;
     char rand[5];
     genRandomStr(rand,rand_len);
@@ -79,6 +96,7 @@ AudioInterface::AudioInterface(QObject *parent, unsigned sample_rate, unsigned c
 
 AudioInterface::~AudioInterface()
 {
+    speex_preprocess_state_destroy(_speex_preprocess);
     if (_s_rec)
       pa_simple_free(_s_rec);
     if (_s_play)
@@ -115,8 +133,14 @@ int AudioInterface::write(float *buf, short bufsize)
     return 0;
 }
 
-int AudioInterface::write_short(short *buf, short bufsize)
+int AudioInterface::write_short(short *buf, short bufsize, bool preprocess)
 {
+    if(preprocess)
+    {
+        int i = 3;
+        speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_NOISE_SUPPRESS, &i);
+        speex_preprocess_run(_speex_preprocess, buf);
+    }
     if(!_s_short_play)
         return 1;
     if(pa_simple_write(_s_short_play, buf, bufsize, &_error) < 0)
@@ -127,7 +151,7 @@ int AudioInterface::write_short(short *buf, short bufsize)
     return 0;
 }
 
-int AudioInterface::read_short(short *buf, short bufsize)
+int AudioInterface::read_short(short *buf, short bufsize, bool preprocess)
 {
     if(!_s_short_rec)
         return 1;
@@ -136,5 +160,12 @@ int AudioInterface::read_short(short *buf, short bufsize)
         fprintf(stderr, __FILE__": pa_simple_read() failed:\n");
         return 1;
     }
-    return 0;
+    int vad = 0;
+    if(preprocess)
+    {
+        int i = 12;
+        speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_NOISE_SUPPRESS, &i);
+        vad = speex_preprocess_run(_speex_preprocess, buf);
+    }
+    return vad;
 }

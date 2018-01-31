@@ -45,10 +45,10 @@ libgnuradio-analog3.7.10, libgnuradio-audio3.7.10, libgnuradio-blocks3.7.10,
 libgnuradio-digital3.7.10, libgnuradio-fec3.7.10, libgnuradio-filter3.7.10, 
 libgnuradio-osmosdr0.1.4, libgnuradio-pmt3.7.10, libgnuradio-qtgui3.7.10, 
 libgnuradio-runtime3.7.10, libgsm1 (>= 1.0.13), libjpeg62-turbo (>= 1.3.1), 
-libopus0 (>= 1.1), libprotobuf10, libpulse0 (>= 0.99.1), libqt4-network (>= 4:4.5.3), 
+libopus0 (>= 1.1), libspeexdsp1, libprotobuf10, libpulse0 (>= 0.99.1), libqt4-network (>= 4:4.5.3), 
 libqt4-sql (>= 4:4.5.3), libqtcore4 (>= 4:4.8.0), libqtgui4 (>= 4:4.6.1),
  libstdc++6 (>= 5.2), gnuradio-dev, gr-osmosdr, libgsm1-dev, libprotobuf-dev,
- libopus-dev, libpulse-dev, libcodec2-dev, libasound2-dev, libjpeg62-turbo-dev,
+ libopus-dev, libspeexdsp-dev, libpulse-dev, libcodec2-dev, libasound2-dev, libjpeg62-turbo-dev,
  libconfig++-dev, qt4-qmake, libqt4-dev, libqwt5-qt4-dev, libqt4-sql-sqlite, qt4-dev-tools
 </pre>
 
@@ -60,7 +60,7 @@ libqt4-sql (>= 4:4.5.3), libqtcore4 (>= 4:4.8.0), libqtgui4 (>= 4:4.6.1),
 - Gnuradio >= 3.7.10 built with OsmoSDR and UHD support
 - Boost 
 - libgnuradio-osmosdr built with UHD, RTL-SDR, SoapySDR or HackRF support
-- libgsm, libprotobuf, libopus, libpulse-simple, libpulse, libasound, libcodec2, libsqlite3, libjpeg, libconfig++
+- libgsm, libprotobuf, libopus, libspeexdsp, libpulse-simple, libpulse, libasound, libcodec2, libsqlite3, libjpeg, libconfig++
 - protoc compiler (libprotoc 2.6.1 or greater)
 
 In order to build on Ubuntu 17.10 you have to install the following packages, assuming a full GNU Radio development environment is already installed.
