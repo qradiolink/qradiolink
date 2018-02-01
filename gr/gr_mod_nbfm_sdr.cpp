@@ -40,7 +40,7 @@ gr_mod_nbfm_sdr::gr_mod_nbfm_sdr(int sps, int samp_rate, int carrier_freq,
     _audio_amplify = gr::blocks::multiply_const_ff::make(0.9,1);
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::band_pass(
-                    1, target_samp_rate, 150, _filter_width, 100, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+                    1, target_samp_rate, 250, _filter_width, 200, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
 
     static const float coeff[] =  {-0.026316914707422256, -0.2512197494506836, 1.5501943826675415,
                                    -0.2512197494506836, -0.026316914707422256};
@@ -59,8 +59,8 @@ gr_mod_nbfm_sdr::gr_mod_nbfm_sdr(int sps, int samp_rate, int carrier_freq,
                     1, _samp_rate, _filter_width, 600, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
 
 
-    connect(self(),0,_audio_amplify,0);
-    //connect(_audio_filter,0,_audio_amplify,0);
+    connect(self(),0,_audio_filter,0);
+    connect(_audio_filter,0,_audio_amplify,0);
     connect(_audio_amplify,0,_emphasis_filter,0);
     connect(_emphasis_filter,0,_fm_modulator,0);
     connect(_fm_modulator,0,_resampler,0);
