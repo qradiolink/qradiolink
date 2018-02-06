@@ -192,6 +192,8 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
 
 void RadioOp::processAudioStream()
 {
+    if(!_transmitting_audio && !_vox_enabled)
+        return;
     int audiobuffer_size = 640; //40 ms @ 8k
     short *audiobuffer = new short[audiobuffer_size/sizeof(short)];
     int vad = _audio->read_short(audiobuffer,audiobuffer_size, true);
@@ -199,12 +201,12 @@ void RadioOp::processAudioStream()
     {
         _vox_timer->start(100);
         if(!_tx_started && !_voip_enabled)
-            startTx();
+            _transmitting_audio = true;
     }
     if(!vad && _vox_enabled && !_vox_timer->isActive())
     {
         if(_tx_started && !_voip_enabled)
-            stopTx();
+            _transmitting_audio = false;
         delete[] audiobuffer;
         return;
     }
@@ -214,7 +216,10 @@ void RadioOp::processAudioStream()
         emit voipData(audiobuffer,audiobuffer_size);
         return;
     }
-    txAudio(audiobuffer, audiobuffer_size);
+    if(_tx_inited)
+        txAudio(audiobuffer, audiobuffer_size);
+    else
+        delete[] audiobuffer;
 }
 
 void RadioOp::txAudio(short *audiobuffer, int audiobuffer_size)
@@ -245,10 +250,7 @@ void RadioOp::txAudio(short *audiobuffer, int audiobuffer_size)
     else
         encoded_audio = _codec->encode_opus(audiobuffer, audiobuffer_size, packet_size);
 
-    unsigned char *data = new unsigned char[packet_size];
-    memcpy(data,encoded_audio,packet_size);
-    emit audioData(data,packet_size);
-    delete[] encoded_audio;
+    emit audioData(encoded_audio,packet_size);
     delete[] audiobuffer;
 }
 
@@ -484,6 +486,7 @@ void RadioOp::run()
         }
 
         updateFrequency();
+        processAudioStream();
         if(transmitting && !ptt_activated)
         {
             ptt_activated = true;
@@ -505,10 +508,6 @@ void RadioOp::run()
                     _modem->demodulate();
                 }
                 processNetStream();
-            }
-            else
-            {
-                processAudioStream();
             }
         }
         else
@@ -1142,6 +1141,8 @@ void RadioOp::setVOIPForwarding(bool value)
 void RadioOp::setVox(bool value)
 {
     _vox_enabled = value;
+    if(_transmitting_audio && !_vox_enabled)
+        _transmitting_audio = false;
 }
 
 void RadioOp::toggleRepeat(bool value)
