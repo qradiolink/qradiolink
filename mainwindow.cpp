@@ -77,6 +77,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     QObject::connect(ui->pttVoipButton,SIGNAL(toggled(bool)),this,SLOT(togglePTTVOIP(bool)));
     QObject::connect(ui->voipForwardButton,SIGNAL(toggled(bool)),this,SLOT(toggleVOIPForwarding(bool)));
     QObject::connect(ui->toggleRepeaterButton,SIGNAL(toggled(bool)),this,SLOT(toggleRepeater(bool)));
+    QObject::connect(ui->toggleVoxButton,SIGNAL(toggled(bool)),this,SLOT(toggleVox(bool)));
 
     QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
 
@@ -475,4 +476,9 @@ void MainWindow::togglePTTVOIP(bool value)
 void MainWindow::toggleVOIPForwarding(bool value)
 {
     emit setVOIPForwarding(value);
+}
+
+void MainWindow::toggleVox(bool value)
+{
+    emit setVox(value);
 }

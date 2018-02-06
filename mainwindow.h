@@ -77,6 +77,7 @@ public slots:
     void updateTxCTCSS(int value);
     void togglePTTVOIP(bool value);
     void toggleVOIPForwarding(bool value);
+    void toggleVox(bool value);
     void toggleRepeater(bool value);
     void newChannel(Channel *chan);
     void channelState(QTreeWidgetItem *item, int k);
@@ -105,6 +106,7 @@ signals:
     void stopAutoTuneFreq();
     void usePTTForVOIP(bool value);
     void setVOIPForwarding(bool value);
+    void setVox(bool value);
     void connectToServer(QString server, unsigned port);
     void disconnectFromServer();
     void changeChannel(int id);

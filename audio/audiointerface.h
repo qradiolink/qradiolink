@@ -19,6 +19,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QDebug>
 #include <stdio.h>
 #include "ext/utils.h"
 #include <pulse/simple.h>
@@ -35,7 +36,7 @@ public:
     int read(float *buf, short bufsize);
     int write(float *buf, short bufsize);
     int write_short(short *buf, short bufsize, bool preprocess=false);
-    int read_short(short *buf, short bufsize, bool preprocess=false);
+    int read_short(short *buf, short bufsize, bool preprocess=0);
 signals:
     
 public slots:
@@ -47,6 +48,7 @@ private:
     pa_simple *_s_short_rec;
     SpeexPreprocessState *_speex_preprocess;
     int _error;
+    float calc_audio_power(short *buf, short samples);
     
 };
 

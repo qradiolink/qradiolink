@@ -31,16 +31,22 @@ AudioInterface::AudioInterface(QObject *parent, unsigned sample_rate, unsigned c
     speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_DENOISE, &i);
     i = 12;
     speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_NOISE_SUPPRESS, &i);
-    i = 0;
-    speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_AGC, &i);
-    i = 0.8;
-    speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_AGC_LEVEL, &i);
-    i=1;
-    speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_DEREVERB, &i);
-    f=.5;
-    speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_DEREVERB_DECAY, &f);
-    f=.5;
-    speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_DEREVERB_LEVEL, &f);
+    //i = 0;
+    //speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_AGC, &i);
+    i = 1;
+    speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_VAD, &i);
+    //i = 80;
+    //speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_PROB_START, &f);
+    //i = 60;
+    //speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_PROB_CONTINUE, &f);
+    //i = 0.8;
+    //speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_AGC_LEVEL, &i);
+    //i=1;
+    //speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_DEREVERB, &i);
+    //f=.5;
+    //speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_DEREVERB_DECAY, &f);
+    //f=.5;
+    //speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_DEREVERB_LEVEL, &f);
     int rand_len = 4;
     char rand[5];
     genRandomStr(rand,rand_len);
@@ -160,12 +166,21 @@ int AudioInterface::read_short(short *buf, short bufsize, bool preprocess)
         fprintf(stderr, __FILE__": pa_simple_read() failed:\n");
         return 1;
     }
-    int vad = 0;
+    int vad = 1;
     if(preprocess)
     {
-        int i = 12;
-        speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_NOISE_SUPPRESS, &i);
         vad = speex_preprocess_run(_speex_preprocess, buf);
     }
     return vad;
+}
+
+float AudioInterface::calc_audio_power(short *buf, short samples)
+{
+    float power = 0.0;
+    for (int i = 0; i < samples; i++)
+    {
+        float a = (float) abs(buf[i]);
+        power += a * a;
+    }
+    return power / (32768.0f * 32768.0f * (float) samples);
 }

@@ -208,6 +208,8 @@ void gr_mod_base::start()
 void gr_mod_base::stop()
 {
     _top_block->stop();
+    _audio_source->clear_buffer();
+    _vector_source->clear_buffer();
     _top_block->wait();
 }
 

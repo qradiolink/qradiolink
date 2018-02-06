@@ -39,6 +39,7 @@ public:
            gr_vector_void_star &output_items);
 
     int set_data(std::vector<unsigned char> *data);
+    void clear_buffer();
 private:
     unsigned _offset;
     bool _finished;

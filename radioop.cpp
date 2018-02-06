@@ -35,11 +35,15 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _stop =false;
     _tx_inited = false;
     _rx_inited = false;
+    _tx_started = false;
     _voip_enabled = false;
+    _vox_enabled = false;
     _voip_forwarding = false;
     _last_voiced_frame_timer.start();
     _voip_tx_timer = new QTimer(this);
     _voip_tx_timer->setSingleShot(true);
+    _vox_timer = new QTimer(this);
+    _vox_timer->setSingleShot(true);
     _settings = settings;
     _transmitting_audio = false;
     _process_text = false;
@@ -190,7 +194,21 @@ void RadioOp::processAudioStream()
 {
     int audiobuffer_size = 640; //40 ms @ 8k
     short *audiobuffer = new short[audiobuffer_size/sizeof(short)];
-    _audio->read_short(audiobuffer,audiobuffer_size, true);
+    int vad = _audio->read_short(audiobuffer,audiobuffer_size, true);
+    if(_vox_enabled && vad)
+    {
+        _vox_timer->start(100);
+        if(!_tx_started && !_voip_enabled)
+            startTx();
+    }
+    if(!vad && _vox_enabled && !_vox_timer->isActive())
+    {
+        if(_tx_started && !_voip_enabled)
+            stopTx();
+        delete[] audiobuffer;
+        return;
+    }
+
     if(_voip_enabled)
     {
         emit voipData(audiobuffer,audiobuffer_size);
@@ -338,6 +356,7 @@ void RadioOp::startTx()
         usleep(100000);
         _modem->tuneTx(_tune_center_freq + _tune_shift_freq);
         _tx_modem_started = false;
+        _tx_started = true;
         if(_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL)
             _modem->startTransmission(_callsign);
     }
@@ -358,6 +377,7 @@ void RadioOp::stopTx()
         _modem->stopTX();
         _modem->tuneTx(70000000);
         _tx_modem_started = false;
+        _tx_started = false;
         if(_rx_inited && !_repeat)
             _modem->startRX();
     }
@@ -548,7 +568,7 @@ void RadioOp::receiveAudioData(unsigned char *data, int size)
                 (_rx_mode == gr_modem_types::ModemTypeQPSK2000) ||
                 (_rx_mode == gr_modem_types::ModemTypeBPSK1000))
         {
-            amplif = 2.0;
+            amplif = 1.0;
         }
         for(int i=0;i<samples;i++)
         {
@@ -1117,6 +1137,11 @@ void RadioOp::usePTTForVOIP(bool value)
 void RadioOp::setVOIPForwarding(bool value)
 {
     _voip_forwarding = value;
+}
+
+void RadioOp::setVox(bool value)
+{
+    _vox_enabled = value;
 }
 
 void RadioOp::toggleRepeat(bool value)

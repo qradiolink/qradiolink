@@ -53,7 +53,7 @@ gr_mod_nbfm_sdr::gr_mod_nbfm_sdr(int sps, int samp_rate, int carrier_freq,
     std::vector<float> interp_taps = gr::filter::firdes::low_pass(1, _samp_rate,
                                                         _filter_width, 12000);
     _resampler = gr::filter::rational_resampler_base_ccf::make(125,4, interp_taps);
-    _amplify = gr::blocks::multiply_const_cc::make(10,1);
+    _amplify = gr::blocks::multiply_const_cc::make(15,1);
     _filter = gr::filter::fft_filter_ccf::make(
                 1,gr::filter::firdes::low_pass(
                     1, _samp_rate, _filter_width, 600, gr::filter::firdes::WIN_BLACKMAN_HARRIS));

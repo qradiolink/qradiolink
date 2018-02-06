@@ -39,6 +39,12 @@ gr_audio_source::~gr_audio_source()
     delete _data;
 }
 
+void gr_audio_source::clear_buffer()
+{
+    gr::thread::scoped_lock guard(_mutex);
+    _data->clear();
+}
+
 int gr_audio_source::set_data(std::vector<float> *data)
 {
 

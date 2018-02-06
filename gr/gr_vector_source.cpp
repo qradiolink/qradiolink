@@ -39,6 +39,12 @@ gr_vector_source::~gr_vector_source()
     delete _data;
 }
 
+void gr_vector_source::clear_buffer()
+{
+    gr::thread::scoped_lock guard(_mutex);
+    _data->clear();
+}
+
 int gr_vector_source::set_data(std::vector<unsigned char> *data)
 {
 

@@ -126,6 +126,7 @@ public slots:
     void toggleRepeat(bool value);
     void addChannel(Channel* chan);
     void setStations(StationList list);
+    void setVox(bool value);
 
 private:
     bool _stop;
@@ -146,6 +147,7 @@ private:
     QMutex *_mutex;
     QTimer *_voice_led_timer;
     QTimer *_data_led_timer;
+    QTimer *_vox_timer;
     AudioEncoder *_codec;
     VideoEncoder *_video;
     NetDevice *_net_device;
@@ -178,6 +180,8 @@ private:
     QVector<short> *_voip_encode_buffer;
     QByteArray *_data_rec_sound;
     bool _repeat;
+    bool _vox_enabled;
+    bool _tx_started;
 
     void readConfig(std::string &rx_device_args, std::string &tx_device_args,
                     std::string &rx_antenna, std::string &tx_antenna, int &rx_freq_corr,

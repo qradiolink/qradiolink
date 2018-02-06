@@ -265,6 +265,7 @@ int main(int argc, char *argv[])
     QObject::connect(w,SIGNAL(enableGUIFFT(bool)),radio_op,SLOT(enableGUIFFT(bool)));
     QObject::connect(w,SIGNAL(usePTTForVOIP(bool)),radio_op,SLOT(usePTTForVOIP(bool)));
     QObject::connect(w,SIGNAL(setVOIPForwarding(bool)),radio_op,SLOT(setVOIPForwarding(bool)));
+    QObject::connect(w,SIGNAL(setVox(bool)),radio_op,SLOT(setVox(bool)));
     QObject::connect(w,SIGNAL(toggleRepeat(bool)),radio_op,SLOT(toggleRepeat(bool)));
     QObject::connect(w,SIGNAL(stopRadio()),radio_op,SLOT(stop()));
     QObject::connect(radio_op, SIGNAL(printText(QString,bool)), w, SLOT(displayText(QString,bool)));

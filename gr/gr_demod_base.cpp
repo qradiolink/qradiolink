@@ -45,9 +45,9 @@ gr_demod_base::gr_demod_base(gr::qtgui::sink_c::sptr fft_gui,
     _single_pole_filter = gr::filter::single_pole_iir_filter_ff::make(0.04);
     _log10 = gr::blocks::nlog10_ff::make();
     _multiply_const_ff = gr::blocks::multiply_const_ff::make(10);
-    _agc2 = gr::analog::agc2_ff::make(0.6e-1, 1e-3, 1, 1);
-    _moving_average = gr::blocks::moving_average_ff::make(25000,1,2000);
-    _add_const = gr::blocks::add_const_ff::make(-110);
+    _agc2 = gr::analog::agc2_ff::make(100, 100, 1, 1);
+    _moving_average = gr::blocks::moving_average_ff::make(2000,1,2000);
+    _add_const = gr::blocks::add_const_ff::make(-80);
     _rotator = gr::blocks::rotator_cc::make(2*M_PI*-_carrier_offset/1000000);
 
 
@@ -242,7 +242,6 @@ void gr_demod_base::set_mode(int mode)
     {
     case gr_modem_types::ModemType2FSK2000:
         _osmosdr_source->set_sample_rate(1000000);
-        _add_const->set_k(-110);
         _top_block->connect(_rotator,0,_2fsk,0);
         _top_block->connect(_2fsk,0,_rssi_valve,0);
         _top_block->connect(_2fsk,1,_const_valve,0);
@@ -252,7 +251,6 @@ void gr_demod_base::set_mode(int mode)
         break;
     case gr_modem_types::ModemType4FSK2000:
         _osmosdr_source->set_sample_rate(1000000);
-        _add_const->set_k(-110);
         _top_block->connect(_rotator,0,_4fsk_2k,0);
         _top_block->connect(_4fsk_2k,0,_rssi_valve,0);
         _top_block->connect(_4fsk_2k,1,_const_valve,0);
@@ -261,7 +259,6 @@ void gr_demod_base::set_mode(int mode)
         break;
     case gr_modem_types::ModemType4FSK20000:
         _osmosdr_source->set_sample_rate(1000000);
-        _add_const->set_k(-110);
         _top_block->connect(_rotator,0,_4fsk_10k,0);
         _top_block->connect(_4fsk_10k,0,_rssi_valve,0);
         _top_block->connect(_4fsk_10k,1,_const_valve,0);
@@ -270,14 +267,12 @@ void gr_demod_base::set_mode(int mode)
         break;
     case gr_modem_types::ModemTypeAM5000:
         _osmosdr_source->set_sample_rate(1000000);
-        _add_const->set_k(-55);
         _top_block->connect(_rotator,0,_am,0);
         _top_block->connect(_am,0,_rssi_valve,0);
         _top_block->connect(_am,1,_audio_sink,0);
         break;
     case gr_modem_types::ModemTypeBPSK1000:
         _osmosdr_source->set_sample_rate(1000000);
-        _add_const->set_k(-110);
         _top_block->connect(_rotator,0,_bpsk_1k,0);
         _top_block->connect(_bpsk_1k,0,_rssi_valve,0);
         _top_block->connect(_bpsk_1k,1,_const_valve,0);
@@ -287,7 +282,6 @@ void gr_demod_base::set_mode(int mode)
         break;
     case gr_modem_types::ModemTypeBPSK2000:
         _osmosdr_source->set_sample_rate(1000000);
-        _add_const->set_k(-110);
         _top_block->connect(_rotator,0,_bpsk_2k,0);
         _top_block->connect(_bpsk_2k,0,_rssi_valve,0);
         _top_block->connect(_bpsk_2k,1,_const_valve,0);
@@ -297,21 +291,18 @@ void gr_demod_base::set_mode(int mode)
         break;
     case gr_modem_types::ModemTypeNBFM2500:
         _osmosdr_source->set_sample_rate(1000000);
-        _add_const->set_k(-55);
         _top_block->connect(_rotator,0,_fm_2500,0);
         _top_block->connect(_fm_2500,0,_rssi_valve,0);
         _top_block->connect(_fm_2500,1,_audio_sink,0);
         break;
     case gr_modem_types::ModemTypeNBFM5000:
         _osmosdr_source->set_sample_rate(1000000);
-        _add_const->set_k(-55);
         _top_block->connect(_rotator,0,_fm_5000,0);
         _top_block->connect(_fm_5000,0,_rssi_valve,0);
         _top_block->connect(_fm_5000,1,_audio_sink,0);
         break;
     case gr_modem_types::ModemTypeQPSK2000:
         _osmosdr_source->set_sample_rate(1000000);
-        _add_const->set_k(-110);
         _top_block->connect(_rotator,0,_qpsk_2k,0);
         _top_block->connect(_qpsk_2k,0,_rssi_valve,0);
         _top_block->connect(_qpsk_2k,1,_const_valve,0);
@@ -320,7 +311,6 @@ void gr_demod_base::set_mode(int mode)
         break;
     case gr_modem_types::ModemTypeQPSK20000:
         _osmosdr_source->set_sample_rate(1000000);
-        _add_const->set_k(-110);
         _top_block->connect(_rotator,0,_qpsk_10k,0);
         _top_block->connect(_qpsk_10k,0,_rssi_valve,0);
         _top_block->connect(_qpsk_10k,1,_const_valve,0);
@@ -332,7 +322,6 @@ void gr_demod_base::set_mode(int mode)
         _carrier_offset = 250000;
         _rotator->set_phase_inc(2*M_PI*-_carrier_offset/1000000);
         _osmosdr_source->set_center_freq(_device_frequency - _carrier_offset);
-        _add_const->set_k(-110);
         _top_block->connect(_rotator,0,_qpsk_250k,0);
         _top_block->connect(_qpsk_250k,0,_rssi_valve,0);
         _top_block->connect(_qpsk_250k,1,_const_valve,0);
@@ -344,7 +333,6 @@ void gr_demod_base::set_mode(int mode)
         _carrier_offset = 250000;
         _rotator->set_phase_inc(2*M_PI*-_carrier_offset/1000000);
         _osmosdr_source->set_center_freq(_device_frequency - _carrier_offset);
-        _add_const->set_k(-110);
         _top_block->connect(_rotator,0,_qpsk_video,0);
         _top_block->connect(_qpsk_video,0,_rssi_valve,0);
         _top_block->connect(_qpsk_video,1,_const_valve,0);
@@ -353,14 +341,12 @@ void gr_demod_base::set_mode(int mode)
         break;
     case gr_modem_types::ModemTypeUSB2500:
         _osmosdr_source->set_sample_rate(1000000);
-        _add_const->set_k(-55);
         _top_block->connect(_rotator,0,_usb,0);
         _top_block->connect(_usb,0,_rssi_valve,0);
         _top_block->connect(_usb,1,_audio_sink,0);
         break;
     case gr_modem_types::ModemTypeLSB2500:
         _osmosdr_source->set_sample_rate(1000000);
-        _add_const->set_k(-55);
         _top_block->connect(_rotator,0,_lsb,0);
         _top_block->connect(_lsb,0,_rssi_valve,0);
         _top_block->connect(_lsb,1,_audio_sink,0);
@@ -370,7 +356,6 @@ void gr_demod_base::set_mode(int mode)
         _carrier_offset = 250000;
         _rotator->set_phase_inc(2*M_PI*-_carrier_offset/1000000);
         _osmosdr_source->set_center_freq(_device_frequency - _carrier_offset);
-        _add_const->set_k(-55);
         _top_block->connect(_rotator,0,_wfm,0);
         _top_block->connect(_wfm,0,_rssi_valve,0);
         _top_block->connect(_wfm,1,_audio_sink,0);

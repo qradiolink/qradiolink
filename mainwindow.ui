@@ -380,6 +380,40 @@ font: 11pt &quot;Sans Serif&quot;;</string>
           </item>
           <item row="13" column="0">
            <layout class="QGridLayout" name="gridLayout_4">
+            <item row="0" column="3">
+             <widget class="QCommandLinkButton" name="toggleRepeaterButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>90</width>
+                <height>64</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>120</width>
+                <height>64</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">font: 14pt &quot;Sans Serif&quot;;
+border-width: 4px;
+background-color: rgb(0, 67, 98);
+color: rgb(255, 255, 255);</string>
+              </property>
+              <property name="text">
+               <string>Repeater</string>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
             <item row="0" column="1">
              <spacer name="horizontalSpacer">
               <property name="orientation">
@@ -393,7 +427,7 @@ font: 11pt &quot;Sans Serif&quot;;</string>
               </property>
              </spacer>
             </item>
-            <item row="0" column="3">
+            <item row="0" column="4">
              <widget class="QCommandLinkButton" name="rxStatusButton">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -439,7 +473,7 @@ color: rgb(255, 255, 255);</string>
               </property>
              </widget>
             </item>
-            <item row="0" column="4">
+            <item row="0" column="5">
              <widget class="QCommandLinkButton" name="txStatusButton">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -510,7 +544,7 @@ background: none;
               </property>
              </widget>
             </item>
-            <item row="0" column="5">
+            <item row="0" column="6">
              <widget class="QPushButton" name="buttonQuit">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -541,22 +575,16 @@ background-color: rgb(132, 0, 0);</string>
              </widget>
             </item>
             <item row="0" column="2">
-             <widget class="QCommandLinkButton" name="toggleRepeaterButton">
+             <widget class="QCommandLinkButton" name="toggleVoxButton">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="minimumSize">
-               <size>
-                <width>90</width>
-                <height>64</height>
-               </size>
-              </property>
               <property name="maximumSize">
                <size>
-                <width>120</width>
+                <width>90</width>
                 <height>64</height>
                </size>
               </property>
@@ -567,7 +595,7 @@ background-color: rgb(0, 67, 98);
 color: rgb(255, 255, 255);</string>
               </property>
               <property name="text">
-               <string>Repeater</string>
+               <string>Vox</string>
               </property>
               <property name="checkable">
                <bool>true</bool>
