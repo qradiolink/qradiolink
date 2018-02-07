@@ -197,18 +197,21 @@ void RadioOp::processAudioStream()
     int audiobuffer_size = 640; //40 ms @ 8k
     short *audiobuffer = new short[audiobuffer_size/sizeof(short)];
     int vad = _audio->read_short(audiobuffer,audiobuffer_size, true);
-    if(_vox_enabled && vad)
+    if(_vox_enabled)
     {
-        _vox_timer->start(100);
-        if(!_tx_started && !_voip_enabled)
-            _transmitting_audio = true;
-    }
-    if(!vad && _vox_enabled && !_vox_timer->isActive())
-    {
-        if(_tx_started && !_voip_enabled)
-            _transmitting_audio = false;
-        delete[] audiobuffer;
-        return;
+        if(vad)
+        {
+            _vox_timer->start(100);
+            if(!_tx_started && !_voip_enabled)
+                _transmitting_audio = true;
+        }
+        if(!vad && !_vox_timer->isActive())
+        {
+            if(_tx_started && !_voip_enabled)
+                _transmitting_audio = false;
+            delete[] audiobuffer;
+            return;
+        }
     }
 
     if(_voip_enabled)
@@ -486,7 +489,6 @@ void RadioOp::run()
         }
 
         updateFrequency();
-        processAudioStream();
         if(transmitting && !ptt_activated)
         {
             ptt_activated = true;
@@ -497,6 +499,7 @@ void RadioOp::run()
             ptt_activated = false;
             stopTx();
         }
+        processAudioStream();
         if(transmitting)
         {
             if(_tx_mode == gr_modem_types::ModemTypeQPSKVideo)
@@ -720,6 +723,7 @@ void RadioOp::processVoipAudioFrame(short *pcm, int samples, quint64 sid)
         else
         {
             _audio->write_short(pcm, samples*sizeof(short));
+            audioFrameReceived();
         }
         _last_voiced_frame_timer.restart();
         _m_queue->clear();
