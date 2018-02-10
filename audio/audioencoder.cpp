@@ -35,7 +35,6 @@ AudioEncoder::AudioEncoder()
     _codec2_2400 = codec2_create(CODEC2_MODE_2400);
 
     _gsm = gsm_create();
-    _agc = hvdi::initAGC(0.8);
     _audio_filter = new Filter(BPF,20,8,0.28,2.8);
     if( _audio_filter->get_error_flag() != 0 )
     {
@@ -48,12 +47,15 @@ AudioEncoder::AudioEncoder()
     opus_encoder_ctl(_enc, OPUS_SET_COMPLEXITY(10));
     //opus_encoder_ctl(_enc, OPUS_SET_DTX(0));
     opus_encoder_ctl(_enc, OPUS_SET_LSB_DEPTH(16));
-    opus_encoder_ctl(_enc, OPUS_SET_MAX_BANDWIDTH(OPUS_BANDWIDTH_FULLBAND));
-    opus_encoder_ctl(_enc, OPUS_SET_PACKET_LOSS_PERC(100));
+    opus_encoder_ctl(_enc, OPUS_SET_SIGNAL(OPUS_SIGNAL_VOICE));
+    opus_encoder_ctl(_enc, OPUS_SET_APPLICATION(OPUS_APPLICATION_AUDIO));
+    opus_encoder_ctl(_enc, OPUS_SET_MAX_BANDWIDTH(OPUS_BANDWIDTH_WIDEBAND));
+    opus_encoder_ctl(_enc, OPUS_SET_PACKET_LOSS_PERC(50));
     opus_encoder_ctl(_enc, OPUS_SET_PREDICTION_DISABLED(0));
     opus_encoder_ctl(_enc, OPUS_GET_BANDWIDTH(&opus_bandwidth));
-    opus_encoder_ctl(_enc, OPUS_SET_INBAND_FEC(0));
+    opus_encoder_ctl(_enc, OPUS_SET_INBAND_FEC(1));
     opus_decoder_ctl(_dec, OPUS_SET_GAIN(-3));
+
 }
 
 AudioEncoder::~AudioEncoder()
@@ -86,7 +88,6 @@ short* AudioEncoder::decode_opus(unsigned char *audiobuffer, int audiobuffersize
         delete[] pcm;
         return NULL;
     }
-    hvdi::AGC(_agc,pcm,samples);
     return pcm;
 }
 
@@ -143,7 +144,6 @@ short* AudioEncoder::decode_codec2_1400(unsigned char *audiobuffer, int audiobuf
     short* decoded = new short[samples];
     memset(decoded,0,(samples)*sizeof(short));
     codec2_decode(_codec2_1400, decoded, audiobuffer);
-    hvdi::AGC(_agc,decoded,samples);
     return decoded;
 }
 
@@ -154,7 +154,6 @@ short* AudioEncoder::decode_codec2_700(unsigned char *audiobuffer, int audiobuff
     short* decoded = new short[samples];
     memset(decoded,0,(samples)*sizeof(short));
     codec2_decode(_codec2_700, decoded, audiobuffer);
-    hvdi::AGC(_agc,decoded,samples);
     return decoded;
 }
 
@@ -165,7 +164,6 @@ short* AudioEncoder::decode_codec2_2400(unsigned char *audiobuffer, int audiobuf
     short* decoded = new short[samples];
     memset(decoded,0,(samples)*sizeof(short));
     codec2_decode(_codec2_2400, decoded, audiobuffer);
-    hvdi::AGC(_agc,decoded,samples);
     return decoded;
 }
 
