@@ -1,3 +1,11 @@
+qradiolink (0.3.18-1) UNRELEASED; urgency=medium
+
+  [ Adrian Musceac ]
+  * Introduced VOX mode
+
+ -- Adrian Musceac <kantooon@gmail.com>  Wed, 7 Feb 2017 24:00:00 +0300
+
+
 qradiolink (0.3.17-1) UNRELEASED; urgency=medium
 
   [ Adrian Musceac ]
