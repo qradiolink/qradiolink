@@ -1172,7 +1172,8 @@ void RadioOp::fineTuneFreq(long center_freq)
 {
     _mutex->lock();
     _modem->tune(_tune_center_freq + center_freq*_step_hz);
-    _modem->tuneTx(_tune_center_freq + _tune_shift_freq + center_freq*_step_hz);
+    // disabled clarifier tuning of TX frequency
+    //_modem->tuneTx(_tune_center_freq + _tune_shift_freq + center_freq*_step_hz);
     _mutex->unlock();
 }
 
