@@ -639,6 +639,7 @@ void MumbleClient::processIncomingAudioPacket(quint8 *data, quint64 size, quint8
     if(audio_size <= 0)
     {
         qDebug() << "malformed audio frame";
+        delete[] data;
         return;
     }
     QByteArray qba = pds.dataBlock(pds.left());
