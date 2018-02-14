@@ -451,6 +451,24 @@ void RadioOp::sendBinData(QByteArray data, int frame_type)
     }
 }
 
+void RadioOp::flushVoipBuffer()
+{
+    if(_voip_encode_buffer->size() > 320)
+    {
+        int frames = floor(_voip_encode_buffer->size() / 320);
+        for(int j = 0;j<frames;j++)
+        {
+            short *pcm = new short[320];
+            for(int i =0; i< 320;i++)
+            {
+                pcm[i] = _voip_encode_buffer->at(i);
+            }
+            _voip_encode_buffer->remove(0,320);
+            emit voipData(pcm,320*sizeof(short));
+        }
+    }
+}
+
 void RadioOp::run()
 {
 
@@ -462,16 +480,7 @@ void RadioOp::run()
     {
         bool transmitting = _transmitting_audio;
         QCoreApplication::processEvents();
-        if(_voip_encode_buffer->size() > 320)
-        {
-            short *pcm = new short[320];
-            for(int i =0; i< 320;i++)
-            {
-                pcm[i] = _voip_encode_buffer->at(i);
-            }
-            _voip_encode_buffer->remove(0,320);
-            emit voipData(pcm,320*sizeof(short));
-        }
+        flushVoipBuffer();
 
         int time = QDateTime::currentDateTime().toTime_t();
         if((time - last_ping_time) > 10)

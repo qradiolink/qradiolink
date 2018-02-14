@@ -65,6 +65,7 @@ public:
                      gr::qtgui::const_sink_c::sptr const_gui, gr::qtgui::number_sink::sptr rssi_gui, QObject *parent = 0);
     ~RadioOp();
 
+    void flushVoipBuffer();
 signals:
     void finished();
     void printText(QString text, bool html);
