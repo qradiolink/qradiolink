@@ -194,6 +194,8 @@ void RadioOp::processAudioStream()
 {
     if(!_transmitting_audio && !_vox_enabled)
         return;
+    if(_tx_mode == gr_modem_types::ModemTypeQPSK250000)
+        return;
     int audiobuffer_size = 640; //40 ms @ 8k
     short *audiobuffer = new short[audiobuffer_size/sizeof(short)];
     int vad = _audio->read_short(audiobuffer,audiobuffer_size, true);
@@ -353,7 +355,7 @@ void RadioOp::startTx()
 {
     if(_tx_inited)
     {
-        if(_rx_inited && !_repeat && (_tx_mode != gr_modem_types::ModemTypeQPSK250000))
+        if(_rx_inited && !_repeat && (_rx_mode != gr_modem_types::ModemTypeQPSK250000))
             _modem->stopRX();
         if(_tx_modem_started)
             _modem->stopTX();
@@ -362,7 +364,8 @@ void RadioOp::startTx()
         _modem->tuneTx(_tune_center_freq + _tune_shift_freq);
         _tx_modem_started = false;
         _tx_started = true;
-        if(_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL)
+        if((_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL)
+                && (_tx_mode != gr_modem_types::ModemTypeQPSK250000))
             _modem->startTransmission(_callsign);
     }
 }
@@ -383,7 +386,7 @@ void RadioOp::stopTx()
         _modem->tuneTx(70000000);
         _tx_modem_started = false;
         _tx_started = false;
-        if(_rx_inited && !_repeat)
+        if(_rx_inited && !_repeat && (_rx_mode != gr_modem_types::ModemTypeQPSK250000))
             _modem->startRX();
     }
 }
@@ -679,6 +682,7 @@ void RadioOp::receiveNetData(unsigned char *data, int size)
         delete[] data;
         return;
     }
+    qDebug() << frame_size;
     unsigned char *net_frame = new unsigned char[frame_size];
     memcpy(net_frame, &data[12], frame_size);
     delete[] data;

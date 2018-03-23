@@ -34,7 +34,7 @@ int NetDevice::tun_init()
     char *dev = const_cast<char*>(dev_str.toStdString().c_str());
     if( (_fd_tun = open("/dev/net/tun", O_RDWR)) < 0 )
     {
-        qDebug() << "tun device open failed";
+        std::cerr << "tun device open failed" << std::endl;
         return -1;
     }
 
@@ -51,7 +51,7 @@ int NetDevice::tun_init()
 
     if( (err = ioctl(_fd_tun, TUNSETIFF, (void *) &ifr)) < 0 )
     {
-        qDebug() << "net ioctl failed";
+        std::cerr << "net ioctl failed" << std::endl;
         close(_fd_tun);
         return err;
     }
@@ -74,9 +74,11 @@ int NetDevice::tun_init()
     strncpy(ifr.ifr_name, dev, IFNAMSIZ);
     if( (err = ioctl(s, SIOCSIFFLAGS, &ifr)) < 0 )
     {
-        qDebug() << "could not bring tap interface up";
+        std::cerr << "could not bring tap interface up" << std::endl;
         return err;
     }
+    int flags = fcntl(_fd_tun, F_GETFL, 0);
+    fcntl(_fd_tun, F_SETFL, flags | O_NONBLOCK);
 
     return 1;
 }
@@ -85,10 +87,12 @@ unsigned char* NetDevice::read_buffered(int &nread)
 {
     unsigned char *buffer = new unsigned char[1500];
     nread = read(_fd_tun,buffer,1500);
+    /*
     if(nread < 0)
     {
-      qDebug() << "error reading from tap interface";
+      std::cerr << "error reading from tap interface" << std::endl;
     }
+    */
     return buffer;
 }
 
@@ -97,7 +101,7 @@ int NetDevice::write_buffered(unsigned char *data, int len)
     int nwrite = write(_fd_tun,data,len);
     if(nwrite < 0)
     {
-      qDebug() << "error writing to tap interface";
+      std::cerr << "error writing to tap interface" << std::endl;
     }
     delete[] data;
     return nwrite;
