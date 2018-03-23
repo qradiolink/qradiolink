@@ -37,6 +37,8 @@ int NetDevice::tun_init()
         std::cerr << "tun device open failed" << std::endl;
         return -1;
     }
+    int flags = fcntl(_fd_tun, F_GETFL, 0);
+    fcntl(_fd_tun, F_SETFL, flags | O_NONBLOCK);
 
     memset(&ifr, 0, sizeof(ifr));
 
@@ -92,8 +94,6 @@ int NetDevice::tun_init()
         std::cerr << "could not bring tap interface up " << err << std::endl;
         return err;
     }
-    int flags = fcntl(_fd_tun, F_GETFL, 0);
-    fcntl(_fd_tun, F_SETFL, flags | O_NONBLOCK);
 
     return 1;
 }
