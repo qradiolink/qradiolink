@@ -156,5 +156,6 @@ unix:!symbian: LIBS += -lprotobuf -lopus -lpulse-simple -lpulse -lcodec2 -lgsm -
                     #-lFestival -lestbase -leststring -lestools -lasound
 #INCLUDEPATH += /usr/include/speech_tools
 INCLUDEPATH += /usr/include/qwt-qt4
+INCLUDEPATH += /usr/include/qwt
 
 RESOURCES += resources.qrc

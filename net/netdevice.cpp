@@ -74,7 +74,7 @@ int NetDevice::tun_init()
     strncpy(ifr.ifr_name, dev, IFNAMSIZ);
     if( (err = ioctl(s, SIOCSIFFLAGS, &ifr)) < 0 )
     {
-        std::cerr << "could not bring tap interface up" << std::endl;
+        std::cerr << "could not bring tap interface up " << err << std::endl;
         return err;
     }
     int flags = fcntl(_fd_tun, F_GETFL, 0);
