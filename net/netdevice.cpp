@@ -51,7 +51,7 @@ int NetDevice::tun_init()
 
     if( (err = ioctl(_fd_tun, TUNSETIFF, (void *) &ifr)) < 0 )
     {
-        std::cerr << "net ioctl failed" << std::endl;
+        std::cerr << "creating net device failed" << std::endl;
         close(_fd_tun);
         return err;
     }
@@ -63,12 +63,27 @@ int NetDevice::tun_init()
     QString ip_str = "10.0.0." + QString::number(_if_no+1);
     char *ip = const_cast<char*>(ip_str.toStdString().c_str());
     inet_pton(AF_INET, ip, ifr.ifr_addr.sa_data + 2);
-    ioctl(s, SIOCSIFADDR, &ifr);
+    if( (err = ioctl(s, SIOCSIFADDR, &ifr)) < 0)
+    {
+        std::cerr << "setting address failed " << err << std::endl;
+        close(_fd_tun);
+        return err;
+    }
 
     inet_pton(AF_INET, "255.255.255.0", ifr.ifr_addr.sa_data + 2);
-    ioctl(s, SIOCSIFNETMASK, &ifr);
+    if( (err = ioctl(s, SIOCSIFNETMASK, &ifr)) < 0)
+    {
+        std::cerr << "setting netmask failed " << err << std::endl;
+        close(_fd_tun);
+        return err;
+    }
 
-    ioctl(s, SIOCGIFFLAGS, &ifr);
+    if( (err = ioctl(s, SIOCGIFFLAGS, &ifr)) < 0)
+    {
+        std::cerr << "getting flags failed " << err << std::endl;
+        close(_fd_tun);
+        return err;
+    }
     ifr.ifr_flags |= (IFF_UP | IFF_RUNNING);
 
     strncpy(ifr.ifr_name, dev, IFNAMSIZ);
