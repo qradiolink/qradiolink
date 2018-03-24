@@ -88,7 +88,7 @@ int NetDevice::tun_init()
     }
     ifr.ifr_flags |= (IFF_UP | IFF_RUNNING);
 
-    strncpy(ifr.ifr_name, dev, IFNAMSIZ);
+    //strncpy(ifr.ifr_name, dev, IFNAMSIZ);
     if( (err = ioctl(s, SIOCSIFFLAGS, &ifr)) < 0 )
     {
         int saved_errno = errno;
