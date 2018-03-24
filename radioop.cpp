@@ -303,7 +303,7 @@ void RadioOp::processNetStream()
 {
     qint64 microsec;
     microsec = (quint64)_data_read_timer->nsecsElapsed()/1000;
-    if(microsec < 47200)
+    if(microsec < 47100)
     {
         return;
     }
@@ -816,10 +816,13 @@ void RadioOp::dataFrameReceived()
 {
     emit displayDataReceiveStatus(true);
     _data_led_timer->start(100);
-    short *sound = (short*) _data_rec_sound->data();
-    short *samples = new short[_data_rec_sound->size()];
-    memcpy(samples, sound, _data_rec_sound->size());
-    _audio->write_short(samples,_data_rec_sound->size());
+    if(_rx_mode != gr_modem_types::ModemTypeQPSK250000)
+    {
+        short *sound = (short*) _data_rec_sound->data();
+        short *samples = new short[_data_rec_sound->size()];
+        memcpy(samples, sound, _data_rec_sound->size());
+        _audio->write_short(samples,_data_rec_sound->size());
+    }
 
 }
 
