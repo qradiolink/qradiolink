@@ -422,7 +422,7 @@ void gr_modem::processVideoData(unsigned char *data, int size)
 void gr_modem::processNetData(unsigned char *data, int size)
 {
     QVector<std::vector<unsigned char>*> frames;
-    for(int i = 0;i<250;i++)
+    for(int i = 0;i<48;i++)
     {
         std::vector<unsigned char> *tx_start = new std::vector<unsigned char>;
         tx_start->push_back(0x8C);
