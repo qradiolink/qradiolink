@@ -504,7 +504,7 @@ void RadioOp::updateDataModemReset(bool transmitting, bool ptt_activated)
     {
         qint64 sec_modem_running;
         sec_modem_running = (quint64)_data_modem_reset_timer->nsecsElapsed()/1000000000;
-        if(sec_modem_running > 180)
+        if(sec_modem_running > 120)
         {
             qDebug() << "resetting modem";
             _data_modem_sleeping = true;
