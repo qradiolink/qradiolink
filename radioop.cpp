@@ -44,6 +44,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _voip_tx_timer->setSingleShot(true);
     _vox_timer = new QTimer(this);
     _vox_timer->setSingleShot(true);
+    _data_read_timer = new QElapsedTimer();
     _settings = settings;
     _transmitting_audio = false;
     _process_text = false;
@@ -300,6 +301,13 @@ int RadioOp::processVideoStream(bool &frame_flag)
 
 void RadioOp::processNetStream()
 {
+    qint64 microsec;
+    microsec = (quint64)_data_read_timer->nsecsElapsed()/1000;
+    if(microsec < 47000)
+    {
+        return;
+    }
+    _data_read_timer->restart();
     int max_frame_size = 1512;
     unsigned char *netbuffer = (unsigned char*)calloc(max_frame_size, sizeof(unsigned char));
     int nread;
@@ -321,7 +329,16 @@ void RadioOp::processNetStream()
     }
     else
     {
-        delete[] netbuffer;
+        int fake_nread = -1;
+        memcpy(&(netbuffer[0]), &fake_nread, 4);
+        memcpy(&(netbuffer[4]), &fake_nread, 4);
+        memcpy(&(netbuffer[8]), &fake_nread, 4);
+        for(int k=12,i=0;k<max_frame_size;k++,i++)
+        {
+            netbuffer[k] = _rand_frame_data[i];
+        }
+
+        emit netData(netbuffer,max_frame_size);
         delete[] buffer;
     }
 }
@@ -676,6 +693,12 @@ void RadioOp::receiveVideoData(unsigned char *data, int size)
 void RadioOp::receiveNetData(unsigned char *data, int size)
 {
     int frame_size = getFrameLength(data);
+    if(frame_size < 0)
+    {
+        qDebug() << "received dummy data ";
+        delete[] data;
+        return;
+    }
     if((frame_size == 0) || (frame_size > 1500))
     {
         qDebug() << "received corrupted frame size, dropping frame ";

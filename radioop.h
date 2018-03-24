@@ -174,6 +174,7 @@ private:
     float _rx_volume;
     QElapsedTimer _last_voiced_frame_timer;
     QTimer *_voip_tx_timer;
+    QElapsedTimer *_data_read_timer;
     gr::qtgui::sink_c::sptr _fft_gui;
     unsigned char *_rand_frame_data;
     std::vector<short> *_m_queue;
