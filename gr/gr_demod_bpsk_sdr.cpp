@@ -83,10 +83,10 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(std::vector<int>signature, int sps, int sam
     connect(_fll,0,_agc,0);
     //connect(_shaping_filter,0,_agc,0);
     connect(_agc,0,_clock_recovery,0);
-    connect(_clock_recovery,0,_costas_loop,0);
-    connect(_costas_loop,0,_equalizer,0);
-    connect(_equalizer,0,_complex_to_real,0);
-    connect(_equalizer,0,self(),1);
+    connect(_clock_recovery,0,_equalizer,0);
+    connect(_equalizer,0,_costas_loop,0);
+    connect(_costas_loop,0,_complex_to_real,0);
+    connect(_costas_loop,0,self(),1);
     connect(_complex_to_real,0,_multiply_const_fec,0);
     connect(_multiply_const_fec,0,_cc_decoder,0);
     connect(_cc_decoder,0,_packed_to_unpacked,0);
