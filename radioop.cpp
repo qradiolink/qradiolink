@@ -859,7 +859,8 @@ void RadioOp::dataFrameReceived()
 {
     emit displayDataReceiveStatus(true);
     _data_led_timer->start(100);
-    if(_rx_mode != gr_modem_types::ModemTypeQPSK250000)
+    if((_rx_mode != gr_modem_types::ModemTypeQPSK250000)
+            && (_rx_mode != gr_modem_types::ModemTypeQPSKVideo))
     {
         short *sound = (short*) _data_rec_sound->data();
         short *samples = new short[_data_rec_sound->size()];
