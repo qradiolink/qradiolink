@@ -22,10 +22,12 @@
 #include <QRegExp>
 #include <QCoreApplication>
 #include <unistd.h>
+#include <iostream>
 #include <math.h>
 #include <sys/socket.h>
 #include <linux/if.h>
 #include <linux/if_tun.h>
+#include <errno.h>
 #include <arpa/inet.h>
 #include <sys/ioctl.h>
 #include <fcntl.h>

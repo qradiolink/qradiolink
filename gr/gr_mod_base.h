@@ -20,6 +20,7 @@
 #include <QObject>
 #include "modem_types.h"
 #include <gnuradio/top_block.h>
+#include <gnuradio/blocks/rotator_cc.h>
 #include <osmosdr/sink.h>
 #include <vector>
 #include "gr_vector_source.h"
@@ -54,6 +55,7 @@ private:
     gr_vector_source_sptr _vector_source;
     gr_audio_source_sptr _audio_source;
     osmosdr::sink::sptr _osmosdr_sink;
+    gr::blocks::rotator_cc::sptr _rotator;
 
     gr_mod_2fsk_sdr_sptr _2fsk;
     gr_mod_4fsk_sdr_sptr _4fsk_2k;
@@ -75,6 +77,7 @@ private:
     int _carrier_freq;
     int _filter_width;
     float _device_frequency;
+    int _carrier_offset;
     int _mode;
 
 

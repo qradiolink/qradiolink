@@ -44,7 +44,7 @@ std::vector<float> *gr_audio_sink::get_data()
     gr::thread::scoped_lock guard(_mutex);
 
     std::vector<float>* data = new std::vector<float>;
-    if(_data->size() < 320)
+    if(_data->size() < 1)
     {
         return data;
     }
@@ -61,7 +61,7 @@ int gr_audio_sink::work(int noutput_items,
 {
     if(noutput_items < 1)
     {
-        usleep(1);
+        usleep(2000);
         return noutput_items;
     }
     gr::thread::scoped_lock guard(_mutex);

@@ -26,10 +26,13 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
     _vector_source = make_gr_vector_source();
     _audio_source = make_gr_audio_source();
 
+    _carrier_offset = 0;
+
+    _rotator = gr::blocks::rotator_cc::make(2*M_PI*250000/1000000);
     _osmosdr_sink = osmosdr::sink::make(device_args);
     _osmosdr_sink->set_sample_rate(250000);
     _osmosdr_sink->set_antenna(device_antenna);
-    _osmosdr_sink->set_center_freq(_device_frequency);
+    _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
     _osmosdr_sink->set_freq_corr(freq_corr);
     osmosdr::gain_range_t range = _osmosdr_sink->get_gain_range();
     if (!range.empty())
@@ -48,8 +51,8 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
     _fm_5000 = make_gr_mod_nbfm_sdr(0, 250000, 1700, 4000);
     _qpsk_2k = make_gr_mod_qpsk_sdr(250, 250000, 1700, 800);
     _qpsk_10k = make_gr_mod_qpsk_sdr(50, 250000, 1700, 4000);
-    _qpsk_250k = make_gr_mod_qpsk_sdr(2, 250000, 1700, 65000);
-    _qpsk_video = make_gr_mod_qpsk_sdr(2, 250000, 1700, 65000);
+    _qpsk_250k = make_gr_mod_qpsk_sdr(8, 1000000, 1700, 75000);
+    _qpsk_video = make_gr_mod_qpsk_sdr(2, 250000, 1700, 75000);
     _usb = make_gr_mod_ssb_sdr(0, 250000, 1700, 2500);
     _lsb = make_gr_mod_ssb_sdr(1, 250000, 1700, 2500);
 }
@@ -101,8 +104,11 @@ void gr_mod_base::set_mode(int mode)
         _top_block->disconnect(_qpsk_10k,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeQPSK250000:
+        _carrier_offset = 0;
+        _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
         _top_block->disconnect(_vector_source,0,_qpsk_250k,0);
-        _top_block->disconnect(_qpsk_250k,0,_osmosdr_sink,0);
+        _top_block->disconnect(_qpsk_250k,0,_rotator,0);
+        _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeQPSKVideo:
         _top_block->disconnect(_vector_source,0,_qpsk_video,0);
@@ -173,9 +179,12 @@ void gr_mod_base::set_mode(int mode)
         _top_block->connect(_qpsk_10k,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeQPSK250000:
-        _osmosdr_sink->set_sample_rate(250000);
+        _carrier_offset = 250000;
+        _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
+        _osmosdr_sink->set_sample_rate(1000000);
         _top_block->connect(_vector_source,0,_qpsk_250k,0);
-        _top_block->connect(_qpsk_250k,0,_osmosdr_sink,0);
+        _top_block->connect(_qpsk_250k,0,_rotator,0);
+        _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeQPSKVideo:
         _osmosdr_sink->set_sample_rate(250000);
@@ -227,7 +236,7 @@ int gr_mod_base::setAudio(std::vector<float> *data)
 void gr_mod_base::tune(long center_freq)
 {
     _device_frequency = center_freq;
-    _osmosdr_sink->set_center_freq(_device_frequency);
+    _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
 }
 
 void gr_mod_base::set_power(float dbm)

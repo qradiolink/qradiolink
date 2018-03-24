@@ -48,12 +48,12 @@ AudioEncoder::AudioEncoder()
     //opus_encoder_ctl(_enc, OPUS_SET_DTX(0));
     opus_encoder_ctl(_enc, OPUS_SET_LSB_DEPTH(16));
     opus_encoder_ctl(_enc, OPUS_SET_SIGNAL(OPUS_SIGNAL_VOICE));
-    opus_encoder_ctl(_enc, OPUS_SET_APPLICATION(OPUS_APPLICATION_AUDIO));
+    opus_encoder_ctl(_enc, OPUS_SET_APPLICATION(OPUS_APPLICATION_VOIP));
     opus_encoder_ctl(_enc, OPUS_SET_MAX_BANDWIDTH(OPUS_BANDWIDTH_WIDEBAND));
     opus_encoder_ctl(_enc, OPUS_SET_PACKET_LOSS_PERC(50));
-    opus_encoder_ctl(_enc, OPUS_SET_PREDICTION_DISABLED(0));
+    //opus_encoder_ctl(_enc, OPUS_SET_PREDICTION_DISABLED(0));
     opus_encoder_ctl(_enc, OPUS_GET_BANDWIDTH(&opus_bandwidth));
-    opus_encoder_ctl(_enc, OPUS_SET_INBAND_FEC(1));
+    opus_encoder_ctl(_enc, OPUS_SET_INBAND_FEC(0));
     opus_decoder_ctl(_dec, OPUS_SET_GAIN(-3));
 
 }
@@ -71,17 +71,15 @@ AudioEncoder::~AudioEncoder()
 unsigned char* AudioEncoder::encode_opus(short *audiobuffer, int audiobuffersize, int &encoded_size)
 {
     unsigned char *encoded_audio = new unsigned char[47];
-    memset(encoded_audio,0,47);
     encoded_size = opus_encode(_enc, audiobuffer, audiobuffersize/sizeof(short), encoded_audio, 47);
     return encoded_audio;
-
 }
 
 short* AudioEncoder::decode_opus(unsigned char *audiobuffer, int audiobuffersize, int &samples)
 {
     int fs = 320;
     short *pcm = new short[fs];
-    memset(pcm,0,(fs)*sizeof(short));
+    //memset(pcm,0,(fs)*sizeof(short));
     samples = opus_decode(_dec,audiobuffer,audiobuffersize, pcm, fs, 0);
     if(samples <= 0)
     {

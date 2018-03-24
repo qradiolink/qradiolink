@@ -57,7 +57,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
     _filter_width = filter_width;
     int filter_slope = 600;
     if(_target_samp_rate > 100000)
-        filter_slope = 10000;
+        filter_slope = 5000;
 
     std::vector<int> map;
     map.push_back(0);
@@ -77,13 +77,20 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
 
     _resampler = gr::filter::rational_resampler_base_ccf::make(interpolation, decimation, taps);
 
-    _agc = gr::analog::agc2_cc::make(10, 1e-1, 1, 1);
+    _agc = gr::analog::agc2_cc::make(1, 1, 1, 0);
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
                                 1, _target_samp_rate, _filter_width, filter_slope,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     float gain_mu, omega_rel_limit;
-
-    gain_mu = 0.025;
-    omega_rel_limit = 0.001;
+    if(sps > 2)
+    {
+        gain_mu = 0.005;
+        omega_rel_limit = 0.0005;
+    }
+    else
+    {
+        gain_mu = 0.001;
+        omega_rel_limit = 0.0001;
+    }
 
     _shaping_filter = gr::filter::fft_filter_ccf::make(
                 1, gr::filter::firdes::root_raised_cosine(1,_target_samp_rate,_target_samp_rate/_samples_per_symbol,0.35,32));
@@ -104,14 +111,22 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
     connect(self(),0,_resampler,0);
     connect(_resampler,0,_filter,0);
     connect(_filter,0,self(),0);
-    connect(_filter,0,_fll,0);
-    //connect(_shaping_filter,0,_agc,0);
-    connect(_fll,0,_agc,0);
+    if(sps > 2)
+    {
+        connect(_filter,0,_fll,0);
+        //connect(_shaping_filter,0,_agc,0);
+        connect(_fll,0,_agc,0);
+    }
+    else
+    {
+        connect(_filter,0,_agc,0);
+    }
+
     connect(_agc,0,_clock_recovery,0);
-    connect(_clock_recovery,0,_costas_loop,0);
-    connect(_costas_loop,0,_equalizer,0);
-    connect(_equalizer,0,self(),1);
-    connect(_equalizer,0,_constellation_receiver,0);
+    connect(_clock_recovery,0,_equalizer,0);
+    connect(_equalizer,0,_costas_loop,0);
+    connect(_costas_loop,0,self(),1);
+    connect(_costas_loop,0,_constellation_receiver,0);
     connect(_constellation_receiver,0,_diff_decoder,0);
     connect(_diff_decoder,0,_map,0);
     connect(_map,0,_unpack,0);

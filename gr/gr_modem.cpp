@@ -422,21 +422,6 @@ void gr_modem::processVideoData(unsigned char *data, int size)
 void gr_modem::processNetData(unsigned char *data, int size)
 {
     QVector<std::vector<unsigned char>*> frames;
-    for(int i = 0;i<48;i++)
-    {
-        std::vector<unsigned char> *tx_start = new std::vector<unsigned char>;
-        tx_start->push_back(0x8C);
-        tx_start->push_back(0x8C);
-        tx_start->push_back(0x8C);
-        tx_start->push_back(0x8C);
-        tx_start->push_back(0x8C);
-        tx_start->push_back(0x8C);
-        tx_start->push_back(0x8C);
-        tx_start->push_back(0x8C);
-        tx_start->push_back(0x8C);
-        tx_start->push_back(0x8C);
-        frames.append(tx_start);
-    }
     std::vector<unsigned char> *one_frame = frame(data, size, FrameTypeData);
     frames.append(one_frame);
     transmit(frames);
@@ -680,7 +665,8 @@ int gr_modem::findSync(unsigned char bit)
             return FrameTypeVoice;
         }
     }
-    if(_modem_type_rx != gr_modem_types::ModemTypeQPSK250000)
+    if(_modem_type_rx != gr_modem_types::ModemTypeQPSK250000 &&
+            _modem_type_rx != gr_modem_types::ModemTypeQPSKVideo)
     {
         temp = _shift_reg & 0xFFFF;
         if((temp == 0xED89))
@@ -716,6 +702,11 @@ int gr_modem::findSync(unsigned char bit)
     {
         _sync_found = true;
         return FrameTypeData;
+    }
+    if((temp == 0x98DEAA))
+    {
+        _sync_found = true;
+        return FrameTypeVideo;
     }
     if((temp == 0x4C8A2B))
     {

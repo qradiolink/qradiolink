@@ -34,9 +34,11 @@ int NetDevice::tun_init()
     char *dev = const_cast<char*>(dev_str.toStdString().c_str());
     if( (_fd_tun = open("/dev/net/tun", O_RDWR)) < 0 )
     {
-        qDebug() << "tun device open failed";
+        std::cerr << "tun device open failed" << std::endl;
         return -1;
     }
+    int flags = fcntl(_fd_tun, F_GETFL, 0);
+    fcntl(_fd_tun, F_SETFL, flags | O_NONBLOCK);
 
     memset(&ifr, 0, sizeof(ifr));
 
@@ -51,7 +53,7 @@ int NetDevice::tun_init()
 
     if( (err = ioctl(_fd_tun, TUNSETIFF, (void *) &ifr)) < 0 )
     {
-        qDebug() << "net ioctl failed";
+        std::cerr << "creating net device failed" << std::endl;
         close(_fd_tun);
         return err;
     }
@@ -63,18 +65,34 @@ int NetDevice::tun_init()
     QString ip_str = "10.0.0." + QString::number(_if_no+1);
     char *ip = const_cast<char*>(ip_str.toStdString().c_str());
     inet_pton(AF_INET, ip, ifr.ifr_addr.sa_data + 2);
-    ioctl(s, SIOCSIFADDR, &ifr);
+    if( (err = ioctl(s, SIOCSIFADDR, &ifr)) < 0)
+    {
+        std::cerr << "setting address failed " << err << std::endl;
+        close(_fd_tun);
+        return err;
+    }
 
     inet_pton(AF_INET, "255.255.255.0", ifr.ifr_addr.sa_data + 2);
-    ioctl(s, SIOCSIFNETMASK, &ifr);
+    if( (err = ioctl(s, SIOCSIFNETMASK, &ifr)) < 0)
+    {
+        std::cerr << "setting netmask failed " << err << std::endl;
+        close(_fd_tun);
+        return err;
+    }
 
-    ioctl(s, SIOCGIFFLAGS, &ifr);
+    if( (err = ioctl(s, SIOCGIFFLAGS, &ifr)) < 0)
+    {
+        std::cerr << "getting flags failed " << err << std::endl;
+        close(_fd_tun);
+        return err;
+    }
     ifr.ifr_flags |= (IFF_UP | IFF_RUNNING);
 
-    strncpy(ifr.ifr_name, dev, IFNAMSIZ);
+    //strncpy(ifr.ifr_name, dev, IFNAMSIZ);
     if( (err = ioctl(s, SIOCSIFFLAGS, &ifr)) < 0 )
     {
-        qDebug() << "could not bring tap interface up";
+        int saved_errno = errno;
+        std::cerr << "could not bring tap interface up " << saved_errno << std::endl;
         return err;
     }
 
@@ -85,10 +103,12 @@ unsigned char* NetDevice::read_buffered(int &nread)
 {
     unsigned char *buffer = new unsigned char[1500];
     nread = read(_fd_tun,buffer,1500);
+    /*
     if(nread < 0)
     {
-      qDebug() << "error reading from tap interface";
+      std::cerr << "error reading from tap interface" << std::endl;
     }
+    */
     return buffer;
 }
 
@@ -97,7 +117,7 @@ int NetDevice::write_buffered(unsigned char *data, int len)
     int nwrite = write(_fd_tun,data,len);
     if(nwrite < 0)
     {
-      qDebug() << "error writing to tap interface";
+      std::cerr << "error writing to tap interface" << std::endl;
     }
     delete[] data;
     return nwrite;
