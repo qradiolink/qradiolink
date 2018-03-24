@@ -389,8 +389,7 @@ void RadioOp::startTx()
         _modem->tuneTx(_tune_center_freq + _tune_shift_freq);
         _tx_modem_started = false;
         _tx_started = true;
-        if((_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL)
-                && (_tx_mode != gr_modem_types::ModemTypeQPSK250000))
+        if((_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL))
             _modem->startTransmission(_callsign);
     }
 }
@@ -520,6 +519,7 @@ void RadioOp::updateDataModemReset(bool transmitting, bool ptt_activated)
             _data_modem_sleep_timer->restart();
             _data_modem_sleeping = false;
             _data_modem_reset_timer->restart();
+            _modem->startTransmission(_callsign);
             qDebug() << "modem reset complete";
         }
     }
