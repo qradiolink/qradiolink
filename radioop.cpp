@@ -306,7 +306,7 @@ void RadioOp::processNetStream()
 {
     qint64 microsec;
     microsec = (quint64)_data_read_timer->nsecsElapsed()/1000;
-    if(microsec < 47000)
+    if(microsec < 47200)
     {
         return;
     }
@@ -504,11 +504,8 @@ void RadioOp::updateDataModemReset(bool transmitting, bool ptt_activated)
     {
         qint64 sec_modem_running;
         sec_modem_running = (quint64)_data_modem_reset_timer->nsecsElapsed()/1000000000;
-        if(sec_modem_running > 60)
+        if(sec_modem_running > 180)
         {
-            ptt_activated = false;
-            _transmitting_audio = false;
-            transmitting = false;
             qDebug() << "resetting modem";
             _data_modem_sleeping = true;
             _data_modem_sleep_timer->restart();
@@ -518,12 +515,9 @@ void RadioOp::updateDataModemReset(bool transmitting, bool ptt_activated)
     {
         qint64 sec_modem_sleeping;
         sec_modem_sleeping = (quint64)_data_modem_sleep_timer->nsecsElapsed()/1000000000;
-        if(sec_modem_sleeping > 3)
+        if(sec_modem_sleeping > 2)
         {
             _data_modem_sleep_timer->restart();
-            ptt_activated = true;
-            _transmitting_audio = true;
-            transmitting = true;
             _data_modem_sleeping = false;
             _data_modem_reset_timer->restart();
             qDebug() << "modem reset complete";
@@ -582,7 +576,8 @@ void RadioOp::run()
                 {
                     _modem->demodulate();
                 }
-                processNetStream();
+                if(!_data_modem_sleeping)
+                    processNetStream();
             }
         }
         else
