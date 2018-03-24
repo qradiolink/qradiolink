@@ -91,7 +91,8 @@ int NetDevice::tun_init()
     strncpy(ifr.ifr_name, dev, IFNAMSIZ);
     if( (err = ioctl(s, SIOCSIFFLAGS, &ifr)) < 0 )
     {
-        std::cerr << "could not bring tap interface up " << err << std::endl;
+        int saved_errno = errno;
+        std::cerr << "could not bring tap interface up " << saved_errno << std::endl;
         return err;
     }
 

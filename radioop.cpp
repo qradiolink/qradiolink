@@ -676,13 +676,12 @@ void RadioOp::receiveVideoData(unsigned char *data, int size)
 void RadioOp::receiveNetData(unsigned char *data, int size)
 {
     int frame_size = getFrameLength(data);
-    if(frame_size == 0)
+    if((frame_size == 0) || (frame_size > 1500))
     {
         qDebug() << "received corrupted frame size, dropping frame ";
         delete[] data;
         return;
     }
-    qDebug() << frame_size;
     unsigned char *net_frame = new unsigned char[frame_size];
     memcpy(net_frame, &data[12], frame_size);
     delete[] data;
