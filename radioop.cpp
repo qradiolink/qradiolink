@@ -514,7 +514,7 @@ void RadioOp::updateDataModemReset(bool transmitting, bool ptt_activated)
     {
         qint64 sec_modem_sleeping;
         sec_modem_sleeping = (quint64)_data_modem_sleep_timer->nsecsElapsed()/1000000000;
-        if(sec_modem_sleeping > 1)
+        if(sec_modem_sleeping > 2)
         {
             _data_modem_sleep_timer->restart();
             _data_modem_sleeping = false;
