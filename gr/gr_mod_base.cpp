@@ -48,7 +48,7 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
     _fm_5000 = make_gr_mod_nbfm_sdr(0, 250000, 1700, 4000);
     _qpsk_2k = make_gr_mod_qpsk_sdr(250, 250000, 1700, 800);
     _qpsk_10k = make_gr_mod_qpsk_sdr(50, 250000, 1700, 4000);
-    _qpsk_250k = make_gr_mod_qpsk_sdr(2, 250000, 1700, 65000);
+    _qpsk_250k = make_gr_mod_qpsk_sdr(8, 1000000, 1700, 65000);
     _qpsk_video = make_gr_mod_qpsk_sdr(2, 250000, 1700, 65000);
     _usb = make_gr_mod_ssb_sdr(0, 250000, 1700, 2500);
     _lsb = make_gr_mod_ssb_sdr(1, 250000, 1700, 2500);
@@ -173,7 +173,7 @@ void gr_mod_base::set_mode(int mode)
         _top_block->connect(_qpsk_10k,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeQPSK250000:
-        _osmosdr_sink->set_sample_rate(250000);
+        _osmosdr_sink->set_sample_rate(1000000);
         _top_block->connect(_vector_source,0,_qpsk_250k,0);
         _top_block->connect(_qpsk_250k,0,_osmosdr_sink,0);
         break;
