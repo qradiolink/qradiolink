@@ -644,9 +644,9 @@ void RadioOp::receivePCMAudio(std::vector<float> *audio_data)
 
 int RadioOp::getFrameLength(unsigned char *data)
 {
-    unsigned long frame_size1;
-    unsigned long frame_size2;
-    unsigned long frame_size3;
+    int frame_size1;
+    int frame_size2;
+    int frame_size3;
 
     memcpy(&frame_size1, &data[0], 4);
     memcpy(&frame_size2, &data[4], 4);
