@@ -66,6 +66,7 @@ public:
     ~RadioOp();
 
     void flushVoipBuffer();
+    void updateDataModemReset(bool transmitting, bool ptt_activated);
 signals:
     void finished();
     void printText(QString text, bool html);
@@ -175,6 +176,9 @@ private:
     QElapsedTimer _last_voiced_frame_timer;
     QTimer *_voip_tx_timer;
     QElapsedTimer *_data_read_timer;
+    QElapsedTimer *_data_modem_reset_timer;
+    QElapsedTimer *_data_modem_sleep_timer;
+    bool _data_modem_sleeping;
     gr::qtgui::sink_c::sptr _fft_gui;
     unsigned char *_rand_frame_data;
     std::vector<short> *_m_queue;

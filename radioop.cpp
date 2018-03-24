@@ -45,6 +45,9 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _vox_timer = new QTimer(this);
     _vox_timer->setSingleShot(true);
     _data_read_timer = new QElapsedTimer();
+    _data_modem_reset_timer = new QElapsedTimer();
+    _data_modem_sleep_timer = new QElapsedTimer();
+    _data_modem_sleeping = false;
     _settings = settings;
     _transmitting_audio = false;
     _process_text = false;
@@ -303,7 +306,7 @@ void RadioOp::processNetStream()
 {
     qint64 microsec;
     microsec = (quint64)_data_read_timer->nsecsElapsed()/1000;
-    if(microsec < 47600)
+    if(microsec < 47000)
     {
         return;
     }
@@ -372,6 +375,11 @@ void RadioOp::startTx()
 {
     if(_tx_inited)
     {
+        if(_tx_mode == gr_modem_types::ModemTypeQPSK250000)
+        {
+            _data_modem_reset_timer->start();
+            _data_modem_sleep_timer->start();
+        }
         if(_rx_inited && !_repeat && (_rx_mode != gr_modem_types::ModemTypeQPSK250000))
             _modem->stopRX();
         if(_tx_modem_started)
@@ -489,6 +497,40 @@ void RadioOp::flushVoipBuffer()
     }
 }
 
+void RadioOp::updateDataModemReset(bool transmitting, bool ptt_activated)
+{
+    if((_tx_mode == gr_modem_types::ModemTypeQPSK250000) && !_data_modem_sleeping
+            && transmitting && ptt_activated)
+    {
+        qint64 sec_modem_running;
+        sec_modem_running = (quint64)_data_modem_reset_timer->nsecsElapsed()/1000000000;
+        if(sec_modem_running > 60)
+        {
+            ptt_activated = false;
+            _transmitting_audio = false;
+            transmitting = false;
+            qDebug() << "resetting modem";
+            _data_modem_sleeping = true;
+            _data_modem_sleep_timer->restart();
+        }
+    }
+    if((_tx_mode == gr_modem_types::ModemTypeQPSK250000) && _data_modem_sleeping)
+    {
+        qint64 sec_modem_sleeping;
+        sec_modem_sleeping = (quint64)_data_modem_sleep_timer->nsecsElapsed()/1000000000;
+        if(sec_modem_sleeping > 3)
+        {
+            _data_modem_sleep_timer->restart();
+            ptt_activated = true;
+            _transmitting_audio = true;
+            transmitting = true;
+            _data_modem_sleeping = false;
+            _data_modem_reset_timer->restart();
+            qDebug() << "modem reset complete";
+        }
+    }
+}
+
 void RadioOp::run()
 {
 
@@ -516,6 +558,7 @@ void RadioOp::run()
                 sendChannels();
             }
         }
+        updateDataModemReset(transmitting, ptt_activated);
 
         updateFrequency();
         if(transmitting && !ptt_activated)
@@ -523,7 +566,7 @@ void RadioOp::run()
             ptt_activated = true;
             startTx();
         }
-        if(!transmitting && ptt_activated)
+        if(!transmitting && ptt_activated && !_data_modem_sleeping)
         {
             ptt_activated = false;
             stopTx();
