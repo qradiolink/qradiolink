@@ -805,7 +805,6 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
     }
     else if (current_frame_type == FrameTypeData )
     {
-        emit dataFrameReceived();
         _last_frame_type = FrameTypeData;
         unsigned char *net_data = new unsigned char[_rx_frame_length];
         memcpy(net_data, received_data, _rx_frame_length);

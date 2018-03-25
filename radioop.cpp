@@ -306,7 +306,7 @@ void RadioOp::processNetStream()
 {
     qint64 microsec;
     microsec = (quint64)_data_read_timer->nsecsElapsed()/1000;
-    if(microsec < 47200)
+    if(microsec < 47500)
     {
         return;
     }
@@ -733,7 +733,7 @@ void RadioOp::receiveNetData(unsigned char *data, int size)
     int frame_size = getFrameLength(data);
     if(frame_size < 0)
     {
-        //qDebug() << "received dummy data ";
+        dataFrameReceived();
         delete[] data;
         return;
     }
@@ -743,6 +743,7 @@ void RadioOp::receiveNetData(unsigned char *data, int size)
         delete[] data;
         return;
     }
+    dataFrameReceived();
     qDebug() << "received data frame size: " << frame_size;
     unsigned char *net_frame = new unsigned char[frame_size];
     memcpy(net_frame, &data[12], frame_size);

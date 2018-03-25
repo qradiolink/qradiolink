@@ -99,7 +99,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
     std::vector<float> pfb_taps = gr::filter::firdes::root_raised_cosine(flt_size,flt_size, 1, 0.35, flt_size * 11 * _samples_per_symbol);
     _clock_sync = gr::digital::pfb_clock_sync_ccf::make(_samples_per_symbol,0.0628,pfb_taps);
     _costas_loop = gr::digital::costas_loop_cc::make(2*M_PI/100,4);
-    _equalizer = gr::digital::cma_equalizer_cc::make(11,1,0.0001,1);
+    _equalizer = gr::digital::cma_equalizer_cc::make(8,1,0.0001,1);
     _fll = gr::digital::fll_band_edge_cc::make(sps, 0.35, 32, 2*M_PI/100);
     _diff_decoder = gr::digital::diff_decoder_bb::make(4);
     _map = gr::digital::map_bb::make(map);
