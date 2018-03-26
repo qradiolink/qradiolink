@@ -306,12 +306,17 @@ int RadioOp::processVideoStream(bool &frame_flag)
 
 void RadioOp::processNetStream()
 {
-    qint64 microsec;
+    // 48400
+    qint64 time_per_frame = 48000;
+    qint64 microsec, time_left;
     microsec = (quint64)_data_read_timer->nsecsElapsed()/1000;
-    if(microsec < 47200)
+    if(microsec < 46000)
     {
         return;
     }
+    time_left = time_per_frame - microsec;
+    if(time_left > 0)
+        usleep(time_left);
     _data_read_timer->restart();
     int max_frame_size = 1512;
     unsigned char *netbuffer = (unsigned char*)calloc(max_frame_size, sizeof(unsigned char));
@@ -554,7 +559,7 @@ void RadioOp::run()
                 sendChannels();
             }
         }
-        updateDataModemReset(transmitting, ptt_activated);
+        //updateDataModemReset(transmitting, ptt_activated);
 
         updateFrequency();
         if(transmitting && !ptt_activated)
