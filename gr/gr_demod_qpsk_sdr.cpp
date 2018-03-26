@@ -48,9 +48,9 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
     else
     {
         interpolation = 1;
-        decimation = 4;
+        decimation = 2;
         _samples_per_symbol = sps;
-        _target_samp_rate = 250000;
+        _target_samp_rate = 500000;
     }
     _samp_rate =samp_rate;
     _carrier_freq = carrier_freq;
