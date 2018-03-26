@@ -429,6 +429,7 @@ void MainWindow::autoTune(bool value)
 
 void MainWindow::displayImage(QImage img)
 {
+    ui->videoLabel->clear();
     delete _video_img;
     _video_img = new QPixmap(QPixmap::fromImage(img,Qt::AutoColor));
     ui->videoLabel->setPixmap(*_video_img);
