@@ -45,6 +45,7 @@
 #include <gnuradio/qtgui/const_sink_c.h>
 #include <gnuradio/qtgui/sink_c.h>
 #include <gnuradio/qtgui/number_sink.h>
+#include <gnuradio/digital/crc32.h>
 #include <libconfig.h++>
 
 typedef QVector<Station> StationList;

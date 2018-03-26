@@ -274,7 +274,7 @@ int RadioOp::processVideoStream(bool &frame_flag)
     qint64 microsec;
     timer.start();
 
-    _video->encode_jpeg(&(videobuffer[12]), encoded_size, max_video_frame_size);
+    _video->encode_jpeg(&(videobuffer[16]), encoded_size, max_video_frame_size - 16);
 
     microsec = (quint64)timer.nsecsElapsed()/1000;
     if(microsec < 100000)
@@ -284,14 +284,16 @@ int RadioOp::processVideoStream(bool &frame_flag)
 
     //qDebug() << "video out " << microsec << " / " << encoded_size;
 
-    if(encoded_size > max_video_frame_size)
+    if(encoded_size > max_video_frame_size - 16)
     {
-        encoded_size = max_video_frame_size;
+        encoded_size = max_video_frame_size - 16;
     }
+    unsigned int crc = gr::digital::crc32(&(videobuffer[16]), encoded_size);
     memcpy(&(videobuffer[0]), &encoded_size, 4);
     memcpy(&(videobuffer[4]), &encoded_size, 4);
     memcpy(&(videobuffer[8]), &encoded_size, 4);
-    for(unsigned int k=encoded_size+12,i=0;k<max_video_frame_size;k++,i++)
+    memcpy(&(videobuffer[12]), &crc, 4);
+    for(unsigned int k=encoded_size+16,i=0;k<max_video_frame_size;k++,i++)
     {
 
         videobuffer[k] = _rand_frame_data[i];
@@ -702,15 +704,24 @@ int RadioOp::getFrameLength(unsigned char *data)
 void RadioOp::receiveVideoData(unsigned char *data, int size)
 {
     int frame_size = getFrameLength(data);
-    if((frame_size == 0) || (frame_size > 3122))
+    unsigned int crc = 0;
+    memcpy(&crc, &data[12], 4);
+    if((frame_size == 0) || (frame_size > 3122 - 16))
     {
         qDebug() << "received wrong frame size, dropping frame ";
         delete[] data;
         return;
     }
     unsigned char *jpeg_frame = new unsigned char[frame_size];
-    memcpy(jpeg_frame, &data[12], frame_size);
+    memcpy(jpeg_frame, &data[16], frame_size);
     delete[] data;
+    unsigned int crc_check = gr::digital::crc32(jpeg_frame, frame_size);
+    if(crc != crc_check)
+    {
+        qDebug() << "CRC check failed ";
+        delete[] jpeg_frame;
+        return;
+    }
 
     unsigned char *raw_output = _video->decode_jpeg(jpeg_frame,frame_size);
 
