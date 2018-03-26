@@ -702,16 +702,18 @@ int RadioOp::getFrameLength(unsigned char *data)
 void RadioOp::receiveVideoData(unsigned char *data, int size)
 {
     int frame_size = getFrameLength(data);
-    if(frame_size == 0)
+    if((frame_size == 0) || (frame_size > 3122))
     {
-        qDebug() << "received corrupted frame size, dropping frame ";
+        qDebug() << "received wrong frame size, dropping frame ";
         delete[] data;
         return;
     }
     unsigned char *jpeg_frame = new unsigned char[frame_size];
     memcpy(jpeg_frame, &data[12], frame_size);
     delete[] data;
+
     unsigned char *raw_output = _video->decode_jpeg(jpeg_frame,frame_size);
+
     delete[] jpeg_frame;
     if(!raw_output)
     {
@@ -739,7 +741,7 @@ void RadioOp::receiveNetData(unsigned char *data, int size)
     }
     if((frame_size == 0) || (frame_size > 1500))
     {
-        qDebug() << "received corrupted frame size, dropping frame ";
+        qDebug() << "received wrong frame size, dropping frame ";
         delete[] data;
         return;
     }
