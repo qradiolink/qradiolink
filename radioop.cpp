@@ -307,10 +307,10 @@ int RadioOp::processVideoStream(bool &frame_flag)
 void RadioOp::processNetStream()
 {
     // 48400
-    qint64 time_per_frame = 48000;
+    qint64 time_per_frame = 48400;
     qint64 microsec, time_left;
     microsec = (quint64)_data_read_timer->nsecsElapsed()/1000;
-    if(microsec < 46000)
+    if(microsec < 46400)
     {
         return;
     }
