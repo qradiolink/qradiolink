@@ -306,7 +306,7 @@ void RadioOp::processNetStream()
 {
     qint64 microsec;
     microsec = (quint64)_data_read_timer->nsecsElapsed()/1000;
-    if(microsec < 47500)
+    if(microsec < 47200)
     {
         return;
     }
