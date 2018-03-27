@@ -17,6 +17,8 @@ Settings::Settings()
     _enable_agc = 0; // unused
     _ident_time = 300; // used
     _radio_id = "";
+    rx_mode = 0;
+    tx_mode = 0;
 
     voip_server="127.0.0.1";
     _config_file = setupConfig();
@@ -81,6 +83,8 @@ void Settings::readConfig()
         rx_frequency = cfg.lookup("rx_frequency");
         tx_shift = cfg.lookup("tx_shift");
         voip_server = QString(cfg.lookup("voip_server"));
+        rx_mode = cfg.lookup("rx_mode");
+        tx_mode = cfg.lookup("tx_mode");
 
     }
     catch(const libconfig::SettingNotFoundException &nfex)
@@ -100,6 +104,8 @@ void Settings::readConfig()
         rx_frequency = 434000000;
         tx_shift = 0;
         voip_server = "127.0.0.1";
+        rx_mode = 1;
+        tx_mode = 1;
         std::cerr << "Settings not found in configuration file." << std::endl;
     }
 }
@@ -123,6 +129,8 @@ void Settings::saveConfig()
     root.add("rx_frequency",libconfig::Setting::TypeInt64) = rx_frequency;
     root.add("tx_shift",libconfig::Setting::TypeInt64) = tx_shift;
     root.add("voip_server",libconfig::Setting::TypeString) = voip_server.toStdString();
+    root.add("rx_mode",libconfig::Setting::TypeInt) = rx_mode;
+    root.add("tx_mode",libconfig::Setting::TypeInt) = tx_mode;
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());

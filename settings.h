@@ -31,6 +31,8 @@ public:
     QString callsign;
     QString video_device;
     QString voip_server;
+    int rx_mode;
+    int tx_mode;
 
 
     quint32 _id;

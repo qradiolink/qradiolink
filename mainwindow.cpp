@@ -138,6 +138,8 @@ void MainWindow::readConfig()
     _tx_frequency = _settings->tx_shift;
     ui->shiftEdit->setText(QString::number(_tx_frequency / 1000));
     ui->voipServerEdit->setText(_settings->voip_server);
+    ui->rxModemTypeComboBox->setCurrentIndex(_settings->rx_mode);
+    ui->txModemTypeComboBox->setCurrentIndex(_settings->tx_mode);
 
 }
 
@@ -158,6 +160,8 @@ void MainWindow::saveConfig()
     _settings->rx_frequency = _rx_frequency;
     _settings->tx_shift = _tx_frequency;
     _settings->voip_server = ui->voipServerEdit->text();
+    _settings->rx_mode = ui->rxModemTypeComboBox->currentIndex();
+    _settings->tx_mode = ui->txModemTypeComboBox->currentIndex();
     _settings->saveConfig();
 }
 

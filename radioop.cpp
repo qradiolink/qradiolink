@@ -104,6 +104,9 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     {
         _data_rec_sound = new QByteArray(resfile.readAll());
     }
+    _settings->readConfig();
+    toggleRxMode(_settings->rx_mode);
+    toggleTxMode(_settings->tx_mode);
 
 }
 
@@ -307,10 +310,10 @@ int RadioOp::processVideoStream(bool &frame_flag)
 void RadioOp::processNetStream()
 {
     // 48400
-    qint64 time_per_frame = 48500;
+    qint64 time_per_frame = 48400;
     qint64 microsec, time_left;
     microsec = (quint64)_data_read_timer->nsecsElapsed()/1000;
-    if(microsec < 46500)
+    if(microsec < 46400)
     {
         return;
     }
