@@ -307,10 +307,10 @@ int RadioOp::processVideoStream(bool &frame_flag)
 void RadioOp::processNetStream()
 {
     // 48400
-    qint64 time_per_frame = 48400;
+    qint64 time_per_frame = 48608;
     qint64 microsec, time_left;
     microsec = (quint64)_data_read_timer->nsecsElapsed()/1000;
-    if(microsec < 46400)
+    if(microsec < 46608)
     {
         return;
     }
@@ -318,18 +318,20 @@ void RadioOp::processNetStream()
     if(time_left > 0)
         usleep(time_left);
     _data_read_timer->restart();
-    int max_frame_size = 1512;
+    int max_frame_size = 1516;
     unsigned char *netbuffer = (unsigned char*)calloc(max_frame_size, sizeof(unsigned char));
     int nread;
     unsigned char *buffer = _net_device->read_buffered(nread);
 
     if(nread > 0)
     {
+        unsigned int crc = gr::digital::crc32(buffer, nread);
         memcpy(&(netbuffer[0]), &nread, 4);
         memcpy(&(netbuffer[4]), &nread, 4);
         memcpy(&(netbuffer[8]), &nread, 4);
-        memcpy(&(netbuffer[12]), buffer, nread);
-        for(int k=nread+12,i=0;k<max_frame_size;k++,i++)
+        memcpy(&(netbuffer[12]), &crc, 4);
+        memcpy(&(netbuffer[16]), buffer, nread);
+        for(int k=nread+16,i=0;k<max_frame_size;k++,i++)
         {
             netbuffer[k] = _rand_frame_data[i];
         }
@@ -510,7 +512,7 @@ void RadioOp::updateDataModemReset(bool transmitting, bool ptt_activated)
     {
         qint64 sec_modem_running;
         sec_modem_running = (quint64)_data_modem_reset_timer->nsecsElapsed()/1000000000;
-        if(sec_modem_running > 120)
+        if(sec_modem_running > 1200)
         {
             qDebug() << "resetting modem";
             _data_modem_sleeping = true;
@@ -559,7 +561,7 @@ void RadioOp::run()
                 sendChannels();
             }
         }
-        //updateDataModemReset(transmitting, ptt_activated);
+        updateDataModemReset(transmitting, ptt_activated);
 
         updateFrequency();
         if(transmitting && !ptt_activated)
@@ -762,10 +764,19 @@ void RadioOp::receiveNetData(unsigned char *data, int size)
         return;
     }
     dataFrameReceived();
-    qDebug() << "received data frame size: " << frame_size;
     unsigned char *net_frame = new unsigned char[frame_size];
-    memcpy(net_frame, &data[12], frame_size);
+    memcpy(net_frame, &data[16], frame_size);
+    unsigned int crc;
+    memcpy(&crc, &data[12], 4);
     delete[] data;
+    unsigned int crc_check = gr::digital::crc32(net_frame, frame_size);
+    if(crc != crc_check)
+    {
+        qDebug() << "CRC check failed, dropping frame ";
+        delete[] net_frame;
+        return;
+    }
+
     int res = _net_device->write_buffered(net_frame,frame_size);
 }
 

@@ -101,6 +101,7 @@ int NetDevice::tun_init()
 
 unsigned char* NetDevice::read_buffered(int &nread)
 {
+    // Using MTU of 1500
     unsigned char *buffer = new unsigned char[1500];
     nread = read(_fd_tun,buffer,1500);
     /*
