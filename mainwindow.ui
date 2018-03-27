@@ -2018,12 +2018,40 @@ font: 10pt &quot;Sans Serif&quot;;</string>
 color: rgb(0, 0, 61);
 font: 10pt &quot;Sans Serif&quot;;</string>
              </property>
+             <property name="maxLength">
+              <number>100</number>
+             </property>
             </widget>
            </item>
            <item row="4" column="2">
             <widget class="QLabel" name="label_10">
              <property name="text">
               <string>Video Device</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="2">
+            <widget class="QLabel" name="label_18">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>IP address</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="3">
+            <widget class="QLineEdit" name="lineEditIPaddress">
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(255, 255, 255);
+color: rgb(0, 0, 61);
+font: 10pt &quot;Sans Serif&quot;;</string>
+             </property>
+             <property name="maxLength">
+              <number>100</number>
              </property>
             </widget>
            </item>

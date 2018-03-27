@@ -16,16 +16,21 @@
 
 #include "netdevice.h"
 
-NetDevice::NetDevice(QObject *parent) :
+NetDevice::NetDevice(QObject *parent, QString ip_address) :
     QObject(parent)
 {
     _fd_tun = 0;
     _if_no = 0;
     if_list();
-    tun_init();
+    tun_init(ip_address);
 }
 
-int NetDevice::tun_init()
+NetDevice::~NetDevice()
+{
+    close(_fd_tun);
+}
+
+int NetDevice::tun_init(QString ip_address)
 {
     struct ifreq ifr;
     int s, err;
@@ -62,9 +67,15 @@ int NetDevice::tun_init()
     strcpy(dev, ifr.ifr_name);
     ifr.ifr_addr = *(struct sockaddr *) &addr;
     ifr.ifr_addr.sa_family = AF_INET;
-    QString ip_str = "10.0.0." + QString::number(_if_no+1);
-    char *ip = const_cast<char*>(ip_str.toStdString().c_str());
-    inet_pton(AF_INET, ip, ifr.ifr_addr.sa_data + 2);
+
+    char *ip = const_cast<char*>(ip_address.toStdString().c_str());
+    int ret = inet_pton(AF_INET, ip, ifr.ifr_addr.sa_data + 2);
+    if(ret != 1)
+    {
+        std::cerr << "The IP address is not valid " << err << std::endl;
+        close(_fd_tun);
+        return err;
+    }
     if( (err = ioctl(s, SIOCSIFADDR, &ifr)) < 0)
     {
         std::cerr << "setting address failed " << err << std::endl;

@@ -140,6 +140,7 @@ void MainWindow::readConfig()
     ui->voipServerEdit->setText(_settings->voip_server);
     ui->rxModemTypeComboBox->setCurrentIndex(_settings->rx_mode);
     ui->txModemTypeComboBox->setCurrentIndex(_settings->tx_mode);
+    ui->lineEditIPaddress->setText(_settings->ip_address);
 
 }
 
@@ -162,6 +163,7 @@ void MainWindow::saveConfig()
     _settings->voip_server = ui->voipServerEdit->text();
     _settings->rx_mode = ui->rxModemTypeComboBox->currentIndex();
     _settings->tx_mode = ui->txModemTypeComboBox->currentIndex();
+    _settings->ip_address = ui->lineEditIPaddress->text();
     _settings->saveConfig();
 }
 

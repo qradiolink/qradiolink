@@ -19,6 +19,7 @@ Settings::Settings()
     _radio_id = "";
     rx_mode = 0;
     tx_mode = 0;
+    ip_address = "";
 
     voip_server="127.0.0.1";
     _config_file = setupConfig();
@@ -85,6 +86,7 @@ void Settings::readConfig()
         voip_server = QString(cfg.lookup("voip_server"));
         rx_mode = cfg.lookup("rx_mode");
         tx_mode = cfg.lookup("tx_mode");
+        ip_address = QString(cfg.lookup("ip_address"));
 
     }
     catch(const libconfig::SettingNotFoundException &nfex)
@@ -104,8 +106,9 @@ void Settings::readConfig()
         rx_frequency = 434000000;
         tx_shift = 0;
         voip_server = "127.0.0.1";
-        rx_mode = 1;
-        tx_mode = 1;
+        rx_mode = 0;
+        tx_mode = 0;
+        ip_address = "10.0.0.1";
         std::cerr << "Settings not found in configuration file." << std::endl;
     }
 }
@@ -131,6 +134,7 @@ void Settings::saveConfig()
     root.add("voip_server",libconfig::Setting::TypeString) = voip_server.toStdString();
     root.add("rx_mode",libconfig::Setting::TypeInt) = rx_mode;
     root.add("tx_mode",libconfig::Setting::TypeInt) = tx_mode;
+    root.add("ip_address",libconfig::Setting::TypeString) = ip_address.toStdString();
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());

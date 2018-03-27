@@ -953,13 +953,17 @@ void RadioOp::toggleRX(bool value)
         _modem->startRX();
         if(_rx_mode == gr_modem_types::ModemTypeQPSK250000 && _net_device == 0)
         {
-            _net_device = new NetDevice;
+            _net_device = new NetDevice(0, _settings->ip_address);
         }
         _rx_inited = true;
     }
     else
     {
-
+        if(_rx_mode == gr_modem_types::ModemTypeQPSK250000 && _net_device != 0 && !_tx_inited)
+        {
+            delete _net_device;
+            _net_device = 0;
+        }
         _modem->stopRX();
         _modem->deinitRX(_rx_mode);
         _rx_inited = false;
@@ -990,7 +994,7 @@ void RadioOp::toggleTX(bool value)
             _video = new VideoEncoder(QString::fromStdString(video_device));
         if(_tx_mode == gr_modem_types::ModemTypeQPSK250000 && _net_device == 0)
         {
-            _net_device = new NetDevice;
+            _net_device = new NetDevice(0, _settings->ip_address);
         }
         _tx_inited = true;
     }
@@ -1001,6 +1005,11 @@ void RadioOp::toggleTX(bool value)
         {
             delete _video;
             _video = 0;
+        }
+        if(_tx_mode == gr_modem_types::ModemTypeQPSK250000 && _net_device != 0 && !_rx_inited)
+        {
+            delete _net_device;
+            _net_device = 0;
         }
         _tx_inited = false;
     }

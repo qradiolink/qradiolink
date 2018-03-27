@@ -36,8 +36,8 @@ class NetDevice : public QObject
 {
     Q_OBJECT
 public:
-    explicit NetDevice(QObject *parent = 0);
-
+    explicit NetDevice(QObject *parent = 0, QString ip_address="");
+    ~NetDevice();
 signals:
 
 public slots:
@@ -47,7 +47,7 @@ public:
     int write_buffered(unsigned char* data, int len);
 
 private:
-    int tun_init();
+    int tun_init(QString ip_address);
     void if_list();
     int _fd_tun;
     int _if_no;

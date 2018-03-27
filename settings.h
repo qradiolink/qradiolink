@@ -33,6 +33,7 @@ public:
     QString voip_server;
     int rx_mode;
     int tx_mode;
+    QString ip_address;
 
 
     quint32 _id;
