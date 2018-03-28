@@ -526,7 +526,7 @@ void RadioOp::updateDataModemReset(bool transmitting, bool ptt_activated)
     {
         qint64 sec_modem_sleeping;
         sec_modem_sleeping = (quint64)_data_modem_sleep_timer->nsecsElapsed()/1000000000;
-        if(sec_modem_sleeping > 3)
+        if(sec_modem_sleeping > 2)
         {
             _data_modem_sleep_timer->restart();
             _data_modem_sleeping = false;
@@ -773,14 +773,13 @@ void RadioOp::receiveNetData(unsigned char *data, int size)
     memcpy(&crc, &data[12], 4);
     delete[] data;
     unsigned int crc_check = gr::digital::crc32(net_frame, frame_size);
-    /*
+
     if(crc != crc_check)
     {
         qDebug() << "CRC check failed, dropping frame ";
         delete[] net_frame;
         return;
     }
-    */
 
     int res = _net_device->write_buffered(net_frame,frame_size);
 }
