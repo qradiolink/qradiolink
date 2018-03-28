@@ -129,7 +129,11 @@ int NetDevice::write_buffered(unsigned char *data, int len)
     int nwrite = write(_fd_tun,data,len);
     if(nwrite < 0)
     {
-      std::cerr << "error writing to tap interface" << std::endl;
+        std::cerr << "error writing to tap interface" << std::endl;
+    }
+    if(nwrite < len)
+    {
+        std::cerr << "dropped N bytes: " << len - nwrite << std::endl;
     }
     delete[] data;
     return nwrite;
