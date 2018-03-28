@@ -68,6 +68,7 @@ int NetDevice::tun_init(QString ip_address)
     ifr.ifr_addr = *(struct sockaddr *) &addr;
     ifr.ifr_addr.sa_family = AF_INET;
 
+
     char *ip = const_cast<char*>(ip_address.toStdString().c_str());
     int ret = inet_pton(AF_INET, ip, ifr.ifr_addr.sa_data + 2);
     if(ret != 1)
@@ -76,6 +77,7 @@ int NetDevice::tun_init(QString ip_address)
         close(_fd_tun);
         return err;
     }
+
     if( (err = ioctl(s, SIOCSIFADDR, &ifr)) < 0)
     {
         std::cerr << "setting address failed " << err << std::endl;
@@ -104,6 +106,13 @@ int NetDevice::tun_init(QString ip_address)
     {
         int saved_errno = errno;
         std::cerr << "could not bring tap interface up " << saved_errno << std::endl;
+        return err;
+    }
+    ifr.ifr_mtu = 1480;
+    if( (err = ioctl(s, SIOCSIFMTU, &ifr)) < 0)
+    {
+        std::cerr << "setting MTU failed " << err << std::endl;
+        close(_fd_tun);
         return err;
     }
 
