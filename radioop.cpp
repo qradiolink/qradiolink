@@ -773,12 +773,14 @@ void RadioOp::receiveNetData(unsigned char *data, int size)
     memcpy(&crc, &data[12], 4);
     delete[] data;
     unsigned int crc_check = gr::digital::crc32(net_frame, frame_size);
+    /*
     if(crc != crc_check)
     {
         qDebug() << "CRC check failed, dropping frame ";
         delete[] net_frame;
         return;
     }
+    */
 
     int res = _net_device->write_buffered(net_frame,frame_size);
 }
