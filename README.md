@@ -22,10 +22,12 @@ Features
 
 - VOIP connection between two or more stations operating in simplex or semi-duplex mode
 - Direct VOIP talk-around (requires internet connection)
-- Transmit and receive analog FM, SSB, AM, digital voice, text messages, digital video.
+- VOX mode
+- Transmit and receive analog FM, SSB, AM, digital voice, text messages, digital video, IP protocol.
+- Full duplex 250 kbit/s IP data modem with configurable TX/RX offsets
 - Analog and digital mode repeater - full duplex mode, no mixed mode support 
 - Radio forwarding over VOIP - forward voice to the VOIP connection and viceversa
-- Mixed operation mode
+- Mixed operation mode (receive one mode and transmit another)
 - Audio codecs: Codec2 700 bit/s, Codec2 1400 bit/s, Opus 9600 bit/s
 - Narrow band digital voice mode with the [Codec2](http://rowetel.com/codec2.html) audio codec
 - Wideband digital voice mode with the [Opus](https://xiph.org) audio codec
@@ -108,6 +110,7 @@ Workaround: switch to waterfall and back
 Check that that device settings are correct and you have clicked save in the configuration page.
 - In low light, the automatic adjustment of ISO in the video camera can cause very long times to capture a frame.
 Solution: use plenty of lighting for video.
+- On Gnome desktop environments, the Qt color scheme is not displayed correctly
 
 
 
@@ -118,7 +121,7 @@ Running
 - VOIP uses [umurmur](https://github.com/umurmur/umurmur) as a server. The available channels and the logged in stations are also listed on the page once you have connected to the server. The server IP/hostname will be saved on application exit. You can use QRadioLink as a pure VOIP client without using the radio by selecting "Use PTT for VOIP". You can also forward the digital or analog radio voice to the VOIP reflector. Any voice packets coming from the reflector will be transmitted directly after transcoding in this case. Currently full duplex audio from more than two VOIP clients at the same time is not supported.
 - The configuration file is located in $HOME/.config/qradiolink.cfg
 - The select inputs in the lower right corner toggle between different operating modes. Repeater mode requires both RX and TX to use the same mode.
-- The Tune page allows fine tuning 5-5000 kHz around the center frequency, and monitoring the 
+- The Tune page allows fine tuning 5-5000 kHz around the center frequency (depending on operating mode), and monitoring the 
 signal strength.
 - Video page will display received video stream (experimental feature). A limited number of cameras are supported.
 
@@ -128,7 +131,7 @@ Credits and License
 - QRadioLink is designed by Adrian Musceac YO8RZZ, and is released under an Open Source License,
  the GNU General Public License version 3.
 - It makes use of other code under compatible licenses, and the authors are credited in the source files.
-- The CFreqCtrl widget is Copyright 2010 Moe Wheatley.
+- The CFreqCtrl widget is Copyright 2010 Moe Wheatley with modifications by Alexandru Csete.
 - [Codec2](http://rowetel.com/codec2.html) is developed by David Rowe
 - [Opus](https://xiph.org) is developed by the Xiph foundation
 - [GNU radio](https://www.gnuradio.org/)  is a free software development toolkit that provides signal processing
