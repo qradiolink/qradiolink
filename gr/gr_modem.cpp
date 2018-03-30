@@ -117,7 +117,7 @@ void gr_modem::toggleTxMode(int modem_type)
         }
         else if(modem_type == gr_modem_types::ModemTypeQPSK250000)
         {
-            _tx_frame_length = 1512;
+            _tx_frame_length = 1516;
         }
     }
 
@@ -171,8 +171,8 @@ void gr_modem::toggleRxMode(int modem_type)
         }
         else if (modem_type == gr_modem_types::ModemTypeQPSK250000)
         {
-            _bit_buf_len = 1513 *8;
-            _rx_frame_length = 1512;
+            _bit_buf_len = 1517 *8;
+            _rx_frame_length = 1516;
         }
         delete[] _bit_buf;
         _bit_buf = new unsigned char[_bit_buf_len];
