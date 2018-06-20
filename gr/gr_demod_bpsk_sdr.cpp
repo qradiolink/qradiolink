@@ -52,13 +52,13 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(std::vector<int>signature, int sps, int sam
     _resampler = gr::filter::rational_resampler_base_ccf::make(1, 50, taps);
     _agc = gr::analog::agc2_cc::make(10, 1e-1, 1, 1);
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
-                            1, _target_samp_rate, _filter_width,600,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
+                            1, _target_samp_rate, _filter_width,800,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     float gain_mu = 0.025;
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0, gain_mu,
                                                               0.001);
     _costas_loop = gr::digital::costas_loop_cc::make(2*M_PI/100,2);
     _equalizer = gr::digital::cma_equalizer_cc::make(8,1,0.00005,1);
-    _fll = gr::digital::fll_band_edge_cc::make(sps, 0.35, 32, 2*M_PI/100);
+    _fll = gr::digital::fll_band_edge_cc::make(sps, 0.35, 256, 2*M_PI/100);
     _shaping_filter = gr::filter::fft_filter_ccf::make(
                 1, gr::filter::firdes::root_raised_cosine(1,_target_samp_rate,_target_samp_rate/_samples_per_symbol,0.35,32));
     _complex_to_real = gr::blocks::complex_to_real::make();

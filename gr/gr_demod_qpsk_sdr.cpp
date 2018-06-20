@@ -55,7 +55,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
     _samp_rate =samp_rate;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
-    int filter_slope = 600;
+    int filter_slope = 800;
     if(_target_samp_rate > 100000)
         filter_slope = 5000;
 
@@ -100,7 +100,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
     _clock_sync = gr::digital::pfb_clock_sync_ccf::make(_samples_per_symbol,0.0628,pfb_taps);
     _costas_loop = gr::digital::costas_loop_cc::make(2*M_PI/100,4);
     _equalizer = gr::digital::cma_equalizer_cc::make(8,1,0.0001,1);
-    _fll = gr::digital::fll_band_edge_cc::make(sps, 0.35, 32, 2*M_PI/100);
+    _fll = gr::digital::fll_band_edge_cc::make(sps, 0.35, 256, 2*M_PI/100);
     _diff_decoder = gr::digital::diff_decoder_bb::make(4);
     _map = gr::digital::map_bb::make(map);
     _unpack = gr::blocks::unpack_k_bits_bb::make(2);
