@@ -55,7 +55,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
     _samp_rate =samp_rate;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
-    int filter_slope = 800;
+    int filter_slope = 1200;
     if(_target_samp_rate > 100000)
         filter_slope = 5000;
 

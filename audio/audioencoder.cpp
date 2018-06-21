@@ -50,11 +50,11 @@ AudioEncoder::AudioEncoder()
     opus_encoder_ctl(_enc, OPUS_SET_SIGNAL(OPUS_SIGNAL_VOICE));
     opus_encoder_ctl(_enc, OPUS_SET_APPLICATION(OPUS_APPLICATION_VOIP));
     opus_encoder_ctl(_enc, OPUS_SET_MAX_BANDWIDTH(OPUS_BANDWIDTH_WIDEBAND));
-    opus_encoder_ctl(_enc, OPUS_SET_PACKET_LOSS_PERC(50));
+    opus_encoder_ctl(_enc, OPUS_SET_PACKET_LOSS_PERC(20));
     //opus_encoder_ctl(_enc, OPUS_SET_PREDICTION_DISABLED(0));
     opus_encoder_ctl(_enc, OPUS_GET_BANDWIDTH(&opus_bandwidth));
     opus_encoder_ctl(_enc, OPUS_SET_INBAND_FEC(0));
-    opus_decoder_ctl(_dec, OPUS_SET_GAIN(-3));
+    opus_decoder_ctl(_dec, OPUS_SET_GAIN(1));
 
 }
 

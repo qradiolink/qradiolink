@@ -41,7 +41,7 @@ gr_mod_qpsk_sdr::gr_mod_qpsk_sdr(int sps, int samp_rate, int carrier_freq,
     _samp_rate =samp_rate;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
-    int filter_slope = 800;
+    int filter_slope = 1200;
     if(sps < 10)
         filter_slope = 5000;
 
