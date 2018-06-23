@@ -81,15 +81,15 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
                                 1, _target_samp_rate, _filter_width, filter_slope,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     float gain_mu, omega_rel_limit;
-    if(sps > 2)
-    {
-        gain_mu = 0.005;
-        omega_rel_limit = 0.0005;
-    }
-    else
+    if(sps <= 2)
     {
         gain_mu = 0.001;
         omega_rel_limit = 0.0001;
+    }
+    else
+    {
+        gain_mu = 0.025;
+        omega_rel_limit = 0.001;
     }
     int filt_length = 512;
     if(sps > 100)
