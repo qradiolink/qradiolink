@@ -42,8 +42,11 @@ gr_mod_qpsk_sdr::gr_mod_qpsk_sdr(int sps, int samp_rate, int carrier_freq,
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
     int filter_slope = 1200;
+    int filt_length = 512;
     if(sps < 10)
         filter_slope = 5000;
+    if(sps > 100)
+        filt_length = 32;
 
     _packed_to_unpacked = gr::blocks::packed_to_unpacked_bb::make(1,gr::GR_MSB_FIRST);
     _packer = gr::blocks::pack_k_bits_bb::make(2);
@@ -57,7 +60,7 @@ gr_mod_qpsk_sdr::gr_mod_qpsk_sdr(int sps, int samp_rate, int carrier_freq,
                                                         1, 0.35, nfilts * 11 * _samples_per_symbol);
     //_shaping_filter = gr::filter::pfb_arb_resampler_ccf::make(_samples_per_symbol, rrc_taps, nfilts);
     _shaping_filter = gr::filter::fft_filter_ccf::make(
-                1, gr::filter::firdes::root_raised_cosine(1,_samp_rate,_samp_rate/_samples_per_symbol,0.35,256));
+                1, gr::filter::firdes::root_raised_cosine(1,_samp_rate,_samp_rate/_samples_per_symbol,0.35,filt_length));
     _repeat = gr::blocks::repeat::make(8, _samples_per_symbol);
     _amplify = gr::blocks::multiply_const_cc::make(0.2,1);
     _filter = gr::filter::fft_filter_ccf::make(

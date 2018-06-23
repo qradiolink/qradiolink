@@ -51,8 +51,8 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
     _fm_5000 = make_gr_mod_nbfm_sdr(0, 250000, 1700, 4000);
     _qpsk_2k = make_gr_mod_qpsk_sdr(250, 250000, 1700, 1000);
     _qpsk_10k = make_gr_mod_qpsk_sdr(50, 250000, 1700, 4000);
-    _qpsk_250k = make_gr_mod_qpsk_sdr(8, 1000000, 1700, 75000);
-    _qpsk_video = make_gr_mod_qpsk_sdr(2, 250000, 1700, 75000);
+    _qpsk_250k = make_gr_mod_qpsk_sdr(8, 1000000, 1700, 78000);
+    _qpsk_video = make_gr_mod_qpsk_sdr(2, 250000, 1700, 78000);
     _usb = make_gr_mod_ssb_sdr(0, 250000, 1700, 2500);
     _lsb = make_gr_mod_ssb_sdr(1, 250000, 1700, 2500);
 }
