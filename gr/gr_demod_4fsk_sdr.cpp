@@ -41,24 +41,26 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
     _filter_width = filter_width;
 
     int rs,bw,decimation;
-    float gain_mu;
+    float gain_mu, omega_rel_limit;
     if(sps == 50)
     {
         _target_samp_rate = 40000;
         _samples_per_symbol = sps*4/25;
         decimation = 25;
         rs = 5000;
-        bw = 10000;
-        gain_mu = 0.025;
+        bw = 20000;
+        gain_mu = 0.005;
+        omega_rel_limit = 0.001;
     }
     if(sps == 250)
     {
-        _target_samp_rate = 10000;
-        _samples_per_symbol = sps/25;
-        decimation = 100;
+        _target_samp_rate = 20000;
+        _samples_per_symbol = sps*2/25;
+        decimation = 50;
         rs = 1000;
         bw = 2000;
         gain_mu = 0.025;
+        omega_rel_limit = 0.001;
     }
 
     std::vector<unsigned int> const_map;
@@ -80,11 +82,11 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
 
     std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width, 12000);
     std::vector<float> symbol_filter_taps = gr::filter::firdes::low_pass(1.0,
-                                 _target_samp_rate, _target_samp_rate/_samples_per_symbol, _target_samp_rate/_samples_per_symbol);
+                                 _target_samp_rate, _target_samp_rate/_samples_per_symbol, _target_samp_rate/_samples_per_symbol/40);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1, decimation, taps);
 
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
-                                1, _target_samp_rate, _filter_width,600,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
+                                1, _target_samp_rate, _filter_width,2000,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     //_freq_demod = gr::analog::quadrature_demod_cf::make(sps/(4*M_PI/2));
 
     _filter1 = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
@@ -105,7 +107,7 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
     _symbol_filter = gr::filter::fft_filter_fff::make(1,symbol_filter_taps);
     _costas_loop = gr::digital::costas_loop_cc::make(2*M_PI/100,2);
     _clock_recovery = gr::digital::clock_recovery_mm_ff::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
-                                                              0.001);
+                                                              omega_rel_limit);
     _float_to_complex = gr::blocks::float_to_complex::make();
     _multiply_symbols = gr::blocks::multiply_const_cc::make(0.5);
     _unpack = gr::blocks::unpack_k_bits_bb::make(2);

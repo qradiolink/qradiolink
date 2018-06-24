@@ -37,7 +37,7 @@ gr_mod_nbfm_sdr::gr_mod_nbfm_sdr(int sps, int samp_rate, int carrier_freq,
 
     _fm_modulator = gr::analog::frequency_modulator_fc::make(4*M_PI*_filter_width/target_samp_rate);
 
-    _audio_amplify = gr::blocks::multiply_const_ff::make(1.5,1);
+    _audio_amplify = gr::blocks::multiply_const_ff::make(1.3,1);
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::band_pass(
                     1, target_samp_rate, 250, _filter_width, 200, gr::filter::firdes::WIN_BLACKMAN_HARRIS));

@@ -50,15 +50,15 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(std::vector<int>signature, int sps, int sam
 
     std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width, 12000);
     std::vector<float> symbol_filter_taps = gr::filter::firdes::low_pass(1.0,
-                                 _target_samp_rate, _target_samp_rate/_samples_per_symbol, _target_samp_rate/_samples_per_symbol);
+                                 _target_samp_rate, _target_samp_rate/_samples_per_symbol, _target_samp_rate/_samples_per_symbol/40);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1, 50, taps);
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
-                                1, _target_samp_rate, _filter_width,600,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
+                                1, _target_samp_rate, _filter_width,2000,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
 
     _upper_filter = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
-                                1, _target_samp_rate, -_filter_width,0,1200,gr::filter::firdes::WIN_HAMMING) );
+                                1, _target_samp_rate, -_filter_width,0,4000,gr::filter::firdes::WIN_HAMMING) );
     _lower_filter = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
-                                1, _target_samp_rate, 0,_filter_width,1200,gr::filter::firdes::WIN_HAMMING) );
+                                1, _target_samp_rate, 0,_filter_width,4000,gr::filter::firdes::WIN_HAMMING) );
     _mag_lower = gr::blocks::complex_to_mag::make();
     _mag_upper = gr::blocks::complex_to_mag::make();
     _divide = gr::blocks::divide_ff::make();
@@ -68,7 +68,7 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(std::vector<int>signature, int sps, int sam
     _symbol_filter = gr::filter::fft_filter_ccf::make(1,symbol_filter_taps);
     float gain_mu = 0.025;
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
-                                                              0.0005);
+                                                              0.001);
 
     _multiply_const_fec = gr::blocks::multiply_const_ff::make(0.5);
 
