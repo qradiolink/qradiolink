@@ -27,7 +27,6 @@
 #include <gnuradio/blocks/multiply_const_cc.h>
 #include <gnuradio/blocks/complex_to_mag.h>
 #include <gnuradio/filter/rational_resampler_base_ccf.h>
-#include <gnuradio/digital/costas_loop_cc.h>
 #include <gnuradio/digital/constellation.h>
 #include <gnuradio/digital/constellation_decoder_cb.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
@@ -62,7 +61,6 @@ private:
     gr::blocks::complex_to_mag::sptr _mag3;
     gr::blocks::complex_to_mag::sptr _mag4;
     gr_4fsk_discriminator_sptr _discriminator;
-    gr::digital::costas_loop_cc::sptr _costas_loop;
 
     gr::blocks::multiply_const_cc::sptr _multiply_symbols;
     gr::analog::quadrature_demod_cf::sptr _freq_demod;
