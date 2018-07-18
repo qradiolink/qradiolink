@@ -26,7 +26,7 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
     _vector_source = make_gr_vector_source();
     _audio_source = make_gr_audio_source();
 
-    _carrier_offset = 250000;
+    _carrier_offset = 0;
 
     _rotator = gr::blocks::rotator_cc::make(2*M_PI*_carrier_offset/1000000);
     _osmosdr_sink = osmosdr::sink::make(device_args);
