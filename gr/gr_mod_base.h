@@ -79,6 +79,7 @@ private:
     float _device_frequency;
     int _carrier_offset;
     int _mode;
+    osmosdr::gain_range_t _gain_range;
 
 
 };

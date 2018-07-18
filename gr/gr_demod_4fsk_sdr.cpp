@@ -50,7 +50,7 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
         rs = 5000;
         bw = 20000;
         gain_mu = 0.005;
-        omega_rel_limit = 0.001;
+        omega_rel_limit = 0.0001;
     }
     if(sps == 250)
     {
@@ -60,7 +60,7 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
         rs = 1000;
         bw = 2000;
         gain_mu = 0.025;
-        omega_rel_limit = 0.001;
+        omega_rel_limit = 0.005;
     }
 
     std::vector<unsigned int> const_map;

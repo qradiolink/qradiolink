@@ -46,7 +46,7 @@ gr_mod_am_sdr::gr_mod_am_sdr(int sps, int samp_rate, int carrier_freq,
     _float_to_complex = gr::blocks::float_to_complex::make();
     std::vector<float> interp_taps = gr::filter::firdes::low_pass(1, _samp_rate,
                                                         _filter_width, 12000);
-    _resampler = gr::filter::rational_resampler_base_ccf::make(125, 4, interp_taps);
+    _resampler = gr::filter::rational_resampler_base_ccf::make(500, 4, interp_taps);
     _amplify = gr::blocks::multiply_const_cc::make(30,1);
     _filter = gr::filter::fft_filter_ccc::make(
                 1,gr::filter::firdes::complex_band_pass_2(
