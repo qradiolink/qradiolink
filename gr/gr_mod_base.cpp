@@ -329,4 +329,24 @@ void gr_mod_base::set_ctcss(float value)
     _top_block->unlock();
 }
 
+void gr_mod_base::set_bb_gain(int value)
+{
+    _top_block->lock();
+    _2fsk->set_bb_gain(value);
+    _4fsk_2k->set_bb_gain(value);
+    _4fsk_10k->set_bb_gain(value);
+    _am->set_bb_gain(value);
+    _bpsk_1k->set_bb_gain(value);
+    _bpsk_2k->set_bb_gain(value);
+    _fm_2500->set_bb_gain(value);
+    _fm_5000->set_bb_gain(value);
+    _qpsk_2k->set_bb_gain(value);
+    _qpsk_10k->set_bb_gain(value);
+    _qpsk_250k->set_bb_gain(value);
+    _qpsk_video->set_bb_gain(value);
+    _usb->set_bb_gain(value);
+    _lsb->set_bb_gain(value);
+    _top_block->unlock();
+}
+
 

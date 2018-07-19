@@ -40,10 +40,12 @@ class gr_mod_am_sdr : public gr::hier_block2
 public:
     explicit gr_mod_am_sdr(int sps=125, int samp_rate=250000, int carrier_freq=1700,
                              int filter_width=8000);
+    void set_bb_gain(int value);
 
 private:
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
     gr::blocks::multiply_const_cc::sptr _amplify;
+    gr::blocks::multiply_const_cc::sptr _bb_gain;
     gr::blocks::multiply_const_ff::sptr _audio_amplify;
     gr::filter::fft_filter_fff::sptr _audio_filter;
     gr::filter::fft_filter_ccc::sptr _filter;

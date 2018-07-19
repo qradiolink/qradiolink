@@ -56,7 +56,8 @@ gr_mod_bpsk_sdr::gr_mod_bpsk_sdr(int sps, int samp_rate, int carrier_freq,
     _shaping_filter = gr::filter::fft_filter_ccf::make(
                 1, gr::filter::firdes::root_raised_cosine(1,_samp_rate,_samp_rate/_samples_per_symbol,0.35,32));
     _repeat = gr::blocks::repeat::make(8, _samples_per_symbol);
-    _amplify = gr::blocks::multiply_const_cc::make(1,1);
+    _amplify = gr::blocks::multiply_const_cc::make(0.2,1);
+    _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
     _filter = gr::filter::fft_filter_ccf::make(
                 1,gr::filter::firdes::low_pass(
                     1, _samp_rate, _filter_width, 1200, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
@@ -71,10 +72,15 @@ gr_mod_bpsk_sdr::gr_mod_bpsk_sdr(int sps, int samp_rate, int carrier_freq,
 
     connect(_repeat,0,_shaping_filter,0);
     connect(_shaping_filter,0,_amplify,0);
-    connect(_amplify,0,_filter,0);
-
+    connect(_amplify,0,_bb_gain,0);
+    connect(_bb_gain,0,_filter,0);
     connect(_filter,0,self(),0);
 
+}
+
+void gr_mod_bpsk_sdr::set_bb_gain(int value)
+{
+    _bb_gain->set_k(value);
 }
 
 

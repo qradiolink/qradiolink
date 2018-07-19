@@ -50,6 +50,7 @@ gr_mod_2fsk_sdr::gr_mod_2fsk_sdr(int sps, int samp_rate, int carrier_freq,
     _freq_modulator = gr::analog::frequency_modulator_fc::make((2*M_PI/2)/(_samples_per_symbol));
     _repeat = gr::blocks::repeat::make(4, _samples_per_symbol);
     _amplify = gr::blocks::multiply_const_cc::make(0.2,1);
+    _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
     _filter = gr::filter::fft_filter_ccf::make(
                 1,gr::filter::firdes::low_pass(
                     1, _samp_rate, _filter_width, 600,gr::filter::firdes::WIN_BLACKMAN_HARRIS));
@@ -63,9 +64,14 @@ gr_mod_2fsk_sdr::gr_mod_2fsk_sdr(int sps, int samp_rate, int carrier_freq,
 
     connect(_repeat,0,_freq_modulator,0);
     connect(_freq_modulator,0,_amplify,0);
-    connect(_amplify,0,_filter,0);
-
+    connect(_amplify,0,_bb_gain,0);
+    connect(_bb_gain,0,_filter,0);
     connect(_filter,0,self(),0);
+}
+
+void gr_mod_2fsk_sdr::set_bb_gain(int value)
+{
+    _bb_gain->set_k(value);
 }
 
 
