@@ -91,7 +91,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
         gain_mu = 0.025;
         omega_rel_limit = 0.001;
     }
-    int filt_length = 512;
+    int filt_length = 128;
     if(sps > 100)
         filt_length = 32;
 
