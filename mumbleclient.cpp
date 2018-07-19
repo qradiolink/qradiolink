@@ -346,7 +346,8 @@ void MumbleClient::processUserRemove(quint8 *message, quint64 size)
         if(s->id == us.session())
         {
             emit leftStation(s);
-            usleep(1000000);
+            struct timespec time_to_sleep = {0, 10000000L };
+            nanosleep(&time_to_sleep, NULL);
             _stations.remove(i);
             delete s;
         }
@@ -551,7 +552,8 @@ void MumbleClient::setMute(bool mute)
 {
     while(!_synchronized)
     {
-        usleep(10000);
+        struct timespec time_to_sleep = {0, 10000000L };
+        nanosleep(&time_to_sleep, NULL);
         QCoreApplication::processEvents();
     }
     MumbleProto::UserState us;

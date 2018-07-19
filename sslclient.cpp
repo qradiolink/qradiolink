@@ -117,7 +117,8 @@ void SSLClient::tryReconnect()
         return;
     std::cout << "Disconnected" << std::endl;
     _connection_tries++;
-    usleep(2000000);
+    struct timespec time_to_sleep = {2, 0L };
+    nanosleep(&time_to_sleep, NULL);
     if(_connection_tries < 2000000)
     {
         QMetaObject::invokeMethod(this, "connectHost", Qt:: QueuedConnection,

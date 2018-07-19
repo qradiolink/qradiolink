@@ -115,7 +115,8 @@ int gr_deframer_bb::work(int noutput_items, gr_vector_const_void_star &input_ite
 {
     if(noutput_items < 1)
     {
-        usleep(1);
+        struct timespec time_to_sleep = {0, 1000L };
+        nanosleep(&time_to_sleep, NULL);
         return noutput_items;
     }
     unsigned char *in = (unsigned char*)(input_items[0]);

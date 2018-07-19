@@ -52,8 +52,8 @@ void ServerWrapper::run()
     _speaker = &spp;
     while(true)
     {
-
-        usleep(50000);
+        struct timespec time_to_sleep = {0, 50000000L };
+        nanosleep(&time_to_sleep, NULL);
         int time = QDateTime::currentDateTime().toTime_t();
         if((time - last_time) > _settings->_ident_time)
         {

@@ -47,8 +47,8 @@ void AudioOp::run()
     hvdi::vox_st *vox = hvdi::initVOX(99000,50);
     while(true)
     {
-
-        usleep(10000);
+        struct timespec time_to_sleep = {0, 1000000L };
+        nanosleep(&time_to_sleep, NULL);
         short audiobuffer[audiobuffer_size];
         _audio->read_short(audiobuffer,audiobuffer_size);
 

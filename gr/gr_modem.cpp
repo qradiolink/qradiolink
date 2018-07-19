@@ -404,7 +404,8 @@ void gr_modem::processPCMAudio(std::vector<float> *audio_data)
         int ret = 1;
         while(ret)
         {
-            usleep(1);
+            struct timespec time_to_sleep = {0, 1000L };
+            nanosleep(&time_to_sleep, NULL);
             ret = _gr_mod_base->setAudio(audio_data);
         }
     }
@@ -440,7 +441,7 @@ void gr_modem::transmit(QVector<std::vector<unsigned char>*> frames)
     int ret = 1;
     while(ret)
     {
-        usleep(1);
+        struct timespec time_to_sleep = {0, 1000L };
         ret = _gr_mod_base->setData(all_frames);
     }
 

@@ -61,7 +61,8 @@ int gr_audio_sink::work(int noutput_items,
 {
     if(noutput_items < 1)
     {
-        usleep(2000);
+        struct timespec time_to_sleep = {0, 2000000L };
+        nanosleep(&time_to_sleep, NULL);
         return noutput_items;
     }
     gr::thread::scoped_lock guard(_mutex);
