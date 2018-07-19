@@ -191,6 +191,7 @@ private:
     bool _repeat;
     bool _vox_enabled;
     bool _tx_started;
+    int _freq_gui_counter;
 
     void readConfig(std::string &rx_device_args, std::string &tx_device_args,
                     std::string &rx_antenna, std::string &tx_antenna, int &rx_freq_corr,

@@ -43,6 +43,10 @@ std::vector<unsigned char> * gr_vector_sink::get_data()
 {
     gr::thread::scoped_lock guard(_mutex);
     std::vector<unsigned char>* data = new std::vector<unsigned char>;
+    if(_data->size() < 1)
+    {
+        return data;
+    }
     data->reserve(_data->size());
     data->insert(data->end(),_data->begin(),_data->end());
     _data->clear();
@@ -56,7 +60,7 @@ int gr_vector_sink::work(int noutput_items,
 {
     if(noutput_items < 1)
     {
-        struct timespec time_to_sleep = {0, 1000L };
+        struct timespec time_to_sleep = {0, 2000000L };
         nanosleep(&time_to_sleep, NULL);
         return noutput_items;
     }

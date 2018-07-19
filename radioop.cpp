@@ -68,6 +68,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _step_hz = 10;
     _tuning_done = true;
     _tune_counter = 0;
+    _freq_gui_counter = 0;
     _tx_modem_started = false;
     _voice_led_timer = new QTimer(this);
     _voice_led_timer->setSingleShot(true);
@@ -438,6 +439,12 @@ void RadioOp::stopTx()
 
 void RadioOp::updateFrequency()
 {
+    if(_freq_gui_counter < 10)
+    {
+        _freq_gui_counter++;
+        return;
+    }
+    _freq_gui_counter = 0;
     long long freq = (long long)_modem->getFreqGUI();
     if(freq != 0 && freq != _tune_center_freq)
     {
@@ -558,13 +565,14 @@ void RadioOp::run()
         bool transmitting = _transmitting_audio;
         QCoreApplication::processEvents();
         flushVoipBuffer();
-
+        /*
         int time = QDateTime::currentDateTime().toTime_t();
         if((time - last_ping_time) > 10)
         {
             emit pingServer();
             last_ping_time = time;
         }
+
         if((time - last_channel_broadcast_time) > 10)
         {
             last_channel_broadcast_time = time;
@@ -573,6 +581,7 @@ void RadioOp::run()
                 sendChannels();
             }
         }
+        */
         updateDataModemReset(transmitting, ptt_activated);
 
         updateFrequency();
@@ -603,9 +612,7 @@ void RadioOp::run()
         }
         else
         {
-            _mutex->lock();
             bool rx_inited = _rx_inited;
-            _mutex->unlock();
             if(rx_inited)
             {
                 if(!_tuning_done)
