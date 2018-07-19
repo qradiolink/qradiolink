@@ -49,6 +49,7 @@ public slots:
     void set_ctcss(float value);
     void set_mode(int mode);
     int setAudio(std::vector<float> *data);
+    void set_bb_gain(int value);
 
 private:
     gr::top_block_sptr _top_block;

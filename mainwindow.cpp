@@ -130,6 +130,7 @@ void MainWindow::readConfig()
     ui->lineEditCallsign->setText(_settings->callsign);
     ui->lineEditVideoDevice->setText(_settings->video_device);
     ui->txGainDial->setValue(_settings->tx_power);
+    ui->lineEditBBgain->setText(QString::number(_settings->bb_gain));
     ui->rxGainDial->setValue(_settings->rx_sensitivity);
     ui->rxSquelchDial->setValue(_settings->squelch);
     ui->rxVolumeDial->setValue(_settings->rx_volume);
@@ -156,6 +157,7 @@ void MainWindow::saveConfig()
     _settings->callsign = ui->lineEditCallsign->text();
     _settings->video_device = ui->lineEditVideoDevice->text();
     _settings->tx_power = (int)ui->txGainDial->value();
+    _settings->bb_gain = (int)ui->lineEditBBgain->text().toInt();
     _settings->rx_sensitivity = (int)ui->rxGainDial->value();
     _settings->squelch = (int)ui->rxSquelchDial->value();
     _settings->rx_volume = (int)ui->rxVolumeDial->value();

@@ -109,6 +109,7 @@ public slots:
     void tuneFreq(qint64 center_freq);
     void tuneTxFreq(qint64 center_freq);
     void setTxPower(int dbm);
+    void setBbGain(int value);
     void setSquelch(int value);
     void setVolume(int value);
     void setRxSensitivity(int value);
@@ -163,6 +164,7 @@ private:
     long long _tune_center_freq;
     long long _tune_shift_freq;
     float _tx_power;
+    int _bb_gain;
     int _squelch;
     float _rx_sensitivity;
     int _step_hz;

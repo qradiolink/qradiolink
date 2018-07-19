@@ -55,6 +55,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _repeat = false;
     _settings = settings;
     _tx_power = 0;
+    _bb_gain = 0;
     _rx_sensitivity = 0;
     _rx_volume = 1.0;
     _squelch = 0;
@@ -145,7 +146,7 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
                          int &tx_freq_corr, std::string &callsign, std::string &video_device)
 {
     _settings->readConfig();
-    int tx_power, rx_sensitivity, squelch, rx_volume;
+    int tx_power, rx_sensitivity, squelch, rx_volume, bb_gain;
     long long rx_frequency, tx_shift;
     rx_device_args = _settings->rx_device_args.toStdString();
     tx_device_args = _settings->tx_device_args.toStdString();
@@ -155,6 +156,7 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
     tx_freq_corr = _settings->tx_freq_corr;
     video_device = _settings->video_device.toStdString();
     tx_power = _settings->tx_power;
+    bb_gain = _settings->bb_gain;
     rx_sensitivity = _settings->rx_sensitivity;
     squelch = _settings->squelch;
     rx_volume = _settings->rx_volume;
@@ -175,6 +177,8 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
     {
         _tx_power = (float)tx_power/100;
     }
+    _bb_gain = bb_gain;
+
     if(_rx_sensitivity == 0)
     {
         _rx_sensitivity = (float)rx_sensitivity/100.0;
@@ -425,7 +429,7 @@ void RadioOp::stopTx()
         struct timespec time_to_sleep = {1, 0L };
         nanosleep(&time_to_sleep, NULL);
         _modem->stopTX();
-        _modem->tuneTx(70000000);
+        _modem->tuneTx(430000000);
         _tx_modem_started = false;
         _tx_started = false;
         if(_rx_inited && !_repeat && (_rx_mode != gr_modem_types::ModemTypeQPSK250000))
@@ -1009,7 +1013,8 @@ void RadioOp::toggleTX(bool value)
 
         _modem->initTX(_tx_mode, tx_device_args, tx_antenna, tx_freq_corr);
         _modem->setTxPower(_tx_power);
-        _modem->tuneTx(70000000);
+        _modem->setBbGain(_bb_gain);
+        _modem->tuneTx(430000000);
         _modem->setTxCTCSS(_tx_ctcss);
         if(_tx_mode == gr_modem_types::ModemTypeQPSKVideo)
             _video = new VideoEncoder(QString::fromStdString(video_device));
@@ -1339,6 +1344,12 @@ void RadioOp::setTxPower(int dbm)
 {
     _tx_power = (float)dbm/100.0;
     _modem->setTxPower(_tx_power);
+}
+
+void RadioOp::setBbGain(int value)
+{
+    _bb_gain = value;
+    _modem->setBbGain(_bb_gain);
 }
 
 void RadioOp::setRxSensitivity(int value)

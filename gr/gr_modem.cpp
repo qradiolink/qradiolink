@@ -242,6 +242,12 @@ void gr_modem::setTxPower(float value)
         _gr_mod_base->set_power(value);
 }
 
+void gr_modem::setBbGain(int value)
+{
+    if(_gr_mod_base)
+        _gr_mod_base->set_bb_gain(value);
+}
+
 void gr_modem::setRxSensitivity(float value)
 {
     if(_gr_demod_base)

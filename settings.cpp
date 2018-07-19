@@ -78,6 +78,7 @@ void Settings::readConfig()
         callsign = QString(cfg.lookup("callsign"));
         video_device = QString(cfg.lookup("video_device"));
         tx_power = cfg.lookup("tx_power");
+        bb_gain = cfg.lookup("bb_gain");
         rx_sensitivity = cfg.lookup("rx_sensitivity");
         squelch = cfg.lookup("squelch");
         rx_volume = cfg.lookup("rx_volume");
@@ -100,6 +101,7 @@ void Settings::readConfig()
         callsign = "CALL";
         video_device = "/dev/video0";
         tx_power = 50;
+        bb_gain = 1;
         rx_sensitivity = 90;
         squelch = -70;
         rx_volume = 10;
@@ -126,6 +128,7 @@ void Settings::saveConfig()
     root.add("callsign",libconfig::Setting::TypeString) = callsign.toStdString();
     root.add("video_device",libconfig::Setting::TypeString) = video_device.toStdString();
     root.add("tx_power",libconfig::Setting::TypeInt) = tx_power;
+    root.add("bb_gain",libconfig::Setting::TypeInt) = bb_gain;
     root.add("rx_sensitivity",libconfig::Setting::TypeInt) = rx_sensitivity;
     root.add("squelch",libconfig::Setting::TypeInt) = squelch;
     root.add("rx_volume",libconfig::Setting::TypeInt) = rx_volume;
