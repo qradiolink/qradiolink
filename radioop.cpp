@@ -565,7 +565,7 @@ void RadioOp::run()
         bool transmitting = _transmitting_audio;
         QCoreApplication::processEvents();
         flushVoipBuffer();
-        /*
+
         int time = QDateTime::currentDateTime().toTime_t();
         if((time - last_ping_time) > 10)
         {
@@ -581,7 +581,7 @@ void RadioOp::run()
                 sendChannels();
             }
         }
-        */
+
         updateDataModemReset(transmitting, ptt_activated);
 
         updateFrequency();
