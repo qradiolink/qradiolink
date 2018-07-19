@@ -56,7 +56,8 @@ int gr_vector_sink::work(int noutput_items,
 {
     if(noutput_items < 1)
     {
-        usleep(1);
+        struct timespec time_to_sleep = {0, 1000L };
+        nanosleep(&time_to_sleep, NULL);
         return noutput_items;
     }
     gr::thread::scoped_lock guard(_mutex);

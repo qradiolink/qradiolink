@@ -88,7 +88,8 @@ void DtmfDecoder::run()
     {
         int last_time = 0;
         int time = QDateTime::currentDateTime().toTime_t();
-        usleep(10000);
+        struct timespec time_to_sleep = {0, 10000000L };
+        nanosleep(&time_to_sleep, NULL);
         QCoreApplication::processEvents();
 
 

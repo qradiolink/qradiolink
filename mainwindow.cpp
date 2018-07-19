@@ -114,7 +114,8 @@ void MainWindow::closeEvent (QCloseEvent *event)
     saveConfig();
     emit stopRadio();
     emit disconnectFromServer();
-    usleep(200000);
+    struct timespec time_to_sleep = {0, 200000000L };
+    nanosleep(&time_to_sleep, NULL);
     event->accept();
 }
 
