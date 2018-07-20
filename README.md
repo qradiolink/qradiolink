@@ -34,7 +34,7 @@ Features
 - Digital modulation:  **BPSK**, **DQPSK**, **2FSK**, **4FSK**
 - Analog modulation: narrow FM (5 kHz), FM (10 kHz), Wide FM (broadcast, receive-only), AM, SSB
 - CTCSS encoder and decoder for analog FM
-- Supported hardware: [**Ettus USRP**](https://ettus.com), [**RTL-SDR**](https://osmocom.org/projects/sdr/wiki/rtl-sdr), [**LimeSDR-mini**](https://www.crowdsupply.com/lime-micro/limesdr-mini) (through SoapySDR), BladeRF, other devices supported by [**gr-osmosdr**](https://osmocom.org/projects/sdr/wiki/GrOsmoSDR)
+- Supported hardware: [**Ettus USRP**](https://ettus.com), [**RTL-SDR**](https://osmocom.org/projects/sdr/wiki/rtl-sdr), [**LimeSDR-mini**](https://www.crowdsupply.com/lime-micro/limesdr-mini) (through SoapySDR), PlutoSDR (through [**SoapyPlutoSDR**](https://github.com/kantooon/SoapyPlutoSDR)), BladeRF, other devices supported by [**gr-osmosdr**](https://osmocom.org/projects/sdr/wiki/GrOsmoSDR)
  
 
 Requirements
@@ -60,6 +60,7 @@ libqt4-sql (>= 4:4.5.3), libqtcore4 (>= 4:4.8.0), libqtgui4 (>= 4:4.6.1),
 - qmake (either qmake-qt4 or qmake-qt5)
 - Pulseaudio (native Alsa support is not fully implemented) 
 - Gnuradio >= 3.7.10 built with OsmoSDR and UHD support
+- optionally SoapySDR and SoapyPlutoSDR
 - Boost 
 - libgnuradio-osmosdr built with UHD, RTL-SDR, SoapySDR or HackRF support
 - libgsm, libprotobuf, libopus, libspeexdsp, libpulse-simple, libpulse, libasound, libcodec2, libsqlite3, libjpeg, libconfig++
