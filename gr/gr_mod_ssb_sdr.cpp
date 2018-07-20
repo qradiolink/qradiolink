@@ -45,7 +45,7 @@ gr_mod_ssb_sdr::gr_mod_ssb_sdr(int sps, int samp_rate, int carrier_freq,
                                                         _filter_width, 1200);
 
     _resampler = gr::filter::rational_resampler_base_ccf::make(500,4, interp_taps);
-    _amplify = gr::blocks::multiply_const_cc::make(0.2,1);
+    _amplify = gr::blocks::multiply_const_cc::make(1,1);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
     _filter_usb = gr::filter::fft_filter_ccc::make(
                 1,gr::filter::firdes::complex_band_pass_2(
