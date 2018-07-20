@@ -44,7 +44,7 @@ gr_demod_am_sdr::gr_demod_am_sdr(std::vector<int>signature, int sps, int samp_ra
 
     float rerate = (float)_target_samp_rate/(float)_samp_rate;
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width, 10000);
+    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width, _target_samp_rate);
     std::vector<float> audio_taps = gr::filter::firdes::low_pass(1, _target_samp_rate, _filter_width, 1200);
     _resampler = gr::filter::pfb_arb_resampler_ccf::make(rerate, taps, 32);
     _audio_resampler = gr::filter::rational_resampler_base_fff::make(2,5, audio_taps);
