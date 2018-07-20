@@ -896,7 +896,7 @@ void RadioOp::repeaterInfoReceived(QByteArray data)
 
 void RadioOp::callsignReceived(QString callsign)
 {
-    QString time= QDateTime::currentDateTime().toString("d/MMM/yyyy hh:mm:ss");
+    QString time= QDateTime::currentDateTime().toString("dd/MMM/yyyy hh:mm:ss");
     QString text = "<br/><b>" + time + "</b> " + "<font color=\"#770000\">" + callsign + " </font><br/>\n";
     emit printText(text,true);
     emit printCallsign(callsign);
