@@ -46,8 +46,8 @@ gr_demod_wbfm_sdr::gr_demod_wbfm_sdr(std::vector<int>signature, int sps, int sam
     std::vector<float> deemph_taps(coeff, coeff + sizeof(coeff) / sizeof(coeff[0]) );
     _deemphasis_filter = gr::filter::fft_filter_fff::make(1,deemph_taps);
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width, 12000);
-    std::vector<float> audio_taps = gr::filter::firdes::low_pass(1, _target_samp_rate, 4000, 600);
+    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width, _target_samp_rate);
+    std::vector<float> audio_taps = gr::filter::firdes::low_pass(1, _target_samp_rate, 4000, 2000);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1,5,taps);
     _audio_resampler = gr::filter::rational_resampler_base_fff::make(1,25, audio_taps);
 

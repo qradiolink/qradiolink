@@ -39,7 +39,7 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(std::vector<int>signature, int sps, int samp_
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width, 600);
+    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width, _target_samp_rate);
     std::vector<float> audio_taps = gr::filter::firdes::low_pass(1, _target_samp_rate, _filter_width, 600);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1,50,taps);
     _audio_resampler = gr::filter::rational_resampler_base_fff::make(2,5, audio_taps);
