@@ -86,6 +86,8 @@ int main(int argc, char *argv[])
 
 
     QApplication a(argc, argv);
+    QStringList arguments = QCoreApplication::arguments();
+
 
     QString start_time= QDateTime::currentDateTime().toString("d/MMM/yyyy hh:mm:ss");
     qDebug() << start_time;
@@ -292,7 +294,11 @@ int main(int argc, char *argv[])
     QObject::connect(w,SIGNAL(changeChannel(int)),client,SLOT(joinChannel(int)));
 
     w->show();
-    w->showMaximized();
+    if(arguments.length() > 1 && arguments.at(1) == "-f")
+    {
+        w->showMaximized();
+        w->setWindowFlags( Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
+    }
     w->activateWindow();
     w->raise();
 

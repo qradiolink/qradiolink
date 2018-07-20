@@ -100,7 +100,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     ui->statusBar->hide();
     ui->mainToolBar->hide();
     setWindowIcon(QIcon(":/res/logo.png"));
-    setWindowFlags( Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
+
 
 }
 
