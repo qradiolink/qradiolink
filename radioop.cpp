@@ -62,6 +62,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _rx_ctcss = 0.0;
     _tx_ctcss = 0.0;
     _tune_center_freq = 0;
+    _autotune_freq = 0;
     _tune_shift_freq = 0;
     _tune_limit_lower = -5000;
     _tune_limit_upper = 5000;
@@ -1403,19 +1404,22 @@ void RadioOp::autoTune()
         struct timespec time_to_sleep = {0, 10000L };
         nanosleep(&time_to_sleep, NULL);
     }
-    _tune_center_freq = _tune_center_freq + _step_hz;
-    _modem->tune(_tune_center_freq);
-    _modem->tuneTx(_tune_center_freq + _tune_shift_freq);
-    if(_tune_center_freq >= (_tune_center_freq + _tune_limit_upper))
-        _tune_center_freq = _tune_center_freq + _tune_limit_lower;
+    _autotune_freq = _autotune_freq + _step_hz;
+    _modem->tune(_autotune_freq);
+    _modem->tuneTx(_autotune_freq + _tune_shift_freq);
+    if(_autotune_freq >= (_tune_center_freq + _tune_limit_upper))
+        _autotune_freq = _tune_center_freq + _tune_limit_lower;
 }
 
 void RadioOp::startAutoTune()
 {
+    _autotune_freq = _tune_center_freq;
     _tuning_done = false;
 }
 
 void RadioOp::stopAutoTune()
 {
     _tuning_done = true;
+    _tune_center_freq = _autotune_freq;
+    emit freqFromGUI(_autotune_freq);
 }

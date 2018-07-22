@@ -162,6 +162,7 @@ private:
     int _rx_radio_type;
     int _tx_radio_type;
     long long _tune_center_freq;
+    long long _autotune_freq;
     long long _tune_shift_freq;
     float _tx_power;
     int _bb_gain;
