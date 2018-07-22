@@ -20,7 +20,7 @@
 #include <gnuradio/hier_block2.h>
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/analog/agc2_cc.h>
-#include <gnuradio/filter/pfb_arb_resampler_ccf.h>
+#include <gnuradio/filter/rational_resampler_base_ccf.h>
 #include <gnuradio/filter/iir_filter_ffd.h>
 #include <gnuradio/filter/rational_resampler_base_fff.h>
 #include <gnuradio/analog/pwr_squelch_cc.h>
@@ -45,7 +45,7 @@ public:
     void set_squelch(int value);
 private:
 
-    gr::filter::pfb_arb_resampler_ccf::sptr _resampler;
+    gr::filter::rational_resampler_base_ccf::sptr _resampler;
     gr::filter::rational_resampler_base_fff::sptr _audio_resampler;
     gr::analog::pwr_squelch_cc::sptr _squelch;
     gr::filter::fft_filter_ccc::sptr _filter;
