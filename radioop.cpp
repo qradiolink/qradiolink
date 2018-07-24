@@ -406,7 +406,7 @@ void RadioOp::startTx()
         if(_tx_modem_started)
             _modem->stopTX();
         _modem->startTX();
-        struct timespec time_to_sleep = {0, 100000000L };
+        struct timespec time_to_sleep = {0, 10000000L };
         nanosleep(&time_to_sleep, NULL);
         _modem->tuneTx(_tune_center_freq + _tune_shift_freq);
         _tx_modem_started = false;
