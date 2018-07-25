@@ -733,9 +733,15 @@ void RadioOp::receiveVideoData(unsigned char *data, int size)
     int frame_size = getFrameLength(data);
     unsigned int crc = 0;
     memcpy(&crc, &data[12], 4);
-    if((frame_size == 0) || (frame_size > 3122 - 16))
+    if(frame_size == 0)
     {
         qDebug() << "received wrong frame size, dropping frame ";
+        delete[] data;
+        return;
+    }
+    if(frame_size > 3122 - 16)
+    {
+        qDebug() << "frame size too large, dropping frame ";
         delete[] data;
         return;
     }
