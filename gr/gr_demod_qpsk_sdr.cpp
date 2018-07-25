@@ -15,6 +15,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "gr_demod_qpsk_sdr.h"
+#include <complex>
 
 gr_demod_qpsk_sdr_sptr make_gr_demod_qpsk_sdr(int sps, int samp_rate, int carrier_freq,
                                           int filter_width)
@@ -38,26 +39,29 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
 
     int decimation;
     int interpolation;
-    if(sps > 2)
+    int filt_bandwidth;
+    if(sps > 4)
     {
         interpolation = 1;
         decimation = 50;
         _samples_per_symbol = sps*2/25;
         _target_samp_rate = 20000;
+        filt_bandwidth = _target_samp_rate;
     }
     else
     {
         interpolation = 1;
-        decimation = 4;
+        decimation = 2;
         _samples_per_symbol = sps;
-        _target_samp_rate = 250000;
+        _target_samp_rate = 500000;
+        filt_bandwidth = 20000;
     }
     _samp_rate =samp_rate;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
     int filter_slope = 1200;
     if(_target_samp_rate > 100000)
-        filter_slope = 5000;
+        filter_slope = 15000;
 
     std::vector<int> map;
     map.push_back(0);
@@ -65,7 +69,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
     map.push_back(3);
     map.push_back(2);
 
-    gr::digital::constellation_dqpsk::sptr constellation = gr::digital::constellation_dqpsk::make();
+    gr::digital::constellation_qpsk::sptr constellation = gr::digital::constellation_qpsk::make();
 
     unsigned int flt_size = 32;
     /*
@@ -73,7 +77,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
                 constellation->points(),pre_diff_code,4,2,2,1,1,const_map);
     */
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width, _target_samp_rate);
+    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width, filt_bandwidth);
 
     _resampler = gr::filter::rational_resampler_base_ccf::make(interpolation, decimation, taps);
 
@@ -81,7 +85,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
                                 1, _target_samp_rate, _filter_width, filter_slope,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     float gain_mu, omega_rel_limit;
-    if(sps <= 2)
+    if(sps <= 4)
     {
         gain_mu = 0.001;
         omega_rel_limit = 0.0001;
@@ -113,11 +117,20 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
     _constellation_receiver = gr::digital::constellation_decoder_cb::make(constellation);
 
+    _decode_ccsds = gr::fec::decode_ccsds_27_fb::make();
+    _diff_phasor = gr::digital::diff_phasor_cc::make();
+    const std::complex<float> i(0, 1);
+    const std::complex<float> rot(-3 * M_PI/4, 0);
+    _rotate_const =  gr::blocks::multiply_const_cc::make(std::exp(i * rot));
+    _complex_to_float = gr::blocks::complex_to_float::make();
+    _interleave = gr::blocks::interleave::make(4);
+    _packed_to_unpacked = gr::blocks::packed_to_unpacked_bb::make(1,gr::GR_MSB_FIRST);
+
 
     connect(self(),0,_resampler,0);
     connect(_resampler,0,_filter,0);
     connect(_filter,0,self(),0);
-    if(sps > 2)
+    if(sps > 1)
     {
         connect(_filter,0,_fll,0);
         //connect(_shaping_filter,0,_agc,0);
@@ -131,12 +144,16 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
     connect(_agc,0,_clock_recovery,0);
     connect(_clock_recovery,0,_equalizer,0);
     connect(_equalizer,0,_costas_loop,0);
-    connect(_costas_loop,0,self(),1);
-    connect(_costas_loop,0,_constellation_receiver,0);
-    connect(_constellation_receiver,0,_diff_decoder,0);
-    connect(_diff_decoder,0,_map,0);
-    connect(_map,0,_unpack,0);
-    connect(_unpack,0,_descrambler,0);
+    //connect(_costas_loop,0,self(),1);
+    connect(_costas_loop,0,_diff_phasor,0);
+    connect(_diff_phasor,0,_rotate_const,0);
+    connect(_rotate_const,0,_complex_to_float,0);
+    connect(_rotate_const,0,self(),1);
+    connect(_complex_to_float,0,_interleave,0);
+    connect(_complex_to_float,1,_interleave,1);
+    connect(_interleave,0,_decode_ccsds,0);
+    connect(_decode_ccsds,0,_packed_to_unpacked,0);
+    connect(_packed_to_unpacked,0,_descrambler,0);
     connect(_descrambler,0,self(),2);
 
 }

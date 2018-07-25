@@ -107,10 +107,10 @@ gr_demod_base::gr_demod_base(gr::qtgui::sink_c::sptr fft_gui,
     _bpsk_2k = make_gr_demod_bpsk_sdr(125,1000000,1700,2400);
     _fm_2500 = make_gr_demod_nbfm_sdr(0, 1000000,1700,2500);
     _fm_5000 = make_gr_demod_nbfm_sdr(0, 1000000,1700,4000);
-    _qpsk_2k = make_gr_demod_qpsk_sdr(250,1000000,1700,800);
-    _qpsk_10k = make_gr_demod_qpsk_sdr(50,1000000,1700,4000);
-    _qpsk_250k = make_gr_demod_qpsk_sdr(2,1000000,1700,78000);
-    _qpsk_video = make_gr_demod_qpsk_sdr(2,1000000,1700,78000);
+    _qpsk_2k = make_gr_demod_qpsk_sdr(125,1000000,1700,1600);
+    _qpsk_10k = make_gr_demod_qpsk_sdr(25,1000000,1700,8000);
+    _qpsk_250k = make_gr_demod_qpsk_sdr(2,1000000,1700,156000);
+    _qpsk_video = make_gr_demod_qpsk_sdr(2,1000000,1700,156000);
     _usb = make_gr_demod_ssb_sdr(0, 1000000,1700,2500);
     _lsb = make_gr_demod_ssb_sdr(1, 1000000,1700,2500);
     _wfm = make_gr_demod_wbfm_sdr(0, 1000000,1700,75000);

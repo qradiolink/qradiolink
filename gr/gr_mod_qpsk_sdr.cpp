@@ -29,7 +29,12 @@ gr_mod_qpsk_sdr::gr_mod_qpsk_sdr(int sps, int samp_rate, int carrier_freq,
                       gr::io_signature::make (1, 1, sizeof (char)),
                       gr::io_signature::make (1, 1, sizeof (gr_complex)))
 {
-    gr::digital::constellation_dqpsk::sptr constellation = gr::digital::constellation_dqpsk::make();
+    gr::digital::constellation_qpsk::sptr constellation = gr::digital::constellation_qpsk::make();
+    std::vector<gr_complex> symbol_table;
+    symbol_table.push_back(-0.707-0.707j);
+    symbol_table.push_back(-0.707+0.707j);
+    symbol_table.push_back(0.707+0.707j);
+    symbol_table.push_back(0.707-0.707j);
 
     std::vector<int> map;
     map.push_back(0);
@@ -47,12 +52,14 @@ gr_mod_qpsk_sdr::gr_mod_qpsk_sdr(int sps, int samp_rate, int carrier_freq,
         filter_slope = 5000;
 
     _packed_to_unpacked = gr::blocks::packed_to_unpacked_bb::make(1,gr::GR_MSB_FIRST);
+    _unpacked_to_packed = gr::blocks::unpacked_to_packed_bb::make(1,gr::GR_MSB_FIRST);
+    _encode_ccsds = gr::fec::encode_ccsds_27_bb::make();
     _packer = gr::blocks::pack_k_bits_bb::make(2);
     _scrambler = gr::digital::scrambler_bb::make(0x8A, 0x7F ,7);
     _diff_encoder = gr::digital::diff_encoder_bb::make(4);
     _map = gr::digital::map_bb::make(map);
 
-    _chunks_to_symbols = gr::digital::chunks_to_symbols_bc::make(constellation->points());
+    _chunks_to_symbols = gr::digital::chunks_to_symbols_bc::make(symbol_table);
     int nfilts = 32;
     std::vector<float> rrc_taps = gr::filter::firdes::root_raised_cosine(nfilts, nfilts,
                                                         1, 0.35, nfilts * 11 * _samples_per_symbol);
@@ -68,7 +75,9 @@ gr_mod_qpsk_sdr::gr_mod_qpsk_sdr(int sps, int samp_rate, int carrier_freq,
 
     connect(self(),0,_packed_to_unpacked,0);
     connect(_packed_to_unpacked,0,_scrambler,0);
-    connect(_scrambler,0,_packer,0);
+    connect(_scrambler,0,_unpacked_to_packed,0);
+    connect(_unpacked_to_packed,0,_encode_ccsds,0);
+    connect(_encode_ccsds,0,_packer,0);
     connect(_packer,0,_map,0);
     connect(_map,0,_diff_encoder,0);
     connect(_diff_encoder,0,_chunks_to_symbols,0);

@@ -23,6 +23,12 @@
 #include <gnuradio/digital/clock_recovery_mm_cc.h>
 #include <gnuradio/blocks/unpack_k_bits_bb.h>
 #include <gnuradio/blocks/float_to_complex.h>
+#include <gnuradio/blocks/complex_to_float.h>
+#include <gnuradio/blocks/multiply_const_cc.h>
+#include <gnuradio/digital/diff_phasor_cc.h>
+#include <gnuradio/blocks/interleave.h>
+#include <gnuradio/blocks/packed_to_unpacked_bb.h>
+#include <gnuradio/fec/decode_ccsds_27_fb.h>
 #include <gnuradio/digital/costas_loop_cc.h>
 #include <gnuradio/digital/diff_decoder_bb.h>
 #include <gnuradio/digital/cma_equalizer_cc.h>
@@ -69,6 +75,12 @@ private:
     gr::filter::fft_filter_ccf::sptr _shaping_filter;
     gr::filter::fft_filter_ccf::sptr _filter;
     gr::digital::descrambler_bb::sptr _descrambler;
+    gr::fec::decode_ccsds_27_fb::sptr _decode_ccsds;
+    gr::digital::diff_phasor_cc::sptr _diff_phasor;
+    gr::blocks::multiply_const_cc::sptr _rotate_const;
+    gr::blocks::complex_to_float::sptr _complex_to_float;
+    gr::blocks::interleave::sptr _interleave;
+    gr::blocks::packed_to_unpacked_bb::sptr _packed_to_unpacked;
 
 
     int _samples_per_symbol;

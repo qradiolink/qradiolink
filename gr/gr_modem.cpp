@@ -633,21 +633,22 @@ void gr_modem::synchronize(int v_size, std::vector<unsigned char> *data)
                 _frequency_found += 1; // 80 bits + counter
             _bit_buf[_bit_buf_index] =  (data->at(i)) & 0x1;
             _bit_buf_index++;
-            int frame_length = _rx_frame_length;
+
             int bit_buf_len = _bit_buf_len;
+
             if((_modem_type_rx != gr_modem_types::ModemTypeBPSK1000)
-                    && (_current_frame_type == FrameTypeVoice))
-            {
-                frame_length++; // reserved data
-            }
-            else if((_modem_type_rx != gr_modem_types::ModemTypeBPSK1000)
                     && (_current_frame_type != FrameTypeVoice))
             {
                 bit_buf_len = _bit_buf_len - 8;
             }
             if(_bit_buf_index >= bit_buf_len)
             {
-
+                int frame_length = _rx_frame_length;
+                if((_modem_type_rx != gr_modem_types::ModemTypeBPSK1000)
+                        && (_current_frame_type == FrameTypeVoice))
+                {
+                    frame_length++; // reserved data
+                }
                 unsigned char *frame_data = new unsigned char[frame_length];
                 packBytes(frame_data,_bit_buf,_bit_buf_index);
                 processReceivedData(frame_data, _current_frame_type);
