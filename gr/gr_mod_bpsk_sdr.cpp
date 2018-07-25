@@ -43,10 +43,10 @@ gr_mod_bpsk_sdr::gr_mod_bpsk_sdr(int sps, int samp_rate, int carrier_freq,
     _filter_width = filter_width;
 
     _packed_to_unpacked = gr::blocks::packed_to_unpacked_bb::make(1,gr::GR_MSB_FIRST);
-    _unpacked_to_packed = gr::blocks::unpacked_to_packed_bb::make(1,gr::GR_MSB_FIRST);
     _scrambler = gr::digital::scrambler_bb::make(0x8A, 0x7F ,7);
 
-    _ccsds_encoder = gr::fec::encode_ccsds_27_bb::make();
+    gr::fec::code::cc_encoder::sptr encoder = gr::fec::code::cc_encoder::make(80, 7, 2, polys);
+    _encode_ccsds = gr::fec::encoder::make(encoder, 1, 1);
 
     _chunks_to_symbols = gr::digital::chunks_to_symbols_bc::make(constellation);
     int nfilts = 32;
@@ -65,9 +65,8 @@ gr_mod_bpsk_sdr::gr_mod_bpsk_sdr(int sps, int samp_rate, int carrier_freq,
 
     connect(self(),0,_packed_to_unpacked,0);
     connect(_packed_to_unpacked,0,_scrambler,0);
-    connect(_scrambler,0,_unpacked_to_packed,0);
-    connect(_unpacked_to_packed,0,_ccsds_encoder,0);
-    connect(_ccsds_encoder,0,_chunks_to_symbols,0);
+    connect(_scrambler,0,_encode_ccsds,0);
+    connect(_encode_ccsds,0,_chunks_to_symbols,0);
     connect(_chunks_to_symbols,0,_repeat,0);
 
     connect(_repeat,0,_shaping_filter,0);

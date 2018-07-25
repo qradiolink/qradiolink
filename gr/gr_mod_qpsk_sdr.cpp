@@ -42,6 +42,10 @@ gr_mod_qpsk_sdr::gr_mod_qpsk_sdr(int sps, int samp_rate, int carrier_freq,
     map.push_back(3);
     map.push_back(2);
 
+    std::vector<int> polys;
+    polys.push_back(109);
+    polys.push_back(79);
+
     _samples_per_symbol = sps;
     _samp_rate =samp_rate;
     _carrier_freq = carrier_freq;
@@ -52,8 +56,8 @@ gr_mod_qpsk_sdr::gr_mod_qpsk_sdr(int sps, int samp_rate, int carrier_freq,
         filter_slope = 5000;
 
     _packed_to_unpacked = gr::blocks::packed_to_unpacked_bb::make(1,gr::GR_MSB_FIRST);
-    _unpacked_to_packed = gr::blocks::unpacked_to_packed_bb::make(1,gr::GR_MSB_FIRST);
-    _encode_ccsds = gr::fec::encode_ccsds_27_bb::make();
+    gr::fec::code::cc_encoder::sptr encoder = gr::fec::code::cc_encoder::make(80, 7, 2, polys);
+    _encode_ccsds = gr::fec::encoder::make(encoder, 1, 1);
     _packer = gr::blocks::pack_k_bits_bb::make(2);
     _scrambler = gr::digital::scrambler_bb::make(0x8A, 0x7F ,7);
     _diff_encoder = gr::digital::diff_encoder_bb::make(4);
@@ -75,8 +79,7 @@ gr_mod_qpsk_sdr::gr_mod_qpsk_sdr(int sps, int samp_rate, int carrier_freq,
 
     connect(self(),0,_packed_to_unpacked,0);
     connect(_packed_to_unpacked,0,_scrambler,0);
-    connect(_scrambler,0,_unpacked_to_packed,0);
-    connect(_unpacked_to_packed,0,_encode_ccsds,0);
+    connect(_scrambler,0,_encode_ccsds,0);
     connect(_encode_ccsds,0,_packer,0);
     connect(_packer,0,_map,0);
     connect(_map,0,_diff_encoder,0);

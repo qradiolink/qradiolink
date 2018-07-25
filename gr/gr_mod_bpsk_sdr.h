@@ -34,7 +34,8 @@
 #include <gnuradio/blocks/repeat.h>
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/digital/scrambler_bb.h>
-#include <gnuradio/fec/encode_ccsds_27_bb.h>
+#include <gnuradio/fec/cc_encoder.h>
+#include <gnuradio/fec/encoder.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
 
 
@@ -54,12 +55,11 @@ public:
 
 private:
     gr::blocks::packed_to_unpacked_bb::sptr _packed_to_unpacked;
-    gr::blocks::unpacked_to_packed_bb::sptr _unpacked_to_packed;
     gr::digital::chunks_to_symbols_bc::sptr _chunks_to_symbols;
     gr::filter::fft_filter_ccf::sptr _shaping_filter;
     gr::blocks::multiply_const_cc::sptr _amplify;
     gr::blocks::multiply_const_cc::sptr _bb_gain;
-    gr::fec::encode_ccsds_27_bb::sptr _ccsds_encoder;
+    gr::fec::encoder::sptr _encode_ccsds;
     gr::digital::scrambler_bb::sptr _scrambler;
     gr::blocks::repeat::sptr _repeat;
     gr::filter::fft_filter_ccf::sptr _filter;
