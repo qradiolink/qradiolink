@@ -20,14 +20,13 @@
 #include <gnuradio/hier_block2.h>
 #include <gnuradio/endianness.h>
 #include <gnuradio/filter/firdes.h>
-#include <gnuradio/digital/clock_recovery_mm_ff.h>
+#include <gnuradio/digital/clock_recovery_mm_cc.h>
 #include <gnuradio/blocks/unpack_k_bits_bb.h>
 #include <gnuradio/blocks/float_to_complex.h>
 #include <gnuradio/analog/quadrature_demod_cf.h>
 #include <gnuradio/blocks/multiply_const_cc.h>
 #include <gnuradio/blocks/complex_to_mag.h>
 #include <gnuradio/filter/rational_resampler_base_ccf.h>
-#include <gnuradio/digital/costas_loop_cc.h>
 #include <gnuradio/digital/constellation.h>
 #include <gnuradio/digital/constellation_decoder_cb.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
@@ -35,6 +34,13 @@
 #include <gnuradio/filter/fft_filter_fff.h>
 #include <gnuradio/digital/descrambler_bb.h>
 #include <gnuradio/blocks/complex_to_mag_squared.h>
+#include <gnuradio/blocks/float_to_uchar.h>
+#include <gnuradio/blocks/add_const_ff.h>
+#include <gnuradio/blocks/multiply_const_ff.h>
+#include <gnuradio/blocks/complex_to_float.h>
+#include <gnuradio/blocks/interleave.h>
+#include <gnuradio/fec/decoder.h>
+#include <gnuradio/fec/cc_decoder.h>
 #include "gr_4fsk_discriminator.h"
 
 class gr_demod_4fsk_sdr;
@@ -62,17 +68,22 @@ private:
     gr::blocks::complex_to_mag::sptr _mag3;
     gr::blocks::complex_to_mag::sptr _mag4;
     gr_4fsk_discriminator_sptr _discriminator;
-    gr::digital::costas_loop_cc::sptr _costas_loop;
 
     gr::blocks::multiply_const_cc::sptr _multiply_symbols;
     gr::analog::quadrature_demod_cf::sptr _freq_demod;
     gr::blocks::float_to_complex::sptr _float_to_complex;
-    gr::filter::fft_filter_fff::sptr _symbol_filter;
-    gr::digital::clock_recovery_mm_ff::sptr _clock_recovery;
+    gr::filter::fft_filter_ccf::sptr _symbol_filter;
+    gr::digital::clock_recovery_mm_cc::sptr _clock_recovery;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
     gr::digital::constellation_decoder_cb::sptr _constellation_receiver;
     gr::filter::fft_filter_ccf::sptr _filter;
     gr::digital::descrambler_bb::sptr _descrambler;
+    gr::blocks::multiply_const_ff::sptr _multiply_const_fec;
+    gr::blocks::complex_to_float::sptr _complex_to_float;
+    gr::blocks::interleave::sptr _interleave;
+    gr::blocks::float_to_uchar::sptr _float_to_uchar;
+    gr::blocks::add_const_ff::sptr _add_const_fec;
+    gr::fec::decoder::sptr _decode_ccsds;
 
     int _samples_per_symbol;
     int _samp_rate;

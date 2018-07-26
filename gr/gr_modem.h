@@ -117,6 +117,7 @@ public slots:
     void startTX();
     void stopTX();
     void setTxPower(float value);
+    void setBbGain(int value);
     void setSquelch(int value);
     void setRxSensitivity(float value);
     void setRxCTCSS(float value);

@@ -44,6 +44,7 @@ public:
     explicit gr_mod_nbfm_sdr(int sps=125, int samp_rate=250000, int carrier_freq=1700,
                              int filter_width=8000);
     void set_ctcss(float value);
+    void set_bb_gain(int value);
 private:
 
     gr::analog::frequency_modulator_fc::sptr _fm_modulator;
@@ -51,6 +52,7 @@ private:
     gr::blocks::add_ff::sptr _add;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
     gr::blocks::multiply_const_cc::sptr _amplify;
+    gr::blocks::multiply_const_cc::sptr _bb_gain;
     gr::blocks::multiply_const_ff::sptr _audio_amplify;
     gr::filter::fft_filter_fff::sptr _audio_filter;
     gr::filter::fft_filter_fff::sptr _emphasis_filter;

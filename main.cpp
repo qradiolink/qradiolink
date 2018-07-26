@@ -86,6 +86,8 @@ int main(int argc, char *argv[])
 
 
     QApplication a(argc, argv);
+    QStringList arguments = QCoreApplication::arguments();
+
 
     QString start_time= QDateTime::currentDateTime().toString("d/MMM/yyyy hh:mm:ss");
     qDebug() << start_time;
@@ -256,6 +258,7 @@ int main(int argc, char *argv[])
     QObject::connect(w,SIGNAL(stopAutoTuneFreq()),radio_op,SLOT(stopAutoTune()));
     QObject::connect(w,SIGNAL(fineTuneFreq(long)),radio_op,SLOT(fineTuneFreq(long)));
     QObject::connect(w,SIGNAL(setTxPower(int)),radio_op,SLOT(setTxPower(int)));
+    //QObject::connect(w,SIGNAL(setBbGain(int)),radio_op,SLOT(setBbGain(int)));
     QObject::connect(w,SIGNAL(setRxSensitivity(int)),radio_op,SLOT(setRxSensitivity(int)));
     QObject::connect(w,SIGNAL(setSquelch(int)),radio_op,SLOT(setSquelch(int)));
     QObject::connect(w,SIGNAL(setVolume(int)),radio_op,SLOT(setVolume(int)));
@@ -291,7 +294,11 @@ int main(int argc, char *argv[])
     QObject::connect(w,SIGNAL(changeChannel(int)),client,SLOT(joinChannel(int)));
 
     w->show();
-    w->showMaximized();
+    if(arguments.length() > 1 && arguments.at(1) == "-f")
+    {
+        w->showMaximized();
+        w->setWindowFlags( Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
+    }
     w->activateWindow();
     w->raise();
 

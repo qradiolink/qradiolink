@@ -21,22 +21,26 @@
 #include <gnuradio/endianness.h>
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/digital/clock_recovery_mm_cc.h>
-#include <gnuradio/blocks/unpack_k_bits_bb.h>
 #include <gnuradio/blocks/float_to_complex.h>
+#include <gnuradio/blocks/complex_to_float.h>
+#include <gnuradio/blocks/multiply_const_cc.h>
+#include <gnuradio/blocks/multiply_const_ff.h>
+#include <gnuradio/digital/diff_phasor_cc.h>
+#include <gnuradio/blocks/interleave.h>
+#include <gnuradio/fec/decoder.h>
+#include <gnuradio/fec/cc_decoder.h>
 #include <gnuradio/digital/costas_loop_cc.h>
-#include <gnuradio/digital/diff_decoder_bb.h>
 #include <gnuradio/digital/cma_equalizer_cc.h>
 #include <gnuradio/analog/agc2_cc.h>
 #include <gnuradio/digital/fll_band_edge_cc.h>
-#include <gnuradio/filter/pfb_arb_resampler_ccf.h>
 #include <gnuradio/filter/rational_resampler_base_ccf.h>
-#include <gnuradio/filter/freq_xlating_fir_filter_ccf.h>
-#include <gnuradio/digital/map_bb.h>
 #include <gnuradio/digital/constellation.h>
 #include <gnuradio/digital/constellation_decoder_cb.h>
 #include <gnuradio/digital/pfb_clock_sync_ccf.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/digital/descrambler_bb.h>
+#include <gnuradio/blocks/float_to_uchar.h>
+#include <gnuradio/blocks/add_const_ff.h>
 
 
 class gr_demod_qpsk_sdr;
@@ -53,22 +57,24 @@ public:
 
 
 private:
-    gr::blocks::unpack_k_bits_bb::sptr _unpack;
-    gr::filter::freq_xlating_fir_filter_ccf::sptr _freq_transl_filter;
     gr::digital::cma_equalizer_cc::sptr _equalizer;
     gr::analog::agc2_cc::sptr _agc;
     gr::digital::fll_band_edge_cc::sptr _fll;
     gr::digital::clock_recovery_mm_cc::sptr _clock_recovery;
     gr::digital::pfb_clock_sync_ccf::sptr _clock_sync;
     gr::digital::costas_loop_cc::sptr _costas_loop;
-    gr::digital::diff_decoder_bb::sptr _diff_decoder;
-    gr::filter::pfb_arb_resampler_ccf::sptr _resampler_pfb;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
-    gr::digital::map_bb::sptr _map;
-    gr::digital::constellation_decoder_cb::sptr _constellation_receiver;
     gr::filter::fft_filter_ccf::sptr _shaping_filter;
     gr::filter::fft_filter_ccf::sptr _filter;
     gr::digital::descrambler_bb::sptr _descrambler;
+    gr::fec::decoder::sptr _decode_ccsds;
+    gr::digital::diff_phasor_cc::sptr _diff_phasor;
+    gr::blocks::multiply_const_cc::sptr _rotate_const;
+    gr::blocks::multiply_const_ff::sptr _multiply_const_fec;
+    gr::blocks::complex_to_float::sptr _complex_to_float;
+    gr::blocks::interleave::sptr _interleave;
+    gr::blocks::float_to_uchar::sptr _float_to_uchar;
+    gr::blocks::add_const_ff::sptr _add_const_fec;
 
 
     int _samples_per_symbol;

@@ -36,16 +36,17 @@ gr_mod_ssb_sdr::gr_mod_ssb_sdr(int sps, int samp_rate, int carrier_freq,
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
 
-    _agc = gr::analog::agc2_ff::make(1000, 1000, 1, 0);
+    _agc = gr::analog::agc2_ff::make(1, 1, 1, 0);
     _audio_filter = gr::filter::fft_filter_fff::make(
-                1,gr::filter::firdes::low_pass(
-                    1, target_samp_rate, _filter_width, 600, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+                1,gr::filter::firdes::band_pass(
+                    1, target_samp_rate, 200, _filter_width, 50, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
     _float_to_complex = gr::blocks::float_to_complex::make();
     std::vector<float> interp_taps = gr::filter::firdes::low_pass(1, _samp_rate,
                                                         _filter_width, 1200);
 
-    _resampler = gr::filter::rational_resampler_base_ccf::make(125,4, interp_taps);
-    _amplify = gr::blocks::multiply_const_cc::make(0.2,1);
+    _resampler = gr::filter::rational_resampler_base_ccf::make(500,4, interp_taps);
+    _amplify = gr::blocks::multiply_const_cc::make(30,1);
+    _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
     _filter_usb = gr::filter::fft_filter_ccc::make(
                 1,gr::filter::firdes::complex_band_pass_2(
                     1, _samp_rate, 300, _filter_width, 50, 120, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
@@ -59,15 +60,21 @@ gr_mod_ssb_sdr::gr_mod_ssb_sdr(int sps, int samp_rate, int carrier_freq,
     connect(_agc,0,_float_to_complex,0);
     connect(_float_to_complex,0,_resampler,0);
     connect(_resampler,0,_amplify,0);
+    connect(_amplify,0,_bb_gain,0);
     if(!sps)
     {
-        connect(_amplify,0,_filter_usb,0);
+        connect(_bb_gain,0,_filter_usb,0);
         connect(_filter_usb,0,self(),0);
     }
     else
     {
-        connect(_amplify,0,_filter_lsb,0);
+        connect(_bb_gain,0,_filter_lsb,0);
         connect(_filter_lsb,0,self(),0);
     }
+}
+
+void gr_mod_ssb_sdr::set_bb_gain(int value)
+{
+    _bb_gain->set_k(value);
 }
 

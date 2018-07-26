@@ -55,18 +55,21 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _repeat = false;
     _settings = settings;
     _tx_power = 0;
+    _bb_gain = 0;
     _rx_sensitivity = 0;
     _rx_volume = 1.0;
     _squelch = 0;
     _rx_ctcss = 0.0;
     _tx_ctcss = 0.0;
     _tune_center_freq = 0;
+    _autotune_freq = 0;
     _tune_shift_freq = 0;
     _tune_limit_lower = -5000;
     _tune_limit_upper = 5000;
     _step_hz = 10;
     _tuning_done = true;
     _tune_counter = 0;
+    _freq_gui_counter = 0;
     _tx_modem_started = false;
     _voice_led_timer = new QTimer(this);
     _voice_led_timer->setSingleShot(true);
@@ -144,7 +147,7 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
                          int &tx_freq_corr, std::string &callsign, std::string &video_device)
 {
     _settings->readConfig();
-    int tx_power, rx_sensitivity, squelch, rx_volume;
+    int tx_power, rx_sensitivity, squelch, rx_volume, bb_gain;
     long long rx_frequency, tx_shift;
     rx_device_args = _settings->rx_device_args.toStdString();
     tx_device_args = _settings->tx_device_args.toStdString();
@@ -154,6 +157,7 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
     tx_freq_corr = _settings->tx_freq_corr;
     video_device = _settings->video_device.toStdString();
     tx_power = _settings->tx_power;
+    bb_gain = _settings->bb_gain;
     rx_sensitivity = _settings->rx_sensitivity;
     squelch = _settings->squelch;
     rx_volume = _settings->rx_volume;
@@ -174,6 +178,8 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
     {
         _tx_power = (float)tx_power/100;
     }
+    _bb_gain = bb_gain;
+
     if(_rx_sensitivity == 0)
     {
         _rx_sensitivity = (float)rx_sensitivity/100.0;
@@ -279,10 +285,11 @@ int RadioOp::processVideoStream(bool &frame_flag)
 
     _video->encode_jpeg(&(videobuffer[16]), encoded_size, max_video_frame_size - 16);
 
-    microsec = (quint64)timer.nsecsElapsed()/1000;
-    if(microsec < 100000)
+    microsec = (quint64)timer.nsecsElapsed();
+    if(microsec < 100000000)
     {
-        usleep((100000 - microsec) - 2000);
+        struct timespec time_to_sleep = {0, (100000000 - microsec) - 2000000 };
+        nanosleep(&time_to_sleep, NULL);
     }
 
     //qDebug() << "video out " << microsec << " / " << encoded_size;
@@ -310,16 +317,18 @@ int RadioOp::processVideoStream(bool &frame_flag)
 void RadioOp::processNetStream()
 {
     // 48400
-    qint64 time_per_frame = 48400;
+    qint64 time_per_frame = 48400000;
     qint64 microsec, time_left;
-    microsec = (quint64)_data_read_timer->nsecsElapsed()/1000;
-    if(microsec < 46400)
+    microsec = (quint64)_data_read_timer->nsecsElapsed();
+    if(microsec < 46400000)
     {
         return;
     }
     time_left = time_per_frame - microsec;
+    struct timespec time_to_sleep = {0, time_left };
+
     if(time_left > 0)
-        usleep(time_left);
+        nanosleep(&time_to_sleep, NULL);
     _data_read_timer->restart();
     int max_frame_size = 1516;
     unsigned char *netbuffer = (unsigned char*)calloc(max_frame_size, sizeof(unsigned char));
@@ -397,7 +406,8 @@ void RadioOp::startTx()
         if(_tx_modem_started)
             _modem->stopTX();
         _modem->startTX();
-        usleep(100000);
+        struct timespec time_to_sleep = {0, 10000000L };
+        nanosleep(&time_to_sleep, NULL);
         _modem->tuneTx(_tune_center_freq + _tune_shift_freq);
         _tx_modem_started = false;
         _tx_started = true;
@@ -417,9 +427,10 @@ void RadioOp::stopTx()
         {
             sendEndBeep();
         }
-        usleep(1000000);
+        struct timespec time_to_sleep = {1, 0L };
+        nanosleep(&time_to_sleep, NULL);
         _modem->stopTX();
-        _modem->tuneTx(70000000);
+        _modem->tuneTx(430000000);
         _tx_modem_started = false;
         _tx_started = false;
         if(_rx_inited && !_repeat && (_rx_mode != gr_modem_types::ModemTypeQPSK250000))
@@ -429,6 +440,12 @@ void RadioOp::stopTx()
 
 void RadioOp::updateFrequency()
 {
+    if(_freq_gui_counter < 10)
+    {
+        _freq_gui_counter++;
+        return;
+    }
+    _freq_gui_counter = 0;
     long long freq = (long long)_modem->getFreqGUI();
     if(freq != 0 && freq != _tune_center_freq)
     {
@@ -446,10 +463,6 @@ void RadioOp::sendTextData(QString text, int frame_type)
         if(!_tx_modem_started)
         {
             stopTx();
-            startTx();
-        }
-        else
-        {
             startTx();
         }
         _tx_modem_started = true;
@@ -472,10 +485,6 @@ void RadioOp::sendBinData(QByteArray data, int frame_type)
         if(!_tx_modem_started)
         {
             stopTx();
-            startTx();
-        }
-        else
-        {
             startTx();
         }
         _tx_modem_started = true;
@@ -556,6 +565,7 @@ void RadioOp::run()
             emit pingServer();
             last_ping_time = time;
         }
+
         if((time - last_channel_broadcast_time) > 10)
         {
             last_channel_broadcast_time = time;
@@ -564,6 +574,7 @@ void RadioOp::run()
                 sendChannels();
             }
         }
+
         updateDataModemReset(transmitting, ptt_activated);
 
         updateFrequency();
@@ -594,9 +605,7 @@ void RadioOp::run()
         }
         else
         {
-            _mutex->lock();
             bool rx_inited = _rx_inited;
-            _mutex->unlock();
             if(rx_inited)
             {
                 if(!_tuning_done)
@@ -615,8 +624,16 @@ void RadioOp::run()
             sendTextData(_text_out, gr_modem::FrameTypeText);
             emit displayTransmitStatus(false);
         }
-
-        usleep(2000);
+        if(!_transmitting_audio && !_vox_enabled && !_process_text)
+        {
+            struct timespec time_to_sleep = {0, 10000000L };
+            nanosleep(&time_to_sleep, NULL);
+        }
+        else
+        {
+            struct timespec time_to_sleep = {0, 2000000L };
+            nanosleep(&time_to_sleep, NULL);
+        }
         if(_stop)
             break;
     }
@@ -716,9 +733,15 @@ void RadioOp::receiveVideoData(unsigned char *data, int size)
     int frame_size = getFrameLength(data);
     unsigned int crc = 0;
     memcpy(&crc, &data[12], 4);
-    if((frame_size == 0) || (frame_size > 3122 - 16))
+    if(frame_size == 0)
     {
         qDebug() << "received wrong frame size, dropping frame ";
+        delete[] data;
+        return;
+    }
+    if(frame_size > 3122 - 16)
+    {
+        qDebug() << "frame size too large, dropping frame ";
         delete[] data;
         return;
     }
@@ -872,7 +895,7 @@ void RadioOp::repeaterInfoReceived(QByteArray data)
 
 void RadioOp::callsignReceived(QString callsign)
 {
-    QString time= QDateTime::currentDateTime().toString("d/MMM/yyyy hh:mm:ss");
+    QString time= QDateTime::currentDateTime().toString("dd/MMM/yyyy hh:mm:ss");
     QString text = "<br/><b>" + time + "</b> " + "<font color=\"#770000\">" + callsign + " </font><br/>\n";
     emit printText(text,true);
     emit printCallsign(callsign);
@@ -989,7 +1012,8 @@ void RadioOp::toggleTX(bool value)
 
         _modem->initTX(_tx_mode, tx_device_args, tx_antenna, tx_freq_corr);
         _modem->setTxPower(_tx_power);
-        _modem->tuneTx(70000000);
+        _modem->setBbGain(_bb_gain);
+        _modem->tuneTx(430000000);
         _modem->setTxCTCSS(_tx_ctcss);
         if(_tx_mode == gr_modem_types::ModemTypeQPSKVideo)
             _video = new VideoEncoder(QString::fromStdString(video_device));
@@ -1321,6 +1345,12 @@ void RadioOp::setTxPower(int dbm)
     _modem->setTxPower(_tx_power);
 }
 
+void RadioOp::setBbGain(int value)
+{
+    _bb_gain = value;
+    _modem->setBbGain(_bb_gain);
+}
+
 void RadioOp::setRxSensitivity(int value)
 {
     _rx_sensitivity = (float)value/100.0;
@@ -1364,26 +1394,38 @@ void RadioOp::autoTune()
 {
     if((_rx_mode == gr_modem_types::ModemTypeBPSK2000)
             || (_rx_mode == gr_modem_types::ModemTypeBPSK1000))
-        usleep(500);
+    {
+        struct timespec time_to_sleep = {0, 500000L };
+        nanosleep(&time_to_sleep, NULL);
+    }
     else if ((_rx_mode == gr_modem_types::ModemType4FSK2000) ||
              (_rx_mode == gr_modem_types::ModemType2FSK2000) ||
              (_rx_mode == gr_modem_types::ModemTypeQPSK2000))
-        usleep(2000);
+    {
+        struct timespec time_to_sleep = {0, 2000000L };
+        nanosleep(&time_to_sleep, NULL);
+    }
     else
-        usleep(10);
-    _tune_center_freq = _tune_center_freq + _step_hz;
-    _modem->tune(_tune_center_freq);
-    _modem->tuneTx(_tune_center_freq + _tune_shift_freq);
-    if(_tune_center_freq >= (_tune_center_freq + _tune_limit_upper))
-        _tune_center_freq = _tune_center_freq + _tune_limit_lower;
+    {
+        struct timespec time_to_sleep = {0, 10000L };
+        nanosleep(&time_to_sleep, NULL);
+    }
+    _autotune_freq = _autotune_freq + _step_hz;
+    _modem->tune(_autotune_freq);
+    _modem->tuneTx(_autotune_freq + _tune_shift_freq);
+    if(_autotune_freq >= (_tune_center_freq + _tune_limit_upper))
+        _autotune_freq = _tune_center_freq + _tune_limit_lower;
 }
 
 void RadioOp::startAutoTune()
 {
+    _autotune_freq = _tune_center_freq;
     _tuning_done = false;
 }
 
 void RadioOp::stopAutoTune()
 {
     _tuning_done = true;
+    _tune_center_freq = _autotune_freq;
+    emit freqFromGUI(_autotune_freq);
 }

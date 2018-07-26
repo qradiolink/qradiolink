@@ -242,6 +242,12 @@ void gr_modem::setTxPower(float value)
         _gr_mod_base->set_power(value);
 }
 
+void gr_modem::setBbGain(int value)
+{
+    if(_gr_mod_base)
+        _gr_mod_base->set_bb_gain(value);
+}
+
 void gr_modem::setRxSensitivity(float value)
 {
     if(_gr_demod_base)
@@ -404,7 +410,8 @@ void gr_modem::processPCMAudio(std::vector<float> *audio_data)
         int ret = 1;
         while(ret)
         {
-            usleep(1);
+            struct timespec time_to_sleep = {0, 1000L };
+            nanosleep(&time_to_sleep, NULL);
             ret = _gr_mod_base->setAudio(audio_data);
         }
     }
@@ -440,7 +447,7 @@ void gr_modem::transmit(QVector<std::vector<unsigned char>*> frames)
     int ret = 1;
     while(ret)
     {
-        usleep(1);
+        struct timespec time_to_sleep = {0, 1000L };
         ret = _gr_mod_base->setData(all_frames);
     }
 

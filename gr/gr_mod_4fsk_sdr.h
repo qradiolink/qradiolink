@@ -37,6 +37,8 @@
 #include <gnuradio/blocks/pack_k_bits_bb.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/analog/frequency_modulator_fc.h>
+#include <gnuradio/fec/cc_encoder.h>
+#include <gnuradio/fec/encoder.h>
 
 
 class gr_mod_4fsk_sdr;
@@ -51,11 +53,13 @@ class gr_mod_4fsk_sdr : public gr::hier_block2
 public:
     explicit gr_mod_4fsk_sdr(int sps=125, int samp_rate=250000, int carrier_freq=1700,
                              int filter_width=8000);
+    void set_bb_gain(int value);
 
 private:
     gr::blocks::packed_to_unpacked_bb::sptr _packed_to_unpacked;
     gr::digital::chunks_to_symbols_bf::sptr _chunks_to_symbols;
     gr::blocks::multiply_const_cc::sptr _amplify;
+    gr::blocks::multiply_const_cc::sptr _bb_gain;
     gr::digital::scrambler_bb::sptr _scrambler;
     gr::blocks::repeat::sptr _repeat;
     gr::filter::fft_filter_ccf::sptr _filter;
@@ -63,6 +67,7 @@ private:
     gr::blocks::pack_k_bits_bb::sptr _packer;
     gr::digital::map_bb::sptr _map;
     gr::analog::frequency_modulator_fc::sptr _freq_modulator;
+    gr::fec::encoder::sptr _encode_ccsds;
 
 
 
