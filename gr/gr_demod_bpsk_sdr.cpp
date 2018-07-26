@@ -50,7 +50,7 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(std::vector<int>signature, int sps, int sam
 
     std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width, _target_samp_rate);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1, 50, taps);
-    _agc = gr::analog::agc2_cc::make(1, 1, 1, 0);
+    _agc = gr::analog::agc2_cc::make(1e-1, 1e-1, 1, 0);
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
                             1, _target_samp_rate, _filter_width,1200,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     float gain_mu = 0.025;
@@ -62,16 +62,18 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(std::vector<int>signature, int sps, int sam
     _shaping_filter = gr::filter::fft_filter_ccf::make(
                 1, gr::filter::firdes::root_raised_cosine(1,_target_samp_rate,_target_samp_rate/_samples_per_symbol,0.35,32));
     _complex_to_real = gr::blocks::complex_to_real::make();
-    _packed_to_unpacked = gr::blocks::packed_to_unpacked_bb::make(1,gr::GR_MSB_FIRST);
-    _packed_to_unpacked2 = gr::blocks::packed_to_unpacked_bb::make(1,gr::GR_MSB_FIRST);
 
-    _cc_decoder = gr::fec::decode_ccsds_27_fb::make();
-    _cc_decoder2 = gr::fec::decode_ccsds_27_fb::make();
+    _multiply_const_fec = gr::blocks::multiply_const_ff::make(48);
+    _float_to_uchar = gr::blocks::float_to_uchar::make();
+    _add_const_fec = gr::blocks::add_const_ff::make(128.0);
 
-    _multiply_const_fec = gr::blocks::multiply_const_ff::make(0.5);
+    gr::fec::code::cc_decoder::sptr decoder = gr::fec::code::cc_decoder::make(80, 7, 2, polys);
+    gr::fec::code::cc_decoder::sptr decoder2 = gr::fec::code::cc_decoder::make(80, 7, 2, polys);
+    _cc_decoder = gr::fec::decoder::make(decoder, 1, 1);
+    _cc_decoder2 = gr::fec::decoder::make(decoder2, 1, 1);
 
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
-    _delay = gr::blocks::delay::make(4,1);
+    _delay = gr::blocks::delay::make(1,1);
     _descrambler2 = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
 
 
@@ -88,14 +90,14 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(std::vector<int>signature, int sps, int sam
     connect(_costas_loop,0,_complex_to_real,0);
     connect(_costas_loop,0,self(),1);
     connect(_complex_to_real,0,_multiply_const_fec,0);
-    connect(_multiply_const_fec,0,_cc_decoder,0);
-    connect(_cc_decoder,0,_packed_to_unpacked,0);
-    connect(_packed_to_unpacked,0,_descrambler,0);
+    connect(_multiply_const_fec,0,_add_const_fec,0);
+    connect(_add_const_fec,0,_float_to_uchar,0);
+    connect(_float_to_uchar,0,_cc_decoder,0);
+    connect(_cc_decoder,0,_descrambler,0);
     connect(_descrambler,0,self(),2);
-    connect(_multiply_const_fec,0,_delay,0);
+    connect(_float_to_uchar,0,_delay,0);
     connect(_delay,0,_cc_decoder2,0);
-    connect(_cc_decoder2,0,_packed_to_unpacked2,0);
-    connect(_packed_to_unpacked2,0,_descrambler2,0);
+    connect(_cc_decoder2,0,_descrambler2,0);
     connect(_descrambler2,0,self(),3);
 
 }

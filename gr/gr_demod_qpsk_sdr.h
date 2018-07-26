@@ -64,7 +64,6 @@ private:
     gr::digital::pfb_clock_sync_ccf::sptr _clock_sync;
     gr::digital::costas_loop_cc::sptr _costas_loop;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
-    gr::digital::constellation_decoder_cb::sptr _constellation_receiver;
     gr::filter::fft_filter_ccf::sptr _shaping_filter;
     gr::filter::fft_filter_ccf::sptr _filter;
     gr::digital::descrambler_bb::sptr _descrambler;

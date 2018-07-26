@@ -32,11 +32,11 @@
 #include <gnuradio/blocks/complex_to_real.h>
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/digital/scrambler_bb.h>
-#include <gnuradio/blocks/unpacked_to_packed_bb.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/digital/constellation.h>
 #include <gnuradio/analog/frequency_modulator_fc.h>
-#include <gnuradio/fec/encode_ccsds_27_bb.h>
+#include <gnuradio/fec/cc_encoder.h>
+#include <gnuradio/fec/encoder.h>
 
 class gr_mod_2fsk_sdr;
 
@@ -54,8 +54,7 @@ public:
 
 private:
     gr::blocks::packed_to_unpacked_bb::sptr _packed_to_unpacked;
-    gr::blocks::unpacked_to_packed_bb::sptr _unpacked_to_packed;
-    gr::fec::encode_ccsds_27_bb::sptr _ccsds_encoder;
+    gr::fec::encoder::sptr _encode_ccsds;
     gr::digital::chunks_to_symbols_bf::sptr _chunks_to_symbols;
     gr::blocks::multiply_const_cc::sptr _amplify;
     gr::blocks::multiply_const_cc::sptr _bb_gain;

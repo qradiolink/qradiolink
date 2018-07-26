@@ -48,6 +48,10 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(std::vector<int>signature, int sps, int sam
     map.push_back(0);
     map.push_back(1);
 
+    std::vector<int> polys;
+    polys.push_back(109);
+    polys.push_back(79);
+
     std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width, _target_samp_rate);
     std::vector<float> symbol_filter_taps = gr::filter::firdes::low_pass(1.0,
                                  _target_samp_rate, _target_samp_rate/_samples_per_symbol, _target_samp_rate/_samples_per_symbol/20);
@@ -70,18 +74,20 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(std::vector<int>signature, int sps, int sam
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
                                                               0.001);
 
-    _multiply_const_fec = gr::blocks::multiply_const_ff::make(0.5);
 
 
-    _conv_decoder = gr::fec::decode_ccsds_27_fb::make();
-    _conv_decoder2 = gr::fec::decode_ccsds_27_fb::make();
+    _multiply_const_fec = gr::blocks::multiply_const_ff::make(48);
+    _float_to_uchar = gr::blocks::float_to_uchar::make();
+    _add_const_fec = gr::blocks::add_const_ff::make(128.0);
 
+    gr::fec::code::cc_decoder::sptr decoder = gr::fec::code::cc_decoder::make(80, 7, 2, polys);
+    gr::fec::code::cc_decoder::sptr decoder2 = gr::fec::code::cc_decoder::make(80, 7, 2, polys);
+    _cc_decoder = gr::fec::decoder::make(decoder, 1, 1);
+    _cc_decoder2 = gr::fec::decoder::make(decoder2, 1, 1);
 
     _complex_to_real = gr::blocks::complex_to_real::make();
 
-    _packed_to_unpacked = gr::blocks::packed_to_unpacked_bb::make(1,gr::GR_MSB_FIRST);
-    _packed_to_unpacked2 = gr::blocks::packed_to_unpacked_bb::make(1,gr::GR_MSB_FIRST);
-    _delay = gr::blocks::delay::make(4,1);
+    _delay = gr::blocks::delay::make(1,1);
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
     _descrambler2 = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
 
@@ -104,16 +110,16 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(std::vector<int>signature, int sps, int sam
 
     connect(_clock_recovery,0,_complex_to_real,0);
     connect(_complex_to_real,0,_multiply_const_fec,0);
-    connect(_multiply_const_fec,0,_conv_decoder,0);
-    connect(_conv_decoder,0,_packed_to_unpacked,0);
-    connect(_packed_to_unpacked,0,_descrambler,0);
+    connect(_multiply_const_fec,0,_add_const_fec,0);
+    connect(_add_const_fec,0,_float_to_uchar,0);
+    connect(_float_to_uchar,0,_cc_decoder,0);
+    connect(_cc_decoder,0,_descrambler,0);
     connect(_descrambler,0,self(),2);
-
-    connect(_multiply_const_fec,0,_delay,0);
-    connect(_delay,0,_conv_decoder2,0);
-    connect(_conv_decoder2,0,_packed_to_unpacked2,0);
-    connect(_packed_to_unpacked2,0,_descrambler2,0);
+    connect(_float_to_uchar,0,_delay,0);
+    connect(_delay,0,_cc_decoder2,0);
+    connect(_cc_decoder2,0,_descrambler2,0);
     connect(_descrambler2,0,self(),3);
+
 
 }
 

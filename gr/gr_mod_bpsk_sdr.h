@@ -21,7 +21,6 @@
 #include <gnuradio/blocks/multiply_const_ff.h>
 #include <gnuradio/analog/sig_source_c.h>
 #include <gnuradio/blocks/packed_to_unpacked_bb.h>
-#include <gnuradio/blocks/unpacked_to_packed_bb.h>
 #include <gnuradio/endianness.h>
 #include <gnuradio/digital/chunks_to_symbols_bc.h>
 #include <gnuradio/blocks/repeat.h>
