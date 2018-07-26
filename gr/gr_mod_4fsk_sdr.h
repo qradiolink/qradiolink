@@ -20,7 +20,6 @@
 
 #include <gnuradio/hier_block2.h>
 #include <gnuradio/blocks/multiply_const_ff.h>
-#include <gnuradio/analog/sig_source_c.h>
 #include <gnuradio/blocks/packed_to_unpacked_bb.h>
 #include <gnuradio/endianness.h>
 #include <gnuradio/digital/chunks_to_symbols_bf.h>

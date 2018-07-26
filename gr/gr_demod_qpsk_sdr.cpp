@@ -93,7 +93,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
         gain_mu = 0.001;
         omega_rel_limit = 0.0001;
     }
-    else if(sps >= 250)
+    else if(sps >= 125)
     {
         gain_mu = 0.025;
         omega_rel_limit = 0.001;
@@ -146,10 +146,10 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
     connect(_agc,0,_clock_recovery,0);
     connect(_clock_recovery,0,_equalizer,0);
     connect(_equalizer,0,_costas_loop,0);
+    connect(_costas_loop,0,self(),1);
     connect(_costas_loop,0,_diff_phasor,0);
     connect(_diff_phasor,0,_rotate_const,0);
     connect(_rotate_const,0,_complex_to_float,0);
-    connect(_rotate_const,0,self(),1);
     connect(_complex_to_float,0,_interleave,0);
     connect(_complex_to_float,1,_interleave,1);
     connect(_interleave,0,_multiply_const_fec,0);
