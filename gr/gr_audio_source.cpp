@@ -39,7 +39,7 @@ gr_audio_source::~gr_audio_source()
     delete _data;
 }
 
-void gr_audio_source::clear_buffer()
+void gr_audio_source::flush()
 {
     gr::thread::scoped_lock guard(_mutex);
     _data->clear();

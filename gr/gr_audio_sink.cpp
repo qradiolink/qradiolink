@@ -39,6 +39,12 @@ gr_audio_sink::~gr_audio_sink()
     delete _data;
 }
 
+void gr_audio_sink::flush()
+{
+    gr::thread::scoped_lock guard(_mutex);
+    _data->clear();
+}
+
 std::vector<float> *gr_audio_sink::get_data()
 {
     gr::thread::scoped_lock guard(_mutex);

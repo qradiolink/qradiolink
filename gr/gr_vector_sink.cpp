@@ -39,6 +39,12 @@ gr_vector_sink::~gr_vector_sink()
     delete _data;
 }
 
+void gr_vector_sink::flush()
+{
+    gr::thread::scoped_lock guard(_mutex);
+    _data->clear();
+}
+
 std::vector<unsigned char> * gr_vector_sink::get_data()
 {
     gr::thread::scoped_lock guard(_mutex);

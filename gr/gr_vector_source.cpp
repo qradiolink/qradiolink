@@ -39,7 +39,8 @@ gr_vector_source::~gr_vector_source()
     delete _data;
 }
 
-void gr_vector_source::clear_buffer()
+
+void gr_vector_source::flush()
 {
     gr::thread::scoped_lock guard(_mutex);
     _data->clear();
