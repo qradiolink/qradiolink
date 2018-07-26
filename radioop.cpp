@@ -283,7 +283,7 @@ int RadioOp::processVideoStream(bool &frame_flag)
     qint64 microsec;
     timer.start();
 
-    _video->encode_jpeg(&(videobuffer[16]), encoded_size, max_video_frame_size - 16);
+    _video->encode_jpeg(&(videobuffer[24]), encoded_size, max_video_frame_size - 24);
 
     microsec = (quint64)timer.nsecsElapsed();
     if(microsec < 100000000)
@@ -294,16 +294,18 @@ int RadioOp::processVideoStream(bool &frame_flag)
 
     //qDebug() << "video out " << microsec << " / " << encoded_size;
 
-    if(encoded_size > max_video_frame_size - 16)
+    if(encoded_size > max_video_frame_size - 24)
     {
-        encoded_size = max_video_frame_size - 16;
+        encoded_size = max_video_frame_size - 24;
     }
-    unsigned int crc = gr::digital::crc32(&(videobuffer[16]), encoded_size);
+    unsigned int crc = gr::digital::crc32(&(videobuffer[24]), encoded_size);
     memcpy(&(videobuffer[0]), &encoded_size, 4);
     memcpy(&(videobuffer[4]), &encoded_size, 4);
     memcpy(&(videobuffer[8]), &encoded_size, 4);
     memcpy(&(videobuffer[12]), &crc, 4);
-    for(unsigned int k=encoded_size+16,i=0;k<max_video_frame_size;k++,i++)
+    memcpy(&(videobuffer[16]), &crc, 4);
+    memcpy(&(videobuffer[20]), &crc, 4);
+    for(unsigned int k=encoded_size+24,i=0;k<max_video_frame_size;k++,i++)
     {
 
         videobuffer[k] = _rand_frame_data[i];
@@ -728,25 +730,43 @@ int RadioOp::getFrameLength(unsigned char *data)
         return 0;
 }
 
+unsigned int RadioOp::getFrameCRC32(unsigned char *data)
+{
+    unsigned int crc1;
+    unsigned int crc2;
+    unsigned int crc3;
+
+    memcpy(&crc1, &data[12], 4);
+    memcpy(&crc2, &data[16], 4);
+    memcpy(&crc3, &data[20], 4);
+    if(crc1 == crc2)
+        return (unsigned int)crc1;
+    else if(crc1 == crc3)
+        return (unsigned int)crc1;
+    else if(crc2 == crc3)
+        return (unsigned int)crc2;
+    else
+        return 0;
+}
+
 void RadioOp::receiveVideoData(unsigned char *data, int size)
 {
     int frame_size = getFrameLength(data);
-    unsigned int crc = 0;
-    memcpy(&crc, &data[12], 4);
+    unsigned int crc = getFrameCRC32(data);
     if(frame_size == 0)
     {
         std::cerr << "received wrong frame size, dropping frame " << std::endl;
         delete[] data;
         return;
     }
-    if(frame_size > 3122 - 16)
+    if(frame_size > 3122 - 24)
     {
         std::cerr << "frame size too large, dropping frame " << std::endl;
         delete[] data;
         return;
     }
     unsigned char *jpeg_frame = new unsigned char[frame_size];
-    memcpy(jpeg_frame, &data[16], frame_size);
+    memcpy(jpeg_frame, &data[24], frame_size);
     delete[] data;
     unsigned int crc_check = gr::digital::crc32(jpeg_frame, frame_size);
     if(crc != crc_check)

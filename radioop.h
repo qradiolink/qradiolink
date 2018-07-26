@@ -199,6 +199,7 @@ private:
                     std::string &rx_antenna, std::string &tx_antenna, int &rx_freq_corr,
                     int &tx_freq_corr, std::string &callsign, std::string &video_device);
     int getFrameLength(unsigned char *data);
+    unsigned int getFrameCRC32(unsigned char *data);
     void txAudio(short *audiobuffer, int audiobuffer_size);
 
     void processAudioStream();
