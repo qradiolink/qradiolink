@@ -34,6 +34,13 @@
 #include <gnuradio/filter/fft_filter_fff.h>
 #include <gnuradio/digital/descrambler_bb.h>
 #include <gnuradio/blocks/complex_to_mag_squared.h>
+#include <gnuradio/blocks/float_to_uchar.h>
+#include <gnuradio/blocks/add_const_ff.h>
+#include <gnuradio/blocks/multiply_const_ff.h>
+#include <gnuradio/blocks/complex_to_float.h>
+#include <gnuradio/blocks/interleave.h>
+#include <gnuradio/fec/decoder.h>
+#include <gnuradio/fec/cc_decoder.h>
 #include "gr_4fsk_discriminator.h"
 
 class gr_demod_4fsk_sdr;
@@ -71,6 +78,12 @@ private:
     gr::digital::constellation_decoder_cb::sptr _constellation_receiver;
     gr::filter::fft_filter_ccf::sptr _filter;
     gr::digital::descrambler_bb::sptr _descrambler;
+    gr::blocks::multiply_const_ff::sptr _multiply_const_fec;
+    gr::blocks::complex_to_float::sptr _complex_to_float;
+    gr::blocks::interleave::sptr _interleave;
+    gr::blocks::float_to_uchar::sptr _float_to_uchar;
+    gr::blocks::add_const_ff::sptr _add_const_fec;
+    gr::fec::decoder::sptr _decode_ccsds;
 
     int _samples_per_symbol;
     int _samp_rate;

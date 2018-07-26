@@ -40,25 +40,27 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
 
-    int rs,bw,decimation;
+    int rs,bw,decimation,interpolation;
     float gain_mu, omega_rel_limit;
-    if(sps == 50)
+    if(sps == 25)
     {
-        _target_samp_rate = 40000;
-        _samples_per_symbol = sps*4/25;
+        _target_samp_rate = 80000;
+        _samples_per_symbol = sps*8/25;
         decimation = 25;
-        rs = 5000;
-        bw = 2000;
+        interpolation = 2;
+        rs = 10000;
+        bw = 4000;
         gain_mu = 0.005;
         omega_rel_limit = 0.001;
     }
-    if(sps == 250)
+    if(sps == 125)
     {
         _target_samp_rate = 20000;
         _samples_per_symbol = sps*2/25;
         decimation = 50;
-        rs = 1000;
-        bw = 2000;
+        interpolation = 1;
+        rs = 2000;
+        bw = 4000;
         gain_mu = 0.025;
         omega_rel_limit = 0.005;
     }
@@ -77,13 +79,17 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
     constellation_points.push_back(0.707107 + 0.707107j);
     constellation_points.push_back(0.707107 - 0.707107j);
 
+    std::vector<int> polys;
+    polys.push_back(109);
+    polys.push_back(79);
+
     gr::digital::constellation_expl_rect::sptr constellation = gr::digital::constellation_expl_rect::make(
                 constellation_points,pre_diff_code,4,2,2,1,1,const_map);
 
     std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width, _target_samp_rate);
     std::vector<float> symbol_filter_taps = gr::filter::firdes::low_pass(1.0,
                                  _target_samp_rate, _target_samp_rate/_samples_per_symbol, _target_samp_rate/_samples_per_symbol/20);
-    _resampler = gr::filter::rational_resampler_base_ccf::make(1, decimation, taps);
+    _resampler = gr::filter::rational_resampler_base_ccf::make(interpolation, decimation, taps);
 
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
                                 1, _target_samp_rate, _filter_width,2000,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
@@ -108,10 +114,16 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
                                                               omega_rel_limit);
     _float_to_complex = gr::blocks::float_to_complex::make();
-    _multiply_symbols = gr::blocks::multiply_const_cc::make(0.5);
-    _unpack = gr::blocks::unpack_k_bits_bb::make(2);
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
     _constellation_receiver = gr::digital::constellation_decoder_cb::make(constellation);
+
+    _complex_to_float = gr::blocks::complex_to_float::make();
+    _interleave = gr::blocks::interleave::make(4);
+    _multiply_const_fec = gr::blocks::multiply_const_ff::make(68);
+    _float_to_uchar = gr::blocks::float_to_uchar::make();
+    _add_const_fec = gr::blocks::add_const_ff::make(128.0);
+    gr::fec::code::cc_decoder::sptr decoder = gr::fec::code::cc_decoder::make(80, 7, 2, polys);
+    _decode_ccsds = gr::fec::decoder::make(decoder, 1, 1);
 
 
     connect(self(),0,_resampler,0);
@@ -135,9 +147,14 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
     //connect(_freq_demod,0,_float_to_complex,0);
     connect(_symbol_filter,0,_clock_recovery,0);
     connect(_clock_recovery,0,self(),1);
-    connect(_clock_recovery,0,_constellation_receiver,0);
-    connect(_constellation_receiver,0,_unpack,0);
-    connect(_unpack,0,_descrambler,0);
+    connect(_clock_recovery,0,_complex_to_float,0);
+    connect(_complex_to_float,0,_interleave,0);
+    connect(_complex_to_float,1,_interleave,1);
+    connect(_interleave,0,_multiply_const_fec,0);
+    connect(_multiply_const_fec,0,_add_const_fec,0);
+    connect(_add_const_fec,0,_float_to_uchar,0);
+    connect(_float_to_uchar,0,_decode_ccsds,0);
+    connect(_decode_ccsds,0,_descrambler,0);
     connect(_descrambler,0,self(),2);
 
 }

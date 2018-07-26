@@ -37,6 +37,8 @@
 #include <gnuradio/blocks/pack_k_bits_bb.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/analog/frequency_modulator_fc.h>
+#include <gnuradio/fec/cc_encoder.h>
+#include <gnuradio/fec/encoder.h>
 
 
 class gr_mod_4fsk_sdr;
@@ -65,6 +67,7 @@ private:
     gr::blocks::pack_k_bits_bb::sptr _packer;
     gr::digital::map_bb::sptr _map;
     gr::analog::frequency_modulator_fc::sptr _freq_modulator;
+    gr::fec::encoder::sptr _encode_ccsds;
 
 
 

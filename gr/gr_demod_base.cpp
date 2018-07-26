@@ -100,8 +100,8 @@ gr_demod_base::gr_demod_base(gr::qtgui::sink_c::sptr fft_gui,
 
 
     _2fsk = make_gr_demod_2fsk_sdr(125,1000000,1700,4000);
-    _4fsk_2k = make_gr_demod_4fsk_sdr(250,1000000,1700,2000);
-    _4fsk_10k = make_gr_demod_4fsk_sdr(50,1000000,1700,10000);
+    _4fsk_2k = make_gr_demod_4fsk_sdr(125,1000000,1700,4000);
+    _4fsk_10k = make_gr_demod_4fsk_sdr(25,1000000,1700,20000);
     _am = make_gr_demod_am_sdr(0, 1000000,1700,4000);
     _bpsk_1k = make_gr_demod_bpsk_sdr(250,1000000,1700,1300);
     _bpsk_2k = make_gr_demod_bpsk_sdr(125,1000000,1700,2400);
