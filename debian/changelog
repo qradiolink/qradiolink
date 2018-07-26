@@ -1,3 +1,15 @@
+qradiolink (0.5.0-1) UNRELEASED; urgency=medium
+
+  [ Adrian Musceac ]
+  * Added support for PlutoSDR
+  * Added convolutional encoding and Viterbi soft symbol decoding to all modes
+  * Fixed issue reported by Daniel Estevez with GNU radio CCSDS_27 blocks
+  * Major rework of DQPSK and 4FSK modems
+  * Added baseband gain setting which PlutoSDR needs (set to 1 for all others)
+
+ -- Adrian Musceac <kantooon@gmail.com>  Wed, 25 Jul 2018 23:00:00 +0300
+
+
 qradiolink (0.3.21-1) UNRELEASED; urgency=medium
 
   [ Adrian Musceac ]
