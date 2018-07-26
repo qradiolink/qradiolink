@@ -20,7 +20,7 @@
 #include <gnuradio/hier_block2.h>
 #include <gnuradio/endianness.h>
 #include <gnuradio/filter/firdes.h>
-#include <gnuradio/digital/clock_recovery_mm_ff.h>
+#include <gnuradio/digital/clock_recovery_mm_cc.h>
 #include <gnuradio/blocks/unpack_k_bits_bb.h>
 #include <gnuradio/blocks/float_to_complex.h>
 #include <gnuradio/analog/quadrature_demod_cf.h>
@@ -65,8 +65,8 @@ private:
     gr::blocks::multiply_const_cc::sptr _multiply_symbols;
     gr::analog::quadrature_demod_cf::sptr _freq_demod;
     gr::blocks::float_to_complex::sptr _float_to_complex;
-    gr::filter::fft_filter_fff::sptr _symbol_filter;
-    gr::digital::clock_recovery_mm_ff::sptr _clock_recovery;
+    gr::filter::fft_filter_ccf::sptr _symbol_filter;
+    gr::digital::clock_recovery_mm_cc::sptr _clock_recovery;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
     gr::digital::constellation_decoder_cb::sptr _constellation_receiver;
     gr::filter::fft_filter_ccf::sptr _filter;
