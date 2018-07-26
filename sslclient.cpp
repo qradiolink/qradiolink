@@ -182,7 +182,7 @@ void SSLClient::sendBin(quint8 *payload, quint64 size)
 
 void SSLClient::processData()
 {
-    //qDebug() << "Received message from " << _socket->peerAddress().toString();
+    //std::cout << "Received message from " << _socket->peerAddress().toString() << std::endl;
     if (_status !=1) return;
 
     QByteArray buf;

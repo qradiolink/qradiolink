@@ -28,6 +28,7 @@
 #include <QCoreApplication>
 #include <QElapsedTimer>
 #include <QImage>
+#include <iostream>
 #include <unistd.h>
 #include <math.h>
 #include "audio/audiointerface.h"

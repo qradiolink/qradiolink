@@ -526,7 +526,7 @@ void RadioOp::updateDataModemReset(bool transmitting, bool ptt_activated)
         sec_modem_running = (quint64)_data_modem_reset_timer->nsecsElapsed()/1000000000;
         if(sec_modem_running > 300)
         {
-            qDebug() << "resetting modem";
+            std::cout << "resetting modem" << std::endl;
             _data_modem_sleeping = true;
             _data_modem_sleep_timer->restart();
         }
@@ -541,7 +541,7 @@ void RadioOp::updateDataModemReset(bool transmitting, bool ptt_activated)
             _data_modem_sleeping = false;
             _data_modem_reset_timer->restart();
             _modem->startTransmission(_callsign);
-            qDebug() << "modem reset complete";
+            std::cout << "modem reset complete" << std::endl;
         }
     }
 }
@@ -735,13 +735,13 @@ void RadioOp::receiveVideoData(unsigned char *data, int size)
     memcpy(&crc, &data[12], 4);
     if(frame_size == 0)
     {
-        qDebug() << "received wrong frame size, dropping frame ";
+        std::cerr << "received wrong frame size, dropping frame " << std::endl;
         delete[] data;
         return;
     }
     if(frame_size > 3122 - 16)
     {
-        qDebug() << "frame size too large, dropping frame ";
+        std::cerr << "frame size too large, dropping frame " << std::endl;
         delete[] data;
         return;
     }
@@ -751,7 +751,7 @@ void RadioOp::receiveVideoData(unsigned char *data, int size)
     unsigned int crc_check = gr::digital::crc32(jpeg_frame, frame_size);
     if(crc != crc_check)
     {
-        qDebug() << "CRC check failed ";
+        std::cerr << "CRC check failed " << std::endl;
         delete[] jpeg_frame;
         return;
     }
@@ -785,7 +785,7 @@ void RadioOp::receiveNetData(unsigned char *data, int size)
     }
     if((frame_size == 0) || (frame_size > 1500))
     {
-        qDebug() << "received wrong frame size, dropping frame ";
+        std::cerr << "received wrong frame size, dropping frame " << std::endl;
         delete[] data;
         return;
     }
@@ -799,7 +799,7 @@ void RadioOp::receiveNetData(unsigned char *data, int size)
 
     if(crc != crc_check)
     {
-        qDebug() << "CRC check failed, dropping frame ";
+        std::cerr << "CRC check failed, dropping frame " << std::endl;
         delete[] net_frame;
         return;
     }

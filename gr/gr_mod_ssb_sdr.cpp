@@ -36,7 +36,7 @@ gr_mod_ssb_sdr::gr_mod_ssb_sdr(int sps, int samp_rate, int carrier_freq,
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
 
-    _agc = gr::analog::agc2_ff::make(1, 1, 1, 0);
+    _agc = gr::analog::agc2_ff::make(1e-1, 1e-1, 1, 0);
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::band_pass(
                     1, target_samp_rate, 200, _filter_width, 50, gr::filter::firdes::WIN_BLACKMAN_HARRIS));

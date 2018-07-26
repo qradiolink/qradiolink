@@ -27,6 +27,7 @@
 #include <QFile>
 #include <QtGlobal>
 #include <QTextStream>
+#include <iostream>
 #include "dtmfdecoder.h"
 #include "databaseapi.h"
 #include "serverwrapper.h"
@@ -89,8 +90,8 @@ int main(int argc, char *argv[])
     QStringList arguments = QCoreApplication::arguments();
 
 
-    QString start_time= QDateTime::currentDateTime().toString("d/MMM/yyyy hh:mm:ss");
-    qDebug() << start_time;
+    std::string start_time= QDateTime::currentDateTime().toString("d/MMM/yyyy hh:mm:ss").toStdString();
+    std::cout << "Starting qradiolink instance: " << start_time << std::endl;
     DatabaseApi db;
     Settings *settings = new Settings;
     settings->readConfig();

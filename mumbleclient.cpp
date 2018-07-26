@@ -88,7 +88,7 @@ void MumbleClient::sendVersion()
 
 void MumbleClient::authenticate()
 {
-    qDebug() << "Authenticating";
+    std::cout << "Authenticating" << std::endl;
     MumbleProto::Authenticate auth;
 
     int rand_len = 4;
@@ -640,7 +640,7 @@ void MumbleClient::processIncomingAudioPacket(quint8 *data, quint64 size, quint8
     int audio_size = pds.left();
     if(audio_size <= 0)
     {
-        qDebug() << "malformed audio frame";
+        std::cerr << "malformed audio frame" << std::endl;
         delete[] data;
         return;
     }
