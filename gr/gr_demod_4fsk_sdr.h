@@ -26,6 +26,7 @@
 #include <gnuradio/analog/quadrature_demod_cf.h>
 #include <gnuradio/blocks/multiply_const_cc.h>
 #include <gnuradio/blocks/complex_to_mag.h>
+#include <gnuradio/digital/fll_band_edge_cc.h>
 #include <gnuradio/filter/rational_resampler_base_ccf.h>
 #include <gnuradio/digital/constellation.h>
 #include <gnuradio/digital/constellation_decoder_cb.h>
@@ -73,6 +74,7 @@ private:
     gr::analog::quadrature_demod_cf::sptr _freq_demod;
     gr::blocks::float_to_complex::sptr _float_to_complex;
     gr::filter::fft_filter_ccf::sptr _symbol_filter;
+    gr::digital::fll_band_edge_cc::sptr _fll;
     gr::digital::clock_recovery_mm_cc::sptr _clock_recovery;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
     gr::digital::constellation_decoder_cb::sptr _constellation_receiver;
