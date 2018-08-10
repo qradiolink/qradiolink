@@ -26,6 +26,7 @@
 #include <gnuradio/blocks/multiply_const_cc.h>
 #include <gnuradio/filter/rational_resampler_base_ccf.h>
 #include <gnuradio/digital/binary_slicer_fb.h>
+#include <gnuradio/digital/fll_band_edge_cc.h>
 #include <gnuradio/blocks/divide_ff.h>
 #include <gnuradio/analog/rail_ff.h>
 #include <gnuradio/blocks/complex_to_real.h>
@@ -59,6 +60,7 @@ private:
     gr::digital::clock_recovery_mm_cc::sptr _clock_recovery;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
     gr::filter::fft_filter_ccf::sptr _filter;
+    gr::digital::fll_band_edge_cc::sptr _fll;
     gr::filter::fft_filter_ccc::sptr _lower_filter;
     gr::filter::fft_filter_ccc::sptr _upper_filter;
     gr::blocks::complex_to_mag::sptr _mag_lower;
