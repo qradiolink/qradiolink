@@ -1092,9 +1092,9 @@ void RadioOp::toggleRxMode(int value)
         break;
     case 3:
         _rx_mode = gr_modem_types::ModemTypeQPSK20000;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
-        _step_hz = 20;
+        _tune_limit_lower = -10000;
+        _tune_limit_upper = 10000;
+        _step_hz = 10;
         break;
     case 4:
         _rx_mode = gr_modem_types::ModemType4FSK2000;
@@ -1210,9 +1210,9 @@ void RadioOp::toggleTxMode(int value)
         break;
     case 3:
         _tx_mode = gr_modem_types::ModemTypeQPSK20000;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
-        _step_hz = 20;
+        _tune_limit_lower = -10000;
+        _tune_limit_upper = 10000;
+        _step_hz = 10;
         break;
     case 4:
         _tx_mode = gr_modem_types::ModemType4FSK2000;
