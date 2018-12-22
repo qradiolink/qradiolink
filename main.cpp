@@ -42,8 +42,9 @@
 #include "channel.h"
 #include "radioop.h"
 #include <gnuradio/qtgui/const_sink_c.h>
-#include <gnuradio/qtgui/sink_c.h>
 #include <gnuradio/qtgui/number_sink.h>
+#include <gnuradio/qtgui/sink_c.h>
+
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 void logMessage(QtMsgType type, const QMessageLogContext &context, const QString &msg)
@@ -98,6 +99,15 @@ int main(int argc, char *argv[])
     MumbleClient *client = new MumbleClient(settings);
     MainWindow *w = new MainWindow(settings);
     w->setWindowTitle("QRadioLink");
+
+    w->show();
+    if(arguments.length() > 1 && arguments.at(1) == "-f")
+    {
+        w->showMaximized();
+        w->setWindowFlags( Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
+    }
+    w->activateWindow();
+    w->raise();
 
     /* Uncomment later
     DtmfCommand *dtmfcommand = new DtmfCommand(settings, &db,client);
@@ -156,8 +166,9 @@ int main(int argc, char *argv[])
 
     const std::string const_name = "const";
     gr::qtgui::const_sink_c::sptr const_gui = gr::qtgui::const_sink_c::make(256, const_name,1, w->get_const_gui());
-    const_gui->set_size(600,400);
+    const_gui->set_size(480,360);
     const_gui->set_update_time(0.2);
+    const_gui->set_line_marker(0,2);
     const_gui->qwidget()->setStyleSheet(
                 "QwtPlotCanvas { background-color: #E1DFFF;  \
                 border: 1px solid White; \
@@ -180,14 +191,15 @@ int main(int argc, char *argv[])
                 } ");
 
 
+
     gr::qtgui::number_sink::sptr rssi_gui = gr::qtgui::number_sink::make(4,0.5,gr::qtgui::NUM_GRAPH_HORIZ,1,w->get_rssi_gui());
     rssi_gui->set_max(0,10);
     rssi_gui->set_min(0,-120);
     rssi_gui->set_label(0,"RSSI");
-    w->get_rssi_gui()->resize(700,90);
-    rssi_gui->qwidget()->resize(700,90);
+    w->get_rssi_gui()->resize(300,50);
+    rssi_gui->qwidget()->resize(300,50);
     rssi_gui->set_update_time(0.3);
-    rssi_gui->set_color(0, "#ff0000", "#A80000");
+    rssi_gui->set_color(0, "#00cc00", "#A80000");
     rssi_gui->qwidget()->setStyleSheet(
             "QwtThermo { background-color: #E1DFFF;" \
             "color: #FF6905;}");
@@ -195,7 +207,8 @@ int main(int argc, char *argv[])
     const std::string fft_name = "fft";
     QRect xy = w->geometry();
     w->get_fft_gui()->resize(xy.right() -xy.left(),xy.bottom()-xy.top()-100);
-    gr::qtgui::sink_c::sptr fft_gui = gr::qtgui::sink_c::make(8096,gr::filter::firdes::WIN_BLACKMAN_HARRIS,
+
+    gr::qtgui::sink_c::sptr fft_gui = gr::qtgui::sink_c::make(8096*4,gr::filter::firdes::WIN_BLACKMAN_HARRIS,
                                                           0,1000000,fft_name,true,true,true,false,w->get_fft_gui());
     fft_gui->qwidget()->resize(xy.right() -xy.left()-50,xy.bottom()-xy.top()-206);
     fft_gui->set_update_time(0.1);
@@ -207,31 +220,34 @@ int main(int argc, char *argv[])
                 DisplayPlot { \
                 qproperty-zoomer_color: black; \
                 qproperty-line_color1: #A4051F; \
-                qproperty-line_color2: #FF710C; \
-                qproperty-line_color3: #FF6905; \
+                qproperty-line_color2: #CC710C; \
+                qproperty-line_color3: #CC6905; \
                 qproperty-line_style1: SolidLine; \
                 qproperty-line_style2: DashLine; \
                 qproperty-line_style3: DotLine; \
                 qproperty-line_width1: 1; \
                 qproperty-line_width2: 2; \
                 qproperty-line_width3: 2; \
-                qproperty-marker_alpha1: 100; \
+                qproperty-marker_alpha1: 220; \
                 qproperty-marker_alpha2: 150; \
                 qproperty-marker_alpha3: 150; \
                 qproperty-axes_label_font_size: 12; \
                 } \
                 WaterfallDisplayPlot { \
-                qproperty-intensity_color_map_type1: 5; \
+                qproperty-intensity_color_map_type1: 6; \
                     qproperty-low_intensity_color: #0B0041; \
                 qproperty-high_intensity_color: #FFFB00; \
                 } \
                 FrequencyDisplayPlot { \
+                    min-height: "+QString::number(xy.bottom()-xy.top()-450)+"px;\
+                    min-width: "+QString::number(xy.right() -xy.left()-100)+"px; \
                     qproperty-marker_lower_intensity_color: white; \
                         qproperty-marker_upper_intensity_color: black; \
                         qproperty-marker_lower_intensity_visible: false; \
                         qproperty-marker_upper_intensity_visible: true; \
                         qproperty-marker_noise_floor_amplitude_color: red; \
                     qproperty-marker_noise_floor_amplitude_visible: true; \
+                    qproperty-marker_peak_amplitude_color: blue; \
             } \
                 ");
     fft_gui->enable_rf_freq(true);
@@ -294,14 +310,7 @@ int main(int argc, char *argv[])
     QObject::connect(w,SIGNAL(setMute(bool)),client,SLOT(setMute(bool)));
     QObject::connect(w,SIGNAL(changeChannel(int)),client,SLOT(joinChannel(int)));
 
-    w->show();
-    if(arguments.length() > 1 && arguments.at(1) == "-f")
-    {
-        w->showMaximized();
-        w->setWindowFlags( Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
-    }
-    w->activateWindow();
-    w->raise();
+
 
     int ret = a.exec();
 

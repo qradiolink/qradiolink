@@ -38,8 +38,8 @@ gr_mod_am_sdr::gr_mod_am_sdr(int sps, int samp_rate, int carrier_freq,
 
     _signal_source = gr::analog::sig_source_f::make(target_samp_rate,gr::analog::GR_COS_WAVE, 0, 1);
     _add = gr::blocks::add_ff::make();
-    _audio_amplify = gr::blocks::multiply_const_ff::make(0.98,1);
-    _agc = gr::analog::agc2_ff::make(1e-1, 1e-1, 0.2, 0);
+    _audio_amplify = gr::blocks::multiply_const_ff::make(0.2,1);
+    _agc = gr::analog::agc2_ff::make(1e-1, 1e-3, 1, 0);
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::low_pass(
                     1, target_samp_rate, _filter_width, 1200, gr::filter::firdes::WIN_HAMMING));
