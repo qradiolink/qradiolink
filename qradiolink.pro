@@ -41,6 +41,9 @@ SOURCES += main.cpp\
         ext/vox.cpp\
         ext/utils.cpp\
         ext/filt.cpp\
+        ext/compressor.c \
+        ext/snd.c \
+        ext/mem.c \
         video/videocapture.cpp\
     radioop.cpp \
     qtgui/freqctrl.cpp \
@@ -105,6 +108,9 @@ HEADERS  += mainwindow.h\
         ext/vox.h\
         ext/utils.h \
         ext/filt.h \
+        ext/snd.h \
+        ext/mem.h \
+        ext/compressor.h \
     radioop.h \
     qtgui/freqctrl.h \
     audio/alsaaudio.h \
