@@ -127,6 +127,13 @@ void gr_demod_base::set_mode(int mode)
     _demod_running = false;
     _top_block->lock();
 
+    _deframer_700_1->flush();
+    _deframer_700_2->flush();
+    _deframer1->flush();
+    _deframer2->flush();
+    _audio_sink->flush();
+    _vector_sink->flush();
+
     switch(_mode)
     {
     case gr_modem_types::ModemType2FSK2000:

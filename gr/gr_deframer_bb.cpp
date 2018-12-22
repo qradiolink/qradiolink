@@ -48,10 +48,25 @@ gr_deframer_bb::~gr_deframer_bb()
     delete _data;
 }
 
+void gr_deframer_bb::flush()
+{
+    gr::thread::scoped_lock guard(_mutex);
+    _offset = 0;
+    _finished = false;
+    _shift_reg = 0;
+    _sync_found = false;
+    _bit_buf_index = 0;
+    _data->clear();
+}
+
 std::vector<unsigned char> * gr_deframer_bb::get_data()
 {
     gr::thread::scoped_lock guard(_mutex);
     std::vector<unsigned char>* data = new std::vector<unsigned char>;
+    if(_data->size() < 1)
+    {
+        return data;
+    }
     data->reserve(_data->size());
     data->insert(data->end(),_data->begin(),_data->end());
     _data->clear();
