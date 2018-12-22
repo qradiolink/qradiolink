@@ -38,6 +38,7 @@ public:
            gr_vector_void_star &output_items);
 
     std::vector<float>* get_data();
+    void flush();
 
 private:
     unsigned int _offset;

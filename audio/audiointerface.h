@@ -22,6 +22,11 @@
 #include <QDebug>
 #include <stdio.h>
 #include "ext/utils.h"
+extern "C"
+{
+#include "ext/compressor.h"
+#include "ext/snd.h"
+}
 #include <pulse/simple.h>
 #include <pulse/error.h>
 #include <speex/speex_preprocess.h>
@@ -37,6 +42,7 @@ public:
     int write(float *buf, short bufsize);
     int write_short(short *buf, short bufsize, bool preprocess=false);
     int read_short(short *buf, short bufsize, bool preprocess=0);
+    void compress_audio(short *buf, short bufsize, int direction);
 signals:
     
 public slots:
@@ -47,6 +53,8 @@ private:
     pa_simple *_s_short_play;
     pa_simple *_s_short_rec;
     SpeexPreprocessState *_speex_preprocess;
+    sf_compressor_state_st _cm_state_read;
+    sf_compressor_state_st _cm_state_write;
     int _error;
     float calc_audio_power(short *buf, short samples);
     

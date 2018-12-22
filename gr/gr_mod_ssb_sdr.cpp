@@ -36,10 +36,14 @@ gr_mod_ssb_sdr::gr_mod_ssb_sdr(int sps, int samp_rate, int carrier_freq,
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
 
-    _agc = gr::analog::agc2_ff::make(1, 1, 1, 0);
+    _agc = gr::analog::agc2_ff::make(1e-1, 1e-3, 1, 0);
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::band_pass(
                     1, target_samp_rate, 200, _filter_width, 50, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+    static const float coeff[] =  {-0.026316914707422256, -0.2512197494506836, 1.5501943826675415,
+                                   -0.2512197494506836, -0.026316914707422256};
+    std::vector<float> emph_taps(coeff, coeff + sizeof(coeff) / sizeof(coeff[0]) );
+    _emphasis_filter = gr::filter::fft_filter_fff::make(1,emph_taps);
     _float_to_complex = gr::blocks::float_to_complex::make();
     std::vector<float> interp_taps = gr::filter::firdes::low_pass(1, _samp_rate,
                                                         _filter_width, 1200);
@@ -57,7 +61,8 @@ gr_mod_ssb_sdr::gr_mod_ssb_sdr(int sps, int samp_rate, int carrier_freq,
 
 
     connect(self(),0,_agc,0);
-    connect(_agc,0,_float_to_complex,0);
+    connect(_agc,0,_emphasis_filter,0);
+    connect(_emphasis_filter,0,_float_to_complex,0);
     connect(_float_to_complex,0,_resampler,0);
     connect(_resampler,0,_amplify,0);
     connect(_amplify,0,_bb_gain,0);

@@ -49,10 +49,10 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
     _bpsk_2k = make_gr_mod_bpsk_sdr(250, 1000000, 1700, 2400);
     _fm_2500 = make_gr_mod_nbfm_sdr(0, 1000000, 1700, 2500);
     _fm_5000 = make_gr_mod_nbfm_sdr(0, 1000000, 1700, 4000);
-    _qpsk_2k = make_gr_mod_qpsk_sdr(500, 1000000, 1700, 1600);
-    _qpsk_10k = make_gr_mod_qpsk_sdr(100, 1000000, 1700, 8000);
-    _qpsk_250k = make_gr_mod_qpsk_sdr(4, 1000000, 1700, 156000);
-    _qpsk_video = make_gr_mod_qpsk_sdr(4, 1000000, 1700, 156000);
+    _qpsk_2k = make_gr_mod_qpsk_sdr(500, 1000000, 1700, 1300);
+    _qpsk_10k = make_gr_mod_qpsk_sdr(100, 1000000, 1700, 6500);
+    _qpsk_250k = make_gr_mod_qpsk_sdr(4, 1000000, 1700, 160000);
+    _qpsk_video = make_gr_mod_qpsk_sdr(4, 1000000, 1700, 160000);
     _usb = make_gr_mod_ssb_sdr(0, 1000000, 1700, 2500);
     _lsb = make_gr_mod_ssb_sdr(1, 1000000, 1700, 2500);
 
@@ -279,14 +279,16 @@ void gr_mod_base::set_mode(int mode)
 
 void gr_mod_base::start()
 {
+    _audio_source->flush();
+    _vector_source->flush();
     _top_block->start();
 }
 
 void gr_mod_base::stop()
 {
     _top_block->stop();
-    _audio_source->clear_buffer();
-    _vector_source->clear_buffer();
+    _audio_source->flush();
+    _vector_source->flush();
     _top_block->wait();
 }
 

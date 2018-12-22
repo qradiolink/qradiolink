@@ -35,7 +35,7 @@ AudioEncoder::AudioEncoder()
     _codec2_2400 = codec2_create(CODEC2_MODE_2400);
 
     _gsm = gsm_create();
-    _audio_filter = new Filter(BPF,20,8,0.28,2.8);
+    _audio_filter = new Filter(BPF,20,8,0.12,3.5);
     if( _audio_filter->get_error_flag() != 0 )
     {
         qDebug() << "audio filter creation failed";

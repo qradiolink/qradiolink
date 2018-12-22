@@ -283,7 +283,7 @@ int RadioOp::processVideoStream(bool &frame_flag)
     qint64 microsec;
     timer.start();
 
-    _video->encode_jpeg(&(videobuffer[16]), encoded_size, max_video_frame_size - 16);
+    _video->encode_jpeg(&(videobuffer[24]), encoded_size, max_video_frame_size - 24);
 
     microsec = (quint64)timer.nsecsElapsed();
     if(microsec < 100000000)
@@ -294,16 +294,18 @@ int RadioOp::processVideoStream(bool &frame_flag)
 
     //qDebug() << "video out " << microsec << " / " << encoded_size;
 
-    if(encoded_size > max_video_frame_size - 16)
+    if(encoded_size > max_video_frame_size - 24)
     {
-        encoded_size = max_video_frame_size - 16;
+        encoded_size = max_video_frame_size - 24;
     }
-    unsigned int crc = gr::digital::crc32(&(videobuffer[16]), encoded_size);
+    unsigned int crc = gr::digital::crc32(&(videobuffer[24]), encoded_size);
     memcpy(&(videobuffer[0]), &encoded_size, 4);
     memcpy(&(videobuffer[4]), &encoded_size, 4);
     memcpy(&(videobuffer[8]), &encoded_size, 4);
     memcpy(&(videobuffer[12]), &crc, 4);
-    for(unsigned int k=encoded_size+16,i=0;k<max_video_frame_size;k++,i++)
+    memcpy(&(videobuffer[16]), &crc, 4);
+    memcpy(&(videobuffer[20]), &crc, 4);
+    for(unsigned int k=encoded_size+24,i=0;k<max_video_frame_size;k++,i++)
     {
 
         videobuffer[k] = _rand_frame_data[i];
@@ -526,7 +528,7 @@ void RadioOp::updateDataModemReset(bool transmitting, bool ptt_activated)
         sec_modem_running = (quint64)_data_modem_reset_timer->nsecsElapsed()/1000000000;
         if(sec_modem_running > 300)
         {
-            qDebug() << "resetting modem";
+            std::cout << "resetting modem" << std::endl;
             _data_modem_sleeping = true;
             _data_modem_sleep_timer->restart();
         }
@@ -541,7 +543,7 @@ void RadioOp::updateDataModemReset(bool transmitting, bool ptt_activated)
             _data_modem_sleeping = false;
             _data_modem_reset_timer->restart();
             _modem->startTransmission(_callsign);
-            qDebug() << "modem reset complete";
+            std::cout << "modem reset complete" << std::endl;
         }
     }
 }
@@ -728,30 +730,48 @@ int RadioOp::getFrameLength(unsigned char *data)
         return 0;
 }
 
+unsigned int RadioOp::getFrameCRC32(unsigned char *data)
+{
+    unsigned int crc1;
+    unsigned int crc2;
+    unsigned int crc3;
+
+    memcpy(&crc1, &data[12], 4);
+    memcpy(&crc2, &data[16], 4);
+    memcpy(&crc3, &data[20], 4);
+    if(crc1 == crc2)
+        return (unsigned int)crc1;
+    else if(crc1 == crc3)
+        return (unsigned int)crc1;
+    else if(crc2 == crc3)
+        return (unsigned int)crc2;
+    else
+        return 0;
+}
+
 void RadioOp::receiveVideoData(unsigned char *data, int size)
 {
     int frame_size = getFrameLength(data);
-    unsigned int crc = 0;
-    memcpy(&crc, &data[12], 4);
+    unsigned int crc = getFrameCRC32(data);
     if(frame_size == 0)
     {
-        qDebug() << "received wrong frame size, dropping frame ";
+        std::cerr << "received wrong frame size, dropping frame " << std::endl;
         delete[] data;
         return;
     }
-    if(frame_size > 3122 - 16)
+    if(frame_size > 3122 - 24)
     {
-        qDebug() << "frame size too large, dropping frame ";
+        std::cerr << "frame size too large, dropping frame " << std::endl;
         delete[] data;
         return;
     }
     unsigned char *jpeg_frame = new unsigned char[frame_size];
-    memcpy(jpeg_frame, &data[16], frame_size);
+    memcpy(jpeg_frame, &data[24], frame_size);
     delete[] data;
     unsigned int crc_check = gr::digital::crc32(jpeg_frame, frame_size);
     if(crc != crc_check)
     {
-        qDebug() << "CRC check failed ";
+        std::cerr << "CRC check failed " << std::endl;
         delete[] jpeg_frame;
         return;
     }
@@ -785,7 +805,7 @@ void RadioOp::receiveNetData(unsigned char *data, int size)
     }
     if((frame_size == 0) || (frame_size > 1500))
     {
-        qDebug() << "received wrong frame size, dropping frame ";
+        std::cerr << "received wrong frame size, dropping frame " << std::endl;
         delete[] data;
         return;
     }
@@ -799,7 +819,7 @@ void RadioOp::receiveNetData(unsigned char *data, int size)
 
     if(crc != crc_check)
     {
-        qDebug() << "CRC check failed, dropping frame ";
+        std::cerr << "CRC check failed, dropping frame " << std::endl;
         delete[] net_frame;
         return;
     }
@@ -1072,9 +1092,9 @@ void RadioOp::toggleRxMode(int value)
         break;
     case 3:
         _rx_mode = gr_modem_types::ModemTypeQPSK20000;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
-        _step_hz = 20;
+        _tune_limit_lower = -10000;
+        _tune_limit_upper = 10000;
+        _step_hz = 10;
         break;
     case 4:
         _rx_mode = gr_modem_types::ModemType4FSK2000;
@@ -1190,9 +1210,9 @@ void RadioOp::toggleTxMode(int value)
         break;
     case 3:
         _tx_mode = gr_modem_types::ModemTypeQPSK20000;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
-        _step_hz = 20;
+        _tune_limit_lower = -10000;
+        _tune_limit_upper = 10000;
+        _step_hz = 10;
         break;
     case 4:
         _tx_mode = gr_modem_types::ModemType4FSK2000;

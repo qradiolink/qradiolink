@@ -90,7 +90,7 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
     std::vector<float> symbol_filter_taps = gr::filter::firdes::low_pass(1.0,
                                  _target_samp_rate, _target_samp_rate/_samples_per_symbol, _target_samp_rate/_samples_per_symbol/20);
     _resampler = gr::filter::rational_resampler_base_ccf::make(interpolation, decimation, taps);
-
+    _fll = gr::digital::fll_band_edge_cc::make(_samples_per_symbol/4, 0.01, 16, 48*M_PI/100);
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
                                 1, _target_samp_rate, _filter_width,2000,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     //_freq_demod = gr::analog::quadrature_demod_cf::make(sps/(4*M_PI/2));
@@ -127,7 +127,8 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
 
 
     connect(self(),0,_resampler,0);
-    connect(_resampler,0,_filter,0);
+    connect(_resampler,0,_fll,0);
+    connect(_fll,0,_filter,0);
     connect(_filter,0,self(),0);
     connect(_filter,0,_filter1,0);
     connect(_filter,0,_filter2,0);

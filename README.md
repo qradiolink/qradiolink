@@ -32,6 +32,7 @@ Features
 - Narrow band digital voice mode with the [Codec2](http://rowetel.com/codec2.html) audio codec
 - Wideband digital voice mode with the [Opus](https://xiph.org) audio codec
 - Digital modulation:  **BPSK**, **DQPSK**, **2FSK**, **4FSK**
+- Automatic carrier tracking and Doppler effect correction. The system can track Doppler shifts of 5-10 kHz, depending on mode. It requires a CNR of at least 10-12 dB, more for FSK modes than for PSK modes.
 - Analog modulation: narrow FM (5 kHz), FM (10 kHz), Wide FM (broadcast, receive-only), AM, SSB
 - CTCSS encoder and decoder for analog FM
 - Supported hardware: [**Ettus USRP**](https://ettus.com), [**RTL-SDR**](https://osmocom.org/projects/sdr/wiki/rtl-sdr), [**LimeSDR-mini**](https://www.crowdsupply.com/lime-micro/limesdr-mini) (through SoapySDR), PlutoSDR (through [**SoapyPlutoSDR**](https://github.com/kantooon/SoapyPlutoSDR)), BladeRF, other devices supported by [**gr-osmosdr**](https://osmocom.org/projects/sdr/wiki/GrOsmoSDR)

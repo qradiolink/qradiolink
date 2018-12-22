@@ -41,6 +41,9 @@ SOURCES += main.cpp\
         ext/vox.cpp\
         ext/utils.cpp\
         ext/filt.cpp\
+        ext/compressor.c \
+        ext/snd.c \
+        ext/mem.c \
         video/videocapture.cpp\
     radioop.cpp \
     qtgui/freqctrl.cpp \
@@ -105,6 +108,9 @@ HEADERS  += mainwindow.h\
         ext/vox.h\
         ext/utils.h \
         ext/filt.h \
+        ext/snd.h \
+        ext/mem.h \
+        ext/compressor.h \
     radioop.h \
     qtgui/freqctrl.h \
     audio/alsaaudio.h \
@@ -153,7 +159,7 @@ LIBS += -lgnuradio-pmt -lgnuradio-audio -lgnuradio-analog -lgnuradio-blocks \
 LIBS += -lrt  # need to include on some distros
 
 unix:!symbian: LIBS += -lprotobuf -lopus -lpulse-simple -lpulse -lcodec2 -lgsm -lasound -ljpeg -lconfig++ -lspeexdsp
-                    #-lFestival -lestbase -leststring -lestools -lasound
+                    #-lFestival -lestbase -leststring -lestools
 #INCLUDEPATH += /usr/include/speech_tools
 INCLUDEPATH += /usr/include/qwt-qt4
 INCLUDEPATH += /usr/include/qwt

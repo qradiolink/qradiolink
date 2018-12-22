@@ -47,6 +47,25 @@ AudioInterface::AudioInterface(QObject *parent, unsigned sample_rate, unsigned c
     //speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_DEREVERB_DECAY, &f);
     //f=.5;
     //speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_DEREVERB_LEVEL, &f);
+
+    sf_simplecomp(&_cm_state_read,
+                  8000, // audio rate
+                  6,   // audio boost
+                  -35,  // kick in (dB)
+                  5,   // knee
+                  1,   // inverse scale
+                  0.001f,   // attack
+                  0.001f    // release
+                  );
+    sf_simplecomp(&_cm_state_write,
+                  8000, // audio rate
+                  1,   // audio boost
+                  -25,  // kick in (dB)
+                  10,   // knee
+                  1,   // inverse scale
+                  0.001f,   // attack
+                  0.001f    // release
+                  );
     int rand_len = 4;
     char rand[5];
     genRandomStr(rand,rand_len);
@@ -146,7 +165,9 @@ int AudioInterface::write_short(short *buf, short bufsize, bool preprocess)
         int i = 3;
         speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_NOISE_SUPPRESS, &i);
         speex_preprocess_run(_speex_preprocess, buf);
+        compress_audio(buf, bufsize, 1);
     }
+
     if(!_s_short_play)
         return 1;
     if(pa_simple_write(_s_short_play, buf, bufsize, &_error) < 0)
@@ -171,6 +192,7 @@ int AudioInterface::read_short(short *buf, short bufsize, bool preprocess)
     {
         vad = speex_preprocess_run(_speex_preprocess, buf);
     }
+    compress_audio(buf, bufsize, 0);
     return vad;
 }
 
@@ -183,4 +205,24 @@ float AudioInterface::calc_audio_power(short *buf, short samples)
         power += a * a;
     }
     return power / (32768.0f * 32768.0f * (float) samples);
+}
+
+void AudioInterface::compress_audio(short *buf, short bufsize, int direction)
+{
+    sf_snd output_snd = sf_snd_new(bufsize/sizeof(short), 8000, true);
+    sf_snd input_snd = sf_snd_new(bufsize/sizeof(short), 8000, true);
+    for(unsigned int i=0;i<bufsize/sizeof(short);i++)
+    {
+        input_snd->samples[i].L = (float)buf[i] / 32767.0f;
+    }
+    if(direction == 0)
+        sf_compressor_process(&_cm_state_read, bufsize/sizeof(short), input_snd->samples, output_snd->samples);
+    if(direction == 1)
+        sf_compressor_process(&_cm_state_write, bufsize/sizeof(short), input_snd->samples, output_snd->samples);
+    for(unsigned int i=0;i<bufsize/sizeof(short);i++)
+    {
+        buf[i] = (short)(output_snd->samples[i].L * 32767.0f);
+    }
+    sf_snd_free(input_snd);
+    sf_snd_free(output_snd);
 }

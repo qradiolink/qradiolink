@@ -48,7 +48,7 @@ gr_demod_am_sdr::gr_demod_am_sdr(std::vector<int>signature, int sps, int samp_ra
     _filter = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
                             1, _target_samp_rate, -_filter_width, _filter_width,1200,gr::filter::firdes::WIN_HAMMING) );
     _squelch = gr::analog::pwr_squelch_cc::make(-140,0.01,0,true);
-    _agc = gr::analog::agc2_cc::make(1, 1, 1, 0);
+    _agc = gr::analog::agc2_cc::make(1e-1, 1e-1, 1, 0);
     _complex_to_mag = gr::blocks::complex_to_mag::make();
     std::vector<double> fft;
     fft.push_back(1);
