@@ -1,3 +1,13 @@
+qradiolink (0.5.1-1) UNRELEASED; urgency=medium
+
+  [ Adrian Musceac ]
+  * Added voice compressor
+  * Improved performance of PSK modes
+  * Improved SSB transmitter (better AGC, better frequency shaping)
+
+
+ -- Adrian Musceac <kantooon@gmail.com>  Wed, 25 Jul 2018 23:00:00 +0300
+
 qradiolink (0.5.0-1) UNRELEASED; urgency=medium
 
   [ Adrian Musceac ]
