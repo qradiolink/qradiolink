@@ -50,7 +50,7 @@ AudioInterface::AudioInterface(QObject *parent, unsigned sample_rate, unsigned c
 
     sf_simplecomp(&_cm_state_read,
                   8000, // audio rate
-                  6,   // audio boost
+                  3,   // audio boost
                   -35,  // kick in (dB)
                   5,   // knee
                   1,   // inverse scale

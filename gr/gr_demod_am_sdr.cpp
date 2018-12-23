@@ -41,7 +41,7 @@ gr_demod_am_sdr::gr_demod_am_sdr(std::vector<int>signature, int sps, int samp_ra
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width, _target_samp_rate);
+    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width, _target_samp_rate/4);
     std::vector<float> audio_taps = gr::filter::firdes::low_pass(1, _target_samp_rate, _filter_width, 1200);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1,50,taps);
     _audio_resampler = gr::filter::rational_resampler_base_fff::make(2,5, audio_taps);
@@ -57,7 +57,7 @@ gr_demod_am_sdr::gr_demod_am_sdr(std::vector<int>signature, int sps, int samp_ra
     ffd.push_back(0);
     ffd.push_back(0.9999);
     _audio_filter = gr::filter::iir_filter_ffd::make(fft,ffd);
-    _audio_gain = gr::blocks::multiply_const_ff::make(0.5);
+    _audio_gain = gr::blocks::multiply_const_ff::make(0.99);
 
 
     connect(self(),0,_resampler,0);
