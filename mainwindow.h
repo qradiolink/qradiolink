@@ -31,6 +31,7 @@
 #include <libconfig.h++>
 #include "settings.h"
 #include "channel.h"
+#include "qtgui/plotter.h"
 #include <iostream>
 
 namespace Ui {
@@ -137,6 +138,7 @@ private:
     void closeEvent(QCloseEvent *);
     Settings *_settings;
     int _current_voip_channel;
+    CPlotter *plotter;
 
 
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>DesktopMainWindow</class>
+ <widget class="QMainWindow" name="DesktopMainWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -2535,7 +2535,7 @@ color: rgb(255, 0, 0);</string>
   <connection>
    <sender>buttonQuit</sender>
    <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
+   <receiver>DesktopMainWindow</receiver>
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">

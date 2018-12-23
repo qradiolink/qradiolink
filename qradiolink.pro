@@ -47,6 +47,7 @@ SOURCES += main.cpp\
         video/videocapture.cpp\
     radioop.cpp \
     qtgui/freqctrl.cpp \
+    qtgui/plotter.cpp \
     audio/alsaaudio.cpp \
     gr/gr_mod_gmsk.cpp \
     gr/gr_modem.cpp \
@@ -113,6 +114,7 @@ HEADERS  += mainwindow.h\
         ext/compressor.h \
     radioop.h \
     qtgui/freqctrl.h \
+    qtgui/plotter.h \
     audio/alsaaudio.h \
     gr/gr_mod_gmsk.h \
     gr/gr_modem.h \
@@ -149,7 +151,8 @@ HEADERS  += mainwindow.h\
     radioprotocol.h
 
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    desktop_mainwindow.ui
 
 
 LIBS += -lgnuradio-pmt -lgnuradio-audio -lgnuradio-analog -lgnuradio-blocks \
