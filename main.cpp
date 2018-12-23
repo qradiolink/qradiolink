@@ -210,9 +210,9 @@ int main(int argc, char *argv[])
 
     gr::qtgui::sink_c::sptr fft_gui = gr::qtgui::sink_c::make(8096*4,gr::filter::firdes::WIN_BLACKMAN_HARRIS,
                                                           0,1000000,fft_name,true,true,true,false,w->get_fft_gui());
-    fft_gui->qwidget()->resize(xy.right() -xy.left()-50,xy.bottom()-xy.top()-206);
+    fft_gui->qwidget()->resize(xy.right() -xy.left()-50,xy.bottom()-xy.top()-170);
     fft_gui->set_update_time(0.1);
-    fft_gui->set_fft_power_db(-140,0);
+    fft_gui->set_fft_power_db(-130,0);
     fft_gui->qwidget()->setStyleSheet(
                 "QwtPlotCanvas { background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #FFFEA2, stop: 1 #0385FF); \
                 border: 1px solid White; \
