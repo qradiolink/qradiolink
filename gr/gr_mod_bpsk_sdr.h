@@ -36,6 +36,7 @@
 #include <gnuradio/fec/cc_encoder.h>
 #include <gnuradio/fec/encoder.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
+#include <gnuradio/filter/rational_resampler_base_ccf.h>
 
 
 class gr_mod_bpsk_sdr;
@@ -62,6 +63,7 @@ private:
     gr::digital::scrambler_bb::sptr _scrambler;
     gr::blocks::repeat::sptr _repeat;
     gr::filter::fft_filter_ccf::sptr _filter;
+    gr::filter::rational_resampler_base_ccf::sptr _resampler;
 
 
 

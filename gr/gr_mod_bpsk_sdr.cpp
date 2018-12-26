@@ -53,10 +53,12 @@ gr_mod_bpsk_sdr::gr_mod_bpsk_sdr(int sps, int samp_rate, int carrier_freq,
     std::vector<float> rrc_taps = gr::filter::firdes::root_raised_cosine(nfilts, nfilts,
                                                         1, 0.35, nfilts * 11 * _samples_per_symbol);
     //_shaping_filter = gr::filter::pfb_arb_resampler_ccf::make(_samples_per_symbol, rrc_taps, nfilts);
+    _resampler = gr::filter::rational_resampler_base_ccf::make(_samples_per_symbol, 1,
+                                  gr::filter::firdes::root_raised_cosine(_samples_per_symbol,_samples_per_symbol,1,0.35,nfilts * _samples_per_symbol));
     _shaping_filter = gr::filter::fft_filter_ccf::make(
                 1, gr::filter::firdes::root_raised_cosine(1,_samp_rate,_samp_rate/_samples_per_symbol,0.35,nfilts * _samples_per_symbol));
     _repeat = gr::blocks::repeat::make(8, _samples_per_symbol);
-    _amplify = gr::blocks::multiply_const_cc::make(0.2,1);
+    _amplify = gr::blocks::multiply_const_cc::make(0.5,1);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
     _filter = gr::filter::fft_filter_ccf::make(
                 1,gr::filter::firdes::low_pass(
@@ -67,10 +69,10 @@ gr_mod_bpsk_sdr::gr_mod_bpsk_sdr(int sps, int samp_rate, int carrier_freq,
     connect(_packed_to_unpacked,0,_scrambler,0);
     connect(_scrambler,0,_encode_ccsds,0);
     connect(_encode_ccsds,0,_chunks_to_symbols,0);
-    connect(_chunks_to_symbols,0,_repeat,0);
+    connect(_chunks_to_symbols,0,_resampler,0);
 
-    connect(_repeat,0,_shaping_filter,0);
-    connect(_shaping_filter,0,_amplify,0);
+    //connect(_repeat,0,_shaping_filter,0);
+    connect(_resampler,0,_amplify,0);
     connect(_amplify,0,_bb_gain,0);
     connect(_bb_gain,0,self(),0);
     //connect(_filter,0,self(),0);

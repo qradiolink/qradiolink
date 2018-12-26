@@ -39,6 +39,7 @@
 #include <gnuradio/blocks/pack_k_bits_bb.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/digital/constellation.h>
+#include <gnuradio/filter/rational_resampler_base_ccf.h>
 
 
 class gr_mod_qpsk_sdr;
@@ -69,6 +70,7 @@ private:
     gr::digital::diff_encoder_bb::sptr _diff_encoder;
     gr::blocks::pack_k_bits_bb::sptr _packer;
     gr::digital::map_bb::sptr _map;
+    gr::filter::rational_resampler_base_ccf::sptr _resampler;
 
 
     int _samples_per_symbol;
