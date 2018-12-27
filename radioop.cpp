@@ -209,9 +209,17 @@ void RadioOp::processAudioStream()
         return;
     if(_tx_mode == gr_modem_types::ModemTypeQPSK250000)
         return;
+    int audio_mode;
+    if((_tx_mode == gr_modem_types::ModemTypeBPSK2000) ||
+            (_tx_mode == gr_modem_types::ModemType2FSK2000) ||
+            (_tx_mode == gr_modem_types::ModemType4FSK2000) ||
+            (_tx_mode == gr_modem_types::ModemTypeQPSK2000))
+        audio_mode = AudioInterface::AUDIO_MODE_CODEC2;
+    else
+        audio_mode = AudioInterface::AUDIO_MODE_OPUS;
     int audiobuffer_size = 640; //40 ms @ 8k
     short *audiobuffer = new short[audiobuffer_size/sizeof(short)];
-    int vad = _audio->read_short(audiobuffer,audiobuffer_size, true);
+    int vad = _audio->read_short(audiobuffer,audiobuffer_size, true, audio_mode);
     if(_vox_enabled)
     {
         if(vad)
@@ -647,6 +655,7 @@ void RadioOp::receiveAudioData(unsigned char *data, int size)
 {
     short *audio_out;
     int samples;
+    int audio_mode = AudioInterface::AUDIO_MODE_OPUS;
     if((_rx_mode == gr_modem_types::ModemTypeBPSK2000) ||
             (_rx_mode == gr_modem_types::ModemType2FSK2000) ||
             (_rx_mode == gr_modem_types::ModemType4FSK2000) ||
@@ -669,6 +678,7 @@ void RadioOp::receiveAudioData(unsigned char *data, int size)
                 (_rx_mode == gr_modem_types::ModemTypeBPSK1000))
         {
             amplif = 1.0;
+            audio_mode = AudioInterface::AUDIO_MODE_CODEC2;
         }
         for(int i=0;i<samples;i++)
         {
@@ -680,7 +690,7 @@ void RadioOp::receiveAudioData(unsigned char *data, int size)
         }
         else
         {
-            _audio->write_short(audio_out,samples*sizeof(short),true);
+            _audio->write_short(audio_out,samples*sizeof(short),true, audio_mode);
         }
     }
 }
@@ -704,7 +714,7 @@ void RadioOp::receivePCMAudio(std::vector<float> *audio_data)
     }
     else
     {
-        _audio->write_short(pcm, size*sizeof(short),false);
+        _audio->write_short(pcm, size*sizeof(short),false, AudioInterface::AUDIO_MODE_ANALOG);
     }
     audio_data->clear();
     delete audio_data;
