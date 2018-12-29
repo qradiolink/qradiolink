@@ -41,6 +41,7 @@
 #include <gnuradio/digital/descrambler_bb.h>
 #include <gnuradio/blocks/float_to_uchar.h>
 #include <gnuradio/blocks/add_const_ff.h>
+#include <gnuradio/analog/rail_ff.h>
 
 
 class gr_demod_qpsk_sdr;
@@ -75,6 +76,7 @@ private:
     gr::blocks::interleave::sptr _interleave;
     gr::blocks::float_to_uchar::sptr _float_to_uchar;
     gr::blocks::add_const_ff::sptr _add_const_fec;
+    gr::analog::rail_ff::sptr _rail;
 
 
     int _samples_per_symbol;

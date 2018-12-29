@@ -67,6 +67,7 @@ private:
     gr::blocks::complex_to_mag::sptr _mag_upper;
     gr::blocks::divide_ff::sptr _divide;
     gr::analog::rail_ff::sptr _rail;
+    gr::analog::rail_ff::sptr _rail2;
     gr::digital::binary_slicer_fb::sptr _binary_slicer;
     gr::blocks::complex_to_real::sptr _complex_to_real;
     gr::digital::descrambler_bb::sptr _descrambler;

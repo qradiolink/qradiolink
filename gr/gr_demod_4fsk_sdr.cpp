@@ -119,7 +119,8 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
 
     _complex_to_float = gr::blocks::complex_to_float::make();
     _interleave = gr::blocks::interleave::make(4);
-    _multiply_const_fec = gr::blocks::multiply_const_ff::make(68);
+    _rail = gr::analog::rail_ff::make(-0.707,0.707);
+    _multiply_const_fec = gr::blocks::multiply_const_ff::make(180);
     _float_to_uchar = gr::blocks::float_to_uchar::make();
     _add_const_fec = gr::blocks::add_const_ff::make(128.0);
     gr::fec::code::cc_decoder::sptr decoder = gr::fec::code::cc_decoder::make(80, 7, 2, polys);
@@ -151,7 +152,8 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
     connect(_clock_recovery,0,_complex_to_float,0);
     connect(_complex_to_float,0,_interleave,0);
     connect(_complex_to_float,1,_interleave,1);
-    connect(_interleave,0,_multiply_const_fec,0);
+    connect(_interleave,0,_rail,0);
+    connect(_rail,0,_multiply_const_fec,0);
     connect(_multiply_const_fec,0,_add_const_fec,0);
     connect(_add_const_fec,0,_float_to_uchar,0);
     connect(_float_to_uchar,0,_decode_ccsds,0);

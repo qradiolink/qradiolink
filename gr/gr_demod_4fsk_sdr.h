@@ -37,6 +37,7 @@
 #include <gnuradio/blocks/complex_to_mag_squared.h>
 #include <gnuradio/blocks/float_to_uchar.h>
 #include <gnuradio/blocks/add_const_ff.h>
+#include <gnuradio/analog/rail_ff.h>
 #include <gnuradio/blocks/multiply_const_ff.h>
 #include <gnuradio/blocks/complex_to_float.h>
 #include <gnuradio/blocks/interleave.h>
@@ -86,6 +87,7 @@ private:
     gr::blocks::float_to_uchar::sptr _float_to_uchar;
     gr::blocks::add_const_ff::sptr _add_const_fec;
     gr::fec::decoder::sptr _decode_ccsds;
+    gr::analog::rail_ff::sptr _rail;
 
     int _samples_per_symbol;
     int _samp_rate;
