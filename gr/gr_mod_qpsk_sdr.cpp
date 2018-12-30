@@ -51,7 +51,7 @@ gr_mod_qpsk_sdr::gr_mod_qpsk_sdr(int sps, int samp_rate, int carrier_freq,
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
     int filter_slope = 1200;
-    int filt_length = 32;
+    int nfilts = 32;
     if(sps < 10)
         filter_slope = 5000;
 
@@ -64,7 +64,12 @@ gr_mod_qpsk_sdr::gr_mod_qpsk_sdr(int sps, int samp_rate, int carrier_freq,
     _map = gr::digital::map_bb::make(map);
 
     _chunks_to_symbols = gr::digital::chunks_to_symbols_bc::make(symbol_table);
-    int nfilts = 32;
+    if(_samples_per_symbol > 120)
+        nfilts = 32;
+    else if(_samples_per_symbol > 10)
+        nfilts = 64;
+    else
+        nfilts = 256;
     std::vector<float> rrc_taps = gr::filter::firdes::root_raised_cosine(nfilts, nfilts,
                                                         1, 0.35, nfilts * 11 * _samples_per_symbol);
     //_shaping_filter = gr::filter::pfb_arb_resampler_ccf::make(_samples_per_symbol, rrc_taps, nfilts);
