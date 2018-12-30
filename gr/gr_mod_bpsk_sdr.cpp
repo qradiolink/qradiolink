@@ -49,7 +49,7 @@ gr_mod_bpsk_sdr::gr_mod_bpsk_sdr(int sps, int samp_rate, int carrier_freq,
     _encode_ccsds = gr::fec::encoder::make(encoder, 1, 1);
 
     _chunks_to_symbols = gr::digital::chunks_to_symbols_bc::make(constellation);
-    int nfilts = 32;
+    int nfilts = 128;
     std::vector<float> rrc_taps = gr::filter::firdes::root_raised_cosine(nfilts, nfilts,
                                                         1, 0.35, nfilts * 11 * _samples_per_symbol);
     //_shaping_filter = gr::filter::pfb_arb_resampler_ccf::make(_samples_per_symbol, rrc_taps, nfilts);
