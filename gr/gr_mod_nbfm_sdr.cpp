@@ -40,7 +40,7 @@ gr_mod_nbfm_sdr::gr_mod_nbfm_sdr(int sps, int samp_rate, int carrier_freq,
     _audio_amplify = gr::blocks::multiply_const_ff::make(0.9,1);
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::band_pass(
-                    1, target_samp_rate, 250, _filter_width, 200, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+                    1, target_samp_rate, 250, 3400, 600, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
 
     static const float coeff[] =  {-0.026316914707422256, -0.2512197494506836, 1.5501943826675415,
                                    -0.2512197494506836, -0.026316914707422256};
@@ -53,7 +53,7 @@ gr_mod_nbfm_sdr::gr_mod_nbfm_sdr(int sps, int samp_rate, int carrier_freq,
     std::vector<float> interp_taps = gr::filter::firdes::low_pass(500, _samp_rate,
                                                         _filter_width, _filter_width*2);
     _resampler = gr::filter::rational_resampler_base_ccf::make(500,4, interp_taps);
-    _amplify = gr::blocks::multiply_const_cc::make(0.5,1);
+    _amplify = gr::blocks::multiply_const_cc::make(0.8,1);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
     _filter = gr::filter::fft_filter_ccf::make(
                 1,gr::filter::firdes::low_pass(
