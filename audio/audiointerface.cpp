@@ -29,7 +29,7 @@ AudioInterface::AudioInterface(QObject *parent, unsigned sample_rate, unsigned c
     float f;
     i = 1;
     speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_DENOISE, &i);
-    i = 12;
+    i = -45;
     speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_NOISE_SUPPRESS, &i);
     //i = 0;
     //speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_AGC, &i);
@@ -41,21 +41,21 @@ AudioInterface::AudioInterface(QObject *parent, unsigned sample_rate, unsigned c
     //speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_PROB_CONTINUE, &f);
     //i = 0.8;
     //speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_AGC_LEVEL, &i);
-    //i=1;
-    //speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_DEREVERB, &i);
-    //f=.5;
-    //speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_DEREVERB_DECAY, &f);
-    //f=.5;
-    //speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_DEREVERB_LEVEL, &f);
+    i=1;
+    speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_DEREVERB, &i);
+    f=.5;
+    speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_DEREVERB_DECAY, &f);
+    f=.5;
+    speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_DEREVERB_LEVEL, &f);
 
     sf_simplecomp(&_cm_state_read_codec2,
                   8000, // audio rate
-                  0,   // audio boost
-                  -25,  // kick in (dB)
+                  -3,   // audio boost
+                  -30,  // kick in (dB)
                   40,   // knee
-                  40,   // inverse scale
-                  0.001f,   // attack
-                  0.075f    // release
+                  20,   // inverse scale
+                  0.005f,   // attack
+                  0.175f    // release
                   );
     sf_simplecomp(&_cm_state_read,
                   8000, // audio rate
@@ -77,12 +77,12 @@ AudioInterface::AudioInterface(QObject *parent, unsigned sample_rate, unsigned c
                   );
     sf_simplecomp(&_cm_state_write_codec2,
                   8000, // audio rate
-                  0,   // audio boost
-                  -35,  // kick in (dB)
-                  10,   // knee
-                  10,   // inverse scale
-                  0.001f,   // attack
-                  0.075f    // release
+                  3,   // audio boost
+                  -25,  // kick in (dB)
+                  40,   // knee
+                  30,   // inverse scale
+                  0.005f,   // attack
+                  0.125f    // release
                   );
     int rand_len = 4;
     char rand[5];
