@@ -63,8 +63,7 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(std::vector<int>signature, int sps, int sam
                 1, gr::filter::firdes::root_raised_cosine(1,_target_samp_rate,_target_samp_rate/_samples_per_symbol,0.35,128 * _samples_per_symbol));
     _complex_to_real = gr::blocks::complex_to_real::make();
 
-    _multiply_const_fec = gr::blocks::multiply_const_ff::make(128);
-    _rail = gr::analog::rail_ff::make(-1,1);
+    _multiply_const_fec = gr::blocks::multiply_const_ff::make(64);
     _float_to_uchar = gr::blocks::float_to_uchar::make();
     _add_const_fec = gr::blocks::add_const_ff::make(128.0);
 
@@ -90,8 +89,7 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(std::vector<int>signature, int sps, int sam
     connect(_equalizer,0,_costas_loop,0);
     connect(_costas_loop,0,_complex_to_real,0);
     connect(_costas_loop,0,self(),1);
-    connect(_complex_to_real,0,_rail,0);
-    connect(_rail,0,_multiply_const_fec,0);
+    connect(_complex_to_real,0,_multiply_const_fec,0);
     connect(_multiply_const_fec,0,_add_const_fec,0);
     connect(_add_const_fec,0,_float_to_uchar,0);
     connect(_float_to_uchar,0,_cc_decoder,0);

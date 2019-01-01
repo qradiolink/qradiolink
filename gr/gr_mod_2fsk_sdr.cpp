@@ -36,6 +36,10 @@ gr_mod_2fsk_sdr::gr_mod_2fsk_sdr(int sps, int samp_rate, int carrier_freq,
     polys.push_back(109);
     polys.push_back(79);
 
+    std::vector<int> map;
+    map.push_back(0);
+    map.push_back(1);
+
     _samples_per_symbol = sps;
     _samp_rate =samp_rate;
     _carrier_freq = carrier_freq;
@@ -43,6 +47,7 @@ gr_mod_2fsk_sdr::gr_mod_2fsk_sdr(int sps, int samp_rate, int carrier_freq,
 
     _packed_to_unpacked = gr::blocks::packed_to_unpacked_bb::make(1,gr::GR_MSB_FIRST);
     _scrambler = gr::digital::scrambler_bb::make(0x8A, 0x7F ,7);
+    _map = gr::digital::map_bb::make(map);
 
      gr::fec::code::cc_encoder::sptr encoder = gr::fec::code::cc_encoder::make(80, 7, 2, polys);
     _encode_ccsds = gr::fec::encoder::make(encoder, 1, 1);
@@ -58,7 +63,8 @@ gr_mod_2fsk_sdr::gr_mod_2fsk_sdr(int sps, int samp_rate, int carrier_freq,
     connect(self(),0,_packed_to_unpacked,0);
     connect(_packed_to_unpacked,0,_scrambler,0);
     connect(_scrambler,0,_encode_ccsds,0);
-    connect(_encode_ccsds,0,_chunks_to_symbols,0);
+    connect(_encode_ccsds,0,_map,0);
+    connect(_map,0,_chunks_to_symbols,0);
     connect(_chunks_to_symbols,0,_repeat,0);
 
     connect(_repeat,0,_freq_modulator,0);

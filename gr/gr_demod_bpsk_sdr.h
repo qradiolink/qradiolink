@@ -37,7 +37,6 @@
 #include <gnuradio/fec/cc_decoder.h>
 #include <gnuradio/blocks/delay.h>
 #include <gnuradio/blocks/multiply_const_ff.h>
-#include <gnuradio/analog/rail_ff.h>
 #include <gnuradio/blocks/float_to_uchar.h>
 
 
@@ -70,7 +69,6 @@ private:
     gr::digital::descrambler_bb::sptr _descrambler;
     gr::digital::descrambler_bb::sptr _descrambler2;
     gr::blocks::delay::sptr _delay;
-    gr::analog::rail_ff::sptr _rail;
     gr::blocks::multiply_const_ff::sptr _multiply_const_fec;
     gr::fec::decoder::sptr _cc_decoder;
     gr::fec::decoder::sptr _cc_decoder2;
