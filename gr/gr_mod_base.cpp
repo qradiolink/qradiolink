@@ -61,6 +61,8 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
 void gr_mod_base::set_mode(int mode)
 {
     _top_block->lock();
+    _audio_source->flush();
+    _vector_source->flush();
 
     switch(_mode)
     {

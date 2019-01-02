@@ -51,9 +51,9 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
     else if(sps >= 125)
     {
         interpolation = 1;
-        decimation = 100;
-        _samples_per_symbol = sps/25;
-        _target_samp_rate = 10000;
+        decimation = 50;
+        _samples_per_symbol = sps*2/25;
+        _target_samp_rate = 20000;
         filt_bandwidth = 2000;
     }
     else
@@ -88,7 +88,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
                 constellation->points(),pre_diff_code,4,2,2,1,1,const_map);
     */
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _target_samp_rate, filt_bandwidth);
+    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _target_samp_rate/2, filt_bandwidth);
 
     _resampler = gr::filter::rational_resampler_base_ccf::make(interpolation, decimation, taps);
 
@@ -105,15 +105,15 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
     }
     else if(sps >= 125)
     {
-        gain_mu = 0.001;
+        gain_mu = 0.005;
         omega_rel_limit = 0.001;
-        filt_length = 32;
+        filt_length = 64;
     }
     else
     {
         gain_mu = 0.001;
         omega_rel_limit = 0.001;
-        filt_length = 256;
+        filt_length = 160;
     }
 
     _shaping_filter = gr::filter::fft_filter_ccf::make(
@@ -121,10 +121,10 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0, gain_mu,
                                                               omega_rel_limit);
     std::vector<float> pfb_taps = gr::filter::firdes::root_raised_cosine(flt_size,flt_size, 1, 0.35, flt_size * 11 * _samples_per_symbol);
-    _clock_sync = gr::digital::pfb_clock_sync_ccf::make(_samples_per_symbol,0.0628,pfb_taps);
+    _clock_sync = gr::digital::pfb_clock_sync_ccf::make(_samples_per_symbol,2*M_PI/100,pfb_taps);
     _costas_loop = gr::digital::costas_loop_cc::make(2*M_PI/100,4,true);
-    _equalizer = gr::digital::cma_equalizer_cc::make(8,1,0.00005,1);
-    _fll = gr::digital::fll_band_edge_cc::make(_samples_per_symbol, 0.35, filt_length, 2*M_PI/100);
+    _equalizer = gr::digital::cma_equalizer_cc::make(8,2,0.00005,1);
+    _fll = gr::digital::fll_band_edge_cc::make(_samples_per_symbol, 0.35, 32, 2*M_PI/100);
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
 
     gr::fec::code::cc_decoder::sptr decoder = gr::fec::code::cc_decoder::make(80, 7, 2, polys);
@@ -135,8 +135,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
     _rotate_const =  gr::blocks::multiply_const_cc::make(std::exp(i * rot));
     _complex_to_float = gr::blocks::complex_to_float::make();
     _interleave = gr::blocks::interleave::make(4);
-    _rail = gr::analog::rail_ff::make(-0.707,0.707);
-    _multiply_const_fec = gr::blocks::multiply_const_ff::make(180);
+    _multiply_const_fec = gr::blocks::multiply_const_ff::make(64);
     _float_to_uchar = gr::blocks::float_to_uchar::make();
     _add_const_fec = gr::blocks::add_const_ff::make(128.0);
 
@@ -156,8 +155,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
     connect(_rotate_const,0,_complex_to_float,0);
     connect(_complex_to_float,0,_interleave,0);
     connect(_complex_to_float,1,_interleave,1);
-    connect(_interleave,0,_rail,0);
-    connect(_rail,0,_multiply_const_fec,0);
+    connect(_interleave,0,_multiply_const_fec,0);
     connect(_multiply_const_fec,0,_add_const_fec,0);
     connect(_add_const_fec,0,_float_to_uchar,0);
     connect(_float_to_uchar,0,_decode_ccsds,0);

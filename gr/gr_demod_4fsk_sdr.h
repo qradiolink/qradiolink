@@ -87,7 +87,6 @@ private:
     gr::blocks::float_to_uchar::sptr _float_to_uchar;
     gr::blocks::add_const_ff::sptr _add_const_fec;
     gr::fec::decoder::sptr _decode_ccsds;
-    gr::analog::rail_ff::sptr _rail;
 
     int _samples_per_symbol;
     int _samp_rate;

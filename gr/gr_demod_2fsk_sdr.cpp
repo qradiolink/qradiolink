@@ -87,7 +87,6 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(std::vector<int>signature, int sps, int sam
     _cc_decoder2 = gr::fec::decoder::make(decoder2, 1, 1);
 
     _complex_to_real = gr::blocks::complex_to_real::make();
-    _rail2 = gr::analog::rail_ff::make(-1,1);
 
     _delay = gr::blocks::delay::make(1,1);
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
@@ -112,8 +111,7 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(std::vector<int>signature, int sps, int sam
     connect(_clock_recovery,0,self(),1);
 
     connect(_clock_recovery,0,_complex_to_real,0);
-    connect(_complex_to_real,0,_rail2,0);
-    connect(_rail2,0,_multiply_const_fec,0);
+    connect(_complex_to_real,0,_multiply_const_fec,0);
     connect(_multiply_const_fec,0,_add_const_fec,0);
     connect(_add_const_fec,0,_float_to_uchar,0);
     connect(_float_to_uchar,0,_cc_decoder,0);

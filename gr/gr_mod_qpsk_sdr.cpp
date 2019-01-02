@@ -65,9 +65,9 @@ gr_mod_qpsk_sdr::gr_mod_qpsk_sdr(int sps, int samp_rate, int carrier_freq,
 
     _chunks_to_symbols = gr::digital::chunks_to_symbols_bc::make(symbol_table);
     if(_samples_per_symbol > 120)
-        nfilts = 32;
-    else if(_samples_per_symbol > 10)
         nfilts = 64;
+    else if(_samples_per_symbol > 10)
+        nfilts = 320;
     else
         nfilts = 256;
     std::vector<float> rrc_taps = gr::filter::firdes::root_raised_cosine(nfilts, nfilts,
