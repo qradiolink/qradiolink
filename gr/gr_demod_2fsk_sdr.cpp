@@ -52,7 +52,7 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(std::vector<int>signature, int sps, int sam
     polys.push_back(109);
     polys.push_back(79);
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width, _target_samp_rate);
+    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _target_samp_rate/2, _filter_width);
     std::vector<float> symbol_filter_taps = gr::filter::firdes::low_pass(1.0,
                                  _target_samp_rate, _target_samp_rate/_samples_per_symbol, _target_samp_rate/_samples_per_symbol/20);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1, 50, taps);

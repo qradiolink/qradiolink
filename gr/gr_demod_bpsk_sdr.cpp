@@ -48,7 +48,7 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(std::vector<int>signature, int sps, int sam
     polys.push_back(79);
 
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width, _target_samp_rate);
+    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _target_samp_rate/2, _filter_width);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1, 50, taps);
     _agc = gr::analog::agc2_cc::make(1e-1, 1e-1, 1, 0);
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(

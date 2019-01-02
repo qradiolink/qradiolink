@@ -88,7 +88,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
                 constellation->points(),pre_diff_code,4,2,2,1,1,const_map);
     */
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _target_samp_rate/2, filt_bandwidth);
+    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _target_samp_rate/2, _filter_width);
 
     _resampler = gr::filter::rational_resampler_base_ccf::make(interpolation, decimation, taps);
 
@@ -123,7 +123,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
     std::vector<float> pfb_taps = gr::filter::firdes::root_raised_cosine(flt_size,flt_size, 1, 0.35, flt_size * 11 * _samples_per_symbol);
     _clock_sync = gr::digital::pfb_clock_sync_ccf::make(_samples_per_symbol,2*M_PI/100,pfb_taps);
     _costas_loop = gr::digital::costas_loop_cc::make(2*M_PI/100,4,true);
-    _equalizer = gr::digital::cma_equalizer_cc::make(8,2,0.00005,1);
+    _equalizer = gr::digital::cma_equalizer_cc::make(8,2,0.000005,1);
     _fll = gr::digital::fll_band_edge_cc::make(_samples_per_symbol, 0.35, 32, 2*M_PI/100);
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
 
