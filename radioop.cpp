@@ -57,7 +57,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _tx_power = 0;
     _bb_gain = 0;
     _rx_sensitivity = 0;
-    _rx_volume = 1.0;
+    _rx_volume = 0.0;
     _squelch = 0;
     _rx_ctcss = 0.0;
     _tx_ctcss = 0.0;
@@ -198,7 +198,7 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
     }
     if(_rx_volume == 0)
     {
-        _rx_volume = (float)rx_volume / 10.0;
+        _rx_volume = (float)rx_volume/50.0;
     }
 
 }
@@ -636,7 +636,7 @@ void RadioOp::run()
         }
         if(!_transmitting_audio && !_vox_enabled && !_process_text)
         {
-            struct timespec time_to_sleep = {0, 10000000L };
+            struct timespec time_to_sleep = {0, 1000000L };
             nanosleep(&time_to_sleep, NULL);
         }
         else
@@ -682,7 +682,7 @@ void RadioOp::receiveAudioData(unsigned char *data, int size)
         }
         for(int i=0;i<samples;i++)
         {
-            audio_out[i] = (short)((float)audio_out[i] * amplif * _rx_volume);
+            audio_out[i] = (short)((float)audio_out[i] * amplif * 1e-1*exp(_rx_volume*log(10)));
         }
         if(_voip_forwarding)
         {
@@ -702,7 +702,7 @@ void RadioOp::receivePCMAudio(std::vector<float> *audio_data)
     short *pcm = new short[size];
     for(int i=0;i<size;i++)
     {
-        pcm[i] = (short)(audio_data->at(i) *_rx_volume * 32767.0f);
+        pcm[i] = (short)(audio_data->at(i) * 1e-1*exp(_rx_volume*log(10)) * 32767.0f);
     }
     if(_voip_forwarding)
     {
@@ -870,7 +870,7 @@ void RadioOp::processVoipAudioFrame(short *pcm, int samples, quint64 sid)
         short *pcm = new short[_m_queue->size()];
         for(unsigned int i = 0;i<_m_queue->size();i++)
         {
-            pcm[i] = (short)((float)_m_queue->at(i) * _rx_volume);
+            pcm[i] = (short)((float)_m_queue->at(i) * 1e-1*exp(_rx_volume*log(10)));
         }
         if(_voip_forwarding && _tx_inited)
         {
@@ -1407,7 +1407,7 @@ void RadioOp::setSquelch(int value)
 
 void RadioOp::setVolume(int value)
 {
-    _rx_volume = (float)value/10.0;
+    _rx_volume = (float)value/50.0;
 }
 
 void RadioOp::setRxCTCSS(float value)

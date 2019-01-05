@@ -104,7 +104,7 @@ void Settings::readConfig()
         bb_gain = 1;
         rx_sensitivity = 90;
         squelch = -70;
-        rx_volume = 10;
+        rx_volume = 50;
         rx_frequency = 434000000;
         tx_shift = 0;
         voip_server = "127.0.0.1";
