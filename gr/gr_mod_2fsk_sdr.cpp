@@ -52,8 +52,10 @@ gr_mod_2fsk_sdr::gr_mod_2fsk_sdr(int sps, int samp_rate, int carrier_freq,
      gr::fec::code::cc_encoder::sptr encoder = gr::fec::code::cc_encoder::make(80, 7, 2, polys);
     _encode_ccsds = gr::fec::encoder::make(encoder, 1, 1);
     _chunks_to_symbols = gr::digital::chunks_to_symbols_bf::make(constellation);
-    _freq_modulator = gr::analog::frequency_modulator_fc::make((2*M_PI/2)/(_samples_per_symbol));
+    _freq_modulator = gr::analog::frequency_modulator_fc::make((M_PI/2)/(_samples_per_symbol));
     _repeat = gr::blocks::repeat::make(4, _samples_per_symbol);
+    _resampler = gr::filter::rational_resampler_base_fff::make(_samples_per_symbol, 1,
+                                  gr::filter::firdes::root_raised_cosine(_samples_per_symbol,_samples_per_symbol,1,0.35,128 * _samples_per_symbol));
     _amplify = gr::blocks::multiply_const_cc::make(0.9,1);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
     _filter = gr::filter::fft_filter_ccf::make(
@@ -65,9 +67,13 @@ gr_mod_2fsk_sdr::gr_mod_2fsk_sdr(int sps, int samp_rate, int carrier_freq,
     connect(_scrambler,0,_encode_ccsds,0);
     connect(_encode_ccsds,0,_map,0);
     connect(_map,0,_chunks_to_symbols,0);
+#ifdef USE_FM
+    connect(_chunks_to_symbols,0,_resampler,0);
+    connect(_resampler,0,_freq_modulator,0);
+#else
     connect(_chunks_to_symbols,0,_repeat,0);
-
     connect(_repeat,0,_freq_modulator,0);
+#endif
     connect(_freq_modulator,0,_amplify,0);
     connect(_amplify,0,_bb_gain,0);
     connect(_bb_gain,0,_filter,0);

@@ -37,6 +37,8 @@
 #include <gnuradio/fec/encoder.h>
 #include <gnuradio/filter/rational_resampler_base_fff.h>
 
+#define USE_FM
+
 class gr_mod_2fsk_sdr;
 
 typedef boost::shared_ptr<gr_mod_2fsk_sdr> gr_mod_2fsk_sdr_sptr;
@@ -63,6 +65,7 @@ private:
     gr::digital::map_bb::sptr _map;
     gr::analog::frequency_modulator_fc::sptr _freq_modulator;
     gr::filter::rational_resampler_base_fff::sptr _resampler;
+
 
 
     int _samples_per_symbol;

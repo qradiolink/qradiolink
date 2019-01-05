@@ -116,6 +116,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
         filt_length = 160;
     }
 
+
     _shaping_filter = gr::filter::fft_filter_ccf::make(
                 1, gr::filter::firdes::root_raised_cosine(1,_target_samp_rate,_target_samp_rate/_samples_per_symbol,0.35,filt_length * _samples_per_symbol));
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0, gain_mu,
@@ -145,7 +146,6 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
     connect(_fll,0,_shaping_filter,0);
     connect(_shaping_filter,0,self(),0);
     connect(_shaping_filter,0,_agc,0);
-
     connect(_agc,0,_clock_recovery,0);
     connect(_clock_recovery,0,_equalizer,0);
     connect(_equalizer,0,_costas_loop,0);

@@ -2291,6 +2291,11 @@ color: rgb(0, 255, 0);</string>
             </item>
             <item>
              <property name="text">
+              <string>2FSK 10K</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
               <string>Narrow FM</string>
              </property>
             </item>
@@ -2406,6 +2411,11 @@ color: rgb(255, 0, 0);</string>
             <item>
              <property name="text">
               <string>2FSK 2K</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>2FSK 10K</string>
              </property>
             </item>
             <item>

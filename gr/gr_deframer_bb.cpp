@@ -41,6 +41,10 @@ gr_deframer_bb::gr_deframer_bb(int modem_type) :
     {
         _bit_buf_len = 4*8;
     }
+    if(modem_type == 3)
+    {
+        _bit_buf_len = 48*8;
+    }
 }
 
 gr_deframer_bb::~gr_deframer_bb()
@@ -143,11 +147,11 @@ int gr_deframer_bb::work(int noutput_items, gr_vector_const_void_star &input_ite
             if(_sync_found)
             {
                 int bits;
-                if(_modem_type == 1 && (current_frame_type != 0x4C8A2B))
+                if((_modem_type == 1 || _modem_type == 3) && (current_frame_type != 0x4C8A2B))
                 {
                     bits = 16;
                 }
-                else if(_modem_type == 1 && (current_frame_type == 0x4C8A2B))
+                else if((_modem_type == 1 || _modem_type == 3) && (current_frame_type == 0x4C8A2B))
                 {
                     bits = 24;
                 }

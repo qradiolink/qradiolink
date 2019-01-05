@@ -103,8 +103,11 @@ private:
     gr_deframer_bb_sptr _deframer2;
     gr_deframer_bb_sptr _deframer_700_1;
     gr_deframer_bb_sptr _deframer_700_2;
+    gr_deframer_bb_sptr _deframer1_10k;
+    gr_deframer_bb_sptr _deframer2_10k;
 
     gr_demod_2fsk_sdr_sptr _2fsk;
+    gr_demod_2fsk_sdr_sptr _2fsk_10k;
     gr_demod_4fsk_sdr_sptr _4fsk_2k;
     gr_demod_4fsk_sdr_sptr _4fsk_10k;
     gr_demod_am_sdr_sptr _am;

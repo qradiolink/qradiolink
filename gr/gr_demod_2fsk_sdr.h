@@ -40,6 +40,9 @@
 #include <gnuradio/blocks/add_const_ff.h>
 #include <gnuradio/blocks/delay.h>
 #include <gnuradio/blocks/float_to_uchar.h>
+#include <gnuradio/analog/quadrature_demod_cf.h>
+
+#define USE_FM
 
 class gr_demod_2fsk_sdr;
 
@@ -78,6 +81,8 @@ private:
     gr::blocks::add_const_ff::sptr _add_const_fec;
     gr::fec::decoder::sptr _cc_decoder;
     gr::fec::decoder::sptr _cc_decoder2;
+    gr::analog::quadrature_demod_cf::sptr _freq_demod;
+    gr::filter::fft_filter_ccf::sptr _shaping_filter;
 
 
     int _samples_per_symbol;

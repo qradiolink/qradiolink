@@ -103,6 +103,10 @@ void gr_modem::toggleTxMode(int modem_type)
         {
             _tx_frame_length = 47;
         }
+        else if(modem_type == gr_modem_types::ModemType2FSK20000)
+        {
+            _tx_frame_length = 47;
+        }
         else if(modem_type == gr_modem_types::ModemType4FSK2000)
         {
             _tx_frame_length = 7;
@@ -150,6 +154,11 @@ void gr_modem::toggleRxMode(int modem_type)
             _rx_frame_length = 7;
         }
         else if (modem_type == gr_modem_types::ModemType4FSK20000)
+        {
+            _bit_buf_len = 48 *8;
+            _rx_frame_length = 47;
+        }
+        else if (modem_type == gr_modem_types::ModemType2FSK20000)
         {
             _bit_buf_len = 48 *8;
             _rx_frame_length = 47;
@@ -563,6 +572,7 @@ void gr_modem::demodulate()
 
     if((_modem_type_rx == gr_modem_types::ModemTypeBPSK2000)
             || (_modem_type_rx == gr_modem_types::ModemType2FSK2000)
+            || (_modem_type_rx == gr_modem_types::ModemType2FSK20000)
             || (_modem_type_rx == gr_modem_types::ModemTypeBPSK1000))
     {
         demod_data = _gr_demod_base->getData(1);
@@ -574,6 +584,7 @@ void gr_modem::demodulate()
     int v_size;
     if((_modem_type_rx == gr_modem_types::ModemTypeBPSK2000)
             || (_modem_type_rx == gr_modem_types::ModemTypeBPSK1000)
+            || (_modem_type_rx == gr_modem_types::ModemType2FSK20000)
             || (_modem_type_rx == gr_modem_types::ModemType2FSK2000))
     {
         if(demod_data->size() >= demod_data2->size())
@@ -598,6 +609,7 @@ void gr_modem::demodulate()
     delete demod_data;
     if((_modem_type_rx == gr_modem_types::ModemTypeBPSK2000)
             || (_modem_type_rx == gr_modem_types::ModemTypeBPSK1000)
+            || (_modem_type_rx == gr_modem_types::ModemType2FSK20000)
             || (_modem_type_rx == gr_modem_types::ModemType2FSK2000))
     {
         demod_data2->clear();
