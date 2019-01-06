@@ -47,10 +47,10 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(std::vector<int>signature, int sps, int sam
     }
     else
     {
-        _target_samp_rate = 80000;
-        _samples_per_symbol = sps*4/25;
+        _target_samp_rate = 40000;
+        _samples_per_symbol = sps*2/25;
         decim = 25;
-        interp = 2;
+        interp = 1;
     }
 
     _samp_rate =samp_rate;
@@ -90,8 +90,8 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(std::vector<int>signature, int sps, int sam
 
     _freq_demod = gr::analog::quadrature_demod_cf::make(_samples_per_symbol/(M_PI/2));
     _shaping_filter = gr::filter::fft_filter_ccf::make(
-                1, gr::filter::firdes::root_raised_cosine(1,_target_samp_rate,_target_samp_rate/_samples_per_symbol,0.35,160 * _samples_per_symbol));
-    _multiply_const_fec = gr::blocks::multiply_const_ff::make(64);
+                1, gr::filter::firdes::root_raised_cosine(1,_target_samp_rate,_target_samp_rate/_samples_per_symbol,0.35,512 * _samples_per_symbol));
+    _multiply_const_fec = gr::blocks::multiply_const_ff::make(128);
     _float_to_uchar = gr::blocks::float_to_uchar::make();
     _add_const_fec = gr::blocks::add_const_ff::make(128.0);
 

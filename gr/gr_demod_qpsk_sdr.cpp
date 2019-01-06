@@ -51,9 +51,9 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
     else if(sps >= 125)
     {
         interpolation = 1;
-        decimation = 50;
-        _samples_per_symbol = sps*2/25;
-        _target_samp_rate = 20000;
+        decimation = 100;
+        _samples_per_symbol = sps/25;
+        _target_samp_rate = 10000;
         filt_bandwidth = 2000;
     }
     else
@@ -107,13 +107,13 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
     {
         gain_mu = 0.005;
         omega_rel_limit = 0.001;
-        filt_length = 64;
+        filt_length = 256;
     }
     else
     {
         gain_mu = 0.001;
         omega_rel_limit = 0.001;
-        filt_length = 160;
+        filt_length = 512;
     }
 
 
@@ -136,7 +136,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
     _rotate_const =  gr::blocks::multiply_const_cc::make(std::exp(i * rot));
     _complex_to_float = gr::blocks::complex_to_float::make();
     _interleave = gr::blocks::interleave::make(4);
-    _multiply_const_fec = gr::blocks::multiply_const_ff::make(64);
+    _multiply_const_fec = gr::blocks::multiply_const_ff::make(128);
     _float_to_uchar = gr::blocks::float_to_uchar::make();
     _add_const_fec = gr::blocks::add_const_ff::make(128.0);
 
