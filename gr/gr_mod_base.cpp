@@ -41,8 +41,8 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
         _osmosdr_sink->set_gain(gain);
     }
 
-    _2fsk = make_gr_mod_2fsk_sdr(250, 1000000, 1700, 2700); // 4000 for non FM demod
-    _2fsk_10k = make_gr_mod_2fsk_sdr(50, 1000000, 1700, 13500);
+    _2fsk = make_gr_mod_2fsk_sdr(250, 1000000, 1700, 4000); // 4000 for non FM demod, 2700 for FM demod
+    _2fsk_10k = make_gr_mod_2fsk_sdr(50, 1000000, 1700, 13500, true);
     _4fsk_2k = make_gr_mod_4fsk_sdr(500, 1000000, 1700, 4000);
     _4fsk_10k = make_gr_mod_4fsk_sdr(100, 1000000, 1700, 20000);
     _am = make_gr_mod_am_sdr(0,1000000, 1700, 4000);

@@ -17,7 +17,7 @@
 #include "gr_demod_2fsk_sdr.h"
 
 gr_demod_2fsk_sdr_sptr make_gr_demod_2fsk_sdr(int sps, int samp_rate, int carrier_freq,
-                                          int filter_width)
+                                          int filter_width, bool fm)
 {
     std::vector<int> signature;
     signature.push_back(sizeof (gr_complex));
@@ -25,13 +25,13 @@ gr_demod_2fsk_sdr_sptr make_gr_demod_2fsk_sdr(int sps, int samp_rate, int carrie
     signature.push_back(sizeof (char));
     signature.push_back(sizeof (char));
     return gnuradio::get_initial_sptr(new gr_demod_2fsk_sdr(signature, sps, samp_rate, carrier_freq,
-                                                      filter_width));
+                                                      filter_width, fm));
 }
 
 
 
 gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(std::vector<int>signature, int sps, int samp_rate, int carrier_freq,
-                                 int filter_width) :
+                                 int filter_width, bool fm) :
     gr::hier_block2 ("gr_demod_2fsk_sdr",
                       gr::io_signature::make (1, 1, sizeof (gr_complex)),
                       gr::io_signature::makev (4, 4, signature))
@@ -111,24 +111,27 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(std::vector<int>signature, int sps, int sam
     connect(_resampler,0,_fll,0);
     connect(_fll,0,_filter,0);
     connect(_filter,0,self(),0);
-#ifdef USE_FM
-    connect(_filter,0,_freq_demod,0);
-    connect(_freq_demod,0,_float_to_complex,0);
-    connect(_float_to_complex,0,_shaping_filter,0);
-    connect(_shaping_filter,0,_clock_recovery,0);
-#else
-    connect(_filter,0,_lower_filter,0);
-    connect(_filter,0,_upper_filter,0);
-    connect(_lower_filter,0,_mag_lower,0);
-    connect(_upper_filter,0,_mag_upper,0);
-    connect(_mag_lower,0,_divide,1);
-    connect(_mag_upper,0,_divide,0);
-    connect(_divide,0,_rail,0);
-    connect(_rail,0,_add,0);
-    connect(_add,0,_float_to_complex,0);
-    connect(_float_to_complex,0,_symbol_filter,0);
-    connect(_symbol_filter,0,_clock_recovery,0);
-#endif
+    if(fm)
+    {
+        connect(_filter,0,_freq_demod,0);
+        connect(_freq_demod,0,_float_to_complex,0);
+        connect(_float_to_complex,0,_shaping_filter,0);
+        connect(_shaping_filter,0,_clock_recovery,0);
+    }
+    else
+    {
+        connect(_filter,0,_lower_filter,0);
+        connect(_filter,0,_upper_filter,0);
+        connect(_lower_filter,0,_mag_lower,0);
+        connect(_upper_filter,0,_mag_upper,0);
+        connect(_mag_lower,0,_divide,1);
+        connect(_mag_upper,0,_divide,0);
+        connect(_divide,0,_rail,0);
+        connect(_rail,0,_add,0);
+        connect(_add,0,_float_to_complex,0);
+        connect(_float_to_complex,0,_symbol_filter,0);
+        connect(_symbol_filter,0,_clock_recovery,0);
+    }
     connect(_clock_recovery,0,self(),1);
     connect(_clock_recovery,0,_complex_to_real,0);
     connect(_complex_to_real,0,_multiply_const_fec,0);

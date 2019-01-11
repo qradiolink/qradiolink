@@ -37,20 +37,19 @@
 #include <gnuradio/fec/encoder.h>
 #include <gnuradio/filter/rational_resampler_base_fff.h>
 
-#define USE_FM
 
 class gr_mod_2fsk_sdr;
 
 typedef boost::shared_ptr<gr_mod_2fsk_sdr> gr_mod_2fsk_sdr_sptr;
 gr_mod_2fsk_sdr_sptr make_gr_mod_2fsk_sdr(int sps=125, int samp_rate=250000, int carrier_freq=1700,
-                                          int filter_width=8000);
+                                          int filter_width=8000, bool fm=false);
 
 class gr_mod_2fsk_sdr : public gr::hier_block2
 {
 
 public:
     explicit gr_mod_2fsk_sdr(int sps=125, int samp_rate=250000, int carrier_freq=1700,
-                             int filter_width=8000);
+                             int filter_width=8000, bool fm=false);
     void set_bb_gain(int value);
 
 private:

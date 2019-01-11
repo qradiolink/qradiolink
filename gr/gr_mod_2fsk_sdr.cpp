@@ -17,14 +17,14 @@
 #include "gr_mod_2fsk_sdr.h"
 
 gr_mod_2fsk_sdr_sptr make_gr_mod_2fsk_sdr(int sps, int samp_rate, int carrier_freq,
-                                          int filter_width)
+                                          int filter_width, bool fm)
 {
     return gnuradio::get_initial_sptr(new gr_mod_2fsk_sdr(sps, samp_rate, carrier_freq,
-                                                      filter_width));
+                                                      filter_width, fm));
 }
 
 gr_mod_2fsk_sdr::gr_mod_2fsk_sdr(int sps, int samp_rate, int carrier_freq,
-                                 int filter_width) :
+                                 int filter_width, bool fm) :
     gr::hier_block2 ("gr_mod_2fsk_sdr",
                       gr::io_signature::make (1, 1, sizeof (char)),
                       gr::io_signature::make (1, 1, sizeof (gr_complex)))
@@ -45,8 +45,12 @@ gr_mod_2fsk_sdr::gr_mod_2fsk_sdr(int sps, int samp_rate, int carrier_freq,
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
     int nfilts = 128;
+    int spacing = 2;
     if(_samples_per_symbol == 50)
+    {
         nfilts = nfilts * 5;
+        spacing = 1;
+    }
 
     _packed_to_unpacked = gr::blocks::packed_to_unpacked_bb::make(1,gr::GR_MSB_FIRST);
     _scrambler = gr::digital::scrambler_bb::make(0x8A, 0x7F ,7);
@@ -55,7 +59,7 @@ gr_mod_2fsk_sdr::gr_mod_2fsk_sdr(int sps, int samp_rate, int carrier_freq,
      gr::fec::code::cc_encoder::sptr encoder = gr::fec::code::cc_encoder::make(80, 7, 2, polys);
     _encode_ccsds = gr::fec::encoder::make(encoder, 1, 1);
     _chunks_to_symbols = gr::digital::chunks_to_symbols_bf::make(constellation);
-    _freq_modulator = gr::analog::frequency_modulator_fc::make((M_PI/2)/(_samples_per_symbol));
+    _freq_modulator = gr::analog::frequency_modulator_fc::make((spacing * M_PI/2)/(_samples_per_symbol));
     _repeat = gr::blocks::repeat::make(4, _samples_per_symbol);
     _resampler = gr::filter::rational_resampler_base_fff::make(_samples_per_symbol, 1,
                                   gr::filter::firdes::root_raised_cosine(_samples_per_symbol,_samples_per_symbol,1,0.35,nfilts * _samples_per_symbol));
@@ -70,13 +74,16 @@ gr_mod_2fsk_sdr::gr_mod_2fsk_sdr(int sps, int samp_rate, int carrier_freq,
     connect(_scrambler,0,_encode_ccsds,0);
     connect(_encode_ccsds,0,_map,0);
     connect(_map,0,_chunks_to_symbols,0);
-#ifdef USE_FM
-    connect(_chunks_to_symbols,0,_resampler,0);
-    connect(_resampler,0,_freq_modulator,0);
-#else
-    connect(_chunks_to_symbols,0,_repeat,0);
-    connect(_repeat,0,_freq_modulator,0);
-#endif
+    if(fm)
+    {
+        connect(_chunks_to_symbols,0,_resampler,0);
+        connect(_resampler,0,_freq_modulator,0);
+    }
+    else
+    {
+        connect(_chunks_to_symbols,0,_repeat,0);
+        connect(_repeat,0,_freq_modulator,0);
+    }
     connect(_freq_modulator,0,_amplify,0);
     connect(_amplify,0,_bb_gain,0);
     connect(_bb_gain,0,_filter,0);
