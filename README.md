@@ -33,9 +33,9 @@ Features
 - Wideband digital voice mode with the [Opus](https://xiph.org) audio codec
 - Digital modulation:  **BPSK**, **DQPSK**, **2FSK**, **4FSK**
 - Automatic carrier tracking and Doppler effect correction. The system can track Doppler shifts of 5-10 kHz, depending on mode. It requires a CNR of at least 10-12 dB, more for FSK modes than for PSK modes.
-- Analog modulation: narrow FM (5 kHz), FM (10 kHz), Wide FM (broadcast, receive-only), AM, SSB
+- Analog modulation: narrow FM (5 kHz), FM (8 kHz), Wide FM (broadcast, receive-only), AM, SSB
 - CTCSS encoder and decoder for analog FM
-- Supported hardware: [**Ettus USRP**](https://ettus.com), [**RTL-SDR**](https://osmocom.org/projects/sdr/wiki/rtl-sdr), [**LimeSDR-mini**](https://www.crowdsupply.com/lime-micro/limesdr-mini) (through SoapySDR), PlutoSDR (through [**SoapyPlutoSDR**](https://github.com/kantooon/SoapyPlutoSDR)), BladeRF, other devices supported by [**gr-osmosdr**](https://osmocom.org/projects/sdr/wiki/GrOsmoSDR)
+- Supported hardware: [**Ettus USRP**](https://ettus.com), [**RTL-SDR**](https://osmocom.org/projects/sdr/wiki/rtl-sdr), [**LimeSDR-mini**](https://www.crowdsupply.com/lime-micro/limesdr-mini) (through SoapySDR), PlutoSDR (through [**SoapyPlutoSDR**](https://github.com/pothosware/SoapyPlutoSDR)), BladeRF, other devices supported by [**gr-osmosdr**](https://osmocom.org/projects/sdr/wiki/GrOsmoSDR)
  
 
 Requirements
@@ -106,8 +106,6 @@ make
 
 Known issues:
 - Digital reception sometimes stops working after switching modes. Workaround: select RX mode before starting RX.
-- FFT display has incorrect size (too small)
-Workaround: switch to waterfall and back
 - Segmentation fault when starting TX or RX modes. 
 Check that that device settings are correct and you have clicked save in the configuration page.
 - In low light, the automatic adjustment of ISO in the video camera can cause very long times to capture a frame.
