@@ -1,3 +1,17 @@
+qradiolink (0.5.2-1) UNRELEASED; urgency=medium
+
+  [ Adrian Musceac ]
+  * Fix FFT spectrum view resize (issue #4)
+  * Partially avoid Opus digital audio high pitch error artefacts
+  * Added 2FSK 10 kbit/s digital mode with RRC filtered symbols
+  * Audio volume is now logarithmic
+  * Re-calibrated TX output power for all modes to avoid clipping on max gain
+  * PSK carrier generation now uses the more CPU expensive resampler method
+
+
+ -- Adrian Musceac <kantooon@gmail.com>  Wed, 25 Jul 2018 23:00:00 +0300
+
+
 qradiolink (0.5.1-1) UNRELEASED; urgency=medium
 
   [ Adrian Musceac ]
@@ -7,6 +21,7 @@ qradiolink (0.5.1-1) UNRELEASED; urgency=medium
 
 
  -- Adrian Musceac <kantooon@gmail.com>  Wed, 25 Jul 2018 23:00:00 +0300
+
 
 qradiolink (0.5.0-1) UNRELEASED; urgency=medium
 
