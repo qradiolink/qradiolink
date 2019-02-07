@@ -161,7 +161,8 @@ LIBS += -lrt  # need to include on some distros
 unix:!symbian: LIBS += -lprotobuf -lopus -lpulse-simple -lpulse -lcodec2 -lgsm -lasound -ljpeg -lconfig++ -lspeexdsp
                     #-lFestival -lestbase -leststring -lestools
 #INCLUDEPATH += /usr/include/speech_tools
+QT_CONFIG -= no-pkg-config
 CONFIG += link_pkgconfig
-PKGCONFIG += Qt5Qwt
+PKGCONFIG += Qt4Qwt Qt5Qwt
 
 RESOURCES += resources.qrc
