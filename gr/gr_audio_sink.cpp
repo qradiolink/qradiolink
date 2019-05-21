@@ -67,7 +67,7 @@ int gr_audio_sink::work(int noutput_items,
 {
     if(noutput_items < 1)
     {
-        struct timespec time_to_sleep = {0, 2000000L };
+        struct timespec time_to_sleep = {0, 10000000L };
         nanosleep(&time_to_sleep, NULL);
         return noutput_items;
     }
