@@ -536,7 +536,7 @@ static void unpackBytes(unsigned char *bitbuf, const unsigned char *bytebuf, int
     }
 }
 
-void gr_modem::demodulateAnalog()
+bool gr_modem::demodulateAnalog()
 {
     std::vector<float> *audio_data;
     if((_modem_type_rx == gr_modem_types::ModemTypeNBFM2500)
@@ -556,15 +556,17 @@ void gr_modem::demodulateAnalog()
             processPCMAudio(repeated_audio);
         }
         emit pcmAudio(audio_data);
+        return true;
     }
     else
     {
         delete audio_data;
+        return false;
     }
 
 }
 
-void gr_modem::demodulate()
+bool gr_modem::demodulate()
 {
     std::vector<unsigned char> *demod_data;
     std::vector<unsigned char> *demod_data2;
@@ -604,7 +606,7 @@ void gr_modem::demodulate()
         data = demod_data;
     }
 
-    synchronize(v_size, data);
+    bool data_to_process = synchronize(v_size, data);
     demod_data->clear();
     delete demod_data;
     if((_modem_type_rx == gr_modem_types::ModemTypeBPSK2000)
@@ -615,12 +617,13 @@ void gr_modem::demodulate()
         demod_data2->clear();
         delete demod_data2;
     }
+    return data_to_process;
 
 }
 
-void gr_modem::synchronize(int v_size, std::vector<unsigned char> *data)
+bool gr_modem::synchronize(int v_size, std::vector<unsigned char> *data)
 {
-
+    bool data_to_process = false;
     for(int i=0;i < v_size;i++)
     {
         if(!_sync_found)
@@ -641,6 +644,7 @@ void gr_modem::synchronize(int v_size, std::vector<unsigned char> *data)
         }
         if(_sync_found)
         {
+            data_to_process = true;
             if(_frequency_found < 255)
                 _frequency_found += 1; // 80 bits + counter
             _bit_buf[_bit_buf_index] =  (data->at(i)) & 0x1;
@@ -669,6 +673,7 @@ void gr_modem::synchronize(int v_size, std::vector<unsigned char> *data)
             }
         }
     }
+    return data_to_process;
 }
 
 int gr_modem::findSync(unsigned char bit)

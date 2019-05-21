@@ -560,6 +560,7 @@ void RadioOp::run()
 {
 
     bool ptt_activated = false;
+    bool data_to_process = false;
     bool frame_flag = true;
     int last_ping_time = 0;
     int last_channel_broadcast_time = 0;
@@ -621,10 +622,10 @@ void RadioOp::run()
                 if(!_tuning_done)
                     autoTune();
                 if(_rx_radio_type == radio_type::RADIO_TYPE_DIGITAL)
-                    _modem->demodulate();
+                    data_to_process = _modem->demodulate();
                 else if(_rx_radio_type == radio_type::RADIO_TYPE_ANALOG)
                 {
-                    _modem->demodulateAnalog();
+                    data_to_process = _modem->demodulateAnalog();
                 }
 
             }
@@ -636,12 +637,20 @@ void RadioOp::run()
         }
         if(!_transmitting_audio && !_vox_enabled && !_process_text)
         {
-            struct timespec time_to_sleep = {0, 1000000L };
-            nanosleep(&time_to_sleep, NULL);
+            if(data_to_process)
+            {
+                struct timespec time_to_sleep = {0, 10000L };
+                nanosleep(&time_to_sleep, NULL);
+            }
+            else
+            {
+                struct timespec time_to_sleep = {0, 10000000L };
+                nanosleep(&time_to_sleep, NULL);
+            }
         }
         else
         {
-            struct timespec time_to_sleep = {0, 2000000L };
+            struct timespec time_to_sleep = {0, 100000L };
             nanosleep(&time_to_sleep, NULL);
         }
         if(_stop)
