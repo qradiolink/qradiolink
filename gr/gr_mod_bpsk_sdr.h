@@ -64,6 +64,7 @@ private:
     gr::blocks::repeat::sptr _repeat;
     gr::filter::fft_filter_ccf::sptr _filter;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
+    gr::filter::rational_resampler_base_ccf::sptr _resampler2;
 
 
 

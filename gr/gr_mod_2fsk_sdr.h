@@ -36,6 +36,7 @@
 #include <gnuradio/fec/cc_encoder.h>
 #include <gnuradio/fec/encoder.h>
 #include <gnuradio/filter/rational_resampler_base_fff.h>
+#include <gnuradio/filter/rational_resampler_base_ccf.h>
 
 
 class gr_mod_2fsk_sdr;
@@ -64,6 +65,7 @@ private:
     gr::digital::map_bb::sptr _map;
     gr::analog::frequency_modulator_fc::sptr _freq_modulator;
     gr::filter::rational_resampler_base_fff::sptr _resampler;
+    gr::filter::rational_resampler_base_ccf::sptr _resampler2;
 
 
 
