@@ -65,9 +65,12 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(std::vector<int>signature, int sps, int sam
     polys.push_back(109);
     polys.push_back(79);
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _target_samp_rate/2, _filter_width*10);
+    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _target_samp_rate/2, _filter_width*10,
+                                                           gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     std::vector<float> symbol_filter_taps = gr::filter::firdes::low_pass(1.0,
-                                 _target_samp_rate, _target_samp_rate/_samples_per_symbol, _target_samp_rate/_samples_per_symbol/20);
+                                 _target_samp_rate, _target_samp_rate/_samples_per_symbol,
+                                                                         _target_samp_rate/_samples_per_symbol/20,
+                                                                         gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     _resampler = gr::filter::rational_resampler_base_ccf::make(interp, decim, taps);
     _resampler->set_thread_priority(99);
     _fll = gr::digital::fll_band_edge_cc::make(_samples_per_symbol, 0.1, 16, 24*M_PI/100);
@@ -75,9 +78,9 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(std::vector<int>signature, int sps, int sam
                                 1, _target_samp_rate, _filter_width,_filter_width/2,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
 
     _upper_filter = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
-                                1, _target_samp_rate, -_filter_width,0,_filter_width,gr::filter::firdes::WIN_HAMMING) );
+                                1, _target_samp_rate, -_filter_width,0,_filter_width,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     _lower_filter = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
-                                1, _target_samp_rate, 0,_filter_width,_filter_width,gr::filter::firdes::WIN_HAMMING) );
+                                1, _target_samp_rate, 0,_filter_width,_filter_width,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     _mag_lower = gr::blocks::complex_to_mag::make();
     _mag_upper = gr::blocks::complex_to_mag::make();
     _divide = gr::blocks::divide_ff::make();

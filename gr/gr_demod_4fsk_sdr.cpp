@@ -86,9 +86,11 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
     gr::digital::constellation_expl_rect::sptr constellation = gr::digital::constellation_expl_rect::make(
                 constellation_points,pre_diff_code,4,2,2,1,1,const_map);
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _target_samp_rate/2, _filter_width*10);
+    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _target_samp_rate/2, _filter_width*10,
+                                                           gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     std::vector<float> symbol_filter_taps = gr::filter::firdes::low_pass(1.0,
-                                 _target_samp_rate, _target_samp_rate/_samples_per_symbol, _target_samp_rate/_samples_per_symbol/20);
+                                 _target_samp_rate, _target_samp_rate/_samples_per_symbol, _target_samp_rate/_samples_per_symbol/20,
+                                                                         gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     _resampler = gr::filter::rational_resampler_base_ccf::make(interpolation, decimation, taps);
     _resampler->set_thread_priority(99);
     _fll = gr::digital::fll_band_edge_cc::make(_samples_per_symbol/4, 0.01, 16, 48*M_PI/100);
