@@ -635,7 +635,7 @@ void RadioOp::run()
             sendTextData(_text_out, gr_modem::FrameTypeText);
             emit displayTransmitStatus(false);
         }
-        if(!_transmitting_audio && !_vox_enabled && !_process_text)
+        if(!transmitting && !_vox_enabled && !_process_text)
         {
             if(data_to_process)
             {
@@ -644,7 +644,7 @@ void RadioOp::run()
             }
             else
             {
-                struct timespec time_to_sleep = {0, 10000000L };
+                struct timespec time_to_sleep = {0, 2000000L };
                 nanosleep(&time_to_sleep, NULL);
             }
         }

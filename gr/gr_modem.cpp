@@ -347,7 +347,7 @@ void gr_modem::endTransmission(QString callsign)
     tx_end->push_back(0x2B);
     for(int i = 0;i<_tx_frame_length;i++)
     {
-        tx_end->push_back(0x00);
+        tx_end->push_back(0x01);
     }
     QVector<std::vector<unsigned char>*> frames;
     frames.append(tx_end);
@@ -634,11 +634,6 @@ bool gr_modem::synchronize(int v_size, std::vector<unsigned char> *data)
                 _bit_buf_index = 0;
                 continue;
             }
-            if(_current_frame_type == FrameTypeEnd)
-            {
-                handleStreamEnd();
-                continue;
-            }
             if(_frequency_found > 0)
                 _frequency_found--; // substract one bit
         }
@@ -734,6 +729,8 @@ int gr_modem::findSync(unsigned char bit)
     }
     if((temp == 0x4C8A2B))
     {
+        _sync_found = true;
+        qDebug() << "tx end";
         return FrameTypeEnd;
     }
     return FrameTypeNone;
@@ -742,6 +739,10 @@ int gr_modem::findSync(unsigned char bit)
 
 void gr_modem::processReceivedData(unsigned char *received_data, int current_frame_type)
 {
+    if (current_frame_type == FrameTypeEnd)
+    {
+        handleStreamEnd();
+    }
     if (current_frame_type == FrameTypeText)
     {
         emit dataFrameReceived();
