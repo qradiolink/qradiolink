@@ -36,6 +36,7 @@
 #include <gnuradio/blocks/pack_k_bits_bb.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/analog/frequency_modulator_fc.h>
+#include <gnuradio/filter/rational_resampler_base_ccf.h>
 #include <gnuradio/fec/cc_encoder.h>
 #include <gnuradio/fec/encoder.h>
 
@@ -67,6 +68,7 @@ private:
     gr::digital::map_bb::sptr _map;
     gr::analog::frequency_modulator_fc::sptr _freq_modulator;
     gr::fec::encoder::sptr _encode_ccsds;
+    gr::filter::rational_resampler_base_ccf::sptr _resampler2;
 
 
 
