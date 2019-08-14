@@ -64,7 +64,7 @@ int gettimeofday(struct timeval * tp, struct timezone * tzp)
 #include <QtGlobal>
 #include <QToolTip>
 #include "plotter.h"
-#include "bookmarks.h"
+
 
 // Comment out to enable plotter debug messages
 //#define PLOTTER_DEBUG
@@ -1314,59 +1314,6 @@ void CPlotter::drawOverlay()
     int xAxisTop = h - xAxisHeight;
     int fLabelTop = xAxisTop + VER_MARGIN;
 
-    if (m_BookmarksEnabled)
-    {
-        m_BookmarkTags.clear();
-        static const QFontMetrics fm(painter.font());
-        static const int fontHeight = fm.ascent() + 1;
-        static const int slant = 5;
-        static const int levelHeight = fontHeight + 5;
-        static const int nLevels = 10;
-        QList<BookmarkInfo> bookmarks = Bookmarks::Get().getBookmarksInRange(m_CenterFreq + m_FftCenter - m_Span / 2,
-                                                                             m_CenterFreq + m_FftCenter + m_Span / 2);
-        int tagEnd[nLevels] = {0};
-        for (int i = 0; i < bookmarks.size(); i++)
-        {
-            x = xFromFreq(bookmarks[i].frequency);
-
-#if defined(_WIN16) || defined(_WIN32) || defined(_WIN64)
-            int nameWidth = fm.width(bookmarks[i].name);
-#else
-            int nameWidth = fm.boundingRect(bookmarks[i].name).width();
-#endif
-
-            int level = 0;
-            while(level < nLevels && tagEnd[level] > x)
-                level++;
-            
-            if(level == nLevels)
-                level = 0;
-
-            tagEnd[level] = x + nameWidth + slant - 1;
-            m_BookmarkTags.append(qMakePair<QRect, qint64>(QRect(x, level * levelHeight, nameWidth + slant, fontHeight), bookmarks[i].frequency));
-
-            QColor color = QColor(bookmarks[i].GetColor());
-            color.setAlpha(0x60);
-            // Vertical line
-            painter.setPen(QPen(color, 1, Qt::DashLine));
-            painter.drawLine(x, level * levelHeight + fontHeight + slant, x, xAxisTop);
-
-            // Horizontal line
-            painter.setPen(QPen(color, 1, Qt::SolidLine));
-            painter.drawLine(x + slant, level * levelHeight + fontHeight,
-                             x + nameWidth + slant - 1,
-                             level * levelHeight + fontHeight);
-            // Diagonal line
-            painter.drawLine(x + 1, level * levelHeight + fontHeight + slant - 1,
-                             x + slant - 1, level * levelHeight + fontHeight + 1);
-
-            color.setAlpha(0xFF);
-            painter.setPen(QPen(color, 2, Qt::SolidLine));
-            painter.drawText(x + slant, level * levelHeight, nameWidth,
-                             fontHeight, Qt::AlignVCenter | Qt::AlignHCenter,
-                             bookmarks[i].name);
-        }
-    }
 
     if (m_CenterLineEnabled)
     {
