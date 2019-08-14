@@ -103,6 +103,10 @@ void gr_modem::toggleTxMode(int modem_type)
         {
             _tx_frame_length = 47;
         }
+        else if(modem_type == gr_modem_types::ModemType2FSK20000)
+        {
+            _tx_frame_length = 47;
+        }
         else if(modem_type == gr_modem_types::ModemType4FSK2000)
         {
             _tx_frame_length = 7;
@@ -150,6 +154,11 @@ void gr_modem::toggleRxMode(int modem_type)
             _rx_frame_length = 7;
         }
         else if (modem_type == gr_modem_types::ModemType4FSK20000)
+        {
+            _bit_buf_len = 48 *8;
+            _rx_frame_length = 47;
+        }
+        else if (modem_type == gr_modem_types::ModemType2FSK20000)
         {
             _bit_buf_len = 48 *8;
             _rx_frame_length = 47;
@@ -338,7 +347,7 @@ void gr_modem::endTransmission(QString callsign)
     tx_end->push_back(0x2B);
     for(int i = 0;i<_tx_frame_length;i++)
     {
-        tx_end->push_back(0x00);
+        tx_end->push_back(0x01);
     }
     QVector<std::vector<unsigned char>*> frames;
     frames.append(tx_end);
@@ -527,7 +536,7 @@ static void unpackBytes(unsigned char *bitbuf, const unsigned char *bytebuf, int
     }
 }
 
-void gr_modem::demodulateAnalog()
+bool gr_modem::demodulateAnalog()
 {
     std::vector<float> *audio_data;
     if((_modem_type_rx == gr_modem_types::ModemTypeNBFM2500)
@@ -547,15 +556,17 @@ void gr_modem::demodulateAnalog()
             processPCMAudio(repeated_audio);
         }
         emit pcmAudio(audio_data);
+        return true;
     }
     else
     {
         delete audio_data;
+        return false;
     }
 
 }
 
-void gr_modem::demodulate()
+bool gr_modem::demodulate()
 {
     std::vector<unsigned char> *demod_data;
     std::vector<unsigned char> *demod_data2;
@@ -563,6 +574,7 @@ void gr_modem::demodulate()
 
     if((_modem_type_rx == gr_modem_types::ModemTypeBPSK2000)
             || (_modem_type_rx == gr_modem_types::ModemType2FSK2000)
+            || (_modem_type_rx == gr_modem_types::ModemType2FSK20000)
             || (_modem_type_rx == gr_modem_types::ModemTypeBPSK1000))
     {
         demod_data = _gr_demod_base->getData(1);
@@ -574,6 +586,7 @@ void gr_modem::demodulate()
     int v_size;
     if((_modem_type_rx == gr_modem_types::ModemTypeBPSK2000)
             || (_modem_type_rx == gr_modem_types::ModemTypeBPSK1000)
+            || (_modem_type_rx == gr_modem_types::ModemType2FSK20000)
             || (_modem_type_rx == gr_modem_types::ModemType2FSK2000))
     {
         if(demod_data->size() >= demod_data2->size())
@@ -593,22 +606,24 @@ void gr_modem::demodulate()
         data = demod_data;
     }
 
-    synchronize(v_size, data);
+    bool data_to_process = synchronize(v_size, data);
     demod_data->clear();
     delete demod_data;
     if((_modem_type_rx == gr_modem_types::ModemTypeBPSK2000)
             || (_modem_type_rx == gr_modem_types::ModemTypeBPSK1000)
+            || (_modem_type_rx == gr_modem_types::ModemType2FSK20000)
             || (_modem_type_rx == gr_modem_types::ModemType2FSK2000))
     {
         demod_data2->clear();
         delete demod_data2;
     }
+    return data_to_process;
 
 }
 
-void gr_modem::synchronize(int v_size, std::vector<unsigned char> *data)
+bool gr_modem::synchronize(int v_size, std::vector<unsigned char> *data)
 {
-
+    bool data_to_process = false;
     for(int i=0;i < v_size;i++)
     {
         if(!_sync_found)
@@ -619,16 +634,12 @@ void gr_modem::synchronize(int v_size, std::vector<unsigned char> *data)
                 _bit_buf_index = 0;
                 continue;
             }
-            if(_current_frame_type == FrameTypeEnd)
-            {
-                handleStreamEnd();
-                continue;
-            }
             if(_frequency_found > 0)
                 _frequency_found--; // substract one bit
         }
         if(_sync_found)
         {
+            data_to_process = true;
             if(_frequency_found < 255)
                 _frequency_found += 1; // 80 bits + counter
             _bit_buf[_bit_buf_index] =  (data->at(i)) & 0x1;
@@ -657,6 +668,7 @@ void gr_modem::synchronize(int v_size, std::vector<unsigned char> *data)
             }
         }
     }
+    return data_to_process;
 }
 
 int gr_modem::findSync(unsigned char bit)
@@ -717,6 +729,8 @@ int gr_modem::findSync(unsigned char bit)
     }
     if((temp == 0x4C8A2B))
     {
+        _sync_found = true;
+        qDebug() << "tx end";
         return FrameTypeEnd;
     }
     return FrameTypeNone;
@@ -725,6 +739,10 @@ int gr_modem::findSync(unsigned char bit)
 
 void gr_modem::processReceivedData(unsigned char *received_data, int current_frame_type)
 {
+    if (current_frame_type == FrameTypeEnd)
+    {
+        handleStreamEnd();
+    }
     if (current_frame_type == FrameTypeText)
     {
         emit dataFrameReceived();

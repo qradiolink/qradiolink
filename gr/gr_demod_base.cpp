@@ -81,6 +81,9 @@ gr_demod_base::gr_demod_base(gr::qtgui::sink_c::sptr fft_gui,
     _deframer_700_1 = make_gr_deframer_bb(2);
     _deframer_700_2 = make_gr_deframer_bb(2);
 
+    _deframer1_10k = make_gr_deframer_bb(3);
+    _deframer2_10k = make_gr_deframer_bb(3);
+
 
     _top_block->connect(_osmosdr_source,0,_rotator,0);
     _top_block->connect(_rotator,0,_fft_valve,0);
@@ -99,7 +102,8 @@ gr_demod_base::gr_demod_base(gr::qtgui::sink_c::sptr fft_gui,
 
 
 
-    _2fsk = make_gr_demod_2fsk_sdr(125,1000000,1700,4000);
+    _2fsk = make_gr_demod_2fsk_sdr(125,1000000,1700,4000); // 4000 for non FM demod, 2700 for FM
+    _2fsk_10k = make_gr_demod_2fsk_sdr(25,1000000,1700,13500, true);
     _4fsk_2k = make_gr_demod_4fsk_sdr(125,1000000,1700,4000);
     _4fsk_10k = make_gr_demod_4fsk_sdr(25,1000000,1700,20000);
     _am = make_gr_demod_am_sdr(0, 1000000,1700,4000);
@@ -143,6 +147,14 @@ void gr_demod_base::set_mode(int mode)
         _top_block->disconnect(_const_valve,0,_constellation,0);
         _top_block->disconnect(_2fsk,2,_deframer1,0);
         _top_block->disconnect(_2fsk,3,_deframer2,0);
+        break;
+    case gr_modem_types::ModemType2FSK20000:
+        _top_block->disconnect(_rotator,0,_2fsk_10k,0);
+        _top_block->disconnect(_2fsk_10k,0,_rssi_valve,0);
+        _top_block->disconnect(_2fsk_10k,1,_const_valve,0);
+        _top_block->disconnect(_const_valve,0,_constellation,0);
+        _top_block->disconnect(_2fsk_10k,2,_deframer1_10k,0);
+        _top_block->disconnect(_2fsk_10k,3,_deframer2_10k,0);
         break;
     case gr_modem_types::ModemType4FSK2000:
         _top_block->disconnect(_rotator,0,_4fsk_2k,0);
@@ -255,6 +267,15 @@ void gr_demod_base::set_mode(int mode)
         _top_block->connect(_const_valve,0,_constellation,0);
         _top_block->connect(_2fsk,2,_deframer1,0);
         _top_block->connect(_2fsk,3,_deframer2,0);
+        break;
+    case gr_modem_types::ModemType2FSK20000:
+        _osmosdr_source->set_sample_rate(1000000);
+        _top_block->connect(_rotator,0,_2fsk_10k,0);
+        _top_block->connect(_2fsk_10k,0,_rssi_valve,0);
+        _top_block->connect(_2fsk_10k,1,_const_valve,0);
+        _top_block->connect(_const_valve,0,_constellation,0);
+        _top_block->connect(_2fsk_10k,2,_deframer1_10k,0);
+        _top_block->connect(_2fsk_10k,3,_deframer2_10k,0);
         break;
     case gr_modem_types::ModemType4FSK2000:
         _osmosdr_source->set_sample_rate(1000000);
@@ -405,6 +426,9 @@ std::vector<unsigned char>* gr_demod_base::getData(int nr)
         case gr_modem_types::ModemType2FSK2000:
             data = _deframer1->get_data();
             break;
+        case gr_modem_types::ModemType2FSK20000:
+            data = _deframer1_10k->get_data();
+            break;
         case gr_modem_types::ModemTypeBPSK1000:
             data = _deframer_700_1->get_data();
             break;
@@ -419,6 +443,9 @@ std::vector<unsigned char>* gr_demod_base::getData(int nr)
         {
         case gr_modem_types::ModemType2FSK2000:
             data = _deframer2->get_data();
+            break;
+        case gr_modem_types::ModemType2FSK20000:
+            data = _deframer2_10k->get_data();
             break;
         case gr_modem_types::ModemTypeBPSK1000:
             data = _deframer_700_2->get_data();

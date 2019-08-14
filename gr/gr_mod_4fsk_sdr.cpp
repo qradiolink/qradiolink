@@ -62,13 +62,15 @@ gr_mod_4fsk_sdr::gr_mod_4fsk_sdr(int sps, int samp_rate, int carrier_freq,
     _map = gr::digital::map_bb::make(map);
 
     _chunks_to_symbols = gr::digital::chunks_to_symbols_bf::make(constellation);
-    _freq_modulator = gr::analog::frequency_modulator_fc::make((4*M_PI/2)/(_samples_per_symbol));
-    _repeat = gr::blocks::repeat::make(4, _samples_per_symbol);
-    _amplify = gr::blocks::multiply_const_cc::make(0.2,1);
+    _freq_modulator = gr::analog::frequency_modulator_fc::make((4*M_PI/2)/(_samples_per_symbol/20));
+    _repeat = gr::blocks::repeat::make(4, _samples_per_symbol/20);
+    _amplify = gr::blocks::multiply_const_cc::make(0.8,1);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
     _filter = gr::filter::fft_filter_ccf::make(
                 1,gr::filter::firdes::low_pass(
-                    1, _samp_rate, _filter_width, 600,gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+                    1, _samp_rate, _filter_width, _filter_width/2,gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+    _resampler2 = gr::filter::rational_resampler_base_ccf::make(20, 1,
+                                  gr::filter::firdes::low_pass(20,_samp_rate,_filter_width,_filter_width*20));
 
 
     connect(self(),0,_packed_to_unpacked,0);
@@ -80,7 +82,8 @@ gr_mod_4fsk_sdr::gr_mod_4fsk_sdr(int sps, int samp_rate, int carrier_freq,
     connect(_chunks_to_symbols,0,_repeat,0);
 
     connect(_repeat,0,_freq_modulator,0);
-    connect(_freq_modulator,0,_amplify,0);
+    connect(_freq_modulator,0,_resampler2,0);
+    connect(_resampler2,0,_amplify,0);
     connect(_amplify,0,_bb_gain,0);
     connect(_bb_gain,0,_filter,0);
     connect(_filter,0,self(),0);

@@ -41,12 +41,14 @@ gr_demod_am_sdr::gr_demod_am_sdr(std::vector<int>signature, int sps, int samp_ra
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width, _target_samp_rate);
-    std::vector<float> audio_taps = gr::filter::firdes::low_pass(1, _target_samp_rate, _filter_width, 1200);
+    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width, _filter_width*10,
+                                                           gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+    std::vector<float> audio_taps = gr::filter::firdes::low_pass(1, _target_samp_rate, _filter_width, 1200,
+                                                                 gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1,50,taps);
     _audio_resampler = gr::filter::rational_resampler_base_fff::make(2,5, audio_taps);
     _filter = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
-                            1, _target_samp_rate, -_filter_width, _filter_width,1200,gr::filter::firdes::WIN_HAMMING) );
+                            1, _target_samp_rate, -_filter_width, _filter_width,1200,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     _squelch = gr::analog::pwr_squelch_cc::make(-140,0.01,0,true);
     _agc = gr::analog::agc2_cc::make(1e-1, 1e-3, 1, 0);
     _complex_to_mag = gr::blocks::complex_to_mag::make();
@@ -57,7 +59,7 @@ gr_demod_am_sdr::gr_demod_am_sdr(std::vector<int>signature, int sps, int samp_ra
     ffd.push_back(0);
     ffd.push_back(0.9999);
     _audio_filter = gr::filter::iir_filter_ffd::make(fft,ffd);
-    _audio_gain = gr::blocks::multiply_const_ff::make(0.5);
+    _audio_gain = gr::blocks::multiply_const_ff::make(0.99);
 
 
     connect(self(),0,_resampler,0);

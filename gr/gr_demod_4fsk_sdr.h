@@ -37,6 +37,7 @@
 #include <gnuradio/blocks/complex_to_mag_squared.h>
 #include <gnuradio/blocks/float_to_uchar.h>
 #include <gnuradio/blocks/add_const_ff.h>
+#include <gnuradio/analog/rail_ff.h>
 #include <gnuradio/blocks/multiply_const_ff.h>
 #include <gnuradio/blocks/complex_to_float.h>
 #include <gnuradio/blocks/interleave.h>

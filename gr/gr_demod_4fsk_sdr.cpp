@@ -86,13 +86,16 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
     gr::digital::constellation_expl_rect::sptr constellation = gr::digital::constellation_expl_rect::make(
                 constellation_points,pre_diff_code,4,2,2,1,1,const_map);
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width, _target_samp_rate);
+    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _target_samp_rate/2, _filter_width*10,
+                                                           gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     std::vector<float> symbol_filter_taps = gr::filter::firdes::low_pass(1.0,
-                                 _target_samp_rate, _target_samp_rate/_samples_per_symbol, _target_samp_rate/_samples_per_symbol/20);
+                                 _target_samp_rate, _target_samp_rate/_samples_per_symbol, _target_samp_rate/_samples_per_symbol/20,
+                                                                         gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     _resampler = gr::filter::rational_resampler_base_ccf::make(interpolation, decimation, taps);
+    _resampler->set_thread_priority(99);
     _fll = gr::digital::fll_band_edge_cc::make(_samples_per_symbol/4, 0.01, 16, 48*M_PI/100);
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
-                                1, _target_samp_rate, _filter_width,2000,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
+                                1, _target_samp_rate, _filter_width,_filter_width/2,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     //_freq_demod = gr::analog::quadrature_demod_cf::make(sps/(4*M_PI/2));
 
     _filter1 = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
@@ -119,7 +122,7 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
 
     _complex_to_float = gr::blocks::complex_to_float::make();
     _interleave = gr::blocks::interleave::make(4);
-    _multiply_const_fec = gr::blocks::multiply_const_ff::make(68);
+    _multiply_const_fec = gr::blocks::multiply_const_ff::make(180);
     _float_to_uchar = gr::blocks::float_to_uchar::make();
     _add_const_fec = gr::blocks::add_const_ff::make(128.0);
     gr::fec::code::cc_decoder::sptr decoder = gr::fec::code::cc_decoder::make(80, 7, 2, polys);

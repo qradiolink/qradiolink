@@ -77,7 +77,7 @@ public:
     ~gr_modem();
     long _frequency_found;
     long _requested_frequency_hz;
-    void demodulateAnalog();
+    bool demodulateAnalog();
     void sendCallsign(QString callsign);
 
 signals:
@@ -99,7 +99,7 @@ public slots:
     void processAudioData(unsigned char *data, int size);
     void processVideoData(unsigned char *data, int size);
     void processNetData(unsigned char *data, int size);
-    void demodulate();
+    bool demodulate();
     void startTransmission(QString callsign);
     void endTransmission(QString callsign);
     void textData(QString text, int frame_type = FrameTypeText);
@@ -137,7 +137,7 @@ private:
     void handleStreamEnd();
     int findSync(unsigned char bit);
     void transmit(QVector<std::vector<unsigned char>*> frames);
-    void synchronize(int v_size, std::vector<unsigned char> *data);
+    bool synchronize(int v_size, std::vector<unsigned char> *data);
 
     gr_mod_base *_gr_mod_base;
     gr_demod_base *_gr_demod_base;

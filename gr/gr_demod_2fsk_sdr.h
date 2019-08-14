@@ -40,18 +40,20 @@
 #include <gnuradio/blocks/add_const_ff.h>
 #include <gnuradio/blocks/delay.h>
 #include <gnuradio/blocks/float_to_uchar.h>
+#include <gnuradio/analog/quadrature_demod_cf.h>
+
 
 class gr_demod_2fsk_sdr;
 
 typedef boost::shared_ptr<gr_demod_2fsk_sdr> gr_demod_2fsk_sdr_sptr;
 gr_demod_2fsk_sdr_sptr make_gr_demod_2fsk_sdr(int sps=125, int samp_rate=250000, int carrier_freq=1700,
-                                          int filter_width=8000);
+                                          int filter_width=8000, bool fm=false);
 
 class gr_demod_2fsk_sdr : public gr::hier_block2
 {
 public:
     explicit gr_demod_2fsk_sdr(std::vector<int> signature, int sps=4, int samp_rate=8000, int carrier_freq=1600,
-                               int filter_width=1800);
+                               int filter_width=1800, bool fm=false);
 
 private:
     gr::blocks::multiply_const_cc::sptr _multiply_symbols;
@@ -78,6 +80,8 @@ private:
     gr::blocks::add_const_ff::sptr _add_const_fec;
     gr::fec::decoder::sptr _cc_decoder;
     gr::fec::decoder::sptr _cc_decoder2;
+    gr::analog::quadrature_demod_cf::sptr _freq_demod;
+    gr::filter::fft_filter_ccf::sptr _shaping_filter;
 
 
     int _samples_per_symbol;

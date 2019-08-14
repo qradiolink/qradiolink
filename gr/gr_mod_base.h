@@ -59,6 +59,7 @@ private:
     gr::blocks::rotator_cc::sptr _rotator;
 
     gr_mod_2fsk_sdr_sptr _2fsk;
+    gr_mod_2fsk_sdr_sptr _2fsk_10k;
     gr_mod_4fsk_sdr_sptr _4fsk_2k;
     gr_mod_4fsk_sdr_sptr _4fsk_10k;
     gr_mod_am_sdr_sptr _am;

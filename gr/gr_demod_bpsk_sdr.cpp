@@ -48,8 +48,10 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(std::vector<int>signature, int sps, int sam
     polys.push_back(79);
 
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width, _target_samp_rate);
+    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _target_samp_rate/2, _filter_width*10,
+                                                           gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1, 50, taps);
+    _resampler->set_thread_priority(99);
     _agc = gr::analog::agc2_cc::make(1e-1, 1e-1, 1, 0);
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
                             1, _target_samp_rate, _filter_width,1200,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
@@ -60,10 +62,10 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(std::vector<int>signature, int sps, int sam
     _equalizer = gr::digital::cma_equalizer_cc::make(8,1,0.00005,1);
     _fll = gr::digital::fll_band_edge_cc::make(_samples_per_symbol, 0.35, 32, 2*M_PI/100);
     _shaping_filter = gr::filter::fft_filter_ccf::make(
-                1, gr::filter::firdes::root_raised_cosine(1,_target_samp_rate,_target_samp_rate/_samples_per_symbol,0.35,32 * 11 * _samples_per_symbol));
+                1, gr::filter::firdes::root_raised_cosine(1,_target_samp_rate,_target_samp_rate/_samples_per_symbol,0.35,128 * _samples_per_symbol));
     _complex_to_real = gr::blocks::complex_to_real::make();
 
-    _multiply_const_fec = gr::blocks::multiply_const_ff::make(48);
+    _multiply_const_fec = gr::blocks::multiply_const_ff::make(64);
     _float_to_uchar = gr::blocks::float_to_uchar::make();
     _add_const_fec = gr::blocks::add_const_ff::make(128.0);
 

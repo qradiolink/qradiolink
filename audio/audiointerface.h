@@ -36,13 +36,19 @@ class AudioInterface : public QObject
 {
     Q_OBJECT
 public:
+    enum
+    {
+        AUDIO_MODE_CODEC2,
+        AUDIO_MODE_ANALOG,
+        AUDIO_MODE_OPUS
+    };
     explicit AudioInterface(QObject *parent = 0, unsigned sample_rate = 8000, unsigned channels = 1, int normal = 1);
     ~AudioInterface();
     int read(float *buf, short bufsize);
     int write(float *buf, short bufsize);
-    int write_short(short *buf, short bufsize, bool preprocess=false);
-    int read_short(short *buf, short bufsize, bool preprocess=0);
-    void compress_audio(short *buf, short bufsize, int direction);
+    int write_short(short *buf, short bufsize, bool preprocess=false, int audio_mode=AUDIO_MODE_ANALOG);
+    int read_short(short *buf, short bufsize, bool preprocess=false, int audio_mode=AUDIO_MODE_ANALOG);
+    void compress_audio(short *buf, short bufsize, int direction, int audio_mode);
 signals:
     
 public slots:
@@ -54,9 +60,12 @@ private:
     pa_simple *_s_short_rec;
     SpeexPreprocessState *_speex_preprocess;
     sf_compressor_state_st _cm_state_read;
+    sf_compressor_state_st _cm_state_read_codec2;
     sf_compressor_state_st _cm_state_write;
+    sf_compressor_state_st _cm_state_write_codec2;
     int _error;
     float calc_audio_power(short *buf, short samples);
+
     
 };
 

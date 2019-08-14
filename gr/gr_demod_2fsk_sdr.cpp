@@ -17,7 +17,7 @@
 #include "gr_demod_2fsk_sdr.h"
 
 gr_demod_2fsk_sdr_sptr make_gr_demod_2fsk_sdr(int sps, int samp_rate, int carrier_freq,
-                                          int filter_width)
+                                          int filter_width, bool fm)
 {
     std::vector<int> signature;
     signature.push_back(sizeof (gr_complex));
@@ -25,21 +25,34 @@ gr_demod_2fsk_sdr_sptr make_gr_demod_2fsk_sdr(int sps, int samp_rate, int carrie
     signature.push_back(sizeof (char));
     signature.push_back(sizeof (char));
     return gnuradio::get_initial_sptr(new gr_demod_2fsk_sdr(signature, sps, samp_rate, carrier_freq,
-                                                      filter_width));
+                                                      filter_width, fm));
 }
 
 
 
 gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(std::vector<int>signature, int sps, int samp_rate, int carrier_freq,
-                                 int filter_width) :
+                                 int filter_width, bool fm) :
     gr::hier_block2 ("gr_demod_2fsk_sdr",
                       gr::io_signature::make (1, 1, sizeof (gr_complex)),
                       gr::io_signature::makev (4, 4, signature))
 {
+    int decim, interp;
+    if(sps > 50)
+    {
+        _target_samp_rate = 20000;
+        _samples_per_symbol = sps/25;
+        decim = 50;
+        interp = 1;
 
-    _target_samp_rate = 20000;
+    }
+    else
+    {
+        _target_samp_rate = 40000;
+        _samples_per_symbol = sps*2/25;
+        decim = 25;
+        interp = 1;
+    }
 
-    _samples_per_symbol = sps/25;
     _samp_rate =samp_rate;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
@@ -52,18 +65,22 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(std::vector<int>signature, int sps, int sam
     polys.push_back(109);
     polys.push_back(79);
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width, _target_samp_rate);
+    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _target_samp_rate/2, _filter_width*10,
+                                                           gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     std::vector<float> symbol_filter_taps = gr::filter::firdes::low_pass(1.0,
-                                 _target_samp_rate, _target_samp_rate/_samples_per_symbol, _target_samp_rate/_samples_per_symbol/20);
-    _resampler = gr::filter::rational_resampler_base_ccf::make(1, 50, taps);
+                                 _target_samp_rate, _target_samp_rate/_samples_per_symbol,
+                                                                         _target_samp_rate/_samples_per_symbol/20,
+                                                                         gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+    _resampler = gr::filter::rational_resampler_base_ccf::make(interp, decim, taps);
+    _resampler->set_thread_priority(99);
     _fll = gr::digital::fll_band_edge_cc::make(_samples_per_symbol, 0.1, 16, 24*M_PI/100);
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
-                                1, _target_samp_rate, _filter_width,2000,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
+                                1, _target_samp_rate, _filter_width,_filter_width/2,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
 
     _upper_filter = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
-                                1, _target_samp_rate, -_filter_width,0,4000,gr::filter::firdes::WIN_HAMMING) );
+                                1, _target_samp_rate, -_filter_width,0,_filter_width,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     _lower_filter = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
-                                1, _target_samp_rate, 0,_filter_width,4000,gr::filter::firdes::WIN_HAMMING) );
+                                1, _target_samp_rate, 0,_filter_width,_filter_width,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     _mag_lower = gr::blocks::complex_to_mag::make();
     _mag_upper = gr::blocks::complex_to_mag::make();
     _divide = gr::blocks::divide_ff::make();
@@ -71,13 +88,14 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(std::vector<int>signature, int sps, int sam
     _rail = gr::analog::rail_ff::make(0,2);
     _float_to_complex = gr::blocks::float_to_complex::make();
     _symbol_filter = gr::filter::fft_filter_ccf::make(1,symbol_filter_taps);
-    float gain_mu = 0.025;
+    float gain_mu = 0.005;
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
                                                               0.001);
 
-
-
-    _multiply_const_fec = gr::blocks::multiply_const_ff::make(48);
+    _freq_demod = gr::analog::quadrature_demod_cf::make(_samples_per_symbol/(M_PI/2));
+    _shaping_filter = gr::filter::fft_filter_ccf::make(
+                1, gr::filter::firdes::root_raised_cosine(1,_target_samp_rate,_target_samp_rate/_samples_per_symbol,0.35,512 * _samples_per_symbol));
+    _multiply_const_fec = gr::blocks::multiply_const_ff::make(128);
     _float_to_uchar = gr::blocks::float_to_uchar::make();
     _add_const_fec = gr::blocks::add_const_ff::make(128.0);
 
@@ -97,19 +115,28 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(std::vector<int>signature, int sps, int sam
     connect(_resampler,0,_fll,0);
     connect(_fll,0,_filter,0);
     connect(_filter,0,self(),0);
-    connect(_filter,0,_lower_filter,0);
-    connect(_filter,0,_upper_filter,0);
-    connect(_lower_filter,0,_mag_lower,0);
-    connect(_upper_filter,0,_mag_upper,0);
-    connect(_mag_lower,0,_divide,1);
-    connect(_mag_upper,0,_divide,0);
-    connect(_divide,0,_rail,0);
-    connect(_rail,0,_add,0);
-    connect(_add,0,_float_to_complex,0);
-    connect(_float_to_complex,0,_symbol_filter,0);
-    connect(_symbol_filter,0,_clock_recovery,0);
+    if(fm)
+    {
+        connect(_filter,0,_freq_demod,0);
+        connect(_freq_demod,0,_float_to_complex,0);
+        connect(_float_to_complex,0,_shaping_filter,0);
+        connect(_shaping_filter,0,_clock_recovery,0);
+    }
+    else
+    {
+        connect(_filter,0,_lower_filter,0);
+        connect(_filter,0,_upper_filter,0);
+        connect(_lower_filter,0,_mag_lower,0);
+        connect(_upper_filter,0,_mag_upper,0);
+        connect(_mag_lower,0,_divide,1);
+        connect(_mag_upper,0,_divide,0);
+        connect(_divide,0,_rail,0);
+        connect(_rail,0,_add,0);
+        connect(_add,0,_float_to_complex,0);
+        connect(_float_to_complex,0,_symbol_filter,0);
+        connect(_symbol_filter,0,_clock_recovery,0);
+    }
     connect(_clock_recovery,0,self(),1);
-
     connect(_clock_recovery,0,_complex_to_real,0);
     connect(_complex_to_real,0,_multiply_const_fec,0);
     connect(_multiply_const_fec,0,_add_const_fec,0);

@@ -1015,10 +1015,10 @@ background-color: rgb(35, 35, 35);</string>
               <enum>QLCDNumber::Filled</enum>
              </property>
              <property name="value" stdset="0">
-              <double>10.000000000000000</double>
+              <double>50.000000000000000</double>
              </property>
              <property name="intValue" stdset="0">
-              <number>10</number>
+              <number>50</number>
              </property>
             </widget>
             <widget class="QLabel" name="label_9">
@@ -1096,16 +1096,16 @@ background-color: rgb(35, 35, 35);</string>
               <bool>true</bool>
              </property>
              <property name="maximum">
-              <number>30</number>
+              <number>99</number>
              </property>
              <property name="pageStep">
               <number>1</number>
              </property>
              <property name="value">
-              <number>10</number>
+              <number>50</number>
              </property>
              <property name="notchTarget">
-              <double>10.000000000000000</double>
+              <double>50.000000000000000</double>
              </property>
              <property name="notchesVisible">
               <bool>true</bool>
@@ -2307,6 +2307,11 @@ color: rgb(0, 255, 0);</string>
             </item>
             <item>
              <property name="text">
+              <string>2FSK 10K</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
               <string>Narrow FM</string>
              </property>
             </item>
@@ -2422,6 +2427,11 @@ color: rgb(255, 0, 0);</string>
             <item>
              <property name="text">
               <string>2FSK 2K</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>2FSK 10K</string>
              </property>
             </item>
             <item>
