@@ -74,6 +74,7 @@ gr_demod_base::gr_demod_base(gr::qtgui::sink_c::sptr fft_gui,
     _constellation = const_gui;
     _fft_gui = fft_gui;
     _rssi = rssi_gui;
+    _fft_sink = make_gr_fft_sink();
 
     _deframer1 = make_gr_deframer_bb(1);
     _deframer2 = make_gr_deframer_bb(1);
@@ -88,6 +89,7 @@ gr_demod_base::gr_demod_base(gr::qtgui::sink_c::sptr fft_gui,
     _top_block->connect(_osmosdr_source,0,_rotator,0);
     _top_block->connect(_rotator,0,_fft_valve,0);
     _top_block->connect(_fft_valve,0,_fft_gui,0);
+    _top_block->connect(_fft_valve,0,_fft_sink,0);
     _top_block->msg_connect(_fft_gui,"freq",_message_sink,"store");
 
 
@@ -480,6 +482,18 @@ std::vector<float>* gr_demod_base::getAudio()
     std::vector<float> *data = _audio_sink->get_data();
     return data;
 }
+
+std::vector<float>* gr_demod_base::getFFTData()
+{
+    if(!_demod_running)
+    {
+        std::vector<float> *dummy = new std::vector<float>;
+        return dummy;
+    }
+    std::vector<float> *data = _fft_sink->get_data();
+    return data;
+}
+
 
 void gr_demod_base::tune(long center_freq)
 {
