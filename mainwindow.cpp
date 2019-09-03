@@ -83,6 +83,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
     QObject::connect(ui->plotterFrame,SIGNAL(pandapterRangeChanged(float,float)),ui->plotterFrame,SLOT(setWaterfallRange(float,float)));
     QObject::connect(ui->plotterFrame,SIGNAL(newCenterFreq(qint64)),this,SLOT(tuneMainFreq(qint64)));
+    QObject::connect(ui->panadapterSlider,SIGNAL(valueChanged(int)),ui->plotterFrame,SLOT(setPercent2DScreen(int)));
     QObject::connect(ui->plotterFrame,SIGNAL(newDemodFreq(qint64,qint64)),this,SLOT(carrierOffsetChanged(qint64,qint64)));
 
     QObject::connect(ui->voipTreeWidget,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this,SLOT(channelState(QTreeWidgetItem *,int)));
@@ -111,7 +112,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     ui->plotterFrame->setSampleRate(1000000);
     ui->plotterFrame->setSpanFreq((quint32)1000000);
     ui->plotterFrame->setRunningState(false);
-    ui->plotterFrame->setFftRate(12);
+    ui->plotterFrame->setFftRate(5);
     ui->plotterFrame->setPercent2DScreen(50);
     ui->plotterFrame->setFftFill(true);
     ui->plotterFrame->setPandapterRange(-120.0, -20.0);
@@ -218,7 +219,6 @@ void MainWindow::GUIsendText()
 
 void MainWindow::newFFTData(std::complex<float>* fft_data, int fftsize)
 {
-    ui->plotterFrame->setRunningState(false);
     unsigned int    i;
     float           pwr;
     float           pwr_scale;
@@ -260,6 +260,7 @@ void MainWindow::newFFTData(std::complex<float>* fft_data, int fftsize)
     }
 
     ui->plotterFrame->setNewFftData(_iirFftData, _realFftData, fftsize);
+    ui->plotterFrame->draw();
     delete[] fft_data;
 }
 
@@ -412,6 +413,8 @@ void MainWindow::channelState(QTreeWidgetItem *item, int k)
 void MainWindow::toggleRXwin(bool value)
 {
     emit toggleRX(value);
+    ui->plotterFrame->setRunningState(value);
+    emit enableGUIFFT(value);
 }
 
 void MainWindow::toggleTXwin(bool value)

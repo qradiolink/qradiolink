@@ -93,7 +93,7 @@
 </string>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>2</number>
         </property>
         <property name="iconSize">
          <size>
@@ -1119,7 +1119,7 @@ color: rgb(203, 0, 0);</string>
             <x>0</x>
             <y>0</y>
             <width>1200</width>
-            <height>600</height>
+            <height>500</height>
            </rect>
           </property>
           <property name="sizePolicy">
@@ -1127,6 +1127,12 @@ color: rgb(203, 0, 0);</string>
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>1200</width>
+            <height>500</height>
+           </size>
           </property>
           <layout class="QGridLayout" name="gridLayout_6">
            <property name="sizeConstraint">
@@ -1176,6 +1182,12 @@ color: rgb(203, 0, 0);</string>
              </property>
              <property name="orientation">
               <enum>Qt::Vertical</enum>
+             </property>
+             <property name="invertedAppearance">
+              <bool>true</bool>
+             </property>
+             <property name="invertedControls">
+              <bool>false</bool>
              </property>
             </widget>
            </item>
@@ -2049,7 +2061,7 @@ background-color: rgb(132, 0, 0);
           <property name="minimumSize">
            <size>
             <width>250</width>
-            <height>64</height>
+            <height>60</height>
            </size>
           </property>
           <property name="styleSheet">
@@ -2070,7 +2082,7 @@ background-color: rgb(128, 132, 138);</string>
            <number>3</number>
           </property>
           <property name="verticalSpacing">
-           <number>0</number>
+           <number>2</number>
           </property>
           <item row="1" column="2">
            <widget class="QComboBox" name="comboBoxTxCTCSS">
@@ -2224,7 +2236,7 @@ background-color: rgb(0, 0, 67);</string>
             <property name="minimumSize">
              <size>
               <width>110</width>
-              <height>15</height>
+              <height>30</height>
              </size>
             </property>
             <property name="maximumSize">
@@ -2271,7 +2283,7 @@ color: rgb(255, 255, 255);</string>
             <property name="minimumSize">
              <size>
               <width>60</width>
-              <height>40</height>
+              <height>30</height>
              </size>
             </property>
             <property name="maximumSize">
@@ -2444,6 +2456,12 @@ background-color: rgb(0, 0, 67);</string>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>30</height>
+             </size>
+            </property>
             <property name="maximumSize">
              <size>
               <width>100</width>
@@ -2488,7 +2506,7 @@ color: rgb(255, 255, 255);</string>
             <property name="minimumSize">
              <size>
               <width>60</width>
-              <height>40</height>
+              <height>30</height>
              </size>
             </property>
             <property name="maximumSize">
