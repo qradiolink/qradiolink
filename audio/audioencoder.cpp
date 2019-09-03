@@ -35,16 +35,17 @@ AudioEncoder::AudioEncoder()
     _codec2_2400 = codec2_create(CODEC2_MODE_2400);
 
     _gsm = gsm_create();
-    _audio_filter = new Filter(BPF,512,8,0.15,3.5);
+    _audio_filter = new Filter(BPF,512,8,0.1,3.5);
     if( _audio_filter->get_error_flag() != 0 )
     {
         qDebug() << "audio filter creation failed";
     }
-    _audio_filter2 = new Filter(BPF,64,8,0.15,3.5);
+    _audio_filter2 = new Filter(BPF,64,8,0.25,3.0);
     if( _audio_filter2->get_error_flag() != 0 )
     {
         qDebug() << "audio filter creation failed";
     }
+    _emph_last_input = 0.0;
 
     int opus_bandwidth;
     opus_encoder_ctl(_enc, OPUS_SET_VBR(0));
@@ -99,7 +100,7 @@ short* AudioEncoder::decode_opus(unsigned char *audiobuffer, int audiobuffersize
 
 unsigned char* AudioEncoder::encode_codec2_1400(short *audiobuffer, int audiobuffersize, int &length)
 {
-    filter_audio(audiobuffer, audiobuffersize);
+    filter_audio(audiobuffer, audiobuffersize,true,false);
     int bits = codec2_bits_per_frame(_codec2_1400);
     //int bytes = (bits + 7) / 8;
     int bytes = bits / 8;
@@ -111,7 +112,7 @@ unsigned char* AudioEncoder::encode_codec2_1400(short *audiobuffer, int audiobuf
 
 unsigned char* AudioEncoder::encode_codec2_700(short *audiobuffer, int audiobuffersize, int &length)
 {
-    filter_audio(audiobuffer, audiobuffersize);
+    filter_audio(audiobuffer, audiobuffersize, true, false);
     int bits = codec2_bits_per_frame(_codec2_700);
     int bytes = (bits + 4) / 8;
     unsigned char *encoded = new unsigned char[bytes];
@@ -138,7 +139,7 @@ short* AudioEncoder::decode_codec2_1400(unsigned char *audiobuffer, int audiobuf
     short* decoded = new short[samples];
     memset(decoded,0,(samples)*sizeof(short));
     codec2_decode(_codec2_1400, decoded, audiobuffer);
-    filter_audio(decoded, samples*sizeof(short));
+    filter_audio(decoded, samples*sizeof(short),false,true);
     return decoded;
 }
 
@@ -149,7 +150,7 @@ short* AudioEncoder::decode_codec2_700(unsigned char *audiobuffer, int audiobuff
     short* decoded = new short[samples];
     memset(decoded,0,(samples)*sizeof(short));
     codec2_decode(_codec2_700, decoded, audiobuffer);
-    filter_audio(decoded, samples*sizeof(short));
+    filter_audio(decoded, samples*sizeof(short), false, true);
     return decoded;
 }
 
@@ -179,12 +180,26 @@ short* AudioEncoder::decode_gsm(unsigned char *audiobuffer, int data_length, int
     return decoded;
 }
 
-void AudioEncoder::filter_audio(short *audiobuffer, int audiobuffersize)
+void AudioEncoder::filter_audio(short *audiobuffer, int audiobuffersize, bool pre_emphasis, bool de_emphasis)
 {
+
     for(unsigned int i = 0;i<audiobuffersize/sizeof(short);i++)
     {
         double sample = (double) audiobuffer[i];
-        audiobuffer[i] = (short) _audio_filter->do_sample(sample);
+        if(!pre_emphasis && !de_emphasis)
+            audiobuffer[i] = (short) _audio_filter->do_sample(sample);
+        if(de_emphasis)
+        {
+            double output = _audio_filter->do_sample(sample) + 0.1 * _emph_last_input + 0.08 * (rand() % 1000);
+            _emph_last_input = sample;
+            audiobuffer[i] = (short) (output * 0.85);
+        }
+        if(pre_emphasis)
+        {
+            double output = _audio_filter->do_sample(sample) - 0.05 * _emph_last_input;
+            _emph_last_input = sample;
+            audiobuffer[i] = (short) (output * 0.85);
+        }
     }
 }
 
