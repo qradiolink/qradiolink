@@ -16,7 +16,7 @@
 
 #include "gr_demod_base.h"
 
-gr_demod_base::gr_demod_base(gr::qtgui::sink_c::sptr fft_gui,
+gr_demod_base::gr_demod_base(
                              gr::qtgui::const_sink_c::sptr const_gui, gr::qtgui::number_sink::sptr rssi_gui,
                               QObject *parent, float device_frequency,
                              float rf_gain, std::string device_args, std::string device_antenna,
@@ -48,11 +48,11 @@ gr_demod_base::gr_demod_base(gr::qtgui::sink_c::sptr fft_gui,
     _agc2 = gr::analog::agc2_ff::make(100, 100, 1, 1);
     _moving_average = gr::blocks::moving_average_ff::make(2000,1,2000);
     _add_const = gr::blocks::add_const_ff::make(-80);
-    _rotator = gr::blocks::rotator_cc::make(2*M_PI*-_carrier_offset/1000000);
+    _rotator = gr::blocks::rotator_cc::make(2*M_PI/1000000);
 
 
     _osmosdr_source = osmosdr::source::make(device_args);
-    _osmosdr_source->set_center_freq(_device_frequency - _carrier_offset);
+    _osmosdr_source->set_center_freq(_device_frequency);
     _osmosdr_source->set_bandwidth(2000000);
     _osmosdr_source->set_sample_rate(1000000);
     _osmosdr_source->set_freq_corr(freq_corr);
@@ -72,7 +72,6 @@ gr_demod_base::gr_demod_base(gr::qtgui::sink_c::sptr fft_gui,
     }
 
     _constellation = const_gui;
-    _fft_gui = fft_gui;
     _rssi = rssi_gui;
     _fft_sink = make_rx_fft_c(32768, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
 
@@ -87,10 +86,8 @@ gr_demod_base::gr_demod_base(gr::qtgui::sink_c::sptr fft_gui,
 
 
     _top_block->connect(_osmosdr_source,0,_rotator,0);
-    _top_block->connect(_rotator,0,_fft_valve,0);
-    _top_block->connect(_fft_valve,0,_fft_gui,0);
+    _top_block->connect(_osmosdr_source,0,_fft_valve,0);
     _top_block->connect(_fft_valve,0,_fft_sink,0);
-    _top_block->msg_connect(_fft_gui,"freq",_message_sink,"store");
 
 
     _top_block->connect(_rssi_valve,0,_mag_squared,0);
@@ -552,4 +549,11 @@ void gr_demod_base::set_ctcss(float value)
     _fm_2500->set_ctcss(value);
     _fm_5000->set_ctcss(value);
     _top_block->unlock();
+}
+
+void gr_demod_base::set_carrier_offset(long carrier_offset)
+{
+    _carrier_offset = carrier_offset;
+    _rotator->set_phase_inc(2*M_PI*-_carrier_offset/1000000);
+
 }

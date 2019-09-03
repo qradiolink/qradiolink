@@ -16,7 +16,7 @@
 
 #include "radioop.h"
 
-RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui::const_sink_c::sptr const_gui,
+RadioOp::RadioOp(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui,
                  gr::qtgui::number_sink::sptr rssi_gui, QObject *parent) :
     QObject(parent)
 {
@@ -81,12 +81,11 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _voip_encode_buffer = new QVector<short>;
 
 
-    _fft_gui = fft_gui;
     QObject::connect(_voice_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));
     QObject::connect(_data_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));
     QObject::connect(_data_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));
     QObject::connect(_voip_tx_timer, SIGNAL(timeout()), this, SLOT(stopTx()));
-    _modem = new gr_modem(_settings, fft_gui,const_gui, rssi_gui);
+    _modem = new gr_modem(_settings, const_gui, rssi_gui);
 
     QObject::connect(_modem,SIGNAL(textReceived(QString)),this,SLOT(textReceived(QString)));
     QObject::connect(_modem,SIGNAL(repeaterInfoReceived(QByteArray)),this,SLOT(repeaterInfoReceived(QByteArray)));
@@ -592,7 +591,7 @@ void RadioOp::run()
 
         updateDataModemReset(transmitting, ptt_activated);
 
-        updateFrequency();
+        //updateFrequency();
         if(transmitting && !ptt_activated)
         {
             ptt_activated = true;
@@ -1034,7 +1033,6 @@ void RadioOp::toggleRX(bool value)
                                  rx_antenna, tx_antenna, rx_freq_corr,
                                  tx_freq_corr, callsign, video_device);
         _modem->initRX(_rx_mode, rx_device_args, rx_antenna, rx_freq_corr);
-        _fft_gui->set_frequency_range(_tune_center_freq, 1000000);
         _modem->setRxSensitivity(_rx_sensitivity);
         _modem->setSquelch(_squelch);
         _modem->setRxCTCSS(_rx_ctcss);
@@ -1405,7 +1403,13 @@ void RadioOp::tuneFreq(qint64 center_freq)
     _tune_center_freq = center_freq;
     _modem->tune(_tune_center_freq);
     _mutex->unlock();
-    _fft_gui->set_frequency_range(_tune_center_freq, 1000000);
+}
+
+void RadioOp::setCarrierOffset(qint64 center_freq)
+{
+    _mutex->lock();
+    _modem->set_carrier_offset(center_freq);
+    _mutex->unlock();
 }
 
 void RadioOp::tuneTxFreq(qint64 center_freq)

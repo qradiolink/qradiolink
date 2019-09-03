@@ -204,57 +204,13 @@ int main(int argc, char *argv[])
             "QwtThermo { background-color: #E1DFFF;" \
             "color: #FF6905;}");
 
-    const std::string fft_name = "fft";
     QRect xy = w->geometry();
     w->get_fft_gui()->resize(xy.right() -xy.left(),xy.bottom()-xy.top()-100);
 
-    gr::qtgui::sink_c::sptr fft_gui = gr::qtgui::sink_c::make(8096*4,gr::filter::firdes::WIN_BLACKMAN_HARRIS,
-                                                          0,1000000,fft_name,true,true,true,false,w->get_fft_gui());
-    fft_gui->qwidget()->resize(xy.right() -xy.left()-50,xy.bottom()-xy.top()-170);
-    fft_gui->set_update_time(0.1);
-    fft_gui->set_fft_power_db(-130,0);
-    fft_gui->qwidget()->setStyleSheet(
-                "QwtPlotCanvas { background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #FFFEA2, stop: 1 #0385FF); \
-                border: 1px solid White; \
-                border-radius: 10px; } \
-                DisplayPlot { \
-                qproperty-zoomer_color: black; \
-                qproperty-line_color1: #A4051F; \
-                qproperty-line_color2: #CC710C; \
-                qproperty-line_color3: #CC6905; \
-                qproperty-line_style1: SolidLine; \
-                qproperty-line_style2: DashLine; \
-                qproperty-line_style3: DotLine; \
-                qproperty-line_width1: 1; \
-                qproperty-line_width2: 2; \
-                qproperty-line_width3: 2; \
-                qproperty-marker_alpha1: 220; \
-                qproperty-marker_alpha2: 150; \
-                qproperty-marker_alpha3: 150; \
-                qproperty-axes_label_font_size: 12; \
-                } \
-                WaterfallDisplayPlot { \
-                qproperty-intensity_color_map_type1: 6; \
-                    qproperty-low_intensity_color: #0B0041; \
-                qproperty-high_intensity_color: #FFFB00; \
-                } \
-                FrequencyDisplayPlot { \
-                    min-height: "+QString::number(xy.bottom()-xy.top()-450)+"px;\
-                    min-width: "+QString::number(xy.right() -xy.left()-100)+"px; \
-                    qproperty-marker_lower_intensity_color: white; \
-                        qproperty-marker_upper_intensity_color: black; \
-                        qproperty-marker_lower_intensity_visible: false; \
-                        qproperty-marker_upper_intensity_visible: true; \
-                        qproperty-marker_noise_floor_amplitude_color: red; \
-                    qproperty-marker_noise_floor_amplitude_visible: true; \
-                    qproperty-marker_peak_amplitude_color: blue; \
-            } \
-                ");
-    fft_gui->enable_rf_freq(true);
 
     QThread *t4 = new QThread;
     t4->setObjectName("radioop");
-    RadioOp *radio_op = new RadioOp(settings, fft_gui,const_gui, rssi_gui);
+    RadioOp *radio_op = new RadioOp(settings, const_gui, rssi_gui);
     radio_op->moveToThread(t4);
     QObject::connect(t4, SIGNAL(started()), radio_op, SLOT(run()));
     QObject::connect(radio_op, SIGNAL(finished()), t4, SLOT(quit()));
@@ -288,6 +244,7 @@ int main(int argc, char *argv[])
     QObject::connect(w,SIGNAL(setVox(bool)),radio_op,SLOT(setVox(bool)));
     QObject::connect(w,SIGNAL(toggleRepeat(bool)),radio_op,SLOT(toggleRepeat(bool)));
     QObject::connect(w,SIGNAL(stopRadio()),radio_op,SLOT(stop()));
+    QObject::connect(w,SIGNAL(setCarrierOffset(qint64)),radio_op,SLOT(setCarrierOffset(qint64)));
     QObject::connect(radio_op, SIGNAL(printText(QString,bool)), w, SLOT(displayText(QString,bool)));
     QObject::connect(radio_op, SIGNAL(printCallsign(QString)), w, SLOT(displayCallsign(QString)));
     QObject::connect(radio_op, SIGNAL(videoImage(QImage)), w, SLOT(displayImage(QImage)));

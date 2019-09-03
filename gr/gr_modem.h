@@ -72,7 +72,7 @@ public:
         FrameTypeRepeaterInfo,
         FrameTypeEnd
     };
-    explicit gr_modem(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui::const_sink_c::sptr const_gui,
+    explicit gr_modem(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui,
                       gr::qtgui::number_sink::sptr rssi_gui, QObject *parent = 0);
     ~gr_modem();
     long _frequency_found;
@@ -127,6 +127,7 @@ public slots:
     double getFreqGUI();
     void setRepeater(bool value);
     void get_fft_data(std::complex<float>* data, unsigned int &size);
+    void set_carrier_offset(long center_freq);
 
 private:
 
@@ -163,7 +164,6 @@ private:
 
     gr::qtgui::const_sink_c::sptr _const_gui;
     gr::qtgui::number_sink::sptr _rssi_gui;
-    gr::qtgui::sink_c::sptr _fft_gui;
 
 
 };

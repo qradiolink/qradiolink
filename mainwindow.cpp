@@ -81,7 +81,9 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     QObject::connect(ui->toggleVoxButton,SIGNAL(toggled(bool)),this,SLOT(toggleVox(bool)));
 
     QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
-    QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
+    QObject::connect(ui->plotterFrame,SIGNAL(pandapterRangeChanged(float,float)),ui->plotterFrame,SLOT(setWaterfallRange(float,float)));
+    QObject::connect(ui->plotterFrame,SIGNAL(newCenterFreq(qint64)),this,SLOT(tuneMainFreq(qint64)));
+    QObject::connect(ui->plotterFrame,SIGNAL(newDemodFreq(qint64,qint64)),this,SLOT(carrierOffsetChanged(qint64,qint64)));
 
     QObject::connect(ui->voipTreeWidget,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this,SLOT(channelState(QTreeWidgetItem *,int)));
 
@@ -449,7 +451,13 @@ void MainWindow::tuneMainFreq(qint64 freq)
     ui->frequencyEdit->setText(QString::number(ceil(freq/1000)));
     ui->tuneDial->setValue(0);
     ui->plotterFrame->setCenterFreq(freq);
+    ui->frameCtrlFreq->setFrequency(freq);
     emit tuneFreq(freq);
+}
+
+void MainWindow::carrierOffsetChanged(qint64 freq, qint64 offset)
+{
+    emit setCarrierOffset(offset);
 }
 
 void MainWindow::enterFreq()

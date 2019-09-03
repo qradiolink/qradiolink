@@ -63,7 +63,7 @@ class RadioOp : public QObject
 {
     Q_OBJECT
 public:
-    explicit RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui,
+    explicit RadioOp(Settings *settings,
                      gr::qtgui::const_sink_c::sptr const_gui, gr::qtgui::number_sink::sptr rssi_gui, QObject *parent = 0);
     ~RadioOp();
 
@@ -133,6 +133,7 @@ public slots:
     void addChannel(Channel* chan);
     void setStations(StationList list);
     void setVox(bool value);
+    void setCarrierOffset(qint64 center_freq);
 
 private:
     bool _stop;

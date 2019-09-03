@@ -16,7 +16,7 @@
 
 #include "gr_modem.h"
 
-gr_modem::gr_modem(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui::const_sink_c::sptr const_gui,
+gr_modem::gr_modem(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui,
                    gr::qtgui::number_sink::sptr rssi_gui, QObject *parent) :
     QObject(parent)
 {
@@ -45,7 +45,6 @@ gr_modem::gr_modem(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgu
     _current_frame_type = FrameTypeNone;
     _const_gui = const_gui;
     _rssi_gui = rssi_gui;
-    _fft_gui = fft_gui;
     _frequency_found =0;
     _requested_frequency_hz = 433500000;
     _gr_mod_base = 0;
@@ -71,7 +70,7 @@ void gr_modem::initTX(int modem_type, std::string device_args, std::string devic
 void gr_modem::initRX(int modem_type, std::string device_args, std::string device_antenna, int freq_corr)
 {
     _modem_type_rx = modem_type;
-    _gr_demod_base = new gr_demod_base(_fft_gui,
+    _gr_demod_base = new gr_demod_base(
                 _const_gui, _rssi_gui, 0, _requested_frequency_hz, 0.9, device_args, device_antenna, freq_corr);
     toggleRxMode(modem_type);
 
@@ -236,6 +235,12 @@ void gr_modem::tune(long center_freq)
 {
     if(_gr_demod_base)
         _gr_demod_base->tune(center_freq);
+}
+
+void gr_modem::set_carrier_offset(long center_freq)
+{
+    if(_gr_demod_base)
+        _gr_demod_base->set_carrier_offset(center_freq);
 }
 
 void gr_modem::tuneTx(long center_freq)

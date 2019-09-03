@@ -24,7 +24,6 @@
 #include <gnuradio/filter/freq_xlating_fir_filter_ccf.h>
 #include <gnuradio/blocks/multiply_cc.h>
 #include <gnuradio/qtgui/const_sink_c.h>
-#include <gnuradio/qtgui/sink_c.h>
 #include <gnuradio/qtgui/number_sink.h>
 #include <gnuradio/analog/agc2_ff.h>
 #include <gnuradio/blocks/complex_to_mag_squared.h>
@@ -57,8 +56,7 @@ class gr_demod_base : public QObject
 {
     Q_OBJECT
 public:
-    explicit gr_demod_base(gr::qtgui::sink_c::sptr fft_gui,
-                               gr::qtgui::const_sink_c::sptr const_gui, gr::qtgui::number_sink::sptr rssi_gui,
+    explicit gr_demod_base(gr::qtgui::const_sink_c::sptr const_gui, gr::qtgui::number_sink::sptr rssi_gui,
                                 QObject *parent = 0, float device_frequency=434000000,
                                float rf_gain=50, std::string device_args="rtl=0", std::string device_antenna="RX2",
                                 int freq_corr=0);
@@ -73,6 +71,7 @@ public slots:
     std::vector<float> *getAudio();
     void getFFTData(std::complex<float> *fft_data,  unsigned int &fftSize);
     void tune(long center_freq);
+    void set_carrier_offset(long carrier_offset);
     void set_rx_sensitivity(float value);
     void set_squelch(int value);
     void set_ctcss(float value);
@@ -88,7 +87,6 @@ private:
     rx_fft_c_sptr _fft_sink;
     gr::analog::agc2_ff::sptr _agc2;
     gr::qtgui::const_sink_c::sptr _constellation;
-    gr::qtgui::sink_c::sptr _fft_gui;
     gr::qtgui::number_sink::sptr _rssi;
     gr::blocks::message_debug::sptr _message_sink;
     gr::blocks::copy::sptr _rssi_valve;
