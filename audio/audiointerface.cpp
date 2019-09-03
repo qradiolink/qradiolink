@@ -50,12 +50,12 @@ AudioInterface::AudioInterface(QObject *parent, unsigned sample_rate, unsigned c
 
     sf_simplecomp(&_cm_state_read_codec2,
                   8000, // audio rate
-                  -3,   // audio boost
-                  -30,  // kick in (dB)
+                  -6,   // audio boost
+                  -40,  // kick in (dB)
                   40,   // knee
-                  20,   // inverse scale
-                  0.005f,   // attack
-                  0.175f    // release
+                  40,   // inverse scale
+                  0.001f,   // attack
+                  0.075f    // release
                   );
     sf_simplecomp(&_cm_state_read,
                   8000, // audio rate
@@ -77,12 +77,12 @@ AudioInterface::AudioInterface(QObject *parent, unsigned sample_rate, unsigned c
                   );
     sf_simplecomp(&_cm_state_write_codec2,
                   8000, // audio rate
-                  3,   // audio boost
+                  0,   // audio boost
                   -25,  // kick in (dB)
                   40,   // knee
                   30,   // inverse scale
                   0.005f,   // attack
-                  0.125f    // release
+                  0.025f    // release
                   );
     int rand_len = 4;
     char rand[5];

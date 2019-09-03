@@ -44,7 +44,7 @@ public:
     short* decode_gsm(unsigned char *audiobuffer, int data_length, int &samples);
 
 
-    void filter_audio(short *audiobuffer, int audiobuffersize);
+    void filter_audio(short *audiobuffer, int audiobuffersize, bool pre_emphasis=false, bool de_emphasis=false);
 private:
     OpusEncoder *_enc;
     OpusDecoder *_dec;
@@ -54,6 +54,7 @@ private:
     struct gsm_state *_gsm;
     Filter *_audio_filter;
     Filter *_audio_filter2;
+    double _emph_last_input;
 };
 
 #endif // AUDIOENCODER_H
