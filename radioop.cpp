@@ -1412,6 +1412,11 @@ void RadioOp::setCarrierOffset(qint64 center_freq)
     _mutex->unlock();
 }
 
+void RadioOp::setFFTSize(int size)
+{
+    _modem->setFFTSize(size);
+}
+
 void RadioOp::tuneTxFreq(qint64 center_freq)
 {
     _mutex->lock();

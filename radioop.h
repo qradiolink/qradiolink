@@ -87,6 +87,8 @@ signals:
     void pingServer();
     void voipData(short *pcm, int samples);
     void newFFTData(std::complex<float>*, int);
+
+
 public slots:
     void run();
     void startTransmission();
@@ -134,6 +136,7 @@ public slots:
     void setStations(StationList list);
     void setVox(bool value);
     void setCarrierOffset(qint64 center_freq);
+    void setFFTSize(int size);
 
 private:
     bool _stop;

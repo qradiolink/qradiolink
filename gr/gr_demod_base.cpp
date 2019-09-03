@@ -557,3 +557,10 @@ void gr_demod_base::set_carrier_offset(long carrier_offset)
     _rotator->set_phase_inc(2*M_PI*-_carrier_offset/1000000);
 
 }
+
+void gr_demod_base::set_fft_size(int size)
+{
+    _top_block->lock();
+    _fft_sink->set_fft_size((unsigned int)size);
+    _top_block->unlock();
+}

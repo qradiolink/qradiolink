@@ -79,6 +79,8 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     QObject::connect(ui->voipForwardButton,SIGNAL(toggled(bool)),this,SLOT(toggleVOIPForwarding(bool)));
     QObject::connect(ui->toggleRepeaterButton,SIGNAL(toggled(bool)),this,SLOT(toggleRepeater(bool)));
     QObject::connect(ui->toggleVoxButton,SIGNAL(toggled(bool)),this,SLOT(toggleVox(bool)));
+    QObject::connect(ui->fftSizeBox,SIGNAL(currentIndexChanged(int)),this,SLOT(setFFTSize(int)));
+    QObject::connect(ui->peakHoldCheckBox,SIGNAL(toggled(bool)),ui->plotterFrame,SLOT(setPeakHold(bool)));
 
     QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
     QObject::connect(ui->plotterFrame,SIGNAL(pandapterRangeChanged(float,float)),ui->plotterFrame,SLOT(setWaterfallRange(float,float)));
@@ -115,6 +117,9 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     ui->plotterFrame->setFftRate(5);
     ui->plotterFrame->setPercent2DScreen(50);
     ui->plotterFrame->setFftFill(true);
+    ui->plotterFrame->setFreqDigits(2);
+    ui->plotterFrame->setTooltipsEnabled(true);
+    ui->plotterFrame->setClickResolution(1);
     ui->plotterFrame->setPandapterRange(-120.0, -20.0);
     ui->plotterFrame->setWaterfallRange(-120.0, -20.0);
 
@@ -260,8 +265,13 @@ void MainWindow::newFFTData(std::complex<float>* fft_data, int fftsize)
     }
 
     ui->plotterFrame->setNewFftData(_iirFftData, _realFftData, fftsize);
-    ui->plotterFrame->draw();
+    //ui->plotterFrame->draw();
     delete[] fft_data;
+}
+
+void MainWindow::setFFTSize(int size)
+{
+    emit newFFTSize(ui->fftSizeBox->currentText().toInt());
 }
 
 void MainWindow::displayText(QString text, bool html)

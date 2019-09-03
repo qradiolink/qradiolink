@@ -88,6 +88,7 @@ int main(int argc, char *argv[])
 
 
     QApplication a(argc, argv);
+    a.setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; border: 0px solid white; }");
     QStringList arguments = QCoreApplication::arguments();
 
 
@@ -244,6 +245,7 @@ int main(int argc, char *argv[])
     QObject::connect(w,SIGNAL(toggleRepeat(bool)),radio_op,SLOT(toggleRepeat(bool)));
     QObject::connect(w,SIGNAL(stopRadio()),radio_op,SLOT(stop()));
     QObject::connect(w,SIGNAL(setCarrierOffset(qint64)),radio_op,SLOT(setCarrierOffset(qint64)));
+    QObject::connect(w,SIGNAL(newFFTSize(int)),radio_op,SLOT(setFFTSize(int)));
     QObject::connect(radio_op, SIGNAL(printText(QString,bool)), w, SLOT(displayText(QString,bool)));
     QObject::connect(radio_op, SIGNAL(printCallsign(QString)), w, SLOT(displayCallsign(QString)));
     QObject::connect(radio_op, SIGNAL(videoImage(QImage)), w, SLOT(displayImage(QImage)));

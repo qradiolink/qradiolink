@@ -85,6 +85,7 @@ public slots:
     void channelState(QTreeWidgetItem *item, int k);
     void newFFTData(std::complex<float>* fft_data, int fftsize);
     void carrierOffsetChanged(qint64 freq, qint64 offset);
+    void setFFTSize(int size);
 
 signals:
     void startTransmission();
@@ -118,6 +119,7 @@ signals:
     void toggleRepeat(bool value);
     void stopRadio();
     void setCarrierOffset(qint64 offset);
+    void newFFTSize(int);
 
 
 public:

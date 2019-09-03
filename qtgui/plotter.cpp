@@ -70,7 +70,7 @@ int gettimeofday(struct timeval * tp, struct timezone * tzp)
 //#define PLOTTER_DEBUG
 
 
-#define CUR_CUT_DELTA 5		//cursor capture delta in pixels
+#define CUR_CUT_DELTA 1		//cursor capture delta in pixels
 
 #define FFT_MIN_DB     -160.f
 #define FFT_MAX_DB      0.f

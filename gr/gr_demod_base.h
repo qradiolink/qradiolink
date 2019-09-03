@@ -79,6 +79,7 @@ public slots:
     void enable_gui_fft(bool value);
     double get_freq();
     void set_mode(int mode);
+    void set_fft_size(int size);
 
 private:
     gr::top_block_sptr _top_block;
