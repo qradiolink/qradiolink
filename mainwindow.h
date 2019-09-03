@@ -27,6 +27,7 @@
 #include <QTreeWidgetItem>
 #include "mumbleclient.h"
 #include <math.h>
+#include <complex>
 #include "qtgui/freqctrl.h"
 #include <libconfig.h++>
 #include "settings.h"
@@ -82,6 +83,7 @@ public slots:
     void toggleRepeater(bool value);
     void newChannel(Channel *chan);
     void channelState(QTreeWidgetItem *item, int k);
+    void newFFTData(std::complex<float>* fft_data, int fftsize);
 
 signals:
     void startTransmission();
@@ -138,7 +140,9 @@ private:
     void closeEvent(QCloseEvent *);
     Settings *_settings;
     int _current_voip_channel;
-    CPlotter *plotter;
+    float *_realFftData;
+    float *_pwrFftData;
+    float *_iirFftData;
 
 
 

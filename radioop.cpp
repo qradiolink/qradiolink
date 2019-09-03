@@ -47,6 +47,8 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _data_read_timer = new QElapsedTimer();
     _data_modem_reset_timer = new QElapsedTimer();
     _data_modem_sleep_timer = new QElapsedTimer();
+    _fft_read_timer = new QElapsedTimer();
+    _fft_read_timer->start();
     _data_modem_sleeping = false;
     _settings = settings;
     _transmitting_audio = false;
@@ -78,8 +80,10 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::sink_c::sptr fft_gui, gr::qtgui:
     _rand_frame_data = new unsigned char[5000];
     _voip_encode_buffer = new QVector<short>;
 
+
     _fft_gui = fft_gui;
     QObject::connect(_voice_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));
+    QObject::connect(_data_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));
     QObject::connect(_data_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));
     QObject::connect(_voip_tx_timer, SIGNAL(timeout()), this, SLOT(stopTx()));
     _modem = new gr_modem(_settings, fft_gui,const_gui, rssi_gui);
@@ -627,6 +631,7 @@ void RadioOp::run()
                 {
                     data_to_process = _modem->demodulateAnalog();
                 }
+                getFFTData();
 
             }
         }
@@ -658,6 +663,27 @@ void RadioOp::run()
     }
 
     emit finished();
+}
+
+void RadioOp::getFFTData()
+{
+    qint64 msec = (quint64)_fft_read_timer->nsecsElapsed() / 1000000;
+    if(msec < 75)
+    {
+        return;
+    }
+    std::complex<float> *fft_data = new std::complex<float>[1024*1024];
+    unsigned int fft_size = 0;
+    _modem->get_fft_data(fft_data, fft_size);
+    if(fft_size > 0)
+    {
+        emit newFFTData(fft_data, (int)fft_size);
+    }
+    else
+    {
+        delete[] fft_data;
+    }
+    _fft_read_timer->restart();
 }
 
 void RadioOp::receiveAudioData(unsigned char *data, int size)

@@ -126,6 +126,7 @@ public slots:
     void enableGUIFFT(bool value);
     double getFreqGUI();
     void setRepeater(bool value);
+    void get_fft_data(std::complex<float>* data, unsigned int &size);
 
 private:
 

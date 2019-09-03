@@ -227,7 +227,7 @@ void CPlotter::mouseMoveEvent(QMouseEvent* event)
 
     QPoint pt = event->pos();
 
-    /* mouse enter / mouse leave events */
+    /* mouse ent er / mouse leave events */
     if (m_OverlayPixmap.rect().contains(pt))
     {
         //is in Overlay bitmap region
@@ -755,15 +755,21 @@ void CPlotter::mouseReleaseEvent(QMouseEvent * event)
 void CPlotter::zoomStepX(float step, int x)
 {
     // calculate new range shown on FFT
-    float new_range = qBound(10.0f,
-                             (float)(m_Span) * step,
-                             (float)(m_SampleFreq) * 10.0f);
+    float new_range = qBound(10.0f, m_Span * step, m_SampleFreq * 10.0f);
 
     // Frequency where event occured is kept fixed under mouse
     float ratio = (float)x / (float)m_OverlayPixmap.width();
     float fixed_hz = freqFromX(x);
     float f_max = fixed_hz + (1.0 - ratio) * new_range;
     float f_min = f_max - new_range;
+
+    // ensure we don't go beyond the rangelimits
+    if (f_min < m_CenterFreq - m_SampleFreq / 2.f)
+        f_min = m_CenterFreq - m_SampleFreq / 2.f;
+
+    if (f_max > m_CenterFreq + m_SampleFreq / 2.f)
+        f_max = m_CenterFreq + m_SampleFreq / 2.f;
+    new_range = f_max - f_min;
 
     qint64 fc = (qint64)(f_min + (f_max - f_min) / 2.0);
 
@@ -1113,7 +1119,7 @@ void CPlotter::draw()
  * When FFT data is set using this method, the same data will be used for both the
  * pandapter and the waterfall.
  */
-void CPlotter::setNewFttData(float *fftData, int size)
+void CPlotter::setNewFftData(float *fftData, int size)
 {
     /** FIXME **/
     if (!m_Running)
@@ -1136,7 +1142,7 @@ void CPlotter::setNewFttData(float *fftData, int size)
  * waterfall.
  */
 
-void CPlotter::setNewFttData(float *fftData, float *wfData, int size)
+void CPlotter::setNewFftData(float *fftData, float *wfData, int size)
 {
     /** FIXME **/
     if (!m_Running)
@@ -1313,7 +1319,6 @@ void CPlotter::drawOverlay()
     int xAxisHeight = metrics.height() + 2 * VER_MARGIN;
     int xAxisTop = h - xAxisHeight;
     int fLabelTop = xAxisTop + VER_MARGIN;
-
 
     if (m_CenterLineEnabled)
     {
@@ -1662,6 +1667,7 @@ void CPlotter::calcDivSize (qint64 low, qint64 high, int divswanted, qint64 &adj
     step = 1;
     divs = high - low;
     int index = 0;
+    adjlow = (low / step) * step;
 
     while (divs > divswanted)
     {

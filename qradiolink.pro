@@ -81,7 +81,7 @@ SOURCES += main.cpp\
     gr/gr_4fsk_discriminator.cpp \
     channel.cpp \
     radioprotocol.cpp \
-    gr/gr_fft_sink.cpp
+    gr/rx_fft.cpp
 
 HEADERS  += mainwindow.h\
         audio/audioencoder.h\
@@ -150,14 +150,14 @@ HEADERS  += mainwindow.h\
     gr/modem_types.h \
     channel.h \
     radioprotocol.h \
-    gr/gr_fft_sink.h
+    gr/rx_fft.h
 
 
 FORMS    += mainwindow.ui \
     desktop_mainwindow.ui
 
 
-LIBS += -lgnuradio-pmt -lgnuradio-audio -lgnuradio-analog -lgnuradio-blocks \
+LIBS += -lgnuradio-pmt -lgnuradio-audio -lgnuradio-analog -lgnuradio-blocks -lgnuradio-fft \
         -lgnuradio-osmosdr \
         -lgnuradio-blocks -lgnuradio-filter -lgnuradio-digital -lgnuradio-runtime -lgnuradio-qtgui -lgnuradio-fec \
         -lboost_thread$$BOOST_SUFFIX -lboost_system$$BOOST_SUFFIX -lboost_program_options$$BOOST_SUFFIX

@@ -81,6 +81,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     QObject::connect(ui->toggleVoxButton,SIGNAL(toggled(bool)),this,SLOT(toggleVox(bool)));
 
     QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
+    QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
 
     QObject::connect(ui->voipTreeWidget,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this,SLOT(channelState(QTreeWidgetItem *,int)));
 
@@ -101,6 +102,17 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     ui->statusBar->hide();
     ui->mainToolBar->hide();
     setWindowIcon(QIcon(":/res/logo.png"));
+    _realFftData = new float[1024*1024];
+    _pwrFftData = new float[1024*1024]();
+    _iirFftData = new float[1024*1024];
+    ui->plotterFrame->setSampleRate(1000000);
+    ui->plotterFrame->setSpanFreq((quint32)1000000);
+    ui->plotterFrame->setRunningState(false);
+    ui->plotterFrame->setFftRate(12);
+    ui->plotterFrame->setPercent2DScreen(50);
+    ui->plotterFrame->setFftFill(true);
+    ui->plotterFrame->setPandapterRange(-120.0, -20.0);
+    ui->plotterFrame->setWaterfallRange(-120.0, -20.0);
 
 
 }
@@ -199,6 +211,53 @@ void MainWindow::GUIsendText()
     emit sendText(text, false);
     ui->sendTextEdit->setPlainText("");
     ui->redLED->setEnabled(true);
+}
+
+void MainWindow::newFFTData(std::complex<float>* fft_data, int fftsize)
+{
+    ui->plotterFrame->setRunningState(false);
+    unsigned int    i;
+    float           pwr;
+    float           pwr_scale;
+    std::complex<float> pt;     /* a single FFT point used in calculations */
+
+    // FIXME: fftsize is a reference
+
+    if (fftsize == 0)
+    {
+        /* nothing to do, wait until next activation. */
+        delete[] fft_data;
+        return;
+    }
+
+    // NB: without cast to float the multiplication will overflow at 64k
+    // and pwr_scale will be inf
+    pwr_scale = 1.0 / ((float)fftsize * (float)fftsize);
+
+    /* Normalize, calculate power and shift the FFT */
+    for (i = 0; i < fftsize; i++)
+    {
+
+        /* normalize and shift */
+        if (i < fftsize/2)
+        {
+            pt = fft_data[fftsize/2+i];
+        }
+        else
+        {
+            pt = fft_data[i-fftsize/2];
+        }
+
+        /* calculate power in dBFS */
+        pwr = pwr_scale * (pt.imag() * pt.imag() + pt.real() * pt.real());
+        _realFftData[i] = 10.0 * log10f(pwr + 1.0e-20);
+
+        /* FFT averaging */
+        _iirFftData[i] += 1 * (_realFftData[i] - _iirFftData[i]);
+    }
+
+    ui->plotterFrame->setNewFftData(_iirFftData, _realFftData, fftsize);
+    delete[] fft_data;
 }
 
 void MainWindow::displayText(QString text, bool html)
@@ -389,6 +448,7 @@ void MainWindow::tuneMainFreq(qint64 freq)
     _rx_frequency = freq;
     ui->frequencyEdit->setText(QString::number(ceil(freq/1000)));
     ui->tuneDial->setValue(0);
+    ui->plotterFrame->setCenterFreq(freq);
     emit tuneFreq(freq);
 }
 

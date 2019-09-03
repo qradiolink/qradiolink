@@ -536,6 +536,11 @@ static void unpackBytes(unsigned char *bitbuf, const unsigned char *bytebuf, int
     }
 }
 
+void gr_modem::get_fft_data(std::complex<float>* data, unsigned int &size)
+{
+    _gr_demod_base->getFFTData(data, size);
+}
+
 bool gr_modem::demodulateAnalog()
 {
     std::vector<float> *audio_data;

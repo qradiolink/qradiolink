@@ -86,6 +86,7 @@ signals:
     void freqFromGUI(long freq);
     void pingServer();
     void voipData(short *pcm, int samples);
+    void newFFTData(std::complex<float>*, int);
 public slots:
     void run();
     void startTransmission();
@@ -194,6 +195,8 @@ private:
     bool _vox_enabled;
     bool _tx_started;
     int _freq_gui_counter;
+    std::complex<float> *_fft_data;
+    QElapsedTimer *_fft_read_timer;
 
     void readConfig(std::string &rx_device_args, std::string &tx_device_args,
                     std::string &rx_antenna, std::string &tx_antenna, int &rx_freq_corr,
@@ -209,6 +212,7 @@ private:
     void sendChannels();
     void sendTextData(QString text, int frame_type);
     void sendBinData(QByteArray data, int frame_type);
+    void getFFTData();
 
 };
 

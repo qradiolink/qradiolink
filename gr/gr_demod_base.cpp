@@ -74,7 +74,7 @@ gr_demod_base::gr_demod_base(gr::qtgui::sink_c::sptr fft_gui,
     _constellation = const_gui;
     _fft_gui = fft_gui;
     _rssi = rssi_gui;
-    _fft_sink = make_gr_fft_sink();
+    _fft_sink = make_rx_fft_c(32768, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
 
     _deframer1 = make_gr_deframer_bb(1);
     _deframer2 = make_gr_deframer_bb(1);
@@ -483,15 +483,14 @@ std::vector<float>* gr_demod_base::getAudio()
     return data;
 }
 
-std::vector<float>* gr_demod_base::getFFTData()
+void gr_demod_base::getFFTData(std::complex<float> *fft_data,  unsigned int &fftSize)
 {
     if(!_demod_running)
     {
-        std::vector<float> *dummy = new std::vector<float>;
-        return dummy;
+        return;
     }
-    std::vector<float> *data = _fft_sink->get_data();
-    return data;
+    _fft_sink->get_fft_data(fft_data, fftSize);
+    return;
 }
 
 

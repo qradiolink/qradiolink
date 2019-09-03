@@ -41,7 +41,7 @@
 #include <vector>
 #include "gr_audio_sink.h"
 #include "gr_vector_sink.h"
-#include "gr_fft_sink.h"
+#include "rx_fft.h"
 #include "gr_deframer_bb.h"
 #include "gr_demod_2fsk_sdr.h"
 #include "gr_demod_4fsk_sdr.h"
@@ -71,7 +71,7 @@ public slots:
     std::vector<unsigned char> *getData();
     std::vector<unsigned char> *getData(int nr);
     std::vector<float> *getAudio();
-    std::vector<float> *getFFTData();
+    void getFFTData(std::complex<float> *fft_data,  unsigned int &fftSize);
     void tune(long center_freq);
     void set_rx_sensitivity(float value);
     void set_squelch(int value);
@@ -85,7 +85,7 @@ private:
     gr::top_block_sptr _top_block;
     gr_audio_sink_sptr _audio_sink;
     gr_vector_sink_sptr _vector_sink;
-    gr_fft_sink_sptr _fft_sink;
+    rx_fft_c_sptr _fft_sink;
     gr::analog::agc2_ff::sptr _agc2;
     gr::qtgui::const_sink_c::sptr _constellation;
     gr::qtgui::sink_c::sptr _fft_gui;
