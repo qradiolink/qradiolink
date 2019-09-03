@@ -96,7 +96,7 @@
 </string>
         </property>
         <property name="currentIndex">
-         <number>2</number>
+         <number>0</number>
         </property>
         <property name="iconSize">
          <size>
@@ -104,322 +104,6 @@
           <height>64</height>
          </size>
         </property>
-        <widget class="QWidget" name="tab">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="baseSize">
-          <size>
-           <width>64</width>
-           <height>64</height>
-          </size>
-         </property>
-         <property name="styleSheet">
-          <string notr="true"/>
-         </property>
-         <attribute name="title">
-          <string>TX</string>
-         </attribute>
-         <layout class="QGridLayout" name="gridLayout">
-          <item row="7" column="0">
-           <spacer name="verticalSpacer">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="4" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout_3">
-            <property name="spacing">
-             <number>0</number>
-            </property>
-            <item>
-             <spacer name="horizontalSpacer_4">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer_3">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </item>
-          <item row="5" column="0">
-           <widget class="QFrame" name="frame_5">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>24</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>80</height>
-             </size>
-            </property>
-            <property name="frameShape">
-             <enum>QFrame::StyledPanel</enum>
-            </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
-            </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_10">
-             <item>
-              <spacer name="horizontalSpacer_7">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeType">
-                <enum>QSizePolicy::Fixed</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_2">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QLabel" name="label_15">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>30</height>
-                </size>
-               </property>
-               <property name="styleSheet">
-                <string notr="true">font: 10pt &quot;Sans Serif&quot;;</string>
-               </property>
-               <property name="frameShape">
-                <enum>QFrame::StyledPanel</enum>
-               </property>
-               <property name="frameShadow">
-                <enum>QFrame::Sunken</enum>
-               </property>
-               <property name="text">
-                <string>RX CTCSS</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="label_13">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>30</height>
-                </size>
-               </property>
-               <property name="styleSheet">
-                <string notr="true">font: 10pt &quot;Sans Serif&quot;;</string>
-               </property>
-               <property name="frameShape">
-                <enum>QFrame::StyledPanel</enum>
-               </property>
-               <property name="frameShadow">
-                <enum>QFrame::Sunken</enum>
-               </property>
-               <property name="text">
-                <string>TX CTCSS</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item row="15" column="0">
-           <layout class="QGridLayout" name="gridLayout_4">
-            <item row="0" column="6">
-             <widget class="QPushButton" name="buttonQuit">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>120</width>
-                <height>64</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>120</width>
-                <height>64</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">font: 12pt &quot;Sans Serif&quot;;
-color: rgb(255, 255, 255);
-background-color: rgb(132, 0, 0);</string>
-              </property>
-              <property name="text">
-               <string>Close</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <spacer name="horizontalSpacer">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </item>
-          <item row="1" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout_4">
-            <property name="sizeConstraint">
-             <enum>QLayout::SetMaximumSize</enum>
-            </property>
-           </layout>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="tab_4">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>550</width>
-           <height>300</height>
-          </size>
-         </property>
-         <attribute name="title">
-          <string>Tune</string>
-         </attribute>
-         <layout class="QVBoxLayout" name="verticalLayout_4">
-          <item>
-           <layout class="QFormLayout" name="formLayout">
-            <property name="sizeConstraint">
-             <enum>QLayout::SetDefaultConstraint</enum>
-            </property>
-            <property name="horizontalSpacing">
-             <number>5</number>
-            </property>
-            <property name="verticalSpacing">
-             <number>3</number>
-            </property>
-            <item row="3" column="0">
-             <widget class="QWidget" name="widget_const" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>600</width>
-                <height>400</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>600</width>
-                <height>400</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="0">
-             <widget class="QWidget" name="widget_rssi" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>550</width>
-                <height>70</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>90</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </widget>
         <widget class="QWidget" name="tab_9">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
@@ -430,7 +114,7 @@ background-color: rgb(132, 0, 0);</string>
          <attribute name="title">
           <string>Spectrum</string>
          </attribute>
-         <widget class="QFrame" name="verticalFrame_2">
+         <widget class="QFrame" name="plotterContainer">
           <property name="geometry">
            <rect>
             <x>0</x>
@@ -447,13 +131,13 @@ background-color: rgb(132, 0, 0);</string>
           </property>
           <property name="minimumSize">
            <size>
-            <width>1200</width>
-            <height>500</height>
+            <width>400</width>
+            <height>300</height>
            </size>
           </property>
           <layout class="QGridLayout" name="gridLayout_6">
            <property name="sizeConstraint">
-            <enum>QLayout::SetMinimumSize</enum>
+            <enum>QLayout::SetMaximumSize</enum>
            </property>
            <property name="leftMargin">
             <number>2</number>
@@ -465,7 +149,7 @@ background-color: rgb(132, 0, 0);</string>
             <number>4</number>
            </property>
            <property name="bottomMargin">
-            <number>2</number>
+            <number>1</number>
            </property>
            <property name="horizontalSpacing">
             <number>3</number>
@@ -501,15 +185,15 @@ background-color: rgb(132, 0, 0);</string>
            <item row="0" column="1">
             <widget class="CPlotter" name="plotterFrame">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
              <property name="minimumSize">
               <size>
-               <width>1100</width>
-               <height>500</height>
+               <width>500</width>
+               <height>300</height>
               </size>
              </property>
              <property name="maximumSize">
@@ -528,6 +212,18 @@ background-color: rgb(132, 0, 0);</string>
            </item>
            <item row="1" column="1">
             <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0,0,0,0,0,0">
+             <property name="spacing">
+              <number>2</number>
+             </property>
+             <property name="sizeConstraint">
+              <enum>QLayout::SetMaximumSize</enum>
+             </property>
+             <property name="topMargin">
+              <number>2</number>
+             </property>
+             <property name="bottomMargin">
+              <number>1</number>
+             </property>
              <item>
               <widget class="QLabel" name="label_16">
                <property name="styleSheet">
@@ -672,6 +368,82 @@ background-color: rgb(255, 255, 127);</string>
            </item>
           </layout>
          </widget>
+        </widget>
+        <widget class="QWidget" name="tab_4">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>550</width>
+           <height>300</height>
+          </size>
+         </property>
+         <attribute name="title">
+          <string>Tune</string>
+         </attribute>
+         <layout class="QVBoxLayout" name="verticalLayout_4">
+          <item>
+           <layout class="QFormLayout" name="formLayout">
+            <property name="sizeConstraint">
+             <enum>QLayout::SetDefaultConstraint</enum>
+            </property>
+            <property name="horizontalSpacing">
+             <number>5</number>
+            </property>
+            <property name="verticalSpacing">
+             <number>3</number>
+            </property>
+            <item row="3" column="0">
+             <widget class="QWidget" name="widget_const" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>600</width>
+                <height>400</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>600</width>
+                <height>400</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="0">
+             <widget class="QWidget" name="widget_rssi" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>550</width>
+                <height>70</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>90</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
         </widget>
         <widget class="QWidget" name="tab_2">
          <property name="sizePolicy">
@@ -1389,7 +1161,7 @@ font: 10pt &quot;Sans Serif&quot;;</string>
        </widget>
       </item>
       <item alignment="Qt::AlignTop">
-       <widget class="QFrame" name="frame_6">
+       <widget class="QFrame" name="controlsFrame">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -1740,6 +1512,9 @@ background-color: rgb(35, 35, 35);</string>
          <property name="mouseTracking">
           <bool>true</bool>
          </property>
+         <property name="autoFillBackground">
+          <bool>true</bool>
+         </property>
          <property name="styleSheet">
           <string notr="true"/>
          </property>
@@ -1780,6 +1555,9 @@ background-color: rgb(35, 35, 35);</string>
          <property name="mouseTracking">
           <bool>true</bool>
          </property>
+         <property name="autoFillBackground">
+          <bool>true</bool>
+         </property>
          <property name="maximum">
           <number>99</number>
          </property>
@@ -1809,6 +1587,9 @@ background-color: rgb(35, 35, 35);</string>
           <cursorShape>OpenHandCursor</cursorShape>
          </property>
          <property name="mouseTracking">
+          <bool>true</bool>
+         </property>
+         <property name="autoFillBackground">
           <bool>true</bool>
          </property>
          <property name="maximum">
@@ -1842,6 +1623,9 @@ background-color: rgb(35, 35, 35);</string>
          <property name="mouseTracking">
           <bool>true</bool>
          </property>
+         <property name="autoFillBackground">
+          <bool>true</bool>
+         </property>
          <property name="maximum">
           <number>100</number>
          </property>
@@ -1850,6 +1634,12 @@ background-color: rgb(35, 35, 35);</string>
          </property>
          <property name="value">
           <number>90</number>
+         </property>
+         <property name="invertedAppearance">
+          <bool>false</bool>
+         </property>
+         <property name="invertedControls">
+          <bool>false</bool>
          </property>
          <property name="notchTarget">
           <double>10.000000000000000</double>
@@ -1878,6 +1668,9 @@ background-color: rgb(35, 35, 35);</string>
            <width>50</width>
            <height>50</height>
           </size>
+         </property>
+         <property name="autoFillBackground">
+          <bool>true</bool>
          </property>
          <property name="minimum">
           <number>-500</number>
@@ -1911,7 +1704,7 @@ background-color: rgb(35, 35, 35);</string>
         <widget class="QLabel" name="label_12">
          <property name="geometry">
           <rect>
-           <x>880</x>
+           <x>910</x>
            <y>20</y>
            <width>34</width>
            <height>16</height>
@@ -1936,10 +1729,10 @@ background-color: rgb(35, 35, 35);</string>
           <string notr="true"/>
          </property>
          <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
+          <enum>QFrame::NoFrame</enum>
          </property>
          <property name="frameShadow">
-          <enum>QFrame::Sunken</enum>
+          <enum>QFrame::Plain</enum>
          </property>
          <property name="text">
           <string>Split</string>
@@ -1954,7 +1747,7 @@ background-color: rgb(35, 35, 35);</string>
         <widget class="QLineEdit" name="shiftEdit">
          <property name="geometry">
           <rect>
-           <x>850</x>
+           <x>880</x>
            <y>40</y>
            <width>100</width>
            <height>30</height>
@@ -2054,7 +1847,7 @@ font: 11pt &quot;Sans Serif&quot;;</string>
         <widget class="QLabel" name="labelDisplayCallsign">
          <property name="geometry">
           <rect>
-           <x>710</x>
+           <x>750</x>
            <y>40</y>
            <width>120</width>
            <height>30</height>
@@ -2109,7 +1902,7 @@ background-color: rgb(0, 85, 127);
         <widget class="QLabel" name="label_22">
          <property name="geometry">
           <rect>
-           <x>720</x>
+           <x>760</x>
            <y>20</y>
            <width>111</width>
            <height>16</height>
@@ -2122,9 +1915,9 @@ background-color: rgb(0, 85, 127);
         <widget class="QCommandLinkButton" name="autotuneButton">
          <property name="geometry">
           <rect>
-           <x>630</x>
+           <x>690</x>
            <y>40</y>
-           <width>71</width>
+           <width>51</width>
            <height>31</height>
           </rect>
          </property>
@@ -2151,8 +1944,44 @@ color: rgb(203, 0, 0);</string>
          <property name="text">
           <string>Scan</string>
          </property>
+         <property name="iconSize">
+          <size>
+           <width>1</width>
+           <height>1</height>
+          </size>
+         </property>
          <property name="checkable">
           <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QLabel" name="labelRSSI">
+         <property name="geometry">
+          <rect>
+           <x>616</x>
+           <y>40</y>
+           <width>71</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(0, 0, 0);
+color: rgb(85, 255, 0);</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_23">
+         <property name="geometry">
+          <rect>
+           <x>640</x>
+           <y>20</y>
+           <width>31</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>RSSI</string>
          </property>
         </widget>
        </widget>
@@ -2163,20 +1992,20 @@ color: rgb(203, 0, 0);</string>
          <number>2</number>
         </property>
         <property name="sizeConstraint">
-         <enum>QLayout::SetDefaultConstraint</enum>
+         <enum>QLayout::SetFixedSize</enum>
         </property>
         <item>
          <widget class="QFrame" name="frame">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="MinimumExpanding">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
           <property name="minimumSize">
            <size>
-            <width>125</width>
-            <height>35</height>
+            <width>120</width>
+            <height>60</height>
            </size>
           </property>
           <property name="styleSheet">
@@ -2200,11 +2029,23 @@ color: rgb(203, 0, 0);</string>
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="maximumSize">
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="toolTip">
+              <string>Sync</string>
+             </property>
              <property name="text">
               <string/>
              </property>
              <property name="pixmap">
               <pixmap resource="resources.qrc">:/res/Button-Blank-Yellow-icon.png</pixmap>
+             </property>
+             <property name="scaledContents">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -2219,6 +2060,18 @@ color: rgb(203, 0, 0);</string>
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
+             </property>
              <property name="toolTip">
               <string>Transmitting</string>
              </property>
@@ -2227,6 +2080,9 @@ color: rgb(203, 0, 0);</string>
              </property>
              <property name="pixmap">
               <pixmap resource="resources.qrc">:/res/Button-Blank-Red-icon.png</pixmap>
+             </property>
+             <property name="scaledContents">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -2241,6 +2097,12 @@ color: rgb(203, 0, 0);</string>
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="maximumSize">
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
+             </property>
              <property name="toolTip">
               <string>Receiving data</string>
              </property>
@@ -2252,6 +2114,9 @@ color: rgb(203, 0, 0);</string>
              </property>
              <property name="pixmap">
               <pixmap resource="resources.qrc">:/res/Button-Blank-Blue-icon.png</pixmap>
+             </property>
+             <property name="scaledContents">
+              <bool>true</bool>
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
@@ -2269,6 +2134,12 @@ color: rgb(203, 0, 0);</string>
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="maximumSize">
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
+             </property>
              <property name="toolTip">
               <string>Receiving audio</string>
              </property>
@@ -2277,6 +2148,9 @@ color: rgb(203, 0, 0);</string>
              </property>
              <property name="pixmap">
               <pixmap resource="resources.qrc">:/res/Button-Blank-Green-icon.png</pixmap>
+             </property>
+             <property name="scaledContents">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -2314,7 +2188,7 @@ background-color: rgb(132, 0, 0);
         <item>
          <widget class="CFreqCtrl" name="frameCtrlFreq">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -2322,7 +2196,7 @@ background-color: rgb(132, 0, 0);
           <property name="minimumSize">
            <size>
             <width>250</width>
-            <height>60</height>
+            <height>64</height>
            </size>
           </property>
           <property name="styleSheet">
@@ -2338,15 +2212,64 @@ background-color: rgb(128, 132, 138);</string>
          </widget>
         </item>
         <item>
+         <widget class="QPushButton" name="showControlsButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="MinimumExpanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>20</width>
+            <height>60</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>30</width>
+            <height>70</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Show Controls</string>
+          </property>
+          <property name="text">
+           <string>^
+^
+^
+^</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <layout class="QGridLayout" name="gridLayout_3">
           <property name="horizontalSpacing">
            <number>3</number>
           </property>
           <property name="verticalSpacing">
-           <number>2</number>
+           <number>1</number>
           </property>
           <item row="1" column="2">
            <widget class="QComboBox" name="comboBoxTxCTCSS">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>16</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>100</width>
+              <height>32</height>
+             </size>
+            </property>
             <property name="toolTip">
              <string>TX CTCSS</string>
             </property>
@@ -2360,21 +2283,21 @@ background-color: rgb(0, 0, 67);</string>
           <item row="1" column="5">
            <widget class="QComboBox" name="rxModemTypeComboBox">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
             <property name="minimumSize">
              <size>
-              <width>100</width>
-              <height>21</height>
+              <width>90</width>
+              <height>16</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
-              <width>160</width>
-              <height>16777215</height>
+              <width>140</width>
+              <height>32</height>
              </size>
             </property>
             <property name="font">
@@ -2476,6 +2399,18 @@ background-color: rgb(0, 0, 67);</string>
           </item>
           <item row="1" column="1">
            <widget class="QComboBox" name="comboBoxRxCTCSS">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>16</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>100</width>
+              <height>16777215</height>
+             </size>
+            </property>
             <property name="toolTip">
              <string>RX CTCSS</string>
             </property>
@@ -2489,21 +2424,21 @@ background-color: rgb(0, 0, 67);</string>
           <item row="0" column="1">
            <widget class="QCommandLinkButton" name="toggleRepeaterButton">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
             <property name="minimumSize">
              <size>
-              <width>110</width>
-              <height>30</height>
+              <width>80</width>
+              <height>16</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
-              <width>120</width>
-              <height>64</height>
+              <width>100</width>
+              <height>35</height>
              </size>
             </property>
             <property name="toolTip">
@@ -2513,10 +2448,10 @@ background-color: rgb(0, 0, 67);</string>
              <string>Repeater enabled</string>
             </property>
             <property name="autoFillBackground">
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
             <property name="styleSheet">
-             <string notr="true">font: 14pt &quot;Sans Serif&quot;;
+             <string notr="true">font: 12pt &quot;Sans Serif&quot;;
 border-width: 4px;
 background-color: rgb(0, 67, 98);
 color: rgb(255, 255, 255);</string>
@@ -2528,6 +2463,12 @@ color: rgb(255, 255, 255);</string>
              <iconset resource="resources.qrc">
               <normaloff>:/res/Button-Blank-Yellow-icon.png</normaloff>:/res/Button-Blank-Yellow-icon.png</iconset>
             </property>
+            <property name="iconSize">
+             <size>
+              <width>16</width>
+              <height>16</height>
+             </size>
+            </property>
             <property name="checkable">
              <bool>true</bool>
             </property>
@@ -2536,7 +2477,7 @@ color: rgb(255, 255, 255);</string>
           <item row="0" column="7">
            <widget class="QCommandLinkButton" name="txStatusButton">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -2544,19 +2485,19 @@ color: rgb(255, 255, 255);</string>
             <property name="minimumSize">
              <size>
               <width>60</width>
-              <height>30</height>
+              <height>16</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
-              <width>160</width>
-              <height>64</height>
+              <width>140</width>
+              <height>35</height>
              </size>
             </property>
             <property name="font">
              <font>
               <family>Sans Serif</family>
-              <pointsize>14</pointsize>
+              <pointsize>12</pointsize>
               <weight>50</weight>
               <italic>false</italic>
               <bold>false</bold>
@@ -2571,11 +2512,14 @@ color: rgb(255, 255, 255);</string>
             <property name="statusTip">
              <string>Transmitter enabled</string>
             </property>
+            <property name="layoutDirection">
+             <enum>Qt::LeftToRight</enum>
+            </property>
             <property name="autoFillBackground">
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
             <property name="styleSheet">
-             <string notr="true">font: 14pt &quot;Sans Serif&quot;;
+             <string notr="true">font: 12pt &quot;Sans Serif&quot;;
 background-color: rgb(0, 0, 67);
 border-width: 4px;
 color: rgb(255, 0, 0);</string>
@@ -2606,10 +2550,16 @@ color: rgb(255, 0, 0);</string>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>16</height>
+             </size>
+            </property>
             <property name="maximumSize">
              <size>
-              <width>160</width>
-              <height>16777215</height>
+              <width>140</width>
+              <height>32</height>
              </size>
             </property>
             <property name="font">
@@ -2712,7 +2662,7 @@ background-color: rgb(0, 0, 67);</string>
           <item row="0" column="2">
            <widget class="QCommandLinkButton" name="toggleVoxButton">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -2720,13 +2670,13 @@ background-color: rgb(0, 0, 67);</string>
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>30</height>
+              <height>16</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
               <width>100</width>
-              <height>64</height>
+              <height>35</height>
              </size>
             </property>
             <property name="toolTip">
@@ -2736,10 +2686,10 @@ background-color: rgb(0, 0, 67);</string>
              <string>Vox enabled</string>
             </property>
             <property name="autoFillBackground">
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
             <property name="styleSheet">
-             <string notr="true">font: 14pt &quot;Sans Serif&quot;;
+             <string notr="true">font: 12pt &quot;Sans Serif&quot;;
 border-width: 4px;
 background-color: rgb(0, 67, 98);
 color: rgb(255, 255, 255);</string>
@@ -2751,6 +2701,12 @@ color: rgb(255, 255, 255);</string>
              <iconset resource="resources.qrc">
               <normaloff>:/res/Button-Blank-Blue-icon.png</normaloff>:/res/Button-Blank-Blue-icon.png</iconset>
             </property>
+            <property name="iconSize">
+             <size>
+              <width>16</width>
+              <height>16</height>
+             </size>
+            </property>
             <property name="checkable">
              <bool>true</bool>
             </property>
@@ -2759,7 +2715,7 @@ color: rgb(255, 255, 255);</string>
           <item row="0" column="5">
            <widget class="QCommandLinkButton" name="rxStatusButton">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -2767,13 +2723,13 @@ color: rgb(255, 255, 255);</string>
             <property name="minimumSize">
              <size>
               <width>60</width>
-              <height>30</height>
+              <height>16</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
-              <width>160</width>
-              <height>64</height>
+              <width>140</width>
+              <height>35</height>
              </size>
             </property>
             <property name="cursor">
@@ -2789,10 +2745,10 @@ color: rgb(255, 255, 255);</string>
              <enum>Qt::LeftToRight</enum>
             </property>
             <property name="autoFillBackground">
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
             <property name="styleSheet">
-             <string notr="true">font: 14pt &quot;Sans Serif&quot;;
+             <string notr="true">font: 12pt &quot;Sans Serif&quot;;
 color: rgb(0, 255, 0);
 border-width: 4px;
 background-color: rgb(0, 0, 67);
@@ -2823,7 +2779,7 @@ background-color: rgb(0, 0, 67);
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>20</width>
+              <width>10</width>
               <height>20</height>
              </size>
             </property>
@@ -2894,22 +2850,5 @@ background-color: rgb(0, 0, 67);
  <resources>
   <include location="resources.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>buttonQuit</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>close()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1151</x>
-     <y>633</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>606</x>
-     <y>374</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

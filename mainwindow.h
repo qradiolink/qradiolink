@@ -86,6 +86,7 @@ public slots:
     void newFFTData(std::complex<float>* fft_data, int fftsize);
     void carrierOffsetChanged(qint64 freq, qint64 offset);
     void setFFTSize(int size);
+    void showControls();
 
 signals:
     void startTransmission();
@@ -140,11 +141,13 @@ private:
     qint64 _tx_frequency;
     QFileInfo *setupConfig();
     void closeEvent(QCloseEvent *);
+    void resizeEvent(QResizeEvent *);
     Settings *_settings;
     int _current_voip_channel;
     float *_realFftData;
     float *_pwrFftData;
     float *_iirFftData;
+    bool _show_controls;
 
 
 

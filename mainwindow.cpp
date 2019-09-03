@@ -81,6 +81,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     QObject::connect(ui->toggleVoxButton,SIGNAL(toggled(bool)),this,SLOT(toggleVox(bool)));
     QObject::connect(ui->fftSizeBox,SIGNAL(currentIndexChanged(int)),this,SLOT(setFFTSize(int)));
     QObject::connect(ui->peakHoldCheckBox,SIGNAL(toggled(bool)),ui->plotterFrame,SLOT(setPeakHold(bool)));
+    QObject::connect(ui->showControlsButton,SIGNAL(clicked()),this,SLOT(showControls()));
 
     QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
     QObject::connect(ui->plotterFrame,SIGNAL(pandapterRangeChanged(float,float)),ui->plotterFrame,SLOT(setWaterfallRange(float,float)));
@@ -97,6 +98,8 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     ui->voipTreeWidget->setColumnHidden(2,true);
     ui->voipTreeWidget->setColumnHidden(3,true);
     _transmitting_radio = false;
+    ui->controlsFrame->hide();
+    _show_controls = false;
     _current_voip_channel = -1;
     _constellation_gui = ui->widget_const;
     _rssi_gui = ui->widget_rssi;
@@ -111,6 +114,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     _iirFftData = new float[1024*1024];
     QRect xy = this->geometry();
     //ui->plotterFrame->resize(xy.right() -xy.left(),xy.bottom()-xy.top()-500);
+    ui->plotterContainer->resize(xy.right() -xy.left()-20,xy.bottom()-xy.top()-120);
     ui->plotterFrame->setSampleRate(1000000);
     ui->plotterFrame->setSpanFreq((quint32)1000000);
     ui->plotterFrame->setRunningState(false);
@@ -139,6 +143,37 @@ void MainWindow::closeEvent (QCloseEvent *event)
     struct timespec time_to_sleep = {0, 200000000L };
     nanosleep(&time_to_sleep, NULL);
     event->accept();
+}
+
+void MainWindow::resizeEvent(QResizeEvent *event)
+{
+    QRect xy = this->geometry();
+    if(_show_controls)
+    {
+        ui->plotterContainer->resize(xy.right() -xy.left()-20,xy.bottom()-xy.top()-210);
+    }
+    else
+    {
+        ui->plotterContainer->resize(xy.right() -xy.left()-20,xy.bottom()-xy.top()-120);
+    }
+    event->accept();
+}
+
+void MainWindow::showControls()
+{
+    QRect xy = this->geometry();
+    if(!_show_controls)
+    {
+        ui->plotterContainer->resize(xy.right() -xy.left()-20,xy.bottom()-xy.top()-210);
+        ui->controlsFrame->show();
+        _show_controls = true;
+    }
+    else
+    {
+        ui->plotterContainer->resize(xy.right() -xy.left()-20,xy.bottom()-xy.top()-120);
+        ui->controlsFrame->hide();
+        _show_controls = false;
+    }
 }
 
 void MainWindow::readConfig()
