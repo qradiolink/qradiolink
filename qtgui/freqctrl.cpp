@@ -45,8 +45,8 @@
 
 
 //Manual adjustment of Font size as percent of control height
-#define DIGIT_SIZE_PERCENT 90
-#define UNITS_SIZE_PERCENT 50
+#define DIGIT_SIZE_PERCENT 50
+#define UNITS_SIZE_PERCENT 20
 
 //adjustment for separation between digits
 #define SEPRATIO_N 100  //separation rectangle size ratio numerator times 100
@@ -73,8 +73,8 @@ CFreqCtrl::CFreqCtrl(QWidget *parent) :
     m_LRMouseFreqSel = false;
     m_ActiveEditDigit = -1;
     m_ResetLowerDigits = false;
-    m_UnitsFont = QFont("Arial", 25, QFont::Normal);
-    m_DigitFont = QFont("Arial", 25, QFont::Normal);
+    m_UnitsFont = QFont("Arial", 15, QFont::Normal);
+    m_DigitFont = QFont("Arial", 15, QFont::Normal);
 }
 
 CFreqCtrl::~CFreqCtrl()

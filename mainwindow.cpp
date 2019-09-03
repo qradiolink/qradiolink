@@ -29,7 +29,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
                          114.8, 118.8, 123.0, 127.3, 131.8, 136.5, 141.3, 146.2, 151.4, 156.7, 162.2,
                           167.9, 173.8, 179.9, 186.2, 192.8, 203.5, 210.7, 218.1, 225.7, 233.6, 241.8, 250.3};
     QStringList tones;
-    tones.append("Disabled");
+    tones.append("CTCSS");
     for(int i=0;i<38;i++)
     {
         tones.append(QString::number(tone_list[i]));
@@ -40,10 +40,10 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
 
     ui->frameCtrlFreq->setup(10, 10U, 9000000000U, 1, UNITS_MHZ );
     ui->frameCtrlFreq->setFrequency(_settings->rx_frequency);
-    ui->frameCtrlFreq->setBkColor(QColor(0,0,99,255));
-    ui->frameCtrlFreq->setHighlightColor(QColor(127,0,0,255));
-    ui->frameCtrlFreq->setDigitColor(QColor(200,200,200,240));
-    ui->frameCtrlFreq->setUnitsColor(QColor(254,254,254,255));
+    ui->frameCtrlFreq->setBkColor(QColor(56, 56, 64,0xFF));
+    ui->frameCtrlFreq->setHighlightColor(QColor(127,0,0,0xFF));
+    ui->frameCtrlFreq->setDigitColor(QColor(200,200,200,0xFF));
+    ui->frameCtrlFreq->setUnitsColor(QColor(254,254,254,0xFF));
 
     ui->txGainDial->setStyleSheet("background-color:#660000;");
     ui->rxGainDial->setStyleSheet("background-color:#013E09;");
@@ -97,7 +97,6 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     _current_voip_channel = -1;
     _constellation_gui = ui->widget_const;
     _rssi_gui = ui->widget_rssi;
-    _fft_gui = ui->widget_fft;
     readConfig();
     _video_img = new QPixmap;
     ui->menuBar->hide();
@@ -107,6 +106,8 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     _realFftData = new float[1024*1024];
     _pwrFftData = new float[1024*1024]();
     _iirFftData = new float[1024*1024];
+    QRect xy = this->geometry();
+    //ui->plotterFrame->resize(xy.right() -xy.left(),xy.bottom()-xy.top()-500);
     ui->plotterFrame->setSampleRate(1000000);
     ui->plotterFrame->setSpanFreq((quint32)1000000);
     ui->plotterFrame->setRunningState(false);

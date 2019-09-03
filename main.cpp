@@ -204,8 +204,7 @@ int main(int argc, char *argv[])
             "QwtThermo { background-color: #E1DFFF;" \
             "color: #FF6905;}");
 
-    QRect xy = w->geometry();
-    w->get_fft_gui()->resize(xy.right() -xy.left(),xy.bottom()-xy.top()-100);
+
 
 
     QThread *t4 = new QThread;
