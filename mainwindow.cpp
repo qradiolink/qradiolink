@@ -38,12 +38,12 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     _filter_widths = new std::vector<std::complex<int>>;
     _filter_widths->push_back(std::complex<int>(-2000, 2000)); // BPSK 2K
     _filter_widths->push_back(std::complex<int>(-700, 700)); // BPSK 700
-    _filter_widths->push_back(std::complex<int>(-1000, 1000));  // QPSK 2K
-    _filter_widths->push_back(std::complex<int>(-10000, 10000));    // QPSK 10K
-    _filter_widths->push_back(std::complex<int>(-2000, 2000));  // 4FSK 2K
+    _filter_widths->push_back(std::complex<int>(-1500, 1500));  // QPSK 2K
+    _filter_widths->push_back(std::complex<int>(-7000, 7000));    // QPSK 10K
+    _filter_widths->push_back(std::complex<int>(-4000, 4000));  // 4FSK 2K
     _filter_widths->push_back(std::complex<int>(-20000, 20000));    // 4FSK 10K
-    _filter_widths->push_back(std::complex<int>(-2000, 2000));  // 2FSK 2K
-    _filter_widths->push_back(std::complex<int>(-5000, 5000));  // 2FSK 10K
+    _filter_widths->push_back(std::complex<int>(-4000, 4000));  // 2FSK 2K
+    _filter_widths->push_back(std::complex<int>(-12500, 12500));  // 2FSK 10K
     _filter_widths->push_back(std::complex<int>(-2500, 2500));  // NBFM
     _filter_widths->push_back(std::complex<int>(-5000, 5000));  // FM
     _filter_widths->push_back(std::complex<int>(-100000, 100000));  // WFM
@@ -213,14 +213,12 @@ void MainWindow::showControls()
         ui->plotterContainer->resize(xy.right() -xy.left()-20,xy.bottom()-xy.top()-210);
         ui->controlsFrame->show();
         _show_controls = true;
-        emit enableGUIConst(_show_controls);
     }
     else
     {
         ui->plotterContainer->resize(xy.right() -xy.left()-20,xy.bottom()-xy.top()-120);
         ui->controlsFrame->hide();
         _show_controls = false;
-        emit enableGUIConst(_show_controls);
     }
 }
 
@@ -236,6 +234,7 @@ void MainWindow::showConstellation()
         ui->constellationDisplay->hide();
         _show_constellation = false;
     }
+    emit enableGUIConst(_show_constellation);
 }
 
 void MainWindow::readConfig()
@@ -389,16 +388,20 @@ void MainWindow::updateConstellation(complex_vector *constellation_data)
 {
     ui->constellationLabel->clear();
     delete _constellation_img;
-    _constellation_img = new QPixmap(200,200);
+    _constellation_img = new QPixmap(300,300);
     _constellation_img->fill(QColor("transparent"));
     QPainter painter(_constellation_img);
-    QPen pen(QColor(77,255,77,255), 4, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen(QColor(77,255,77,255), 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen2(QColor(180,180,180,180), 1, Qt::SolidLine, Qt::SquareCap, Qt::RoundJoin);
+    painter.setPen(pen2);
+    painter.drawLine(150, 0, 150, 300);
+    painter.drawLine(0, 150, 300, 150);
     painter.setPen(pen);
     for(int i = 0;i < constellation_data->size();i++)
     {
         std::complex<float> pt = constellation_data->at(i);
-        int x = (int)(std::min(pt.real(), 2.0f) * 50 + 100);
-        int y = (int)(std::min(pt.imag(), 2.0f) * 50 + 100);
+        int x = (int)(std::min(pt.real(), 2.0f) * 75 + 150);
+        int y = (int)(std::min(pt.imag(), 2.0f) * 75 + 150);
         painter.drawPoint(x, y);
     }
     painter.end();

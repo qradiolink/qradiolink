@@ -1075,6 +1075,7 @@ void RadioOp::toggleRX(bool value)
         _modem->setRxCTCSS(_rx_ctcss);
         _modem->tune(_tune_center_freq);
         _modem->startRX();
+        _modem->enableGUIConst(true);
         if(_rx_mode == gr_modem_types::ModemTypeQPSK250000 && _net_device == 0)
         {
             _net_device = new NetDevice(0, _settings->ip_address);
@@ -1506,7 +1507,6 @@ void RadioOp::setTxCTCSS(float value)
 void RadioOp::enableGUIConst(bool value)
 {
     _constellation_enabled = value;
-    _modem->enableGUIConst(value);
 }
 
 void RadioOp::enableGUIFFT(bool value)

@@ -598,9 +598,9 @@ background-color: rgb(0, 0, 67);</string>
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>270</y>
-            <width>200</width>
-            <height>200</height>
+            <y>170</y>
+            <width>300</width>
+            <height>300</height>
            </rect>
           </property>
           <property name="sizePolicy">
@@ -611,19 +611,19 @@ background-color: rgb(0, 0, 67);</string>
           </property>
           <property name="minimumSize">
            <size>
-            <width>200</width>
-            <height>200</height>
+            <width>300</width>
+            <height>300</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>200</width>
-            <height>200</height>
+            <width>300</width>
+            <height>300</height>
            </size>
           </property>
           <property name="styleSheet">
-           <string notr="true">background-color: #1F1D1D;
-border: 2px solid white;</string>
+           <string notr="true">border: 1px solid white;
+background-color: rgb(0, 0, 0);</string>
           </property>
           <property name="frameShape">
            <enum>QFrame::StyledPanel</enum>
@@ -636,12 +636,15 @@ border: 2px solid white;</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>201</width>
-             <height>201</height>
+             <width>300</width>
+             <height>300</height>
             </rect>
            </property>
+           <property name="toolTip">
+            <string>Constellation display</string>
+           </property>
            <property name="text">
-            <string>TextLabel</string>
+            <string/>
            </property>
           </widget>
          </widget>
