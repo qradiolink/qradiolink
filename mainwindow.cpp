@@ -82,6 +82,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     QObject::connect(ui->fftSizeBox,SIGNAL(currentIndexChanged(int)),this,SLOT(setFFTSize(int)));
     QObject::connect(ui->peakHoldCheckBox,SIGNAL(toggled(bool)),ui->plotterFrame,SLOT(setPeakHold(bool)));
     QObject::connect(ui->showControlsButton,SIGNAL(clicked()),this,SLOT(showControls()));
+    QObject::connect(ui->showConstellationButton,SIGNAL(clicked()),this,SLOT(showConstellation()));
 
     QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
     QObject::connect(ui->plotterFrame,SIGNAL(pandapterRangeChanged(float,float)),ui->plotterFrame,SLOT(setWaterfallRange(float,float)));
@@ -99,7 +100,9 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     ui->voipTreeWidget->setColumnHidden(3,true);
     _transmitting_radio = false;
     ui->controlsFrame->hide();
+    ui->constellationDisplay->hide();
     _show_controls = false;
+    _show_constellation = false;
     _current_voip_channel = -1;
     _constellation_gui = ui->widget_const;
     _rssi_gui = ui->widget_rssi;
@@ -173,6 +176,20 @@ void MainWindow::showControls()
         ui->plotterContainer->resize(xy.right() -xy.left()-20,xy.bottom()-xy.top()-120);
         ui->controlsFrame->hide();
         _show_controls = false;
+    }
+}
+
+void MainWindow::showConstellation()
+{
+    if(!_show_constellation)
+    {
+        ui->constellationDisplay->show();
+        _show_constellation = true;
+    }
+    else
+    {
+        ui->constellationDisplay->hide();
+        _show_constellation = false;
     }
 }
 

@@ -87,6 +87,8 @@ public slots:
     void carrierOffsetChanged(qint64 freq, qint64 offset);
     void setFFTSize(int size);
     void showControls();
+    void showConstellation();
+
 
 signals:
     void startTransmission();
@@ -148,6 +150,7 @@ private:
     float *_pwrFftData;
     float *_iirFftData;
     bool _show_controls;
+    bool _show_constellation;
 
 
 

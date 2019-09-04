@@ -120,7 +120,7 @@
             <x>0</x>
             <y>0</y>
             <width>1200</width>
-            <height>550</height>
+            <height>300</height>
            </rect>
           </property>
           <property name="sizePolicy">
@@ -132,7 +132,7 @@
           <property name="minimumSize">
            <size>
             <width>400</width>
-            <height>300</height>
+            <height>200</height>
            </size>
           </property>
           <layout class="QGridLayout" name="gridLayout_6">
@@ -193,7 +193,7 @@
              <property name="minimumSize">
               <size>
                <width>500</width>
-               <height>300</height>
+               <height>200</height>
               </size>
              </property>
              <property name="maximumSize">
@@ -367,6 +367,44 @@ background-color: rgb(255, 255, 127);</string>
             </layout>
            </item>
           </layout>
+         </widget>
+         <widget class="QFrame" name="constellationDisplay">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>270</y>
+            <width>200</width>
+            <height>200</height>
+           </rect>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>200</width>
+            <height>200</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>200</width>
+            <height>200</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">background-color: rgb(53, 53, 53);
+border: 2px solid white;</string>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
          </widget>
         </widget>
         <widget class="QWidget" name="tab_4">
@@ -1513,7 +1551,7 @@ background-color: rgb(35, 35, 35);</string>
           <bool>true</bool>
          </property>
          <property name="autoFillBackground">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
          <property name="styleSheet">
           <string notr="true"/>
@@ -1556,7 +1594,7 @@ background-color: rgb(35, 35, 35);</string>
           <bool>true</bool>
          </property>
          <property name="autoFillBackground">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
          <property name="maximum">
           <number>99</number>
@@ -1590,7 +1628,7 @@ background-color: rgb(35, 35, 35);</string>
           <bool>true</bool>
          </property>
          <property name="autoFillBackground">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
          <property name="maximum">
           <number>100</number>
@@ -1624,7 +1662,7 @@ background-color: rgb(35, 35, 35);</string>
           <bool>true</bool>
          </property>
          <property name="autoFillBackground">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
          <property name="maximum">
           <number>100</number>
@@ -1670,7 +1708,7 @@ background-color: rgb(35, 35, 35);</string>
           </size>
          </property>
          <property name="autoFillBackground">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
          <property name="minimum">
           <number>-500</number>
@@ -2239,6 +2277,25 @@ background-color: rgb(128, 132, 138);</string>
 ^
 ^
 ^</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="showConstellationButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>30</width>
+            <height>70</height>
+           </size>
+          </property>
+          <property name="text">
+           <string/>
           </property>
          </widget>
         </item>
