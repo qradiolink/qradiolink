@@ -35,6 +35,25 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
         tones.append(QString::number(tone_list[i]));
     }
 
+    _filter_widths = new std::vector<std::complex<int>>;
+    _filter_widths->push_back(std::complex<int>(-2000, 2000)); // BPSK 2K
+    _filter_widths->push_back(std::complex<int>(-700, 700)); // BPSK 700
+    _filter_widths->push_back(std::complex<int>(-1000, 1000));  // QPSK 2K
+    _filter_widths->push_back(std::complex<int>(-10000, 10000));    // QPSK 10K
+    _filter_widths->push_back(std::complex<int>(-2000, 2000));  // 4FSK 2K
+    _filter_widths->push_back(std::complex<int>(-20000, 20000));    // 4FSK 10K
+    _filter_widths->push_back(std::complex<int>(-2000, 2000));  // 2FSK 2K
+    _filter_widths->push_back(std::complex<int>(-5000, 5000));  // 2FSK 10K
+    _filter_widths->push_back(std::complex<int>(-2500, 2500));  // NBFM
+    _filter_widths->push_back(std::complex<int>(-5000, 5000));  // FM
+    _filter_widths->push_back(std::complex<int>(-100000, 100000));  // WFM
+    _filter_widths->push_back(std::complex<int>(-1, 2500)); // USB
+    _filter_widths->push_back(std::complex<int>(-2500, 1)); // LSB
+    _filter_widths->push_back(std::complex<int>(-5000, 5000));  // AM
+    _filter_widths->push_back(std::complex<int>(-150000, 150000)); // QPSK250000 VIDEO
+    _filter_widths->push_back(std::complex<int>(-150000, 150000)); // QPSK250000 DATA
+
+
     ui->comboBoxTxCTCSS->addItems(tones);
     ui->comboBoxRxCTCSS->addItems(tones);
 
@@ -129,6 +148,14 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     ui->plotterFrame->setClickResolution(1);
     ui->plotterFrame->setPandapterRange(-120.0, -20.0);
     ui->plotterFrame->setWaterfallRange(-120.0, -20.0);
+
+    _scene = new QGraphicsScene(ui->constellationDisplay);
+    _scene->setItemIndexMethod(QGraphicsScene::NoIndex);
+    _view = new QGraphicsView(_scene);
+    _view->setRenderHint(QPainter::Antialiasing);
+    _view->setCacheMode(QGraphicsView::CacheBackground);
+    _view->setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
+    _view->resize(200, 200);
 
 
 }
@@ -489,16 +516,23 @@ void MainWindow::toggleWideband(bool value)
     emit toggleWidebandMode(value);
 }
 
+void MainWindow::setFilterWidth(int index)
+{
+    std::complex<int> widths = _filter_widths->at(index);
+    ui->plotterFrame->setHiLowCutFrequencies(widths.real(), widths.imag());
+}
+
 void MainWindow::toggleRxMode(int value)
 {
     emit toggleRxModemMode(value);
-    mainTabChanged(ui->tabWidget->currentIndex());
+    setFilterWidth(value);
+    //mainTabChanged(ui->tabWidget->currentIndex());
 }
 
 void MainWindow::toggleTxMode(int value)
 {
     emit toggleTxModemMode(value);
-    mainTabChanged(ui->tabWidget->currentIndex());
+    //mainTabChanged(ui->tabWidget->currentIndex());
 }
 
 void MainWindow::toggleRepeater(bool value)

@@ -151,6 +151,10 @@ private:
     float *_iirFftData;
     bool _show_controls;
     bool _show_constellation;
+    QGraphicsScene *_scene;
+    QGraphicsView *_view;
+    void setFilterWidth(int index);
+    std::vector<std::complex<int>> *_filter_widths;
 
 
 
