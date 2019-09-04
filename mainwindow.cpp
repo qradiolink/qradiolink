@@ -612,8 +612,9 @@ void MainWindow::tuneMainFreq(qint64 freq)
         _rx_frequency = freq - _demod_offset;
         ui->plotterFrame->setCenterFreq(_rx_frequency);
         ui->plotterFrame->setDemodCenterFreq(_rx_frequency + _demod_offset);
-        emit tuneFreq(_rx_frequency);
         emit setCarrierOffset(_demod_offset);
+        emit tuneFreq(_rx_frequency);
+
     }
 }
 

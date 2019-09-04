@@ -1437,7 +1437,7 @@ void RadioOp::tuneFreq(qint64 center_freq)
 {
     _mutex->lock();
     _rx_frequency = center_freq;
-    _tx_frequency = center_freq;
+    _tx_frequency = center_freq + _carrier_offset;
     _modem->tune(_rx_frequency);
     _modem->tuneTx(_tx_frequency + _tune_shift_freq);
     _mutex->unlock();
