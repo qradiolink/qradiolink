@@ -17,6 +17,7 @@ Settings::Settings()
     _enable_agc = 0; // unused
     _ident_time = 300; // used
     _radio_id = "";
+    demod_offset = 0;
     rx_mode = 0;
     tx_mode = 0;
     ip_address = "";
@@ -83,6 +84,7 @@ void Settings::readConfig()
         squelch = cfg.lookup("squelch");
         rx_volume = cfg.lookup("rx_volume");
         rx_frequency = cfg.lookup("rx_frequency");
+        demod_offset = cfg.lookup("demod_offset");
         tx_shift = cfg.lookup("tx_shift");
         voip_server = QString(cfg.lookup("voip_server"));
         rx_mode = cfg.lookup("rx_mode");
@@ -111,6 +113,7 @@ void Settings::readConfig()
         rx_mode = 0;
         tx_mode = 0;
         ip_address = "10.0.0.1";
+        demod_offset = 0;
         std::cerr << "Settings not found in configuration file." << std::endl;
     }
 }
@@ -138,6 +141,7 @@ void Settings::saveConfig()
     root.add("rx_mode",libconfig::Setting::TypeInt) = rx_mode;
     root.add("tx_mode",libconfig::Setting::TypeInt) = tx_mode;
     root.add("ip_address",libconfig::Setting::TypeString) = ip_address.toStdString();
+    root.add("demod_offset",libconfig::Setting::TypeInt64) = demod_offset;
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());

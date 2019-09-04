@@ -35,6 +35,7 @@ public:
     int rx_mode;
     int tx_mode;
     QString ip_address;
+    long long demod_offset;
 
 
     quint32 _id;
@@ -51,6 +52,7 @@ public:
     quint8 _enable_agc;
     quint16 _ident_time;
     QString _radio_id;
+
 
 private:
     QFileInfo *_config_file;

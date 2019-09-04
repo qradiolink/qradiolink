@@ -149,6 +149,7 @@ private:
     float *_realFftData;
     float *_pwrFftData;
     float *_iirFftData;
+    qint64 _demod_offset;
     bool _show_controls;
     bool _show_constellation;
     QGraphicsScene *_scene;
