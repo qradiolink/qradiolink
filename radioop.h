@@ -199,6 +199,7 @@ private:
     bool _vox_enabled;
     bool _tx_started;
     int _freq_gui_counter;
+    qint64 _carrier_offset;
     std::complex<float> *_fft_data;
     std::vector<std::complex<float>> *_constellation_data;
     bool _fft_enabled;

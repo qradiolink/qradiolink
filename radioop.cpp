@@ -73,6 +73,7 @@ RadioOp::RadioOp(Settings *settings, QObject *parent) :
     _tune_limit_lower = -5000;
     _tune_limit_upper = 5000;
     _step_hz = 10;
+    _carrier_offset = 0;
     _tuning_done = true;
     _tune_counter = 0;
     _freq_gui_counter = 0;
@@ -1429,9 +1430,9 @@ void RadioOp::toggleRepeat(bool value)
 void RadioOp::fineTuneFreq(long center_freq)
 {
     _mutex->lock();
-    _modem->tune(_tune_center_freq + center_freq*_step_hz);
+    //_modem->tune(_tune_center_freq + center_freq*_step_hz);
+    _modem->set_carrier_offset(_carrier_offset + center_freq*_step_hz);
     // disabled clarifier tuning of TX frequency
-    //_modem->tuneTx(_tune_center_freq + _tune_shift_freq + center_freq*_step_hz);
     _mutex->unlock();
 }
 
@@ -1446,6 +1447,7 @@ void RadioOp::tuneFreq(qint64 center_freq)
 void RadioOp::setCarrierOffset(qint64 offset)
 {
     _mutex->lock();
+    _carrier_offset = offset;
     _modem->set_carrier_offset(offset);
     _mutex->unlock();
 }

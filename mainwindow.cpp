@@ -126,7 +126,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
 
     QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
     QObject::connect(ui->plotterFrame,SIGNAL(pandapterRangeChanged(float,float)),ui->plotterFrame,SLOT(setWaterfallRange(float,float)));
-    QObject::connect(ui->plotterFrame,SIGNAL(newCenterFreq(qint64)),this,SLOT(tuneMainFreq(qint64)));
+    QObject::connect(ui->plotterFrame,SIGNAL(newCenterFreq(qint64)),this,SLOT(tuneFreqPlotter(qint64)));
     QObject::connect(ui->panadapterSlider,SIGNAL(valueChanged(int)),ui->plotterFrame,SLOT(setPercent2DScreen(int)));
     QObject::connect(ui->averagingSlider,SIGNAL(valueChanged(int)),this,SLOT(setAveraging(int)));
     QObject::connect(ui->plotterFrame,SIGNAL(newDemodFreq(qint64,qint64)),this,SLOT(carrierOffsetChanged(qint64,qint64)));
@@ -254,6 +254,7 @@ void MainWindow::readConfig()
     ui->rxVolumeDial->setValue(_settings->rx_volume);
     ui->frameCtrlFreq->setFrequency(_settings->rx_frequency);
     _rx_frequency = _settings->rx_frequency;
+    ui->plotterFrame->setCenterFreq(_rx_frequency);
     ui->frequencyEdit->setText(QString::number(ceil(_rx_frequency/1000)));
     _tx_frequency = _settings->tx_shift;
     ui->shiftEdit->setText(QString::number(_tx_frequency / 1000));
@@ -606,17 +607,29 @@ void MainWindow::tuneCenterFreq(int value)
 
 void MainWindow::tuneMainFreq(qint64 freq)
 {
-    _rx_frequency = freq;
+
     ui->frequencyEdit->setText(QString::number(ceil(freq/1000)));
     ui->tuneDial->setValue(0);
-    ui->plotterFrame->setCenterFreq(freq);
+    if(freq != (_rx_frequency + _demod_offset))
+    {
+        _rx_frequency = freq - _demod_offset;
+        ui->plotterFrame->setCenterFreq(_rx_frequency);
+        ui->plotterFrame->setDemodCenterFreq(_rx_frequency + _demod_offset);
+        emit tuneFreq(freq);
+        emit setCarrierOffset(_demod_offset);
+    }
+}
+
+void MainWindow::tuneFreqPlotter(qint64 freq)
+{
+    tuneMainFreq(freq);
     ui->frameCtrlFreq->setFrequency(freq);
-    emit tuneFreq(freq);
 }
 
 void MainWindow::carrierOffsetChanged(qint64 freq, qint64 offset)
 {
     _demod_offset = offset;
+    ui->frameCtrlFreq->setFrequency(_rx_frequency + _demod_offset);
     emit setCarrierOffset(offset);
 }
 
@@ -624,7 +637,7 @@ void MainWindow::enterFreq()
 {
     ui->frameCtrlFreq->setFrequency(ui->frequencyEdit->text().toLong()*1000);
     _rx_frequency = ui->frequencyEdit->text().toLong()*1000;
-    emit tuneFreq(ui->frequencyEdit->text().toLong()*1000);
+    emit tuneFreq(_rx_frequency);
 }
 
 void MainWindow::enterShift()

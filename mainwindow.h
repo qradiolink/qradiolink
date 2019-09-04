@@ -62,6 +62,7 @@ public slots:
     void toggleTXwin(bool value);
     void tuneCenterFreq(int value);
     void tuneMainFreq(qint64 freq);
+    void tuneFreqPlotter(qint64 freq);
     void toggleWideband(bool value);
     void toggleRxMode(int value);
     void toggleTxMode(int value);
