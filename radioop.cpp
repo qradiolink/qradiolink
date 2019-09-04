@@ -49,6 +49,7 @@ RadioOp::RadioOp(Settings *settings, QObject *parent) :
     _fft_read_timer = new QElapsedTimer();
     _fft_read_timer->start();
     _fft_enabled = true;
+    _constellation_enabled = false;
     _data_modem_sleeping = false;
     _settings = settings;
     _transmitting_audio = false;
@@ -631,6 +632,7 @@ void RadioOp::run()
                     data_to_process = _modem->demodulateAnalog();
                 }
                 getFFTData();
+                //getConstellationData();
 
             }
         }
@@ -690,6 +692,31 @@ void RadioOp::getFFTData()
         delete[] fft_data;
     }
     _fft_read_timer->restart();
+}
+
+void RadioOp::getConstellationData()
+{
+    if(!_constellation_enabled)
+    {
+        _constellation_read_timer->restart();
+        return;
+    }
+    qint64 msec = (quint64)_constellation_read_timer->nsecsElapsed() / 1000000;
+    if(msec < 75)
+    {
+        return;
+    }
+    //std::complex<float> *fft_data = new std::complex<float>[1024*1024];
+    std::vector<gr_complex> const_data = _modem->getConstellation();
+    //if(fft_size > 0)
+    //{
+        //emit newConstellationData();
+    //}
+    //else
+    //{
+        //delete[] fft_data;
+    //}
+    _constellation_read_timer->restart();
 }
 
 
@@ -1476,6 +1503,7 @@ void RadioOp::setTxCTCSS(float value)
 
 void RadioOp::enableGUIConst(bool value)
 {
+    _constellation_enabled = value;
     _modem->enableGUIConst(value);
 }
 

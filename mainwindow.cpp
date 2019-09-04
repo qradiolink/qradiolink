@@ -375,6 +375,7 @@ void MainWindow::newFFTData(std::complex<float>* fft_data, int fftsize)
     delete[] fft_data;
 }
 
+
 void MainWindow::setFFTSize(int size)
 {
     emit newFFTSize(ui->fftSizeBox->currentText().toInt());
@@ -383,6 +384,11 @@ void MainWindow::setFFTSize(int size)
 void MainWindow::setAveraging(int x)
 {
     _fft_averaging = 1.0 / x;
+}
+
+void MainWindow::updateConstellation(std::vector<std::complex<float>>* constellation_data)
+{
+
 }
 
 void MainWindow::displayText(QString text, bool html)

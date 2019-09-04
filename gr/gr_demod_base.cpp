@@ -567,3 +567,8 @@ float gr_demod_base::get_rssi()
 {
     return _rssi->level();
 }
+
+std::vector<gr_complex> gr_demod_base::get_constellation_data()
+{
+    return _constellation->level();
+}

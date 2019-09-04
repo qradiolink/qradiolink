@@ -94,6 +94,7 @@ public slots:
     void setEnabledFFT(bool value);
     void setPeakDetect(bool value);
     void updateRSSI(float value);
+    void updateConstellation(std::vector<std::complex<float>>* constellation_data);
 
 
 signals:

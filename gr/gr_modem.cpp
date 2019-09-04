@@ -555,6 +555,12 @@ float gr_modem::getRSSI()
         return _gr_demod_base->get_rssi();
 }
 
+std::vector<gr_complex> gr_modem::getConstellation()
+{
+    if(_gr_demod_base)
+        return _gr_demod_base->get_constellation_data();
+}
+
 bool gr_modem::demodulateAnalog()
 {
     std::vector<float> *audio_data;
