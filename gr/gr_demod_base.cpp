@@ -492,7 +492,7 @@ void gr_demod_base::getFFTData(std::complex<float> *fft_data,  unsigned int &fft
 void gr_demod_base::tune(long center_freq)
 {
     _device_frequency = center_freq;
-    _osmosdr_source->set_center_freq(_device_frequency-_carrier_offset);
+    _osmosdr_source->set_center_freq(_device_frequency);
 }
 
 double gr_demod_base::get_freq()

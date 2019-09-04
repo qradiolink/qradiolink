@@ -471,20 +471,7 @@ void RadioOp::stopTx()
 
 void RadioOp::updateFrequency()
 {
-    if(_freq_gui_counter < 10)
-    {
-        _freq_gui_counter++;
-        return;
-    }
-    _freq_gui_counter = 0;
-    long long freq = (long long)_modem->getFreqGUI();
-    if(freq != 0 && freq != _rx_frequency)
-    {
-        _rx_frequency = freq;
-        _modem->tune(_rx_frequency);
-        _modem->tuneTx(_tx_frequency + _tune_shift_freq);
-        emit freqFromGUI(_rx_frequency);
-    }
+
 }
 
 void RadioOp::sendTextData(QString text, int frame_type)
@@ -609,7 +596,6 @@ void RadioOp::run()
 
         updateDataModemReset(transmitting, ptt_activated);
 
-        //updateFrequency();
         if(transmitting && !ptt_activated)
         {
             ptt_activated = true;
@@ -1084,6 +1070,7 @@ void RadioOp::toggleRX(bool value)
         _modem->setRxSensitivity(_rx_sensitivity);
         _modem->setSquelch(_squelch);
         _modem->setRxCTCSS(_rx_ctcss);
+        _modem->set_carrier_offset(_carrier_offset);
         _modem->tune(_rx_frequency);
         _modem->startRX();
         _modem->enableGUIConst(true);
@@ -1552,19 +1539,19 @@ void RadioOp::autoTune()
     _autotune_freq = _autotune_freq + _step_hz;
     _modem->tune(_autotune_freq);
     //_modem->tuneTx(_autotune_freq + _tune_shift_freq);
-    if(_autotune_freq >= (_rx_frequency + _carrier_offset + _tune_limit_upper))
-        _autotune_freq = _rx_frequency + _carrier_offset + _tune_limit_lower;
+    if(_autotune_freq >= (_rx_frequency + _tune_limit_upper))
+        _autotune_freq = _rx_frequency + _tune_limit_lower;
 }
 
 void RadioOp::startAutoTune()
 {
-    _autotune_freq = _rx_frequency + _carrier_offset;
+    _autotune_freq = _rx_frequency;
     _tuning_done = false;
 }
 
 void RadioOp::stopAutoTune()
 {
     _tuning_done = true;
-    _rx_frequency = _autotune_freq - _carrier_offset;
+    _rx_frequency = _autotune_freq;
     emit freqFromGUI(_autotune_freq);
 }

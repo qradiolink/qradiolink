@@ -262,7 +262,6 @@ void MainWindow::readConfig()
     ui->plotterFrame->setFilterOffset((qint64)_settings->demod_offset);
     ui->plotterFrame->setCenterFreq(_rx_frequency);
     ui->frameCtrlFreq->setFrequency(_rx_frequency + _demod_offset);
-    carrierOffsetChanged(0, _demod_offset);
 
 }
 
@@ -560,7 +559,6 @@ void MainWindow::channelState(QTreeWidgetItem *item, int k)
 void MainWindow::toggleRXwin(bool value)
 {
     emit toggleRX(value);
-    emit setCarrierOffset(_demod_offset);
     ui->plotterFrame->setRunningState(value);
     emit enableGUIFFT(value);
 }
@@ -614,15 +612,15 @@ void MainWindow::tuneMainFreq(qint64 freq)
         _rx_frequency = freq - _demod_offset;
         ui->plotterFrame->setCenterFreq(_rx_frequency);
         ui->plotterFrame->setDemodCenterFreq(_rx_frequency + _demod_offset);
-        emit tuneFreq(freq);
+        emit tuneFreq(_rx_frequency);
         emit setCarrierOffset(_demod_offset);
     }
 }
 
 void MainWindow::tuneFreqPlotter(qint64 freq)
 {
-    tuneMainFreq(freq);
-    ui->frameCtrlFreq->setFrequency(freq);
+    tuneMainFreq(freq - _demod_offset);
+    ui->frameCtrlFreq->setFrequency(freq + _demod_offset);
 }
 
 void MainWindow::carrierOffsetChanged(qint64 freq, qint64 offset)
@@ -635,7 +633,7 @@ void MainWindow::carrierOffsetChanged(qint64 freq, qint64 offset)
 void MainWindow::enterFreq()
 {
     ui->frameCtrlFreq->setFrequency(ui->frequencyEdit->text().toLong()*1000);
-    _rx_frequency = ui->frequencyEdit->text().toLong()*1000;
+    _rx_frequency = ui->frequencyEdit->text().toLong()*1000 - _demod_offset;
     emit tuneFreq(_rx_frequency);
 }
 
