@@ -64,26 +64,22 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     ui->frameCtrlFreq->setDigitColor(QColor(200,200,200,0xFF));
     ui->frameCtrlFreq->setUnitsColor(QColor(254,254,254,0xFF));
 
-    QString style = "QDial "
-            "{"
-            "background-color:QLinearGradient("
-            "    x1: 0.177, y1: 0.004, x2: 0.831, y2: 0.911,"
-            "    stop: 0 white,"
-            "   stop: 0.061 white,"
-            "    stop: 0.066 #b3b3b3,"
-            "    stop: 0.5 #242424,"
-            "    stop: 0.505 #000000,"
-            "    stop: 0.827 #040404,"
-            "    stop: 0.966 #292929,"
-            "    stop: 0.983 #2e2e2e"
-            ");"
-        "}";
+    /*
+     *
+        font: 8pt "Sans Serif";
+        color: rgb(240, 240, 119);
+        background-color: rgb(0, 0, 67);
+        QDial {
+          color: rgb(240, 240, 255);
+          background-color: rgb(255, 255, 67);
+        }
+    */
 
-    ui->txGainDial->setStyleSheet("background-color:#b3b3b3;");
-    ui->rxGainDial->setStyleSheet("background-color:#b3b3b3;");
-    ui->rxSquelchDial->setStyleSheet("background-color:#b3b3b3;");
-    ui->rxVolumeDial->setStyleSheet("background-color:#b3b3b3;");
-    ui->tuneDial->setStyleSheet("background-color:#b3b3b3;");
+    ui->txGainDial->setStyleSheet("background-color: rgb(150, 150, 150);");
+    ui->rxGainDial->setStyleSheet("background-color: rgb(150, 150, 150);");
+    ui->rxSquelchDial->setStyleSheet("background-color:rgb(150, 150, 150);");
+    ui->rxVolumeDial->setStyleSheet("background-color: rgb(150, 150, 150);");
+    ui->tuneDial->setStyleSheet("background-color: rgb(150, 150, 150);");
     ui->txGainDial->setNotchesVisible(true);
 
 
@@ -252,9 +248,10 @@ void MainWindow::readConfig()
     ui->rxGainDial->setValue(_settings->rx_sensitivity);
     ui->rxSquelchDial->setValue(_settings->squelch);
     ui->rxVolumeDial->setValue(_settings->rx_volume);
-    ui->frameCtrlFreq->setFrequency(_settings->rx_frequency);
+
     _rx_frequency = _settings->rx_frequency;
-    ui->plotterFrame->setCenterFreq(_rx_frequency);
+    _demod_offset = _settings->demod_offset;
+
     ui->frequencyEdit->setText(QString::number(ceil(_rx_frequency/1000)));
     _tx_frequency = _settings->tx_shift;
     ui->shiftEdit->setText(QString::number(_tx_frequency / 1000));
@@ -263,7 +260,9 @@ void MainWindow::readConfig()
     ui->txModemTypeComboBox->setCurrentIndex(_settings->tx_mode);
     ui->lineEditIPaddress->setText(_settings->ip_address);
     ui->plotterFrame->setFilterOffset((qint64)_settings->demod_offset);
-    _demod_offset = _settings->demod_offset;
+    ui->plotterFrame->setCenterFreq(_rx_frequency);
+    ui->frameCtrlFreq->setFrequency(_rx_frequency + _demod_offset);
+    carrierOffsetChanged(0, _demod_offset);
 
 }
 
@@ -392,7 +391,7 @@ void MainWindow::updateConstellation(complex_vector *constellation_data)
     _constellation_img = new QPixmap(300,300);
     _constellation_img->fill(QColor("transparent"));
     QPainter painter(_constellation_img);
-    QPen pen(QColor(77,255,77,255), 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen(QColor(77,255,77,255), 7, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     QPen pen2(QColor(180,180,180,180), 1, Qt::SolidLine, Qt::SquareCap, Qt::RoundJoin);
     painter.setPen(pen2);
     painter.drawLine(150, 0, 150, 300);

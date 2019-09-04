@@ -26,7 +26,7 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
     _device_frequency = device_frequency;
     _top_block = gr::make_top_block("demodulator");
     _mode = 9999;
-    _carrier_offset = 25000;
+    _carrier_offset = 0;
 
     _audio_sink = make_gr_audio_sink();
     _vector_sink = make_gr_vector_sink();

@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>QRadioLink</string>
+   <string>FreeXceiver</string>
   </property>
   <property name="windowIcon">
    <iconset resource="resources.qrc">
@@ -202,12 +202,69 @@
                <height>32764</height>
               </size>
              </property>
+             <property name="styleSheet">
+              <string notr="true">font: 7pt &quot;Sans Serif&quot;;S</string>
+             </property>
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
              </property>
              <property name="frameShadow">
               <enum>QFrame::Raised</enum>
              </property>
+             <widget class="QFrame" name="constellationDisplay">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>300</width>
+                <height>300</height>
+               </rect>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>300</width>
+                <height>300</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>300</width>
+                <height>300</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border: 1px solid white;
+background-color: rgb(0, 0, 0);</string>
+              </property>
+              <property name="frameShape">
+               <enum>QFrame::StyledPanel</enum>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Raised</enum>
+              </property>
+              <widget class="QLabel" name="constellationLabel">
+               <property name="geometry">
+                <rect>
+                 <x>0</x>
+                 <y>0</y>
+                 <width>300</width>
+                 <height>300</height>
+                </rect>
+               </property>
+               <property name="toolTip">
+                <string>Constellation display</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </widget>
             </widget>
            </item>
            <item row="1" column="1">
@@ -286,7 +343,7 @@ background-color: rgb(0, 0, 67);</string>
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
-                 <width>20</width>
+                 <width>15</width>
                  <height>10</height>
                 </size>
                </property>
@@ -593,60 +650,6 @@ background-color: rgb(0, 0, 67);</string>
             </layout>
            </item>
           </layout>
-         </widget>
-         <widget class="QFrame" name="constellationDisplay">
-          <property name="geometry">
-           <rect>
-            <x>0</x>
-            <y>170</y>
-            <width>300</width>
-            <height>300</height>
-           </rect>
-          </property>
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>300</width>
-            <height>300</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>300</width>
-            <height>300</height>
-           </size>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">border: 1px solid white;
-background-color: rgb(0, 0, 0);</string>
-          </property>
-          <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
-          </property>
-          <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
-          </property>
-          <widget class="QLabel" name="constellationLabel">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>300</width>
-             <height>300</height>
-            </rect>
-           </property>
-           <property name="toolTip">
-            <string>Constellation display</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
          </widget>
         </widget>
         <widget class="QWidget" name="tab_2">
@@ -1379,15 +1382,13 @@ font: 10pt &quot;Sans Serif&quot;;</string>
          </size>
         </property>
         <property name="autoFillBackground">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="styleSheet">
          <string notr="true">font: 8pt &quot;Sans Serif&quot;;
-color: rgb(240, 240, 119);
-background-color: rgb(0, 0, 67);
 QDial {
-  color: rgb(240, 240, 255);
-  background-color: rgb(255, 255, 67);
+  background-color: rgb(150, 150, 150);
+  background: rgb(150, 150, 150);
 }
 </string>
         </property>
@@ -1422,8 +1423,7 @@ QDial {
           </font>
          </property>
          <property name="styleSheet">
-          <string notr="true">color: rgb(240, 240, 119);
-background-color: rgb(0, 0, 67);</string>
+          <string notr="true"/>
          </property>
          <property name="text">
           <string>TX gain</string>
@@ -1445,8 +1445,7 @@ background-color: rgb(0, 0, 67);</string>
           </sizepolicy>
          </property>
          <property name="styleSheet">
-          <string notr="true">color: rgb(240, 240, 119);
-background-color: rgb(0, 0, 67);</string>
+          <string notr="true"/>
          </property>
          <property name="text">
           <string>Volume</string>
@@ -1483,9 +1482,7 @@ background-color: rgb(0, 0, 67);</string>
           </font>
          </property>
          <property name="styleSheet">
-          <string notr="true">
-color: rgb(240, 240, 119);
-background-color: rgb(0, 0, 67);</string>
+          <string notr="true"/>
          </property>
          <property name="text">
           <string>Squelch</string>
@@ -1908,9 +1905,9 @@ background-color: rgb(35, 35, 35);</string>
         <widget class="QLabel" name="label_12">
          <property name="geometry">
           <rect>
-           <x>910</x>
+           <x>900</x>
            <y>20</y>
-           <width>34</width>
+           <width>71</width>
            <height>16</height>
           </rect>
          </property>
@@ -1939,7 +1936,7 @@ background-color: rgb(35, 35, 35);</string>
           <enum>QFrame::Plain</enum>
          </property>
          <property name="text">
-          <string>Split</string>
+          <string>Split (kHz)</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -1968,6 +1965,9 @@ background-color: rgb(35, 35, 35);</string>
            <width>150</width>
            <height>30</height>
           </size>
+         </property>
+         <property name="toolTip">
+          <string>Transmission split in kHz</string>
          </property>
          <property name="styleSheet">
           <string notr="true">background-color: rgba(255, 255, 255, 180);
@@ -2020,6 +2020,12 @@ font: 11pt &quot;Sans Serif&quot;;</string>
            <bold>false</bold>
           </font>
          </property>
+         <property name="toolTip">
+          <string>Press enter</string>
+         </property>
+         <property name="autoFillBackground">
+          <bool>false</bool>
+         </property>
          <property name="styleSheet">
           <string notr="true">background-color: rgba(255, 255, 255, 180);
 color: rgb(0, 0, 76);
@@ -2038,14 +2044,14 @@ font: 11pt &quot;Sans Serif&quot;;</string>
         <widget class="QLabel" name="label_21">
          <property name="geometry">
           <rect>
-           <x>1020</x>
+           <x>1010</x>
            <y>20</y>
-           <width>161</width>
+           <width>171</width>
            <height>16</height>
           </rect>
          </property>
          <property name="text">
-          <string>Manual frequency entry</string>
+          <string>Manual frequency entry (kHz)</string>
          </property>
         </widget>
         <widget class="QLabel" name="labelDisplayCallsign">
@@ -2071,17 +2077,21 @@ font: 11pt &quot;Sans Serif&quot;;</string>
          </property>
          <property name="font">
           <font>
-           <family>Monospace</family>
+           <family>Sans Serif</family>
            <pointsize>9</pointsize>
            <weight>50</weight>
            <italic>false</italic>
            <bold>false</bold>
           </font>
          </property>
+         <property name="toolTip">
+          <string>Incoming transmission callsign</string>
+         </property>
          <property name="styleSheet">
           <string notr="true">color: rgb(255, 255, 255);
 font: 9pt &quot;Monospace&quot;;
-background-color: rgb(0, 85, 127);
+background-color: rgb(150, 150, 150);
+font: 9pt &quot;Sans Serif&quot;;
 </string>
          </property>
          <property name="frameShape">
@@ -2106,9 +2116,9 @@ background-color: rgb(0, 85, 127);
         <widget class="QLabel" name="label_22">
          <property name="geometry">
           <rect>
-           <x>800</x>
+           <x>810</x>
            <y>20</y>
-           <width>61</width>
+           <width>51</width>
            <height>16</height>
           </rect>
          </property>
@@ -2138,12 +2148,13 @@ background-color: rgb(0, 85, 127);
           </size>
          </property>
          <property name="autoFillBackground">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
          <property name="styleSheet">
-          <string notr="true">font: 10pt &quot;Sans Serif&quot;;
-background: none;
-color: rgb(203, 0, 0);</string>
+          <string notr="true">font: 8pt &quot;Sans Serif&quot;;
+color: rgb(240, 240, 119);
+background-color: rgb(0, 0, 67);
+</string>
          </property>
          <property name="text">
           <string>Scan</string>
@@ -2405,6 +2416,7 @@ background-color: rgb(132, 0, 0);
           </property>
           <property name="styleSheet">
            <string notr="true">font: 35pt &quot;Sans Serif&quot;;
+background-color: rgb(150, 150, 150);
 </string>
           </property>
           <property name="frameShape">
