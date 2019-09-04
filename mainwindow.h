@@ -25,6 +25,8 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QTreeWidgetItem>
+#include <QGraphicsScene>
+#include <QGraphicsView>
 #include "mumbleclient.h"
 #include <math.h>
 #include <complex>
@@ -128,15 +130,11 @@ signals:
 public:
     explicit MainWindow(Settings *settings, QWidget *parent = 0);
     ~MainWindow();
-    QWidget* get_const_gui() {return _constellation_gui;}
-    QWidget* get_rssi_gui() {return _rssi_gui;}
 
     void readConfig();
 private:
     Ui::MainWindow *ui;
     bool _transmitting_radio;
-    QWidget *_constellation_gui;
-    QWidget *_rssi_gui;
     QPixmap *_video_img;
     QFileInfo *_config_file;
     qint64 _rx_frequency;

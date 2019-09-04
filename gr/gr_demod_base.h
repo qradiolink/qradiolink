@@ -36,6 +36,8 @@
 #include <gnuradio/blocks/copy.h>
 #include <gnuradio/blocks/rotator_cc.h>
 #include <gnuradio/blocks/message_debug.h>
+#include <gnuradio/blocks/probe_signal_f.h>
+#include <gnuradio/blocks/probe_signal_vc.h>
 #include <osmosdr/source.h>
 #include <vector>
 #include "gr_audio_sink.h"
@@ -56,8 +58,7 @@ class gr_demod_base : public QObject
 {
     Q_OBJECT
 public:
-    explicit gr_demod_base(gr::qtgui::const_sink_c::sptr const_gui, gr::qtgui::number_sink::sptr rssi_gui,
-                                QObject *parent = 0, float device_frequency=434000000,
+    explicit gr_demod_base(QObject *parent = 0, float device_frequency=434000000,
                                float rf_gain=50, std::string device_args="rtl=0", std::string device_antenna="RX2",
                                 int freq_corr=0);
     ~gr_demod_base();
@@ -87,12 +88,12 @@ private:
     gr_vector_sink_sptr _vector_sink;
     rx_fft_c_sptr _fft_sink;
     gr::analog::agc2_ff::sptr _agc2;
-    gr::qtgui::const_sink_c::sptr _constellation;
-    gr::qtgui::number_sink::sptr _rssi;
     gr::blocks::message_debug::sptr _message_sink;
     gr::blocks::copy::sptr _rssi_valve;
     gr::blocks::copy::sptr _fft_valve;
     gr::blocks::copy::sptr _const_valve;
+    gr::blocks::probe_signal_f::sptr _rssi;
+    gr::blocks::probe_signal_vc::sptr _constellation;
     gr::blocks::complex_to_mag_squared::sptr _mag_squared;
     gr::blocks::nlog10_ff::sptr _log10;
     gr::filter::single_pole_iir_filter_ff::sptr _single_pole_filter;

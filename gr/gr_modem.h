@@ -36,9 +36,6 @@
 #include "gr_demod_gmsk.h"
 #include "gr_mod_bpsk.h"
 #include "gr_demod_bpsk.h"
-#include <gnuradio/qtgui/number_sink.h>
-#include <gnuradio/qtgui/const_sink_c.h>
-#include <gnuradio/qtgui/sink_c.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -72,8 +69,7 @@ public:
         FrameTypeRepeaterInfo,
         FrameTypeEnd
     };
-    explicit gr_modem(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui,
-                      gr::qtgui::number_sink::sptr rssi_gui, QObject *parent = 0);
+    explicit gr_modem(Settings *settings, QObject *parent = 0);
     ~gr_modem();
     long _frequency_found;
     long _requested_frequency_hz;
@@ -163,8 +159,6 @@ private:
     int _bit_buf_len;
     unsigned long long _shift_reg;
 
-    gr::qtgui::const_sink_c::sptr _const_gui;
-    gr::qtgui::number_sink::sptr _rssi_gui;
 
 
 };

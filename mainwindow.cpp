@@ -123,8 +123,6 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     _show_controls = false;
     _show_constellation = false;
     _current_voip_channel = -1;
-    _constellation_gui = ui->widget_const;
-    _rssi_gui = ui->widget_rssi;
     _demod_offset = 0;
     readConfig();
     _video_img = new QPixmap;
@@ -246,6 +244,7 @@ void MainWindow::readConfig()
     ui->txModemTypeComboBox->setCurrentIndex(_settings->tx_mode);
     ui->lineEditIPaddress->setText(_settings->ip_address);
     ui->plotterFrame->setFilterOffset((qint64)_settings->demod_offset);
+    _demod_offset = _settings->demod_offset;
 
 }
 
@@ -505,6 +504,7 @@ void MainWindow::channelState(QTreeWidgetItem *item, int k)
 void MainWindow::toggleRXwin(bool value)
 {
     emit toggleRX(value);
+    emit setCarrierOffset(_demod_offset);
     ui->plotterFrame->setRunningState(value);
     emit enableGUIFFT(value);
 }

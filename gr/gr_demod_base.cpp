@@ -16,9 +16,7 @@
 
 #include "gr_demod_base.h"
 
-gr_demod_base::gr_demod_base(
-                             gr::qtgui::const_sink_c::sptr const_gui, gr::qtgui::number_sink::sptr rssi_gui,
-                              QObject *parent, float device_frequency,
+gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
                              float rf_gain, std::string device_args, std::string device_antenna,
                               int freq_corr) :
     QObject(parent)
@@ -37,6 +35,8 @@ gr_demod_base::gr_demod_base(
 
     _rssi_valve = gr::blocks::copy::make(8);
     _rssi_valve->set_enabled(false);
+    _rssi = gr::blocks::probe_signal_f::make();
+    _constellation = gr::blocks::probe_signal_vc::make(256);
     _fft_valve = gr::blocks::copy::make(8);
     _fft_valve->set_enabled(false);
     _const_valve = gr::blocks::copy::make(8);
@@ -71,8 +71,6 @@ gr_demod_base::gr_demod_base(
         _osmosdr_source->set_gain_mode(true);
     }
 
-    _constellation = const_gui;
-    _rssi = rssi_gui;
     _fft_sink = make_rx_fft_c(32768, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
 
     _deframer1 = make_gr_deframer_bb(1);
@@ -220,7 +218,7 @@ void gr_demod_base::set_mode(int mode)
         _top_block->disconnect(_qpsk_250k,1,_const_valve,0);
         _top_block->disconnect(_const_valve,0,_constellation,0);
         _top_block->disconnect(_qpsk_250k,2,_vector_sink,0);
-        _carrier_offset = 25000;
+        //_carrier_offset = 25000;
         _rotator->set_phase_inc(2*M_PI*-_carrier_offset/1000000);
         _osmosdr_source->set_center_freq(_device_frequency - _carrier_offset);
         break;
@@ -230,7 +228,7 @@ void gr_demod_base::set_mode(int mode)
         _top_block->disconnect(_qpsk_video,1,_const_valve,0);
         _top_block->disconnect(_const_valve,0,_constellation,0);
         _top_block->disconnect(_qpsk_video,2,_vector_sink,0);
-        _carrier_offset = 25000;
+        //_carrier_offset = 25000;
         _rotator->set_phase_inc(2*M_PI*-_carrier_offset/1000000);
         _osmosdr_source->set_center_freq(_device_frequency - _carrier_offset);
         break;
@@ -248,7 +246,7 @@ void gr_demod_base::set_mode(int mode)
         _top_block->disconnect(_rotator,0,_wfm,0);
         _top_block->disconnect(_wfm,0,_rssi_valve,0);
         _top_block->disconnect(_wfm,1,_audio_sink,0);
-        _carrier_offset = 25000;
+        //_carrier_offset = 25000;
         _rotator->set_phase_inc(2*M_PI*-_carrier_offset/1000000);
         _osmosdr_source->set_center_freq(_device_frequency - _carrier_offset);
         break;
@@ -346,7 +344,7 @@ void gr_demod_base::set_mode(int mode)
         break;
     case gr_modem_types::ModemTypeQPSK250000:
         _osmosdr_source->set_sample_rate(1000000);
-        _carrier_offset = 250000;
+        //_carrier_offset = 250000;
         _rotator->set_phase_inc(2*M_PI*-_carrier_offset/1000000);
         _osmosdr_source->set_center_freq(_device_frequency - _carrier_offset);
         _top_block->connect(_rotator,0,_qpsk_250k,0);
@@ -357,7 +355,7 @@ void gr_demod_base::set_mode(int mode)
         break;
     case gr_modem_types::ModemTypeQPSKVideo:
         _osmosdr_source->set_sample_rate(1000000);
-        _carrier_offset = 250000;
+        //_carrier_offset = 250000;
         _rotator->set_phase_inc(2*M_PI*-_carrier_offset/1000000);
         _osmosdr_source->set_center_freq(_device_frequency - _carrier_offset);
         _top_block->connect(_rotator,0,_qpsk_video,0);
@@ -380,7 +378,7 @@ void gr_demod_base::set_mode(int mode)
         break;
     case gr_modem_types::ModemTypeWBFM:
         _osmosdr_source->set_sample_rate(1000000);
-        _carrier_offset = 250000;
+        //_carrier_offset = 250000;
         _rotator->set_phase_inc(2*M_PI*-_carrier_offset/1000000);
         _osmosdr_source->set_center_freq(_device_frequency - _carrier_offset);
         _top_block->connect(_rotator,0,_wfm,0);

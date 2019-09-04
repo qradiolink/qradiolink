@@ -16,8 +16,7 @@
 
 #include "radioop.h"
 
-RadioOp::RadioOp(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui,
-                 gr::qtgui::number_sink::sptr rssi_gui, QObject *parent) :
+RadioOp::RadioOp(Settings *settings, QObject *parent) :
     QObject(parent)
 {
     _rx_mode = gr_modem_types::ModemTypeBPSK2000;
@@ -85,7 +84,7 @@ RadioOp::RadioOp(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui,
     QObject::connect(_data_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));
     QObject::connect(_data_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));
     QObject::connect(_voip_tx_timer, SIGNAL(timeout()), this, SLOT(stopTx()));
-    _modem = new gr_modem(_settings, const_gui, rssi_gui);
+    _modem = new gr_modem(_settings);
 
     QObject::connect(_modem,SIGNAL(textReceived(QString)),this,SLOT(textReceived(QString)));
     QObject::connect(_modem,SIGNAL(repeaterInfoReceived(QByteArray)),this,SLOT(repeaterInfoReceived(QByteArray)));
@@ -1405,10 +1404,10 @@ void RadioOp::tuneFreq(qint64 center_freq)
     _mutex->unlock();
 }
 
-void RadioOp::setCarrierOffset(qint64 center_freq)
+void RadioOp::setCarrierOffset(qint64 offset)
 {
     _mutex->lock();
-    _modem->set_carrier_offset(center_freq);
+    _modem->set_carrier_offset(offset);
     _mutex->unlock();
 }
 

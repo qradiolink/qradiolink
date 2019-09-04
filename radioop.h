@@ -43,9 +43,6 @@
 #include "audio/alsaaudio.h"
 #include "gr/gr_modem.h"
 #include "net/netdevice.h"
-#include <gnuradio/qtgui/const_sink_c.h>
-#include <gnuradio/qtgui/sink_c.h>
-#include <gnuradio/qtgui/number_sink.h>
 #include <gnuradio/digital/crc32.h>
 #include <libconfig.h++>
 
@@ -64,7 +61,7 @@ class RadioOp : public QObject
     Q_OBJECT
 public:
     explicit RadioOp(Settings *settings,
-                     gr::qtgui::const_sink_c::sptr const_gui, gr::qtgui::number_sink::sptr rssi_gui, QObject *parent = 0);
+                      QObject *parent = 0);
     ~RadioOp();
 
     void flushVoipBuffer();
@@ -135,7 +132,7 @@ public slots:
     void addChannel(Channel* chan);
     void setStations(StationList list);
     void setVox(bool value);
-    void setCarrierOffset(qint64 center_freq);
+    void setCarrierOffset(qint64 offset);
     void setFFTSize(int size);
 
 private:
@@ -189,7 +186,6 @@ private:
     QElapsedTimer *_data_modem_reset_timer;
     QElapsedTimer *_data_modem_sleep_timer;
     bool _data_modem_sleeping;
-    gr::qtgui::sink_c::sptr _fft_gui;
     unsigned char *_rand_frame_data;
     std::vector<short> *_m_queue;
     quint64 _last_session_id;

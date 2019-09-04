@@ -41,9 +41,6 @@
 #include "station.h"
 #include "channel.h"
 #include "radioop.h"
-#include <gnuradio/qtgui/const_sink_c.h>
-#include <gnuradio/qtgui/number_sink.h>
-#include <gnuradio/qtgui/sink_c.h>
 
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
@@ -165,52 +162,11 @@ int main(int argc, char *argv[])
     t3->start();
     */
 
-    const std::string const_name = "const";
-    gr::qtgui::const_sink_c::sptr const_gui = gr::qtgui::const_sink_c::make(256, const_name,1, w->get_const_gui());
-    const_gui->set_size(600,400);
-    const_gui->set_update_time(0.2);
-    //const_gui->set_line_marker(0,2);
-    const_gui->qwidget()->setStyleSheet(
-                "QwtPlotCanvas { background-color: #E1DFFF;  \
-                border: 1px solid White; \
-                border-radius: 10px; \
-                } \
-                DisplayPlot { \
-                qproperty-zoomer_color: black; \
-                qproperty-line_color1: #01147F; \
-                qproperty-line_color2: magenta; \
-                qproperty-line_color3: #FF6905; \
-                qproperty-line_style2: DashLine; \
-                qproperty-line_style3: DotLine; \
-                qproperty-line_width1: 1; \
-                qproperty-line_width2: 1; \
-                qproperty-line_width3: 1; \
-                qproperty-marker_alpha1: 210; \
-                qproperty-marker_alpha2: 0; \
-                qproperty-marker_alpha3: 0; \
-                qproperty-axes_label_font_size: 12; \
-                } ");
-
-
-
-    gr::qtgui::number_sink::sptr rssi_gui = gr::qtgui::number_sink::make(4,0.5,gr::qtgui::NUM_GRAPH_HORIZ,1,w->get_rssi_gui());
-    rssi_gui->set_max(0,10);
-    rssi_gui->set_min(0,-120);
-    rssi_gui->set_label(0,"RSSI");
-    w->get_rssi_gui()->resize(300,50);
-    rssi_gui->qwidget()->resize(300,50);
-    rssi_gui->set_update_time(0.3);
-    rssi_gui->set_color(0, "#00cc00", "#A80000");
-    rssi_gui->qwidget()->setStyleSheet(
-            "QwtThermo { background-color: #E1DFFF;" \
-            "color: #FF6905;}");
-
-
 
 
     QThread *t4 = new QThread;
     t4->setObjectName("radioop");
-    RadioOp *radio_op = new RadioOp(settings, const_gui, rssi_gui);
+    RadioOp *radio_op = new RadioOp(settings);
     radio_op->moveToThread(t4);
     QObject::connect(t4, SIGNAL(started()), radio_op, SLOT(run()));
     QObject::connect(radio_op, SIGNAL(finished()), t4, SLOT(quit()));

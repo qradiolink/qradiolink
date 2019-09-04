@@ -16,8 +16,7 @@
 
 #include "gr_modem.h"
 
-gr_modem::gr_modem(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui,
-                   gr::qtgui::number_sink::sptr rssi_gui, QObject *parent) :
+gr_modem::gr_modem(Settings *settings, QObject *parent) :
     QObject(parent)
 {
     _modem_type_rx = gr_modem_types::ModemTypeBPSK2000;
@@ -43,8 +42,6 @@ gr_modem::gr_modem(Settings *settings, gr::qtgui::const_sink_c::sptr const_gui,
     _shift_reg = 0;
     _last_frame_type = FrameTypeNone;
     _current_frame_type = FrameTypeNone;
-    _const_gui = const_gui;
-    _rssi_gui = rssi_gui;
     _frequency_found =0;
     _requested_frequency_hz = 433500000;
     _gr_mod_base = 0;
@@ -70,8 +67,7 @@ void gr_modem::initTX(int modem_type, std::string device_args, std::string devic
 void gr_modem::initRX(int modem_type, std::string device_args, std::string device_antenna, int freq_corr)
 {
     _modem_type_rx = modem_type;
-    _gr_demod_base = new gr_demod_base(
-                _const_gui, _rssi_gui, 0, _requested_frequency_hz, 0.9, device_args, device_antenna, freq_corr);
+    _gr_demod_base = new gr_demod_base(0, _requested_frequency_hz, 0.9, device_args, device_antenna, freq_corr);
     toggleRxMode(modem_type);
 
 }
