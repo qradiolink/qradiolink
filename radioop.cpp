@@ -50,6 +50,8 @@ RadioOp::RadioOp(Settings *settings, QObject *parent) :
     _fft_read_timer->start();
     _fft_poll_time = 75;
     _fft_enabled = true;
+    _constellation_read_timer = new QElapsedTimer();
+    _constellation_read_timer->start();
     _constellation_enabled = false;
     _data_modem_sleeping = false;
     _settings = settings;
@@ -82,6 +84,8 @@ RadioOp::RadioOp(Settings *settings, QObject *parent) :
     _rand_frame_data = new unsigned char[5000];
     _voip_encode_buffer = new QVector<short>;
     _fft_data = new std::complex<float>[1024*1024];
+    _constellation_data = new std::vector<std::complex<float>>;
+    _constellation_data->reserve(256);
 
 
     QObject::connect(_voice_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));
@@ -634,7 +638,7 @@ void RadioOp::run()
                     data_to_process = _modem->demodulateAnalog();
                 }
                 getFFTData();
-                //getConstellationData();
+                getConstellationData();
 
             }
         }
@@ -688,10 +692,6 @@ void RadioOp::getFFTData()
     {
         emit newFFTData(_fft_data, (int)fft_size);
     }
-    else
-    {
-        //delete[] fft_data;
-    }
     _fft_read_timer->restart();
 }
 
@@ -710,18 +710,14 @@ void RadioOp::getConstellationData()
     qint64 msec = (quint64)_constellation_read_timer->nsecsElapsed() / 1000000;
     if(msec < _fft_poll_time)
     {
+        std::complex<float> const_data_point = _modem->getConstellation();
+        _mutex->lock();
+        _constellation_data->push_back(const_data_point);
+        _mutex->unlock();
         return;
     }
-    //std::complex<float> *fft_data = new std::complex<float>[1024*1024];
-    std::vector<gr_complex> const_data = _modem->getConstellation();
-    //if(fft_size > 0)
-    //{
-        //emit newConstellationData();
-    //}
-    //else
-    //{
-        //delete[] fft_data;
-    //}
+
+    emit newConstellationData(_constellation_data);
     _constellation_read_timer->restart();
 }
 

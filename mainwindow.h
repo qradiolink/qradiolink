@@ -25,8 +25,7 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QTreeWidgetItem>
-#include <QGraphicsScene>
-#include <QGraphicsView>
+#include <QPainter>
 #include "mumbleclient.h"
 #include <math.h>
 #include <complex>
@@ -37,6 +36,7 @@
 #include "qtgui/plotter.h"
 #include <iostream>
 
+typedef std::vector<std::complex<float>> complex_vector;
 namespace Ui {
 class MainWindow;
 }
@@ -94,7 +94,7 @@ public slots:
     void setEnabledFFT(bool value);
     void setPeakDetect(bool value);
     void updateRSSI(float value);
-    void updateConstellation(std::vector<std::complex<float>>* constellation_data);
+    void updateConstellation(complex_vector* constellation_data);
     void newWaterfallFPS();
 
 
@@ -143,6 +143,7 @@ private:
     Ui::MainWindow *ui;
     bool _transmitting_radio;
     QPixmap *_video_img;
+    QPixmap *_constellation_img;
     QFileInfo *_config_file;
     qint64 _rx_frequency;
     qint64 _tx_frequency;
@@ -160,8 +161,6 @@ private:
     bool _show_controls;
     bool _show_constellation;
     bool _fft_enabled;
-    QGraphicsScene *_scene;
-    QGraphicsView *_view;
     void setFilterWidth(int index);
     std::vector<std::complex<int>> *_filter_widths;
 

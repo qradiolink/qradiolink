@@ -47,6 +47,7 @@
 #include <libconfig.h++>
 
 typedef QVector<Station> StationList;
+typedef std::vector<std::complex<float>> complex_vector;
 namespace radio_type
 {
     enum
@@ -84,7 +85,7 @@ signals:
     void pingServer();
     void voipData(short *pcm, int samples);
     void newFFTData(std::complex<float>*, int);
-    void newConstellationData(std::vector<std::complex<float>>*);
+    void newConstellationData(complex_vector*);
     void newRSSIValue(float rssi);
 
 
@@ -199,6 +200,7 @@ private:
     bool _tx_started;
     int _freq_gui_counter;
     std::complex<float> *_fft_data;
+    std::vector<std::complex<float>> *_constellation_data;
     bool _fft_enabled;
     int _fft_poll_time;
     bool _constellation_enabled;

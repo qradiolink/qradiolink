@@ -82,6 +82,8 @@ int main(int argc, char *argv[])
 
     typedef QVector<Station> StationList;
     qRegisterMetaType<StationList>("StationList");
+    typedef std::vector<std::complex<float>> complex_vector;
+    qRegisterMetaType<complex_vector>("complex_vector");
 
 
     QApplication a(argc, argv);
@@ -215,7 +217,7 @@ int main(int argc, char *argv[])
     QObject::connect(radio_op, SIGNAL(voipData(short*,int)), client, SLOT(processAudio(short*,int)));
     QObject::connect(radio_op, SIGNAL(newFFTData(std::complex<float>*,int)), w, SLOT(newFFTData(std::complex<float>*,int)));
     QObject::connect(radio_op, SIGNAL(newRSSIValue(float)), w, SLOT(updateRSSI(float)));
-    QObject::connect(radio_op, SIGNAL(newConstellationData(std::vector<std::complex<float> >*)), w, SLOT(updateConstellation(std::vector<std::complex<float> >*)));
+    QObject::connect(radio_op, SIGNAL(newConstellationData(complex_vector*)), w, SLOT(updateConstellation(complex_vector*)));
 
     QObject::connect(client,SIGNAL(onlineStations(StationList)),w,SLOT(updateOnlineStations(StationList)));
     QObject::connect(client,SIGNAL(onlineStations(StationList)),radio_op,SLOT(setStations(StationList)));

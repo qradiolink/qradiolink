@@ -313,6 +313,12 @@ background-color: rgb(0, 0, 67);</string>
 color: rgb(240, 240, 119);
 background-color: rgb(0, 0, 67);</string>
                </property>
+               <property name="currentIndex">
+                <number>3</number>
+               </property>
+               <property name="maxVisibleItems">
+                <number>15</number>
+               </property>
                <item>
                 <property name="text">
                  <string>4096</string>
@@ -625,6 +631,19 @@ border: 2px solid white;</string>
           <property name="frameShadow">
            <enum>QFrame::Raised</enum>
           </property>
+          <widget class="QLabel" name="constellationLabel">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>201</width>
+             <height>201</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>TextLabel</string>
+           </property>
+          </widget>
          </widget>
         </widget>
         <widget class="QWidget" name="tab_2">

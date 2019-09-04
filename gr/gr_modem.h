@@ -126,7 +126,7 @@ public slots:
     void set_carrier_offset(long center_freq);
     void setFFTSize(int size);
     float getRSSI();
-    std::vector<gr_complex> getConstellation();
+    gr_complex getConstellation();
 
 private:
 

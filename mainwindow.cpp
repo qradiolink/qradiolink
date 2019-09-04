@@ -149,6 +149,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     _demod_offset = 0;
     readConfig();
     _video_img = new QPixmap;
+    _constellation_img = new QPixmap(200,200);
     ui->menuBar->hide();
     ui->statusBar->hide();
     ui->mainToolBar->hide();
@@ -171,14 +172,6 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     ui->plotterFrame->setClickResolution(1);
     ui->plotterFrame->setPandapterRange(-120.0, -20.0);
     ui->plotterFrame->setWaterfallRange(-120.0, -20.0);
-
-    _scene = new QGraphicsScene(ui->constellationDisplay);
-    _scene->setItemIndexMethod(QGraphicsScene::NoIndex);
-    _view = new QGraphicsView(_scene);
-    _view->setRenderHint(QPainter::Antialiasing);
-    _view->setCacheMode(QGraphicsView::CacheBackground);
-    _view->setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
-    _view->resize(200, 200);
 
 
 }
@@ -392,9 +385,27 @@ void MainWindow::newWaterfallFPS()
     emit setWaterfallFPS(_waterfall_fps);
 }
 
-void MainWindow::updateConstellation(std::vector<std::complex<float>>* constellation_data)
+void MainWindow::updateConstellation(complex_vector *constellation_data)
 {
+    ui->constellationLabel->clear();
+    delete _constellation_img;
+    _constellation_img = new QPixmap(200,200);
+    _constellation_img->fill(QColor("transparent"));
+    QPainter painter(_constellation_img);
+    QPen pen(QColor(77,255,77,255), 4, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    painter.setPen(pen);
+    for(int i = 0;i < constellation_data->size();i++)
+    {
+        std::complex<float> pt = constellation_data->at(i);
+        int x = (int)(std::min(pt.real(), 2.0f) * 50 + 100);
+        int y = (int)(std::min(pt.imag(), 2.0f) * 50 + 100);
+        painter.drawPoint(x, y);
+    }
+    painter.end();
 
+    ui->constellationLabel->setPixmap(*_constellation_img);
+    if(constellation_data->size() > 256)
+        constellation_data->erase(constellation_data->begin(),constellation_data->begin()+128);
 }
 
 void MainWindow::displayText(QString text, bool html)
