@@ -81,6 +81,7 @@ RadioOp::RadioOp(Settings *settings, QObject *parent) :
     _data_led_timer->setSingleShot(true);
     _rand_frame_data = new unsigned char[5000];
     _voip_encode_buffer = new QVector<short>;
+    _fft_data = new std::complex<float>[1024*1024];
 
 
     QObject::connect(_voice_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));
@@ -681,16 +682,15 @@ void RadioOp::getFFTData()
     }
     float rssi = _modem->getRSSI();
     emit newRSSIValue(rssi);
-    std::complex<float> *fft_data = new std::complex<float>[1024*1024];
     unsigned int fft_size = 0;
-    _modem->get_fft_data(fft_data, fft_size);
+    _modem->get_fft_data(_fft_data, fft_size);
     if(fft_size > 0)
     {
-        emit newFFTData(fft_data, (int)fft_size);
+        emit newFFTData(_fft_data, (int)fft_size);
     }
     else
     {
-        delete[] fft_data;
+        //delete[] fft_data;
     }
     _fft_read_timer->restart();
 }

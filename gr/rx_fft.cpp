@@ -51,6 +51,7 @@ rx_fft_c::rx_fft_c(unsigned int fftsize, int wintype)
 
     /* allocate circular buffer */
     d_cbuf.set_capacity(d_fftsize);
+    d_cbuf.reserve();
 
     /* create FFT window */
     set_window_type(wintype);
@@ -60,6 +61,7 @@ rx_fft_c::~rx_fft_c()
 {
     delete d_fft;
 }
+
 
 /*! \brief Receiver FFT work method.
  *  \param noutput_items

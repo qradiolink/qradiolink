@@ -373,7 +373,6 @@ void MainWindow::newFFTData(std::complex<float>* fft_data, int fftsize)
 
     ui->plotterFrame->setNewFftData(_iirFftData, _realFftData, fftsize);
     //ui->plotterFrame->draw();
-    delete[] fft_data;
 }
 
 

@@ -62,6 +62,7 @@ public:
                                float rf_gain=50, std::string device_args="rtl=0", std::string device_antenna="RX2",
                                 int freq_corr=0);
     ~gr_demod_base();
+
 signals:
 
 public slots:
