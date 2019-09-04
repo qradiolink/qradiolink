@@ -676,6 +676,8 @@ void RadioOp::getFFTData()
     {
         return;
     }
+    float rssi = _modem->getRSSI();
+    emit newRSSIValue(rssi);
     std::complex<float> *fft_data = new std::complex<float>[1024*1024];
     unsigned int fft_size = 0;
     _modem->get_fft_data(fft_data, fft_size);
@@ -689,6 +691,7 @@ void RadioOp::getFFTData()
     }
     _fft_read_timer->restart();
 }
+
 
 void RadioOp::receiveAudioData(unsigned char *data, int size)
 {

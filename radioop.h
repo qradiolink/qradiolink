@@ -84,6 +84,7 @@ signals:
     void pingServer();
     void voipData(short *pcm, int samples);
     void newFFTData(std::complex<float>*, int);
+    void newRSSIValue(float rssi);
 
 
 public slots:

@@ -92,6 +92,7 @@ public slots:
     void showControls();
     void showConstellation();
     void setEnabledFFT(bool value);
+    void updateRSSI(float value);
 
 
 signals:

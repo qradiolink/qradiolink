@@ -81,6 +81,7 @@ public slots:
     double get_freq();
     void set_mode(int mode);
     void set_fft_size(int size);
+    float get_rssi();
 
 private:
     gr::top_block_sptr _top_block;

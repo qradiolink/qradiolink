@@ -227,8 +227,8 @@
              <item>
               <widget class="QLabel" name="label_16">
                <property name="styleSheet">
-                <string notr="true">font: 9pt &quot;Sans Serif&quot;;
-background-color: rgb(255, 255, 127);</string>
+                <string notr="true">font: 8pt &quot;Sans Serif&quot;;
+</string>
                </property>
                <property name="text">
                 <string>Sample rate</string>
@@ -295,8 +295,8 @@ background-color: rgb(0, 0, 67);</string>
              <item>
               <widget class="QLabel" name="label_17">
                <property name="styleSheet">
-                <string notr="true">font: 9pt &quot;Sans Serif&quot;;
-background-color: rgb(255, 255, 127);</string>
+                <string notr="true">font: 8pt &quot;Sans Serif&quot;;
+</string>
                </property>
                <property name="text">
                 <string>FFT size</string>
@@ -338,13 +338,28 @@ background-color: rgb(0, 0, 67);</string>
                  <string>65536</string>
                 </property>
                </item>
+               <item>
+                <property name="text">
+                 <string>262144</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>524288</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>1048576</string>
+                </property>
+               </item>
               </widget>
              </item>
              <item>
               <widget class="QCheckBox" name="peakHoldCheckBox">
                <property name="styleSheet">
-                <string notr="true">font: 9pt &quot;Sans Serif&quot;;
-background-color: rgb(255, 255, 127);</string>
+                <string notr="true">font: 8pt &quot;Sans Serif&quot;;
+</string>
                </property>
                <property name="text">
                 <string>Peak hold</string>
@@ -420,8 +435,8 @@ background-color: rgb(255, 255, 127);</string>
                 <string>Disable FFT and Waterfall for extra CPU</string>
                </property>
                <property name="styleSheet">
-                <string notr="true">font: 9pt &quot;Sans Serif&quot;;
-background-color: rgb(255, 255, 127);</string>
+                <string notr="true">font: 8pt &quot;Sans Serif&quot;;
+</string>
                </property>
                <property name="text">
                 <string>FFT</string>
@@ -1889,9 +1904,9 @@ font: 11pt &quot;Sans Serif&quot;;</string>
         <widget class="QLabel" name="labelDisplayCallsign">
          <property name="geometry">
           <rect>
-           <x>750</x>
+           <x>790</x>
            <y>40</y>
-           <width>120</width>
+           <width>80</width>
            <height>30</height>
           </rect>
          </property>
@@ -1903,14 +1918,14 @@ font: 11pt &quot;Sans Serif&quot;;</string>
          </property>
          <property name="minimumSize">
           <size>
-           <width>120</width>
+           <width>70</width>
            <height>30</height>
           </size>
          </property>
          <property name="font">
           <font>
            <family>Monospace</family>
-           <pointsize>11</pointsize>
+           <pointsize>9</pointsize>
            <weight>50</weight>
            <italic>false</italic>
            <bold>false</bold>
@@ -1918,7 +1933,7 @@ font: 11pt &quot;Sans Serif&quot;;</string>
          </property>
          <property name="styleSheet">
           <string notr="true">color: rgb(255, 255, 255);
-font: 11pt &quot;Monospace&quot;;
+font: 9pt &quot;Monospace&quot;;
 background-color: rgb(0, 85, 127);
 </string>
          </property>
@@ -1944,20 +1959,20 @@ background-color: rgb(0, 85, 127);
         <widget class="QLabel" name="label_22">
          <property name="geometry">
           <rect>
-           <x>760</x>
+           <x>800</x>
            <y>20</y>
-           <width>111</width>
+           <width>61</width>
            <height>16</height>
           </rect>
          </property>
          <property name="text">
-          <string>Incoming callsign</string>
+          <string>Callsign</string>
          </property>
         </widget>
         <widget class="QCommandLinkButton" name="autotuneButton">
          <property name="geometry">
           <rect>
-           <x>690</x>
+           <x>650</x>
            <y>40</y>
            <width>51</width>
            <height>31</height>
@@ -1999,7 +2014,7 @@ color: rgb(203, 0, 0);</string>
         <widget class="QLabel" name="labelRSSI">
          <property name="geometry">
           <rect>
-           <x>616</x>
+           <x>710</x>
            <y>40</y>
            <width>71</width>
            <height>31</height>
@@ -2016,7 +2031,7 @@ color: rgb(85, 255, 0);</string>
         <widget class="QLabel" name="label_23">
          <property name="geometry">
           <rect>
-           <x>640</x>
+           <x>730</x>
            <y>20</y>
            <width>31</width>
            <height>16</height>
@@ -2243,7 +2258,7 @@ background-color: rgb(132, 0, 0);
           </property>
           <property name="styleSheet">
            <string notr="true">font: 35pt &quot;Sans Serif&quot;;
-background-color: rgb(128, 132, 138);</string>
+</string>
           </property>
           <property name="frameShape">
            <enum>QFrame::Panel</enum>

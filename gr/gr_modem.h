@@ -125,6 +125,7 @@ public slots:
     void get_fft_data(std::complex<float>* data, unsigned int &size);
     void set_carrier_offset(long center_freq);
     void setFFTSize(int size);
+    float getRSSI();
 
 private:
 

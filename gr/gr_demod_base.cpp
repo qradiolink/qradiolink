@@ -562,3 +562,8 @@ void gr_demod_base::set_fft_size(int size)
     _fft_sink->set_fft_size((unsigned int)size);
     _top_block->unlock();
 }
+
+float gr_demod_base::get_rssi()
+{
+    return _rssi->level();
+}

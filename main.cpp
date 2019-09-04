@@ -213,6 +213,7 @@ int main(int argc, char *argv[])
     QObject::connect(client, SIGNAL(pcmAudio(short*,int,quint64)), radio_op, SLOT(processVoipAudioFrame(short*, int, quint64)));
     QObject::connect(radio_op, SIGNAL(voipData(short*,int)), client, SLOT(processAudio(short*,int)));
     QObject::connect(radio_op, SIGNAL(newFFTData(std::complex<float>*,int)), w, SLOT(newFFTData(std::complex<float>*,int)));
+    QObject::connect(radio_op, SIGNAL(newRSSIValue(float)), w, SLOT(updateRSSI(float)));
 
     QObject::connect(client,SIGNAL(onlineStations(StationList)),w,SLOT(updateOnlineStations(StationList)));
     QObject::connect(client,SIGNAL(onlineStations(StationList)),radio_op,SLOT(setStations(StationList)));

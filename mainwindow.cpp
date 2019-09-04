@@ -64,11 +64,28 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     ui->frameCtrlFreq->setDigitColor(QColor(200,200,200,0xFF));
     ui->frameCtrlFreq->setUnitsColor(QColor(254,254,254,0xFF));
 
-    ui->txGainDial->setStyleSheet("background-color:#660000;");
-    ui->rxGainDial->setStyleSheet("background-color:#013E09;");
-    ui->rxSquelchDial->setStyleSheet("background-color:#040D55;");
-    ui->rxVolumeDial->setStyleSheet("background-color:#040D55;");
-    ui->tuneDial->setStyleSheet("background-color:#040D55;");
+    QString style = "QDial "
+            "{"
+            "background-color:QLinearGradient("
+            "    x1: 0.177, y1: 0.004, x2: 0.831, y2: 0.911,"
+            "    stop: 0 white,"
+            "   stop: 0.061 white,"
+            "    stop: 0.066 #b3b3b3,"
+            "    stop: 0.5 #242424,"
+            "    stop: 0.505 #000000,"
+            "    stop: 0.827 #040404,"
+            "    stop: 0.966 #292929,"
+            "    stop: 0.983 #2e2e2e"
+            ");"
+        "}";
+
+    ui->txGainDial->setStyleSheet("background-color:#b3b3b3;");
+    ui->rxGainDial->setStyleSheet("background-color:#b3b3b3;");
+    ui->rxSquelchDial->setStyleSheet("background-color:#b3b3b3;");
+    ui->rxVolumeDial->setStyleSheet("background-color:#b3b3b3;");
+    ui->tuneDial->setStyleSheet("background-color:#b3b3b3;");
+    ui->txGainDial->setNotchesVisible(true);
+
 
 
     QObject::connect(ui->buttonTransmit,SIGNAL(pressed()),this,SLOT(GUIstartTransmission()));
@@ -200,12 +217,14 @@ void MainWindow::showControls()
         ui->plotterContainer->resize(xy.right() -xy.left()-20,xy.bottom()-xy.top()-210);
         ui->controlsFrame->show();
         _show_controls = true;
+        emit enableGUIConst(_show_controls);
     }
     else
     {
         ui->plotterContainer->resize(xy.right() -xy.left()-20,xy.bottom()-xy.top()-120);
         ui->controlsFrame->hide();
         _show_controls = false;
+        emit enableGUIConst(_show_controls);
     }
 }
 
@@ -668,4 +687,9 @@ void MainWindow::setEnabledFFT(bool value)
 {
     _fft_enabled = value;
     emit enableGUIFFT(value);
+}
+
+void MainWindow::updateRSSI(float value)
+{
+    ui->labelRSSI->setText(QString::number(value));
 }

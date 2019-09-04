@@ -545,7 +545,14 @@ static void unpackBytes(unsigned char *bitbuf, const unsigned char *bytebuf, int
 
 void gr_modem::get_fft_data(std::complex<float>* data, unsigned int &size)
 {
-    _gr_demod_base->getFFTData(data, size);
+    if(_gr_demod_base)
+        _gr_demod_base->getFFTData(data, size);
+}
+
+float gr_modem::getRSSI()
+{
+    if(_gr_demod_base)
+        return _gr_demod_base->get_rssi();
 }
 
 bool gr_modem::demodulateAnalog()
