@@ -120,6 +120,8 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     QObject::connect(ui->showControlsButton,SIGNAL(clicked()),this,SLOT(showControls()));
     QObject::connect(ui->showConstellationButton,SIGNAL(clicked()),this,SLOT(showConstellation()));
     QObject::connect(ui->fftEnableCheckBox,SIGNAL(toggled(bool)),this,SLOT(setEnabledFFT(bool)));
+    QObject::connect(ui->peakDetectCheckBox,SIGNAL(toggled(bool)),this,SLOT(setPeakDetect(bool)));
+
 
     QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
     QObject::connect(ui->plotterFrame,SIGNAL(pandapterRangeChanged(float,float)),ui->plotterFrame,SLOT(setWaterfallRange(float,float)));
@@ -687,6 +689,11 @@ void MainWindow::setEnabledFFT(bool value)
 {
     _fft_enabled = value;
     emit enableGUIFFT(value);
+}
+
+void MainWindow::setPeakDetect(bool value)
+{
+    ui->plotterFrame->setPeakDetection(value, 3.0);
 }
 
 void MainWindow::updateRSSI(float value)

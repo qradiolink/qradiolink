@@ -211,7 +211,7 @@
             </widget>
            </item>
            <item row="1" column="1">
-            <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0,0,0,0,0,0,0,0,0,0">
+            <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0,0,0,0,0,0,0,0,0,0,0,0">
              <property name="spacing">
               <number>2</number>
              </property>
@@ -443,6 +443,32 @@ background-color: rgb(0, 0, 67);</string>
                </property>
                <property name="checked">
                 <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_3">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeType">
+                <enum>QSizePolicy::Fixed</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>15</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="peakDetectCheckBox">
+               <property name="styleSheet">
+                <string notr="true">font: 8pt &quot;Sans Serif&quot;;</string>
+               </property>
+               <property name="text">
+                <string>Peak detect</string>
                </property>
               </widget>
              </item>
