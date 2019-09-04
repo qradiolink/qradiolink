@@ -95,6 +95,7 @@ public slots:
     void setPeakDetect(bool value);
     void updateRSSI(float value);
     void updateConstellation(std::vector<std::complex<float>>* constellation_data);
+    void newWaterfallFPS();
 
 
 signals:
@@ -130,6 +131,7 @@ signals:
     void stopRadio();
     void setCarrierOffset(qint64 offset);
     void newFFTSize(int);
+    void setWaterfallFPS(int);
 
 
 public:
@@ -153,6 +155,7 @@ private:
     float *_pwrFftData;
     float *_iirFftData;
     float _fft_averaging;
+    int _waterfall_fps;
     qint64 _demod_offset;
     bool _show_controls;
     bool _show_constellation;

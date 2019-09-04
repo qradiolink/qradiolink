@@ -48,6 +48,7 @@ RadioOp::RadioOp(Settings *settings, QObject *parent) :
     _data_modem_sleep_timer = new QElapsedTimer();
     _fft_read_timer = new QElapsedTimer();
     _fft_read_timer->start();
+    _fft_poll_time = 75;
     _fft_enabled = true;
     _constellation_enabled = false;
     _data_modem_sleeping = false;
@@ -674,7 +675,7 @@ void RadioOp::getFFTData()
         return;
     }
     qint64 msec = (quint64)_fft_read_timer->nsecsElapsed() / 1000000;
-    if(msec < 75)
+    if(msec < _fft_poll_time)
     {
         return;
     }
@@ -694,6 +695,11 @@ void RadioOp::getFFTData()
     _fft_read_timer->restart();
 }
 
+void RadioOp::setFFTPollTime(int fps)
+{
+    _fft_poll_time = (int)(1000 / fps);
+}
+
 void RadioOp::getConstellationData()
 {
     if(!_constellation_enabled)
@@ -702,7 +708,7 @@ void RadioOp::getConstellationData()
         return;
     }
     qint64 msec = (quint64)_constellation_read_timer->nsecsElapsed() / 1000000;
-    if(msec < 75)
+    if(msec < _fft_poll_time)
     {
         return;
     }

@@ -121,6 +121,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     QObject::connect(ui->showConstellationButton,SIGNAL(clicked()),this,SLOT(showConstellation()));
     QObject::connect(ui->fftEnableCheckBox,SIGNAL(toggled(bool)),this,SLOT(setEnabledFFT(bool)));
     QObject::connect(ui->peakDetectCheckBox,SIGNAL(toggled(bool)),this,SLOT(setPeakDetect(bool)));
+    QObject::connect(ui->fpsBox,SIGNAL(currentIndexChanged(int)),this,SLOT(newWaterfallFPS()));
 
 
     QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
@@ -384,6 +385,12 @@ void MainWindow::setFFTSize(int size)
 void MainWindow::setAveraging(int x)
 {
     _fft_averaging = 1.0 / x;
+}
+
+void MainWindow::newWaterfallFPS()
+{
+    _waterfall_fps = ui->fpsBox->currentText().toInt();
+    emit setWaterfallFPS(_waterfall_fps);
 }
 
 void MainWindow::updateConstellation(std::vector<std::complex<float>>* constellation_data)

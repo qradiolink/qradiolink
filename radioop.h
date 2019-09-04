@@ -136,6 +136,7 @@ public slots:
     void setVox(bool value);
     void setCarrierOffset(qint64 offset);
     void setFFTSize(int size);
+    void setFFTPollTime(int fps);
 
 private:
     bool _stop;
@@ -199,6 +200,7 @@ private:
     int _freq_gui_counter;
     std::complex<float> *_fft_data;
     bool _fft_enabled;
+    int _fft_poll_time;
     bool _constellation_enabled;
     QElapsedTimer *_fft_read_timer;
     QElapsedTimer *_constellation_read_timer;
