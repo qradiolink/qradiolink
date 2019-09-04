@@ -102,11 +102,13 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     QObject::connect(ui->peakHoldCheckBox,SIGNAL(toggled(bool)),ui->plotterFrame,SLOT(setPeakHold(bool)));
     QObject::connect(ui->showControlsButton,SIGNAL(clicked()),this,SLOT(showControls()));
     QObject::connect(ui->showConstellationButton,SIGNAL(clicked()),this,SLOT(showConstellation()));
+    QObject::connect(ui->fftEnableCheckBox,SIGNAL(toggled(bool)),this,SLOT(setEnabledFFT(bool)));
 
     QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
     QObject::connect(ui->plotterFrame,SIGNAL(pandapterRangeChanged(float,float)),ui->plotterFrame,SLOT(setWaterfallRange(float,float)));
     QObject::connect(ui->plotterFrame,SIGNAL(newCenterFreq(qint64)),this,SLOT(tuneMainFreq(qint64)));
     QObject::connect(ui->panadapterSlider,SIGNAL(valueChanged(int)),ui->plotterFrame,SLOT(setPercent2DScreen(int)));
+    QObject::connect(ui->averagingSlider,SIGNAL(valueChanged(int)),this,SLOT(setAveraging(int)));
     QObject::connect(ui->plotterFrame,SIGNAL(newDemodFreq(qint64,qint64)),this,SLOT(carrierOffsetChanged(qint64,qint64)));
 
     QObject::connect(ui->voipTreeWidget,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this,SLOT(channelState(QTreeWidgetItem *,int)));
@@ -118,6 +120,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     ui->voipTreeWidget->setColumnHidden(2,true);
     ui->voipTreeWidget->setColumnHidden(3,true);
     _transmitting_radio = false;
+    _fft_enabled = true;
     ui->controlsFrame->hide();
     ui->constellationDisplay->hide();
     _show_controls = false;
@@ -133,6 +136,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     _realFftData = new float[1024*1024];
     _pwrFftData = new float[1024*1024]();
     _iirFftData = new float[1024*1024];
+    _fft_averaging = 1;
     QRect xy = this->geometry();
     //ui->plotterFrame->resize(xy.right() -xy.left(),xy.bottom()-xy.top()-500);
     ui->plotterContainer->resize(xy.right() -xy.left()-20,xy.bottom()-xy.top()-120);
@@ -342,7 +346,7 @@ void MainWindow::newFFTData(std::complex<float>* fft_data, int fftsize)
         _realFftData[i] = 10.0 * log10f(pwr + 1.0e-20);
 
         /* FFT averaging */
-        _iirFftData[i] += 1 * (_realFftData[i] - _iirFftData[i]);
+        _iirFftData[i] += _fft_averaging * (_realFftData[i] - _iirFftData[i]);
     }
 
     ui->plotterFrame->setNewFftData(_iirFftData, _realFftData, fftsize);
@@ -353,6 +357,11 @@ void MainWindow::newFFTData(std::complex<float>* fft_data, int fftsize)
 void MainWindow::setFFTSize(int size)
 {
     emit newFFTSize(ui->fftSizeBox->currentText().toInt());
+}
+
+void MainWindow::setAveraging(int x)
+{
+    _fft_averaging = 1.0 / x;
 }
 
 void MainWindow::displayText(QString text, bool html)
@@ -620,18 +629,7 @@ void MainWindow::displayImage(QImage img)
 
 void MainWindow::mainTabChanged(int value)
 {
-    if(value == 1)
-        emit enableGUIConst(true);
-    else
-        emit enableGUIConst(false);
-    if(value == 2)
-    {
-        emit enableGUIFFT(true);
-    }
-    else
-    {
-        emit enableGUIFFT(false);
-    }
+
 }
 
 void MainWindow::updateFreqGUI(long freq)
@@ -664,4 +662,10 @@ void MainWindow::toggleVOIPForwarding(bool value)
 void MainWindow::toggleVox(bool value)
 {
     emit setVox(value);
+}
+
+void MainWindow::setEnabledFFT(bool value)
+{
+    _fft_enabled = value;
+    emit enableGUIFFT(value);
 }

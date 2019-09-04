@@ -48,6 +48,7 @@ RadioOp::RadioOp(Settings *settings, QObject *parent) :
     _data_modem_sleep_timer = new QElapsedTimer();
     _fft_read_timer = new QElapsedTimer();
     _fft_read_timer->start();
+    _fft_enabled = true;
     _data_modem_sleeping = false;
     _settings = settings;
     _transmitting_audio = false;
@@ -665,6 +666,11 @@ void RadioOp::run()
 
 void RadioOp::getFFTData()
 {
+    if(!_fft_enabled)
+    {
+        _fft_read_timer->restart();
+        return;
+    }
     qint64 msec = (quint64)_fft_read_timer->nsecsElapsed() / 1000000;
     if(msec < 75)
     {
@@ -1472,6 +1478,7 @@ void RadioOp::enableGUIConst(bool value)
 
 void RadioOp::enableGUIFFT(bool value)
 {
+    _fft_enabled = value;
     _modem->enableGUIFFT(value);
 }
 

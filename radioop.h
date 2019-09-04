@@ -196,6 +196,7 @@ private:
     bool _tx_started;
     int _freq_gui_counter;
     std::complex<float> *_fft_data;
+    bool _fft_enabled;
     QElapsedTimer *_fft_read_timer;
 
     void readConfig(std::string &rx_device_args, std::string &tx_device_args,

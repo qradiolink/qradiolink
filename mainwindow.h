@@ -88,8 +88,10 @@ public slots:
     void newFFTData(std::complex<float>* fft_data, int fftsize);
     void carrierOffsetChanged(qint64 freq, qint64 offset);
     void setFFTSize(int size);
+    void setAveraging(int x);
     void showControls();
     void showConstellation();
+    void setEnabledFFT(bool value);
 
 
 signals:
@@ -147,9 +149,11 @@ private:
     float *_realFftData;
     float *_pwrFftData;
     float *_iirFftData;
+    float _fft_averaging;
     qint64 _demod_offset;
     bool _show_controls;
     bool _show_constellation;
+    bool _fft_enabled;
     QGraphicsScene *_scene;
     QGraphicsView *_view;
     void setFilterWidth(int index);
