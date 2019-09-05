@@ -48,10 +48,11 @@ rx_fft_c::rx_fft_c(unsigned int fftsize, int wintype)
 
     /* create FFT object */
     d_fft = new gr::fft::fft_complex(d_fftsize, true);
+    d_cbuf = new boost::circular_buffer<gr_complex>;
 
     /* allocate circular buffer */
-    d_cbuf.set_capacity(d_fftsize);
-    d_cbuf.reserve();
+    d_cbuf->set_capacity(d_fftsize);
+    d_cbuf->reserve();
 
     /* create FFT window */
     set_window_type(wintype);
@@ -60,6 +61,7 @@ rx_fft_c::rx_fft_c(unsigned int fftsize, int wintype)
 rx_fft_c::~rx_fft_c()
 {
     delete d_fft;
+    delete d_cbuf;
 }
 
 
@@ -84,7 +86,7 @@ int rx_fft_c::work(int noutput_items,
     boost::mutex::scoped_lock lock(d_mutex);
     for (i = 0; i < noutput_items; i++)
     {
-        d_cbuf.push_back(in[i]);
+        d_cbuf->push_back(in[i]);
     }
 
     return noutput_items;
@@ -99,7 +101,7 @@ void rx_fft_c::get_fft_data(std::complex<float>* fftPoints, unsigned int &fftSiz
 {
     boost::mutex::scoped_lock lock(d_mutex);
 
-    if (d_cbuf.size() < d_fftsize)
+    if (d_cbuf->size() < d_fftsize)
     {
         // not enough samples in the buffer
         fftSize = 0;
@@ -108,8 +110,8 @@ void rx_fft_c::get_fft_data(std::complex<float>* fftPoints, unsigned int &fftSiz
     }
 
     /* perform FFT */
-    do_fft(d_cbuf.linearize(), d_cbuf.size());  // FIXME: array_one() and two() may be faster
-    //d_cbuf.clear();
+    do_fft(d_cbuf->linearize(), d_cbuf->size());  // FIXME: array_one() and two() may be faster
+    //d_cbuf->clear();
 
     /* get FFT data */
     memcpy(fftPoints, d_fft->get_outbuf(), sizeof(gr_complex)*d_fftsize);
@@ -151,8 +153,9 @@ void rx_fft_c::set_fft_size(unsigned int fftsize)
         d_fftsize = fftsize;
 
         /* clear and resize circular buffer */
-        d_cbuf.clear();
-        d_cbuf.set_capacity(d_fftsize);
+        d_cbuf->clear();
+        d_cbuf->set_capacity(d_fftsize);
+        d_cbuf->reserve();
 
         /* reset window */
         int wintype = d_wintype; // FIXME: would be nicer with a window_reset()
@@ -221,9 +224,10 @@ rx_fft_f::rx_fft_f(unsigned int fftsize, int wintype)
 
     /* create FFT object */
     d_fft = new gr::fft::fft_complex(d_fftsize, true);
+    d_cbuf = new boost::circular_buffer<float>;
 
     /* allocate circular buffer */
-    d_cbuf.set_capacity(d_fftsize);
+    d_cbuf->set_capacity(d_fftsize);
 
     /* create FFT window */
     set_window_type(wintype);
@@ -255,7 +259,7 @@ int rx_fft_f::work(int noutput_items,
     boost::mutex::scoped_lock lock(d_mutex);
     for (i = 0; i < noutput_items; i++)
     {
-        d_cbuf.push_back(in[i]);
+        d_cbuf->push_back(in[i]);
     }
 
     return noutput_items;
@@ -269,7 +273,7 @@ void rx_fft_f::get_fft_data(std::complex<float>* fftPoints, unsigned int &fftSiz
 {
     boost::mutex::scoped_lock lock(d_mutex);
 
-    if (d_cbuf.size() < d_fftsize)
+    if (d_cbuf->size() < d_fftsize)
     {
         // not enough samples in the buffer
         fftSize = 0;
@@ -278,8 +282,8 @@ void rx_fft_f::get_fft_data(std::complex<float>* fftPoints, unsigned int &fftSiz
     }
 
     /* perform FFT */
-    do_fft(d_cbuf.linearize(), d_cbuf.size());  // FIXME: array_one() and two() may be faster
-    //d_cbuf.clear();
+    do_fft(d_cbuf->linearize(), d_cbuf->size());  // FIXME: array_one() and two() may be faster
+    //d_cbuf->clear();
 
     /* get FFT data */
     memcpy(fftPoints, d_fft->get_outbuf(), sizeof(gr_complex)*d_fftsize);
@@ -325,8 +329,8 @@ void rx_fft_f::set_fft_size(unsigned int fftsize)
         d_fftsize = fftsize;
 
         /* clear and resize circular buffer */
-        d_cbuf.clear();
-        d_cbuf.set_capacity(d_fftsize);
+        d_cbuf->clear();
+        d_cbuf->set_capacity(d_fftsize);
 
         /* reset window */
         int wintype = d_wintype; // FIXME: would be nicer with a window_reset()

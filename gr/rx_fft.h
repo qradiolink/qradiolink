@@ -94,7 +94,7 @@ private:
     gr::fft::fft_complex    *d_fft;    /*! FFT object. */
     std::vector<float>  d_window; /*! FFT window taps. */
 
-    boost::circular_buffer<gr_complex> d_cbuf; /*! buffer to accumulate samples. */
+    boost::circular_buffer<gr_complex> *d_cbuf; /*! buffer to accumulate samples. */
 
     void do_fft(const gr_complex *data_in, unsigned int size);
 
@@ -156,7 +156,7 @@ private:
     gr::fft::fft_complex    *d_fft;    /*! FFT object. */
     std::vector<float>  d_window; /*! FFT window taps. */
 
-    boost::circular_buffer<float> d_cbuf; /*! buffer to accumulate samples. */
+    boost::circular_buffer<float> *d_cbuf; /*! buffer to accumulate samples. */
 
     void do_fft(const float *data_in, unsigned int size);
 

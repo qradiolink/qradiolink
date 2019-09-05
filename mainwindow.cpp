@@ -333,7 +333,6 @@ void MainWindow::newFFTData(std::complex<float>* fft_data, int fftsize)
     if (fftsize == 0)
     {
         /* nothing to do, wait until next activation. */
-        delete[] fft_data;
         return;
     }
 
