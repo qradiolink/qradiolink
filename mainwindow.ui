@@ -268,7 +268,7 @@ background-color: #1F1D1D;</string>
             </widget>
            </item>
            <item row="1" column="1">
-            <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0">
+            <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0">
              <property name="spacing">
               <number>2</number>
              </property>
@@ -635,6 +635,66 @@ background-color: rgb(0, 0, 67);</string>
                  <string>30</string>
                 </property>
                </item>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_11">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeType">
+                <enum>QSizePolicy::Fixed</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>15</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_15">
+               <property name="styleSheet">
+                <string notr="true">font: 8pt &quot;Sans Serif&quot;;</string>
+               </property>
+               <property name="text">
+                <string>Zoom</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSlider" name="zoomSlider">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>100</width>
+                 <height>20</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>100</width>
+                 <height>30</height>
+                </size>
+               </property>
+               <property name="minimum">
+                <number>1</number>
+               </property>
+               <property name="maximum">
+                <number>10</number>
+               </property>
+               <property name="value">
+                <number>1</number>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
               </widget>
              </item>
              <item>
@@ -1402,9 +1462,9 @@ font: 10pt &quot;Sans Serif&quot;;</string>
          <property name="geometry">
           <rect>
            <x>320</x>
-           <y>50</y>
+           <y>55</y>
            <width>61</width>
-           <height>31</height>
+           <height>21</height>
           </rect>
          </property>
          <property name="sizePolicy">
@@ -1904,20 +1964,20 @@ background-color: rgb(35, 35, 35);</string>
         <widget class="QLabel" name="label_20">
          <property name="geometry">
           <rect>
-           <x>560</x>
+           <x>570</x>
            <y>50</y>
            <width>61</width>
            <height>31</height>
           </rect>
          </property>
          <property name="text">
-          <string>FineTune</string>
+          <string>Clarifier</string>
          </property>
         </widget>
         <widget class="QLabel" name="label_12">
          <property name="geometry">
           <rect>
-           <x>900</x>
+           <x>970</x>
            <y>20</y>
            <width>71</width>
            <height>16</height>
@@ -1960,7 +2020,7 @@ background-color: rgb(35, 35, 35);</string>
         <widget class="QLineEdit" name="shiftEdit">
          <property name="geometry">
           <rect>
-           <x>880</x>
+           <x>960</x>
            <y>40</y>
            <width>100</width>
            <height>30</height>
@@ -1982,9 +2042,10 @@ background-color: rgb(35, 35, 35);</string>
           <string>Transmission split in kHz</string>
          </property>
          <property name="styleSheet">
-          <string notr="true">background-color: rgba(255, 255, 255, 180);
-color: rgb(0, 0, 77);
-font: 11pt &quot;Sans Serif&quot;;</string>
+          <string notr="true">font: 11pt &quot;Sans Serif&quot;;s</string>
+         </property>
+         <property name="inputMethodHints">
+          <set>Qt::ImhDigitsOnly</set>
          </property>
          <property name="text">
           <string>0</string>
@@ -1999,9 +2060,9 @@ font: 11pt &quot;Sans Serif&quot;;</string>
         <widget class="QLineEdit" name="frequencyEdit">
          <property name="geometry">
           <rect>
-           <x>990</x>
+           <x>1070</x>
            <y>40</y>
-           <width>200</width>
+           <width>120</width>
            <height>30</height>
           </rect>
          </property>
@@ -2013,13 +2074,13 @@ font: 11pt &quot;Sans Serif&quot;;</string>
          </property>
          <property name="minimumSize">
           <size>
-           <width>200</width>
+           <width>120</width>
            <height>30</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>200</width>
+           <width>120</width>
            <height>50</height>
           </size>
          </property>
@@ -2039,12 +2100,13 @@ font: 11pt &quot;Sans Serif&quot;;</string>
           <bool>false</bool>
          </property>
          <property name="styleSheet">
-          <string notr="true">background-color: rgba(255, 255, 255, 180);
-color: rgb(0, 0, 76);
-font: 11pt &quot;Sans Serif&quot;;</string>
+          <string notr="true">font: 11pt &quot;Sans Serif&quot;;</string>
+         </property>
+         <property name="inputMethodHints">
+          <set>Qt::ImhDigitsOnly</set>
          </property>
          <property name="text">
-          <string>434025</string>
+          <string>434000</string>
          </property>
          <property name="maxLength">
           <number>8</number>
@@ -2056,20 +2118,24 @@ font: 11pt &quot;Sans Serif&quot;;</string>
         <widget class="QLabel" name="label_21">
          <property name="geometry">
           <rect>
-           <x>1010</x>
-           <y>20</y>
-           <width>171</width>
-           <height>16</height>
+           <x>1070</x>
+           <y>10</y>
+           <width>121</width>
+           <height>31</height>
           </rect>
          </property>
          <property name="text">
-          <string>Manual frequency entry (kHz)</string>
+          <string>Manual frequency
+ entry (kHz)</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
          </property>
         </widget>
         <widget class="QLabel" name="labelDisplayCallsign">
          <property name="geometry">
           <rect>
-           <x>790</x>
+           <x>870</x>
            <y>40</y>
            <width>80</width>
            <height>30</height>
@@ -2128,20 +2194,23 @@ font: 9pt &quot;Sans Serif&quot;;
         <widget class="QLabel" name="label_22">
          <property name="geometry">
           <rect>
-           <x>810</x>
-           <y>20</y>
-           <width>51</width>
-           <height>16</height>
+           <x>880</x>
+           <y>19</y>
+           <width>61</width>
+           <height>21</height>
           </rect>
          </property>
          <property name="text">
           <string>Callsign</string>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
         <widget class="QCommandLinkButton" name="autotuneButton">
          <property name="geometry">
           <rect>
-           <x>650</x>
+           <x>730</x>
            <y>40</y>
            <width>51</width>
            <height>31</height>
@@ -2171,10 +2240,14 @@ background-color: rgb(0, 0, 67);
          <property name="text">
           <string>Scan</string>
          </property>
+         <property name="icon">
+          <iconset resource="resources.qrc">
+           <normaloff>:/res/transparent-bg.png</normaloff>:/res/transparent-bg.png</iconset>
+         </property>
          <property name="iconSize">
           <size>
-           <width>1</width>
-           <height>1</height>
+           <width>0</width>
+           <height>0</height>
           </size>
          </property>
          <property name="checkable">
@@ -2184,7 +2257,7 @@ background-color: rgb(0, 0, 67);
         <widget class="QLabel" name="labelRSSI">
          <property name="geometry">
           <rect>
-           <x>710</x>
+           <x>790</x>
            <y>40</y>
            <width>71</width>
            <height>31</height>
@@ -2213,7 +2286,7 @@ color: rgb(85, 255, 0);</string>
         <widget class="QLabel" name="label_23">
          <property name="geometry">
           <rect>
-           <x>730</x>
+           <x>810</x>
            <y>20</y>
            <width>31</width>
            <height>16</height>
@@ -2537,13 +2610,16 @@ background-color: rgb(150, 150, 150);
           <property name="icon">
            <iconset resource="resources.qrc">
             <normaloff>:/res/arrow-up.png</normaloff>
-            <normalon>:/res/transparent-bg.png</normalon>:/res/arrow-up.png</iconset>
+            <normalon>:/res/arrow-up-red.png</normalon>:/res/arrow-up.png</iconset>
           </property>
           <property name="iconSize">
            <size>
             <width>24</width>
             <height>24</height>
            </size>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -2573,13 +2649,16 @@ background-color: rgb(150, 150, 150);
           <property name="icon">
            <iconset resource="resources.qrc">
             <normaloff>:/res/arrow-up.png</normaloff>
-            <normalon>:/res/transparent-bg.png</normalon>:/res/arrow-up.png</iconset>
+            <normalon>:/res/arrow-up-red.png</normalon>:/res/arrow-up.png</iconset>
           </property>
           <property name="iconSize">
            <size>
             <width>24</width>
             <height>24</height>
            </size>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
           </property>
          </widget>
         </item>

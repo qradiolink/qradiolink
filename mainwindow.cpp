@@ -15,7 +15,6 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "mainwindow.h"
-#include "ui_desktop_mainwindow.h"
 #include "ui_mainwindow.h"
 
 
@@ -66,16 +65,6 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     ui->frameCtrlFreq->setDigitColor(QColor(0,205,0,0xFF));
     ui->frameCtrlFreq->setUnitsColor(QColor(254,254,254,0xFF));
 
-    /*
-     *
-        font: 8pt "Sans Serif";
-        color: rgb(240, 240, 119);
-        background-color: rgb(0, 0, 67);
-        QDial {
-          color: rgb(240, 240, 255);
-          background-color: rgb(255, 255, 67);
-        }
-    */
 
     ui->txGainDial->setStyleSheet("background-color: rgb(150, 150, 150);");
     ui->rxGainDial->setStyleSheet("background-color: rgb(150, 150, 150);");
@@ -115,8 +104,8 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     QObject::connect(ui->toggleVoxButton,SIGNAL(toggled(bool)),this,SLOT(toggleVox(bool)));
     QObject::connect(ui->fftSizeBox,SIGNAL(currentIndexChanged(int)),this,SLOT(setFFTSize(int)));
     QObject::connect(ui->peakHoldCheckBox,SIGNAL(toggled(bool)),ui->plotterFrame,SLOT(setPeakHold(bool)));
-    QObject::connect(ui->showControlsButton,SIGNAL(clicked()),this,SLOT(showControls()));
-    QObject::connect(ui->showConstellationButton,SIGNAL(clicked()),this,SLOT(showConstellation()));
+    QObject::connect(ui->showControlsButton,SIGNAL(toggled(bool)),this,SLOT(showControls(bool)));
+    QObject::connect(ui->showConstellationButton,SIGNAL(toggled(bool)),this,SLOT(showConstellation(bool)));
     QObject::connect(ui->fftEnableCheckBox,SIGNAL(toggled(bool)),this,SLOT(setEnabledFFT(bool)));
     QObject::connect(ui->peakDetectCheckBox,SIGNAL(toggled(bool)),this,SLOT(setPeakDetect(bool)));
     QObject::connect(ui->fpsBox,SIGNAL(currentIndexChanged(int)),this,SLOT(newWaterfallFPS()));
@@ -171,9 +160,12 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     ui->plotterFrame->setWaterfallRange(-110.0, -30.0);
     //QPixmap pm = QPixmap::grabWidget(ui->frameCtrlFreq);
     //ui->frameCtrlFreq->setMask(pm.createHeuristicMask(false));
-    QGraphicsOpacityEffect *eff = new QGraphicsOpacityEffect(this);
-    eff->setOpacity(0.7);
-    ui->frameCtrlFreq->setGraphicsEffect(eff);
+    QGraphicsOpacityEffect *eff_freq = new QGraphicsOpacityEffect(this);
+    eff_freq->setOpacity(0.6);
+    ui->frameCtrlFreq->setGraphicsEffect(eff_freq);
+    QGraphicsOpacityEffect *eff_const = new QGraphicsOpacityEffect(this);
+    eff_const->setOpacity(0.7);
+    ui->constellationDisplay->setGraphicsEffect(eff_const);
 
 
 }
@@ -207,7 +199,7 @@ void MainWindow::resizeEvent(QResizeEvent *event)
     event->accept();
 }
 
-void MainWindow::showControls()
+void MainWindow::showControls(bool value)
 {
     QRect xy = this->geometry();
     if(!_show_controls)
@@ -224,7 +216,7 @@ void MainWindow::showControls()
     }
 }
 
-void MainWindow::showConstellation()
+void MainWindow::showConstellation(bool value)
 {
     if(!_show_constellation)
     {

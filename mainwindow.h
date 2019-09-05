@@ -92,8 +92,8 @@ public slots:
     void carrierOffsetChanged(qint64 freq, qint64 offset);
     void setFFTSize(int size);
     void setAveraging(int x);
-    void showControls();
-    void showConstellation();
+    void showControls(bool value);
+    void showConstellation(bool value);
     void setEnabledFFT(bool value);
     void setPeakDetect(bool value);
     void updateRSSI(float value);
