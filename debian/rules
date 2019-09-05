@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 %:
-	QT_SELECT=qt4 dh $@
+	QT_SELECT=qt5 dh $@
 override_dh_auto_clean:
 	protoc --proto_path=${PWD}/ext --cpp_out=${PWD}/ext ${PWD}/ext/Mumble.proto
 	protoc --proto_path=${PWD}/ext --cpp_out=${PWD}/ext ${PWD}/ext/QRadioLink.proto
