@@ -2422,8 +2422,16 @@ background-color: rgb(132, 0, 0);
           <property name="text">
            <string>PTT</string>
           </property>
+          <property name="icon">
+           <iconset resource="resources.qrc">
+            <normaloff>:/res/Button-Blank-Gray-icon.png</normaloff>
+            <normalon>:/res/Button-Blank-Red-icon.png</normalon>:/res/Button-Blank-Gray-icon.png</iconset>
+          </property>
           <property name="shortcut">
            <string>Space</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -2483,7 +2491,8 @@ background-color: rgb(150, 150, 150);
           </property>
           <property name="icon">
            <iconset resource="resources.qrc">
-            <normaloff>:/res/arrow-up.png</normaloff>:/res/arrow-up.png</iconset>
+            <normaloff>:/res/arrow-up.png</normaloff>
+            <normalon>:/res/transparent-bg.png</normalon>:/res/arrow-up.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -2518,7 +2527,8 @@ background-color: rgb(150, 150, 150);
           </property>
           <property name="icon">
            <iconset resource="resources.qrc">
-            <normaloff>:/res/arrow-up.png</normaloff>:/res/arrow-up.png</iconset>
+            <normaloff>:/res/arrow-up.png</normaloff>
+            <normalon>:/res/transparent-bg.png</normalon>:/res/arrow-up.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -2747,7 +2757,8 @@ color: rgb(255, 255, 255);</string>
             </property>
             <property name="icon">
              <iconset resource="resources.qrc">
-              <normaloff>:/res/Button-Blank-Yellow-icon.png</normaloff>:/res/Button-Blank-Yellow-icon.png</iconset>
+              <normaloff>:/res/Button-Blank-Gray-icon.png</normaloff>
+              <normalon>:/res/Button-Blank-Yellow-icon.png</normalon>:/res/Button-Blank-Gray-icon.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -2815,7 +2826,8 @@ color: rgb(255, 0, 0);</string>
             </property>
             <property name="icon">
              <iconset resource="resources.qrc">
-              <normaloff>:/res/Button-Blank-Red-icon.png</normaloff>:/res/Button-Blank-Red-icon.png</iconset>
+              <normaloff>:/res/Button-Blank-Gray-icon.png</normaloff>
+              <normalon>:/res/Button-Blank-Red-icon.png</normalon>:/res/Button-Blank-Gray-icon.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -2985,7 +2997,8 @@ color: rgb(255, 255, 255);</string>
             </property>
             <property name="icon">
              <iconset resource="resources.qrc">
-              <normaloff>:/res/Button-Blank-Blue-icon.png</normaloff>:/res/Button-Blank-Blue-icon.png</iconset>
+              <normaloff>:/res/Button-Blank-Gray-icon.png</normaloff>
+              <normalon>:/res/Button-Blank-Blue-icon.png</normalon>:/res/Button-Blank-Gray-icon.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -3045,7 +3058,8 @@ background-color: rgb(0, 0, 67);
             </property>
             <property name="icon">
              <iconset resource="resources.qrc">
-              <normaloff>:/res/Button-Blank-Green-icon.png</normaloff>:/res/Button-Blank-Green-icon.png</iconset>
+              <normaloff>:/res/Button-Blank-Gray-icon.png</normaloff>
+              <normalon>:/res/Button-Blank-Green-icon.png</normalon>:/res/Button-Blank-Gray-icon.png</iconset>
             </property>
             <property name="iconSize">
              <size>
