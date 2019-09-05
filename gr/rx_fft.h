@@ -96,6 +96,11 @@ private:
 
     boost::circular_buffer<gr_complex> *d_cbuf; /*! buffer to accumulate samples. */
 
+    gr_complex *d_fft_points;
+
+    int d_counter;
+    bool d_data_ready;
+
     void do_fft(const gr_complex *data_in, unsigned int size);
 
 };

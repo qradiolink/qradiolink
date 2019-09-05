@@ -85,7 +85,7 @@ RadioOp::RadioOp(Settings *settings, QObject *parent) :
     _data_led_timer->setSingleShot(true);
     _rand_frame_data = new unsigned char[5000];
     _voip_encode_buffer = new QVector<short>;
-    _fft_data = new std::complex<float>[1024*1024];
+    _fft_data = new std::complex<float>[1024*1024*10];
     _constellation_data = new std::vector<std::complex<float>>;
     _constellation_data->reserve(256);
 

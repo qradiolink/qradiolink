@@ -49,6 +49,9 @@ rx_fft_c::rx_fft_c(unsigned int fftsize, int wintype)
     /* create FFT object */
     d_fft = new gr::fft::fft_complex(d_fftsize, true, 4);
     d_cbuf = new boost::circular_buffer<gr_complex>;
+    d_fft_points = new gr_complex[d_fftsize];
+    d_counter = 0;
+    d_data_ready = false;
 
     /* allocate circular buffer */
     d_cbuf->set_capacity(d_fftsize);
@@ -62,6 +65,7 @@ rx_fft_c::~rx_fft_c()
 {
     delete d_fft;
     delete d_cbuf;
+    delete d_fft_points;
 }
 
 
@@ -86,7 +90,19 @@ int rx_fft_c::work(int noutput_items,
     boost::mutex::scoped_lock lock(d_mutex);
     for (i = 0; i < noutput_items; i++)
     {
+        if(d_counter >= d_fftsize)
+        {
+            d_counter = 0;
+            /* perform FFT */
+            do_fft(d_cbuf->linearize(), d_cbuf->size());  // FIXME: array_one() and two() may be faster
+            //d_cbuf->clear();
+
+            /* set FFT data */
+            memcpy(d_fft_points, d_fft->get_outbuf(), sizeof(gr_complex)*d_fftsize);
+            d_data_ready = true;
+        }
         d_cbuf->push_back(in[i]);
+        d_counter++;
     }
 
     return noutput_items;
@@ -109,13 +125,18 @@ void rx_fft_c::get_fft_data(std::complex<float>* fftPoints, unsigned int &fftSiz
         return;
     }
 
-    /* perform FFT */
-    do_fft(d_cbuf->linearize(), d_cbuf->size());  // FIXME: array_one() and two() may be faster
-    //d_cbuf->clear();
+    if (!d_data_ready)
+    {
+        // not enough samples in the buffer
+        fftSize = 0;
 
-    /* get FFT data */
-    memcpy(fftPoints, d_fft->get_outbuf(), sizeof(gr_complex)*d_fftsize);
+        return;
+    }
+
+
+    memcpy(fftPoints, d_fft_points, sizeof(gr_complex)*d_fftsize);
     fftSize = d_fftsize;
+    d_data_ready = false;
 }
 
 /*! \brief Compute FFT on the available input data.
@@ -155,7 +176,9 @@ void rx_fft_c::set_fft_size(unsigned int fftsize)
         /* clear and resize circular buffer */
         d_cbuf->clear();
         d_cbuf->set_capacity(d_fftsize);
-        d_cbuf->reserve();
+
+        delete[] d_fft_points;
+        d_fft_points = new gr_complex[d_fftsize];
 
         /* reset window */
         int wintype = d_wintype; // FIXME: would be nicer with a window_reset()
