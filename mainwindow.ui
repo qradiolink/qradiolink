@@ -2522,6 +2522,12 @@ background-color: rgb(132, 0, 0);
             <height>64</height>
            </size>
           </property>
+          <property name="maximumSize">
+           <size>
+            <width>380</width>
+            <height>64</height>
+           </size>
+          </property>
           <property name="styleSheet">
            <string notr="true">font: 35pt &quot;Sans Serif&quot;;
 background-image: url(:/res/led-screen-texture.png);
@@ -2566,7 +2572,7 @@ background-color: rgb(150, 150, 150);
              </property>
              <property name="maximumSize">
               <size>
-               <width>16777215</width>
+               <width>380</width>
                <height>64</height>
               </size>
              </property>

@@ -47,7 +47,7 @@ rx_fft_c::rx_fft_c(unsigned int fftsize, int wintype)
 {
 
     /* create FFT object */
-    d_fft = new gr::fft::fft_complex(d_fftsize, true);
+    d_fft = new gr::fft::fft_complex(d_fftsize, true, 4);
     d_cbuf = new boost::circular_buffer<gr_complex>;
 
     /* allocate circular buffer */
