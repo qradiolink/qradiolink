@@ -73,8 +73,8 @@ CFreqCtrl::CFreqCtrl(QWidget *parent) :
     m_LRMouseFreqSel = false;
     m_ActiveEditDigit = -1;
     m_ResetLowerDigits = false;
-    m_UnitsFont = QFont("Liquid Crystal", 15, QFont::Normal);
-    m_DigitFont = QFont("Liquid Crystal", 15, QFont::Bold);
+    m_UnitsFont = QFont("Arial", 15, QFont::Normal);
+    m_DigitFont = QFont("Liquid Crystal", 15, QFont::Bold, QFont::StyleItalic);
 }
 
 CFreqCtrl::~CFreqCtrl()
@@ -639,13 +639,13 @@ void CFreqCtrl::drawBkGround(QPainter &Painter)
 
     // draw units text
     m_UnitsFont.setPixelSize((UNITS_SIZE_PERCENT*rect.height())/100);
-    m_UnitsFont.setFamily("Liquid Crystal");
+    //m_UnitsFont.setFamily("Arial");
     Painter.setFont(m_UnitsFont );
     Painter.setPen(m_UnitsColor);
     Painter.drawText(m_UnitsRect, Qt::AlignHCenter|Qt::AlignVCenter, m_UnitString);
 
     m_DigitFont.setPixelSize((DIGIT_SIZE_PERCENT*rect.height())/100);
-    m_DigitFont.setFamily("Liquid Crystal");
+    //m_DigitFont.setFamily("Liquid Crystal");
     Painter.setFont(m_DigitFont);
     Painter.setPen(m_DigitColor);
 

@@ -58,9 +58,11 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     ui->comboBoxRxCTCSS->addItems(tones);
 
     ui->frameCtrlFreq->setup(10, 10U, 9000000000U, 1, UNITS_MHZ );
-    ui->frameCtrlFreq->setBkColor(QColor(56, 56, 64,0xFF));
-    ui->frameCtrlFreq->setHighlightColor(QColor(127,0,0,0xFF));
-    ui->frameCtrlFreq->setDigitColor(QColor(200,200,200,0xFF));
+    //ui->frameCtrlFreq->setBkColor(QColor(202, 194, 197,0xFF));
+    ui->frameCtrlFreq->setBkColor(QColor(0x1F, 0x1D, 0x1D,0xFF));
+    ui->frameCtrlFreq->setHighlightColor(QColor(127,55,55,0xFF));
+    //ui->frameCtrlFreq->setDigitColor(QColor(0,0,133,0xFF));
+    ui->frameCtrlFreq->setDigitColor(QColor(0,155,0,0xFF));
     ui->frameCtrlFreq->setUnitsColor(QColor(254,254,254,0xFF));
 
     /*
@@ -166,6 +168,10 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     ui->plotterFrame->setClickResolution(1);
     ui->plotterFrame->setPandapterRange(-110.0, -30.0);
     ui->plotterFrame->setWaterfallRange(-110.0, -30.0);
+    //QPixmap pm = QPixmap::grabWidget(ui->frameCtrlFreq);
+    //ui->frameCtrlFreq->setMask(pm.createHeuristicMask(false));
+
+
 
 
 }

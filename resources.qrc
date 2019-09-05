@@ -11,6 +11,7 @@
         <file>res/logo.png</file>
         <file>res/data_rec.raw</file>
         <file>res/led-screen-texture.png</file>
+        <file>res/arrow-up.png</file>
     </qresource>
     <qresource prefix="/fonts">
         <file>res/LiquidCrystal-Normal.otf</file>
