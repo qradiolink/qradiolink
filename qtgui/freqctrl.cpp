@@ -219,7 +219,7 @@ void CFreqCtrl::setup(int NumDigits, qint64 Minf, qint64 Maxf,int MinStep, FUNIT
 //////////////////////////////////////////////////////////////////////////////
 //  Sets the frequency and individual digit values
 //////////////////////////////////////////////////////////////////////////////
-void CFreqCtrl::setFrequency(qint64 freq)
+void CFreqCtrl::setFrequency(qint64 freq, bool emit_signal)
 {
     int i;
     qint64 acc = 0;
@@ -273,7 +273,10 @@ void CFreqCtrl::setFrequency(qint64 freq)
 
     // signal the new frequency to world
     m_Oldfreq = m_freq;
-    emit newFrequency(m_freq);
+    if(emit_signal)
+    {
+        emit newFrequency(m_freq);
+    }
     updateCtrl(m_LastLeadZeroPos != m_LeadZeroPos);
     m_LastLeadZeroPos = m_LeadZeroPos;
 }

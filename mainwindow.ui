@@ -240,7 +240,7 @@
               </property>
               <property name="styleSheet">
                <string notr="true">border: 1px solid white;
-background-color: rgb(0, 0, 0);</string>
+background-color: #1F1D1D;</string>
               </property>
               <property name="frameShape">
                <enum>QFrame::StyledPanel</enum>
@@ -601,6 +601,9 @@ background-color: rgb(0, 0, 67);</string>
                 <string notr="true">font: 8pt &quot;Sans Serif&quot;;
 color: rgb(240, 240, 119);
 background-color: rgb(0, 0, 67);</string>
+               </property>
+               <property name="currentIndex">
+                <number>1</number>
                </property>
                <item>
                 <property name="text">
@@ -1386,10 +1389,7 @@ font: 10pt &quot;Sans Serif&quot;;</string>
         </property>
         <property name="styleSheet">
          <string notr="true">font: 8pt &quot;Sans Serif&quot;;
-QDial {
-  background-color: rgb(150, 150, 150);
-  background: rgb(150, 150, 150);
-}
+
 </string>
         </property>
         <property name="frameShape">
@@ -1519,6 +1519,9 @@ QDial {
           <string notr="true">color: rgb(0, 85, 127);
 background-color: rgb(35, 35, 35);</string>
          </property>
+         <property name="frameShadow">
+          <enum>QFrame::Sunken</enum>
+         </property>
          <property name="lineWidth">
           <number>1</number>
          </property>
@@ -1529,7 +1532,7 @@ background-color: rgb(35, 35, 35);</string>
           <number>4</number>
          </property>
          <property name="segmentStyle">
-          <enum>QLCDNumber::Filled</enum>
+          <enum>QLCDNumber::Flat</enum>
          </property>
          <property name="value" stdset="0">
           <double>-100.000000000000000</double>
@@ -1566,6 +1569,9 @@ background-color: rgb(35, 35, 35);</string>
           <string notr="true">color: rgb(0, 220, 0);
 background-color: rgb(35, 35, 35);</string>
          </property>
+         <property name="frameShadow">
+          <enum>QFrame::Sunken</enum>
+         </property>
          <property name="lineWidth">
           <number>1</number>
          </property>
@@ -1576,7 +1582,7 @@ background-color: rgb(35, 35, 35);</string>
           <number>2</number>
          </property>
          <property name="segmentStyle">
-          <enum>QLCDNumber::Filled</enum>
+          <enum>QLCDNumber::Flat</enum>
          </property>
          <property name="value" stdset="0">
           <double>90.000000000000000</double>
@@ -1613,6 +1619,9 @@ background-color: rgb(35, 35, 35);</string>
           <string notr="true">color: rgb(255, 0, 0);
 background-color: rgb(35, 35, 35);</string>
          </property>
+         <property name="frameShadow">
+          <enum>QFrame::Sunken</enum>
+         </property>
          <property name="lineWidth">
           <number>1</number>
          </property>
@@ -1623,7 +1632,7 @@ background-color: rgb(35, 35, 35);</string>
           <number>2</number>
          </property>
          <property name="segmentStyle">
-          <enum>QLCDNumber::Filled</enum>
+          <enum>QLCDNumber::Flat</enum>
          </property>
          <property name="value" stdset="0">
           <double>50.000000000000000</double>
@@ -1660,6 +1669,9 @@ background-color: rgb(35, 35, 35);</string>
           <string notr="true">color: rgb(0, 85, 127);
 background-color: rgb(35, 35, 35);</string>
          </property>
+         <property name="frameShadow">
+          <enum>QFrame::Sunken</enum>
+         </property>
          <property name="lineWidth">
           <number>1</number>
          </property>
@@ -1670,7 +1682,7 @@ background-color: rgb(35, 35, 35);</string>
           <number>2</number>
          </property>
          <property name="segmentStyle">
-          <enum>QLCDNumber::Filled</enum>
+          <enum>QLCDNumber::Flat</enum>
          </property>
          <property name="value" stdset="0">
           <double>50.000000000000000</double>
@@ -2182,8 +2194,20 @@ background-color: rgb(0, 0, 67);
           <string notr="true">background-color: rgb(0, 0, 0);
 color: rgb(85, 255, 0);</string>
          </property>
+         <property name="frameShape">
+          <enum>QFrame::Panel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Plain</enum>
+         </property>
          <property name="text">
           <string/>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::TextSelectableByMouse</set>
          </property>
         </widget>
         <widget class="QLabel" name="label_23">
@@ -2387,7 +2411,7 @@ color: rgb(85, 255, 0);</string>
            </size>
           </property>
           <property name="toolTip">
-           <string>Push to talk</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Push to talk (Space key)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="styleSheet">
            <string notr="true">font: 18pt &quot;Sans Serif&quot;;
@@ -2397,6 +2421,9 @@ background-color: rgb(132, 0, 0);
           </property>
           <property name="text">
            <string>PTT</string>
+          </property>
+          <property name="shortcut">
+           <string>Space</string>
           </property>
          </widget>
         </item>

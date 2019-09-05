@@ -147,7 +147,7 @@ private:
     QPixmap *_constellation_img;
     QFileInfo *_config_file;
     qint64 _rx_frequency;
-    qint64 _tx_frequency;
+    qint64 _tx_shift_frequency;
     QFileInfo *setupConfig();
     void closeEvent(QCloseEvent *);
     void resizeEvent(QResizeEvent *);

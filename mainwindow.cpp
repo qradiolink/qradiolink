@@ -58,7 +58,6 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     ui->comboBoxRxCTCSS->addItems(tones);
 
     ui->frameCtrlFreq->setup(10, 10U, 9000000000U, 1, UNITS_MHZ );
-    ui->frameCtrlFreq->setFrequency(_settings->rx_frequency);
     ui->frameCtrlFreq->setBkColor(QColor(56, 56, 64,0xFF));
     ui->frameCtrlFreq->setHighlightColor(QColor(127,0,0,0xFF));
     ui->frameCtrlFreq->setDigitColor(QColor(200,200,200,0xFF));
@@ -155,7 +154,6 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     _iirFftData = new float[1024*1024];
     _fft_averaging = 1;
     QRect xy = this->geometry();
-    //ui->plotterFrame->resize(xy.right() -xy.left(),xy.bottom()-xy.top()-500);
     ui->plotterContainer->resize(xy.right() -xy.left()-20,xy.bottom()-xy.top()-120);
     ui->plotterFrame->setSampleRate(1000000);
     ui->plotterFrame->setSpanFreq((quint32)1000000);
@@ -166,8 +164,8 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     ui->plotterFrame->setFreqDigits(2);
     ui->plotterFrame->setTooltipsEnabled(true);
     ui->plotterFrame->setClickResolution(1);
-    ui->plotterFrame->setPandapterRange(-120.0, -20.0);
-    ui->plotterFrame->setWaterfallRange(-120.0, -20.0);
+    ui->plotterFrame->setPandapterRange(-110.0, -30.0);
+    ui->plotterFrame->setWaterfallRange(-110.0, -30.0);
 
 
 }
@@ -253,8 +251,8 @@ void MainWindow::readConfig()
     _demod_offset = _settings->demod_offset;
 
     ui->frequencyEdit->setText(QString::number(ceil(_rx_frequency/1000)));
-    _tx_frequency = _settings->tx_shift;
-    ui->shiftEdit->setText(QString::number(_tx_frequency / 1000));
+    _tx_shift_frequency = _settings->tx_shift;
+    ui->shiftEdit->setText(QString::number(_tx_shift_frequency / 1000));
     ui->voipServerEdit->setText(_settings->voip_server);
     ui->rxModemTypeComboBox->setCurrentIndex(_settings->rx_mode);
     ui->txModemTypeComboBox->setCurrentIndex(_settings->tx_mode);
@@ -281,7 +279,7 @@ void MainWindow::saveConfig()
     _settings->squelch = (int)ui->rxSquelchDial->value();
     _settings->rx_volume = (int)ui->rxVolumeDial->value();
     _settings->rx_frequency = _rx_frequency;
-    _settings->tx_shift = _tx_frequency;
+    _settings->tx_shift = _tx_shift_frequency;
     _settings->voip_server = ui->voipServerEdit->text();
     _settings->rx_mode = ui->rxModemTypeComboBox->currentIndex();
     _settings->tx_mode = ui->txModemTypeComboBox->currentIndex();
@@ -302,11 +300,13 @@ void MainWindow::GUIstartTransmission()
     if(!_transmitting_radio)
     {
         emit startTransmission();
+        ui->frameCtrlFreq->setFrequency(_rx_frequency + _demod_offset + _tx_shift_frequency, false);
         ui->redLED->setEnabled(true);
         _transmitting_radio=true;
     }
     else
     {
+        ui->frameCtrlFreq->setFrequency(_rx_frequency + _demod_offset, false);
         _transmitting_radio=false;
         GUIendTransmission();
     }
@@ -607,15 +607,14 @@ void MainWindow::tuneMainFreq(qint64 freq)
 
     ui->frequencyEdit->setText(QString::number(ceil(freq/1000)));
     ui->tuneDial->setValue(0);
-    if(freq != (_rx_frequency + _demod_offset))
-    {
+    if(!_transmitting_radio)
         _rx_frequency = freq - _demod_offset;
-        ui->plotterFrame->setCenterFreq(_rx_frequency);
-        ui->plotterFrame->setDemodCenterFreq(_rx_frequency + _demod_offset);
-        emit setCarrierOffset(_demod_offset);
-        emit tuneFreq(_rx_frequency);
-
-    }
+    else
+        _rx_frequency = freq - _tx_shift_frequency - _demod_offset;
+    ui->plotterFrame->setCenterFreq(_rx_frequency);
+    ui->plotterFrame->setDemodCenterFreq(_rx_frequency + _demod_offset);
+    emit setCarrierOffset(_demod_offset);
+    emit tuneFreq(_rx_frequency);
 }
 
 void MainWindow::tuneFreqPlotter(qint64 freq)
@@ -627,7 +626,7 @@ void MainWindow::tuneFreqPlotter(qint64 freq)
 void MainWindow::carrierOffsetChanged(qint64 freq, qint64 offset)
 {
     _demod_offset = offset;
-    ui->frameCtrlFreq->setFrequency(_rx_frequency + _demod_offset);
+    ui->frameCtrlFreq->setFrequency(_rx_frequency + _demod_offset, false);
     emit setCarrierOffset(offset);
 }
 
@@ -640,8 +639,15 @@ void MainWindow::enterFreq()
 
 void MainWindow::enterShift()
 {
-    _tx_frequency = ui->shiftEdit->text().toLong()*1000;
-    emit tuneTxFreq(_tx_frequency);
+    if(!_transmitting_radio)
+    {
+        _tx_shift_frequency = ui->shiftEdit->text().toLong()*1000;
+        emit tuneTxFreq(_tx_shift_frequency);
+    }
+    else
+    {
+        std::cout << "Cannot set TX shift frequency while transmitting" << std::endl;
+    }
 }
 
 void MainWindow::setTxPowerDisplay(int value)

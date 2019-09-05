@@ -52,7 +52,7 @@ public:
 
     //primary access routines
     void setup(int NumDigits, qint64 Minf, qint64 Maxf,int MinStep, FUNITS UnitsType);
-    void setFrequency(qint64 freq);
+    void setFrequency(qint64 freq, bool emit_signal=true);
     void setUnits(FUNITS units);
     void setDigitColor(QColor cr);
     void setBkColor(QColor cr);
