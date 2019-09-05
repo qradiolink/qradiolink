@@ -15,7 +15,7 @@ It can also be used as an amateur radio SDR transceiver for demonstrating radio 
 
 The application was originally inspired from the [Codec2 GMSK modem](https://github.com/on1arf/gmsk) project by Kristoff Bonne.
 
-[![Screenshot](http://qradiolink.org/images/qradiolink26.png)](http://qradiolink.org)
+[![Screenshot](http://qradiolink.org/images/freexceiver1.png)](http://qradiolink.org)
 
 Features
 ---
@@ -56,8 +56,7 @@ libqt4-sql (>= 4:4.5.3), libqtcore4 (>= 4:4.8.0), libqtgui4 (>= 4:4.6.1),
 </pre>
 
 - Please make sure you have all the development packages installed before building QRadioLink
-- Depending on whether GNU radio was built with Qt4 or Qt5, you will need the corresponding development packages
-- QT >= 4.8 (QT 5 only works on Debian testing with GNUradio 3.7.11 packages )
+- QT >= 5.2
 - qmake (either qmake-qt4 or qmake-qt5)
 - Pulseaudio (native Alsa support is not fully implemented) 
 - Gnuradio >= 3.7.10 built with OsmoSDR and UHD support
@@ -70,13 +69,13 @@ libqt4-sql (>= 4:4.5.3), libqtcore4 (>= 4:4.8.0), libqtgui4 (>= 4:4.6.1),
 In order to build on Ubuntu 17.10 you have to install the following packages, assuming a full GNU Radio development environment is already installed.
 
 <pre>
-$ sudo apt install libconfig++-dev libgsm1-dev libprotobuf-dev libopus-dev libpulse-dev libasound2-dev libcodec2-dev libsqlite3-dev libjpeg-dev libprotoc-dev protobuf-compiler libqwt5-qt4-dev
+$ sudo apt install libconfig++-dev libgsm1-dev libprotobuf-dev libopus-dev libpulse-dev libasound2-dev libcodec2-dev libsqlite3-dev libjpeg-dev libprotoc-dev protobuf-compiler
 </pre>
 
 [Downloads](https://github.com/kantooon/qradiolink/releases "Downloads")
 ----
 
-Debian Stretch (stable) x86_64 packages are provided via Travis CI automated builds
+Debian Stretch x86_64 packages are provided via Travis CI automated builds
 Please see the [Github releases page](https://github.com/kantooon/qradiolink/releases) for binary downloads.
 
 Opensuse packages are available from [Opensuse build server](https://build.opensuse.org/package/show/hardware:sdr/qradiolink)
@@ -99,7 +98,7 @@ protoc --cpp_out=. Mumble.proto
 protoc --cpp_out=. QRadioLink.proto
 cd ..
 cd build/
-qmake-qt4 ..
+qmake ..
 make
 ./qradiolink
 </pre>
@@ -128,10 +127,11 @@ signal strength.
 
 Credits and License
 -------------------
-- QRadioLink is designed by Adrian Musceac YO8RZZ, and is released under an Open Source License,
+- QRadioLink is mostly written by Adrian Musceac YO8RZZ, and is released under an Open Source License,
  the GNU General Public License version 3.
 - It makes use of other code under compatible licenses, and the authors are credited in the source files.
-- The CFreqCtrl widget is Copyright 2010 Moe Wheatley with modifications by Alexandru Csete.
+- The CFreqCtrl and CPlotter widgets are Copyright 2010 Moe Wheatley and Alexandru Csete OZ9AEC.
+- Some GNU radio code from Gqrx is used as well
 - [Codec2](http://rowetel.com/codec2.html) is developed by David Rowe
 - [Opus](https://xiph.org) is developed by the Xiph foundation
 - [GNU radio](https://www.gnuradio.org/)  is a free software development toolkit that provides signal processing
