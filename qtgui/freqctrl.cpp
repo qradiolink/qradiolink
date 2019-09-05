@@ -74,7 +74,7 @@ CFreqCtrl::CFreqCtrl(QWidget *parent) :
     m_ActiveEditDigit = -1;
     m_ResetLowerDigits = false;
     m_UnitsFont = QFont("Arial", 15, QFont::Normal);
-    m_DigitFont = QFont("Liquid Crystal", 15, QFont::Bold, QFont::StyleItalic);
+    m_DigitFont = QFont("Liquid Crystal", 15, QFont::Bold, QFont::StyleNormal);
 }
 
 CFreqCtrl::~CFreqCtrl()

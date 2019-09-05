@@ -73,7 +73,7 @@ int gr_vector_source::work(int noutput_items,
     if(_finished)
     {
         //guard.unlock();
-        struct timespec time_to_sleep = {0, 2000000L };
+        struct timespec time_to_sleep = {0, 10000L };
         nanosleep(&time_to_sleep, NULL);
         return 0;
     }
