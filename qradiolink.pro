@@ -5,8 +5,8 @@
 #-------------------------------------------------
 
 QT       += core gui network sql
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+QT += widgets
+#greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = qradiolink
 TEMPLATE = app

@@ -25,6 +25,8 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QTreeWidgetItem>
+#include <QGraphicsOpacityEffect>
+#include <QPropertyAnimation>
 #include <QPainter>
 #include "mumbleclient.h"
 #include <math.h>

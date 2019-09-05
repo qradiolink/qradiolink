@@ -23,6 +23,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    setAnimated(true);
     ui->setupUi(this);
     _settings = settings;
     static float tone_list[]= {67.0, 71.9, 74.4, 77.0, 79.7, 82.5, 85.4, 88.5, 81.5, 87.4, 94.8, 100.0, 103.5, 107.2, 110.9,
@@ -62,7 +63,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     ui->frameCtrlFreq->setBkColor(QColor(0x1F, 0x1D, 0x1D,0xFF));
     ui->frameCtrlFreq->setHighlightColor(QColor(127,55,55,0xFF));
     //ui->frameCtrlFreq->setDigitColor(QColor(0,0,133,0xFF));
-    ui->frameCtrlFreq->setDigitColor(QColor(0,155,0,0xFF));
+    ui->frameCtrlFreq->setDigitColor(QColor(0,205,0,0xFF));
     ui->frameCtrlFreq->setUnitsColor(QColor(254,254,254,0xFF));
 
     /*
@@ -85,7 +86,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
 
 
 
-    QObject::connect(ui->buttonTransmit,SIGNAL(pressed()),this,SLOT(GUIstartTransmission()));
+    QObject::connect(ui->buttonTransmit,SIGNAL(toggled(bool)),this,SLOT(GUIstartTransmission()));
     //QObject::connect(ui->buttonTransmit,SIGNAL(released()),this,SLOT(GUIendTransmission()));
     QObject::connect(ui->sendTextButton,SIGNAL(clicked()),this,SLOT(GUIsendText()));
     QObject::connect(ui->voipConnectButton,SIGNAL(clicked()),this,SLOT(GUIconnectVOIP()));
@@ -170,8 +171,9 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     ui->plotterFrame->setWaterfallRange(-110.0, -30.0);
     //QPixmap pm = QPixmap::grabWidget(ui->frameCtrlFreq);
     //ui->frameCtrlFreq->setMask(pm.createHeuristicMask(false));
-
-
+    QGraphicsOpacityEffect *eff = new QGraphicsOpacityEffect(this);
+    eff->setOpacity(0.7);
+    ui->frameCtrlFreq->setGraphicsEffect(eff);
 
 
 }
