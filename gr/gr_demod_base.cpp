@@ -27,6 +27,7 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
     _top_block = gr::make_top_block("demodulator");
     _mode = 9999;
     _carrier_offset = 0;
+    _samp_rate = 2000000;
 
     _audio_sink = make_gr_audio_sink();
     _vector_sink = make_gr_vector_sink();
@@ -49,6 +50,8 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
     _moving_average = gr::blocks::moving_average_ff::make(2000,1,2000);
     _add_const = gr::blocks::add_const_ff::make(-80);
     _rotator = gr::blocks::rotator_cc::make(2*M_PI/1000000);
+    _resampler = gr::filter::rational_resampler_base_ccf::make(1, 2,
+                gr::filter::firdes::low_pass(1, _samp_rate, 1000000, 10000, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
 
 
     _osmosdr_source = osmosdr::source::make(device_args);
@@ -571,4 +574,54 @@ float gr_demod_base::get_rssi()
 gr_complex gr_demod_base::get_constellation_data()
 {
     return _constellation->level();
+}
+
+void gr_demod_base::set_samp_rate(int samp_rate)
+{
+    _top_block->lock();
+    _samp_rate = samp_rate;
+    if(_samp_rate == 1000000)
+    {
+        try
+        {
+            _top_block->disconnect(_resampler,0,_rotator,0);
+            _top_block->disconnect(_osmosdr_source,0,_resampler,0);
+            _top_block->connect(_osmosdr_source,0,_rotator,0);
+        }
+        catch(std::invalid_argument e)
+        {
+
+        }
+    }
+    else
+    {
+        try
+        {
+            _top_block->disconnect(_osmosdr_source,0,_resampler,0);
+            _top_block->disconnect(_resampler,0,_rotator,0);
+        }
+        catch(std::invalid_argument e)
+        {
+            _top_block->disconnect(_osmosdr_source,0,_rotator,0);
+        }
+        try
+        {
+
+            int decimation = (int) _samp_rate / 1000000;
+            _resampler.reset();
+            _resampler = gr::filter::rational_resampler_base_ccf::make(1, decimation,
+                        gr::filter::firdes::low_pass(1, _samp_rate, 500000, 500000, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+            _top_block->connect(_osmosdr_source,0,_resampler,0);
+            _top_block->connect(_resampler,0,_rotator,0);
+        }
+        catch(std::invalid_argument e)
+        {
+
+        }
+
+    }
+    _osmosdr_source->set_bandwidth(_samp_rate);
+    _osmosdr_source->set_sample_rate(_samp_rate);
+    _top_block->unlock();
+
 }

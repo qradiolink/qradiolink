@@ -138,6 +138,7 @@ public slots:
     void setCarrierOffset(qint64 offset);
     void setFFTSize(int size);
     void setFFTPollTime(int fps);
+    void setSampleRate(int samp_rate);
 
 private:
     bool _stop;

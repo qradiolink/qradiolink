@@ -684,7 +684,9 @@ void RadioOp::getFFTData()
     float rssi = _modem->getRSSI();
     emit newRSSIValue(rssi);
     unsigned int fft_size = 0;
+    _mutex->lock();
     _modem->get_fft_data(_fft_data, fft_size);
+    _mutex->unlock();
     if(fft_size > 0)
     {
         emit newFFTData(_fft_data, (int)fft_size);
@@ -1448,6 +1450,13 @@ void RadioOp::setCarrierOffset(qint64 offset)
     _mutex->lock();
     _carrier_offset = offset;
     _modem->set_carrier_offset(offset);
+    _mutex->unlock();
+}
+
+void RadioOp::setSampleRate(int samp_rate)
+{
+    _mutex->lock();
+    _modem->set_samp_rate(samp_rate);
     _mutex->unlock();
 }
 

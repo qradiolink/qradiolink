@@ -109,6 +109,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     QObject::connect(ui->fftEnableCheckBox,SIGNAL(toggled(bool)),this,SLOT(setEnabledFFT(bool)));
     QObject::connect(ui->peakDetectCheckBox,SIGNAL(toggled(bool)),this,SLOT(setPeakDetect(bool)));
     QObject::connect(ui->fpsBox,SIGNAL(currentIndexChanged(int)),this,SLOT(newWaterfallFPS()));
+    QObject::connect(ui->sampleRateBox,SIGNAL(currentIndexChanged(int)),this,SLOT(updateSampleRate()));
 
 
     QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
@@ -742,4 +743,12 @@ void MainWindow::setPeakDetect(bool value)
 void MainWindow::updateRSSI(float value)
 {
     ui->labelRSSI->setText(QString::number(value));
+}
+
+void MainWindow::updateSampleRate()
+{
+    int samp_rate = ui->sampleRateBox->currentText().toInt();
+    ui->plotterFrame->setSampleRate(samp_rate);
+    ui->plotterFrame->setSpanFreq((quint32)samp_rate);
+    emit setSampleRate(samp_rate);
 }

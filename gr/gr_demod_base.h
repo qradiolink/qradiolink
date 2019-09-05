@@ -82,6 +82,7 @@ public slots:
     void set_fft_size(int size);
     float get_rssi();
     gr_complex get_constellation_data();
+    void set_samp_rate(int samp_rate);
 
 private:
     gr::top_block_sptr _top_block;
@@ -102,6 +103,7 @@ private:
     gr::blocks::moving_average_ff::sptr _moving_average;
     gr::blocks::add_const_ff::sptr _add_const;
     gr::blocks::rotator_cc::sptr _rotator;
+    gr::filter::rational_resampler_base_ccf::sptr _resampler;
 
     gr_deframer_bb_sptr _deframer1;
     gr_deframer_bb_sptr _deframer2;
@@ -134,6 +136,7 @@ private:
     int _mode;
     int _carrier_offset;
     bool _demod_running;
+    int _samp_rate;
 };
 
 #endif // GR_DEMOD_BASE_H

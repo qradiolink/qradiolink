@@ -239,6 +239,12 @@ void gr_modem::set_carrier_offset(long center_freq)
         _gr_demod_base->set_carrier_offset(center_freq);
 }
 
+void gr_modem::set_samp_rate(int samp_rate)
+{
+    if(_gr_demod_base)
+        _gr_demod_base->set_samp_rate(samp_rate);
+}
+
 void gr_modem::setFFTSize(int size)
 {
     if(_gr_demod_base)

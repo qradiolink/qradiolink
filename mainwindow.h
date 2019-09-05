@@ -99,6 +99,7 @@ public slots:
     void updateRSSI(float value);
     void updateConstellation(complex_vector* constellation_data);
     void newWaterfallFPS();
+    void updateSampleRate();
 
 
 signals:
@@ -135,6 +136,7 @@ signals:
     void setCarrierOffset(qint64 offset);
     void newFFTSize(int);
     void setWaterfallFPS(int);
+    void setSampleRate(int);
 
 
 public:
