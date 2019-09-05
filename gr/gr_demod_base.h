@@ -23,8 +23,6 @@
 #include <gnuradio/filter/rational_resampler_base_ccf.h>
 #include <gnuradio/filter/freq_xlating_fir_filter_ccf.h>
 #include <gnuradio/blocks/multiply_cc.h>
-#include <gnuradio/qtgui/const_sink_c.h>
-#include <gnuradio/qtgui/number_sink.h>
 #include <gnuradio/analog/agc2_ff.h>
 #include <gnuradio/blocks/complex_to_mag_squared.h>
 #include <gnuradio/blocks/nlog10_ff.h>
