@@ -4,6 +4,7 @@
  *           http://gqrx.dk/
  *
  * Copyright 2011-2013 Alexandru Csete OZ9AEC.
+ * Modified 2019 by Adrian Musceac YO8RZZ
  *
  * Gqrx is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +51,7 @@ rx_fft_c::rx_fft_c(unsigned int fftsize, int wintype)
     d_fft = new gr::fft::fft_complex(d_fftsize, true, 4);
     d_cbuf = new boost::circular_buffer<gr_complex>;
     d_fft_points = new gr_complex[d_fftsize];
+    d_sample_buffer = new std::vector<gr_complex>;
     d_counter = 0;
     d_data_ready = false;
 
@@ -65,7 +67,8 @@ rx_fft_c::~rx_fft_c()
 {
     delete d_fft;
     delete d_cbuf;
-    delete d_fft_points;
+    delete[] d_fft_points;
+    delete d_sample_buffer;
 }
 
 
@@ -94,14 +97,15 @@ int rx_fft_c::work(int noutput_items,
         {
             d_counter = 0;
             /* perform FFT */
-            do_fft(d_cbuf->linearize(), d_cbuf->size());  // FIXME: array_one() and two() may be faster
+            do_fft(d_sample_buffer->data(), d_fftsize);  // FIXME: array_one() and two() may be faster
             //d_cbuf->clear();
+            d_sample_buffer->clear();
 
             /* set FFT data */
             memcpy(d_fft_points, d_fft->get_outbuf(), sizeof(gr_complex)*d_fftsize);
             d_data_ready = true;
         }
-        d_cbuf->push_back(in[i]);
+        d_sample_buffer->push_back(in[i]);
         d_counter++;
     }
 
@@ -117,6 +121,7 @@ void rx_fft_c::get_fft_data(std::complex<float>* fftPoints, unsigned int &fftSiz
 {
     boost::mutex::scoped_lock lock(d_mutex);
 
+    /*
     if (d_cbuf->size() < d_fftsize)
     {
         // not enough samples in the buffer
@@ -124,6 +129,7 @@ void rx_fft_c::get_fft_data(std::complex<float>* fftPoints, unsigned int &fftSiz
 
         return;
     }
+    */
 
     if (!d_data_ready)
     {

@@ -22,6 +22,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+
     setAnimated(true);
     ui->setupUi(this);
     _settings = settings;
@@ -147,6 +148,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     _pwrFftData = new float[1024*1024]();
     _iirFftData = new float[1024*1024];
     _fft_averaging = 1;
+    _rssi = 0;
     QRect xy = this->geometry();
     ui->plotterContainer->resize(xy.right() -xy.left()-20,xy.bottom()-xy.top()-120);
     ui->plotterFrame->setSampleRate(1000000);
@@ -158,8 +160,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     ui->plotterFrame->setFreqDigits(2);
     ui->plotterFrame->setTooltipsEnabled(true);
     ui->plotterFrame->setClickResolution(1);
-    ui->plotterFrame->setPandapterRange(-110.0, -30.0);
-    ui->plotterFrame->setWaterfallRange(-110.0, -30.0);
+    setRange(1);
     //QPixmap pm = QPixmap::grabWidget(ui->frameCtrlFreq);
     //ui->frameCtrlFreq->setMask(pm.createHeuristicMask(false));
     QGraphicsOpacityEffect *eff_freq = new QGraphicsOpacityEffect(this);
@@ -186,6 +187,7 @@ void MainWindow::closeEvent (QCloseEvent *event)
     nanosleep(&time_to_sleep, NULL);
     event->accept();
 }
+
 
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
@@ -324,6 +326,10 @@ void MainWindow::GUIsendText()
 
 void MainWindow::newFFTData(std::complex<float>* fft_data, int fftsize)
 {
+    // don't paint anything if window is minimized
+    if(isMinimized())
+        return;
+
     unsigned int    i;
     float           pwr;
     float           pwr_scale;
@@ -387,6 +393,11 @@ void MainWindow::newWaterfallFPS()
 
 void MainWindow::updateConstellation(complex_vector *constellation_data)
 {
+    if(isMinimized())
+    {
+        constellation_data->clear();
+        return;
+    }
     ui->constellationLabel->clear();
     delete _constellation_img;
     _constellation_img = new QPixmap(300,300);
@@ -743,6 +754,7 @@ void MainWindow::setPeakDetect(bool value)
 
 void MainWindow::updateRSSI(float value)
 {
+    _rssi = value;
     ui->labelRSSI->setText(QString::number(value));
 }
 
@@ -757,6 +769,6 @@ void MainWindow::updateSampleRate()
 void MainWindow::setRange(int value)
 {
     // value is from one to 10
-    ui->plotterFrame->setPandapterRange(-140.0 / (float)value, -30.0 / (float)value);
-    ui->plotterFrame->setWaterfallRange(-140.0 / (float)value, -30.0 / (float)value);
+    ui->plotterFrame->setPandapterRange(_rssi + 30 - 50 / (float)value , _rssi + 50 / (float)value);
+    ui->plotterFrame->setWaterfallRange(_rssi + 30 - 50 / (float)value , _rssi + 50 / (float)value);
 }

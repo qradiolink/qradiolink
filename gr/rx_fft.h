@@ -4,6 +4,7 @@
  *           http://gqrx.dk/
  *
  * Copyright 2011-2013 Alexandru Csete OZ9AEC.
+ * Modified 2019 by Adrian Musceac YO8RZZ
  *
  * Gqrx is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,6 +98,8 @@ private:
     boost::circular_buffer<gr_complex> *d_cbuf; /*! buffer to accumulate samples. */
 
     gr_complex *d_fft_points;
+
+    std::vector<gr_complex> *d_sample_buffer;
 
     int d_counter;
     bool d_data_ready;
