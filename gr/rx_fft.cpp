@@ -236,6 +236,7 @@ rx_fft_f::rx_fft_f(unsigned int fftsize, int wintype)
 rx_fft_f::~rx_fft_f()
 {
     delete d_fft;
+    delete d_cbuf;
 }
 
 /*! \brief Audio FFT work method.
