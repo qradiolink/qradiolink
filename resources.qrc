@@ -10,5 +10,12 @@
         <file>res/end_beep.raw</file>
         <file>res/logo.png</file>
         <file>res/data_rec.raw</file>
+        <file>res/led-screen-texture.png</file>
+    </qresource>
+    <qresource prefix="/fonts">
+        <file>res/LiquidCrystal-Normal.otf</file>
+        <file>res/LiquidCrystal-Bold.otf</file>
+        <file>res/LiquidCrystal-BoldItalic.otf</file>
+        <file>res/LiquidCrystal-NormalItalic.otf</file>
     </qresource>
 </RCC>

@@ -89,6 +89,10 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     a.setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; border: 0px solid white; }");
     QStringList arguments = QCoreApplication::arguments();
+    QFontDatabase::addApplicationFont(":/fonts/res/LiquidCrystal-Normal.otf");
+    QFontDatabase::addApplicationFont(":/fonts/res/LiquidCrystal-Bold.otf");
+    QFontDatabase::addApplicationFont(":/fonts/res/LiquidCrystal-BoldItalic.otf");
+    QFontDatabase::addApplicationFont(":/fonts/res/LiquidCrystal-NormalItalic.otf");
 
 
     std::string start_time= QDateTime::currentDateTime().toString("d/MMM/yyyy hh:mm:ss").toStdString();

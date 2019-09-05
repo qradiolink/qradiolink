@@ -73,8 +73,8 @@ CFreqCtrl::CFreqCtrl(QWidget *parent) :
     m_LRMouseFreqSel = false;
     m_ActiveEditDigit = -1;
     m_ResetLowerDigits = false;
-    m_UnitsFont = QFont("Arial", 15, QFont::Normal);
-    m_DigitFont = QFont("Arial", 15, QFont::Normal);
+    m_UnitsFont = QFont("Liquid Crystal", 15, QFont::Normal);
+    m_DigitFont = QFont("Liquid Crystal", 15, QFont::Bold);
 }
 
 CFreqCtrl::~CFreqCtrl()
@@ -624,6 +624,7 @@ void CFreqCtrl::keyPressEvent( QKeyEvent * event )
 void CFreqCtrl::drawBkGround(QPainter &Painter)
 {
     QRect rect(0, 0, width(), height());
+    Painter.setRenderHint(QPainter::Antialiasing);
 
     //qDebug() <<rect;
     int cellwidth = 100*rect.width()/(100*(m_NumDigits+2)+(m_NumSeps*SEPRATIO_N)/SEPRATIO_D);
@@ -638,13 +639,13 @@ void CFreqCtrl::drawBkGround(QPainter &Painter)
 
     // draw units text
     m_UnitsFont.setPixelSize((UNITS_SIZE_PERCENT*rect.height())/100);
-    m_UnitsFont.setFamily("Arial");
+    m_UnitsFont.setFamily("Liquid Crystal");
     Painter.setFont(m_UnitsFont );
     Painter.setPen(m_UnitsColor);
     Painter.drawText(m_UnitsRect, Qt::AlignHCenter|Qt::AlignVCenter, m_UnitString);
 
     m_DigitFont.setPixelSize((DIGIT_SIZE_PERCENT*rect.height())/100);
-    m_DigitFont.setFamily("Arial");
+    m_DigitFont.setFamily("Liquid Crystal");
     Painter.setFont(m_DigitFont);
     Painter.setPen(m_DigitColor);
 
@@ -687,6 +688,7 @@ void CFreqCtrl::drawBkGround(QPainter &Painter)
 void CFreqCtrl::drawDigits(QPainter &Painter)
 {
     Painter.setFont(m_DigitFont);
+    Painter.setRenderHint(QPainter::Antialiasing);
     m_FirstEditableDigit = m_DigStart;
 
     for (int i = m_DigStart; i < m_NumDigits; i++)
