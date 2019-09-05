@@ -5,8 +5,8 @@
 #-------------------------------------------------
 
 QT       += core gui network sql
-QT += widgets
-#greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = qradiolink
 TEMPLATE = app
@@ -14,7 +14,7 @@ TEMPLATE = app
 CONFIG  += thread
 
 QMAKE_CXXFLAGS += $$(CXXFLAGS)
-QMAKE_CFLAGS += $$(CFLAGS)
+//QMAKE_CFLAGS += $$(CFLAGS)
 QMAKE_LFLAGS += $$(LDFLAGS)
 
 SOURCES += main.cpp\
