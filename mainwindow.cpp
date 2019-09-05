@@ -117,6 +117,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     QObject::connect(ui->plotterFrame,SIGNAL(newCenterFreq(qint64)),this,SLOT(tuneFreqPlotter(qint64)));
     QObject::connect(ui->panadapterSlider,SIGNAL(valueChanged(int)),ui->plotterFrame,SLOT(setPercent2DScreen(int)));
     QObject::connect(ui->averagingSlider,SIGNAL(valueChanged(int)),this,SLOT(setAveraging(int)));
+    QObject::connect(ui->rangeSlider,SIGNAL(valueChanged(int)),this,SLOT(setRange(int)));
     QObject::connect(ui->plotterFrame,SIGNAL(newDemodFreq(qint64,qint64)),this,SLOT(carrierOffsetChanged(qint64,qint64)));
 
     QObject::connect(ui->voipTreeWidget,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this,SLOT(channelState(QTreeWidgetItem *,int)));
@@ -151,7 +152,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     ui->plotterFrame->setSampleRate(1000000);
     ui->plotterFrame->setSpanFreq((quint32)1000000);
     ui->plotterFrame->setRunningState(false);
-    ui->plotterFrame->setFftRate(5);
+    ui->plotterFrame->setFftRate(10);
     ui->plotterFrame->setPercent2DScreen(50);
     ui->plotterFrame->setFftFill(true);
     ui->plotterFrame->setFreqDigits(2);
@@ -380,6 +381,7 @@ void MainWindow::setAveraging(int x)
 void MainWindow::newWaterfallFPS()
 {
     _waterfall_fps = ui->fpsBox->currentText().toInt();
+    //ui->plotterFrame->setFftRate(_waterfall_fps);
     emit setWaterfallFPS(_waterfall_fps);
 }
 
@@ -750,4 +752,11 @@ void MainWindow::updateSampleRate()
     ui->plotterFrame->setSampleRate(samp_rate);
     ui->plotterFrame->setSpanFreq((quint32)samp_rate);
     emit setSampleRate(samp_rate);
+}
+
+void MainWindow::setRange(int value)
+{
+    // value is from one to 10
+    ui->plotterFrame->setPandapterRange(-140.0 / (float)value, -30.0 / (float)value);
+    ui->plotterFrame->setWaterfallRange(-140.0 / (float)value, -30.0 / (float)value);
 }

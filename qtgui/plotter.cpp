@@ -627,7 +627,7 @@ quint64 CPlotter::getWfTimeRes(void)
 void CPlotter::setFftRate(int rate_hz)
 {
     fft_rate = rate_hz;
-    clearWaterfall();
+    //clearWaterfall();
 }
 
 // Called when a mouse button is pressed

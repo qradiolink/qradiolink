@@ -664,7 +664,7 @@ background-color: rgb(0, 0, 67);</string>
               </widget>
              </item>
              <item>
-              <widget class="QSlider" name="zoomSlider">
+              <widget class="QSlider" name="rangeSlider">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                  <horstretch>0</horstretch>

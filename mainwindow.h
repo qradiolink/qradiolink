@@ -100,6 +100,7 @@ public slots:
     void updateConstellation(complex_vector* constellation_data);
     void newWaterfallFPS();
     void updateSampleRate();
+    void setRange(int value);
 
 
 signals:
