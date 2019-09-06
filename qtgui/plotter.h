@@ -9,8 +9,8 @@
 #include <vector>
 #include <QMap>
 
-#define HORZ_DIVS_MAX 12    //50
-#define VERT_DIVS_MIN 5
+#define HORZ_DIVS_MAX 20    //50
+#define VERT_DIVS_MIN 20
 #define MAX_SCREENSIZE 16384
 
 #define PEAK_CLICK_MAX_H_DISTANCE 10 //Maximum horizontal distance of clicked point from peak

@@ -603,7 +603,7 @@ color: rgb(240, 240, 119);
 background-color: rgb(0, 0, 67);</string>
                </property>
                <property name="currentIndex">
-                <number>1</number>
+                <number>0</number>
                </property>
                <item>
                 <property name="text">
@@ -633,6 +633,26 @@ background-color: rgb(0, 0, 67);</string>
                <item>
                 <property name="text">
                  <string>30</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>35</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>40</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>45</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>50</string>
                 </property>
                </item>
               </widget>
