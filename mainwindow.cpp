@@ -139,7 +139,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     _demod_offset = 0;
     readConfig();
     _video_img = new QPixmap;
-    _constellation_img = new QPixmap(200,200);
+    _constellation_img = new QPixmap(300,300);
     ui->menuBar->hide();
     ui->statusBar->hide();
     ui->mainToolBar->hide();
@@ -164,7 +164,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     //QPixmap pm = QPixmap::grabWidget(ui->frameCtrlFreq);
     //ui->frameCtrlFreq->setMask(pm.createHeuristicMask(false));
     QGraphicsOpacityEffect *eff_freq = new QGraphicsOpacityEffect(this);
-    eff_freq->setOpacity(0.6);
+    eff_freq->setOpacity(0.65);
     ui->frameCtrlFreq->setGraphicsEffect(eff_freq);
     QGraphicsOpacityEffect *eff_const = new QGraphicsOpacityEffect(this);
     eff_const->setOpacity(0.7);
@@ -398,12 +398,11 @@ void MainWindow::updateConstellation(complex_vector *constellation_data)
         constellation_data->clear();
         return;
     }
-    ui->constellationLabel->clear();
-    delete _constellation_img;
-    _constellation_img = new QPixmap(300,300);
+
     _constellation_img->fill(QColor("transparent"));
     QPainter painter(_constellation_img);
-    QPen pen(QColor(77,255,77,255), 7, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    painter.setRenderHint(QPainter::HighQualityAntialiasing);
+    QPen pen(QColor(0,255,0,255), 6, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     QPen pen2(QColor(180,180,180,180), 1, Qt::SolidLine, Qt::SquareCap, Qt::RoundJoin);
     painter.setPen(pen2);
     painter.drawLine(150, 0, 150, 300);
@@ -419,8 +418,7 @@ void MainWindow::updateConstellation(complex_vector *constellation_data)
     painter.end();
 
     ui->constellationLabel->setPixmap(*_constellation_img);
-    if(constellation_data->size() > 256)
-        constellation_data->erase(constellation_data->begin(),constellation_data->begin()+128);
+    constellation_data->clear();
 }
 
 void MainWindow::displayText(QString text, bool html)

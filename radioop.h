@@ -208,7 +208,6 @@ private:
     int _fft_poll_time;
     bool _constellation_enabled;
     QElapsedTimer *_fft_read_timer;
-    QElapsedTimer *_constellation_read_timer;
 
     void readConfig(std::string &rx_device_args, std::string &tx_device_args,
                     std::string &rx_antenna, std::string &tx_antenna, int &rx_freq_corr,

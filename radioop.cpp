@@ -50,8 +50,6 @@ RadioOp::RadioOp(Settings *settings, QObject *parent) :
     _fft_read_timer->start();
     _fft_poll_time = 75;
     _fft_enabled = true;
-    _constellation_read_timer = new QElapsedTimer();
-    _constellation_read_timer->start();
     _constellation_enabled = false;
     _data_modem_sleeping = false;
     _settings = settings;
@@ -701,21 +699,19 @@ void RadioOp::getConstellationData()
 {
     if(!_constellation_enabled)
     {
-        _constellation_read_timer->restart();
         return;
     }
-    qint64 msec = (quint64)_constellation_read_timer->nsecsElapsed() / 1000000;
-    if(msec < _fft_poll_time)
-    {
-        std::complex<float> const_data_point = _modem->getConstellation();
-        _mutex->lock();
-        _constellation_data->push_back(const_data_point);
-        _mutex->unlock();
+    std::complex<float> const_data_point = _modem->getConstellation();
+    if(const_data_point == _constellation_data->back())
         return;
+    _mutex->lock();
+    _constellation_data->push_back(const_data_point);
+    _mutex->unlock();
+    if(_constellation_data->size() > 32)
+    {
+        emit newConstellationData(_constellation_data);
     }
 
-    emit newConstellationData(_constellation_data);
-    _constellation_read_timer->restart();
 }
 
 
