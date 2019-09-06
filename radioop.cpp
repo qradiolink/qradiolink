@@ -704,12 +704,12 @@ void RadioOp::getConstellationData()
     std::complex<float> const_data_point = _modem->getConstellation();
     if(const_data_point == _constellation_data->back())
         return;
-    _mutex->lock();
     _constellation_data->push_back(const_data_point);
-    _mutex->unlock();
-    if(_constellation_data->size() > 32)
+    if(_constellation_data->size() > 24)
     {
-        emit newConstellationData(_constellation_data);
+        complex_vector constellation_data(*_constellation_data);
+        emit newConstellationData(constellation_data);
+        _constellation_data->clear();
     }
 
 }

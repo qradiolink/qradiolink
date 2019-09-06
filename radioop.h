@@ -85,7 +85,7 @@ signals:
     void pingServer();
     void voipData(short *pcm, int samples);
     void newFFTData(std::complex<float>*, int);
-    void newConstellationData(complex_vector*);
+    void newConstellationData(complex_vector);
     void newRSSIValue(float rssi);
 
 

@@ -205,12 +205,6 @@
              <property name="styleSheet">
               <string notr="true">font: 7pt &quot;Sans Serif&quot;;S</string>
              </property>
-             <property name="frameShape">
-              <enum>QFrame::StyledPanel</enum>
-             </property>
-             <property name="frameShadow">
-              <enum>QFrame::Raised</enum>
-             </property>
              <widget class="QFrame" name="constellationDisplay">
               <property name="geometry">
                <rect>
