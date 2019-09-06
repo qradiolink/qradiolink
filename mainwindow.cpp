@@ -767,8 +767,8 @@ void MainWindow::setRange(int value)
     // value is from one to 10
     if(_rssi == 0)
         _rssi = -80.0;
-    ui->plotterFrame->setPandapterRange(_rssi - 100 / (float)value , _rssi + 100 / (float)value);
-    ui->plotterFrame->setWaterfallRange(_rssi - 100 / (float)value , _rssi + 100 / (float)value);
+    ui->plotterFrame->setPandapterRange(_rssi - 10 / (float)value , _rssi + 50 / (float)value);
+    ui->plotterFrame->setWaterfallRange(_rssi - 10 / (float)value , _rssi + 50 / (float)value);
 }
 
 void MainWindow::autoSquelch()
