@@ -91,6 +91,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     QObject::connect(ui->txGainDial,SIGNAL(valueChanged(int)),this,SLOT(setTxPowerDisplay(int)));
     QObject::connect(ui->rxGainDial,SIGNAL(valueChanged(int)),this,SLOT(setRxSensitivityDisplay(int)));
     QObject::connect(ui->rxSquelchDial,SIGNAL(valueChanged(int)),this,SLOT(setSquelchDisplay(int)));
+    QObject::connect(ui->autoSquelchButton,SIGNAL(clicked()),this,SLOT(autoSquelch()));
     QObject::connect(ui->rxVolumeDial,SIGNAL(valueChanged(int)),this,SLOT(setVolumeDisplay(int)));
     QObject::connect(ui->rxModemTypeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(toggleRxMode(int)));
     QObject::connect(ui->txModemTypeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(toggleTxMode(int)));
@@ -771,4 +772,13 @@ void MainWindow::setRange(int value)
         _rssi = -80.0;
     ui->plotterFrame->setPandapterRange(_rssi - 100 / (float)value , _rssi + 100 / (float)value);
     ui->plotterFrame->setWaterfallRange(_rssi - 100 / (float)value , _rssi + 100 / (float)value);
+}
+
+void MainWindow::autoSquelch()
+{
+    if(_rssi == 0)
+        return;
+    int squelch = (int)_rssi + 50;
+    setSquelchDisplay(squelch);
+    ui->rxSquelchDial->setValue(squelch);
 }

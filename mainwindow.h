@@ -101,6 +101,7 @@ public slots:
     void newWaterfallFPS();
     void updateSampleRate();
     void setRange(int value);
+    void autoSquelch();
 
 
 signals:
