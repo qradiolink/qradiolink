@@ -83,7 +83,7 @@ RadioOp::RadioOp(Settings *settings, QObject *parent) :
     _data_led_timer->setSingleShot(true);
     _rand_frame_data = new unsigned char[5000];
     _voip_encode_buffer = new QVector<short>;
-    _fft_data = new std::complex<float>[1024*1024*10];
+    _fft_data = new std::complex<float>[1024*1024];
     _constellation_data = new std::vector<std::complex<float>>;
     _constellation_data->reserve(256);
 
@@ -686,8 +686,8 @@ void RadioOp::getFFTData()
     if(fft_size > 0)
     {
         emit newFFTData(_fft_data, (int)fft_size);
+        _fft_read_timer->restart();
     }
-    _fft_read_timer->restart();
 }
 
 void RadioOp::setFFTPollTime(int fps)

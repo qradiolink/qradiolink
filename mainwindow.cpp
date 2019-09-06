@@ -146,7 +146,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     ui->mainToolBar->hide();
     setWindowIcon(QIcon(":/res/logo.png"));
     _realFftData = new float[1024*1024];
-    _pwrFftData = new float[1024*1024]();
+    _pwrFftData = new float[1024*1024];
     _iirFftData = new float[1024*1024];
     _fft_averaging = 1;
     _rssi = 0;
@@ -155,7 +155,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     ui->plotterFrame->setSampleRate(1000000);
     ui->plotterFrame->setSpanFreq((quint32)1000000);
     ui->plotterFrame->setRunningState(false);
-    ui->plotterFrame->setFftRate(10);
+    //ui->plotterFrame->setFftRate(10);
     ui->plotterFrame->setPercent2DScreen(50);
     ui->plotterFrame->setFftFill(true);
     ui->plotterFrame->setFreqDigits(2);
@@ -371,7 +371,6 @@ void MainWindow::newFFTData(std::complex<float>* fft_data, int fftsize)
     }
 
     ui->plotterFrame->setNewFftData(_iirFftData, _realFftData, fftsize);
-    //ui->plotterFrame->draw();
 }
 
 

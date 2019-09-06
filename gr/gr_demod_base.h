@@ -78,7 +78,7 @@ public slots:
     void enable_gui_const(bool value);
     void enable_gui_fft(bool value);
     double get_freq();
-    void set_mode(int mode);
+    void set_mode(int mode, bool disconnect=true, bool connect=true);
     void set_fft_size(int size);
     float get_rssi();
     gr_complex get_constellation_data();
@@ -137,6 +137,7 @@ private:
     int _carrier_offset;
     bool _demod_running;
     int _samp_rate;
+    bool _locked;
 };
 
 #endif // GR_DEMOD_BASE_H
