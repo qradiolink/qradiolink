@@ -400,8 +400,7 @@ void MainWindow::updateConstellation(complex_vector *constellation_data)
 
     _constellation_img->fill(QColor("transparent"));
     QPainter painter(_constellation_img);
-    painter.setRenderHint(QPainter::HighQualityAntialiasing);
-    QPen pen(QColor(0,255,0,255), 6, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen(QColor(0,255,0,255), 4, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     QPen pen2(QColor(180,180,180,180), 1, Qt::SolidLine, Qt::SquareCap, Qt::RoundJoin);
     painter.setPen(pen2);
     painter.drawLine(150, 0, 150, 300);
