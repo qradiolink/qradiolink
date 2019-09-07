@@ -847,7 +847,8 @@ void RadioOp::receiveVideoData(unsigned char *data, int size)
     unsigned int crc_check = gr::digital::crc32(jpeg_frame, frame_size);
     if(crc != crc_check)
     {
-        std::cerr << "CRC check failed " << std::endl;
+        // JPEG decoder has this nasty habit of segfaulting on image errors
+        std::cerr << "CRC check failed, dropping frame to avoid JPEG segfault " << std::endl;
         delete[] jpeg_frame;
         return;
     }
@@ -860,8 +861,7 @@ void RadioOp::receiveVideoData(unsigned char *data, int size)
 
         return;
     }
-    QImage img (320,240, QImage::Format_RGB888);
-    img.loadFromData(raw_output, 230400, 0);
+    QImage img (raw_output, 320,240, QImage::Format_RGB888);
     img.convertToFormat(QImage::Format_RGB32);
     QImage out_img(img.scaled(480, 360));
 

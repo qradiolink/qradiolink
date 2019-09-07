@@ -22,7 +22,8 @@
 
 VideoEncoder::VideoEncoder(QString device_name)
 {
-    dev_name = (char*)device_name.toStdString().c_str();
+    dev_name = (char*)(device_name.toStdString().c_str());
+    std::cerr << "Using video device: " << dev_name << std::endl;
     open_device();
     init_device();
     start_capturing();
@@ -38,7 +39,7 @@ VideoEncoder::~VideoEncoder()
 void VideoEncoder::encode_jpeg(unsigned char *videobuffer, unsigned long &encoded_size, int max_video_frame_size)
 {
     int len;
-    unsigned char *frame = new unsigned char[153600];
+    unsigned char *frame = new unsigned char[230400];
     QDateTime dateTime1 = QDateTime::currentDateTime();
     capture_frame(frame, len);
     QDateTime dateTime2 = QDateTime::currentDateTime();
@@ -159,6 +160,7 @@ unsigned char* VideoEncoder::decode_jpeg(unsigned char *videobuffer, int data_le
          */
         jpeg_destroy_decompress(&cinfo);
         delete[] out_decompress;
+        std::cerr << cinfo.err->output_message << std::endl;
         return NULL;
     }
     /* Now we can initialize the JPEG decompression object. */

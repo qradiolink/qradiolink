@@ -20,6 +20,7 @@
 #include <QString>
 #include <QDebug>
 #include <QDateTime>
+#include <iostream>
 
 class VideoEncoder
 {
