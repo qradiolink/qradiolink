@@ -97,7 +97,7 @@ public slots:
     void setEnabledFFT(bool value);
     void setPeakDetect(bool value);
     void updateRSSI(float value);
-    void updateConstellation(complex_vector constellation_data);
+    void updateConstellation(complex_vector* constellation_data);
     void newWaterfallFPS();
     void updateSampleRate();
     void setRange(int value);

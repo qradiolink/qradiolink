@@ -35,11 +35,11 @@
 #include <gnuradio/blocks/rotator_cc.h>
 #include <gnuradio/blocks/message_debug.h>
 #include <gnuradio/blocks/probe_signal_f.h>
-#include <gnuradio/blocks/probe_signal_c.h>
 #include <osmosdr/source.h>
 #include <vector>
 #include "gr_audio_sink.h"
 #include "gr_vector_sink.h"
+#include "gr_const_sink.h"
 #include "rx_fft.h"
 #include "gr_deframer_bb.h"
 #include "gr_demod_2fsk_sdr.h"
@@ -81,7 +81,7 @@ public slots:
     void set_mode(int mode, bool disconnect=true, bool connect=true);
     void set_fft_size(int size);
     float get_rssi();
-    gr_complex get_constellation_data();
+    std::vector<gr_complex> *get_constellation_data();
     void set_samp_rate(int samp_rate);
 
 private:
@@ -96,7 +96,7 @@ private:
     gr::blocks::copy::sptr _const_valve;
     gr::blocks::copy::sptr _demod_valve;
     gr::blocks::probe_signal_f::sptr _rssi;
-    gr::blocks::probe_signal_c::sptr _constellation;
+    gr_const_sink_sptr _constellation;
     gr::blocks::complex_to_mag_squared::sptr _mag_squared;
     gr::blocks::nlog10_ff::sptr _log10;
     gr::filter::single_pole_iir_filter_ff::sptr _single_pole_filter;

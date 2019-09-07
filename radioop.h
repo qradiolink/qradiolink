@@ -85,7 +85,7 @@ signals:
     void pingServer();
     void voipData(short *pcm, int samples);
     void newFFTData(std::complex<float>*, int);
-    void newConstellationData(complex_vector);
+    void newConstellationData(complex_vector*);
     void newRSSIValue(float rssi);
 
 
@@ -203,11 +203,11 @@ private:
     int _freq_gui_counter;
     qint64 _carrier_offset;
     std::complex<float> *_fft_data;
-    std::vector<std::complex<float>> *_constellation_data;
     bool _fft_enabled;
     int _fft_poll_time;
     bool _constellation_enabled;
     QElapsedTimer *_fft_read_timer;
+    QElapsedTimer *_const_read_timer;
 
     void readConfig(std::string &rx_device_args, std::string &tx_device_args,
                     std::string &rx_antenna, std::string &tx_antenna, int &rx_freq_corr,

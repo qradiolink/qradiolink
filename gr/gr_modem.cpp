@@ -561,10 +561,15 @@ float gr_modem::getRSSI()
         return _gr_demod_base->get_rssi();
 }
 
-gr_complex gr_modem::getConstellation()
+std::vector<gr_complex>* gr_modem::getConstellation()
 {
     if(_gr_demod_base)
         return _gr_demod_base->get_constellation_data();
+    else
+    {
+        std::vector<std::complex<float>> *const_data = new std::vector<std::complex<float>>;
+        return const_data;
+    }
 }
 
 bool gr_modem::demodulateAnalog()

@@ -38,7 +38,7 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
     _rssi_valve = gr::blocks::copy::make(8);
     _rssi_valve->set_enabled(false);
     _rssi = gr::blocks::probe_signal_f::make();
-    _constellation = gr::blocks::probe_signal_c::make();
+    _constellation = make_gr_const_sink();
     _fft_valve = gr::blocks::copy::make(8);
     _fft_valve->set_enabled(false);
     _const_valve = gr::blocks::copy::make(8);
@@ -561,9 +561,15 @@ float gr_demod_base::get_rssi()
     return _rssi->level();
 }
 
-gr_complex gr_demod_base::get_constellation_data()
+std::vector<gr_complex>* gr_demod_base::get_constellation_data()
 {
-    return _constellation->level();
+    if(!_demod_running)
+    {
+        std::vector<gr_complex> *dummy = new std::vector<gr_complex>;
+        return dummy;
+    }
+    std::vector<gr_complex> *data = _constellation->get_data();
+    return data;
 }
 
 void gr_demod_base::set_samp_rate(int samp_rate)

@@ -50,6 +50,8 @@ RadioOp::RadioOp(Settings *settings, QObject *parent) :
     _fft_read_timer->start();
     _fft_poll_time = 75;
     _fft_enabled = true;
+    _const_read_timer = new QElapsedTimer();
+    _const_read_timer->start();
     _constellation_enabled = false;
     _data_modem_sleeping = false;
     _settings = settings;
@@ -84,8 +86,6 @@ RadioOp::RadioOp(Settings *settings, QObject *parent) :
     _rand_frame_data = new unsigned char[5000];
     _voip_encode_buffer = new QVector<short>;
     _fft_data = new std::complex<float>[1024*1024];
-    _constellation_data = new std::vector<std::complex<float>>;
-    _constellation_data->reserve(256);
 
 
     QObject::connect(_voice_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));
@@ -701,15 +701,16 @@ void RadioOp::getConstellationData()
     {
         return;
     }
-    std::complex<float> const_data_point = _modem->getConstellation();
-    if(const_data_point == _constellation_data->back())
-        return;
-    _constellation_data->push_back(const_data_point);
-    if(_constellation_data->size() > 24)
+    qint64 msec = (quint64)_const_read_timer->nsecsElapsed() / 1000000;
+    if(msec < _fft_poll_time)
     {
-        complex_vector constellation_data(*_constellation_data);
-        emit newConstellationData(constellation_data);
-        _constellation_data->clear();
+        return;
+    }
+    std::vector<std::complex<float>> *const_data = _modem->getConstellation();
+    if(const_data->size() > 1)
+    {
+        emit newConstellationData(const_data);
+        _const_read_timer->restart();
     }
 
 }

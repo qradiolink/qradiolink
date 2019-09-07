@@ -391,7 +391,7 @@ void MainWindow::newWaterfallFPS()
     emit setWaterfallFPS(_waterfall_fps);
 }
 
-void MainWindow::updateConstellation(complex_vector constellation_data)
+void MainWindow::updateConstellation(complex_vector *constellation_data)
 {
     if(isMinimized())
     {
@@ -401,15 +401,15 @@ void MainWindow::updateConstellation(complex_vector constellation_data)
     _constellation_img->fill(QColor("transparent"));
     QPainter painter(_constellation_img);
     painter.setRenderHint(QPainter::HighQualityAntialiasing);
-    QPen pen(QColor(0,255,0,255), 8, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen(QColor(0,255,0,255), 6, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     QPen pen2(QColor(180,180,180,180), 1, Qt::SolidLine, Qt::SquareCap, Qt::RoundJoin);
     painter.setPen(pen2);
     painter.drawLine(150, 0, 150, 300);
     painter.drawLine(0, 150, 300, 150);
     painter.setPen(pen);
-    for(int i = 0;i < constellation_data.size();i++)
+    for(int i = 0;i < constellation_data->size();i++)
     {
-        std::complex<float> pt = constellation_data.at(i);
+        std::complex<float> pt = constellation_data->at(i);
         int x = (int)(floor((std::min(pt.real(), 2.0f) * 75)) + 150);
         int y = (int)(floor((std::min(pt.imag(), 2.0f) * 75)) + 150);
         painter.drawPoint(x, y);
@@ -417,6 +417,8 @@ void MainWindow::updateConstellation(complex_vector constellation_data)
     painter.end();
 
     ui->constellationLabel->setPixmap(*_constellation_img);
+    constellation_data->clear();
+    delete constellation_data;
 }
 
 void MainWindow::displayText(QString text, bool html)

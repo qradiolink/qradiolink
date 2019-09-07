@@ -127,7 +127,7 @@ public slots:
     void set_samp_rate(int samp_rate);
     void setFFTSize(int size);
     float getRSSI();
-    gr_complex getConstellation();
+    std::vector<gr_complex> *getConstellation();
 
 private:
 
