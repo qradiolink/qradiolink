@@ -657,7 +657,7 @@ void RadioOp::run()
         }
         else
         {
-            struct timespec time_to_sleep = {0, 100000L };
+            struct timespec time_to_sleep = {0, 10000L };
             nanosleep(&time_to_sleep, NULL);
         }
         if(_stop)
@@ -1000,13 +1000,13 @@ void RadioOp::callsignReceived(QString callsign)
 void RadioOp::audioFrameReceived()
 {
     emit displayReceiveStatus(true);
-    _voice_led_timer->start(100);
+    _voice_led_timer->start(500);
 }
 
 void RadioOp::dataFrameReceived()
 {
     emit displayDataReceiveStatus(true);
-    _data_led_timer->start(100);
+    _data_led_timer->start(500);
     if((_rx_mode != gr_modem_types::ModemTypeQPSK250000)
             && (_rx_mode != gr_modem_types::ModemTypeQPSKVideo))
     {
