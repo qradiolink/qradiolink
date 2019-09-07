@@ -680,7 +680,8 @@ void RadioOp::getFFTData()
         return;
     }
     float rssi = _modem->getRSSI();
-    emit newRSSIValue(rssi);
+    if(rssi != 0)
+        emit newRSSIValue(rssi);
     unsigned int fft_size = 0;
     _modem->get_fft_data(_fft_data, fft_size);
     if(fft_size > 0)

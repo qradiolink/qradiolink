@@ -162,6 +162,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     ui->plotterFrame->setTooltipsEnabled(true);
     ui->plotterFrame->setClickResolution(1);
     setRange(1);
+    _range_set = false;
     //QPixmap pm = QPixmap::grabWidget(ui->frameCtrlFreq);
     //ui->frameCtrlFreq->setMask(pm.createHeuristicMask(false));
     QGraphicsOpacityEffect *eff_freq = new QGraphicsOpacityEffect(this);
@@ -574,6 +575,7 @@ void MainWindow::toggleRXwin(bool value)
     emit toggleRX(value);
     ui->plotterFrame->setRunningState(value);
     emit enableGUIFFT(value);
+    _range_set = false;
 }
 
 void MainWindow::toggleTXwin(bool value)
@@ -756,6 +758,11 @@ void MainWindow::updateRSSI(float value)
 {
     _rssi = value;
     ui->labelRSSI->setText(QString::number(value));
+    if(!_range_set)
+    {
+        setRange(1);
+        _range_set = true;
+    }
 }
 
 void MainWindow::updateSampleRate()
@@ -771,8 +778,8 @@ void MainWindow::setRange(int value)
     // value is from one to 10
     if(_rssi == 0)
         _rssi = -80.0;
-    ui->plotterFrame->setPandapterRange(_rssi - 10 / (float)value , _rssi + 50 / (float)value);
-    ui->plotterFrame->setWaterfallRange(_rssi - 10 / (float)value , _rssi + 50 / (float)value);
+    ui->plotterFrame->setPandapterRange(_rssi - 10 / (float)value , _rssi + 70 / (float)value);
+    ui->plotterFrame->setWaterfallRange(_rssi - 10 / (float)value , _rssi + 70 / (float)value);
 }
 
 void MainWindow::autoSquelch()

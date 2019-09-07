@@ -172,6 +172,7 @@ private:
     std::vector<std::complex<int>> *_filter_widths;
     float _rssi;
     QPainter *_constellation_painter;
+    bool _range_set;
 
 
 
