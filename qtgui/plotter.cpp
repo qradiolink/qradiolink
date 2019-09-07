@@ -962,7 +962,8 @@ void CPlotter::draw()
             m_WaterfallPixmap.scroll(0, 1, 0, 0, w, h);
 
             QPainter painter1(&m_WaterfallPixmap);
-            painter1.setRenderHint(QPainter::HighQualityAntialiasing);
+            //painter1.setRenderHint(QPainter::HighQualityAntialiasing);
+            painter1.setCompositionMode(QPainter::CompositionMode_Source);
 
             // draw new line of fft data at top of waterfall bitmap
             painter1.setPen(QColor(0, 0, 0));
@@ -1002,7 +1003,7 @@ void CPlotter::draw()
         m_2DPixmap = m_OverlayPixmap.copy(0,0,w,h);
 
         QPainter painter2(&m_2DPixmap);
-        painter2.setRenderHint(QPainter::HighQualityAntialiasing);
+        painter2.setRenderHint(QPainter::SmoothPixmapTransform);
 
 // workaround for "fixed" line drawing since Qt 5
 // see http://stackoverflow.com/questions/16990326

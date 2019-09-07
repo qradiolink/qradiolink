@@ -171,6 +171,7 @@ private:
     void setFilterWidth(int index);
     std::vector<std::complex<int>> *_filter_widths;
     float _rssi;
+    QPainter *_constellation_painter;
 
 
 
