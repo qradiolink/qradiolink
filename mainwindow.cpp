@@ -175,6 +175,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     _eff_video = new QGraphicsOpacityEffect(this);
     _eff_video->setOpacity(0.65);
     ui->videoFrame->setGraphicsEffect(_eff_video);
+    _s_meter_bg = new QPixmap(":/res/s-meter-bg-black-small.png");
 
 }
 
@@ -772,6 +773,18 @@ void MainWindow::updateRSSI(float value)
 {
     _rssi = value;
     ui->labelRSSI->setText(QString::number(value));
+    QLineF needle;
+    needle.setP1(QPointF(77,60));
+    needle.setAngle(abs(_rssi));
+    needle.setLength(50);
+    QPen pen(QColor(224,33,33,255), 4, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPixmap s_meter = _s_meter_bg->copy(0,0,154,60);
+    QPainter p(&s_meter);
+    p.setRenderHint(QPainter::HighQualityAntialiasing);
+    p.setPen(pen);
+    p.drawLine(needle);
+    p.end();
+    ui->labelSMeter->setPixmap(s_meter);
     if(!_range_set)
     {
         setRange(1);

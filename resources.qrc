@@ -13,6 +13,8 @@
         <file>res/led-screen-texture.png</file>
         <file>res/arrow-up.png</file>
         <file>res/arrow-up-red.png</file>
+        <file>res/s-meter-bg-black.png</file>
+        <file>res/s-meter-bg-black-small.png</file>
     </qresource>
     <qresource prefix="/fonts">
         <file>res/LiquidCrystal-Normal.otf</file>

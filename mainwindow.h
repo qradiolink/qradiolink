@@ -176,6 +176,7 @@ private:
     QGraphicsOpacityEffect *_eff_freq;
     QGraphicsOpacityEffect *_eff_const;
     QGraphicsOpacityEffect *_eff_video;
+    QPixmap *_s_meter_bg;
 
 
 
