@@ -184,6 +184,7 @@ MainWindow::~MainWindow()
     _filter_widths->clear();
     delete _filter_widths;
     delete _video_img;
+    _constellation_painter->end();
     delete _constellation_img;
     delete _constellation_painter;
     delete[] _realFftData;
