@@ -172,6 +172,11 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     eff_const->setOpacity(0.7);
     ui->constellationDisplay->setGraphicsEffect(eff_const);
     _constellation_painter = new QPainter(_constellation_img);
+    QGraphicsOpacityEffect *eff_video = new QGraphicsOpacityEffect(this);
+    eff_video->setOpacity(0.65);
+    ui->videoFrame->setGraphicsEffect(eff_video);
+
+
 
 
 }
