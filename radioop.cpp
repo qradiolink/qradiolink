@@ -1010,10 +1010,10 @@ void RadioOp::dataFrameReceived()
     if((_rx_mode != gr_modem_types::ModemTypeQPSK250000)
             && (_rx_mode != gr_modem_types::ModemTypeQPSKVideo))
     {
-        short *sound = (short*) _data_rec_sound->data();
-        short *samples = new short[_data_rec_sound->size()];
-        memcpy(samples, sound, _data_rec_sound->size());
-        _audio->write_short(samples,_data_rec_sound->size());
+        //short *sound = (short*) _data_rec_sound->data();
+        //short *samples = new short[_data_rec_sound->size()];
+        //memcpy(samples, sound, _data_rec_sound->size());
+        //_audio->write_short(samples,_data_rec_sound->size());
     }
 
 }
