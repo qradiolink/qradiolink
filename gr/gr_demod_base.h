@@ -94,6 +94,7 @@ private:
     gr::blocks::copy::sptr _rssi_valve;
     gr::blocks::copy::sptr _fft_valve;
     gr::blocks::copy::sptr _const_valve;
+    gr::blocks::copy::sptr _demod_valve;
     gr::blocks::probe_signal_f::sptr _rssi;
     gr::blocks::probe_signal_c::sptr _constellation;
     gr::blocks::complex_to_mag_squared::sptr _mag_squared;
