@@ -165,25 +165,33 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     _range_set = false;
     //QPixmap pm = QPixmap::grabWidget(ui->frameCtrlFreq);
     //ui->frameCtrlFreq->setMask(pm.createHeuristicMask(false));
-    QGraphicsOpacityEffect *eff_freq = new QGraphicsOpacityEffect(this);
-    eff_freq->setOpacity(0.65);
-    ui->frameCtrlFreq->setGraphicsEffect(eff_freq);
-    QGraphicsOpacityEffect *eff_const = new QGraphicsOpacityEffect(this);
-    eff_const->setOpacity(0.7);
-    ui->constellationDisplay->setGraphicsEffect(eff_const);
+    _eff_freq = new QGraphicsOpacityEffect(this);
+    _eff_freq->setOpacity(0.65);
+    ui->frameCtrlFreq->setGraphicsEffect(_eff_freq);
+    _eff_const = new QGraphicsOpacityEffect(this);
+    _eff_const->setOpacity(0.7);
+    ui->constellationDisplay->setGraphicsEffect(_eff_const);
     _constellation_painter = new QPainter(_constellation_img);
-    QGraphicsOpacityEffect *eff_video = new QGraphicsOpacityEffect(this);
-    eff_video->setOpacity(0.65);
-    ui->videoFrame->setGraphicsEffect(eff_video);
-
-
-
+    _eff_video = new QGraphicsOpacityEffect(this);
+    _eff_video->setOpacity(0.65);
+    ui->videoFrame->setGraphicsEffect(_eff_video);
 
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+    _filter_widths->clear();
+    delete _filter_widths;
+    delete _video_img;
+    delete _constellation_img;
+    delete _constellation_painter;
+    delete[] _realFftData;
+    delete[] _pwrFftData;
+    delete[] _iirFftData;
+    delete _eff_freq;
+    delete _eff_const;
+    delete _eff_video;
 }
 
 void MainWindow::closeEvent (QCloseEvent *event)

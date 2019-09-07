@@ -173,6 +173,9 @@ private:
     float _rssi;
     QPainter *_constellation_painter;
     bool _range_set;
+    QGraphicsOpacityEffect *_eff_freq;
+    QGraphicsOpacityEffect *_eff_const;
+    QGraphicsOpacityEffect *_eff_video;
 
 
 

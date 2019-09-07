@@ -2353,6 +2353,9 @@ border: 0px solid black;</string>
            <height>31</height>
           </rect>
          </property>
+         <property name="toolTip">
+          <string>Automatic squelch</string>
+         </property>
          <property name="styleSheet">
           <string notr="true">font: 8pt &quot;Sans Serif&quot;;
 color: rgb(240, 240, 119);
