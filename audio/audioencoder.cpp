@@ -35,7 +35,7 @@ AudioEncoder::AudioEncoder()
     _codec2_2400 = codec2_create(CODEC2_MODE_2400);
 
     _gsm = gsm_create();
-    _audio_filter = new Filter(BPF,512,8,0.1,3.5);
+    _audio_filter = new Filter(BPF,4,8,0.05,3.8);
     if( _audio_filter->get_error_flag() != 0 )
     {
         qDebug() << "audio filter creation failed";
@@ -190,15 +190,15 @@ void AudioEncoder::filter_audio(short *audiobuffer, int audiobuffersize, bool pr
             audiobuffer[i] = (short) _audio_filter->do_sample(sample);
         if(de_emphasis)
         {
-            double output = _audio_filter->do_sample(sample) + 0.1 * _emph_last_input + 0.08 * (rand() % 1000);
+            double output = _audio_filter->do_sample(sample) + 0.9 * _emph_last_input + 0.1 * (rand() % 1000);
             _emph_last_input = sample;
-            audiobuffer[i] = (short) (output * 0.85);
+            audiobuffer[i] = (short) (output * 0.7);
         }
         if(pre_emphasis)
         {
-            double output = _audio_filter->do_sample(sample) - 0.05 * _emph_last_input;
+            double output = _audio_filter->do_sample(sample) - 0.9 * _emph_last_input + 0.01 * (rand() % 1000);
             _emph_last_input = sample;
-            audiobuffer[i] = (short) (output * 0.85);
+            audiobuffer[i] = (short) (output * 0.5);
         }
     }
 }

@@ -48,14 +48,15 @@ AudioInterface::AudioInterface(QObject *parent, unsigned sample_rate, unsigned c
     f=.5;
     speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_DEREVERB_LEVEL, &f);
 
+    // need to make these configurable
     sf_simplecomp(&_cm_state_read_codec2,
                   8000, // audio rate
-                  -6,   // audio boost
-                  -40,  // kick in (dB)
+                  0,   // audio boost
+                  -50,  // kick in (dB)
                   40,   // knee
-                  40,   // inverse scale
-                  0.001f,   // attack
-                  0.075f    // release
+                  120,   // inverse scale
+                  0.005f,   // attack
+                  0.175f    // release
                   );
     sf_simplecomp(&_cm_state_read,
                   8000, // audio rate
@@ -77,12 +78,12 @@ AudioInterface::AudioInterface(QObject *parent, unsigned sample_rate, unsigned c
                   );
     sf_simplecomp(&_cm_state_write_codec2,
                   8000, // audio rate
-                  0,   // audio boost
-                  -25,  // kick in (dB)
+                  6,   // audio boost
+                  -20,  // kick in (dB)
                   40,   // knee
-                  30,   // inverse scale
-                  0.005f,   // attack
-                  0.025f    // release
+                  90,   // inverse scale
+                  0.001f,   // attack
+                  0.175f    // release
                   );
     int rand_len = 4;
     char rand[5];
