@@ -789,9 +789,9 @@ void MainWindow::updateRSSI(float value)
     _rssi = value;
     ui->labelRSSI->setText(QString::number(value));
     QLineF needle;
-    needle.setP1(QPointF(77,60));
+    needle.setP1(QPointF(77,105));
     needle.setAngle(abs_rssi);
-    needle.setLength(52);
+    needle.setLength(100 + (int)(abs(90-abs_rssi)/10));
     QPen pen(QColor(224,33,33,255), 4, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     QPixmap s_meter = _s_meter_bg->copy(0,0,154,60);
     QPainter p(&s_meter);
