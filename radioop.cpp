@@ -1094,7 +1094,7 @@ void RadioOp::toggleRX(bool value)
         }
         _rx_inited = true;
     }
-    else
+    else if (_rx_inited)
     {
         if(_rx_mode == gr_modem_types::ModemTypeQPSK250000 && _net_device != 0 && !_tx_inited)
         {
@@ -1129,6 +1129,7 @@ void RadioOp::toggleTX(bool value)
         catch(std::runtime_error e)
         {
             emit initError("Could not init TX device, check settings");
+            return;
         }
         _modem->setTxPower(_tx_power);
         _modem->setBbGain(_bb_gain);
@@ -1142,7 +1143,7 @@ void RadioOp::toggleTX(bool value)
         }
         _tx_inited = true;
     }
-    else
+    else if(_tx_inited)
     {
         _modem->deinitTX(_tx_mode);
         if(_tx_mode == gr_modem_types::ModemTypeQPSKVideo)
