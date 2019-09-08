@@ -223,6 +223,7 @@ int main(int argc, char *argv[])
     QObject::connect(radio_op, SIGNAL(newFFTData(std::complex<float>*,int)), w, SLOT(newFFTData(std::complex<float>*,int)));
     QObject::connect(radio_op, SIGNAL(newRSSIValue(float)), w, SLOT(updateRSSI(float)));
     QObject::connect(radio_op, SIGNAL(newConstellationData(complex_vector*)), w, SLOT(updateConstellation(complex_vector*)));
+    QObject::connect(radio_op, SIGNAL(initError(QString)), w, SLOT(initError(QString)));
 
     QObject::connect(client,SIGNAL(onlineStations(StationList)),w,SLOT(updateOnlineStations(StationList)));
     QObject::connect(client,SIGNAL(onlineStations(StationList)),radio_op,SLOT(setStations(StationList)));

@@ -87,6 +87,7 @@ signals:
     void newFFTData(std::complex<float>*, int);
     void newConstellationData(complex_vector*);
     void newRSSIValue(float rssi);
+    void initError(QString error);
 
 
 public slots:

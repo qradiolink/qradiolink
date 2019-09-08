@@ -102,6 +102,7 @@ public slots:
     void updateSampleRate();
     void setRange(int value);
     void autoSquelch();
+    void initError(QString error);
 
 
 signals:
