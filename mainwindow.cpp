@@ -774,6 +774,15 @@ void MainWindow::setPeakDetect(bool value)
 
 void MainWindow::updateRSSI(float value)
 {
+    _rssi = value;
+    if(!_range_set)
+    {
+        setRange(1);
+        _range_set = true;
+    }
+    if(!_show_controls)
+        return;
+
     float S9 = 80.0; // degrees
     float arc_min = 155.0;
     float arc_max = 25.0;
@@ -789,7 +798,7 @@ void MainWindow::updateRSSI(float value)
     int deviation = (int) ((arc_min - arc_max) / 2*M_PI*abs_rssi);
     if(abs_rssi > 90.0)
         deviation = -deviation;
-    _rssi = value;
+
     ui->labelRSSI->setText(QString::number(value));
     QLineF needle;
     needle.setP1(QPointF(77,105));
@@ -803,11 +812,6 @@ void MainWindow::updateRSSI(float value)
     p.drawLine(needle);
     p.end();
     ui->labelSMeter->setPixmap(s_meter);
-    if(!_range_set)
-    {
-        setRange(1);
-        _range_set = true;
-    }
 }
 
 void MainWindow::updateSampleRate()
