@@ -190,15 +190,15 @@ void AudioEncoder::filter_audio(short *audiobuffer, int audiobuffersize, bool pr
             audiobuffer[i] = (short) _audio_filter->do_sample(sample);
         if(de_emphasis)
         {
-            double output = _audio_filter->do_sample(sample) + 0.1 * _emph_last_input; + 0.1 * (rand() % 1000); // 0.9
+            double output = _audio_filter->do_sample(sample) + 0.9 * _emph_last_input; + 0.1 * (rand() % 1000); // 0.9
             _emph_last_input = sample;
             audiobuffer[i] = (short) (output * 0.7);
         }
         if(pre_emphasis)
         {
-            double output = _audio_filter->do_sample(sample) - 0.1 * _emph_last_input + 0.1 * (rand() % 1000); // 0.9
+            double output = _audio_filter->do_sample(sample) - 0.9 * _emph_last_input + 0.1 * (rand() % 1000); // 0.9
             _emph_last_input = sample;
-            audiobuffer[i] = (short) (output * 0.4);
+            audiobuffer[i] = (short) (output * 0.7);
         }
     }
 }
