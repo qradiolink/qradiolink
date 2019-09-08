@@ -771,12 +771,27 @@ void MainWindow::setPeakDetect(bool value)
 
 void MainWindow::updateRSSI(float value)
 {
+    float S9 = 80.0; // degrees
+    float arc_min = 155.0;
+    float arc_max = 25.0;
+    float abs_rssi = fabs(_rssi);
+    if(abs_rssi > arc_min)
+    {
+        abs_rssi = arc_min; // should be 0 on the scale
+    }
+    if(abs_rssi < arc_max)
+    {
+        abs_rssi = arc_max;
+    }
+    int deviation = (int) ((arc_min - arc_max) / 2*M_PI*abs_rssi);
+    if(abs_rssi > 90.0)
+        deviation = -deviation;
     _rssi = value;
     ui->labelRSSI->setText(QString::number(value));
     QLineF needle;
     needle.setP1(QPointF(77,60));
-    needle.setAngle(abs(_rssi));
-    needle.setLength(50);
+    needle.setAngle(abs_rssi);
+    needle.setLength(52);
     QPen pen(QColor(224,33,33,255), 4, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     QPixmap s_meter = _s_meter_bg->copy(0,0,154,60);
     QPainter p(&s_meter);
