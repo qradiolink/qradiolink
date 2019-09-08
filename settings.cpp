@@ -91,6 +91,7 @@ void Settings::readConfig()
         rx_mode = cfg.lookup("rx_mode");
         tx_mode = cfg.lookup("tx_mode");
         ip_address = QString(cfg.lookup("ip_address"));
+        rx_sample_rate = cfg.lookup("rx_sample_rate");
 
     }
     catch(const libconfig::SettingNotFoundException &nfex)

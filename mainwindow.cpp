@@ -138,7 +138,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     _show_constellation = false;
     _current_voip_channel = -1;
     _demod_offset = 0;
-    readConfig();
+
     _video_img = new QPixmap;
     _constellation_img = new QPixmap(300,300);
     ui->menuBar->hide();
@@ -176,6 +176,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     _eff_video->setOpacity(0.65);
     ui->videoFrame->setGraphicsEffect(_eff_video);
     _s_meter_bg = new QPixmap(":/res/s-meter-bg-black-small.png");
+    readConfig();
 
 }
 
@@ -282,8 +283,9 @@ void MainWindow::readConfig()
     ui->plotterFrame->setFilterOffset((qint64)_settings->demod_offset);
     ui->plotterFrame->setCenterFreq(_rx_frequency);
     ui->frameCtrlFreq->setFrequency(_rx_frequency + _demod_offset);
-    //ui->sampleRateBox->setCurrentIndex(_settings->rx_sample_rate / 1000000 - 1); // FIXME: signal loops back into modem and causes race
-
+    ui->plotterFrame->setSampleRate(_settings->rx_sample_rate);
+    ui->plotterFrame->setSpanFreq((quint32)_settings->rx_sample_rate);
+    ui->sampleRateBox->setCurrentIndex(_settings->rx_sample_rate / 1000000 - 1);
 }
 
 void MainWindow::saveConfig()
@@ -589,10 +591,10 @@ void MainWindow::channelState(QTreeWidgetItem *item, int k)
 
 void MainWindow::toggleRXwin(bool value)
 {
+    emit setSampleRate(ui->sampleRateBox->currentText().toInt());
     emit toggleRX(value);
     ui->plotterFrame->setRunningState(value);
     emit enableGUIFFT(value);
-    emit setSampleRate(ui->sampleRateBox->currentText().toInt());
     _range_set = false;
 }
 

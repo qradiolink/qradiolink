@@ -138,7 +138,7 @@ public slots:
     void setCarrierOffset(qint64 offset);
     void setFFTSize(int size);
     void setFFTPollTime(int fps);
-    void setSampleRate(int samp_rate);
+    void setRxSampleRate(int samp_rate);
 
 private:
     bool _stop;
@@ -186,6 +186,7 @@ private:
     float _rx_ctcss;
     float _tx_ctcss;
     float _rx_volume;
+    long long _rx_sample_rate;
     QElapsedTimer _last_voiced_frame_timer;
     QTimer *_voip_tx_timer;
     QElapsedTimer *_data_read_timer;

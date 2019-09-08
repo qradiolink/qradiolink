@@ -75,6 +75,7 @@ RadioOp::RadioOp(Settings *settings, QObject *parent) :
     _tune_limit_upper = 5000;
     _step_hz = 10;
     _carrier_offset = 0;
+    _rx_sample_rate = 0;
     _tuning_done = true;
     _tune_counter = 0;
     _freq_gui_counter = 0;
@@ -207,6 +208,10 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
     if(_carrier_offset == 0)
     {
         _carrier_offset = demod_offset;
+    }
+    if(_rx_sample_rate == 0)
+    {
+        _rx_sample_rate = rx_sample_rate;
     }
     if(_tune_shift_freq == 0)
     {
@@ -1070,6 +1075,7 @@ void RadioOp::toggleRX(bool value)
         _modem->setSquelch(_squelch);
         _modem->setRxCTCSS(_rx_ctcss);
         _modem->set_carrier_offset(_carrier_offset);
+        _modem->set_samp_rate(_rx_sample_rate);
         _modem->tune(_rx_frequency);
         _modem->startRX();
         _modem->enableGUIConst(true);
@@ -1450,8 +1456,9 @@ void RadioOp::setCarrierOffset(qint64 offset)
     _mutex->unlock();
 }
 
-void RadioOp::setSampleRate(int samp_rate)
+void RadioOp::setRxSampleRate(int samp_rate)
 {
+    _rx_sample_rate = samp_rate;
     _mutex->lock();
     _modem->set_samp_rate(samp_rate);
     _mutex->unlock();
