@@ -282,6 +282,7 @@ void MainWindow::readConfig()
     ui->plotterFrame->setFilterOffset((qint64)_settings->demod_offset);
     ui->plotterFrame->setCenterFreq(_rx_frequency);
     ui->frameCtrlFreq->setFrequency(_rx_frequency + _demod_offset);
+    //ui->sampleRateBox->setCurrentIndex(_settings->rx_sample_rate / 1000000 - 1); // FIXME: signal loops back into modem and causes race
 
 }
 
@@ -307,6 +308,7 @@ void MainWindow::saveConfig()
     _settings->tx_mode = ui->txModemTypeComboBox->currentIndex();
     _settings->ip_address = ui->lineEditIPaddress->text();
     _settings->demod_offset = (long long)_demod_offset;
+    _settings->rx_sample_rate = (long long)(ui->sampleRateBox->currentText().toInt());
     _settings->saveConfig();
 }
 
@@ -590,6 +592,7 @@ void MainWindow::toggleRXwin(bool value)
     emit toggleRX(value);
     ui->plotterFrame->setRunningState(value);
     emit enableGUIFFT(value);
+    emit setSampleRate(ui->sampleRateBox->currentText().toInt());
     _range_set = false;
 }
 

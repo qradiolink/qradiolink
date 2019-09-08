@@ -589,8 +589,16 @@ void gr_demod_base::set_samp_rate(int samp_rate)
         }
         catch(std::invalid_argument e)
         {
+
+        }
+        try
+        {
             _top_block->disconnect(_rotator,0, _resampler,0);
             _top_block->disconnect(_resampler,0, _demod_valve,0);
+        }
+        catch(std::invalid_argument e)
+        {
+
         }
         _resampler.reset();
         std::vector<float> taps;
@@ -609,8 +617,15 @@ void gr_demod_base::set_samp_rate(int samp_rate)
         }
         catch(std::invalid_argument e)
         {
+            _top_block->disconnect(_rotator,0, _demod_valve,0);
         }
-        _top_block->connect(_rotator,0, _demod_valve,0);
+        try
+        {
+            _top_block->connect(_rotator,0, _demod_valve,0);
+        }
+        catch(std::invalid_argument e)
+        {
+        }
     }
 
 

@@ -21,6 +21,7 @@ Settings::Settings()
     rx_mode = 0;
     tx_mode = 0;
     ip_address = "";
+    rx_sample_rate = 1000000;
 
     voip_server="127.0.0.1";
     _config_file = setupConfig();
@@ -94,6 +95,8 @@ void Settings::readConfig()
     }
     catch(const libconfig::SettingNotFoundException &nfex)
     {
+        // FIXME: defaults should not be set this way
+        // if a setting is missing it will reset the whole config
         rx_device_args = "rtl=0";
         tx_device_args = "uhd";
         rx_antenna = "RX2";
@@ -114,6 +117,7 @@ void Settings::readConfig()
         tx_mode = 0;
         ip_address = "10.0.0.1";
         demod_offset = 0;
+        rx_sample_rate = 1000000;
         std::cerr << "Settings not found in configuration file." << std::endl;
     }
 }
@@ -142,6 +146,7 @@ void Settings::saveConfig()
     root.add("tx_mode",libconfig::Setting::TypeInt) = tx_mode;
     root.add("ip_address",libconfig::Setting::TypeString) = ip_address.toStdString();
     root.add("demod_offset",libconfig::Setting::TypeInt64) = demod_offset;
+    root.add("rx_sample_rate",libconfig::Setting::TypeInt64) = rx_sample_rate;
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());

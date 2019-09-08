@@ -158,7 +158,7 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
 {
     _settings->readConfig();
     int tx_power, rx_sensitivity, squelch, rx_volume, bb_gain;
-    long long rx_frequency, tx_shift, demod_offset;
+    long long rx_frequency, tx_shift, demod_offset, rx_sample_rate;
     rx_device_args = _settings->rx_device_args.toStdString();
     tx_device_args = _settings->tx_device_args.toStdString();
     rx_antenna = _settings->rx_antenna.toStdString();
@@ -174,6 +174,7 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
     rx_frequency = _settings->rx_frequency;
     demod_offset = _settings->demod_offset;
     tx_shift = _settings->tx_shift;
+    rx_sample_rate = _settings->rx_sample_rate;
 
     _callsign = _settings->callsign;
     if(_callsign.size() < 7)

@@ -36,6 +36,7 @@ public:
     int tx_mode;
     QString ip_address;
     long long demod_offset;
+    long long rx_sample_rate;
 
 
     quint32 _id;
