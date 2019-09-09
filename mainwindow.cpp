@@ -95,7 +95,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     QObject::connect(ui->rxVolumeDial,SIGNAL(valueChanged(int)),this,SLOT(setVolumeDisplay(int)));
     QObject::connect(ui->rxModemTypeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(toggleRxMode(int)));
     QObject::connect(ui->txModemTypeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(toggleTxMode(int)));
-    QObject::connect(ui->autotuneButton,SIGNAL(toggled(bool)),this,SLOT(autoTune(bool)));
+    QObject::connect(ui->autotuneButton,SIGNAL(toggled(bool)),this,SLOT(startScan(bool)));
     QObject::connect(ui->saveOptionsButton,SIGNAL(clicked()),this,SLOT(saveConfig()));
     QObject::connect(ui->tabWidget,SIGNAL(currentChanged(int)),this,SLOT(mainTabChanged(int)));
     QObject::connect(ui->comboBoxRxCTCSS,SIGNAL(currentIndexChanged(int)),this,SLOT(updateRxCTCSS(int)));
@@ -177,6 +177,10 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     ui->videoFrame->setGraphicsEffect(_eff_video);
     _s_meter_bg = new QPixmap(":/res/s-meter-bg-black-small.png");
     readConfig();
+    updateRSSI(9999);
+    _range_set = false;
+    setRange(1);
+    _range_set = false;
 
 }
 
@@ -715,10 +719,13 @@ void MainWindow::setVolumeDisplay(int value)
     emit setVolume((int)value);
 }
 
-void MainWindow::autoTune(bool value)
+void MainWindow::startScan(bool value)
 {
     if(value)
-        emit startAutoTuneFreq();
+    {
+        int step = ui->lineEditScanStep->text().toInt();
+        emit startAutoTuneFreq(step);
+    }
     else
         emit stopAutoTuneFreq();
 }
@@ -789,12 +796,12 @@ void MainWindow::updateRSSI(float value)
         setRange(1);
         _range_set = true;
     }
-    if(!_show_controls)
+    if(!_show_controls && value != 9999)
         return;
 
     float S9 = 80.0; // degrees
-    float arc_min = 155.0;
-    float arc_max = 25.0;
+    float arc_min = 135.0;
+    float arc_max = 45.0;
     float abs_rssi = fabs(_rssi);
     if(abs_rssi > arc_min)
     {

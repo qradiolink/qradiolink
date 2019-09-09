@@ -123,7 +123,7 @@ public slots:
     void enableGUIConst(bool value);
     void enableGUIFFT(bool value);
     void scan(bool receiving);
-    void startAutoTune();
+    void startAutoTune(int step);
     void stopAutoTune();
     void endAudioTransmission();
     void processVoipAudioFrame(short *pcm, int samples, quint64 sid);

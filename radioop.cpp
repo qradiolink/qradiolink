@@ -1515,10 +1515,12 @@ void RadioOp::scan(bool receiving)
     _scan_timer->restart();
 }
 
-void RadioOp::startAutoTune()
+void RadioOp::startAutoTune(int step)
 {
     if(!_rx_inited)
         return;
+    if(step != 0)
+        _step_hz = step;
     _tune_limit_lower = -_rx_sample_rate / 2;
     _tune_limit_upper = _rx_sample_rate / 2;
     _autotune_freq = _carrier_offset;

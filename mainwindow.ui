@@ -1172,7 +1172,7 @@ font: 12pt &quot;Sans Serif&quot;;</string>
            <rect>
             <x>10</x>
             <y>10</y>
-            <width>947</width>
+            <width>1006</width>
             <height>331</height>
            </rect>
           </property>
@@ -1198,7 +1198,7 @@ font: 10pt &quot;Sans Serif&quot;;</string>
              </property>
             </widget>
            </item>
-           <item row="7" column="0">
+           <item row="8" column="0">
             <widget class="QPushButton" name="saveOptionsButton">
              <property name="toolTip">
               <string>Save settings</string>
@@ -1241,27 +1241,6 @@ font: 10pt &quot;Sans Serif&quot;;</string>
              </property>
             </widget>
            </item>
-           <item row="0" column="1">
-            <widget class="QLineEdit" name="lineEditRXDev">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>300</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">background-color: rgb(255, 255, 255);
-color: rgb(0, 0, 61);
-font: 10pt &quot;Sans Serif&quot;;</string>
-             </property>
-            </widget>
-           </item>
            <item row="0" column="2">
             <widget class="QLabel" name="label_4">
              <property name="text">
@@ -1269,8 +1248,8 @@ font: 10pt &quot;Sans Serif&quot;;</string>
              </property>
             </widget>
            </item>
-           <item row="1" column="1">
-            <widget class="QLineEdit" name="lineEditTXDev">
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="lineEditRXDev">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -1297,6 +1276,27 @@ font: 10pt &quot;Sans Serif&quot;;</string>
              </property>
             </widget>
            </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="lineEditTXDev">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>300</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(255, 255, 255);
+color: rgb(0, 0, 61);
+font: 10pt &quot;Sans Serif&quot;;</string>
+             </property>
+            </widget>
+           </item>
            <item row="3" column="0">
             <widget class="QLabel" name="label_5">
              <property name="text">
@@ -1308,6 +1308,13 @@ font: 10pt &quot;Sans Serif&quot;;</string>
             <widget class="QLabel" name="label_3">
              <property name="text">
               <string>TX device args</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QLabel" name="label_7">
+             <property name="text">
+              <string>RX Freq Correction ppm</string>
              </property>
             </widget>
            </item>
@@ -1329,13 +1336,6 @@ font: 10pt &quot;Sans Serif&quot;;</string>
               <string notr="true">background-color: rgb(255, 255, 255);
 color: rgb(0, 0, 61);
 font: 10pt &quot;Sans Serif&quot;;</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="2">
-            <widget class="QLabel" name="label_7">
-             <property name="text">
-              <string>RX Freq Correction ppm</string>
              </property>
             </widget>
            </item>
@@ -1367,6 +1367,13 @@ font: 10pt &quot;Sans Serif&quot;;</string>
              </property>
             </widget>
            </item>
+           <item row="4" column="2">
+            <widget class="QLabel" name="label_10">
+             <property name="text">
+              <string>Video Device</string>
+             </property>
+            </widget>
+           </item>
            <item row="3" column="3">
             <widget class="QLineEdit" name="lineEditTXFreqCorrection">
              <property name="sizePolicy">
@@ -1385,6 +1392,19 @@ font: 10pt &quot;Sans Serif&quot;;</string>
               <string notr="true">background-color: rgb(255, 255, 255);
 color: rgb(0, 0, 61);
 font: 10pt &quot;Sans Serif&quot;;</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="2">
+            <widget class="QLabel" name="label_18">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>IP address</string>
              </property>
             </widget>
            </item>
@@ -1412,23 +1432,10 @@ font: 10pt &quot;Sans Serif&quot;;</string>
              </property>
             </widget>
            </item>
-           <item row="4" column="2">
-            <widget class="QLabel" name="label_10">
+           <item row="5" column="0">
+            <widget class="QLabel" name="label_19">
              <property name="text">
-              <string>Video Device</string>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="2">
-            <widget class="QLabel" name="label_18">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>IP address</string>
+              <string>Baseband gain</string>
              </property>
             </widget>
            </item>
@@ -1444,10 +1451,14 @@ font: 10pt &quot;Sans Serif&quot;;</string>
              </property>
             </widget>
            </item>
-           <item row="5" column="0">
-            <widget class="QLabel" name="label_19">
+           <item row="6" column="0">
+            <widget class="QLabel" name="label_21">
              <property name="text">
-              <string>Baseband gain</string>
+              <string>Manual frequency
+ entry (kHz)</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
              </property>
             </widget>
            </item>
@@ -1472,16 +1483,15 @@ font: 10pt &quot;Sans Serif&quot;;</string>
              </property>
             </widget>
            </item>
-           <item row="6" column="0">
-            <widget class="QLabel" name="label_21">
+           <item row="6" column="2">
+            <widget class="QLabel" name="label_24">
              <property name="text">
-              <string>Manual frequency
- entry (kHz)</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
+              <string>Scan step</string>
              </property>
             </widget>
+           </item>
+           <item row="6" column="3">
+            <widget class="QLineEdit" name="lineEditScanStep"/>
            </item>
            <item row="6" column="1">
             <widget class="QLineEdit" name="frequencyEdit">
@@ -1532,6 +1542,13 @@ font: 10pt &quot;Sans Serif&quot;;</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="1">
+            <widget class="QCheckBox" name="checkBoxAudioCompressor">
+             <property name="text">
+              <string>Audio compressor</string>
              </property>
             </widget>
            </item>

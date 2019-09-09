@@ -72,7 +72,7 @@ public slots:
     void setRxSensitivityDisplay(int value);
     void setSquelchDisplay(int value);
     void setVolumeDisplay(int value);
-    void autoTune(bool value);
+    void startScan(bool value);
     void displayImage(QImage img);
     void enterFreq();
     void saveConfig();
@@ -125,7 +125,7 @@ signals:
     void setTxCTCSS(float value);
     void enableGUIConst(bool value);
     void enableGUIFFT(bool value);
-    void startAutoTuneFreq();
+    void startAutoTuneFreq(int step);
     void stopAutoTuneFreq();
     void usePTTForVOIP(bool value);
     void setVOIPForwarding(bool value);
