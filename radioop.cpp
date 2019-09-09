@@ -46,6 +46,7 @@ RadioOp::RadioOp(Settings *settings, QObject *parent) :
     _data_read_timer = new QElapsedTimer();
     _data_modem_reset_timer = new QElapsedTimer();
     _data_modem_sleep_timer = new QElapsedTimer();
+    _scan_timer = new QElapsedTimer();
     _fft_read_timer = new QElapsedTimer();
     _fft_read_timer->start();
     _fft_poll_time = 75;
@@ -71,9 +72,9 @@ RadioOp::RadioOp(Settings *settings, QObject *parent) :
     _tx_frequency = 0;
     _autotune_freq = 0;
     _tune_shift_freq = 0;
-    _tune_limit_lower = -5000;
-    _tune_limit_upper = 5000;
-    _step_hz = 10;
+    _tune_limit_lower = -500000;
+    _tune_limit_upper = 500000;
+    _step_hz = 12500;
     _carrier_offset = 0;
     _rx_sample_rate = 0;
     _tuning_done = true;
@@ -631,7 +632,7 @@ void RadioOp::run()
             if(rx_inited)
             {
                 if(!_tuning_done)
-                    autoTune();
+                    scan();
                 if(_rx_radio_type == radio_type::RADIO_TYPE_DIGITAL)
                     data_to_process = _modem->demodulate();
                 else if(_rx_radio_type == radio_type::RADIO_TYPE_ANALOG)
@@ -689,7 +690,9 @@ void RadioOp::getFFTData()
     if(rssi != 0)
         emit newRSSIValue(rssi);
     unsigned int fft_size = 0;
+    _mutex->lock();
     _modem->get_fft_data(_fft_data, fft_size);
+    _mutex->unlock();
     if(fft_size > 0)
     {
         emit newFFTData(_fft_data, (int)fft_size);
@@ -1162,251 +1165,168 @@ void RadioOp::toggleTX(bool value)
 
 void RadioOp::toggleRxMode(int value)
 {
+
     bool rx_inited_before = _rx_inited;
     if(rx_inited_before)
     {
-        _mutex->lock();
         _rx_inited = false;
-        _mutex->unlock();
     }
     _rx_radio_type = radio_type::RADIO_TYPE_DIGITAL;
     switch(value)
     {
     case 0:
         _rx_mode = gr_modem_types::ModemTypeBPSK2000;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
-        _step_hz = 10;
+        _step_hz = 1000;
         break;
     case 1:
         _rx_mode = gr_modem_types::ModemTypeBPSK1000;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
-        _step_hz = 10;
+        _step_hz = 1000;
         break;
     case 2:
         _rx_mode = gr_modem_types::ModemTypeQPSK2000;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
-        _step_hz = 10;
+        _step_hz = 1000;
         break;
     case 3:
         _rx_mode = gr_modem_types::ModemTypeQPSK20000;
-        _tune_limit_lower = -10000;
-        _tune_limit_upper = 10000;
-        _step_hz = 10;
+        _step_hz = 1000;
         break;
     case 4:
         _rx_mode = gr_modem_types::ModemType4FSK2000;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
-        _step_hz = 10;
+        _step_hz = 1000;
         break;
     case 5:
         _rx_mode = gr_modem_types::ModemType4FSK20000;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
-        _step_hz = 20;
+        _step_hz = 5000;
         break;
     case 6:
         _rx_mode = gr_modem_types::ModemType2FSK2000;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
-        _step_hz = 10;
+        _step_hz = 1000;
         break;
     case 7:
         _rx_mode = gr_modem_types::ModemType2FSK20000;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
-        _step_hz = 20;
+        _step_hz = 5000;
         break;
     case 8:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _rx_mode = gr_modem_types::ModemTypeNBFM2500;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
-        _step_hz = 10;
+        _step_hz = 6250;
         break;
     case 9:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _rx_mode = gr_modem_types::ModemTypeNBFM5000;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
-        _step_hz = 10;
+        _step_hz = 12500;
         break;
     case 10:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _rx_mode = gr_modem_types::ModemTypeWBFM;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
-        _step_hz = 10;
+        _step_hz = 10000;
         break;
     case 11:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _rx_mode = gr_modem_types::ModemTypeUSB2500;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
-        _step_hz = 2;
+        _step_hz = 100;
         break;
     case 12:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _rx_mode = gr_modem_types::ModemTypeLSB2500;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
-        _step_hz = 2;
+        _step_hz = 100;
         break;
     case 13:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _rx_mode = gr_modem_types::ModemTypeAM5000;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
-        _step_hz = 10;
+        _step_hz = 1000;
         break;
     case 14:
         _rx_mode = gr_modem_types::ModemTypeQPSKVideo;
-        _tune_limit_lower = -15000;
-        _tune_limit_upper = 15000;
-        _step_hz = 100;
+        _step_hz = 1000;
         break;
     case 15:
         _rx_mode = gr_modem_types::ModemTypeQPSK250000;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
-        _step_hz = 100;
+        _step_hz = 1000;
         break;
     default:
         _rx_mode = gr_modem_types::ModemTypeBPSK2000;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
-        _step_hz = 10;
+        _step_hz = 1000;
         break;
     }
 
+    _mutex->lock();
     _modem->toggleRxMode(_rx_mode);
     if(rx_inited_before)
     {
-        _mutex->lock();
         _rx_inited = true;
-        _mutex->unlock();
     }
+    _mutex->unlock();
 }
 
 void RadioOp::toggleTxMode(int value)
 {
+
     _tx_radio_type = radio_type::RADIO_TYPE_DIGITAL;
     switch(value)
     {
     case 0:
         _tx_mode = gr_modem_types::ModemTypeBPSK2000;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
-        _step_hz = 10;
         break;
     case 1:
         _tx_mode = gr_modem_types::ModemTypeBPSK1000;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
-        _step_hz = 10;
         break;
     case 2:
         _tx_mode = gr_modem_types::ModemTypeQPSK2000;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
-        _step_hz = 10;
         break;
     case 3:
         _tx_mode = gr_modem_types::ModemTypeQPSK20000;
-        _tune_limit_lower = -10000;
-        _tune_limit_upper = 10000;
-        _step_hz = 10;
         break;
     case 4:
         _tx_mode = gr_modem_types::ModemType4FSK2000;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
-        _step_hz = 10;
         break;
     case 5:
         _tx_mode = gr_modem_types::ModemType4FSK20000;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
-        _step_hz = 20;
         break;
     case 6:
         _tx_mode = gr_modem_types::ModemType2FSK2000;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
-        _step_hz = 10;
         break;
     case 7:
         _tx_mode = gr_modem_types::ModemType2FSK20000;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
-        _step_hz = 20;
         break;
     case 8:
         _tx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _tx_mode = gr_modem_types::ModemTypeNBFM2500;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
-        _step_hz = 10;
         break;
     case 9:
         _tx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _tx_mode = gr_modem_types::ModemTypeNBFM5000;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
-        _step_hz = 10;
         break;
     case 10:
         _tx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _tx_mode = gr_modem_types::ModemTypeWBFM;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
-        _step_hz = 10;
         break;
     case 11:
         _tx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _tx_mode = gr_modem_types::ModemTypeUSB2500;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
-        _step_hz = 2;
         break;
     case 12:
         _tx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _tx_mode = gr_modem_types::ModemTypeLSB2500;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
-        _step_hz = 2;
         break;
     case 13:
         _tx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _tx_mode = gr_modem_types::ModemTypeAM5000;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
-        _step_hz = 10;
         break;
     case 14:
         _tx_mode = gr_modem_types::ModemTypeQPSKVideo;
-        _tune_limit_lower = -15000;
-        _tune_limit_upper = 15000;
-        _step_hz = 100;
         break;
     case 15:
         _tx_mode = gr_modem_types::ModemTypeQPSK250000;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
-        _step_hz = 100;
         break;
     default:
         _tx_mode = gr_modem_types::ModemTypeBPSK2000;
-        _tune_limit_lower = -5000;
-        _tune_limit_upper = 5000;
-        _step_hz = 10;
         break;
     }
 
+    _mutex->lock();
     _modem->toggleTxMode(_tx_mode);
+    _mutex->unlock();
 }
 
 void RadioOp::usePTTForVOIP(bool value)
@@ -1429,6 +1349,7 @@ void RadioOp::setVox(bool value)
 void RadioOp::toggleRepeat(bool value)
 {
 
+    _mutex->lock();
     if((_rx_mode != _tx_mode) && value) // no mixed mode repeat
         return;
     if(value && !_repeat)
@@ -1442,6 +1363,7 @@ void RadioOp::toggleRepeat(bool value)
         _repeat = value;
     }
     _modem->setRepeater(value);
+    _mutex->unlock();
 
 }
 
@@ -1450,7 +1372,6 @@ void RadioOp::fineTuneFreq(long center_freq)
     _mutex->lock();
     //_modem->tune(_tune_center_freq + center_freq*_step_hz);
     _modem->set_carrier_offset(_carrier_offset + center_freq*_step_hz);
-    // disabled clarifier tuning of TX frequency
     _mutex->unlock();
 }
 
@@ -1482,7 +1403,9 @@ void RadioOp::setRxSampleRate(int samp_rate)
 
 void RadioOp::setFFTSize(int size)
 {
+    _mutex->lock();
     _modem->setFFTSize(size);
+    _mutex->unlock();
 }
 
 void RadioOp::tuneTxFreq(qint64 center_freq)
@@ -1495,26 +1418,34 @@ void RadioOp::tuneTxFreq(qint64 center_freq)
 
 void RadioOp::setTxPower(int dbm)
 {
+    _mutex->lock();
     _tx_power = (float)dbm/100.0;
     _modem->setTxPower(_tx_power);
+    _mutex->unlock();
 }
 
 void RadioOp::setBbGain(int value)
 {
+    _mutex->lock();
     _bb_gain = value;
     _modem->setBbGain(_bb_gain);
+    _mutex->unlock();
 }
 
 void RadioOp::setRxSensitivity(int value)
 {
+    _mutex->lock();
     _rx_sensitivity = (float)value/100.0;
     _modem->setRxSensitivity(_rx_sensitivity);
+    _mutex->unlock();
 }
 
 void RadioOp::setSquelch(int value)
 {
+    _mutex->lock();
     _squelch = value;
     _modem->setSquelch(value);
+    _mutex->unlock();
 }
 
 void RadioOp::setVolume(int value)
@@ -1524,14 +1455,18 @@ void RadioOp::setVolume(int value)
 
 void RadioOp::setRxCTCSS(float value)
 {
+    _mutex->lock();
     _rx_ctcss = value;
     _modem->setRxCTCSS(value);
+    _mutex->unlock();
 }
 
 void RadioOp::setTxCTCSS(float value)
 {
+    _mutex->lock();
     _tx_ctcss = value;
     _modem->setTxCTCSS(value);
+    _mutex->unlock();
 }
 
 void RadioOp::enableGUIConst(bool value)
@@ -1541,46 +1476,42 @@ void RadioOp::enableGUIConst(bool value)
 
 void RadioOp::enableGUIFFT(bool value)
 {
+    _mutex->lock();
     _fft_enabled = value;
     _modem->enableGUIFFT(value);
+    _mutex->unlock();
 }
 
-void RadioOp::autoTune()
+void RadioOp::scan()
 {
-    if((_rx_mode == gr_modem_types::ModemTypeBPSK2000)
-            || (_rx_mode == gr_modem_types::ModemTypeBPSK1000))
+    qint64 msec = (quint64)_scan_timer->nsecsElapsed() / 1000000;
+    if(msec < 100)
     {
-        struct timespec time_to_sleep = {0, 500000L };
-        nanosleep(&time_to_sleep, NULL);
-    }
-    else if ((_rx_mode == gr_modem_types::ModemType4FSK2000) ||
-             (_rx_mode == gr_modem_types::ModemType2FSK2000) ||
-             (_rx_mode == gr_modem_types::ModemTypeQPSK2000))
-    {
-        struct timespec time_to_sleep = {0, 2000000L };
-        nanosleep(&time_to_sleep, NULL);
-    }
-    else
-    {
-        struct timespec time_to_sleep = {0, 10000L };
-        nanosleep(&time_to_sleep, NULL);
+        return;
     }
     _autotune_freq = _autotune_freq + _step_hz;
-    _modem->tune(_autotune_freq);
-    //_modem->tuneTx(_autotune_freq + _tune_shift_freq);
     if(_autotune_freq >= (_rx_frequency + _tune_limit_upper))
         _autotune_freq = _rx_frequency + _tune_limit_lower;
+    _mutex->lock();
+    _modem->set_carrier_offset(_autotune_freq);
+    _mutex->unlock();
+    _scan_timer->restart();
 }
 
 void RadioOp::startAutoTune()
 {
-    _autotune_freq = _rx_frequency;
+    if(!_rx_inited)
+        return;
+    _tune_limit_lower = -_rx_sample_rate / 2;
+    _tune_limit_upper = _rx_sample_rate / 2;
+    _autotune_freq = _rx_frequency + _carrier_offset;
+    _scan_timer->start();
     _tuning_done = false;
 }
 
 void RadioOp::stopAutoTune()
 {
     _tuning_done = true;
-    _rx_frequency = _autotune_freq;
+    //_rx_frequency = _autotune_freq;
     emit freqFromGUI(_autotune_freq);
 }

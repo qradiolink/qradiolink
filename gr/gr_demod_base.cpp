@@ -67,10 +67,10 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
     _osmosdr_source->set_dc_offset_mode(0);
     _osmosdr_source->set_iq_balance_mode(0);
     _osmosdr_source->set_antenna(device_antenna);
-    osmosdr::gain_range_t range = _osmosdr_source->get_gain_range();
-    if (!range.empty())
+    _gain_range = _osmosdr_source->get_gain_range();
+    if (!_gain_range.empty())
     {
-        double gain =  range.start() + rf_gain*(range.stop()-range.start());
+        double gain =  _gain_range.start() + rf_gain*(_gain_range.stop()-_gain_range.start());
         _osmosdr_source->set_gain(gain);
     }
     else
@@ -505,10 +505,9 @@ double gr_demod_base::get_freq()
 
 void gr_demod_base::set_rx_sensitivity(float value)
 {
-    osmosdr::gain_range_t range = _osmosdr_source->get_gain_range();
-    if (!range.empty())
+    if (!_gain_range.empty())
     {
-        double gain =  range.start() + value*(range.stop()-range.start());
+        double gain =  _gain_range.start() + value*(_gain_range.stop()-_gain_range.start());
         _osmosdr_source->set_gain(gain);
     }
 }

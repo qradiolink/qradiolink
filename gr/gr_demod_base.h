@@ -139,6 +139,7 @@ private:
     bool _demod_running;
     int _samp_rate;
     bool _locked;
+    osmosdr::gain_range_t _gain_range;
 };
 
 #endif // GR_DEMOD_BASE_H
