@@ -81,7 +81,7 @@ signals:
     void videoImage(QImage img);
     void endAudio(int secs);
     void startAudio();
-    void freqFromGUI(long freq);
+    void freqToGUI(long freq);
     void pingServer();
     void voipData(short *pcm, int samples);
     void newFFTData(std::complex<float>*, int);
@@ -122,7 +122,7 @@ public slots:
     void setTxCTCSS(float value);
     void enableGUIConst(bool value);
     void enableGUIFFT(bool value);
-    void scan();
+    void scan(bool receiving);
     void startAutoTune();
     void stopAutoTune();
     void endAudioTransmission();

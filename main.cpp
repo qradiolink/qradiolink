@@ -216,7 +216,7 @@ int main(int argc, char *argv[])
     QObject::connect(radio_op, SIGNAL(displayReceiveStatus(bool)), w, SLOT(displayReceiveStatus(bool)));
     QObject::connect(radio_op, SIGNAL(displayTransmitStatus(bool)), w, SLOT(displayTransmitStatus(bool)));
     QObject::connect(radio_op, SIGNAL(displayDataReceiveStatus(bool)), w, SLOT(displayDataReceiveStatus(bool)));
-    QObject::connect(radio_op, SIGNAL(freqFromGUI(long)), w, SLOT(updateFreqGUI(long)));
+    QObject::connect(radio_op, SIGNAL(freqToGUI(long)), w, SLOT(updateFreqGUI(long)));
     QObject::connect(radio_op, SIGNAL(pingServer()), client, SLOT(pingServer()));
     QObject::connect(client, SIGNAL(pcmAudio(short*,int,quint64)), radio_op, SLOT(processVoipAudioFrame(short*, int, quint64)));
     QObject::connect(radio_op, SIGNAL(voipData(short*,int)), client, SLOT(processAudio(short*,int)));

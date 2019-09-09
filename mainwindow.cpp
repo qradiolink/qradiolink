@@ -739,8 +739,9 @@ void MainWindow::mainTabChanged(int value)
 
 void MainWindow::updateFreqGUI(long freq)
 {
-    ui->frameCtrlFreq->setFrequency(freq);
-    _rx_frequency = freq;
+    _demod_offset = freq;
+    ui->frameCtrlFreq->setFrequency(_rx_frequency + _demod_offset, false);
+    ui->plotterFrame->setFilterOffset((qint64)_demod_offset);
     ui->frequencyEdit->setText(QString::number(ceil(freq/1000)));
 }
 

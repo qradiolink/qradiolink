@@ -631,8 +631,6 @@ void RadioOp::run()
             bool rx_inited = _rx_inited;
             if(rx_inited)
             {
-                if(!_tuning_done)
-                    scan();
                 if(_rx_radio_type == radio_type::RADIO_TYPE_DIGITAL)
                     data_to_process = _modem->demodulate();
                 else if(_rx_radio_type == radio_type::RADIO_TYPE_ANALOG)
@@ -641,7 +639,8 @@ void RadioOp::run()
                 }
                 getFFTData();
                 getConstellationData();
-
+                if(!_tuning_done)
+                    scan(data_to_process);
             }
         }
         if(_process_text && (_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL))
@@ -686,11 +685,12 @@ void RadioOp::getFFTData()
     {
         return;
     }
+
+    unsigned int fft_size = 0;
+    _mutex->lock();
     float rssi = _modem->getRSSI();
     if(rssi != 0)
         emit newRSSIValue(rssi);
-    unsigned int fft_size = 0;
-    _mutex->lock();
     _modem->get_fft_data(_fft_data, fft_size);
     _mutex->unlock();
     if(fft_size > 0)
@@ -716,7 +716,9 @@ void RadioOp::getConstellationData()
     {
         return;
     }
+    _mutex->lock();
     std::vector<std::complex<float>> *const_data = _modem->getConstellation();
+    _mutex->unlock();
     if(const_data->size() > 1)
     {
         emit newConstellationData(const_data);
@@ -1073,6 +1075,7 @@ void RadioOp::toggleRX(bool value)
         readConfig(rx_device_args, tx_device_args,
                                  rx_antenna, tx_antenna, rx_freq_corr,
                                  tx_freq_corr, callsign, video_device);
+        _mutex->lock();
         try
         {
             _modem->initRX(_rx_mode, rx_device_args, rx_antenna, rx_freq_corr);
@@ -1091,6 +1094,8 @@ void RadioOp::toggleRX(bool value)
         _modem->tune(_rx_frequency);
         _modem->startRX();
         _modem->enableGUIConst(true);
+
+        _mutex->unlock();
         if(_rx_mode == gr_modem_types::ModemTypeQPSK250000 && _net_device == 0)
         {
             _net_device = new NetDevice(0, _settings->ip_address);
@@ -1104,8 +1109,10 @@ void RadioOp::toggleRX(bool value)
             delete _net_device;
             _net_device = 0;
         }
+        _mutex->lock();
         _modem->stopRX();
         _modem->deinitRX(_rx_mode);
+        _mutex->unlock();
         _rx_inited = false;
     }
 }
@@ -1125,6 +1132,7 @@ void RadioOp::toggleTX(bool value)
         readConfig(rx_device_args, tx_device_args,
                                  rx_antenna, tx_antenna, rx_freq_corr,
                                  tx_freq_corr, callsign, video_device);
+        _mutex->lock();
         try
         {
             _modem->initTX(_tx_mode, tx_device_args, tx_antenna, tx_freq_corr);
@@ -1138,6 +1146,8 @@ void RadioOp::toggleTX(bool value)
         _modem->setBbGain(_bb_gain);
         _modem->tuneTx(430000000);
         _modem->setTxCTCSS(_tx_ctcss);
+
+        _mutex->unlock();
         if(_tx_mode == gr_modem_types::ModemTypeQPSKVideo)
             _video = new VideoEncoder(QString::fromStdString(video_device));
         if(_tx_mode == gr_modem_types::ModemTypeQPSK250000 && _net_device == 0)
@@ -1148,7 +1158,9 @@ void RadioOp::toggleTX(bool value)
     }
     else if(_tx_inited)
     {
+        _mutex->lock();
         _modem->deinitTX(_tx_mode);
+        _mutex->unlock();
         if(_tx_mode == gr_modem_types::ModemTypeQPSKVideo)
         {
             delete _video;
@@ -1348,8 +1360,6 @@ void RadioOp::setVox(bool value)
 
 void RadioOp::toggleRepeat(bool value)
 {
-
-    _mutex->lock();
     if((_rx_mode != _tx_mode) && value) // no mixed mode repeat
         return;
     if(value && !_repeat)
@@ -1362,6 +1372,7 @@ void RadioOp::toggleRepeat(bool value)
         stopTx();
         _repeat = value;
     }
+    _mutex->lock();
     _modem->setRepeater(value);
     _mutex->unlock();
 
@@ -1370,16 +1381,15 @@ void RadioOp::toggleRepeat(bool value)
 void RadioOp::fineTuneFreq(long center_freq)
 {
     _mutex->lock();
-    //_modem->tune(_tune_center_freq + center_freq*_step_hz);
     _modem->set_carrier_offset(_carrier_offset + center_freq*_step_hz);
     _mutex->unlock();
 }
 
 void RadioOp::tuneFreq(qint64 center_freq)
 {
-    _mutex->lock();
     _rx_frequency = center_freq;
     _tx_frequency = center_freq + _carrier_offset;
+    _mutex->lock();
     _modem->tune(_rx_frequency);
     _modem->tuneTx(_tx_frequency + _tune_shift_freq);
     _mutex->unlock();
@@ -1387,8 +1397,8 @@ void RadioOp::tuneFreq(qint64 center_freq)
 
 void RadioOp::setCarrierOffset(qint64 offset)
 {
-    _mutex->lock();
     _carrier_offset = offset;
+    _mutex->lock();
     _modem->set_carrier_offset(offset);
     _mutex->unlock();
 }
@@ -1410,40 +1420,40 @@ void RadioOp::setFFTSize(int size)
 
 void RadioOp::tuneTxFreq(qint64 center_freq)
 {
-    _mutex->lock();
     _tune_shift_freq = center_freq;
+    _mutex->lock();
     _modem->tuneTx(_tx_frequency + _tune_shift_freq);
     _mutex->unlock();
 }
 
 void RadioOp::setTxPower(int dbm)
 {
-    _mutex->lock();
     _tx_power = (float)dbm/100.0;
+    _mutex->lock();
     _modem->setTxPower(_tx_power);
     _mutex->unlock();
 }
 
 void RadioOp::setBbGain(int value)
 {
-    _mutex->lock();
     _bb_gain = value;
+    _mutex->lock();
     _modem->setBbGain(_bb_gain);
     _mutex->unlock();
 }
 
 void RadioOp::setRxSensitivity(int value)
 {
-    _mutex->lock();
     _rx_sensitivity = (float)value/100.0;
+    _mutex->lock();
     _modem->setRxSensitivity(_rx_sensitivity);
     _mutex->unlock();
 }
 
 void RadioOp::setSquelch(int value)
 {
-    _mutex->lock();
     _squelch = value;
+    _mutex->lock();
     _modem->setSquelch(value);
     _mutex->unlock();
 }
@@ -1455,16 +1465,16 @@ void RadioOp::setVolume(int value)
 
 void RadioOp::setRxCTCSS(float value)
 {
-    _mutex->lock();
     _rx_ctcss = value;
+    _mutex->lock();
     _modem->setRxCTCSS(value);
     _mutex->unlock();
 }
 
 void RadioOp::setTxCTCSS(float value)
 {
-    _mutex->lock();
     _tx_ctcss = value;
+    _mutex->lock();
     _modem->setTxCTCSS(value);
     _mutex->unlock();
 }
@@ -1476,25 +1486,32 @@ void RadioOp::enableGUIConst(bool value)
 
 void RadioOp::enableGUIFFT(bool value)
 {
-    _mutex->lock();
     _fft_enabled = value;
+    _mutex->lock();
     _modem->enableGUIFFT(value);
     _mutex->unlock();
 }
 
-void RadioOp::scan()
+void RadioOp::scan(bool receiving)
 {
+    if(receiving)
+    {
+        // FIXME: should set a timer after which scan is resumed
+        //stopAutoTune();
+        return;
+    }
     qint64 msec = (quint64)_scan_timer->nsecsElapsed() / 1000000;
-    if(msec < 100)
+    if(msec < _fft_poll_time)
     {
         return;
     }
     _autotune_freq = _autotune_freq + _step_hz;
-    if(_autotune_freq >= (_rx_frequency + _tune_limit_upper))
-        _autotune_freq = _rx_frequency + _tune_limit_lower;
+    if(_autotune_freq >= _tune_limit_upper)
+        _autotune_freq = _tune_limit_lower;
     _mutex->lock();
     _modem->set_carrier_offset(_autotune_freq);
     _mutex->unlock();
+    emit freqToGUI(_autotune_freq);
     _scan_timer->restart();
 }
 
@@ -1504,7 +1521,7 @@ void RadioOp::startAutoTune()
         return;
     _tune_limit_lower = -_rx_sample_rate / 2;
     _tune_limit_upper = _rx_sample_rate / 2;
-    _autotune_freq = _rx_frequency + _carrier_offset;
+    _autotune_freq = _carrier_offset;
     _scan_timer->start();
     _tuning_done = false;
 }
@@ -1512,6 +1529,6 @@ void RadioOp::startAutoTune()
 void RadioOp::stopAutoTune()
 {
     _tuning_done = true;
-    //_rx_frequency = _autotune_freq;
-    emit freqFromGUI(_autotune_freq);
+    _carrier_offset = _autotune_freq;
+    emit freqToGUI(_autotune_freq);
 }
