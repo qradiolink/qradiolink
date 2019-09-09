@@ -123,6 +123,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     QObject::connect(ui->plotterFrame,SIGNAL(newDemodFreq(qint64,qint64)),this,SLOT(carrierOffsetChanged(qint64,qint64)));
 
     QObject::connect(ui->voipTreeWidget,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this,SLOT(channelState(QTreeWidgetItem *,int)));
+    QObject::connect(&_secondary_text_timer,SIGNAL(timeout()),ui->secondaryTextDisplay,SLOT(hide()));
 
     ui->rxModemTypeComboBox->setAttribute(Qt::WA_AcceptTouchEvents);
     ui->txModemTypeComboBox->setAttribute(Qt::WA_AcceptTouchEvents);
@@ -134,6 +135,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     _fft_enabled = true;
     ui->controlsFrame->hide();
     ui->constellationDisplay->hide();
+    ui->secondaryTextDisplay->hide();
     _show_controls = false;
     _show_constellation = false;
     _current_voip_channel = -1;
@@ -152,6 +154,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     _rssi = 0;
     QRect xy = this->geometry();
     ui->plotterContainer->resize(xy.right() -xy.left()-20,xy.bottom()-xy.top()-120);
+    ui->secondaryTextDisplay->move(xy.left() + 5, xy.bottom() - 265);
     ui->plotterFrame->setSampleRate(1000000);
     ui->plotterFrame->setSpanFreq((quint32)1000000);
     ui->plotterFrame->setRunningState(false);
@@ -175,6 +178,10 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     _eff_video = new QGraphicsOpacityEffect(this);
     _eff_video->setOpacity(0.65);
     ui->videoFrame->setGraphicsEffect(_eff_video);
+    _eff_text_display = new QGraphicsOpacityEffect(this);
+    _eff_text_display->setOpacity(0.5);
+    ui->secondaryTextDisplay->setGraphicsEffect(_eff_text_display);
+
     _s_meter_bg = new QPixmap(":/res/s-meter-bg-black-small.png");
     readConfig();
     updateRSSI(9999);
@@ -218,10 +225,12 @@ void MainWindow::resizeEvent(QResizeEvent *event)
     if(_show_controls)
     {
         ui->plotterContainer->resize(xy.right() -xy.left()-20,xy.bottom()-xy.top()-210);
+        ui->secondaryTextDisplay->move(xy.left() + 5, xy.bottom() - 355);
     }
     else
     {
         ui->plotterContainer->resize(xy.right() -xy.left()-20,xy.bottom()-xy.top()-120);
+        ui->secondaryTextDisplay->move(xy.left() + 5, xy.bottom() - 265);
     }
     event->accept();
 }
@@ -290,6 +299,7 @@ void MainWindow::readConfig()
     ui->plotterFrame->setSampleRate(_settings->rx_sample_rate);
     ui->plotterFrame->setSpanFreq((quint32)_settings->rx_sample_rate);
     ui->sampleRateBox->setCurrentIndex(_settings->rx_sample_rate / 1000000 - 1);
+    ui->lineEditScanStep->setText(QString::number(_settings->scan_step));
 }
 
 void MainWindow::saveConfig()
@@ -315,6 +325,7 @@ void MainWindow::saveConfig()
     _settings->ip_address = ui->lineEditIPaddress->text();
     _settings->demod_offset = (long long)_demod_offset;
     _settings->rx_sample_rate = (long long)(ui->sampleRateBox->currentText().toInt());
+    _settings->scan_step = (int)ui->lineEditScanStep->text().toInt();
     _settings->saveConfig();
 }
 
@@ -449,20 +460,38 @@ void MainWindow::updateConstellation(complex_vector *constellation_data)
 
 void MainWindow::displayText(QString text, bool html)
 {
-    if(ui->receivedTextEdit->toPlainText().size() > 1024*1024*1024)
+    ui->receivedTextEdit->moveCursor(QTextCursor::End);
+    if(ui->receivedTextEdit->toPlainText().size() > 1024*1024)
     {
-        // TODO: truncate text
+        ui->receivedTextEdit->clear();
     }
     if(html)
         ui->receivedTextEdit->insertHtml(text);
     else
-        ui->receivedTextEdit->insertPlainText(text);
+        ui->receivedTextEdit->append(text);
+
     ui->receivedTextEdit->verticalScrollBar()->setValue(ui->receivedTextEdit->verticalScrollBar()->maximum());
+
+    // text widget
+    ui->secondaryTextDisplay->moveCursor(QTextCursor::End);
+    if(ui->secondaryTextDisplay->toPlainText().size() > 1024*6)
+    {
+        ui->secondaryTextDisplay->clear();
+    }
+    if(html)
+        ui->secondaryTextDisplay->appendHtml(text);
+    else
+        ui->secondaryTextDisplay->appendPlainText(text);
+
+    ui->secondaryTextDisplay->verticalScrollBar()->setValue(ui->secondaryTextDisplay->verticalScrollBar()->maximum());
+    ui->secondaryTextDisplay->show();
+    _secondary_text_timer.start(10000);
 }
 
 void MainWindow::clearTextArea()
 {
     ui->receivedTextEdit->setPlainText("");
+    ui->receivedTextEdit->moveCursor(QTextCursor::End);
     ui->receivedTextEdit->verticalScrollBar()->setValue(ui->receivedTextEdit->verticalScrollBar()->maximum());
 }
 

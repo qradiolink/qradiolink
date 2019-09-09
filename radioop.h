@@ -211,6 +211,7 @@ private:
     QElapsedTimer *_fft_read_timer;
     QElapsedTimer *_const_read_timer;
     QElapsedTimer *_scan_timer;
+    bool _scan_stop;
 
     void readConfig(std::string &rx_device_args, std::string &tx_device_args,
                     std::string &rx_antenna, std::string &tx_antenna, int &rx_freq_corr,

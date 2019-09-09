@@ -47,6 +47,7 @@ RadioOp::RadioOp(Settings *settings, QObject *parent) :
     _data_modem_reset_timer = new QElapsedTimer();
     _data_modem_sleep_timer = new QElapsedTimer();
     _scan_timer = new QElapsedTimer();
+    _scan_stop = false;
     _fft_read_timer = new QElapsedTimer();
     _fft_read_timer->start();
     _fft_poll_time = 75;
@@ -1003,7 +1004,7 @@ void RadioOp::repeaterInfoReceived(QByteArray data)
 void RadioOp::callsignReceived(QString callsign)
 {
     QString time= QDateTime::currentDateTime().toString("dd/MMM/yyyy hh:mm:ss");
-    QString text = "<br/><b>" + time + "</b> " + "<font color=\"#770000\">" + callsign + " </font><br/>\n";
+    QString text = "<b>" + time + "</b> " + "<font color=\"#FF5555\">" + callsign + " </font><br/>\n";
     emit printText(text,true);
     emit printCallsign(callsign);
 }
@@ -1038,7 +1039,7 @@ void RadioOp::receiveEnd()
 void RadioOp::endAudioTransmission()
 {
     QString time= QDateTime::currentDateTime().toString("d/MMM/yyyy hh:mm:ss");
-    emit printText("<br/><b>" + time + "</b> <font color=\"#000077\">Transmission end</font><br/>\n",true);
+    emit printText("<b>" + time + "</b> <font color=\"#77FF77\">Transmission end</font><br/>\n",true);
     QFile resfile(":/res/end_beep.raw");
     if(resfile.open(QIODevice::ReadOnly))
     {
@@ -1494,11 +1495,21 @@ void RadioOp::enableGUIFFT(bool value)
 
 void RadioOp::scan(bool receiving)
 {
-    if(receiving)
+    if(receiving && !_scan_stop)
     {
-        // FIXME: should set a timer after which scan is resumed
-        //stopAutoTune();
-        return;
+        _scan_stop = true;
+    }
+    if(_scan_stop)
+    {
+        qint64 msec = (quint64)_scan_timer->nsecsElapsed() / 1000000;
+        if(msec < 5000)
+        {
+            return;
+        }
+        else
+        {
+            _scan_stop = false;
+        }
     }
     qint64 msec = (quint64)_scan_timer->nsecsElapsed() / 1000000;
     if(msec < _fft_poll_time)
@@ -1531,6 +1542,7 @@ void RadioOp::startAutoTune(int step)
 void RadioOp::stopAutoTune()
 {
     _tuning_done = true;
+    _scan_stop = false;
     _carrier_offset = _autotune_freq;
     emit freqToGUI(_autotune_freq);
 }

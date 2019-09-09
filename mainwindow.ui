@@ -83,14 +83,14 @@
         <property name="font">
          <font>
           <family>Sans Serif</family>
-          <pointsize>12</pointsize>
+          <pointsize>10</pointsize>
           <weight>50</weight>
           <italic>false</italic>
           <bold>false</bold>
          </font>
         </property>
         <property name="styleSheet">
-         <string notr="true">font: 12pt &quot;Sans Serif&quot;;
+         <string notr="true">font: 10pt &quot;Sans Serif&quot;;
 
 
 </string>
@@ -103,6 +103,9 @@
           <width>64</width>
           <height>64</height>
          </size>
+        </property>
+        <property name="movable">
+         <bool>true</bool>
         </property>
         <widget class="QWidget" name="tab_9">
          <property name="sizePolicy">
@@ -193,7 +196,7 @@
              <property name="minimumSize">
               <size>
                <width>500</width>
-               <height>200</height>
+               <height>300</height>
               </size>
              </property>
              <property name="maximumSize">
@@ -336,6 +339,40 @@ background-color: #1F1D1D;</string>
                 <set>Qt::AlignCenter</set>
                </property>
               </widget>
+             </widget>
+             <widget class="QPlainTextEdit" name="secondaryTextDisplay">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>300</y>
+                <width>500</width>
+                <height>100</height>
+               </rect>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border: 0px solid white;
+font: oblique 8pt &quot;Sans Serif&quot;;
+background-color: #1F1D1D;
+color: rgb(255, 255, 255);</string>
+              </property>
+              <property name="lineWidth">
+               <number>3</number>
+              </property>
+              <property name="horizontalScrollBarPolicy">
+               <enum>Qt::ScrollBarAlwaysOff</enum>
+              </property>
+              <property name="undoRedoEnabled">
+               <bool>false</bool>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+              </property>
              </widget>
             </widget>
            </item>
@@ -815,7 +852,10 @@ background-color: rgb(0, 0, 67);</string>
           </sizepolicy>
          </property>
          <attribute name="title">
-          <string>Data</string>
+          <string>Text</string>
+         </attribute>
+         <attribute name="toolTip">
+          <string>Send and receive text</string>
          </attribute>
          <layout class="QGridLayout" name="gridLayout_8">
           <item row="0" column="3">
@@ -1552,6 +1592,16 @@ font: 10pt &quot;Sans Serif&quot;;</string>
              </property>
             </widget>
            </item>
+           <item row="7" column="2">
+            <widget class="QCheckBox" name="checkBoxStopScan">
+             <property name="toolTip">
+              <string>Unchecked will delay for 5 seconds</string>
+             </property>
+             <property name="text">
+              <string>Stop scan on signal</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </widget>
         </widget>
@@ -2279,6 +2329,9 @@ font: 9pt &quot;Sans Serif&quot;;
            <width>100</width>
            <height>40</height>
           </size>
+         </property>
+         <property name="toolTip">
+          <string>Start/Stop scan</string>
          </property>
          <property name="autoFillBackground">
           <bool>false</bool>

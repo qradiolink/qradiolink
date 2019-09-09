@@ -37,6 +37,7 @@ public:
     QString ip_address;
     long long demod_offset;
     long long rx_sample_rate;
+    int scan_step;
 
 
     quint32 _id;

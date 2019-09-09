@@ -766,7 +766,6 @@ int gr_modem::findSync(unsigned char bit)
     if((temp == 0x4C8A2B))
     {
         _sync_found = true;
-        qDebug() << "tx end";
         return FrameTypeEnd;
     }
     return FrameTypeNone;

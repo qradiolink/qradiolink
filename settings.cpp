@@ -22,6 +22,7 @@ Settings::Settings()
     tx_mode = 0;
     ip_address = "";
     rx_sample_rate = 1000000;
+    scan_step = 0;
 
     voip_server="127.0.0.1";
     _config_file = setupConfig();
@@ -92,6 +93,7 @@ void Settings::readConfig()
         tx_mode = cfg.lookup("tx_mode");
         ip_address = QString(cfg.lookup("ip_address"));
         rx_sample_rate = cfg.lookup("rx_sample_rate");
+        scan_step = cfg.lookup("scan_step");
 
     }
     catch(const libconfig::SettingNotFoundException &nfex)
@@ -119,6 +121,7 @@ void Settings::readConfig()
         ip_address = "10.0.0.1";
         demod_offset = 0;
         rx_sample_rate = 1000000;
+        scan_step = 0;
         std::cerr << "Settings not found in configuration file." << std::endl;
     }
 }
@@ -148,6 +151,7 @@ void Settings::saveConfig()
     root.add("ip_address",libconfig::Setting::TypeString) = ip_address.toStdString();
     root.add("demod_offset",libconfig::Setting::TypeInt64) = demod_offset;
     root.add("rx_sample_rate",libconfig::Setting::TypeInt64) = rx_sample_rate;
+    root.add("scan_step",libconfig::Setting::TypeInt) = scan_step;
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());
