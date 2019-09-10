@@ -152,6 +152,10 @@ RadioOp::~RadioOp()
 
 void RadioOp::stop()
 {
+    if(_rx_inited)
+        toggleRX(false);
+    if(_tx_inited)
+        toggleTX(false);
     _stop=true;
 }
 
