@@ -45,12 +45,12 @@ AudioEncoder::AudioEncoder()
     {
         qDebug() << "audio filter creation failed";
     }
-    _audio_filter_700 = new Filter(BPF,256,8,0.2,3.0); // 16,8,0.12,3.8
+    _audio_filter_700 = new Filter(BPF,32,8,0.2,2.4); // 16,8,0.12,3.8
     if( _audio_filter_700->get_error_flag() != 0 )
     {
         qDebug() << "audio filter creation failed";
     }
-    _audio_filter2_700 = new Filter(BPF,256,8,0.2,3.0);
+    _audio_filter2_700 = new Filter(BPF,32,8,0.2,2.4);
     if( _audio_filter2_700->get_error_flag() != 0 )
     {
         qDebug() << "audio filter creation failed";
@@ -214,14 +214,16 @@ void AudioEncoder::filter_audio(short *audiobuffer, int audiobuffersize, bool pr
             // FIXME:
             if(mode == 0)
             {
-                output = _audio_filter2_1400->do_sample(sample) + 0.2 * _emph_last_input; + 0.1 * (rand() % 1000); // 0.9
+                output = _audio_filter2_1400->do_sample(sample) + 0.35 * _emph_last_input + 0.01 * (rand() % 1000); // 0.9
+                _emph_last_input = output;
+                audiobuffer[i] = (short) (output * 0.8);
             }
             else
             {
-                output = _audio_filter2_700->do_sample(sample) - 0.9 * _emph_last_input; + 0.1 * (rand() % 1000); // 0.9
+                output = _audio_filter2_700->do_sample(sample) + 0.9375f * _emph_last_input; + 0.1 * (rand() % 1000); // 0.9
+                _emph_last_input = output;
+                audiobuffer[i] = (short) (output * 1.5);
             }
-            _emph_last_input = output;
-            audiobuffer[i] = (short) (output * 0.7);
         }
         if(pre_emphasis)
         {
@@ -229,14 +231,16 @@ void AudioEncoder::filter_audio(short *audiobuffer, int audiobuffersize, bool pr
             // FIXME:
             if(mode == 0)
             {
-                output = _audio_filter_1400->do_sample(sample) - 0.2 * _emph_last_input + 0.1 * (rand() % 1000); // 0.9
+                output = _audio_filter_1400->do_sample(sample) - 0.35 * _emph_last_input + 0.1 * (rand() % 1000); // 0.9
+                _emph_last_input = output;
+                audiobuffer[i] = (short) (output * 0.3);
             }
             else
             {
-                output = _audio_filter_700->do_sample(sample) + 0.9 * _emph_last_input + 0.2 * (rand() % 1000); // 0.9
+                output = _audio_filter_700->do_sample(sample) - 0.9375f * _emph_last_input + 0.015 * (rand() % 1000); // 0.9
+                _emph_last_input = output;
+                audiobuffer[i] = (short) (output * 0.9); // I'm still getting clipping and don't know where
             }
-            _emph_last_input = output;
-            audiobuffer[i] = (short) (output * 0.4);
         }
     }
 }
