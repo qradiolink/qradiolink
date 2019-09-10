@@ -653,12 +653,12 @@ void RadioOp::run()
         {
             if(data_to_process)
             {
-                struct timespec time_to_sleep = {0, 5000L };
+                struct timespec time_to_sleep = {0, 10000000L };
                 nanosleep(&time_to_sleep, NULL);
             }
             else
             {
-                struct timespec time_to_sleep = {0, 2000000L };
+                struct timespec time_to_sleep = {0, 30000000L };
                 nanosleep(&time_to_sleep, NULL);
             }
         }
@@ -1135,7 +1135,6 @@ void RadioOp::toggleTX(bool value)
         readConfig(rx_device_args, tx_device_args,
                                  rx_antenna, tx_antenna, rx_freq_corr,
                                  tx_freq_corr, callsign, video_device);
-        _mutex->lock();
         try
         {
             _mutex->lock();
