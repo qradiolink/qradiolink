@@ -663,7 +663,7 @@ void MainWindow::toggleTxMode(int value)
 void MainWindow::initError(QString error)
 {
     std::cerr << error.toStdString() << std::endl;
-    // FIXME: show popup
+    ui->tabWidget->setCurrentIndex(3);
 }
 
 void MainWindow::toggleRepeater(bool value)

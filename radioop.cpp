@@ -1076,17 +1076,19 @@ void RadioOp::toggleRX(bool value)
         readConfig(rx_device_args, tx_device_args,
                                  rx_antenna, tx_antenna, rx_freq_corr,
                                  tx_freq_corr, callsign, video_device);
-        _mutex->lock();
         try
         {
+            _mutex->lock();
             _modem->initRX(_rx_mode, rx_device_args, rx_antenna, rx_freq_corr);
+            _mutex->unlock();
         }
         catch(std::runtime_error e)
         {
+            _mutex->unlock();
             emit initError("Could not init RX device, check settings");
             return;
         }
-
+        _mutex->lock();
         _modem->setRxSensitivity(_rx_sensitivity);
         _modem->setSquelch(_squelch);
         _modem->setRxCTCSS(_rx_ctcss);
@@ -1136,13 +1138,18 @@ void RadioOp::toggleTX(bool value)
         _mutex->lock();
         try
         {
+            _mutex->lock();
             _modem->initTX(_tx_mode, tx_device_args, tx_antenna, tx_freq_corr);
+            _mutex->unlock();
         }
         catch(std::runtime_error e)
         {
+            _mutex->unlock();
             emit initError("Could not init TX device, check settings");
             return;
         }
+        _mutex->lock();
+
         _modem->setTxPower(_tx_power);
         _modem->setBbGain(_bb_gain);
         _modem->tuneTx(430000000);
