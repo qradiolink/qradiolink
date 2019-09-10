@@ -44,7 +44,7 @@ public:
     short* decode_gsm(unsigned char *audiobuffer, int data_length, int &samples);
 
 
-    void filter_audio(short *audiobuffer, int audiobuffersize, bool pre_emphasis=false, bool de_emphasis=false);
+    void filter_audio(short *audiobuffer, int audiobuffersize, bool pre_emphasis=false, bool de_emphasis=false, int mode=0);
 private:
     OpusEncoder *_enc;
     OpusDecoder *_dec;
@@ -52,8 +52,10 @@ private:
     struct CODEC2 *_codec2_700;
     struct CODEC2 *_codec2_2400;
     struct gsm_state *_gsm;
-    Filter *_audio_filter;
-    Filter *_audio_filter2;
+    Filter *_audio_filter_1400;
+    Filter *_audio_filter2_1400;
+    Filter *_audio_filter_700;
+    Filter *_audio_filter2_700;
     double _emph_last_input;
 };
 

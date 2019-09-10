@@ -55,7 +55,7 @@ AudioInterface::AudioInterface(QObject *parent, unsigned sample_rate, unsigned c
                   -50,  // kick in (dB)
                   90,   // knee
                   90,   // inverse scale
-                  0.015f,   // attack
+                  0.001f,   // attack
                   0.125f    // release
                   );
     sf_simplecomp(&_cm_state_read,

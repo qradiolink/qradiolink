@@ -35,13 +35,23 @@ AudioEncoder::AudioEncoder()
     _codec2_2400 = codec2_create(CODEC2_MODE_2400);
 
     _gsm = gsm_create();
-    _audio_filter = new Filter(BPF,256,8,0.2,3.8); // 16,8,0.12,3.8
-    if( _audio_filter->get_error_flag() != 0 )
+    _audio_filter_1400 = new Filter(BPF,256,8,0.2,3.8); // 16,8,0.12,3.8
+    if( _audio_filter_1400->get_error_flag() != 0 )
     {
         qDebug() << "audio filter creation failed";
     }
-    _audio_filter2 = new Filter(BPF,256,8,0.2,3.8);
-    if( _audio_filter2->get_error_flag() != 0 )
+    _audio_filter2_1400 = new Filter(BPF,256,8,0.2,3.8);
+    if( _audio_filter2_1400->get_error_flag() != 0 )
+    {
+        qDebug() << "audio filter creation failed";
+    }
+    _audio_filter_700 = new Filter(BPF,256,8,0.2,3.0); // 16,8,0.12,3.8
+    if( _audio_filter_700->get_error_flag() != 0 )
+    {
+        qDebug() << "audio filter creation failed";
+    }
+    _audio_filter2_700 = new Filter(BPF,256,8,0.2,3.0);
+    if( _audio_filter2_700->get_error_flag() != 0 )
     {
         qDebug() << "audio filter creation failed";
     }
@@ -71,8 +81,8 @@ AudioEncoder::~AudioEncoder()
     codec2_destroy(_codec2_1400);
     codec2_destroy(_codec2_700);
     gsm_destroy(_gsm);
-    delete _audio_filter;
-    delete _audio_filter2;
+    delete _audio_filter_1400;
+    delete _audio_filter2_1400;
 }
 
 unsigned char* AudioEncoder::encode_opus(short *audiobuffer, int audiobuffersize, int &encoded_size)
@@ -179,26 +189,54 @@ short* AudioEncoder::decode_gsm(unsigned char *audiobuffer, int data_length, int
     gsm_decode(_gsm,audiobuffer,decoded);
     return decoded;
 }
-
-void AudioEncoder::filter_audio(short *audiobuffer, int audiobuffersize, bool pre_emphasis, bool de_emphasis)
+// FIXME: enum for mode
+void AudioEncoder::filter_audio(short *audiobuffer, int audiobuffersize, bool pre_emphasis, bool de_emphasis, int mode)
 {
 
     for(unsigned int i = 0;i<audiobuffersize/sizeof(short);i++)
     {
         double sample = (double) audiobuffer[i];
         if(!pre_emphasis && !de_emphasis)
-            audiobuffer[i] = (short) _audio_filter->do_sample(sample);
+        {
+            // FIXME:
+            if(mode == 0)
+            {
+                audiobuffer[i] = (short) _audio_filter_1400->do_sample(sample);
+            }
+            else
+            {
+                audiobuffer[i] = (short) _audio_filter_700->do_sample(sample);
+            }
+        }
         if(de_emphasis)
         {
-            double output = _audio_filter2->do_sample(sample) + 0.2 * _emph_last_input; + 0.1 * (rand() % 1000); // 0.9
+            double output;
+            // FIXME:
+            if(mode == 0)
+            {
+                output = _audio_filter2_1400->do_sample(sample) + 0.2 * _emph_last_input; + 0.1 * (rand() % 1000); // 0.9
+            }
+            else
+            {
+                output = _audio_filter2_700->do_sample(sample) - 0.9 * _emph_last_input; + 0.1 * (rand() % 1000); // 0.9
+            }
             _emph_last_input = output;
             audiobuffer[i] = (short) (output * 0.7);
         }
         if(pre_emphasis)
         {
-            double output = _audio_filter->do_sample(sample) - 0.2 * _emph_last_input + 0.1 * (rand() % 1000); // 0.9
+            double output;
+            // FIXME:
+            if(mode == 0)
+            {
+                output = _audio_filter_1400->do_sample(sample) - 0.2 * _emph_last_input + 0.1 * (rand() % 1000); // 0.9
+            }
+            else
+            {
+                output = _audio_filter_700->do_sample(sample) + 0.9 * _emph_last_input + 0.2 * (rand() % 1000); // 0.9
+            }
             _emph_last_input = output;
-            audiobuffer[i] = (short) (output * 0.7);
+            audiobuffer[i] = (short) (output * 0.4);
         }
     }
 }
