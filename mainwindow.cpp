@@ -169,10 +169,10 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     //QPixmap pm = QPixmap::grabWidget(ui->frameCtrlFreq);
     //ui->frameCtrlFreq->setMask(pm.createHeuristicMask(false));
     _eff_freq = new QGraphicsOpacityEffect(this);
-    _eff_freq->setOpacity(0.65);
+    _eff_freq->setOpacity(0.6);
     ui->frameCtrlFreq->setGraphicsEffect(_eff_freq);
     _eff_const = new QGraphicsOpacityEffect(this);
-    _eff_const->setOpacity(0.7);
+    _eff_const->setOpacity(0.6);
     ui->constellationDisplay->setGraphicsEffect(_eff_const);
     _constellation_painter = new QPainter(_constellation_img);
     _eff_video = new QGraphicsOpacityEffect(this);

@@ -440,6 +440,46 @@ background-color: rgb(0, 0, 67);</string>
                  <string>4000000</string>
                 </property>
                </item>
+               <item>
+                <property name="text">
+                 <string>5000000</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>6000000</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>7000000</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>8000000</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>9000000</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>10000000</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>20000000</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>30000000</string>
+                </property>
+               </item>
               </widget>
              </item>
              <item>
@@ -480,11 +520,21 @@ color: rgb(240, 240, 119);
 background-color: rgb(0, 0, 67);</string>
                </property>
                <property name="currentIndex">
-                <number>3</number>
+                <number>5</number>
                </property>
                <property name="maxVisibleItems">
                 <number>15</number>
                </property>
+               <item>
+                <property name="text">
+                 <string>1024</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>2048</string>
+                </property>
+               </item>
                <item>
                 <property name="text">
                  <string>4096</string>

@@ -60,7 +60,7 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
 
     _osmosdr_source = osmosdr::source::make(device_args);
     _osmosdr_source->set_center_freq(_device_frequency);
-    _osmosdr_source->set_bandwidth(1000000);
+    _osmosdr_source->set_bandwidth(1500000); // LimeSDR does not support less
     _osmosdr_source->set_sample_rate(1000000);
     _osmosdr_source->set_freq_corr(freq_corr);
     _osmosdr_source->set_gain_mode(false);
