@@ -155,8 +155,7 @@ HEADERS  += mainwindow.h\
     gr/rx_fft.h
 
 
-FORMS    += mainwindow.ui \
-    desktop_mainwindow.ui
+FORMS    += mainwindow.ui
 
 
 LIBS += -lgnuradio-pmt -lgnuradio-audio -lgnuradio-analog -lgnuradio-blocks -lgnuradio-fft \

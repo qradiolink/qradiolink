@@ -1247,12 +1247,12 @@ void RadioOp::toggleRxMode(int value)
     case 11:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _rx_mode = gr_modem_types::ModemTypeUSB2500;
-        _step_hz = 100;
+        _step_hz = 10;
         break;
     case 12:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _rx_mode = gr_modem_types::ModemTypeLSB2500;
-        _step_hz = 100;
+        _step_hz = 10;
         break;
     case 13:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
