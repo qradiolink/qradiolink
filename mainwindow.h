@@ -180,6 +180,7 @@ private:
     QGraphicsOpacityEffect *_eff_text_display;
     QPixmap *_s_meter_bg;
     QTimer _secondary_text_timer;
+    QMutex _mutex;
 
 
 

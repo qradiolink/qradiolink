@@ -175,6 +175,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     _eff_const->setOpacity(0.6);
     ui->constellationDisplay->setGraphicsEffect(_eff_const);
     _constellation_painter = new QPainter(_constellation_img);
+    _constellation_painter->end();
     _eff_video = new QGraphicsOpacityEffect(this);
     _eff_video->setOpacity(0.65);
     ui->videoFrame->setGraphicsEffect(_eff_video);
@@ -433,7 +434,7 @@ void MainWindow::updateConstellation(complex_vector *constellation_data)
     {
         return;
     }
-
+    _mutex.lock();
     _constellation_img->fill(QColor("transparent"));
     QPen pen(QColor(0,255,0,255), 4, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     QPen pen2(QColor(180,180,180,180), 1, Qt::SolidLine, Qt::SquareCap, Qt::RoundJoin);
@@ -454,6 +455,7 @@ void MainWindow::updateConstellation(complex_vector *constellation_data)
     _constellation_painter->end();
 
     ui->constellationLabel->setPixmap(*_constellation_img);
+    _mutex.unlock();
     constellation_data->clear();
     delete constellation_data;
 }
