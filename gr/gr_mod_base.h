@@ -50,6 +50,7 @@ public slots:
     void set_mode(int mode);
     int setAudio(std::vector<float> *data);
     void set_bb_gain(int value);
+    void set_carrier_offset(long carrier_offset);
 
 private:
     gr::top_block_sptr _top_block;

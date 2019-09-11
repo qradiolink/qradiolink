@@ -233,10 +233,16 @@ void gr_modem::tune(long center_freq)
         _gr_demod_base->tune(center_freq);
 }
 
-void gr_modem::set_carrier_offset(long center_freq)
+void gr_modem::set_carrier_offset(long offset)
 {
     if(_gr_demod_base)
-        _gr_demod_base->set_carrier_offset(center_freq);
+        _gr_demod_base->set_carrier_offset(offset);
+}
+
+void gr_modem::set_tx_carrier_offset(long offset)
+{
+    if(_gr_mod_base)
+        _gr_mod_base->set_carrier_offset(offset);
 }
 
 void gr_modem::set_samp_rate(int samp_rate)

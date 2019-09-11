@@ -369,4 +369,11 @@ void gr_mod_base::set_bb_gain(int value)
     _top_block->unlock();
 }
 
+void gr_mod_base::set_carrier_offset(long carrier_offset)
+{
+    _carrier_offset = carrier_offset;
+    _rotator->set_phase_inc(2*M_PI*-_carrier_offset/_samp_rate);
+
+}
+
 

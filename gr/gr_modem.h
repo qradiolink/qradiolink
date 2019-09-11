@@ -123,7 +123,8 @@ public slots:
     double getFreqGUI();
     void setRepeater(bool value);
     void get_fft_data(std::complex<float>* data, unsigned int &size);
-    void set_carrier_offset(long center_freq);
+    void set_carrier_offset(long offset);
+    void set_tx_carrier_offset(long offset);
     void set_samp_rate(int samp_rate);
     void setFFTSize(int size);
     float getRSSI();
