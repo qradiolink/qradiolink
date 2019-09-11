@@ -194,6 +194,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
         ui->showControlsButton->setChecked(true);
     }
 
+
 }
 
 MainWindow::~MainWindow()
@@ -303,7 +304,9 @@ void MainWindow::readConfig()
     ui->frameCtrlFreq->setFrequency(_rx_frequency + _demod_offset);
     ui->plotterFrame->setSampleRate(_settings->rx_sample_rate);
     ui->plotterFrame->setSpanFreq((quint32)_settings->rx_sample_rate);
-    ui->sampleRateBox->setCurrentIndex(_settings->rx_sample_rate / 1000000 - 1);
+    ui->sampleRateBox->setCurrentIndex(ui->sampleRateBox->findText(QString::number(_settings->rx_sample_rate)));
+    ui->fftSizeBox->setCurrentIndex(ui->fftSizeBox->findText(QString::number(_settings->fft_size)));
+    ui->fpsBox->setCurrentIndex(ui->fpsBox->findText(QString::number(_settings->waterfall_fps)));
     ui->lineEditScanStep->setText(QString::number(_settings->scan_step));
 
 }
@@ -331,7 +334,9 @@ void MainWindow::saveConfig()
     _settings->ip_address = ui->lineEditIPaddress->text();
     _settings->demod_offset = (long long)_demod_offset;
     _settings->rx_sample_rate = (long long)(ui->sampleRateBox->currentText().toInt());
+    _settings->fft_size = (long long)(ui->fftSizeBox->currentText().toInt());
     _settings->scan_step = (int)ui->lineEditScanStep->text().toInt();
+    _settings->waterfall_fps = (int)ui->fpsBox->currentText().toInt();
     _settings->saveConfig();
 }
 
@@ -635,6 +640,8 @@ void MainWindow::toggleRXwin(bool value)
     emit toggleRX(value);
     ui->plotterFrame->setRunningState(value);
     emit enableGUIFFT(value);
+    setFFTSize(_settings->waterfall_fps);
+    newWaterfallFPS();
     _range_set = false;
 }
 

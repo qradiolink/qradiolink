@@ -40,6 +40,8 @@ public:
     int scan_step;
     int show_controls;
     int show_constellation;
+    int fft_size;
+    int waterfall_fps;
 
 
     quint32 _id;

@@ -25,6 +25,8 @@ Settings::Settings()
     scan_step = 0;
     show_controls = 0;
     show_constellation = 0;
+    fft_size = 32768;
+    waterfall_fps = 15;
 
     voip_server="127.0.0.1";
     _config_file = setupConfig();
@@ -98,6 +100,8 @@ void Settings::readConfig()
         scan_step = cfg.lookup("scan_step");
         show_controls = cfg.lookup("show_controls");
         show_constellation = cfg.lookup("show_constellation");
+        fft_size = cfg.lookup("fft_size");
+        waterfall_fps = cfg.lookup("waterfall_fps");
 
     }
     catch(const libconfig::SettingNotFoundException &nfex)
@@ -128,6 +132,8 @@ void Settings::readConfig()
         scan_step = 0;
         show_controls = 0;
         show_constellation = 0;
+        fft_size = 32768;
+        waterfall_fps = 15;
         std::cerr << "Settings not found in configuration file." << std::endl;
     }
 }
@@ -160,6 +166,8 @@ void Settings::saveConfig()
     root.add("scan_step",libconfig::Setting::TypeInt) = scan_step;
     root.add("show_controls",libconfig::Setting::TypeInt) = show_controls;
     root.add("show_constellation",libconfig::Setting::TypeInt) = show_constellation;
+    root.add("fft_size",libconfig::Setting::TypeInt) = fft_size;
+    root.add("waterfall_fps",libconfig::Setting::TypeInt) = waterfall_fps;
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());

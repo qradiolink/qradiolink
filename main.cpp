@@ -101,6 +101,7 @@ int main(int argc, char *argv[])
     Settings *settings = new Settings;
     settings->readConfig();
     MumbleClient *client = new MumbleClient(settings);
+    RadioOp *radio_op = new RadioOp(settings);
     MainWindow *w = new MainWindow(settings);
     w->setWindowTitle("QRadioLink");
 
@@ -172,7 +173,7 @@ int main(int argc, char *argv[])
 
     QThread *t4 = new QThread;
     t4->setObjectName("radioop");
-    RadioOp *radio_op = new RadioOp(settings);
+
     radio_op->moveToThread(t4);
     QObject::connect(t4, SIGNAL(started()), radio_op, SLOT(run()));
     QObject::connect(radio_op, SIGNAL(finished()), t4, SLOT(quit()));
@@ -235,7 +236,6 @@ int main(int argc, char *argv[])
     QObject::connect(w,SIGNAL(disconnectFromServer()),client,SLOT(disconnectFromServer()));
     QObject::connect(w,SIGNAL(setMute(bool)),client,SLOT(setMute(bool)));
     QObject::connect(w,SIGNAL(changeChannel(int)),client,SLOT(joinChannel(int)));
-
 
 
     int ret = a.exec();
