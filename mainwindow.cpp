@@ -187,10 +187,12 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     _range_set = false;
     setRange(1);
     _range_set = false;
-    showControls((bool)_settings->show_controls);
-    showConstellation((bool)_settings->show_constellation);
-    ui->showConstellationButton->setChecked((bool)_settings->show_controls);
-    ui->showControlsButton->setChecked((bool) _settings->show_controls);
+    if(_settings->show_constellation)
+        ui->showConstellationButton->setChecked(true);
+    if((bool)_settings->show_controls)
+    {
+        ui->showControlsButton->setChecked(true);
+    }
 
 }
 
@@ -225,7 +227,7 @@ void MainWindow::closeEvent (QCloseEvent *event)
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
     QRect xy = this->geometry();
-    if(_settings->show_controls)
+    if((bool)_settings->show_controls)
     {
         ui->plotterContainer->resize(xy.right() -xy.left()-20,xy.bottom()-xy.top()-210);
         ui->secondaryTextDisplay->move(xy.left() + 5, xy.bottom() - 355);
