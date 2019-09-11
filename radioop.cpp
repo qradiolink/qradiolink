@@ -1503,7 +1503,7 @@ void RadioOp::enableGUIFFT(bool value)
     _mutex->unlock();
 }
 
-void RadioOp::scan(bool receiving)
+void RadioOp::scan(bool receiving, bool wait_for_timer)
 {
     if(receiving && !_scan_stop)
     {
@@ -1521,10 +1521,13 @@ void RadioOp::scan(bool receiving)
             _scan_stop = false;
         }
     }
-    qint64 msec = (quint64)_scan_timer->nsecsElapsed() / 1000000;
-    if(msec < _fft_poll_time)
+    if(wait_for_timer)
     {
-        return;
+        qint64 msec = (quint64)_scan_timer->nsecsElapsed() / 1000000;
+        if(msec < _fft_poll_time)
+        {
+            return;
+        }
     }
     _autotune_freq = _autotune_freq + _step_hz;
     if(_autotune_freq >= _tune_limit_upper)
@@ -1547,6 +1550,7 @@ void RadioOp::startAutoTune(int step)
     _autotune_freq = _carrier_offset;
     _scan_timer->start();
     _tuning_done = false;
+    scan(false, false);
 }
 
 void RadioOp::stopAutoTune()

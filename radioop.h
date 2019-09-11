@@ -122,7 +122,7 @@ public slots:
     void setTxCTCSS(float value);
     void enableGUIConst(bool value);
     void enableGUIFFT(bool value);
-    void scan(bool receiving);
+    void scan(bool receiving, bool wait_for_timer=true);
     void startAutoTune(int step);
     void stopAutoTune();
     void endAudioTransmission();
