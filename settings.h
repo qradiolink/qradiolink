@@ -38,6 +38,8 @@ public:
     long long demod_offset;
     long long rx_sample_rate;
     int scan_step;
+    int show_controls;
+    int show_constellation;
 
 
     quint32 _id;

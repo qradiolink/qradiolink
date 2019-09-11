@@ -166,8 +166,6 @@ private:
     float _fft_averaging;
     int _waterfall_fps;
     qint64 _demod_offset;
-    bool _show_controls;
-    bool _show_constellation;
     bool _fft_enabled;
     void setFilterWidth(int index);
     std::vector<std::complex<int>> *_filter_widths;

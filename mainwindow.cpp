@@ -136,8 +136,6 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     ui->controlsFrame->hide();
     ui->constellationDisplay->hide();
     ui->secondaryTextDisplay->hide();
-    _show_controls = false;
-    _show_constellation = false;
     _current_voip_channel = -1;
     _demod_offset = 0;
 
@@ -189,6 +187,10 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     _range_set = false;
     setRange(1);
     _range_set = false;
+    showControls((bool)_settings->show_controls);
+    showConstellation((bool)_settings->show_constellation);
+    ui->showConstellationButton->setChecked((bool)_settings->show_controls);
+    ui->showControlsButton->setChecked((bool) _settings->show_controls);
 
 }
 
@@ -223,7 +225,7 @@ void MainWindow::closeEvent (QCloseEvent *event)
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
     QRect xy = this->geometry();
-    if(_show_controls)
+    if(_settings->show_controls)
     {
         ui->plotterContainer->resize(xy.right() -xy.left()-20,xy.bottom()-xy.top()-210);
         ui->secondaryTextDisplay->move(xy.left() + 5, xy.bottom() - 355);
@@ -239,33 +241,33 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 void MainWindow::showControls(bool value)
 {
     QRect xy = this->geometry();
-    if(!_show_controls)
+    if(value)
     {
         ui->plotterContainer->resize(xy.right() -xy.left()-20,xy.bottom()-xy.top()-210);
         ui->controlsFrame->show();
-        _show_controls = true;
+        _settings->show_controls = 1;
     }
     else
     {
         ui->plotterContainer->resize(xy.right() -xy.left()-20,xy.bottom()-xy.top()-120);
         ui->controlsFrame->hide();
-        _show_controls = false;
+        _settings->show_controls = 0;
     }
 }
 
 void MainWindow::showConstellation(bool value)
 {
-    if(!_show_constellation)
+    if(value)
     {
         ui->constellationDisplay->show();
-        _show_constellation = true;
+        _settings->show_constellation = 1;
     }
     else
     {
         ui->constellationDisplay->hide();
-        _show_constellation = false;
+        _settings->show_constellation = 0;
     }
-    emit enableGUIConst(_show_constellation);
+    emit enableGUIConst(value);
 }
 
 void MainWindow::readConfig()
@@ -301,6 +303,7 @@ void MainWindow::readConfig()
     ui->plotterFrame->setSpanFreq((quint32)_settings->rx_sample_rate);
     ui->sampleRateBox->setCurrentIndex(_settings->rx_sample_rate / 1000000 - 1);
     ui->lineEditScanStep->setText(QString::number(_settings->scan_step));
+
 }
 
 void MainWindow::saveConfig()
@@ -827,7 +830,7 @@ void MainWindow::updateRSSI(float value)
         setRange(1);
         _range_set = true;
     }
-    if(!_show_controls && value != 9999)
+    if(!_settings->show_controls && value != 9999)
         return;
 
     float S9 = 80.0; // degrees
