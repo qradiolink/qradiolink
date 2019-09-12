@@ -879,9 +879,8 @@ void RadioOp::receiveVideoData(unsigned char *data, int size)
     }
     QImage img (raw_output, 320,240, QImage::Format_RGB888);
     img.convertToFormat(QImage::Format_RGB32);
-    QImage out_img(img.scaled(160, 120));
 
-    emit videoImage(out_img);
+    emit videoImage(img);
     delete[] raw_output;
 
 }

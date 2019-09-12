@@ -124,6 +124,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
 
     QObject::connect(ui->voipTreeWidget,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this,SLOT(channelState(QTreeWidgetItem *,int)));
     QObject::connect(&_secondary_text_timer,SIGNAL(timeout()),ui->secondaryTextDisplay,SLOT(hide()));
+    QObject::connect(&_video_timer,SIGNAL(timeout()),ui->videoFrame,SLOT(hide()));
 
     ui->rxModemTypeComboBox->setAttribute(Qt::WA_AcceptTouchEvents);
     ui->txModemTypeComboBox->setAttribute(Qt::WA_AcceptTouchEvents);
@@ -136,6 +137,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     ui->controlsFrame->hide();
     ui->constellationDisplay->hide();
     ui->secondaryTextDisplay->hide();
+    ui->videoFrame->hide();
     _current_voip_channel = -1;
     _demod_offset = 0;
 
@@ -175,7 +177,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     _constellation_painter = new QPainter(_constellation_img);
     _constellation_painter->end();
     _eff_video = new QGraphicsOpacityEffect(this);
-    _eff_video->setOpacity(0.65);
+    _eff_video->setOpacity(0.85);
     ui->videoFrame->setGraphicsEffect(_eff_video);
     _eff_text_display = new QGraphicsOpacityEffect(this);
     _eff_text_display->setOpacity(0.5);
@@ -507,6 +509,16 @@ void MainWindow::clearTextArea()
     ui->receivedTextEdit->verticalScrollBar()->setValue(ui->receivedTextEdit->verticalScrollBar()->maximum());
 }
 
+void MainWindow::displayImage(QImage img)
+{
+    ui->videoLabel->clear();
+    delete _video_img;
+    _video_img = new QPixmap(QPixmap::fromImage(img,Qt::AutoColor));
+    ui->videoLabel->setPixmap(*_video_img);
+    ui->videoFrame->show();
+    _video_timer.start(3000);
+}
+
 void MainWindow::displayCallsign(QString callsign)
 {
     ui->labelDisplayCallsign->setText(callsign);
@@ -773,13 +785,7 @@ void MainWindow::startScan(bool value)
         emit stopAutoTuneFreq();
 }
 
-void MainWindow::displayImage(QImage img)
-{
-    ui->videoLabel->clear();
-    delete _video_img;
-    _video_img = new QPixmap(QPixmap::fromImage(img,Qt::AutoColor));
-    ui->videoLabel->setPixmap(*_video_img);
-}
+
 
 
 void MainWindow::mainTabChanged(int value)
