@@ -185,39 +185,57 @@ void gr_modem::toggleRxMode(int modem_type)
 
 void gr_modem::deinitTX(int modem_type)
 {
-    _modem_type_tx = modem_type;
+    if(_gr_mod_base)
+    {
+        _modem_type_tx = modem_type;
 
-    _gr_mod_base->stop();
-    delete _gr_mod_base;
-    _gr_mod_base =0;
+        _gr_mod_base->stop();
+        delete _gr_mod_base;
+        _gr_mod_base =0;
+    }
 }
 
 void gr_modem::deinitRX(int modem_type)
 {
-    _modem_type_rx = modem_type;
-    _gr_demod_base->stop();
-    delete _gr_demod_base;
-    _gr_demod_base =0;
+    if(_gr_demod_base)
+    {
+        _modem_type_rx = modem_type;
+        _gr_demod_base->stop();
+        delete _gr_demod_base;
+        _gr_demod_base =0;
+    }
 }
 
 void gr_modem::startRX()
 {
-    _gr_demod_base->start();
+    if(_gr_demod_base)
+    {
+        _gr_demod_base->start();
+    }
 }
 
 void gr_modem::stopRX()
 {
-    _gr_demod_base->stop();
+    if(_gr_demod_base)
+    {
+        _gr_demod_base->stop();
+    }
 }
 
 void gr_modem::startTX()
 {
-    _gr_mod_base->start();
+    if(_gr_mod_base)
+    {
+        _gr_mod_base->start();
+    }
 }
 
 void gr_modem::stopTX()
 {
-    _gr_mod_base->stop();
+    if(_gr_mod_base)
+    {
+        _gr_mod_base->stop();
+    }
 }
 
 double gr_modem::getFreqGUI()
@@ -429,6 +447,10 @@ void gr_modem::binData(QByteArray bin_data, int frame_type)
 void gr_modem::processPCMAudio(std::vector<float> *audio_data)
 {
 
+    if(!_gr_mod_base)
+    {
+        return;
+    }
     if((_modem_type_tx == gr_modem_types::ModemTypeNBFM2500)
             || (_modem_type_tx == gr_modem_types::ModemTypeNBFM5000)
             || (_modem_type_tx == gr_modem_types::ModemTypeUSB2500)
@@ -465,6 +487,10 @@ void gr_modem::processNetData(unsigned char *data, int size)
 
 void gr_modem::transmit(QVector<std::vector<unsigned char>*> frames)
 {
+    if(!_gr_mod_base)
+    {
+        return;
+    }
     std::vector<unsigned char> *all_frames = new std::vector<unsigned char>;
     for (int i=0; i<frames.size();i++)
     {
@@ -580,6 +606,10 @@ std::vector<gr_complex>* gr_modem::getConstellation()
 
 bool gr_modem::demodulateAnalog()
 {
+    if(!_gr_demod_base)
+    {
+        return false;
+    }
     std::vector<float> *audio_data;
     if((_modem_type_rx == gr_modem_types::ModemTypeNBFM2500)
             || (_modem_type_rx == gr_modem_types::ModemTypeNBFM5000)
@@ -610,6 +640,10 @@ bool gr_modem::demodulateAnalog()
 
 bool gr_modem::demodulate()
 {
+    if(!_gr_demod_base)
+    {
+        return false;
+    }
     std::vector<unsigned char> *demod_data;
     std::vector<unsigned char> *demod_data2;
     std::vector<unsigned char> *data;
