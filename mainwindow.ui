@@ -520,7 +520,7 @@ color: rgb(240, 240, 119);
 background-color: rgb(0, 0, 67);</string>
                </property>
                <property name="currentIndex">
-                <number>5</number>
+                <number>0</number>
                </property>
                <property name="maxVisibleItems">
                 <number>15</number>
@@ -558,6 +558,11 @@ background-color: rgb(0, 0, 67);</string>
                <item>
                 <property name="text">
                  <string>65536</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>131072</string>
                 </property>
                </item>
                <item>

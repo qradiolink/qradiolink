@@ -1504,6 +1504,8 @@ void RadioOp::enableGUIFFT(bool value)
 
 void RadioOp::scan(bool receiving, bool wait_for_timer)
 {
+    bool increment_main_frequency = false;
+    bool decrement_main_frequency = false;
     if(receiving && !_scan_stop)
     {
         _scan_stop = true;
@@ -1528,11 +1530,22 @@ void RadioOp::scan(bool receiving, bool wait_for_timer)
             return;
         }
     }
-    _autotune_freq = _autotune_freq + _step_hz;
+    _autotune_freq = _autotune_freq + _scan_step_hz;
     if(_autotune_freq >= _tune_limit_upper)
+    {
         _autotune_freq = _tune_limit_lower;
+        increment_main_frequency = true;
+    }
+    if(_autotune_freq <= _tune_limit_lower)
+    {
+        _autotune_freq = _tune_limit_upper;
+        decrement_main_frequency = true;
+
+    }
     _mutex->lock();
     _modem->set_carrier_offset(_autotune_freq);
+    //if(increment_main_frequency)
+    //_modem->tune(_rx_frequency);
     _mutex->unlock();
     emit freqToGUI(_autotune_freq);
     _scan_timer->restart();
@@ -1543,7 +1556,9 @@ void RadioOp::startAutoTune(int step)
     if(!_rx_inited)
         return;
     if(step != 0)
-        _step_hz = step;
+        _scan_step_hz = step;
+    else
+        _scan_step_hz = _step_hz;
     _tune_limit_lower = -_rx_sample_rate / 2;
     _tune_limit_upper = _rx_sample_rate / 2;
     _autotune_freq = _carrier_offset;

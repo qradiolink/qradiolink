@@ -179,6 +179,7 @@ private:
     int _squelch;
     float _rx_sensitivity;
     int _step_hz;
+    int _scan_step_hz;
     int _tune_limit_lower;
     int _tune_limit_upper;
     bool _tuning_done;
