@@ -3,6 +3,8 @@ QRadioLink
 
 [![Build Status](https://travis-ci.org/kantooon/qradiolink.svg?branch=master)](https://travis-ci.org/kantooon/qradiolink)
 
+[![Packaging status](https://repology.org/badge/vertical-allrepos/qradiolink.svg)](https://repology.org/project/qradiolink/versions)
+
 About
 -----
 
@@ -70,6 +72,11 @@ In order to build on Ubuntu 17.10 you have to install the following packages, as
 
 <pre>
 $ sudo apt install libconfig++-dev libgsm1-dev libprotobuf-dev libopus-dev libpulse-dev libasound2-dev libcodec2-dev libsqlite3-dev libjpeg-dev libprotoc-dev protobuf-compiler
+</pre>
+
+On Ubuntu 18.04 LTS, replace libjpeg62-turbo and libjpeg62-turbo-dev with libjpeg-turbo8-dev and libjpeg-dev
+<pre>
+$ sudo apt install libjpeg-turbo8-dev libjpeg-dev
 </pre>
 
 [Downloads](https://github.com/kantooon/qradiolink/releases "Downloads")
