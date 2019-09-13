@@ -78,7 +78,7 @@ public slots:
     void saveConfig();
     void mainTabChanged(int value);
     void clearTextArea();
-    void updateFreqGUI(long freq);
+    void updateFreqGUI(long long center_freq, long carrier_offset);
     void enterShift();
     void updateRxCTCSS(int value);
     void updateTxCTCSS(int value);

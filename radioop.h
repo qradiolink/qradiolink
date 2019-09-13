@@ -81,7 +81,7 @@ signals:
     void videoImage(QImage img);
     void endAudio(int secs);
     void startAudio();
-    void freqToGUI(long freq);
+    void freqToGUI(long long center_freq,long carrier_offset);
     void pingServer();
     void voipData(short *pcm, int samples);
     void newFFTData(std::complex<float>*, int);

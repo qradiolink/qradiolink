@@ -1198,65 +1198,79 @@ void RadioOp::toggleRxMode(int value)
     {
     case 0:
         _rx_mode = gr_modem_types::ModemTypeBPSK2000;
-        _step_hz = 1000;
+        _step_hz = 10;
+        _scan_step_hz = 12500;
         break;
     case 1:
         _rx_mode = gr_modem_types::ModemTypeBPSK1000;
-        _step_hz = 1000;
+        _step_hz = 10;
+        _scan_step_hz = 6250;
         break;
     case 2:
         _rx_mode = gr_modem_types::ModemTypeQPSK2000;
-        _step_hz = 1000;
+        _step_hz = 10;
+        _scan_step_hz = 6250;
         break;
     case 3:
         _rx_mode = gr_modem_types::ModemTypeQPSK20000;
-        _step_hz = 1000;
+        _step_hz = 100;
+        _scan_step_hz = 12500 * 2; // FIXME: channelization
         break;
     case 4:
         _rx_mode = gr_modem_types::ModemType4FSK2000;
-        _step_hz = 1000;
+        _step_hz = 10;
+        _scan_step_hz = 12500;
         break;
     case 5:
         _rx_mode = gr_modem_types::ModemType4FSK20000;
-        _step_hz = 5000;
+        _step_hz = 500;
+        _scan_step_hz = 50000;
         break;
     case 6:
         _rx_mode = gr_modem_types::ModemType2FSK2000;
-        _step_hz = 1000;
+        _step_hz = 10;
+        _scan_step_hz = 12500;
         break;
     case 7:
         _rx_mode = gr_modem_types::ModemType2FSK20000;
-        _step_hz = 5000;
+        _step_hz = 500;
+        _scan_step_hz = 50000; // FIXME: channelization
         break;
     case 8:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _rx_mode = gr_modem_types::ModemTypeNBFM2500;
         _step_hz = 6250;
+        _scan_step_hz = 6250;
         break;
     case 9:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _rx_mode = gr_modem_types::ModemTypeNBFM5000;
         _step_hz = 12500;
+        _scan_step_hz = 12500;
         break;
     case 10:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _rx_mode = gr_modem_types::ModemTypeWBFM;
         _step_hz = 10000;
+        _scan_step_hz = 200000;
         break;
     case 11:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _rx_mode = gr_modem_types::ModemTypeUSB2500;
         _step_hz = 10;
+        _scan_step_hz = 2500;
         break;
     case 12:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _rx_mode = gr_modem_types::ModemTypeLSB2500;
         _step_hz = 10;
+        _scan_step_hz = 2500;
         break;
     case 13:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _rx_mode = gr_modem_types::ModemTypeAM5000;
-        _step_hz = 1000;
+        _step_hz = 100;
+        _scan_step_hz = 10000;
         break;
     case 14:
         _rx_mode = gr_modem_types::ModemTypeQPSKVideo;
@@ -1265,10 +1279,12 @@ void RadioOp::toggleRxMode(int value)
     case 15:
         _rx_mode = gr_modem_types::ModemTypeQPSK250000;
         _step_hz = 1000;
+        _scan_step_hz = 500000;
         break;
     default:
         _rx_mode = gr_modem_types::ModemTypeBPSK2000;
-        _step_hz = 1000;
+        _step_hz = 10;
+        _scan_step_hz = 12500;
         break;
     }
 
@@ -1533,21 +1549,31 @@ void RadioOp::scan(bool receiving, bool wait_for_timer)
     _autotune_freq = _autotune_freq + _scan_step_hz;
     if(_autotune_freq >= _tune_limit_upper)
     {
-        _autotune_freq = _tune_limit_lower;
+        _autotune_freq = _tune_limit_lower + (_autotune_freq - _tune_limit_upper);
         increment_main_frequency = true;
     }
     if(_autotune_freq <= _tune_limit_lower)
     {
-        _autotune_freq = _tune_limit_upper;
+        _autotune_freq = _tune_limit_upper - (_tune_limit_lower - _autotune_freq);
         decrement_main_frequency = true;
 
     }
     _mutex->lock();
+
+    if(increment_main_frequency)
+    {
+        _rx_frequency = _rx_frequency + _rx_sample_rate;
+        _modem->tune(_rx_frequency);
+    }
+    if(decrement_main_frequency)
+    {
+        _rx_frequency = _rx_frequency - _rx_sample_rate;
+        _modem->tune(_rx_frequency);
+    }
     _modem->set_carrier_offset(_autotune_freq);
-    //if(increment_main_frequency)
-    //_modem->tune(_rx_frequency);
     _mutex->unlock();
-    emit freqToGUI(_autotune_freq);
+    _carrier_offset = _autotune_freq;
+    emit freqToGUI(_rx_frequency, _carrier_offset);
     _scan_timer->restart();
 }
 
@@ -1557,8 +1583,6 @@ void RadioOp::startAutoTune(int step)
         return;
     if(step != 0)
         _scan_step_hz = step;
-    else
-        _scan_step_hz = _step_hz;
     _tune_limit_lower = -_rx_sample_rate / 2;
     _tune_limit_upper = _rx_sample_rate / 2;
     _autotune_freq = _carrier_offset;
@@ -1572,5 +1596,5 @@ void RadioOp::stopAutoTune()
     _tuning_done = true;
     _scan_stop = false;
     _carrier_offset = _autotune_freq;
-    emit freqToGUI(_autotune_freq);
+    emit freqToGUI(_rx_frequency, _autotune_freq);
 }

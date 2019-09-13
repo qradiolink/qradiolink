@@ -793,12 +793,14 @@ void MainWindow::mainTabChanged(int value)
 
 }
 
-void MainWindow::updateFreqGUI(long freq)
+void MainWindow::updateFreqGUI(long long center_freq, long carrier_offset)
 {
-    _demod_offset = freq;
+    _demod_offset = carrier_offset;
+    _rx_frequency = (qint64)center_freq;
     ui->frameCtrlFreq->setFrequency(_rx_frequency + _demod_offset, false);
     ui->plotterFrame->setFilterOffset((qint64)_demod_offset);
-    ui->frequencyEdit->setText(QString::number(ceil(freq/1000)));
+    ui->plotterFrame->setCenterFreq(_rx_frequency);
+    ui->frequencyEdit->setText(QString::number(ceil((_rx_frequency+_demod_offset)/1000)));
 }
 
 void MainWindow::updateRxCTCSS(int value)
