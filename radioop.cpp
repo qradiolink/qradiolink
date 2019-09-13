@@ -108,7 +108,7 @@ RadioOp::RadioOp(Settings *settings, QObject *parent) :
     QObject::connect(this,SIGNAL(pcmData(std::vector<float>*)),_modem,SLOT(transmitPCMAudio(std::vector<float>*)));
     QObject::connect(this,SIGNAL(videoData(unsigned char*,int)),_modem,SLOT(transmitVideoData(unsigned char*,int)));
     QObject::connect(this,SIGNAL(netData(unsigned char*,int)),_modem,SLOT(transmitNetData(unsigned char*,int)));
-    QObject::connect(_modem,SIGNAL(digitalAudio(unsigned char*,int)),this,SLOT(receiveAudioData(unsigned char*,int)));
+    QObject::connect(_modem,SIGNAL(digitalAudio(unsigned char*,int)),this,SLOT(receiveDigitalAudio(unsigned char*,int)));
     QObject::connect(_modem,SIGNAL(pcmAudio(std::vector<float>*)),this,SLOT(receivePCMAudio(std::vector<float>*)));
     QObject::connect(_modem,SIGNAL(videoData(unsigned char*,int)),this,SLOT(receiveVideoData(unsigned char*,int)));
     QObject::connect(_modem,SIGNAL(netData(unsigned char*,int)),this,SLOT(receiveNetData(unsigned char*,int)));
@@ -270,7 +270,7 @@ void RadioOp::processAudioStream()
 
     if(_voip_enabled)
     {
-        emit voipData(audiobuffer,audiobuffer_size);
+        emit voipDataPCM(audiobuffer,audiobuffer_size);
         return;
     }
     if(_tx_inited)
@@ -529,9 +529,9 @@ void RadioOp::sendBinData(QByteArray data, int frame_type)
 
 void RadioOp::flushVoipBuffer()
 {
-    if(_voip_encode_buffer->size() > 320)
+    if(_voip_encode_buffer->size() >= 320)
     {
-        int frames = floor(_voip_encode_buffer->size() / 320);
+        int frames = (int)floor((float)_voip_encode_buffer->size() / 320.0);
         for(int j = 0;j<frames;j++)
         {
             short *pcm = new short[320];
@@ -540,7 +540,7 @@ void RadioOp::flushVoipBuffer()
                 pcm[i] = _voip_encode_buffer->at(i);
             }
             _voip_encode_buffer->remove(0,320);
-            emit voipData(pcm,320*sizeof(short));
+            emit voipDataPCM(pcm,320*sizeof(short));
         }
     }
 }
@@ -742,7 +742,7 @@ void RadioOp::getConstellationData()
 }
 
 
-void RadioOp::receiveAudioData(unsigned char *data, int size)
+void RadioOp::receiveDigitalAudio(unsigned char *data, int size)
 {
     short *audio_out;
     int samples;
@@ -757,7 +757,16 @@ void RadioOp::receiveAudioData(unsigned char *data, int size)
     else if((_rx_mode == gr_modem_types::ModemTypeBPSK1000))
         audio_out = _codec->decode_codec2_700(data, size, samples);
     else
+    {
+        if(_voip_forwarding)
+        {
+            // FIXME: should not transcode Opus
+            unsigned char *voip_packet_opus = new unsigned char[size];
+            memcpy(voip_packet_opus, data, size);
+            emit voipDataOpus(voip_packet_opus,size);
+        }
         audio_out = _codec->decode_opus(data, size, samples);
+    }
     delete[] data;
     if(samples > 0)
     {
@@ -775,11 +784,11 @@ void RadioOp::receiveAudioData(unsigned char *data, int size)
         {
             audio_out[i] = (short)((float)audio_out[i] * amplif * 1e-1*exp(_rx_volume*log(10)));
         }
-        if(_voip_forwarding)
+        if(_voip_forwarding && audio_mode!=AudioInterface::AUDIO_MODE_OPUS)
         {
-            emit voipData(audio_out,samples*sizeof(short));
+            emit voipDataPCM(audio_out,samples*sizeof(short));
         }
-        else
+        else if(!_voip_forwarding)
         {
             _audio->write_short(audio_out,samples*sizeof(short),true, audio_mode);
         }

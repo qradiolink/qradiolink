@@ -66,7 +66,8 @@ public slots:
     void processProtoMessage(QByteArray data);
     void processUDPData(QByteArray data);
     void sendUDPPing();
-    void processAudio(short *audiobuffer, int audiobuffersize);
+    void processPCMAudio(short *audiobuffer, int audiobuffersize);
+    void processOpusAudio(unsigned char *opus_packet, int packet_size);
     QString getChannelName();
     int getChannelId();
     QString createChannel(QString channel_name="");
@@ -90,7 +91,7 @@ private:
     void processIncomingAudioPacket(quint8 *data, quint64 size, quint8 type);
     void decodeAudio(unsigned char *audiobuffer, short audiobuffersize, quint8 type, quint64 session_id);
 
-    SSLClient *_telnet;
+    SSLClient *_socket_client;
 #ifndef NO_CRYPT
     CryptState *_crypt_state;
 #endif

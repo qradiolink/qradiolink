@@ -83,7 +83,8 @@ signals:
     void startAudio();
     void freqToGUI(long long center_freq,long carrier_offset);
     void pingServer();
-    void voipData(short *pcm, int samples);
+    void voipDataPCM(short *pcm, int samples);
+    void voipDataOpus(unsigned char *pcm, int packet_size);
     void newFFTData(std::complex<float>*, int);
     void newConstellationData(complex_vector*);
     void newRSSIValue(float rssi);
@@ -102,7 +103,7 @@ public slots:
     void audioFrameReceived();
     void dataFrameReceived();
     void receiveEnd();
-    void receiveAudioData(unsigned char *data, int size);
+    void receiveDigitalAudio(unsigned char *data, int size);
     void receiveVideoData(unsigned char *data, int size);
     void receiveNetData(unsigned char *data, int size);
     void receivePCMAudio(std::vector<float>* audio_data);

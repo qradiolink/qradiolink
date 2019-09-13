@@ -22,7 +22,7 @@
 MumbleClient::MumbleClient(Settings *settings, QObject *parent) :
     QObject(parent)
 {
-    _telnet = new SSLClient;
+    _socket_client = new SSLClient;
 #ifndef NO_CRYPT
     _crypt_state = new CryptState;
 #endif
@@ -40,7 +40,7 @@ MumbleClient::MumbleClient(Settings *settings, QObject *parent) :
 
 MumbleClient::~MumbleClient()
 {
-    delete _telnet;
+    delete _socket_client;
 #ifndef NO_CRYPT
     delete _crypt_state;
 #endif
@@ -49,20 +49,20 @@ MumbleClient::~MumbleClient()
 
 void MumbleClient::connectToServer(QString address, unsigned port)
 {
-    _telnet->connectHost(address,port);
-    QObject::connect(_telnet,SIGNAL(connectedToHost()),this,SLOT(sendVersion()));
-    QObject::connect(_telnet,SIGNAL(haveMessage(QByteArray)),this,SLOT(processProtoMessage(QByteArray)));
-    QObject::connect(_telnet,SIGNAL(haveUDPData(QByteArray)),this,SLOT(processUDPData(QByteArray)));
+    _socket_client->connectHost(address,port);
+    QObject::connect(_socket_client,SIGNAL(connectedToHost()),this,SLOT(sendVersion()));
+    QObject::connect(_socket_client,SIGNAL(haveMessage(QByteArray)),this,SLOT(processProtoMessage(QByteArray)));
+    QObject::connect(_socket_client,SIGNAL(haveUDPData(QByteArray)),this,SLOT(processUDPData(QByteArray)));
 }
 
 void MumbleClient::disconnectFromServer()
 {
     if(_authenticated)
     {
-        _telnet->disconnectHost();
-        QObject::disconnect(_telnet,SIGNAL(connectedToHost()),this,SLOT(sendVersion()));
-        QObject::disconnect(_telnet,SIGNAL(haveMessage(QByteArray)),this,SLOT(processProtoMessage(QByteArray)));
-        QObject::disconnect(_telnet,SIGNAL(haveUDPData(QByteArray)),this,SLOT(processUDPData(QByteArray)));
+        _socket_client->disconnectHost();
+        QObject::disconnect(_socket_client,SIGNAL(connectedToHost()),this,SLOT(sendVersion()));
+        QObject::disconnect(_socket_client,SIGNAL(haveMessage(QByteArray)),this,SLOT(processProtoMessage(QByteArray)));
+        QObject::disconnect(_socket_client,SIGNAL(haveUDPData(QByteArray)),this,SLOT(processUDPData(QByteArray)));
         _encryption_set = false;
         _authenticated = false;
         _synchronized = false;
@@ -73,38 +73,39 @@ void MumbleClient::disconnectFromServer()
 
 void MumbleClient::sendVersion()
 {
-    MumbleProto::Version v;
-    v.set_version(PROTOCOL_VERSION);
-    v.set_release("QRadioLink");
-    v.set_os("GNU/Linux");
-    v.set_os_version("x.x");
-    int size = v.ByteSize();
+    MumbleProto::Version *v = new MumbleProto::Version;
+    v->set_version(PROTOCOL_VERSION);
+    v->set_release("QRadioLink");
+    v->set_os("GNU/Linux");
+    v->set_os_version("x.x");
+    int size = v->ByteSize();
     quint8 data[size];
-    v.SerializeToArray(data,size);
+    v->SerializeToArray(data,size);
     quint16 type = 0;
     sendMessage(data,type,size);
     authenticate();
+    delete v;
 }
 
 void MumbleClient::authenticate()
 {
     std::cout << "Authenticating" << std::endl;
-    MumbleProto::Authenticate auth;
+    MumbleProto::Authenticate *auth = new MumbleProto::Authenticate;
 
     int rand_len = 4;
     char rand[4];
     genRandomStr(rand,rand_len);
     QString username = _settings->callsign;
     username += "-" + QString::fromLocal8Bit(rand);
-
-    auth.set_username(username.toStdString().c_str());
-    auth.set_password("");
-    auth.set_opus(true);
-    int size = auth.ByteSize();
-    quint8 data[size];
-    auth.SerializeToArray(data,size);
+    auth->set_username(username.toStdString());
+    auth->set_password("");
+    auth->set_opus(true);
+    int size = auth->ByteSize();
+    unsigned char data[size];
+    auth->SerializeToArray(data,size);
     quint16 type = 2;
     sendMessage(data,type,size);
+    delete auth;
 }
 
 void MumbleClient::pingServer()
@@ -567,10 +568,13 @@ void MumbleClient::setMute(bool mute)
     sendMessage(mdata,9,msize);
 }
 
-void MumbleClient::processAudio(short *audiobuffer, int audiobuffersize)
+void MumbleClient::processPCMAudio(short *audiobuffer, int audiobuffersize)
 {
     if(!_synchronized)
+    {
+        delete[] audiobuffer;
         return;
+    }
     int packet_size = 0;
     unsigned char *encoded_audio;
     if(_settings->_use_codec2)
@@ -585,6 +589,18 @@ void MumbleClient::processAudio(short *audiobuffer, int audiobuffersize)
     delete[] encoded_audio;
     delete[] audiobuffer;
 }
+
+void MumbleClient::processOpusAudio(unsigned char *opus_packet, int packet_size)
+{
+    if(!_synchronized)
+    {
+        delete[] opus_packet;
+        return;
+    }
+    createVoicePacket(opus_packet, packet_size);
+    delete[] opus_packet;
+}
+
 
 void MumbleClient::createVoicePacket(unsigned char *encoded_audio, int packet_size)
 {
@@ -703,7 +719,7 @@ void MumbleClient::sendMessage(quint8 *message, quint16 type, int size)
 
     memcpy(bin_data+6,message,size);
     addPreamble(bin_data,type,size);
-    _telnet->sendBin(bin_data,new_size);
+    _socket_client->sendBin(bin_data,new_size);
 }
 
 void MumbleClient::sendUDPMessage(quint8 *message, int size)
@@ -718,7 +734,7 @@ void MumbleClient::sendUDPMessage(quint8 *message, int size)
         _telnet->sendUDP(bin_data,new_size);
     }
 #else
-     _telnet->sendUDP(message,size);
+     _socket_client->sendUDP(message,size);
 #endif
 }
 
@@ -740,7 +756,7 @@ void MumbleClient::sendUDPPing()
 
     _telnet->sendUDP(encrypted,sizeof(quint8) + sizeof(quint64)+4);
 #else
-    _telnet->sendUDP(message,sizeof(quint8) + sizeof(quint64));
+    _socket_client->sendUDP(message,sizeof(quint8) + sizeof(quint64));
 #endif
 }
 
