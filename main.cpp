@@ -190,7 +190,7 @@ int main(int argc, char *argv[])
     QObject::connect(w,SIGNAL(toggleRxModemMode(int)),radio_op,SLOT(toggleRxMode(int)));
     QObject::connect(w,SIGNAL(tuneFreq(qint64)),radio_op,SLOT(tuneFreq(qint64)));
     QObject::connect(w,SIGNAL(tuneTxFreq(qint64)),radio_op,SLOT(tuneTxFreq(qint64)));
-    QObject::connect(w,SIGNAL(startAutoTuneFreq(int)),radio_op,SLOT(startAutoTune(int)));
+    QObject::connect(w,SIGNAL(startAutoTuneFreq(int, int)),radio_op,SLOT(startAutoTune(int, int)));
     QObject::connect(w,SIGNAL(stopAutoTuneFreq()),radio_op,SLOT(stopAutoTune()));
     QObject::connect(w,SIGNAL(fineTuneFreq(long)),radio_op,SLOT(fineTuneFreq(long)));
     QObject::connect(w,SIGNAL(setTxPower(int)),radio_op,SLOT(setTxPower(int)));

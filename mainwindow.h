@@ -125,7 +125,7 @@ signals:
     void setTxCTCSS(float value);
     void enableGUIConst(bool value);
     void enableGUIFFT(bool value);
-    void startAutoTuneFreq(int step);
+    void startAutoTuneFreq(int step, int scan_direction);
     void stopAutoTuneFreq();
     void usePTTForVOIP(bool value);
     void setVOIPForwarding(bool value);

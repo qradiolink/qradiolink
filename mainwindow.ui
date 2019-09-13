@@ -2364,50 +2364,55 @@ font: 9pt &quot;Sans Serif&quot;;
           <set>Qt::AlignCenter</set>
          </property>
         </widget>
-        <widget class="QCommandLinkButton" name="autotuneButton">
+        <widget class="QPushButton" name="scanUpButton">
          <property name="geometry">
           <rect>
-           <x>860</x>
+           <x>890</x>
            <y>40</y>
-           <width>51</width>
-           <height>31</height>
+           <width>24</width>
+           <height>32</height>
           </rect>
          </property>
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
          <property name="maximumSize">
           <size>
-           <width>100</width>
-           <height>40</height>
+           <width>24</width>
+           <height>32</height>
           </size>
          </property>
          <property name="toolTip">
-          <string>Start/Stop scan</string>
+          <string>Scan up</string>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
          </property>
          <property name="autoFillBackground">
           <bool>false</bool>
          </property>
          <property name="styleSheet">
           <string notr="true">font: 8pt &quot;Sans Serif&quot;;
-color: rgb(240, 240, 119);
-background-color: rgb(0, 0, 67);
+
 </string>
          </property>
          <property name="text">
-          <string>Scan</string>
+          <string/>
          </property>
          <property name="icon">
           <iconset resource="resources.qrc">
-           <normaloff>:/res/transparent-bg.png</normaloff>:/res/transparent-bg.png</iconset>
+           <normaloff>:/res/arrow-right-double.png</normaloff>
+           <normalon>:/res/go-last-view.png</normalon>
+           <activeon>:/res/go-last-view.png</activeon>
+           <selectedon>:/res/go-last-view.png</selectedon>:/res/arrow-right-double.png</iconset>
          </property>
          <property name="iconSize">
           <size>
-           <width>0</width>
-           <height>0</height>
+           <width>16</width>
+           <height>16</height>
           </size>
          </property>
          <property name="checkable">
@@ -2495,6 +2500,49 @@ background-color: rgb(0, 0, 67);</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_25">
+         <property name="geometry">
+          <rect>
+           <x>870</x>
+           <y>20</y>
+           <width>31</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Scan</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="scanDownButton">
+         <property name="geometry">
+          <rect>
+           <x>860</x>
+           <y>40</y>
+           <width>24</width>
+           <height>32</height>
+          </rect>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="toolTip">
+          <string>Scan down</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="resources.qrc">
+           <normaloff>:/res/arrow-left-double.png</normaloff>
+           <normalon>:/res/go-first-view.png</normalon>:/res/arrow-left-double.png</iconset>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
          </property>
         </widget>
        </widget>

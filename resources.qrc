@@ -15,6 +15,10 @@
         <file>res/arrow-up-red.png</file>
         <file>res/s-meter-bg-black.png</file>
         <file>res/s-meter-bg-black-small.png</file>
+        <file>res/arrow-left-double.png</file>
+        <file>res/arrow-right-double.png</file>
+        <file>res/go-first-view.png</file>
+        <file>res/go-last-view.png</file>
     </qresource>
     <qresource prefix="/fonts">
         <file>res/LiquidCrystal-Normal.otf</file>

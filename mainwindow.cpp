@@ -95,7 +95,8 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     QObject::connect(ui->rxVolumeDial,SIGNAL(valueChanged(int)),this,SLOT(setVolumeDisplay(int)));
     QObject::connect(ui->rxModemTypeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(toggleRxMode(int)));
     QObject::connect(ui->txModemTypeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(toggleTxMode(int)));
-    QObject::connect(ui->autotuneButton,SIGNAL(toggled(bool)),this,SLOT(startScan(bool)));
+    QObject::connect(ui->scanUpButton,SIGNAL(toggled(bool)),this,SLOT(startScan(bool)));
+    QObject::connect(ui->scanDownButton,SIGNAL(toggled(bool)),this,SLOT(startScan(bool)));
     QObject::connect(ui->saveOptionsButton,SIGNAL(clicked()),this,SLOT(saveConfig()));
     QObject::connect(ui->tabWidget,SIGNAL(currentChanged(int)),this,SLOT(mainTabChanged(int)));
     QObject::connect(ui->comboBoxRxCTCSS,SIGNAL(currentIndexChanged(int)),this,SLOT(updateRxCTCSS(int)));
@@ -776,10 +777,14 @@ void MainWindow::setVolumeDisplay(int value)
 
 void MainWindow::startScan(bool value)
 {
+    int scan_direction = 0;
+    QObject *which_button = this->sender();
+    if(which_button == ui->scanUpButton)
+        scan_direction = 1;
     if(value)
     {
         int step = ui->lineEditScanStep->text().toInt();
-        emit startAutoTuneFreq(step);
+        emit startAutoTuneFreq(step, scan_direction);
     }
     else
         emit stopAutoTuneFreq();
