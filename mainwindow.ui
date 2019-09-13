@@ -340,7 +340,7 @@ background-color: #1F1D1D;</string>
                </property>
               </widget>
              </widget>
-             <widget class="QPlainTextEdit" name="secondaryTextDisplay">
+             <widget class="QTextEdit" name="secondaryTextDisplay">
               <property name="geometry">
                <rect>
                 <x>0</x>
@@ -366,12 +366,6 @@ color: rgb(255, 255, 255);</string>
               </property>
               <property name="horizontalScrollBarPolicy">
                <enum>Qt::ScrollBarAlwaysOff</enum>
-              </property>
-              <property name="undoRedoEnabled">
-               <bool>false</bool>
-              </property>
-              <property name="textInteractionFlags">
-               <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
               </property>
              </widget>
             </widget>
@@ -2367,9 +2361,9 @@ font: 9pt &quot;Sans Serif&quot;;
         <widget class="QPushButton" name="scanUpButton">
          <property name="geometry">
           <rect>
-           <x>890</x>
+           <x>880</x>
            <y>40</y>
-           <width>24</width>
+           <width>32</width>
            <height>32</height>
           </rect>
          </property>
@@ -2381,7 +2375,7 @@ font: 9pt &quot;Sans Serif&quot;;
          </property>
          <property name="maximumSize">
           <size>
-           <width>24</width>
+           <width>32</width>
            <height>32</height>
           </size>
          </property>
@@ -2431,7 +2425,8 @@ font: 9pt &quot;Sans Serif&quot;;
          <property name="styleSheet">
           <string notr="true">background-color: rgb(0, 0, 0);
 color: rgb(85, 255, 0);
-border: 0px solid black;</string>
+border: 1px solid white;
+font: 9pt &quot;Sans Serif&quot;;</string>
          </property>
          <property name="frameShape">
           <enum>QFrame::Panel</enum>
@@ -2467,7 +2462,7 @@ border: 0px solid black;</string>
           <rect>
            <x>790</x>
            <y>40</y>
-           <width>61</width>
+           <width>55</width>
            <height>31</height>
           </rect>
          </property>
@@ -2475,9 +2470,7 @@ border: 0px solid black;</string>
           <string>Automatic squelch</string>
          </property>
          <property name="styleSheet">
-          <string notr="true">font: 8pt &quot;Sans Serif&quot;;
-color: rgb(240, 240, 119);
-background-color: rgb(0, 0, 67);</string>
+          <string notr="true">font: 8pt &quot;Sans Serif&quot;;</string>
          </property>
          <property name="text">
           <string>AutoSq</string>
@@ -2492,8 +2485,14 @@ background-color: rgb(0, 0, 67);</string>
            <height>60</height>
           </rect>
          </property>
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Sunken</enum>
+         </property>
          <property name="lineWidth">
-          <number>0</number>
+          <number>1</number>
          </property>
          <property name="text">
           <string/>
@@ -2518,9 +2517,9 @@ background-color: rgb(0, 0, 67);</string>
         <widget class="QPushButton" name="scanDownButton">
          <property name="geometry">
           <rect>
-           <x>860</x>
+           <x>850</x>
            <y>40</y>
-           <width>24</width>
+           <width>32</width>
            <height>32</height>
           </rect>
          </property>
@@ -3198,7 +3197,7 @@ color: rgb(255, 255, 255);</string>
              <string notr="true">font: 12pt &quot;Sans Serif&quot;;
 background-color: rgb(0, 0, 67);
 border-width: 4px;
-color: rgb(255, 0, 0);</string>
+color: rgb(255, 78, 78);</string>
             </property>
             <property name="text">
              <string>TX</string>

@@ -236,13 +236,17 @@ void MainWindow::resizeEvent(QResizeEvent *event)
     if((bool)_settings->show_controls)
     {
         ui->plotterContainer->resize(xy.right() -xy.left()-20,xy.bottom()-xy.top()-210);
-        ui->secondaryTextDisplay->move(xy.left() + 5, xy.bottom() - 355);
+        xy = ui->plotterContainer->geometry();
+        ui->secondaryTextDisplay->move(xy.left(), xy.bottom() - 150);
     }
     else
     {
         ui->plotterContainer->resize(xy.right() -xy.left()-20,xy.bottom()-xy.top()-120);
-        ui->secondaryTextDisplay->move(xy.left() + 5, xy.bottom() - 265);
+        xy = ui->plotterContainer->geometry();
+        ui->secondaryTextDisplay->move(xy.left(), xy.bottom() - 150);
     }
+    xy = ui->plotterContainer->geometry();
+    ui->videoFrame->move(xy.right() - 360, xy.top());
     event->accept();
 }
 
@@ -486,7 +490,7 @@ void MainWindow::displayText(QString text, bool html)
     if(html)
         ui->receivedTextEdit->insertHtml(text);
     else
-        ui->receivedTextEdit->append(text);
+        ui->receivedTextEdit->append(text+"\n");
 
     ui->receivedTextEdit->verticalScrollBar()->setValue(ui->receivedTextEdit->verticalScrollBar()->maximum());
 
@@ -497,9 +501,9 @@ void MainWindow::displayText(QString text, bool html)
         ui->secondaryTextDisplay->clear();
     }
     if(html)
-        ui->secondaryTextDisplay->appendHtml(text);
+        ui->secondaryTextDisplay->insertHtml(text);
     else
-        ui->secondaryTextDisplay->appendPlainText(text);
+        ui->secondaryTextDisplay->append(text+"\n");
 
     ui->secondaryTextDisplay->verticalScrollBar()->setValue(ui->secondaryTextDisplay->verticalScrollBar()->maximum());
     ui->secondaryTextDisplay->show();

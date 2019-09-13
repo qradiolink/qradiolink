@@ -909,6 +909,7 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
 
 void gr_modem::handleStreamEnd()
 {
+    // FIXME: wrong signals emitted when text is received
     if(_last_frame_type == FrameTypeText)
     {
         emit textReceived( QString("\n"));
