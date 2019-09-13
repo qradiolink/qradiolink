@@ -644,6 +644,7 @@ void RadioOp::run()
                 }
                 getFFTData();
                 getConstellationData();
+                getRSSI();
                 if(!_tuning_done)
                     scan(data_to_process);
             }
@@ -678,6 +679,17 @@ void RadioOp::run()
     emit finished();
 }
 
+void RadioOp::getRSSI()
+{
+    if(!_rssi_enabled)
+        return;
+    _mutex->lock();
+    float rssi = _modem->getRSSI();
+    _mutex->unlock();
+    if(rssi != 0)
+        emit newRSSIValue(rssi);
+}
+
 void RadioOp::getFFTData()
 {
     if(!_fft_enabled)
@@ -693,9 +705,6 @@ void RadioOp::getFFTData()
 
     unsigned int fft_size = 0;
     _mutex->lock();
-    float rssi = _modem->getRSSI();
-    if(rssi != 0)
-        emit newRSSIValue(rssi);
     _modem->get_fft_data(_fft_data, fft_size);
     _mutex->unlock();
     if(fft_size > 0)
@@ -1111,6 +1120,7 @@ void RadioOp::toggleRX(bool value)
         _modem->startRX();
         _modem->enableGUIConst(_constellation_enabled);
         _modem->enableGUIFFT(_fft_enabled);
+        _modem->enableRSSI(_rssi_enabled);
 
         _mutex->unlock();
         if(_rx_mode == gr_modem_types::ModemTypeQPSK250000 && _net_device == 0)
@@ -1523,6 +1533,14 @@ void RadioOp::enableGUIConst(bool value)
     _constellation_enabled = value;
     _mutex->lock();
     _modem->enableGUIConst(value);
+    _mutex->unlock();
+}
+
+void RadioOp::enableRSSI(bool value)
+{
+    _rssi_enabled = value;
+    _mutex->lock();
+    _modem->enableRSSI(value);
     _mutex->unlock();
 }
 

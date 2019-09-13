@@ -518,6 +518,11 @@ void gr_demod_base::enable_gui_const(bool value)
     _const_valve->set_enabled(value);
 }
 
+void gr_demod_base::enable_rssi(bool value)
+{
+    _rssi_valve->set_enabled(value);
+}
+
 void gr_demod_base::enable_gui_fft(bool value)
 {
     _fft_valve->set_enabled(value);

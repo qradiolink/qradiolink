@@ -197,7 +197,9 @@ void MainWindow::initSettings()
     setEnabledFFT((bool)_settings->show_fft);
     _range_set = false;
     ui->showConstellationButton->setChecked(_settings->show_constellation);
+    showConstellation(_settings->show_constellation);
     ui->showControlsButton->setChecked((bool)_settings->show_controls);
+    showControls((bool)_settings->show_controls);
 
 }
 
@@ -266,6 +268,7 @@ void MainWindow::showControls(bool value)
         ui->controlsFrame->hide();
         _settings->show_controls = 0;
     }
+    emit enableRSSI(value);
 }
 
 void MainWindow::showConstellation(bool value)
@@ -281,6 +284,12 @@ void MainWindow::showConstellation(bool value)
         _settings->show_constellation = 0;
     }
     emit enableGUIConst(value);
+}
+
+void MainWindow::setEnabledFFT(bool value)
+{
+    _settings->show_fft = (int) value;
+    emit enableGUIFFT(value);
 }
 
 void MainWindow::readConfig()
@@ -841,11 +850,6 @@ void MainWindow::toggleVox(bool value)
     emit setVox(value);
 }
 
-void MainWindow::setEnabledFFT(bool value)
-{
-    _settings->show_fft = (int) value;
-    emit enableGUIFFT(value);
-}
 
 void MainWindow::setPeakDetect(bool value)
 {

@@ -122,6 +122,7 @@ public slots:
     void setTxCTCSS(float value);
     void enableGUIConst(bool value);
     void enableGUIFFT(bool value);
+    void enableRSSI(bool value);
     void scan(bool receiving, bool wait_for_timer=true);
     void startAutoTune(int step, int direction);
     void stopAutoTune();
@@ -209,6 +210,7 @@ private:
     bool _fft_enabled;
     int _fft_poll_time;
     bool _constellation_enabled;
+    bool _rssi_enabled;
     QElapsedTimer *_fft_read_timer;
     QElapsedTimer *_const_read_timer;
     QElapsedTimer *_scan_timer;
@@ -230,6 +232,7 @@ private:
     void sendBinData(QByteArray data, int frame_type);
     void getFFTData();
     void getConstellationData();
+    void getRSSI();
 
 };
 

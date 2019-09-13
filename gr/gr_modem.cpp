@@ -323,6 +323,12 @@ void gr_modem::enableGUIFFT(bool value)
         _gr_demod_base->enable_gui_fft(value);
 }
 
+void gr_modem::enableRSSI(bool value)
+{
+    if(_gr_demod_base)
+        _gr_demod_base->enable_rssi(value);
+}
+
 void gr_modem::setRepeater(bool value)
 {
     _repeater = value;

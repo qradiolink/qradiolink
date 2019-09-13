@@ -120,6 +120,7 @@ public slots:
     void setTxCTCSS(float value);
     void enableGUIConst(bool value);
     void enableGUIFFT(bool value);
+    void enableRSSI(bool value);
     double getFreqGUI();
     void setRepeater(bool value);
     void get_fft_data(std::complex<float>* data, unsigned int &size);
