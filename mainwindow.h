@@ -48,11 +48,11 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public slots:
-    void GUIstartTransmission();
-    void GUIendTransmission();
-    void GUIconnectVOIP();
-    void GUIdisconnectVOIP();
-    void GUIsendText();
+    void startTransmissionRequested();
+    void endTransmissionRequested();
+    void connectVOIPRequested();
+    void disconnectVOIPRequested();
+    void sendTextRequested();
     void chooseFile();
     void displayText(QString text, bool html);
     void displayCallsign(QString callsign);
@@ -165,6 +165,7 @@ private:
     float *_iirFftData;
     float _fft_averaging;
     int _waterfall_fps;
+    long _rx_sample_rate;
     qint64 _demod_offset;
     bool _fft_enabled;
     void setFilterWidth(int index);

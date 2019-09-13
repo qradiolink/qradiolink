@@ -76,11 +76,11 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
 
 
 
-    QObject::connect(ui->buttonTransmit,SIGNAL(toggled(bool)),this,SLOT(GUIstartTransmission()));
+    QObject::connect(ui->buttonTransmit,SIGNAL(toggled(bool)),this,SLOT(startTransmissionRequested()));
     //QObject::connect(ui->buttonTransmit,SIGNAL(released()),this,SLOT(GUIendTransmission()));
-    QObject::connect(ui->sendTextButton,SIGNAL(clicked()),this,SLOT(GUIsendText()));
-    QObject::connect(ui->voipConnectButton,SIGNAL(clicked()),this,SLOT(GUIconnectVOIP()));
-    QObject::connect(ui->voipDisconnectButton,SIGNAL(clicked()),this,SLOT(GUIdisconnectVOIP()));
+    QObject::connect(ui->sendTextButton,SIGNAL(clicked()),this,SLOT(sendTextRequested()));
+    QObject::connect(ui->voipConnectButton,SIGNAL(clicked()),this,SLOT(connectVOIPRequested()));
+    QObject::connect(ui->voipDisconnectButton,SIGNAL(clicked()),this,SLOT(disconnectVOIPRequested()));
     QObject::connect(ui->chooseFileButton,SIGNAL(clicked()),this,SLOT(chooseFile()));
     QObject::connect(ui->clearReceivedTextButton,SIGNAL(clicked()),this,SLOT(clearTextArea()));
     QObject::connect(ui->rxStatusButton,SIGNAL(toggled(bool)),this,SLOT(toggleRXwin(bool)));
@@ -206,7 +206,8 @@ MainWindow::~MainWindow()
     _filter_widths->clear();
     delete _filter_widths;
     delete _video_img;
-    _constellation_painter->end();
+    if(_constellation_painter->isActive())
+        _constellation_painter->end();
     delete _constellation_img;
     delete _constellation_painter;
     delete[] _realFftData;
@@ -222,6 +223,7 @@ void MainWindow::closeEvent (QCloseEvent *event)
     saveConfig();
     emit stopRadio();
     emit disconnectFromServer();
+    // FIXME: this is the wrong way to stop the radio
     struct timespec time_to_sleep = {0, 200000000L };
     nanosleep(&time_to_sleep, NULL);
     event->accept();
@@ -294,6 +296,7 @@ void MainWindow::readConfig()
 
     _rx_frequency = _settings->rx_frequency;
     _demod_offset = _settings->demod_offset;
+    _rx_sample_rate = _settings->rx_sample_rate;
 
     ui->frequencyEdit->setText(QString::number(ceil(_rx_frequency/1000)));
     _tx_shift_frequency = _settings->tx_shift;
@@ -344,13 +347,13 @@ void MainWindow::saveConfig()
 }
 
 
-void MainWindow::GUIendTransmission()
+void MainWindow::endTransmissionRequested()
 {
     emit endTransmission();
     ui->redLED->setEnabled(false);
 }
 
-void MainWindow::GUIstartTransmission()
+void MainWindow::startTransmissionRequested()
 {
     if(!_transmitting_radio)
     {
@@ -363,11 +366,11 @@ void MainWindow::GUIstartTransmission()
     {
         ui->frameCtrlFreq->setFrequency(_rx_frequency + _demod_offset, false);
         _transmitting_radio=false;
-        GUIendTransmission();
+        endTransmissionRequested();
     }
 }
 
-void MainWindow::GUIsendText()
+void MainWindow::sendTextRequested()
 {
     QString text = ui->sendTextEdit->toPlainText();
     emit sendText(text, false);
@@ -552,13 +555,13 @@ void MainWindow::displayTransmitStatus(bool status)
     ui->redLED->setEnabled(status);
 }
 
-void MainWindow::GUIconnectVOIP()
+void MainWindow::connectVOIPRequested()
 {
     emit connectToServer(ui->voipServerEdit->text(), 64738);
     emit setMute(false);
 }
 
-void MainWindow::GUIdisconnectVOIP()
+void MainWindow::disconnectVOIPRequested()
 {
     emit disconnectFromServer();
     ui->voipTreeWidget->clear();
@@ -889,6 +892,7 @@ void MainWindow::updateRSSI(float value)
 void MainWindow::updateSampleRate()
 {
     int samp_rate = ui->sampleRateBox->currentText().toInt();
+    _rx_sample_rate = samp_rate;
     ui->plotterFrame->setSampleRate(samp_rate);
     ui->plotterFrame->setSpanFreq((quint32)samp_rate);
     emit setSampleRate(samp_rate);

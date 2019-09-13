@@ -24,14 +24,6 @@ gr_modem::gr_modem(Settings *settings, QObject *parent) :
     _repeater = false;
     _settings = settings;
     _transmitting = false;
-    //_gr_mod_gmsk = new gr_mod_gmsk(0,24,48000,1600,1200,1);
-    //_gr_mod_gmsk->start();
-    //_gr_demod_gmsk = new gr_demod_gmsk(0,24,48000,1600,1200,1);
-    //_gr_demod_gmsk->start();
-    //_gr_mod_bpsk = new gr_mod_bpsk(0,24,48000,1700,1200,1);
-    //_gr_mod_bpsk->start();
-    //_gr_demod_bpsk = new gr_demod_bpsk(0,24,48000,1700,1200,1);
-    //_gr_demod_bpsk->start();
     _rx_frame_length = 7;
     _tx_frame_length = 7;
     _bit_buf_len = 8 *8;
@@ -52,8 +44,8 @@ gr_modem::gr_modem(Settings *settings, QObject *parent) :
 
 gr_modem::~gr_modem()
 {
-    //deinitRX();
-    //deinitTX();
+    deinitRX(_modem_type_rx);
+    deinitTX(_modem_type_tx);
 }
 
 void gr_modem::initTX(int modem_type, std::string device_args, std::string device_antenna, int freq_corr)
@@ -70,6 +62,29 @@ void gr_modem::initRX(int modem_type, std::string device_args, std::string devic
     _gr_demod_base = new gr_demod_base(0, _requested_frequency_hz, 0.9, device_args, device_antenna, freq_corr);
     toggleRxMode(modem_type);
 
+}
+
+void gr_modem::deinitTX(int modem_type)
+{
+    if(_gr_mod_base)
+    {
+        _modem_type_tx = modem_type;
+
+        _gr_mod_base->stop();
+        delete _gr_mod_base;
+        _gr_mod_base =0;
+    }
+}
+
+void gr_modem::deinitRX(int modem_type)
+{
+    if(_gr_demod_base)
+    {
+        _modem_type_rx = modem_type;
+        _gr_demod_base->stop();
+        delete _gr_demod_base;
+        _gr_demod_base =0;
+    }
 }
 
 void gr_modem::toggleTxMode(int modem_type)
@@ -183,28 +198,6 @@ void gr_modem::toggleRxMode(int modem_type)
     }
 }
 
-void gr_modem::deinitTX(int modem_type)
-{
-    if(_gr_mod_base)
-    {
-        _modem_type_tx = modem_type;
-
-        _gr_mod_base->stop();
-        delete _gr_mod_base;
-        _gr_mod_base =0;
-    }
-}
-
-void gr_modem::deinitRX(int modem_type)
-{
-    if(_gr_demod_base)
-    {
-        _modem_type_rx = modem_type;
-        _gr_demod_base->stop();
-        delete _gr_demod_base;
-        _gr_demod_base =0;
-    }
-}
 
 void gr_modem::startRX()
 {
@@ -365,7 +358,7 @@ void gr_modem::startTransmission(QString callsign)
     for(int i = 0;i<_tx_frame_length*2;i++)
     {
 
-        tx_start->push_back(0x8C);
+        tx_start->push_back(0xAA);
     }
     QVector<std::vector<unsigned char>*> frames;
     frames.append(tx_start);
@@ -391,7 +384,7 @@ void gr_modem::endTransmission(QString callsign)
     transmit(frames);
 }
 
-void gr_modem::processAudioData(unsigned char *data, int size)
+void gr_modem::transmitDigitalAudio(unsigned char *data, int size)
 {
     std::vector<unsigned char> *one_frame = frame(data, size, FrameTypeVoice);
     QVector<std::vector<unsigned char>*> frames;
@@ -444,7 +437,7 @@ void gr_modem::binData(QByteArray bin_data, int frame_type)
     transmit(frames);
 }
 
-void gr_modem::processPCMAudio(std::vector<float> *audio_data)
+void gr_modem::transmitPCMAudio(std::vector<float> *audio_data)
 {
 
     if(!_gr_mod_base)
@@ -467,7 +460,7 @@ void gr_modem::processPCMAudio(std::vector<float> *audio_data)
     }
 }
 
-void gr_modem::processVideoData(unsigned char *data, int size)
+void gr_modem::transmitVideoData(unsigned char *data, int size)
 {
     std::vector<unsigned char> *one_frame = frame(data, size, FrameTypeVideo);
     QVector<std::vector<unsigned char>*> frames;
@@ -476,35 +469,13 @@ void gr_modem::processVideoData(unsigned char *data, int size)
     delete[] data;
 }
 
-void gr_modem::processNetData(unsigned char *data, int size)
+void gr_modem::transmitNetData(unsigned char *data, int size)
 {
     QVector<std::vector<unsigned char>*> frames;
     std::vector<unsigned char> *one_frame = frame(data, size, FrameTypeData);
     frames.append(one_frame);
     transmit(frames);
     delete[] data;
-}
-
-void gr_modem::transmit(QVector<std::vector<unsigned char>*> frames)
-{
-    if(!_gr_mod_base)
-    {
-        return;
-    }
-    std::vector<unsigned char> *all_frames = new std::vector<unsigned char>;
-    for (int i=0; i<frames.size();i++)
-    {
-        all_frames->insert( all_frames->end(), frames.at(i)->begin(), frames.at(i)->end() );
-        frames.at(i)->clear();
-        delete frames.at(i);
-    }
-    int ret = 1;
-    while(ret)
-    {
-        struct timespec time_to_sleep = {0, 1000L };
-        ret = _gr_mod_base->setData(all_frames);
-    }
-
 }
 
 std::vector<unsigned char>* gr_modem::frame(unsigned char *encoded_audio, int data_size, int frame_type)
@@ -551,6 +522,28 @@ std::vector<unsigned char>* gr_modem::frame(unsigned char *encoded_audio, int da
     }
 
     return data;
+
+}
+
+void gr_modem::transmit(QVector<std::vector<unsigned char>*> frames)
+{
+    if(!_gr_mod_base)
+    {
+        return;
+    }
+    std::vector<unsigned char> *all_frames = new std::vector<unsigned char>;
+    for (int i=0; i<frames.size();i++)
+    {
+        all_frames->insert( all_frames->end(), frames.at(i)->begin(), frames.at(i)->end() );
+        frames.at(i)->clear();
+        delete frames.at(i);
+    }
+    int ret = 1;
+    while(ret)
+    {
+        struct timespec time_to_sleep = {0, 1000L };
+        ret = _gr_mod_base->setData(all_frames);
+    }
 
 }
 
@@ -625,7 +618,7 @@ bool gr_modem::demodulateAnalog()
         if(_repeater)
         {
             std::vector<float> *repeated_audio = new std::vector<float>(audio_data->begin(),audio_data->end());
-            processPCMAudio(repeated_audio);
+            transmitPCMAudio(repeated_audio);
         }
         emit pcmAudio(audio_data);
         return true;
@@ -891,7 +884,7 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
         {
             unsigned char *repeated_frame = new unsigned char[_rx_frame_length];
             memcpy(repeated_frame, codec2_data, _rx_frame_length);
-            processAudioData(repeated_frame, _rx_frame_length);
+            transmitDigitalAudio(repeated_frame, _rx_frame_length);
         }
         emit digitalAudio(codec2_data,_rx_frame_length);
     }

@@ -64,6 +64,7 @@ rx_fft_c::~rx_fft_c()
 {
     delete d_fft;
     delete[] d_fft_points;
+    d_sample_buffer->clear();
     delete d_sample_buffer;
 }
 
@@ -120,11 +121,8 @@ void rx_fft_c::get_fft_data(std::complex<float>* fftPoints, unsigned int &fftSiz
     {
         // not enough samples in the buffer
         fftSize = 0;
-
         return;
     }
-
-
     memcpy(fftPoints, d_fft_points, sizeof(gr_complex)*d_fftsize);
     fftSize = d_fftsize;
     d_data_ready = false;

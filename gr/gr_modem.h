@@ -91,10 +91,10 @@ signals:
     void receiveEnd();
     void endAudioTransmission();
 public slots:
-    void processPCMAudio(std::vector<float> *audio_data);
-    void processAudioData(unsigned char *data, int size);
-    void processVideoData(unsigned char *data, int size);
-    void processNetData(unsigned char *data, int size);
+    void transmitPCMAudio(std::vector<float> *audio_data);
+    void transmitDigitalAudio(unsigned char *data, int size);
+    void transmitVideoData(unsigned char *data, int size);
+    void transmitNetData(unsigned char *data, int size);
     bool demodulate();
     void startTransmission(QString callsign);
     void endTransmission(QString callsign);

@@ -104,10 +104,10 @@ RadioOp::RadioOp(Settings *settings, QObject *parent) :
     QObject::connect(_modem,SIGNAL(dataFrameReceived()),this,SLOT(dataFrameReceived()));
     QObject::connect(_modem,SIGNAL(receiveEnd()),this,SLOT(receiveEnd()));
     QObject::connect(_modem,SIGNAL(endAudioTransmission()),this,SLOT(endAudioTransmission()));
-    QObject::connect(this,SIGNAL(audioData(unsigned char*,int)),_modem,SLOT(processAudioData(unsigned char*,int)));
-    QObject::connect(this,SIGNAL(pcmData(std::vector<float>*)),_modem,SLOT(processPCMAudio(std::vector<float>*)));
-    QObject::connect(this,SIGNAL(videoData(unsigned char*,int)),_modem,SLOT(processVideoData(unsigned char*,int)));
-    QObject::connect(this,SIGNAL(netData(unsigned char*,int)),_modem,SLOT(processNetData(unsigned char*,int)));
+    QObject::connect(this,SIGNAL(audioData(unsigned char*,int)),_modem,SLOT(transmitDigitalAudio(unsigned char*,int)));
+    QObject::connect(this,SIGNAL(pcmData(std::vector<float>*)),_modem,SLOT(transmitPCMAudio(std::vector<float>*)));
+    QObject::connect(this,SIGNAL(videoData(unsigned char*,int)),_modem,SLOT(transmitVideoData(unsigned char*,int)));
+    QObject::connect(this,SIGNAL(netData(unsigned char*,int)),_modem,SLOT(transmitNetData(unsigned char*,int)));
     QObject::connect(_modem,SIGNAL(digitalAudio(unsigned char*,int)),this,SLOT(receiveAudioData(unsigned char*,int)));
     QObject::connect(_modem,SIGNAL(pcmAudio(std::vector<float>*)),this,SLOT(receivePCMAudio(std::vector<float>*)));
     QObject::connect(_modem,SIGNAL(videoData(unsigned char*,int)),this,SLOT(receiveVideoData(unsigned char*,int)));
@@ -864,7 +864,7 @@ void RadioOp::receiveVideoData(unsigned char *data, int size)
     if(crc != crc_check)
     {
         // JPEG decoder has this nasty habit of segfaulting on image errors
-        std::cerr << "CRC check failed, dropping frame to avoid JPEG segfault " << std::endl;
+        std::cerr << "CRC check failed, dropping frame" << std::endl;
         delete[] jpeg_frame;
         return;
     }
@@ -878,6 +878,11 @@ void RadioOp::receiveVideoData(unsigned char *data, int size)
         return;
     }
     QImage img (raw_output, 320,240, QImage::Format_RGB888);
+    if(img.isNull())
+    {
+        delete[] raw_output;
+        return;
+    }
     img.convertToFormat(QImage::Format_RGB32);
 
     emit videoImage(img);
@@ -1008,6 +1013,10 @@ void RadioOp::callsignReceived(QString callsign)
 {
     QString time= QDateTime::currentDateTime().toString("dd/MMM/yyyy hh:mm:ss");
     QString text = "<b>" + time + "</b> " + "<font color=\"#FF5555\">" + callsign + " </font><br/>\n";
+
+    short *samples = (short*) _data_rec_sound->data();
+    _audio->write_short(samples,_data_rec_sound->size());
+
     emit printText(text,true);
     emit printCallsign(callsign);
 }
@@ -1087,6 +1096,7 @@ void RadioOp::toggleRX(bool value)
         }
         catch(std::runtime_error e)
         {
+            _modem->deinitRX(_rx_mode);
             _mutex->unlock();
             emit initError("Could not init RX device, check settings");
             return;
@@ -1146,6 +1156,7 @@ void RadioOp::toggleTX(bool value)
         }
         catch(std::runtime_error e)
         {
+            _modem->deinitTX(_tx_mode);
             _mutex->unlock();
             emit initError("Could not init TX device, check settings");
             return;
