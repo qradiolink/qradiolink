@@ -237,7 +237,7 @@ int main(int argc, char *argv[])
     QObject::connect(w,SIGNAL(setMute(bool)),client,SLOT(setMute(bool)));
     QObject::connect(w,SIGNAL(changeChannel(int)),client,SLOT(joinChannel(int)));
 
-
+    w->initSettings();
     int ret = a.exec();
 
     client->disconnectFromServer();

@@ -100,7 +100,7 @@ public slots:
     void updateConstellation(complex_vector* constellation_data);
     void newWaterfallFPS();
     void updateSampleRate();
-    void setRange(int value);
+    void setFFTRange(int value);
     void autoSquelch();
     void initError(QString error);
 
@@ -147,6 +147,7 @@ public:
     ~MainWindow();
 
     void readConfig();
+    void initSettings();
 private:
     Ui::MainWindow *ui;
     bool _transmitting_radio;

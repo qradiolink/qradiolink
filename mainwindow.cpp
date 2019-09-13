@@ -120,7 +120,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     QObject::connect(ui->plotterFrame,SIGNAL(newCenterFreq(qint64)),this,SLOT(tuneFreqPlotter(qint64)));
     QObject::connect(ui->panadapterSlider,SIGNAL(valueChanged(int)),ui->plotterFrame,SLOT(setPercent2DScreen(int)));
     QObject::connect(ui->averagingSlider,SIGNAL(valueChanged(int)),this,SLOT(setAveraging(int)));
-    QObject::connect(ui->rangeSlider,SIGNAL(valueChanged(int)),this,SLOT(setRange(int)));
+    QObject::connect(ui->rangeSlider,SIGNAL(valueChanged(int)),this,SLOT(setFFTRange(int)));
     QObject::connect(ui->plotterFrame,SIGNAL(newDemodFreq(qint64,qint64)),this,SLOT(carrierOffsetChanged(qint64,qint64)));
 
     QObject::connect(ui->voipTreeWidget,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this,SLOT(channelState(QTreeWidgetItem *,int)));
@@ -165,7 +165,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     ui->plotterFrame->setFreqDigits(2);
     ui->plotterFrame->setTooltipsEnabled(true);
     ui->plotterFrame->setClickResolution(1);
-    setRange(1);
+    setFFTRange(1);
     _range_set = false;
     //QPixmap pm = QPixmap::grabWidget(ui->frameCtrlFreq);
     //ui->frameCtrlFreq->setMask(pm.createHeuristicMask(false));
@@ -185,19 +185,19 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     ui->secondaryTextDisplay->setGraphicsEffect(_eff_text_display);
 
     _s_meter_bg = new QPixmap(":/res/s-meter-bg-black-small.png");
+
+
+}
+
+void MainWindow::initSettings()
+{
     readConfig();
     updateRSSI(9999);
     _range_set = false;
-    setRange(1);
+    setFFTRange(1);
     _range_set = false;
-    if(_settings->show_constellation)
-        ui->showConstellationButton->setChecked(true);
-    if((bool)_settings->show_controls)
-    {
-        ui->showControlsButton->setChecked(true);
-    }
-
-
+    ui->showConstellationButton->setChecked(_settings->show_constellation);
+    ui->showControlsButton->setChecked((bool)_settings->show_controls);
 }
 
 MainWindow::~MainWindow()
@@ -856,7 +856,7 @@ void MainWindow::updateRSSI(float value)
     _rssi = value;
     if(!_range_set)
     {
-        setRange(1);
+        setFFTRange(1);
         _range_set = true;
     }
     if(!_settings->show_controls && value != 9999)
@@ -902,7 +902,7 @@ void MainWindow::updateSampleRate()
     emit setSampleRate(samp_rate);
 }
 
-void MainWindow::setRange(int value)
+void MainWindow::setFFTRange(int value)
 {
     // value is from one to 10
     if(_rssi == 0)
