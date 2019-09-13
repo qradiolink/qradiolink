@@ -25,6 +25,7 @@ Settings::Settings()
     scan_step = 0;
     show_controls = 0;
     show_constellation = 0;
+    show_fft = 0;
     fft_size = 32768;
     waterfall_fps = 15;
 
@@ -35,7 +36,7 @@ Settings::Settings()
 QFileInfo *Settings::setupConfig()
 {
     QDir files = QDir::homePath();
-
+    // FIXME: standard says own directory, plus need to store memories separately
     QFileInfo new_file = files.filePath(".config/qradiolink.cfg");
     if(!new_file.exists())
     {
@@ -100,6 +101,7 @@ void Settings::readConfig()
         scan_step = cfg.lookup("scan_step");
         show_controls = cfg.lookup("show_controls");
         show_constellation = cfg.lookup("show_constellation");
+        show_fft = cfg.lookup("show_fft");
         fft_size = cfg.lookup("fft_size");
         waterfall_fps = cfg.lookup("waterfall_fps");
 
@@ -130,10 +132,11 @@ void Settings::readConfig()
         demod_offset = 0;
         rx_sample_rate = 1000000;
         scan_step = 0;
-        show_controls = 0;
+        show_controls = 1;
         show_constellation = 0;
         fft_size = 32768;
         waterfall_fps = 15;
+        show_fft = 1;
         std::cerr << "Settings not found in configuration file." << std::endl;
     }
 }
@@ -166,6 +169,7 @@ void Settings::saveConfig()
     root.add("scan_step",libconfig::Setting::TypeInt) = scan_step;
     root.add("show_controls",libconfig::Setting::TypeInt) = show_controls;
     root.add("show_constellation",libconfig::Setting::TypeInt) = show_constellation;
+    root.add("show_fft",libconfig::Setting::TypeInt) = show_fft;
     root.add("fft_size",libconfig::Setting::TypeInt) = fft_size;
     root.add("waterfall_fps",libconfig::Setting::TypeInt) = waterfall_fps;
     try

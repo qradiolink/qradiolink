@@ -42,6 +42,7 @@ public:
     int show_constellation;
     int fft_size;
     int waterfall_fps;
+    int show_fft;
 
 
     quint32 _id;

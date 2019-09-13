@@ -1109,7 +1109,8 @@ void RadioOp::toggleRX(bool value)
         _modem->set_samp_rate(_rx_sample_rate);
         _modem->tune(_rx_frequency);
         _modem->startRX();
-        _modem->enableGUIConst(true);
+        _modem->enableGUIConst(_constellation_enabled);
+        _modem->enableGUIFFT(_fft_enabled);
 
         _mutex->unlock();
         if(_rx_mode == gr_modem_types::ModemTypeQPSK250000 && _net_device == 0)
@@ -1440,20 +1441,6 @@ void RadioOp::setCarrierOffset(qint64 offset)
     _mutex->unlock();
 }
 
-void RadioOp::setRxSampleRate(int samp_rate)
-{
-    _rx_sample_rate = samp_rate;
-    _mutex->lock();
-    _modem->set_samp_rate(samp_rate);
-    _mutex->unlock();
-}
-
-void RadioOp::setFFTSize(int size)
-{
-    _mutex->lock();
-    _modem->setFFTSize(size);
-    _mutex->unlock();
-}
 
 void RadioOp::tuneTxFreq(qint64 center_freq)
 {
@@ -1476,6 +1463,21 @@ void RadioOp::setBbGain(int value)
     _bb_gain = value;
     _mutex->lock();
     _modem->setBbGain(_bb_gain);
+    _mutex->unlock();
+}
+
+void RadioOp::setRxSampleRate(int samp_rate)
+{
+    _rx_sample_rate = samp_rate;
+    _mutex->lock();
+    _modem->set_samp_rate(samp_rate);
+    _mutex->unlock();
+}
+
+void RadioOp::setFFTSize(int size)
+{
+    _mutex->lock();
+    _modem->setFFTSize(size);
     _mutex->unlock();
 }
 
@@ -1519,6 +1521,9 @@ void RadioOp::setTxCTCSS(float value)
 void RadioOp::enableGUIConst(bool value)
 {
     _constellation_enabled = value;
+    _mutex->lock();
+    _modem->enableGUIConst(value);
+    _mutex->unlock();
 }
 
 void RadioOp::enableGUIFFT(bool value)

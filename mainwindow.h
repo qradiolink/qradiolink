@@ -168,7 +168,6 @@ private:
     int _waterfall_fps;
     long _rx_sample_rate;
     qint64 _demod_offset;
-    bool _fft_enabled;
     void setFilterWidth(int index);
     std::vector<std::complex<int>> *_filter_widths;
     float _rssi;

@@ -134,7 +134,6 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     ui->voipTreeWidget->setColumnHidden(2,true);
     ui->voipTreeWidget->setColumnHidden(3,true);
     _transmitting_radio = false;
-    _fft_enabled = true;
     ui->controlsFrame->hide();
     ui->constellationDisplay->hide();
     ui->secondaryTextDisplay->hide();
@@ -195,9 +194,11 @@ void MainWindow::initSettings()
     updateRSSI(9999);
     _range_set = false;
     setFFTRange(1);
+    setEnabledFFT((bool)_settings->show_fft);
     _range_set = false;
     ui->showConstellationButton->setChecked(_settings->show_constellation);
     ui->showControlsButton->setChecked((bool)_settings->show_controls);
+
 }
 
 MainWindow::~MainWindow()
@@ -318,6 +319,7 @@ void MainWindow::readConfig()
     ui->fftSizeBox->setCurrentIndex(ui->fftSizeBox->findText(QString::number(_settings->fft_size)));
     ui->fpsBox->setCurrentIndex(ui->fpsBox->findText(QString::number(_settings->waterfall_fps)));
     ui->lineEditScanStep->setText(QString::number(_settings->scan_step));
+    ui->fftEnableCheckBox->setChecked((bool)_settings->show_fft);
 
 }
 
@@ -659,7 +661,6 @@ void MainWindow::toggleRXwin(bool value)
     emit setSampleRate(ui->sampleRateBox->currentText().toInt());
     emit toggleRX(value);
     ui->plotterFrame->setRunningState(value);
-    emit enableGUIFFT(value);
     setFFTSize(_settings->waterfall_fps);
     newWaterfallFPS();
     _range_set = false;
@@ -842,7 +843,7 @@ void MainWindow::toggleVox(bool value)
 
 void MainWindow::setEnabledFFT(bool value)
 {
-    _fft_enabled = value;
+    _settings->show_fft = (int) value;
     emit enableGUIFFT(value);
 }
 
