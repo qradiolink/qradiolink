@@ -50,7 +50,8 @@ std::vector<float> *gr_audio_sink::get_data()
     gr::thread::scoped_lock guard(_mutex);
 
     std::vector<float>* data = new std::vector<float>;
-    if(_data->size() < 1)
+    // Have at least 80 ms of audio buffered
+    if(_data->size() < 640)
     {
         return data;
     }

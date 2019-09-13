@@ -577,14 +577,7 @@ void MumbleClient::processPCMAudio(short *audiobuffer, int audiobuffersize)
     }
     int packet_size = 0;
     unsigned char *encoded_audio;
-    if(_settings->_use_codec2)
-    {
-        encoded_audio = _codec->encode_codec2_1400(audiobuffer, audiobuffersize, packet_size);
-    }
-    else
-    {
-        encoded_audio = _codec->encode_opus(audiobuffer, audiobuffersize, packet_size);
-    }
+    encoded_audio = _codec->encode_opus(audiobuffer, audiobuffersize, packet_size);
     createVoicePacket(encoded_audio, packet_size);
     delete[] encoded_audio;
     delete[] audiobuffer;

@@ -234,7 +234,7 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
 
 }
 
-void RadioOp::processAudioStream()
+void RadioOp::processInputAudioStream()
 {
     if(!_transmitting_audio && !_vox_enabled)
         return;
@@ -311,7 +311,7 @@ void RadioOp::txAudio(short *audiobuffer, int audiobuffer_size)
     delete[] audiobuffer;
 }
 
-int RadioOp::processVideoStream(bool &frame_flag)
+int RadioOp::processInputVideoStream(bool &frame_flag)
 {
     unsigned int max_video_frame_size = 3122;
     unsigned long encoded_size;
@@ -355,7 +355,7 @@ int RadioOp::processVideoStream(bool &frame_flag)
     return 1;
 }
 
-void RadioOp::processNetStream()
+void RadioOp::processInputNetStream()
 {
     // 48400
     qint64 time_per_frame = 48400000;
@@ -531,17 +531,15 @@ void RadioOp::flushVoipBuffer()
 {
     if(_voip_encode_buffer->size() >= 320)
     {
-        int frames = (int)floor((float)_voip_encode_buffer->size() / 320.0);
-        for(int j = 0;j<frames;j++)
+
+        short *pcm = new short[320];
+        for(int i =0; i< 320;i++)
         {
-            short *pcm = new short[320];
-            for(int i =0; i< 320;i++)
-            {
-                pcm[i] = _voip_encode_buffer->at(i);
-            }
-            _voip_encode_buffer->remove(0,320);
-            emit voipDataPCM(pcm,320*sizeof(short));
+            pcm[i] = _voip_encode_buffer->at(i);
         }
+
+        emit voipDataPCM(pcm,320*sizeof(short));
+        _voip_encode_buffer->remove(0,320);
     }
 }
 
@@ -616,11 +614,11 @@ void RadioOp::run()
             ptt_activated = false;
             stopTx();
         }
-        processAudioStream();
+        processInputAudioStream();
         if(transmitting)
         {
             if(_tx_mode == gr_modem_types::ModemTypeQPSKVideo)
-                processVideoStream(frame_flag);
+                processInputVideoStream(frame_flag);
             else if((_tx_mode == gr_modem_types::ModemTypeQPSK250000) && (_net_device != 0))
             {
                 if(_rx_inited)
@@ -628,7 +626,7 @@ void RadioOp::run()
                     _modem->demodulate();
                 }
                 if(!_data_modem_sleeping)
-                    processNetStream();
+                    processInputNetStream();
             }
         }
         else
@@ -803,13 +801,13 @@ void RadioOp::receivePCMAudio(std::vector<float> *audio_data)
     for(int i=0;i<size;i++)
     {
         pcm[i] = (short)(audio_data->at(i) * 1e-1*exp(_rx_volume*log(10)) * 32767.0f);
-    }
-    if(_voip_forwarding)
-    {
-        for(int i=0;i<size;i++)
+        if(_voip_forwarding)
         {
             _voip_encode_buffer->push_back(pcm[i]);
         }
+    }
+    if(_voip_forwarding)
+    {
         delete[] pcm;
     }
     else

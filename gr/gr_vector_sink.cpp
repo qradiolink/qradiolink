@@ -49,7 +49,7 @@ std::vector<unsigned char> * gr_vector_sink::get_data()
 {
     gr::thread::scoped_lock guard(_mutex);
     std::vector<unsigned char>* data = new std::vector<unsigned char>;
-    if(_data->size() < 1)
+    if(_data->size() < 80)
     {
         return data;
     }

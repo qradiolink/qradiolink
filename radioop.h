@@ -224,9 +224,9 @@ private:
     unsigned int getFrameCRC32(unsigned char *data);
     void txAudio(short *audiobuffer, int audiobuffer_size);
 
-    void processAudioStream();
-    int processVideoStream(bool &frame_flag);
-    void processNetStream();
+    void processInputAudioStream();
+    int processInputVideoStream(bool &frame_flag);
+    void processInputNetStream();
     void sendEndBeep();
     void sendChannels();
     void sendTextData(QString text, int frame_type);
