@@ -514,7 +514,6 @@ void gr_demod_base::set_rx_sensitivity(float value)
 
 void gr_demod_base::enable_gui_const(bool value)
 {
-    _rssi_valve->set_enabled(value);
     _const_valve->set_enabled(value);
 }
 
