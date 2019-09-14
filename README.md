@@ -34,7 +34,7 @@ Features
 - Narrow band digital voice mode with the [Codec2](http://rowetel.com/codec2.html) audio codec
 - Wideband digital voice mode with the [Opus](https://xiph.org) audio codec
 - Digital modulation:  **BPSK**, **DQPSK**, **2FSK**, **4FSK**
-- Automatic carrier tracking and Doppler effect correction. The system can track Doppler shifts of 5-10 kHz, depending on mode. It requires a CNR of at least 10-12 dB, more for FSK modes than for PSK modes.
+- Automatic carrier tracking and Doppler effect correction for digital modes. The system can track Doppler shifts of 5-10 kHz, depending on mode. It requires a CNR of at least 10-12 dB, more for FSK modes than for PSK modes.
 - Analog modulation: narrow FM (5 kHz), FM (8 kHz), Wide FM (broadcast, receive-only), AM, SSB
 - CTCSS encoder and decoder for analog FM
 - Supported hardware: [**Ettus USRP**](https://ettus.com), [**RTL-SDR**](https://osmocom.org/projects/sdr/wiki/rtl-sdr), LimeSDR, [**LimeSDR-mini**](https://www.crowdsupply.com/lime-micro/limesdr-mini) (through SoapySDR), PlutoSDR (through [**SoapyPlutoSDR**](https://github.com/pothosware/SoapyPlutoSDR)), BladeRF, other devices supported by [**gr-osmosdr**](https://osmocom.org/projects/sdr/wiki/GrOsmoSDR) like HackRF and RedPitaya (not tested)
@@ -54,7 +54,7 @@ libopus0 (>= 1.1), libspeexdsp1, libprotobuf10, libpulse0 (>= 0.99.1), libqt4-ne
 libqt4-sql (>= 4:4.5.3), libqtcore4 (>= 4:4.8.0), libqtgui4 (>= 4:4.6.1),
  libstdc++6 (>= 5.2), gnuradio-dev, gr-osmosdr, libgsm1-dev, libprotobuf-dev,
  libopus-dev, libspeexdsp-dev, libpulse-dev, libcodec2-dev, libasound2-dev, libjpeg62-turbo-dev,
- libconfig++-dev, qt4-qmake, libqt4-dev, libqwt5-qt4-dev, libqt4-sql-sqlite, qt4-dev-tools
+ libconfig++-dev, qt4-qmake, libqt4-dev, libqt4-sql-sqlite, qt4-dev-tools
 </pre>
 
 - Please make sure you have all the development packages installed before building QRadioLink
@@ -82,7 +82,6 @@ $ sudo apt install libjpeg-turbo8-dev libjpeg-dev
 [Downloads](https://github.com/kantooon/qradiolink/releases "Downloads")
 ----
 
-Note that currently the 0.8.0 version is not yet released pending testing of the release candidates. You should build the software from Git to have the latest version.
 Debian Stretch x86_64 packages are provided via Travis CI automated builds
 Please see the [Github releases page](https://github.com/kantooon/qradiolink/releases) for binary downloads.
 
@@ -123,7 +122,7 @@ Running
 -------
 - It is recommended to start the application using the command line and check for errors.
 - At first run, see the Setup tab first and configure the application, then click Save before starting TX or RX from the main page, otherwise you may get a segmentation fault.
-- VOIP uses [umurmur](https://github.com/umurmur/umurmur) as a server. The available channels and the logged in stations are also listed on the page once you have connected to the server. The server IP/hostname will be saved on application exit. You can use QRadioLink as a pure VOIP client without using the radio by selecting "Use PTT for VOIP". You can also forward the digital or analog radio voice to the VOIP reflector. Any voice packets coming from the reflector will be transmitted directly after transcoding in this case. Currently full duplex audio from more than two VOIP clients at the same time is not supported.
+- VOIP uses [umurmur](https://github.com/umurmur/umurmur) as a server. A version known to work with qradiolink is mirrored at [qradiolink](https://github.com/qradiolink/umurmur) The available channels and the logged in stations are also listed on the page once you have connected to the server. The server IP/hostname will be saved on application exit. You can use QRadioLink as a pure VOIP client without using the radio by selecting "Use PTT for VOIP". You can also forward the digital or analog radio voice to the VOIP reflector. Any voice packets coming from the reflector will be transmitted directly after transcoding in this case. Currently full duplex audio from more than two VOIP clients at the same time is not supported.
 - The configuration file is located in $HOME/.config/qradiolink.cfg
 - The select inputs in the lower right corner toggle between different operating modes. Repeater mode requires both RX and TX to use the same mode.
 - Video will be displayed in the upper right corner. If your camera does not work, see the V4L2 guide for troubleshooting camera settings.

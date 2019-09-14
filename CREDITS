@@ -106,3 +106,26 @@ Audio filter from:
 End beep sound: http://www.w2sjw.com/radio_sounds.html (public domain)
 LED images: Jojo Mendoza (CC Attribution Noncommercial No Derivate 4.0)
 S-meter image from Wikipedia: https://en.wikipedia.org/wiki/File:Pmeter-t.jpg
+Icons from KDE 4 Oxygen theme
+
+// (c) Copyright 2016, Sean Connelly (@voidqk), http://syntheti.cc
+// MIT License
+// Project Home: https://github.com/voidqk/sndfilter
+
+// biquad filtering based on WebAudio specification:
+//   https://webaudio.github.io/web-audio-api/#the-biquadfilternode-interface
+
+
+// (c) Copyright 2016, Sean Connelly (@voidqk), http://syntheti.cc
+// MIT License
+// Project Home: https://github.com/voidqk/sndfilter
+
+// dynamics compressor based on WebAudio specification:
+//   https://webaudio.github.io/web-audio-api/#the-dynamicscompressornode-interface
+
+// (c) Copyright 2016, Sean Connelly (@voidqk), http://syntheti.cc
+// MIT License
+// Project Home: https://github.com/voidqk/sndfilter
+
+// biquad filtering based on WebAudio specification:
+//   https://webaudio.github.io/web-audio-api/#the-biquadfilternode-interface
