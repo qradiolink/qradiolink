@@ -23,6 +23,7 @@
 #include <gnuradio/filter/fft_filter_fff.h>
 #include <gnuradio/filter/rational_resampler_base_ccf.h>
 #include <gnuradio/analog/agc2_ff.h>
+#include <gnuradio/analog/feedforward_agc_cc.h>
 #include <gnuradio/blocks/multiply_const_cc.h>
 #include <gnuradio/blocks/multiply_const_ff.h>
 #include <gnuradio/blocks/add_ff.h>
@@ -50,6 +51,7 @@ private:
     gr::filter::fft_filter_fff::sptr _audio_filter;
     gr::filter::fft_filter_ccc::sptr _filter;
     gr::analog::agc2_ff::sptr _agc;
+    gr::analog::feedforward_agc_cc::sptr _feed_forward_agc;
     gr::analog::sig_source_f::sptr _signal_source;
     gr::blocks::add_ff::sptr _add;
     gr::blocks::float_to_complex::sptr _float_to_complex;

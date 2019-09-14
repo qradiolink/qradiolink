@@ -260,12 +260,16 @@ void MainWindow::showControls(bool value)
     {
         ui->plotterContainer->resize(xy.right() -xy.left()-20,xy.bottom()-xy.top()-210);
         ui->controlsFrame->show();
+        xy = ui->plotterContainer->geometry();
+        ui->secondaryTextDisplay->move(xy.left(), xy.bottom() - 150);
         _settings->show_controls = 1;
     }
     else
     {
         ui->plotterContainer->resize(xy.right() -xy.left()-20,xy.bottom()-xy.top()-120);
         ui->controlsFrame->hide();
+        xy = ui->plotterContainer->geometry();
+        ui->secondaryTextDisplay->move(xy.left(), xy.bottom() - 150);
         _settings->show_controls = 0;
     }
     emit enableRSSI(value);

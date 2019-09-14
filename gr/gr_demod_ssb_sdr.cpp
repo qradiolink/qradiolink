@@ -46,13 +46,14 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(std::vector<int>signature, int sps, int samp_
     _audio_resampler = gr::filter::rational_resampler_base_fff::make(2,5, audio_taps);
 
     _filter_usb = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
-                            1, _target_samp_rate, 300, _filter_width,600,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
+                            1, _target_samp_rate, 200, _filter_width,600,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     _filter_lsb = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
-                            1, _target_samp_rate, -_filter_width, -300,600,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
+                            1, _target_samp_rate, -_filter_width, -20,600,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     _squelch = gr::analog::pwr_squelch_cc::make(-140,0.01,0,true);
-    _agc = gr::analog::agc2_cc::make(1e-1, 1e-1, 1, 1);
+    _feed_forward_agc = gr::analog::feedforward_agc_cc::make(16,1);
+    _agc = gr::analog::agc2_cc::make(1e-1, 1e-2, 1, 0.5);
     _complex_to_real = gr::blocks::complex_to_real::make();
-    _audio_gain = gr::blocks::multiply_const_ff::make(0.1);
+    _audio_gain = gr::blocks::multiply_const_ff::make(0.5);
 
 
     connect(self(),0,_resampler,0);
@@ -69,6 +70,7 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(std::vector<int>signature, int sps, int samp_
         connect(_filter_lsb,0,_squelch,0);
     }
     connect(_squelch,0,_agc,0);
+    //connect(_feed_forward_agc,0,_agc,0);
     connect(_agc,0,_complex_to_real,0);
     connect(_complex_to_real,0,_audio_gain,0);
     connect(_audio_gain,0,_audio_resampler,0);

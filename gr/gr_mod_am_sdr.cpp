@@ -44,10 +44,11 @@ gr_mod_am_sdr::gr_mod_am_sdr(int sps, int samp_rate, int carrier_freq,
                 1,gr::filter::firdes::low_pass(
                     1, target_samp_rate, _filter_width, 1200, gr::filter::firdes::WIN_HAMMING));
     _float_to_complex = gr::blocks::float_to_complex::make();
-    std::vector<float> interp_taps = gr::filter::firdes::low_pass(500, _samp_rate,
+    std::vector<float> interp_taps = gr::filter::firdes::low_pass(125, _samp_rate,
                                                         _filter_width, _filter_width);
+    _feed_forward_agc = gr::analog::feedforward_agc_cc::make(1024,1);
     _resampler = gr::filter::rational_resampler_base_ccf::make(500, 4, interp_taps);
-    _amplify = gr::blocks::multiply_const_cc::make(0.5,1);
+    _amplify = gr::blocks::multiply_const_cc::make(2,1);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
     _filter = gr::filter::fft_filter_ccc::make(
                 1,gr::filter::firdes::complex_band_pass_2(
@@ -60,7 +61,8 @@ gr_mod_am_sdr::gr_mod_am_sdr(int sps, int samp_rate, int carrier_freq,
     connect(_audio_amplify,0,_add,0);
     connect(_signal_source,0,_add,1);
     connect(_add,0,_float_to_complex,0);
-    connect(_float_to_complex,0,_resampler,0);
+    connect(_float_to_complex,0,_feed_forward_agc,0);
+    connect(_feed_forward_agc,0,_resampler,0);
     connect(_resampler,0,_amplify,0);
     connect(_amplify,0,_bb_gain,0);
     connect(_bb_gain,0,_filter,0);
