@@ -30,6 +30,16 @@ AudioEncoder::AudioEncoder()
     {
         qDebug() << "audio decoder creation failed";
     }
+    _enc_voip = opus_encoder_create(8000,1,OPUS_APPLICATION_VOIP,&error);
+    if(error != OPUS_OK)
+    {
+        qDebug() << "audio encoder creation failed";
+    }
+    _dec_voip = opus_decoder_create(8000,1,&error1);
+    if(error1 != OPUS_OK)
+    {
+        qDebug() << "audio decoder creation failed";
+    }
     _codec2_1400 = codec2_create(CODEC2_MODE_1400);
     _codec2_700 = codec2_create(CODEC2_MODE_700B);
     _codec2_2400 = codec2_create(CODEC2_MODE_2400);
@@ -72,12 +82,30 @@ AudioEncoder::AudioEncoder()
     opus_encoder_ctl(_enc, OPUS_SET_INBAND_FEC(0));
     opus_decoder_ctl(_dec, OPUS_SET_GAIN(0));
 
+    // VOIP
+    int opus_bandwidth_voip;
+    opus_encoder_ctl(_enc_voip, OPUS_SET_VBR(0));
+    opus_encoder_ctl(_enc_voip, OPUS_SET_BITRATE(40000));
+    opus_encoder_ctl(_enc_voip, OPUS_SET_COMPLEXITY(10));
+    //opus_encoder_ctl(_enc, OPUS_SET_DTX(0));
+    opus_encoder_ctl(_enc_voip, OPUS_SET_LSB_DEPTH(24));
+    opus_encoder_ctl(_enc_voip, OPUS_SET_SIGNAL(OPUS_SIGNAL_VOICE));
+    opus_encoder_ctl(_enc_voip, OPUS_SET_APPLICATION(OPUS_APPLICATION_VOIP));
+    opus_encoder_ctl(_enc_voip, OPUS_SET_MAX_BANDWIDTH(OPUS_BANDWIDTH_FULLBAND));
+    opus_encoder_ctl(_enc_voip, OPUS_SET_PACKET_LOSS_PERC(0));
+    //opus_encoder_ctl(_enc, OPUS_SET_PREDICTION_DISABLED(0));
+    opus_encoder_ctl(_enc_voip, OPUS_GET_BANDWIDTH(&opus_bandwidth_voip));
+    opus_encoder_ctl(_enc_voip, OPUS_SET_INBAND_FEC(0));
+    opus_decoder_ctl(_dec_voip, OPUS_SET_GAIN(6));
+
 }
 
 AudioEncoder::~AudioEncoder()
 {
     opus_encoder_destroy(_enc);
     opus_decoder_destroy(_dec);
+    opus_encoder_destroy(_enc_voip);
+    opus_decoder_destroy(_dec_voip);
     codec2_destroy(_codec2_1400);
     codec2_destroy(_codec2_700);
     gsm_destroy(_gsm);
@@ -92,12 +120,33 @@ unsigned char* AudioEncoder::encode_opus(short *audiobuffer, int audiobuffersize
     return encoded_audio;
 }
 
+unsigned char* AudioEncoder::encode_opus_voip(short *audiobuffer, int audiobuffersize, int &encoded_size)
+{
+    unsigned char *encoded_audio = new unsigned char[120];
+    encoded_size = opus_encode(_enc_voip, audiobuffer, audiobuffersize/sizeof(short), encoded_audio, 120);
+    return encoded_audio;
+}
+
 short* AudioEncoder::decode_opus(unsigned char *audiobuffer, int audiobuffersize, int &samples)
 {
     int fs = 320;
     short *pcm = new short[fs];
     //memset(pcm,0,(fs)*sizeof(short));
     samples = opus_decode(_dec,audiobuffer,audiobuffersize, pcm, fs, 0);
+    if(samples <= 0)
+    {
+        delete[] pcm;
+        return NULL;
+    }
+    return pcm;
+}
+
+short* AudioEncoder::decode_opus_voip(unsigned char *audiobuffer, int audiobuffersize, int &samples)
+{
+    int fs = 320;
+    short *pcm = new short[fs];
+    //memset(pcm,0,(fs)*sizeof(short));
+    samples = opus_decode(_dec_voip,audiobuffer,audiobuffersize, pcm, fs, 0);
     if(samples <= 0)
     {
         delete[] pcm;

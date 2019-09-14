@@ -442,14 +442,18 @@ void RadioOp::startTx()
             _data_modem_reset_timer->start();
             _data_modem_sleep_timer->start();
         }
+        _mutex->lock();
         if(_rx_inited && !_repeat && (_rx_mode != gr_modem_types::ModemTypeQPSK250000))
             _modem->stopRX();
         if(_tx_modem_started)
             _modem->stopTX();
+
+        _modem->tuneTx(_tx_frequency + _tune_shift_freq);
         _modem->startTX();
+        _mutex->unlock();
+        // FIXME: sleep add as workaround for LimeSDR which has the calibration procedure
         struct timespec time_to_sleep = {0, 10000000L };
         nanosleep(&time_to_sleep, NULL);
-        _modem->tuneTx(_tx_frequency + _tune_shift_freq);
         _tx_modem_started = false;
         _tx_started = true;
         if((_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL))
@@ -471,6 +475,7 @@ void RadioOp::stopTx()
         struct timespec time_to_sleep = {1, 0L };
         nanosleep(&time_to_sleep, NULL);
         _modem->stopTX();
+        // FIXME: this handles the LO driving the amplifier but is not ideal
         _modem->tuneTx(430000000);
         _tx_modem_started = false;
         _tx_started = false;
@@ -1118,17 +1123,19 @@ void RadioOp::toggleRX(bool value)
             return;
         }
         _mutex->lock();
+        _modem->enableGUIFFT(_fft_enabled);
+        _modem->enableGUIConst(_constellation_enabled);
+        _modem->enableRSSI(_rssi_enabled);
         _modem->setRxSensitivity(_rx_sensitivity);
         _modem->setSquelch(_squelch);
         _modem->setRxCTCSS(_rx_ctcss);
         _modem->set_carrier_offset(_carrier_offset);
         _modem->set_samp_rate(_rx_sample_rate);
         _modem->tune(_rx_frequency);
+        // FIXME: why do I need a delay here?
+        struct timespec time_to_sleep = {0, 50000000L };
+        nanosleep(&time_to_sleep, NULL);
         _modem->startRX();
-        _modem->enableGUIConst(_constellation_enabled);
-        _modem->enableGUIFFT(_fft_enabled);
-        _modem->enableRSSI(_rssi_enabled);
-
         _mutex->unlock();
         if(_rx_mode == gr_modem_types::ModemTypeQPSK250000 && _net_device == 0)
         {

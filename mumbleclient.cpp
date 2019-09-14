@@ -577,7 +577,8 @@ void MumbleClient::processPCMAudio(short *audiobuffer, int audiobuffersize)
     }
     int packet_size = 0;
     unsigned char *encoded_audio;
-    encoded_audio = _codec->encode_opus(audiobuffer, audiobuffersize, packet_size);
+    // encode the PCM with higher quality and bitrate
+    encoded_audio = _codec->encode_opus_voip(audiobuffer, audiobuffersize, packet_size);
     createVoicePacket(encoded_audio, packet_size);
     delete[] encoded_audio;
     delete[] audiobuffer;
@@ -691,7 +692,7 @@ void MumbleClient::decodeAudio(unsigned char *audiobuffer, short audiobuffersize
     }
     else
     {
-        pcm = _codec->decode_opus(audiobuffer,audiobuffersize, samples);
+        pcm = _codec->decode_opus_voip(audiobuffer,audiobuffersize, samples);
     }
     if(pcm == NULL)
         return;
