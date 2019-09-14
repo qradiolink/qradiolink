@@ -19,6 +19,10 @@
         <file>res/arrow-right-double.png</file>
         <file>res/go-first-view.png</file>
         <file>res/go-last-view.png</file>
+        <file>res/text-speak.png</file>
+        <file>res/application-exit.png</file>
+        <file>res/call-start.png</file>
+        <file>res/im-user.png</file>
     </qresource>
     <qresource prefix="/fonts">
         <file>res/LiquidCrystal-Normal.otf</file>

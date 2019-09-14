@@ -603,6 +603,11 @@ void MainWindow::updateOnlineStations(StationList stations)
             QTreeWidgetItem *st_item = new QTreeWidgetItem(0);
             st_item->setText(0,stations.at(i).callsign);
             st_item->setText(3,QString::number(stations.at(i).id));
+            st_item->setIcon(0,QIcon(":/res/im-user.png"));
+            st_item->setBackgroundColor(0,QColor("#ffffff"));
+            st_item->setBackgroundColor(1,QColor("#ffffff"));
+            st_item->setBackgroundColor(2,QColor("#ffffff"));
+            st_item->setBackgroundColor(3,QColor("#ffffff"));
             item->addChild(st_item);
         }
     }
@@ -622,14 +627,16 @@ void MainWindow::newChannel(Channel *chan)
             old_item->setTextColor(0,QColor("#000000"));
             old_item->setTextColor(1,QColor("#000000"));
             old_item->setTextColor(2,QColor("#000000"));
+            old_item->setIcon(0,QIcon(":/res/call-start.png"));
         }
         QTreeWidgetItem *item = ui->voipTreeWidget->findItems(QString::number(chan->id),Qt::MatchExactly | Qt::MatchRecursive,2).at(0);
-        item->setBackgroundColor(0,QColor("#770000"));
-        item->setBackgroundColor(1,QColor("#770000"));
-        item->setBackgroundColor(2,QColor("#770000"));
+        item->setBackgroundColor(0,QColor("#cc0000"));
+        item->setBackgroundColor(1,QColor("#cc0000"));
+        item->setBackgroundColor(2,QColor("#cc0000"));
         item->setTextColor(0,QColor("#ffffff"));
         item->setTextColor(1,QColor("#ffffff"));
         item->setTextColor(2,QColor("#ffffff"));
+        item->setIcon(0,QIcon(":/res/call-start.png"));
         _current_voip_channel = chan->id;
         ui->voipTreeWidget->expandAll();
         return;
@@ -644,6 +651,7 @@ void MainWindow::newChannel(Channel *chan)
     t->setTextColor(0,QColor("#000000"));
     t->setTextColor(1,QColor("#000000"));
     t->setTextColor(2,QColor("#000000"));
+    t->setIcon(0,QIcon(":/res/call-start.png"));
     if(chan->parent_id <= 0)
         ui->voipTreeWidget->addTopLevelItem(t);
     else
@@ -654,6 +662,7 @@ void MainWindow::newChannel(Channel *chan)
             QTreeWidgetItem *parent = channel_list.at(0);
             parent->addChild(t);
             t->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
+            t->setIcon(0,QIcon(":/res/call-start.png"));
         }
     }
     ui->voipTreeWidget->expandAll();
