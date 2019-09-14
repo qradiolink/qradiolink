@@ -85,18 +85,18 @@ AudioEncoder::AudioEncoder()
     // VOIP
     int opus_bandwidth_voip;
     opus_encoder_ctl(_enc_voip, OPUS_SET_VBR(0));
-    opus_encoder_ctl(_enc_voip, OPUS_SET_BITRATE(40000));
-    opus_encoder_ctl(_enc_voip, OPUS_SET_COMPLEXITY(10));
+    opus_encoder_ctl(_enc_voip, OPUS_SET_BITRATE(48000));
+    opus_encoder_ctl(_enc_voip, OPUS_SET_COMPLEXITY(5));
     //opus_encoder_ctl(_enc, OPUS_SET_DTX(0));
     opus_encoder_ctl(_enc_voip, OPUS_SET_LSB_DEPTH(24));
-    opus_encoder_ctl(_enc_voip, OPUS_SET_SIGNAL(OPUS_SIGNAL_VOICE));
-    opus_encoder_ctl(_enc_voip, OPUS_SET_APPLICATION(OPUS_APPLICATION_VOIP));
+    opus_encoder_ctl(_enc_voip, OPUS_SET_SIGNAL(OPUS_SIGNAL_MUSIC));
+    opus_encoder_ctl(_enc_voip, OPUS_SET_APPLICATION(OPUS_APPLICATION_AUDIO));
     opus_encoder_ctl(_enc_voip, OPUS_SET_MAX_BANDWIDTH(OPUS_BANDWIDTH_FULLBAND));
     opus_encoder_ctl(_enc_voip, OPUS_SET_PACKET_LOSS_PERC(0));
     //opus_encoder_ctl(_enc, OPUS_SET_PREDICTION_DISABLED(0));
     opus_encoder_ctl(_enc_voip, OPUS_GET_BANDWIDTH(&opus_bandwidth_voip));
-    opus_encoder_ctl(_enc_voip, OPUS_SET_INBAND_FEC(0));
-    opus_decoder_ctl(_dec_voip, OPUS_SET_GAIN(6));
+    //opus_encoder_ctl(_enc_voip, OPUS_SET_INBAND_FEC(0));
+    opus_decoder_ctl(_dec_voip, OPUS_SET_GAIN(24));
 
 }
 

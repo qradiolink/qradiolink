@@ -534,6 +534,7 @@ void RadioOp::sendBinData(QByteArray data, int frame_type)
 
 void RadioOp::flushVoipBuffer()
 {
+    // FIXME: breakups on official Mumble client
     if(_voip_encode_buffer->size() >= 320)
     {
 
@@ -1133,7 +1134,7 @@ void RadioOp::toggleRX(bool value)
         _modem->set_samp_rate(_rx_sample_rate);
         _modem->tune(_rx_frequency);
         // FIXME: why do I need a delay here?
-        struct timespec time_to_sleep = {0, 50000000L };
+        struct timespec time_to_sleep = {0, 100000000L };
         nanosleep(&time_to_sleep, NULL);
         _modem->startRX();
         _mutex->unlock();
