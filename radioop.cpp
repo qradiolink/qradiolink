@@ -451,7 +451,7 @@ void RadioOp::startTx()
         _modem->tuneTx(_tx_frequency + _tune_shift_freq);
         _modem->startTX();
         _mutex->unlock();
-        // FIXME: sleep add as workaround for LimeSDR which has the calibration procedure
+        // FIXME: how to handle the LimeSDR calibration better?
         struct timespec time_to_sleep = {0, 10000000L };
         nanosleep(&time_to_sleep, NULL);
         _tx_modem_started = false;
@@ -475,8 +475,6 @@ void RadioOp::stopTx()
         struct timespec time_to_sleep = {1, 0L };
         nanosleep(&time_to_sleep, NULL);
         _modem->stopTX();
-        // FIXME: this handles the LO driving the amplifier but is not ideal
-        _modem->tuneTx(430000000);
         _tx_modem_started = false;
         _tx_started = false;
         if(_rx_inited && !_repeat && (_rx_mode != gr_modem_types::ModemTypeQPSK250000))
