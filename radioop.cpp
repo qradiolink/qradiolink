@@ -535,6 +535,7 @@ void RadioOp::sendBinData(QByteArray data, int frame_type)
 void RadioOp::flushVoipBuffer()
 {
     // FIXME: breakups on official Mumble client
+    _mutex->lock();
     if(_voip_encode_buffer->size() >= 320)
     {
 
@@ -547,6 +548,7 @@ void RadioOp::flushVoipBuffer()
         emit voipDataPCM(pcm,320*sizeof(short));
         _voip_encode_buffer->remove(0,320);
     }
+    _mutex->unlock();
 }
 
 void RadioOp::updateDataModemReset(bool transmitting, bool ptt_activated)
@@ -804,6 +806,11 @@ void RadioOp::receivePCMAudio(std::vector<float> *audio_data)
     int size = audio_data->size();
 
     short *pcm = new short[size];
+    // FIXME: we only have a single mutex that blocks the thread for everything
+    if(_voip_forwarding)
+    {
+        _mutex->lock();
+    }
     for(int i=0;i<size;i++)
     {
         pcm[i] = (short)(audio_data->at(i) * 1e-1*exp(_rx_volume*log(10)) * 32767.0f);
@@ -811,6 +818,10 @@ void RadioOp::receivePCMAudio(std::vector<float> *audio_data)
         {
             _voip_encode_buffer->push_back(pcm[i]);
         }
+    }
+    if(_voip_forwarding)
+    {
+        _mutex->unlock();
     }
     if(_voip_forwarding)
     {
