@@ -748,6 +748,7 @@ void RadioOp::getConstellationData()
 
 void RadioOp::receiveDigitalAudio(unsigned char *data, int size)
 {
+    float volume_coeff = 1e-1*exp(_rx_volume*log(10));
     short *audio_out;
     int samples;
     int audio_mode = AudioInterface::AUDIO_MODE_OPUS;
@@ -786,7 +787,7 @@ void RadioOp::receiveDigitalAudio(unsigned char *data, int size)
         }
         for(int i=0;i<samples;i++)
         {
-            audio_out[i] = (short)((float)audio_out[i] * amplif * 1e-1*exp(_rx_volume*log(10)));
+            audio_out[i] = (short)((float)audio_out[i] * amplif * volume_coeff);
         }
         if(_voip_forwarding && audio_mode!=AudioInterface::AUDIO_MODE_OPUS)
         {
@@ -801,6 +802,7 @@ void RadioOp::receiveDigitalAudio(unsigned char *data, int size)
 
 void RadioOp::receivePCMAudio(std::vector<float> *audio_data)
 {
+    float volume_coeff = 1e-1*exp(_rx_volume*log(10));
     int size = audio_data->size();
 
     short *pcm = new short[size];
@@ -811,7 +813,7 @@ void RadioOp::receivePCMAudio(std::vector<float> *audio_data)
     }
     for(int i=0;i<size;i++)
     {
-        pcm[i] = (short)(audio_data->at(i) * 1e-1*exp(_rx_volume*log(10)) * 32767.0f);
+        pcm[i] = (short)(audio_data->at(i) * volume_coeff * 32767.0f);
         if(_voip_forwarding)
         {
             _voip_encode_buffer->push_back(pcm[i]);
@@ -956,7 +958,7 @@ void RadioOp::receiveNetData(unsigned char *data, int size)
 
 void RadioOp::processVoipAudioFrame(short *pcm, int samples, quint64 sid)
 {
-
+    float volume_coeff = 1e-1*exp(_rx_volume*log(10));
     if(_m_queue->empty())
     {
         for(int i=0;i<samples;i++)
@@ -987,7 +989,7 @@ void RadioOp::processVoipAudioFrame(short *pcm, int samples, quint64 sid)
         short *pcm = new short[_m_queue->size()];
         for(unsigned int i = 0;i<_m_queue->size();i++)
         {
-            pcm[i] = (short)((float)_m_queue->at(i) * 1e-1*exp(_rx_volume*log(10)));
+            pcm[i] = (short)((float)_m_queue->at(i) * volume_coeff);
         }
         if(_voip_forwarding && _tx_inited)
         {

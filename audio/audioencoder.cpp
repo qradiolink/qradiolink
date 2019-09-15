@@ -97,7 +97,7 @@ AudioEncoder::AudioEncoder()
     opus_encoder_ctl(_enc_voip, OPUS_GET_BANDWIDTH(&opus_bandwidth_voip));
     opus_encoder_ctl(_enc_voip, OPUS_SET_EXPERT_FRAME_DURATION(OPUS_FRAMESIZE_40_MS));
     //opus_encoder_ctl(_enc_voip, OPUS_SET_INBAND_FEC(0));
-    opus_decoder_ctl(_dec_voip, OPUS_SET_GAIN(24));
+    opus_decoder_ctl(_dec_voip, OPUS_SET_GAIN(2048));
 
 }
 

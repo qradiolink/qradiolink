@@ -76,7 +76,8 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     ui->tuneDial->setStyleSheet("background-color: rgb(150, 150, 150);");
     ui->txGainDial->setNotchesVisible(true);
 
-
+    _speech_icon_timer.setSingleShot(true);
+    _secondary_text_timer.setSingleShot(true);
 
     QObject::connect(ui->buttonTransmit,SIGNAL(toggled(bool)),this,SLOT(startTransmissionRequested()));
     //QObject::connect(ui->buttonTransmit,SIGNAL(released()),this,SLOT(GUIendTransmission()));
