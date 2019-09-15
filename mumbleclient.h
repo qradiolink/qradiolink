@@ -80,6 +80,7 @@ public slots:
     int disconnectStation(QString radio_id);
     void disconnectAllStations();
     void setMute(bool mute);
+    void logMessage(QString log_msg);
 
 private:
     void sendUDPMessage(quint8 *message, int size);

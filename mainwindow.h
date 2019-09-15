@@ -53,9 +53,11 @@ public slots:
     void connectVOIPRequested();
     void disconnectVOIPRequested();
     void connectedToServer(QString msg);
+    void resetSpeechIcons();
     void sendTextRequested();
     void chooseFile();
     void displayText(QString text, bool html);
+    void displayVOIPText(QString text, bool html);
     void displayCallsign(QString callsign);
     void displayReceiveStatus(bool status);
     void displayTransmitStatus(bool status);
@@ -184,7 +186,9 @@ private:
     QPixmap *_s_meter_bg;
     QTimer _secondary_text_timer;
     QTimer _video_timer;
+    QTimer _speech_icon_timer;
     QMutex _mutex;
+    StationList _user_list;
 
 
 

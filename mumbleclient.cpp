@@ -53,6 +53,7 @@ void MumbleClient::connectToServer(QString address, unsigned port)
     QObject::connect(_socket_client,SIGNAL(connectedToHost()),this,SLOT(sendVersion()));
     QObject::connect(_socket_client,SIGNAL(haveMessage(QByteArray)),this,SLOT(processProtoMessage(QByteArray)));
     QObject::connect(_socket_client,SIGNAL(haveUDPData(QByteArray)),this,SLOT(processUDPData(QByteArray)));
+    QObject::connect(_socket_client,SIGNAL(logMessage(QString)),this,SLOT(logMessage(QString)));
 }
 
 void MumbleClient::disconnectFromServer()
@@ -63,11 +64,12 @@ void MumbleClient::disconnectFromServer()
         QObject::disconnect(_socket_client,SIGNAL(connectedToHost()),this,SLOT(sendVersion()));
         QObject::disconnect(_socket_client,SIGNAL(haveMessage(QByteArray)),this,SLOT(processProtoMessage(QByteArray)));
         QObject::disconnect(_socket_client,SIGNAL(haveUDPData(QByteArray)),this,SLOT(processUDPData(QByteArray)));
+        QObject::disconnect(_socket_client,SIGNAL(logMessage(QString)),this,SLOT(logMessage(QString)));
         _encryption_set = false;
         _authenticated = false;
         _synchronized = false;
         _session_id = -1;
-        std::cout << "Disconnected" << std::endl;
+        emit textMessage("Disconnected", false);
     }
 }
 
@@ -89,7 +91,7 @@ void MumbleClient::sendVersion()
 
 void MumbleClient::authenticate()
 {
-    std::cout << "Authenticating" << std::endl;
+    emit textMessage("Authenticating", false);
     MumbleProto::Authenticate *auth = new MumbleProto::Authenticate;
 
     int rand_len = 4;
@@ -256,14 +258,14 @@ void MumbleClient::processUserState(quint8 *message, quint64 size)
     if((_session_id==-1) && (us.has_channel_id()))
     {
         _channel_id = us.channel_id();
-        emit textMessage(" Joined channel: " + _channel_id, false);
+        emit textMessage("Joined channel: " + QString::number(_channel_id), false);
     }
     if(us.session() == _session_id)
     {
         if(us.has_channel_id())
         {
             _channel_id = us.channel_id();
-            emit textMessage( " Joined channel: " + _channel_id, false);
+            emit textMessage( "Joined channel: " + QString::number(_channel_id), false);
             Channel *c = new Channel(_channel_id,0,"","");
             emit newChannel(c);
             if(_channel_id > 1)
@@ -755,4 +757,7 @@ void MumbleClient::sendUDPPing()
 #endif
 }
 
-
+void MumbleClient::logMessage(QString log_msg)
+{
+    textMessage(log_msg, false);
+}

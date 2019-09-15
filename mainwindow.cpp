@@ -126,6 +126,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     QObject::connect(ui->voipTreeWidget,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this,SLOT(channelState(QTreeWidgetItem *,int)));
     QObject::connect(&_secondary_text_timer,SIGNAL(timeout()),ui->secondaryTextDisplay,SLOT(hide()));
     QObject::connect(&_video_timer,SIGNAL(timeout()),ui->videoFrame,SLOT(hide()));
+    QObject::connect(&_speech_icon_timer,SIGNAL(timeout()),this,SLOT(resetSpeechIcons()));
 
     ui->rxModemTypeComboBox->setAttribute(Qt::WA_AcceptTouchEvents);
     ui->txModemTypeComboBox->setAttribute(Qt::WA_AcceptTouchEvents);
@@ -525,6 +526,21 @@ void MainWindow::displayText(QString text, bool html)
     _secondary_text_timer.start(10000);
 }
 
+void MainWindow::displayVOIPText(QString text, bool html)
+{
+    ui->voipMessagesEdit->moveCursor(QTextCursor::End);
+    if(ui->voipMessagesEdit->toPlainText().size() > 1024*1024)
+    {
+        ui->voipMessagesEdit->clear();
+    }
+    if(html)
+        ui->voipMessagesEdit->insertHtml(text);
+    else
+        ui->voipMessagesEdit->append(text);
+
+    ui->voipMessagesEdit->verticalScrollBar()->setValue(ui->voipMessagesEdit->verticalScrollBar()->maximum());
+}
+
 void MainWindow::clearTextArea()
 {
     ui->receivedTextEdit->setPlainText("");
@@ -589,7 +605,7 @@ void MainWindow::disconnectVOIPRequested()
 
 void MainWindow::connectedToServer(QString msg)
 {
-    displayText(msg, false);
+    displayVOIPText(msg, false);
     ui->voipConnectButton->setDisabled(true);
 }
 
@@ -611,6 +627,8 @@ void MainWindow::updateOnlineStations(StationList stations)
                                                                              Qt::MatchExactly | Qt::MatchRecursive,2);
         if(channel_list.size()>0)
         {
+            if(QString::number(stations.at(i).id) == ".")
+                continue;
             QTreeWidgetItem *item = channel_list.at(0);
             QTreeWidgetItem *st_item = new QTreeWidgetItem(0);
             st_item->setText(0,stations.at(i).callsign);
@@ -621,6 +639,7 @@ void MainWindow::updateOnlineStations(StationList stations)
             st_item->setBackgroundColor(2,QColor("#ffffff"));
             st_item->setBackgroundColor(3,QColor("#ffffff"));
             item->addChild(st_item);
+            _user_list.append(stations.at(i));
         }
     }
 }
@@ -629,6 +648,13 @@ void MainWindow::leftStation(Station *s)
 {
     QList<QTreeWidgetItem*> list = ui->voipTreeWidget->findItems(QString::number(s->id),
              Qt::MatchExactly | Qt::MatchRecursive,3);
+    for(int i =0;i<_user_list.size();i++)
+    {
+        if(_user_list.at(i).id == s->id)
+        {
+            _user_list.remove(i);
+        }
+    }
     if(list.size()>0)
     {
         delete list.at(0);
@@ -641,8 +667,22 @@ void MainWindow::userSpeaking(quint64 id)
              Qt::MatchExactly | Qt::MatchRecursive,3);
     if(list.size()>0)
     {
-        // FIXME: need a timer
-        //list.at(0)->setIcon(0, QIcon(":res/text-speak.png"));
+        list.at(0)->setIcon(0, QIcon(":res/text-speak.png"));
+    }
+    if(!_speech_icon_timer.isActive())
+        _speech_icon_timer.start(1000);
+}
+
+void MainWindow::resetSpeechIcons()
+{
+    for(int i =0;i<_user_list.size();i++)
+    {
+        QList<QTreeWidgetItem*> list = ui->voipTreeWidget->findItems(QString::number(_user_list.at(i).id),
+                 Qt::MatchExactly | Qt::MatchRecursive,3);
+        if(list.size()>0)
+        {
+            list.at(0)->setIcon(0, QIcon(":res/im-user.png"));
+        }
     }
 }
 

@@ -78,9 +78,10 @@ int SSLClient::connectionStatus()
 }
 
 
+
 void SSLClient::connectionSuccess()
 {
-    std::cout << "Successfull server connection" << std::endl;
+    emit logMessage("Successfull server connection");
     _status=1;
     _connection_tries=0;
     _reconnect = true;
@@ -97,7 +98,7 @@ void SSLClient::connectionFailed(QAbstractSocket::SocketError)
 {
 
 
-    std::cerr << "Outgoing connection failed " << _socket->errorString().toStdString() << std::endl;
+    emit logMessage("Outgoing connection failed " + _socket->errorString());
     if(_status==1)
     {
         _socket->close();
@@ -115,7 +116,7 @@ void SSLClient::tryReconnect()
 {
     if(!_reconnect)
         return;
-    std::cout << "Disconnected" << std::endl;
+    emit logMessage("Disconnected");
     _connection_tries++;
     struct timespec time_to_sleep = {2, 0L };
     nanosleep(&time_to_sleep, NULL);
@@ -134,10 +135,10 @@ void SSLClient::tryReconnect()
 
 void SSLClient::sslError(QList<QSslError> errors)
 {
-    std::cerr << "SSL errors occured" << std::endl;
+    emit logMessage("SSL errors occured");
     for(int i =0;i<errors.size();i++)
     {
-        std::cerr << errors.at(i).errorString().toStdString() << std::endl;
+        emit logMessage(errors.at(i).errorString());
     }
     const QSslCertificate cert = _socket->peerCertificate();
     _socket->peerCertificateChain() << cert;
@@ -152,7 +153,7 @@ void SSLClient::connectHost(const QString &host, const unsigned &port)
         _socket->close();
         _status=0;
     }
-    std::cout << "trying " << host.toStdString() << std::endl;
+    emit logMessage("Trying connection to" + host);
     _socket->connectToHostEncrypted(host, port);
     _hostname = host;
     _port = port;

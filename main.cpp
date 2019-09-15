@@ -232,7 +232,7 @@ int main(int argc, char *argv[])
     QObject::connect(client,SIGNAL(leftStation(Station*)),w,SLOT(leftStation(Station*)));
     QObject::connect(client,SIGNAL(userSpeaking(quint64)),w,SLOT(userSpeaking(quint64)));
     QObject::connect(client,SIGNAL(onlineStations(StationList)),radio_op,SLOT(setStations(StationList)));
-    QObject::connect(client,SIGNAL(textMessage(QString,bool)),w,SLOT(displayText(QString,bool)));
+    QObject::connect(client,SIGNAL(textMessage(QString,bool)),w,SLOT(displayVOIPText(QString,bool)));
     QObject::connect(client,SIGNAL(connectedToServer(QString)),w,SLOT(connectedToServer(QString)));
     QObject::connect(client,SIGNAL(newChannel(Channel*)),w,SLOT(newChannel(Channel*)));
     QObject::connect(client,SIGNAL(newChannel(Channel*)),radio_op,SLOT(addChannel(Channel*)));

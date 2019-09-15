@@ -58,6 +58,7 @@ signals:
     void haveMessage(QByteArray buf);
     void haveUDPData(QByteArray buf);
     void disconnectedFromHost();
+    void logMessage(QString log_msg);
 
 private:
     QSslSocket *_socket;
