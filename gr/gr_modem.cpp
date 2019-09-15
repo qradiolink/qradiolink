@@ -244,6 +244,13 @@ void gr_modem::tune(long center_freq)
         _gr_demod_base->tune(center_freq);
 }
 
+void gr_modem::tuneTx(long center_freq)
+{
+
+    if(_gr_mod_base)
+        _gr_mod_base->tune(center_freq);
+}
+
 void gr_modem::set_carrier_offset(long offset)
 {
     if(_gr_demod_base)
@@ -252,8 +259,8 @@ void gr_modem::set_carrier_offset(long offset)
 
 void gr_modem::set_tx_carrier_offset(long offset)
 {
-    if(_gr_mod_base)
-        _gr_mod_base->set_carrier_offset(offset);
+    // we don't use carrier_offset for TX, fixed sample rate
+    Q_UNUSED(offset);
 }
 
 void gr_modem::set_samp_rate(int samp_rate)
@@ -266,13 +273,6 @@ void gr_modem::setFFTSize(int size)
 {
     if(_gr_demod_base)
         _gr_demod_base->set_fft_size(size);
-}
-
-void gr_modem::tuneTx(long center_freq)
-{
-
-    if(_gr_mod_base)
-        _gr_mod_base->tune(center_freq);
 }
 
 void gr_modem::setTxPower(float value)

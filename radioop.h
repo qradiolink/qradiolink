@@ -67,6 +67,7 @@ public:
 
     void flushVoipBuffer();
     void updateDataModemReset(bool transmitting, bool ptt_activated);
+
 signals:
     void finished();
     void printText(QString text, bool html);
@@ -113,7 +114,8 @@ public slots:
     void toggleTxMode(int value);
     void fineTuneFreq(long center_freq);
     void tuneFreq(qint64 center_freq);
-    void tuneTxFreq(qint64 center_freq);
+    void tuneTxFreq(qint64 actual_freq);
+    void changeTxShift(qint64 center_freq);
     void setTxPower(int dbm);
     void setBbGain(int value);
     void setSquelch(int value);
@@ -231,6 +233,7 @@ private:
     void sendChannels();
     void sendTextData(QString text, int frame_type);
     void sendBinData(QByteArray data, int frame_type);
+    bool getDemodulatorData();
     void getFFTData();
     void getConstellationData();
     void getRSSI();

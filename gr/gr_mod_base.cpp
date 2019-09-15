@@ -369,6 +369,7 @@ void gr_mod_base::set_bb_gain(int value)
     _top_block->unlock();
 }
 
+// unused because of fixed sample rate
 void gr_mod_base::set_carrier_offset(long carrier_offset)
 {
     _carrier_offset = carrier_offset;

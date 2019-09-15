@@ -67,7 +67,7 @@ public slots:
     void userSpeaking(quint64 id);
     void toggleRXwin(bool value);
     void toggleTXwin(bool value);
-    void tuneCenterFreq(int value);
+    void clarifierTuneFreq(int value);
     void tuneMainFreq(qint64 freq);
     void tuneFreqPlotter(qint64 freq);
     void toggleWideband(bool value);
@@ -117,7 +117,8 @@ signals:
     void toggleRX(bool value);
     void toggleTX(bool value);
     void tuneFreq(qint64 center_freq);
-    void tuneTxFreq(qint64 center_freq);
+    void tuneTxFreq(qint64 freq);
+    void changeTxShift(qint64 center_freq);
     void fineTuneFreq(long center_freq);
     void toggleWidebandMode(bool value);
     void toggleRxModemMode(int value);
@@ -161,6 +162,7 @@ private:
     QPixmap *_constellation_img;
     QFileInfo *_config_file;
     qint64 _rx_frequency;
+    qint64 _tx_frequency;
     qint64 _tx_shift_frequency;
     QFileInfo *setupConfig();
     void closeEvent(QCloseEvent *);

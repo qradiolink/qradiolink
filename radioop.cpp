@@ -209,6 +209,7 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
     }
     if(_tx_frequency == 0)
     {
+        // tx_frequency is the actual, not center freq
         _tx_frequency = rx_frequency + demod_offset;
     }
     if(_carrier_offset == 0)
@@ -443,12 +444,14 @@ void RadioOp::startTx()
             _data_modem_sleep_timer->start();
         }
         _mutex->lock();
-        if(_rx_inited && !_repeat && (_rx_mode != gr_modem_types::ModemTypeQPSK250000))
-            _modem->stopRX();
+        // FIXME: full duplex mode
+        //if(_rx_inited && !_repeat && (_rx_mode != gr_modem_types::ModemTypeQPSK250000))
+        //    _modem->stopRX();
         if(_tx_modem_started)
             _modem->stopTX();
 
         _modem->tuneTx(_tx_frequency + _tune_shift_freq);
+        _modem->setTxPower(_tx_power);
         _modem->startTX();
         _mutex->unlock();
         // FIXME: how to handle the LimeSDR calibration better?
@@ -474,11 +477,15 @@ void RadioOp::stopTx()
         }
         struct timespec time_to_sleep = {1, 0L };
         nanosleep(&time_to_sleep, NULL);
+        _mutex->lock();
+        _modem->setTxPower(0.0);
         _modem->stopTX();
+        _mutex->unlock();
         _tx_modem_started = false;
         _tx_started = false;
-        if(_rx_inited && !_repeat && (_rx_mode != gr_modem_types::ModemTypeQPSK250000))
-            _modem->startRX();
+        // FIXME: full duplex mode
+        //if(_rx_inited && !_repeat && (_rx_mode != gr_modem_types::ModemTypeQPSK250000))
+        //   _modem->startRX();
     }
 }
 
@@ -578,6 +585,24 @@ void RadioOp::updateDataModemReset(bool transmitting, bool ptt_activated)
     }
 }
 
+bool RadioOp::getDemodulatorData()
+{
+    bool data_to_process = false;
+    if(_rx_inited)
+    {
+        if(_rx_radio_type == radio_type::RADIO_TYPE_DIGITAL)
+            data_to_process = _modem->demodulate();
+        else if(_rx_radio_type == radio_type::RADIO_TYPE_ANALOG)
+        {
+            data_to_process = _modem->demodulateAnalog();
+        }
+
+        if(!_tuning_done)
+            scan(data_to_process);
+    }
+    return data_to_process;
+}
+
 void RadioOp::run()
 {
 
@@ -588,7 +613,10 @@ void RadioOp::run()
     int last_channel_broadcast_time = 0;
     while(true)
     {
+        _mutex->lock();
         bool transmitting = _transmitting_audio;
+        bool rx_inited = _rx_inited;
+        _mutex->unlock();
         QCoreApplication::processEvents();
         flushVoipBuffer();
 
@@ -621,13 +649,16 @@ void RadioOp::run()
             stopTx();
         }
         processInputAudioStream();
+        getFFTData();
+        getConstellationData();
+        getRSSI();
         if(transmitting)
         {
             if(_tx_mode == gr_modem_types::ModemTypeQPSKVideo)
                 processInputVideoStream(frame_flag);
             else if((_tx_mode == gr_modem_types::ModemTypeQPSK250000) && (_net_device != 0))
             {
-                if(_rx_inited)
+                if(rx_inited)
                 {
                     _modem->demodulate();
                 }
@@ -635,24 +666,9 @@ void RadioOp::run()
                     processInputNetStream();
             }
         }
-        else
-        {
-            bool rx_inited = _rx_inited;
-            if(rx_inited)
-            {
-                if(_rx_radio_type == radio_type::RADIO_TYPE_DIGITAL)
-                    data_to_process = _modem->demodulate();
-                else if(_rx_radio_type == radio_type::RADIO_TYPE_ANALOG)
-                {
-                    data_to_process = _modem->demodulateAnalog();
-                }
-                getFFTData();
-                getConstellationData();
-                getRSSI();
-                if(!_tuning_done)
-                    scan(data_to_process);
-            }
-        }
+
+        data_to_process = getDemodulatorData();
+
         if(_process_text && (_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL))
         {
             sendTextData(_text_out, gr_modem::FrameTypeText);
@@ -1465,10 +1481,17 @@ void RadioOp::fineTuneFreq(long center_freq)
 
 void RadioOp::tuneFreq(qint64 center_freq)
 {
+    // _rx_frequency is the source center frequency
     _rx_frequency = center_freq;
-    _tx_frequency = center_freq + _carrier_offset;
     _mutex->lock();
     _modem->tune(_rx_frequency);
+    _mutex->unlock();
+}
+
+void RadioOp::tuneTxFreq(qint64 actual_freq)
+{
+    _tx_frequency = actual_freq;
+    _mutex->lock();
     _modem->tuneTx(_tx_frequency + _tune_shift_freq);
     _mutex->unlock();
 }
@@ -1477,12 +1500,13 @@ void RadioOp::setCarrierOffset(qint64 offset)
 {
     _carrier_offset = offset;
     _mutex->lock();
+    // we don't use carrier_offset for TX, fixed sample rate
     _modem->set_carrier_offset(offset);
     _mutex->unlock();
 }
 
 
-void RadioOp::tuneTxFreq(qint64 center_freq)
+void RadioOp::changeTxShift(qint64 center_freq)
 {
     _tune_shift_freq = center_freq;
     _mutex->lock();

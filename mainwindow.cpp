@@ -88,7 +88,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     QObject::connect(ui->clearReceivedTextButton,SIGNAL(clicked()),this,SLOT(clearTextArea()));
     QObject::connect(ui->rxStatusButton,SIGNAL(toggled(bool)),this,SLOT(toggleRXwin(bool)));
     QObject::connect(ui->txStatusButton,SIGNAL(toggled(bool)),this,SLOT(toggleTXwin(bool)));
-    QObject::connect(ui->tuneDial,SIGNAL(valueChanged(int)),this,SLOT(tuneCenterFreq(int)));
+    QObject::connect(ui->tuneDial,SIGNAL(valueChanged(int)),this,SLOT(clarifierTuneFreq(int)));
     QObject::connect(ui->frequencyEdit,SIGNAL(returnPressed()),this,SLOT(enterFreq()));
     QObject::connect(ui->shiftEdit,SIGNAL(returnPressed()),this,SLOT(enterShift()));
     QObject::connect(ui->txGainDial,SIGNAL(valueChanged(int)),this,SLOT(setTxPowerDisplay(int)));
@@ -801,7 +801,7 @@ void MainWindow::toggleRepeater(bool value)
     emit toggleRepeat(value);
 }
 
-void MainWindow::tuneCenterFreq(int value)
+void MainWindow::clarifierTuneFreq(int value)
 {
     emit fineTuneFreq((int)ui->tuneDial->value());
 }
@@ -811,18 +811,23 @@ void MainWindow::tuneMainFreq(qint64 freq)
 
     ui->frequencyEdit->setText(QString::number(ceil(freq/1000)));
     ui->tuneDial->setValue(0);
-    if(!_transmitting_radio)
-        _rx_frequency = freq - _demod_offset;
-    else
-        _rx_frequency = freq - _tx_shift_frequency - _demod_offset;
+    // _rx_frequency is the center frequency of the source
+    _rx_frequency = freq - _demod_offset;
+    // tx_frequency is the actual frequency
+    _tx_frequency = freq;
     ui->plotterFrame->setCenterFreq(_rx_frequency);
     ui->plotterFrame->setDemodCenterFreq(_rx_frequency + _demod_offset);
     emit setCarrierOffset(_demod_offset);
     emit tuneFreq(_rx_frequency);
+    emit tuneTxFreq(freq);
 }
 
+
+// this happens on middle mouse
 void MainWindow::tuneFreqPlotter(qint64 freq)
 {
+    return; // can't handle this now
+    _tx_frequency = freq;
     tuneMainFreq(freq - _demod_offset);
     ui->frameCtrlFreq->setFrequency(freq + _demod_offset);
 }
@@ -832,6 +837,7 @@ void MainWindow::carrierOffsetChanged(qint64 freq, qint64 offset)
     _demod_offset = offset;
     ui->frameCtrlFreq->setFrequency(_rx_frequency + _demod_offset, false);
     emit setCarrierOffset(offset);
+    emit tuneTxFreq(freq);
 }
 
 void MainWindow::enterFreq()
@@ -846,11 +852,11 @@ void MainWindow::enterShift()
     if(!_transmitting_radio)
     {
         _tx_shift_frequency = ui->shiftEdit->text().toLong()*1000;
-        emit tuneTxFreq(_tx_shift_frequency);
+        emit changeTxShift(_tx_shift_frequency);
     }
     else
     {
-        std::cout << "Cannot set TX shift frequency while transmitting" << std::endl;
+        std::cerr << "Cannot set TX shift frequency while transmitting" << std::endl;
     }
 }
 
