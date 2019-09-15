@@ -184,7 +184,7 @@ int main(int argc, char *argv[])
     t4->start();
 
     QThread *t5 = new QThread;
-    t4->setObjectName("audiowriter");
+    t5->setObjectName("audiowriter");
 
     audiowriter->moveToThread(t5);
     QObject::connect(t5, SIGNAL(started()), audiowriter, SLOT(run()));

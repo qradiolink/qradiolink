@@ -58,7 +58,7 @@ void AudioWriter::run()
         _mutex.lock();
         _sample_queue->clear();
         _mutex.unlock();
-        struct timespec time_to_sleep = {0, 10000000L };
+        struct timespec time_to_sleep = {0, 1000000L };
         nanosleep(&time_to_sleep, NULL);
     }
     delete _audio_writer;
