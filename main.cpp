@@ -37,6 +37,7 @@
 #endif
 #include "mumbleclient.h"
 #include "audioop.h"
+#include "audiowriter.h"
 #include "dtmfcommand.h"
 #include "station.h"
 #include "channel.h"
@@ -102,6 +103,7 @@ int main(int argc, char *argv[])
     settings->readConfig();
     MumbleClient *client = new MumbleClient(settings);
     RadioOp *radio_op = new RadioOp(settings);
+    AudioWriter *audiowriter = new AudioWriter;
     MainWindow *w = new MainWindow(settings);
     w->setWindowTitle("QRadioLink");
 
@@ -181,6 +183,16 @@ int main(int argc, char *argv[])
     QObject::connect(t4, SIGNAL(finished()), t4, SLOT(deleteLater()));
     t4->start();
 
+    QThread *t5 = new QThread;
+    t4->setObjectName("audiowriter");
+
+    audiowriter->moveToThread(t5);
+    QObject::connect(t5, SIGNAL(started()), audiowriter, SLOT(run()));
+    QObject::connect(audiowriter, SIGNAL(finished()), t5, SLOT(quit()));
+    QObject::connect(audiowriter, SIGNAL(finished()), audiowriter, SLOT(deleteLater()));
+    QObject::connect(t5, SIGNAL(finished()), t5, SLOT(deleteLater()));
+    t5->start();
+
     QObject::connect(w,SIGNAL(startTransmission()),radio_op,SLOT(startTransmission()));
     QObject::connect(w,SIGNAL(endTransmission()),radio_op,SLOT(endTransmission()));
     QObject::connect(w,SIGNAL(sendText(QString, bool)),radio_op,SLOT(textData(QString, bool)));
@@ -223,6 +235,7 @@ int main(int argc, char *argv[])
     QObject::connect(radio_op, SIGNAL(pingServer()), client, SLOT(pingServer()));
     QObject::connect(client, SIGNAL(pcmAudio(short*,int,quint64)), radio_op, SLOT(processVoipAudioFrame(short*, int, quint64)));
     QObject::connect(radio_op, SIGNAL(voipDataPCM(short*,int)), client, SLOT(processPCMAudio(short*,int)));
+    QObject::connect(radio_op, SIGNAL(writePCM(short*,int,bool,int)), audiowriter, SLOT(writePCM(short*,int,bool, int)));
     QObject::connect(radio_op, SIGNAL(voipDataOpus(unsigned char*,int)), client, SLOT(processOpusAudio(unsigned char*, int)));
     QObject::connect(radio_op, SIGNAL(newFFTData(std::complex<float>*,int)), w, SLOT(newFFTData(std::complex<float>*,int)));
     QObject::connect(radio_op, SIGNAL(newRSSIValue(float)), w, SLOT(updateRSSI(float)));

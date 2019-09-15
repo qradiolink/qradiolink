@@ -90,6 +90,7 @@ signals:
     void newConstellationData(complex_vector*);
     void newRSSIValue(float rssi);
     void initError(QString error);
+    void writePCM(short *pcm, int bytes, bool preprocess, int mode);
 
 
 public slots:

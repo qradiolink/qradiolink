@@ -811,7 +811,8 @@ void RadioOp::receiveDigitalAudio(unsigned char *data, int size)
         }
         else if(!_voip_forwarding)
         {
-            _audio->write_short(audio_out,samples*sizeof(short),true, audio_mode);
+            emit writePCM(audio_out,samples*sizeof(short), true, audio_mode);
+            //_audio->write_short(audio_out,samples*sizeof(short),true, audio_mode);
         }
     }
 }
@@ -845,7 +846,8 @@ void RadioOp::receivePCMAudio(std::vector<float> *audio_data)
     }
     else
     {
-        _audio->write_short(pcm, size*sizeof(short),false, AudioInterface::AUDIO_MODE_ANALOG);
+        emit writePCM(pcm, size*sizeof(short), false, AudioInterface::AUDIO_MODE_ANALOG);
+        //_audio->write_short(pcm, size*sizeof(short),false, AudioInterface::AUDIO_MODE_ANALOG);
     }
     audio_data->clear();
     delete audio_data;
@@ -1019,7 +1021,8 @@ void RadioOp::processVoipAudioFrame(short *pcm, int samples, quint64 sid)
         }
         else
         {
-            _audio->write_short(pcm, samples*sizeof(short));
+            emit writePCM(pcm, samples*sizeof(short), true, AudioInterface::AUDIO_MODE_OPUS);
+            //_audio->write_short(pcm, samples*sizeof(short));
             audioFrameReceived();
         }
         _last_voiced_frame_timer.restart();
@@ -1065,7 +1068,8 @@ void RadioOp::callsignReceived(QString callsign)
     QString text = "<b>" + time + "</b> " + "<font color=\"#FF5555\">" + callsign + " </font><br/>\n";
 
     short *samples = (short*) _data_rec_sound->data();
-    _audio->write_short(samples,_data_rec_sound->size());
+    emit writePCM(samples, _data_rec_sound->size(), false, AudioInterface::AUDIO_MODE_ANALOG);
+    //_audio->write_short(samples,_data_rec_sound->size());
 
     emit printText(text,true);
     emit printCallsign(callsign);
@@ -1087,6 +1091,7 @@ void RadioOp::dataFrameReceived()
         //short *sound = (short*) _data_rec_sound->data();
         //short *samples = new short[_data_rec_sound->size()];
         //memcpy(samples, sound, _data_rec_sound->size());
+        //emit writePCM(samples, _data_rec_sound->size(), false, AudioInterface::AUDIO_MODE_ANALOG);
         //_audio->write_short(samples,_data_rec_sound->size());
     }
 
@@ -1107,7 +1112,8 @@ void RadioOp::endAudioTransmission()
     {
         QByteArray *data = new QByteArray(resfile.readAll());
         short *samples = (short*) data->data();
-        _audio->write_short(samples,data->size());
+        emit writePCM(samples, data->size(), false, AudioInterface::AUDIO_MODE_ANALOG);
+        //_audio->write_short(samples,data->size());
 
     }
 }
