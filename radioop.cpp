@@ -448,7 +448,7 @@ void RadioOp::startTx()
             _data_modem_reset_timer->start();
             _data_modem_sleep_timer->start();
         }
-        _mutex->lock();
+        //_mutex->lock();
         // FIXME: full duplex mode
         //if(_rx_inited && !_repeat && (_rx_mode != gr_modem_types::ModemTypeQPSK250000))
         //    _modem->stopRX();
@@ -458,7 +458,7 @@ void RadioOp::startTx()
         _modem->tuneTx(_tx_frequency + _tune_shift_freq);
         _modem->setTxPower(_tx_power);
         _modem->startTX();
-        _mutex->unlock();
+        //_mutex->unlock();
         // FIXME: how to handle the LimeSDR calibration better?
         struct timespec time_to_sleep = {0, 10000000L };
         nanosleep(&time_to_sleep, NULL);
@@ -482,10 +482,10 @@ void RadioOp::stopTx()
         }
         struct timespec time_to_sleep = {1, 0L };
         nanosleep(&time_to_sleep, NULL);
-        _mutex->lock();
+        //_mutex->lock();
         _modem->setTxPower(0.0);
         _modem->stopTX();
-        _mutex->unlock();
+        //_mutex->unlock();
         _tx_modem_started = false;
         _tx_started = false;
         // FIXME: full duplex mode
@@ -515,9 +515,9 @@ void RadioOp::sendTextData(QString text, int frame_type)
     }
     if(!_repeat_text)
     {
-        _mutex->lock();
+        //_mutex->lock();
         _process_text = false;
-        _mutex->unlock();
+        //_mutex->unlock();
     }
 }
 
@@ -536,16 +536,16 @@ void RadioOp::sendBinData(QByteArray data, int frame_type)
     }
     if(!_repeat_text)
     {
-        _mutex->lock();
+        //_mutex->lock();
         _process_text = false;
-        _mutex->unlock();
+        //_mutex->unlock();
     }
 }
 
 void RadioOp::flushVoipBuffer()
 {
     // FIXME: breakups on official Mumble client
-    _mutex->lock();
+    //_mutex->lock();
     if(_voip_encode_buffer->size() >= 320)
     {
 
@@ -558,7 +558,7 @@ void RadioOp::flushVoipBuffer()
         emit voipDataPCM(pcm,320*sizeof(short));
         _voip_encode_buffer->remove(0,320);
     }
-    _mutex->unlock();
+    //_mutex->unlock();
 }
 
 void RadioOp::updateDataModemReset(bool transmitting, bool ptt_activated)
@@ -595,14 +595,14 @@ bool RadioOp::getDemodulatorData()
     bool data_to_process = false;
     if(_rx_inited)
     {
-        _mutex->lock();
+        //_mutex->lock();
         if(_rx_radio_type == radio_type::RADIO_TYPE_DIGITAL)
             data_to_process = _modem->demodulate();
         else if(_rx_radio_type == radio_type::RADIO_TYPE_ANALOG)
         {
             data_to_process = _modem->demodulateAnalog();
         }
-        _mutex->unlock();
+        //_mutex->unlock();
 
         if(!_tuning_done)
             scan(data_to_process);
@@ -620,10 +620,10 @@ void RadioOp::run()
     int last_channel_broadcast_time = 0;
     while(true)
     {
-        _mutex->lock();
+        //_mutex->lock();
         bool transmitting = _transmitting_audio;
         bool rx_inited = _rx_inited;
-        _mutex->unlock();
+        //_mutex->unlock();
         QCoreApplication::processEvents();
         flushVoipBuffer();
 
@@ -710,9 +710,9 @@ void RadioOp::getRSSI()
 {
     if(!_rssi_enabled)
         return;
-    _mutex->lock();
+    //_mutex->lock();
     float rssi = _modem->getRSSI();
-    _mutex->unlock();
+    //_mutex->unlock();
     if(rssi != 0)
         emit newRSSIValue(rssi);
 }
@@ -731,9 +731,9 @@ void RadioOp::getFFTData()
     }
 
     unsigned int fft_size = 0;
-    _mutex->lock();
+    //_mutex->lock();
     _modem->get_fft_data(_fft_data, fft_size);
-    _mutex->unlock();
+    //_mutex->unlock();
     if(fft_size > 0)
     {
         emit newFFTData(_fft_data, (int)fft_size);
@@ -757,9 +757,9 @@ void RadioOp::getConstellationData()
     {
         return;
     }
-    _mutex->lock();
+    //_mutex->lock();
     std::vector<std::complex<float>> *const_data = _modem->getConstellation();
-    _mutex->unlock();
+    //_mutex->unlock();
     if(const_data->size() > 1)
     {
         emit newConstellationData(const_data);
@@ -831,10 +831,6 @@ void RadioOp::receivePCMAudio(std::vector<float> *audio_data)
 
     short *pcm = new short[size];
     // FIXME: we only have a single mutex that blocks the thread for everything
-    if(_voip_forwarding)
-    {
-        _mutex->lock();
-    }
     for(int i=0;i<size;i++)
     {
         pcm[i] = (short)(audio_data->at(i) * volume_coeff * 32767.0f);
@@ -842,10 +838,6 @@ void RadioOp::receivePCMAudio(std::vector<float> *audio_data)
         {
             _voip_encode_buffer->push_back(pcm[i]);
         }
-    }
-    if(_voip_forwarding)
-    {
-        _mutex->unlock();
     }
     if(_voip_forwarding)
     {
@@ -1052,10 +1044,10 @@ void RadioOp::endTransmission()
 void RadioOp::textData(QString text, bool repeat)
 {
     _repeat_text = repeat;
-    _mutex->lock();
+    //_mutex->lock();
     _text_out = text;
     _process_text = true;
-    _mutex->unlock();
+    //_mutex->unlock();
 
 }
 
@@ -1151,18 +1143,18 @@ void RadioOp::toggleRX(bool value)
                                  tx_freq_corr, callsign, video_device);
         try
         {
-            _mutex->lock();
+            //_mutex->lock();
             _modem->initRX(_rx_mode, rx_device_args, rx_antenna, rx_freq_corr);
-            _mutex->unlock();
+            //_mutex->unlock();
         }
         catch(std::runtime_error e)
         {
             _modem->deinitRX(_rx_mode);
-            _mutex->unlock();
+            //_mutex->unlock();
             emit initError("Could not init RX device, check settings");
             return;
         }
-        _mutex->lock();
+        //_mutex->lock();
         _modem->enableGUIFFT(_fft_enabled);
         _modem->enableGUIConst(_constellation_enabled);
         _modem->enableRSSI(_rssi_enabled);
@@ -1173,7 +1165,7 @@ void RadioOp::toggleRX(bool value)
         _modem->set_samp_rate(_rx_sample_rate);
         _modem->tune(_rx_frequency);
         _modem->startRX();
-        _mutex->unlock();
+        //_mutex->unlock();
         if(_rx_mode == gr_modem_types::ModemTypeQPSK250000 && _net_device == 0)
         {
             _net_device = new NetDevice(0, _settings->ip_address);
@@ -1187,10 +1179,10 @@ void RadioOp::toggleRX(bool value)
             delete _net_device;
             _net_device = 0;
         }
-        _mutex->lock();
+        //_mutex->lock();
         _modem->stopRX();
         _modem->deinitRX(_rx_mode);
-        _mutex->unlock();
+        //_mutex->unlock();
         _rx_inited = false;
     }
 }
@@ -1212,24 +1204,24 @@ void RadioOp::toggleTX(bool value)
                                  tx_freq_corr, callsign, video_device);
         try
         {
-            _mutex->lock();
+            //_mutex->lock();
             _modem->initTX(_tx_mode, tx_device_args, tx_antenna, tx_freq_corr);
-            _mutex->unlock();
+            //_mutex->unlock();
         }
         catch(std::runtime_error e)
         {
             _modem->deinitTX(_tx_mode);
-            _mutex->unlock();
+            //_mutex->unlock();
             emit initError("Could not init TX device, check settings");
             return;
         }
-        _mutex->lock();
+        //_mutex->lock();
 
         _modem->setTxPower(_tx_power);
         _modem->setBbGain(_bb_gain);
         _modem->tuneTx(430000000);
         _modem->setTxCTCSS(_tx_ctcss);
-        _mutex->unlock();
+        //_mutex->unlock();
         if(_tx_mode == gr_modem_types::ModemTypeQPSKVideo)
             _video = new VideoEncoder(QString::fromStdString(video_device));
         if(_tx_mode == gr_modem_types::ModemTypeQPSK250000 && _net_device == 0)
@@ -1240,9 +1232,9 @@ void RadioOp::toggleTX(bool value)
     }
     else if(_tx_inited)
     {
-        _mutex->lock();
+        //_mutex->lock();
         _modem->deinitTX(_tx_mode);
-        _mutex->unlock();
+        //_mutex->unlock();
         if(_tx_mode == gr_modem_types::ModemTypeQPSKVideo)
         {
             delete _video;
@@ -1360,13 +1352,13 @@ void RadioOp::toggleRxMode(int value)
         break;
     }
 
-    _mutex->lock();
+    //_mutex->lock();
     _modem->toggleRxMode(_rx_mode);
     if(rx_inited_before)
     {
         _rx_inited = true;
     }
-    _mutex->unlock();
+    //_mutex->unlock();
 }
 
 void RadioOp::toggleTxMode(int value)
@@ -1434,9 +1426,9 @@ void RadioOp::toggleTxMode(int value)
         break;
     }
 
-    _mutex->lock();
+    //_mutex->lock();
     _modem->toggleTxMode(_tx_mode);
-    _mutex->unlock();
+    //_mutex->unlock();
 }
 
 void RadioOp::usePTTForVOIP(bool value)
@@ -1470,99 +1462,99 @@ void RadioOp::toggleRepeat(bool value)
         stopTx();
         _repeat = value;
     }
-    _mutex->lock();
+    //_mutex->lock();
     _modem->setRepeater(value);
-    _mutex->unlock();
+    //_mutex->unlock();
 
 }
 
 void RadioOp::fineTuneFreq(long center_freq)
 {
-    _mutex->lock();
+    //_mutex->lock();
     _modem->set_carrier_offset(_carrier_offset + center_freq*_step_hz);
-    _mutex->unlock();
+    //_mutex->unlock();
 }
 
 void RadioOp::tuneFreq(qint64 center_freq)
 {
     // _rx_frequency is the source center frequency
     _rx_frequency = center_freq;
-    _mutex->lock();
+    //_mutex->lock();
     _modem->tune(_rx_frequency);
-    _mutex->unlock();
+    //_mutex->unlock();
 }
 
 void RadioOp::tuneTxFreq(qint64 actual_freq)
 {
     _tx_frequency = actual_freq;
-    _mutex->lock();
+    //_mutex->lock();
     _modem->tuneTx(_tx_frequency + _tune_shift_freq);
-    _mutex->unlock();
+    //_mutex->unlock();
 }
 
 void RadioOp::setCarrierOffset(qint64 offset)
 {
     _carrier_offset = offset;
-    _mutex->lock();
+    //_mutex->lock();
     // we don't use carrier_offset for TX, fixed sample rate
     _modem->set_carrier_offset(offset);
-    _mutex->unlock();
+    //_mutex->unlock();
 }
 
 
 void RadioOp::changeTxShift(qint64 center_freq)
 {
     _tune_shift_freq = center_freq;
-    _mutex->lock();
+    //_mutex->lock();
     _modem->tuneTx(_tx_frequency + _tune_shift_freq);
-    _mutex->unlock();
+    //_mutex->unlock();
 }
 
 void RadioOp::setTxPower(int dbm)
 {
     _tx_power = (float)dbm/100.0;
-    _mutex->lock();
+    //_mutex->lock();
     _modem->setTxPower(_tx_power);
-    _mutex->unlock();
+    //_mutex->unlock();
 }
 
 void RadioOp::setBbGain(int value)
 {
     _bb_gain = value;
-    _mutex->lock();
+    //_mutex->lock();
     _modem->setBbGain(_bb_gain);
-    _mutex->unlock();
+    //_mutex->unlock();
 }
 
 void RadioOp::setRxSampleRate(int samp_rate)
 {
     _rx_sample_rate = samp_rate;
-    _mutex->lock();
+    //_mutex->lock();
     _modem->set_samp_rate(samp_rate);
-    _mutex->unlock();
+    //_mutex->unlock();
 }
 
 void RadioOp::setFFTSize(int size)
 {
-    _mutex->lock();
+    //_mutex->lock();
     _modem->setFFTSize(size);
-    _mutex->unlock();
+    //_mutex->unlock();
 }
 
 void RadioOp::setRxSensitivity(int value)
 {
     _rx_sensitivity = (float)value/100.0;
-    _mutex->lock();
+    //_mutex->lock();
     _modem->setRxSensitivity(_rx_sensitivity);
-    _mutex->unlock();
+    //_mutex->unlock();
 }
 
 void RadioOp::setSquelch(int value)
 {
     _squelch = value;
-    _mutex->lock();
+    //_mutex->lock();
     _modem->setSquelch(value);
-    _mutex->unlock();
+    //_mutex->unlock();
 }
 
 void RadioOp::setVolume(int value)
@@ -1573,41 +1565,41 @@ void RadioOp::setVolume(int value)
 void RadioOp::setRxCTCSS(float value)
 {
     _rx_ctcss = value;
-    _mutex->lock();
+    //_mutex->lock();
     _modem->setRxCTCSS(value);
-    _mutex->unlock();
+    //_mutex->unlock();
 }
 
 void RadioOp::setTxCTCSS(float value)
 {
     _tx_ctcss = value;
-    _mutex->lock();
+    //_mutex->lock();
     _modem->setTxCTCSS(value);
-    _mutex->unlock();
+    //_mutex->unlock();
 }
 
 void RadioOp::enableGUIConst(bool value)
 {
     _constellation_enabled = value;
-    _mutex->lock();
+    //_mutex->lock();
     _modem->enableGUIConst(value);
-    _mutex->unlock();
+    //_mutex->unlock();
 }
 
 void RadioOp::enableRSSI(bool value)
 {
     _rssi_enabled = value;
-    _mutex->lock();
+    //_mutex->lock();
     _modem->enableRSSI(value);
-    _mutex->unlock();
+    //_mutex->unlock();
 }
 
 void RadioOp::enableGUIFFT(bool value)
 {
     _fft_enabled = value;
-    _mutex->lock();
+    //_mutex->lock();
     _modem->enableGUIFFT(value);
-    _mutex->unlock();
+    //_mutex->unlock();
 }
 
 void RadioOp::scan(bool receiving, bool wait_for_timer)
@@ -1650,7 +1642,7 @@ void RadioOp::scan(bool receiving, bool wait_for_timer)
         decrement_main_frequency = true;
 
     }
-    _mutex->lock();
+    //_mutex->lock();
 
     if(increment_main_frequency)
     {
@@ -1663,7 +1655,7 @@ void RadioOp::scan(bool receiving, bool wait_for_timer)
         _modem->tune(_rx_frequency);
     }
     _modem->set_carrier_offset(_autotune_freq);
-    _mutex->unlock();
+    //_mutex->unlock();
     _carrier_offset = _autotune_freq;
     emit freqToGUI(_rx_frequency, _carrier_offset);
     _scan_timer->restart();
