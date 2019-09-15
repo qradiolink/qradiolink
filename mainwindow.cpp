@@ -584,11 +584,19 @@ void MainWindow::disconnectVOIPRequested()
 {
     emit disconnectFromServer();
     ui->voipTreeWidget->clear();
+    ui->voipConnectButton->setDisabled(false);
+}
+
+void MainWindow::connectedToServer(QString msg)
+{
+    displayText(msg, false);
+    ui->voipConnectButton->setDisabled(true);
 }
 
 
 void MainWindow::updateOnlineStations(StationList stations)
 {
+
     for(int i=0;i<stations.size();i++)
     {
         QList<QTreeWidgetItem*> list = ui->voipTreeWidget->findItems(".", Qt::MatchRegExp | Qt::MatchExactly | Qt::MatchRecursive,3);
@@ -614,6 +622,27 @@ void MainWindow::updateOnlineStations(StationList stations)
             st_item->setBackgroundColor(3,QColor("#ffffff"));
             item->addChild(st_item);
         }
+    }
+}
+
+void MainWindow::leftStation(Station *s)
+{
+    QList<QTreeWidgetItem*> list = ui->voipTreeWidget->findItems(QString::number(s->id),
+             Qt::MatchExactly | Qt::MatchRecursive,3);
+    if(list.size()>0)
+    {
+        delete list.at(0);
+    }
+}
+
+void MainWindow::userSpeaking(quint64 id)
+{
+    QList<QTreeWidgetItem*> list = ui->voipTreeWidget->findItems(QString::number(id),
+             Qt::MatchExactly | Qt::MatchRecursive,3);
+    if(list.size()>0)
+    {
+        // FIXME: need a timer
+        //list.at(0)->setIcon(0, QIcon(":res/text-speak.png"));
     }
 }
 

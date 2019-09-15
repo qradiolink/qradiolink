@@ -1086,24 +1086,47 @@ font: 12pt &quot;Sans Serif&quot;;
                <item>
                 <layout class="QGridLayout" name="gridLayout">
                  <property name="topMargin">
-                  <number>10</number>
+                  <number>2</number>
                  </property>
                  <property name="bottomMargin">
+                  <number>2</number>
+                 </property>
+                 <property name="horizontalSpacing">
                   <number>10</number>
                  </property>
-                 <property name="spacing">
-                  <number>15</number>
+                 <property name="verticalSpacing">
+                  <number>5</number>
                  </property>
                  <item row="1" column="3">
                   <widget class="QPushButton" name="voipDisconnectButton">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>150</width>
+                     <height>30</height>
+                    </size>
+                   </property>
                    <property name="styleSheet">
-                    <string notr="true">font: 14pt &quot;Sans Serif&quot;;
-background: none;
-background-color: rgb(127, 0, 0);
-color: rgb(255, 255, 255);</string>
+                    <string notr="true">font: 12pt &quot;Sans Serif&quot;;</string>
                    </property>
                    <property name="text">
                     <string>Disconnect</string>
+                   </property>
+                   <property name="icon">
+                    <iconset>
+                     <normalon>:/res/application-exit.png</normalon>
+                    </iconset>
+                   </property>
+                   <property name="iconSize">
+                    <size>
+                     <width>24</width>
+                     <height>24</height>
+                    </size>
                    </property>
                   </widget>
                  </item>
@@ -1117,7 +1140,7 @@ color: rgb(255, 255, 255);</string>
                    </property>
                    <property name="minimumSize">
                     <size>
-                     <width>200</width>
+                     <width>180</width>
                      <height>40</height>
                     </size>
                    </property>
@@ -1140,7 +1163,7 @@ background-color: rgb(0, 0, 67);
                    <property name="icon">
                     <iconset resource="resources.qrc">
                      <normaloff>:/res/Button-Blank-Gray-icon.png</normaloff>
-                     <normalon>:/res/Button-Blank-Green-icon.png</normalon>:/res/Button-Blank-Gray-icon.png</iconset>
+                     <normalon>:/res/text-speak.png</normalon>:/res/Button-Blank-Gray-icon.png</iconset>
                    </property>
                    <property name="checkable">
                     <bool>true</bool>
@@ -1168,6 +1191,9 @@ color: rgb(0, 0, 71);</string>
                    <property name="text">
                     <string>Password</string>
                    </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
                   </widget>
                  </item>
                  <item row="0" column="0">
@@ -1191,6 +1217,9 @@ color: rgb(0, 0, 71);</string>
                    <property name="text">
                     <string>Hostname or IP address of VOIP server</string>
                    </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
                   </widget>
                  </item>
                  <item row="2" column="2">
@@ -1203,7 +1232,7 @@ color: rgb(0, 0, 71);</string>
                    </property>
                    <property name="minimumSize">
                     <size>
-                     <width>60</width>
+                     <width>150</width>
                      <height>40</height>
                     </size>
                    </property>
@@ -1224,9 +1253,9 @@ background-color: rgb(0, 0, 67);
                     <string>Forward radio</string>
                    </property>
                    <property name="icon">
-                    <iconset resource="resources.qrc">
-                     <normaloff>:/res/Button-Blank-Gray-icon.png</normaloff>
-                     <normalon>:/res/Button-Blank-Yellow-icon.png</normalon>:/res/Button-Blank-Gray-icon.png</iconset>
+                    <iconset>
+                     <normalon>:/res/Button-Blank-Red-icon.png</normalon>
+                    </iconset>
                    </property>
                    <property name="checkable">
                     <bool>true</bool>
@@ -1244,7 +1273,7 @@ background-color: rgb(0, 0, 67);
                    <property name="minimumSize">
                     <size>
                      <width>250</width>
-                     <height>0</height>
+                     <height>25</height>
                     </size>
                    </property>
                    <property name="styleSheet">
@@ -1259,14 +1288,35 @@ font: 12pt &quot;Sans Serif&quot;;</string>
                  </item>
                  <item row="1" column="2">
                   <widget class="QPushButton" name="voipConnectButton">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>100</width>
+                     <height>30</height>
+                    </size>
+                   </property>
                    <property name="styleSheet">
-                    <string notr="true">font: 14pt &quot;Sans Serif&quot;;
-background: none;
-background-color: rgb(0, 50, 0);
-color: rgb(255, 255, 255);</string>
+                    <string notr="true">font: 12pt &quot;Sans Serif&quot;;
+</string>
                    </property>
                    <property name="text">
                     <string>Connect</string>
+                   </property>
+                   <property name="icon">
+                    <iconset>
+                     <normalon>:/res/call-start.png</normalon>
+                    </iconset>
+                   </property>
+                   <property name="iconSize">
+                    <size>
+                     <width>24</width>
+                     <height>24</height>
+                    </size>
                    </property>
                   </widget>
                  </item>
@@ -1281,7 +1331,7 @@ color: rgb(255, 255, 255);</string>
                    <property name="minimumSize">
                     <size>
                      <width>200</width>
-                     <height>0</height>
+                     <height>25</height>
                     </size>
                    </property>
                   </widget>
@@ -1307,12 +1357,12 @@ color: rgb(255, 255, 255);</string>
                   <enum>Qt::Vertical</enum>
                  </property>
                  <property name="sizeType">
-                  <enum>QSizePolicy::MinimumExpanding</enum>
+                  <enum>QSizePolicy::Fixed</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
-                   <width>20</width>
-                   <height>40</height>
+                   <width>10</width>
+                   <height>30</height>
                   </size>
                  </property>
                 </spacer>
@@ -1430,22 +1480,6 @@ color: rgb(0, 67, 98);</string>
              </item>
             </layout>
            </widget>
-          </item>
-          <item>
-           <spacer name="verticalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Fixed</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
           </item>
          </layout>
         </widget>

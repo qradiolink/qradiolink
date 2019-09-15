@@ -52,6 +52,7 @@ public slots:
     void endTransmissionRequested();
     void connectVOIPRequested();
     void disconnectVOIPRequested();
+    void connectedToServer(QString msg);
     void sendTextRequested();
     void chooseFile();
     void displayText(QString text, bool html);
@@ -60,6 +61,8 @@ public slots:
     void displayTransmitStatus(bool status);
     void displayDataReceiveStatus(bool status);
     void updateOnlineStations(StationList stations);
+    void leftStation(Station *s);
+    void userSpeaking(quint64 id);
     void toggleRXwin(bool value);
     void toggleTXwin(bool value);
     void tuneCenterFreq(int value);

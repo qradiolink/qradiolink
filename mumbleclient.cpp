@@ -201,7 +201,10 @@ void MumbleClient::processServerSync(quint8 *message, quint64 size)
              + " max bandwidth: " + _max_bandwidth
              + " session: " + QString::number(_session_id);
     std::cout << msg.toStdString() << std::endl;
+    emit connectedToServer(msg);
     return;
+
+    // FIXME: leftover from another state
 #ifndef NO_CRYPT
     //createChannel();
 #endif
@@ -347,10 +350,7 @@ void MumbleClient::processUserRemove(quint8 *message, quint64 size)
         if(s->id == us.session())
         {
             emit leftStation(s);
-            struct timespec time_to_sleep = {0, 10000000L };
-            nanosleep(&time_to_sleep, NULL);
             _stations.remove(i);
-            delete s;
         }
     }
     /* Just debug code
@@ -697,6 +697,7 @@ void MumbleClient::decodeAudio(unsigned char *audiobuffer, short audiobuffersize
     if(pcm == NULL)
         return;
     emit pcmAudio(pcm, samples, session_id);
+    emit userSpeaking(session_id);
 
 }
 

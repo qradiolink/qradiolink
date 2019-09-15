@@ -229,8 +229,11 @@ int main(int argc, char *argv[])
     QObject::connect(radio_op, SIGNAL(initError(QString)), w, SLOT(initError(QString)));
 
     QObject::connect(client,SIGNAL(onlineStations(StationList)),w,SLOT(updateOnlineStations(StationList)));
+    QObject::connect(client,SIGNAL(leftStation(Station*)),w,SLOT(leftStation(Station*)));
+    QObject::connect(client,SIGNAL(userSpeaking(quint64)),w,SLOT(userSpeaking(quint64)));
     QObject::connect(client,SIGNAL(onlineStations(StationList)),radio_op,SLOT(setStations(StationList)));
     QObject::connect(client,SIGNAL(textMessage(QString,bool)),w,SLOT(displayText(QString,bool)));
+    QObject::connect(client,SIGNAL(connectedToServer(QString)),w,SLOT(connectedToServer(QString)));
     QObject::connect(client,SIGNAL(newChannel(Channel*)),w,SLOT(newChannel(Channel*)));
     QObject::connect(client,SIGNAL(newChannel(Channel*)),radio_op,SLOT(addChannel(Channel*)));
 

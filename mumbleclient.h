@@ -48,6 +48,7 @@ public:
 
 
 signals:
+    void connectedToServer(QString message);
     void channelName(QString name);
     void pcmAudio(short *pcm, int size, quint64 session_id);
     void onlineStations(StationList);
@@ -56,6 +57,8 @@ signals:
     void leftStation(Station*);
     void channelReady(int chan_number);
     void textMessage(QString msg, bool html);
+    void userSound(Station* s);
+    void userSpeaking(quint64 id);
     
 public slots:
     void connectToServer(QString address, unsigned port);
