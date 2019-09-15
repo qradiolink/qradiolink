@@ -31,4 +31,5 @@ Station::Station()
     local=0;
     active=1;
     waiting = 0;
+    is_user = false;
 }

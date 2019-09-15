@@ -38,6 +38,7 @@ public:
     int waiting;
     bool mute;
     bool deaf;
+    bool is_user;
 };
 
 #endif // STATION_H

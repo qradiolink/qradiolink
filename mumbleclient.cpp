@@ -262,6 +262,16 @@ void MumbleClient::processUserState(quint8 *message, quint64 size)
     }
     if(us.session() == _session_id)
     {
+        Station *s;
+        for(int i=0; i < _stations.size();i++)
+        {
+            s = _stations.at(i);
+            if(s->id == _session_id)
+            {
+                break;
+            }
+        }
+        s->is_user = true;
         if(us.has_channel_id())
         {
             _channel_id = us.channel_id();
@@ -272,14 +282,8 @@ void MumbleClient::processUserState(quint8 *message, quint64 size)
             {
                 emit channelReady(_channel_id);
             }
-            for(int i=0; i < _stations.size();i++)
-            {
-                Station *s = _stations.at(i);
-                if(s->id == _session_id)
-                {
-                    s->channel_id = us.channel_id();
-                }
-            }
+            s->channel_id = us.channel_id();
+
         }
     }
 

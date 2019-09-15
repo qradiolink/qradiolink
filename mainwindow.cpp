@@ -638,6 +638,8 @@ void MainWindow::updateOnlineStations(StationList stations)
             st_item->setBackgroundColor(1,QColor("#ffffff"));
             st_item->setBackgroundColor(2,QColor("#ffffff"));
             st_item->setBackgroundColor(3,QColor("#ffffff"));
+            if(stations.at(i).is_user)
+                st_item->setTextColor(0,QColor("#cc0000"));
             item->addChild(st_item);
             _user_list.append(stations.at(i));
         }
