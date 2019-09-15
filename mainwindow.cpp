@@ -58,6 +58,8 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     ui->comboBoxTxCTCSS->addItems(tones);
     ui->comboBoxRxCTCSS->addItems(tones);
 
+    ui->tabWidget->setCurrentIndex(0);
+
     ui->frameCtrlFreq->setup(10, 10U, 9000000000U, 1, UNITS_MHZ );
     //ui->frameCtrlFreq->setBkColor(QColor(202, 194, 197,0xFF));
     ui->frameCtrlFreq->setBkColor(QColor(0x1F, 0x1D, 0x1D,0xFF));
@@ -185,7 +187,6 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     ui->secondaryTextDisplay->setGraphicsEffect(_eff_text_display);
 
     _s_meter_bg = new QPixmap(":/res/s-meter-bg-black-small.png");
-
 
 }
 
