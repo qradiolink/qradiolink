@@ -205,6 +205,7 @@ private:
     quint64 _last_session_id;
     QVector<short> *_voip_encode_buffer;
     QByteArray *_data_rec_sound;
+    QByteArray *_end_rec_sound;
     bool _repeat;
     bool _vox_enabled;
     bool _tx_started;

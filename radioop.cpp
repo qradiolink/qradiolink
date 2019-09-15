@@ -120,6 +120,11 @@ RadioOp::RadioOp(Settings *settings, QObject *parent) :
     {
         _data_rec_sound = new QByteArray(resfile.readAll());
     }
+    QFile resfile_end_tx(":/res/end_beep.raw");
+    if(resfile_end_tx.open(QIODevice::ReadOnly))
+    {
+        _end_rec_sound = new QByteArray(resfile_end_tx.readAll());
+    }
     _settings->readConfig();
     toggleRxMode(_settings->rx_mode);
     toggleTxMode(_settings->tx_mode);
@@ -590,12 +595,14 @@ bool RadioOp::getDemodulatorData()
     bool data_to_process = false;
     if(_rx_inited)
     {
+        _mutex->lock();
         if(_rx_radio_type == radio_type::RADIO_TYPE_DIGITAL)
             data_to_process = _modem->demodulate();
         else if(_rx_radio_type == radio_type::RADIO_TYPE_ANALOG)
         {
             data_to_process = _modem->demodulateAnalog();
         }
+        _mutex->unlock();
 
         if(!_tuning_done)
             scan(data_to_process);
@@ -1067,7 +1074,9 @@ void RadioOp::callsignReceived(QString callsign)
     QString time= QDateTime::currentDateTime().toString("dd/MMM/yyyy hh:mm:ss");
     QString text = "<b>" + time + "</b> " + "<font color=\"#FF5555\">" + callsign + " </font><br/>\n";
 
-    short *samples = (short*) _data_rec_sound->data();
+    short *samples = new short[_data_rec_sound->size()/sizeof(short)];
+    short *origin = (short*) _data_rec_sound->data();
+    memcpy(samples, origin, _data_rec_sound->size());
     emit writePCM(samples, _data_rec_sound->size(), false, AudioInterface::AUDIO_MODE_ANALOG);
     //_audio->write_short(samples,_data_rec_sound->size());
 
@@ -1088,10 +1097,10 @@ void RadioOp::dataFrameReceived()
     if((_rx_mode != gr_modem_types::ModemTypeQPSK250000)
             && (_rx_mode != gr_modem_types::ModemTypeQPSKVideo))
     {
-        //short *sound = (short*) _data_rec_sound->data();
-        //short *samples = new short[_data_rec_sound->size()];
-        //memcpy(samples, sound, _data_rec_sound->size());
-        //emit writePCM(samples, _data_rec_sound->size(), false, AudioInterface::AUDIO_MODE_ANALOG);
+        short *sound = (short*) _data_rec_sound->data();
+        short *samples = new short[_data_rec_sound->size()/sizeof(short)];
+        memcpy(samples, sound, _data_rec_sound->size());
+        emit writePCM(samples, _data_rec_sound->size(), false, AudioInterface::AUDIO_MODE_ANALOG);
         //_audio->write_short(samples,_data_rec_sound->size());
     }
 
@@ -1107,15 +1116,11 @@ void RadioOp::endAudioTransmission()
 {
     QString time= QDateTime::currentDateTime().toString("d/MMM/yyyy hh:mm:ss");
     emit printText("<b>" + time + "</b> <font color=\"#77FF77\">Transmission end</font><br/>\n",true);
-    QFile resfile(":/res/end_beep.raw");
-    if(resfile.open(QIODevice::ReadOnly))
-    {
-        QByteArray *data = new QByteArray(resfile.readAll());
-        short *samples = (short*) data->data();
-        emit writePCM(samples, data->size(), false, AudioInterface::AUDIO_MODE_ANALOG);
-        //_audio->write_short(samples,data->size());
-
-    }
+    short *samples = new short[_end_rec_sound->size()/sizeof(short)];
+    short *origin = (short*) _end_rec_sound->data();
+    memcpy(samples, origin, _end_rec_sound->size());
+    emit writePCM(samples, _end_rec_sound->size(), false, AudioInterface::AUDIO_MODE_ANALOG);
+    //_audio->write_short(samples,data->size());
 }
 
 void RadioOp::addChannel(Channel *chan)
@@ -1167,9 +1172,6 @@ void RadioOp::toggleRX(bool value)
         _modem->set_carrier_offset(_carrier_offset);
         _modem->set_samp_rate(_rx_sample_rate);
         _modem->tune(_rx_frequency);
-        // FIXME: why do I need a delay here?
-        struct timespec time_to_sleep = {0, 100000000L };
-        nanosleep(&time_to_sleep, NULL);
         _modem->startRX();
         _mutex->unlock();
         if(_rx_mode == gr_modem_types::ModemTypeQPSK250000 && _net_device == 0)
@@ -1227,11 +1229,7 @@ void RadioOp::toggleTX(bool value)
         _modem->setBbGain(_bb_gain);
         _modem->tuneTx(430000000);
         _modem->setTxCTCSS(_tx_ctcss);
-
         _mutex->unlock();
-        // FIXME: why do I need a delay here?
-        struct timespec time_to_sleep = {0, 100000000L };
-        nanosleep(&time_to_sleep, NULL);
         if(_tx_mode == gr_modem_types::ModemTypeQPSKVideo)
             _video = new VideoEncoder(QString::fromStdString(video_device));
         if(_tx_mode == gr_modem_types::ModemTypeQPSK250000 && _net_device == 0)

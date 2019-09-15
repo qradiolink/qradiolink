@@ -40,8 +40,8 @@ void AudioWriter::run()
     while(_working)
     {
         QCoreApplication::processEvents();
-
-        for(int i=0;i< _sample_queue->size();i++)
+        int size = _sample_queue->size();
+        for(int i=0;i< size;i++)
         {
             audio_samples *samp = _sample_queue->at(i);
             int bytes = samp->bytes;
@@ -51,7 +51,8 @@ void AudioWriter::run()
             memcpy(pcm, samp->pcm, samp->bytes);
             delete[] samp->pcm;
             delete samp;
-            _audio_writer->write_short(pcm, bytes, preprocess, audio_mode);
+            // FIXME: compressor segfaults across threads
+            _audio_writer->write_short(pcm, bytes, false, audio_mode);
 
         }
         _mutex.lock();
