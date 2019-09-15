@@ -116,10 +116,16 @@ void SSLClient::tryReconnect()
 {
     if(!_reconnect)
         return;
-    emit logMessage("Disconnected");
+    emit logMessage("Disconnected from server");
     _connection_tries++;
-    struct timespec time_to_sleep = {2, 0L };
-    nanosleep(&time_to_sleep, NULL);
+    // FIXME: blocks the main thread
+    QTimer timer;
+    timer.setSingleShot(true);
+    timer.start(5000);
+    while(timer.isActive())
+    {
+        QCoreApplication::processEvents();
+    }
     if(_connection_tries < 2000000)
     {
         QMetaObject::invokeMethod(this, "connectHost", Qt:: QueuedConnection,

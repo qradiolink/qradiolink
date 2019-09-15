@@ -28,6 +28,7 @@
 #include <QString>
 #include <QStringList>
 #include <QTime>
+#include <QTimer>
 #include <QCoreApplication>
 #include <unistd.h>
 #include <iostream>
