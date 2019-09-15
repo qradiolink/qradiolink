@@ -1,3 +1,18 @@
+qradiolink (0.8.0-rc2) RELEASED; urgency=medium
+
+  [ Adrian Musceac ]
+  * Fixed issues found in RC1
+  * User interface redesign, added plotter from Gqrx and analog S-meter display
+  * Ported to Qt5
+  * Supports now sample rates from 1 Msps to 30 Msps
+  * Fixed SSB transmit AGC overdriving and clipping
+  * Fixed low performance with PSK modes
+  * Improvements to radio over IP forwarding
+  * Configurable FFT sizes up to 1048576
+  * Display FPS configurable from 5 FPS to 50 FPS
+  * Options to improve CPU performance (toggle on/off FFT and constellation)
+
+
 qradiolink (0.8.0-rc1) RELEASED; urgency=medium
 
   [ Adrian Musceac ]
