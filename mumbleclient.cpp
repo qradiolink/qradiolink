@@ -559,6 +559,7 @@ void MumbleClient::setMute(bool mute)
 {
     while(!_synchronized)
     {
+        // FIXME: remove all these sleeps in the main thread
         struct timespec time_to_sleep = {0, 10000000L };
         nanosleep(&time_to_sleep, NULL);
         QCoreApplication::processEvents();

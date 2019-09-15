@@ -958,6 +958,7 @@ void RadioOp::receiveNetData(unsigned char *data, int size)
 
 void RadioOp::processVoipAudioFrame(short *pcm, int samples, quint64 sid)
 {
+    // FIXME: refactor refactor refactor
     float volume_coeff = 1e-1*exp(_rx_volume*log(10));
     if(_m_queue->empty())
     {
@@ -1206,6 +1207,9 @@ void RadioOp::toggleTX(bool value)
         _modem->setTxCTCSS(_tx_ctcss);
 
         _mutex->unlock();
+        // FIXME: why do I need a delay here?
+        struct timespec time_to_sleep = {0, 100000000L };
+        nanosleep(&time_to_sleep, NULL);
         if(_tx_mode == gr_modem_types::ModemTypeQPSKVideo)
             _video = new VideoEncoder(QString::fromStdString(video_device));
         if(_tx_mode == gr_modem_types::ModemTypeQPSK250000 && _net_device == 0)
