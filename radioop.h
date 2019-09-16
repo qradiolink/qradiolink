@@ -139,6 +139,7 @@ public slots:
     void setVOIPForwarding(bool value);
     void startTx();
     void stopTx();
+    void endTx();
     void updateFrequency();
     void toggleRepeat(bool value);
     void addChannel(Channel* chan);
@@ -199,6 +200,7 @@ private:
     long long _rx_sample_rate;
     QElapsedTimer _last_voiced_frame_timer;
     QTimer *_voip_tx_timer;
+    QTimer *_end_tx_timer;
     QElapsedTimer *_data_read_timer;
     QElapsedTimer *_data_modem_reset_timer;
     QElapsedTimer *_data_modem_sleep_timer;

@@ -42,6 +42,8 @@ RadioOp::RadioOp(Settings *settings, QObject *parent) :
     _voip_tx_timer->setSingleShot(true);
     _vox_timer = new QTimer(this);
     _vox_timer->setSingleShot(true);
+    _end_tx_timer = new QTimer(this);
+    _end_tx_timer->setSingleShot(true);
     _data_read_timer = new QElapsedTimer();
     _data_modem_reset_timer = new QElapsedTimer();
     _data_modem_sleep_timer = new QElapsedTimer();
@@ -94,6 +96,7 @@ RadioOp::RadioOp(Settings *settings, QObject *parent) :
     QObject::connect(_data_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));
     QObject::connect(_data_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));
     QObject::connect(_voip_tx_timer, SIGNAL(timeout()), this, SLOT(stopTx()));
+    QObject::connect(_end_tx_timer, SIGNAL(timeout()), this, SLOT(endTx()));
     _modem = new gr_modem(_settings);
 
     QObject::connect(_modem,SIGNAL(textReceived(QString)),this,SLOT(textReceived(QString)));
@@ -145,6 +148,8 @@ RadioOp::~RadioOp()
     delete _voice_led_timer;
     delete _data_led_timer;
     delete _voip_tx_timer;
+    delete _vox_timer;
+    delete _end_tx_timer;
     delete _modem;
     delete[] _rand_frame_data;
     _voip_encode_buffer->clear();
@@ -462,6 +467,7 @@ void RadioOp::startTx()
         // FIXME: full duplex mode
         //if(_rx_inited && !_repeat && (_rx_mode != gr_modem_types::ModemTypeQPSK250000))
         //    _modem->stopRX();
+        _mutex->lock();
         if(!_duplex_enabled)
             _modem->enableDemod(false);
         //if(_tx_modem_started)
@@ -469,6 +475,7 @@ void RadioOp::startTx()
 
         _modem->tuneTx(_tx_frequency + _tune_shift_freq);
         _modem->setTxPower(_tx_power);
+        _mutex->unlock();
         //_modem->startTX();
 
         // FIXME: how to handle the LimeSDR calibration better?
@@ -493,12 +500,8 @@ void RadioOp::stopTx()
         {
             sendEndBeep();
         }
-        // FIXME: this is the transmission end tail, but this is not the proper way to handle it
-        struct timespec time_to_sleep = {1, 0L };
-        nanosleep(&time_to_sleep, NULL);
 
-        _modem->setTxPower(0.0);
-        //_modem->stopTX();
+        _end_tx_timer->start(1000);
         _tx_modem_started = false;
         _tx_started = false;
         // FIXME: full duplex mode
@@ -508,6 +511,14 @@ void RadioOp::stopTx()
             _modem->enableDemod(true);
     }
     setInputAudioStream();
+}
+
+void RadioOp::endTx()
+{
+    _mutex->lock();
+    _modem->setTxPower(0.0);
+    //_modem->stopTX();
+    _mutex->unlock();
 }
 
 void RadioOp::updateFrequency()

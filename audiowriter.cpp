@@ -52,7 +52,7 @@ void AudioWriter::run()
             delete[] samp->pcm;
             delete samp;
             // FIXME: compressor segfaults across threads
-            _audio_writer->write_short(pcm, bytes, false, audio_mode);
+            _audio_writer->write_short(pcm, bytes, preprocess, audio_mode);
 
         }
         _mutex.lock();

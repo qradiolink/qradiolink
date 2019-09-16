@@ -78,7 +78,7 @@ AudioInterface::AudioInterface(QObject *parent, unsigned sample_rate, unsigned c
                   );
     sf_simplecomp(&_cm_state_write_codec2,
                   8000, // audio rate
-                  12,   // audio boost
+                  3,   // audio boost
                   -30,  // kick in (dB)
                   20,   // knee
                   20,   // inverse scale
@@ -182,9 +182,9 @@ int AudioInterface::write_short(short *buf, short bufsize, bool preprocess, int 
     if(preprocess)
     {
         int i = 3;
-        speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_NOISE_SUPPRESS, &i);
-        speex_preprocess_run(_speex_preprocess, buf);
-        //compress_audio(buf, bufsize, 1, audio_mode);
+        //speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_NOISE_SUPPRESS, &i);
+        //speex_preprocess_run(_speex_preprocess, buf);
+        compress_audio(buf, bufsize, 1, audio_mode);
     }
 
     if(!_s_short_play)
@@ -209,10 +209,10 @@ int AudioInterface::read_short(short *buf, short bufsize, bool preprocess, int a
     int vad = 1;
     if(preprocess)
     {
-        vad = speex_preprocess_run(_speex_preprocess, buf);
+        //vad = speex_preprocess_run(_speex_preprocess, buf);
     }
 
-    //compress_audio(buf, bufsize, 0, audio_mode);
+    compress_audio(buf, bufsize, 0, audio_mode);
 
     return vad;
 }
