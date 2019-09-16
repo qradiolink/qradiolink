@@ -25,6 +25,7 @@ AudioInterface::AudioInterface(QObject *parent, unsigned sample_rate, unsigned c
     _s_short_rec = NULL;
     _error=0;
     _speex_preprocess = speex_preprocess_state_init(320, 8000);
+
     int i;
     float f;
     i = 1;
@@ -78,7 +79,7 @@ AudioInterface::AudioInterface(QObject *parent, unsigned sample_rate, unsigned c
                   );
     sf_simplecomp(&_cm_state_write_codec2,
                   8000, // audio rate
-                  12,   // audio boost
+                  3,   // audio boost
                   -30,  // kick in (dB)
                   20,   // knee
                   20,   // inverse scale
@@ -182,8 +183,8 @@ int AudioInterface::write_short(short *buf, short bufsize, bool preprocess, int 
     if(preprocess)
     {
         int i = 3;
-        speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_NOISE_SUPPRESS, &i);
-        speex_preprocess_run(_speex_preprocess, buf);
+        //speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_NOISE_SUPPRESS, &i);
+        //speex_preprocess_run(_speex_preprocess, buf);
         compress_audio(buf, bufsize, 1, audio_mode);
     }
 
@@ -209,12 +210,12 @@ int AudioInterface::read_short(short *buf, short bufsize, bool preprocess, int a
     int vad = 1;
     if(preprocess)
     {
-        vad = speex_preprocess_run(_speex_preprocess, buf);
+        //vad = speex_preprocess_run(_speex_preprocess, buf);
     }
 
     compress_audio(buf, bufsize, 0, audio_mode);
-
-    return vad;
+    float power = calc_audio_power(buf, bufsize/sizeof(short));
+    return (power > 0.001);
 }
 
 float AudioInterface::calc_audio_power(short *buf, short samples)
@@ -222,10 +223,10 @@ float AudioInterface::calc_audio_power(short *buf, short samples)
     float power = 0.0;
     for (int i = 0; i < samples; i++)
     {
-        float a = (float) abs(buf[i]);
+        float a = abs(((float)buf[i]) / 32768.0f);
         power += a * a;
     }
-    return power / (32768.0f * 32768.0f * (float) samples);
+    return 32768.0f * power / ((float) samples);
 }
 
 void AudioInterface::compress_audio(short *buf, short bufsize, int direction, int audio_mode)

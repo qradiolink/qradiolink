@@ -170,6 +170,7 @@ void SSLClient::disconnectHost()
 {
     if(_status==0)
         return;
+    QObject::disconnect(_socket,SIGNAL(disconnected()),this,SLOT(tryReconnect()));
     _socket->disconnectFromHost();
     _reconnect = false;
     _status=0;

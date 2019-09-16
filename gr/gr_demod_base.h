@@ -78,6 +78,7 @@ public slots:
     void enable_gui_const(bool value);
     void enable_gui_fft(bool value);
     void enable_rssi(bool value);
+    void enable_demodulator(bool value);
     double get_freq();
     void set_mode(int mode, bool disconnect=true, bool connect=true);
     void set_fft_size(int size);

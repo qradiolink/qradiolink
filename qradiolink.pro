@@ -83,7 +83,8 @@ SOURCES += main.cpp\
     channel.cpp \
     radioprotocol.cpp \
     gr/rx_fft.cpp \
-    audiowriter.cpp
+    audiowriter.cpp \
+    audioreader.cpp
 
 HEADERS  += mainwindow.h\
         audio/audioencoder.h\
@@ -154,7 +155,8 @@ HEADERS  += mainwindow.h\
     channel.h \
     radioprotocol.h \
     gr/rx_fft.h \
-    audiowriter.h
+    audiowriter.h \
+    audioreader.h
 
 
 FORMS    += mainwindow.ui

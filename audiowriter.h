@@ -25,7 +25,7 @@ public slots:
 private:
     struct audio_samples
     {
-        audio_samples() : pcm(0), bytes(0), audio_mode(0) {}
+        audio_samples() : pcm(0), bytes(0), preprocess(false), audio_mode(0) {}
         short *pcm;
         int bytes;
         bool preprocess;
@@ -33,7 +33,8 @@ private:
     };
 
     AudioInterface *_audio_writer;
-    std::vector<audio_samples*> *_sample_queue;
+    std::vector<audio_samples*> *_rx_sample_queue;
+    //std::vector<audio_samples*> *_tx_sample_queue;
     bool _working;
     QMutex _mutex;
 

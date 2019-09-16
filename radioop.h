@@ -70,6 +70,7 @@ public:
 
 signals:
     void finished();
+    void setAudioReadMode(bool capture, bool preprocess, int audio_mode);
     void printText(QString text, bool html);
     void printCallsign(QString text);
     void displayReceiveStatus(bool status);
@@ -97,6 +98,7 @@ public slots:
     void run();
     void startTransmission();
     void endTransmission();
+    void txAudio(short *audiobuffer, int audiobuffer_size, int vad, bool radio_only);
     void textData(QString text, bool repeat = false);
     void stop();
     void textReceived(QString text);
@@ -127,6 +129,7 @@ public slots:
     void enableGUIConst(bool value);
     void enableGUIFFT(bool value);
     void enableRSSI(bool value);
+    void enableDuplex(bool value);
     void scan(bool receiving, bool wait_for_timer=true);
     void startAutoTune(int step, int direction);
     void stopAutoTune();
@@ -136,6 +139,7 @@ public slots:
     void setVOIPForwarding(bool value);
     void startTx();
     void stopTx();
+    void endTx();
     void updateFrequency();
     void toggleRepeat(bool value);
     void addChannel(Channel* chan);
@@ -196,6 +200,7 @@ private:
     long long _rx_sample_rate;
     QElapsedTimer _last_voiced_frame_timer;
     QTimer *_voip_tx_timer;
+    QTimer *_end_tx_timer;
     QElapsedTimer *_data_read_timer;
     QElapsedTimer *_data_modem_reset_timer;
     QElapsedTimer *_data_modem_sleep_timer;
@@ -216,6 +221,7 @@ private:
     int _fft_poll_time;
     bool _constellation_enabled;
     bool _rssi_enabled;
+    bool _duplex_enabled;
     QElapsedTimer *_fft_read_timer;
     QElapsedTimer *_const_read_timer;
     QElapsedTimer *_scan_timer;
@@ -226,9 +232,9 @@ private:
                     int &tx_freq_corr, std::string &callsign, std::string &video_device);
     int getFrameLength(unsigned char *data);
     unsigned int getFrameCRC32(unsigned char *data);
-    void txAudio(short *audiobuffer, int audiobuffer_size);
 
-    void processInputAudioStream();
+
+    void updateInputAudioStream();
     int processInputVideoStream(bool &frame_flag);
     void processInputNetStream();
     void sendEndBeep();

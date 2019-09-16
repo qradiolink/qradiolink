@@ -4,15 +4,15 @@ AudioWriter::AudioWriter(QObject *parent) :
     QObject(parent)
 {
 
-    _sample_queue = new std::vector<audio_samples*>;
+    _rx_sample_queue = new std::vector<audio_samples*>;
     _working = true;
 }
 
 AudioWriter::~AudioWriter()
 {
 
-    _sample_queue->clear();
-    delete _sample_queue;
+    _rx_sample_queue->clear();
+    delete _rx_sample_queue;
 }
 
 void AudioWriter::stop()
@@ -30,7 +30,7 @@ void AudioWriter::writePCM(short *pcm, int bytes, bool preprocess, int audio_mod
     samp->preprocess = preprocess;
     samp->audio_mode = audio_mode;
     _mutex.lock();
-    _sample_queue->push_back(samp);
+    _rx_sample_queue->push_back(samp);
     _mutex.unlock();
 }
 
@@ -40,26 +40,35 @@ void AudioWriter::run()
     while(_working)
     {
         QCoreApplication::processEvents();
-        int size = _sample_queue->size();
-        for(int i=0;i< size;i++)
+        int size = _rx_sample_queue->size();
+        if(size > 0)
         {
-            audio_samples *samp = _sample_queue->at(i);
-            int bytes = samp->bytes;
-            bool preprocess = samp->preprocess;
-            int audio_mode = samp->audio_mode;
-            short *pcm = new short[bytes/sizeof(short)];
-            memcpy(pcm, samp->pcm, samp->bytes);
-            delete[] samp->pcm;
-            delete samp;
-            // FIXME: compressor segfaults across threads
-            _audio_writer->write_short(pcm, bytes, false, audio_mode);
+            for(int i=0;i< size;i++)
+            {
+                audio_samples *samp = _rx_sample_queue->at(i);
+                int bytes = samp->bytes;
+                bool preprocess = samp->preprocess;
+                int audio_mode = samp->audio_mode;
+                short *pcm = new short[bytes/sizeof(short)];
+                memcpy(pcm, samp->pcm, samp->bytes);
+                delete[] samp->pcm;
+                delete samp;
+                // FIXME: speex dsp segfaults across threads
+                _audio_writer->write_short(pcm, bytes, preprocess, audio_mode);
 
+            }
+            _mutex.lock();
+            _rx_sample_queue->clear();
+            _mutex.unlock();
+
+            struct timespec time_to_sleep = {0, 1000L };
+            nanosleep(&time_to_sleep, NULL);
         }
-        _mutex.lock();
-        _sample_queue->clear();
-        _mutex.unlock();
-        struct timespec time_to_sleep = {0, 1000000L };
-        nanosleep(&time_to_sleep, NULL);
+        else
+        {
+            struct timespec time_to_sleep = {0, 5000000L };
+            nanosleep(&time_to_sleep, NULL);
+        }
     }
     delete _audio_writer;
 }

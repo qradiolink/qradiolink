@@ -44,8 +44,10 @@ gr_modem::gr_modem(Settings *settings, QObject *parent) :
 
 gr_modem::~gr_modem()
 {
-    deinitRX(_modem_type_rx);
-    deinitTX(_modem_type_tx);
+    if(_gr_demod_base)
+        deinitRX(_modem_type_rx);
+    if(_gr_mod_base)
+        deinitTX(_modem_type_tx);
 }
 
 void gr_modem::initTX(int modem_type, std::string device_args, std::string device_antenna, int freq_corr)
@@ -329,6 +331,12 @@ void gr_modem::enableRSSI(bool value)
         _gr_demod_base->enable_rssi(value);
 }
 
+void gr_modem::enableDemod(bool value)
+{
+    if(_gr_demod_base)
+        _gr_demod_base->enable_demodulator(value);
+}
+
 void gr_modem::setRepeater(bool value)
 {
     _repeater = value;
@@ -390,14 +398,6 @@ void gr_modem::endTransmission(QString callsign)
     transmit(frames);
 }
 
-void gr_modem::transmitDigitalAudio(unsigned char *data, int size)
-{
-    std::vector<unsigned char> *one_frame = frame(data, size, FrameTypeVoice);
-    QVector<std::vector<unsigned char>*> frames;
-    frames.append(one_frame);
-    transmit(frames);
-    delete[] data;
-}
 
 void gr_modem::textData(QString text, int frame_type)
 {
@@ -442,6 +442,17 @@ void gr_modem::binData(QByteArray bin_data, int frame_type)
     }
     transmit(frames);
 }
+
+
+void gr_modem::transmitDigitalAudio(unsigned char *data, int size)
+{
+    std::vector<unsigned char> *one_frame = frame(data, size, FrameTypeVoice);
+    QVector<std::vector<unsigned char>*> frames;
+    frames.append(one_frame);
+    transmit(frames);
+    delete[] data;
+}
+
 
 void gr_modem::transmitPCMAudio(std::vector<float> *audio_data)
 {

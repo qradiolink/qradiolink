@@ -38,6 +38,7 @@
 #include "mumbleclient.h"
 #include "audioop.h"
 #include "audiowriter.h"
+#include "audioreader.h"
 #include "dtmfcommand.h"
 #include "station.h"
 #include "channel.h"
@@ -104,6 +105,7 @@ int main(int argc, char *argv[])
     MumbleClient *client = new MumbleClient(settings);
     RadioOp *radio_op = new RadioOp(settings);
     AudioWriter *audiowriter = new AudioWriter;
+    AudioReader *audioreader = new AudioReader;
     MainWindow *w = new MainWindow(settings);
     w->setWindowTitle("QRadioLink");
 
@@ -175,7 +177,6 @@ int main(int argc, char *argv[])
 
     QThread *t4 = new QThread;
     t4->setObjectName("radioop");
-
     radio_op->moveToThread(t4);
     QObject::connect(t4, SIGNAL(started()), radio_op, SLOT(run()));
     QObject::connect(radio_op, SIGNAL(finished()), t4, SLOT(quit()));
@@ -185,13 +186,21 @@ int main(int argc, char *argv[])
 
     QThread *t5 = new QThread;
     t5->setObjectName("audiowriter");
-
     audiowriter->moveToThread(t5);
     QObject::connect(t5, SIGNAL(started()), audiowriter, SLOT(run()));
     QObject::connect(audiowriter, SIGNAL(finished()), t5, SLOT(quit()));
     QObject::connect(audiowriter, SIGNAL(finished()), audiowriter, SLOT(deleteLater()));
     QObject::connect(t5, SIGNAL(finished()), t5, SLOT(deleteLater()));
     t5->start();
+
+    QThread *t6 = new QThread;
+    t6->setObjectName("audioreader");
+    audioreader->moveToThread(t6);
+    QObject::connect(t6, SIGNAL(started()), audioreader, SLOT(run()));
+    QObject::connect(audioreader, SIGNAL(finished()), t6, SLOT(quit()));
+    QObject::connect(audioreader, SIGNAL(finished()), audioreader, SLOT(deleteLater()));
+    QObject::connect(t6, SIGNAL(finished()), t6, SLOT(deleteLater()));
+    t6->start();
 
     QObject::connect(w,SIGNAL(startTransmission()),radio_op,SLOT(startTransmission()));
     QObject::connect(w,SIGNAL(endTransmission()),radio_op,SLOT(endTransmission()));
@@ -215,6 +224,7 @@ int main(int argc, char *argv[])
     QObject::connect(w,SIGNAL(setTxCTCSS(float)),radio_op,SLOT(setTxCTCSS(float)));
     QObject::connect(w,SIGNAL(enableGUIConst(bool)),radio_op,SLOT(enableGUIConst(bool)));
     QObject::connect(w,SIGNAL(enableGUIFFT(bool)),radio_op,SLOT(enableGUIFFT(bool)));
+    QObject::connect(w,SIGNAL(enableDuplex(bool)),radio_op,SLOT(enableDuplex(bool)));
     QObject::connect(w,SIGNAL(enableRSSI(bool)),radio_op,SLOT(enableRSSI(bool)));
     QObject::connect(w,SIGNAL(usePTTForVOIP(bool)),radio_op,SLOT(usePTTForVOIP(bool)));
     QObject::connect(w,SIGNAL(setVOIPForwarding(bool)),radio_op,SLOT(setVOIPForwarding(bool)));
@@ -225,6 +235,9 @@ int main(int argc, char *argv[])
     QObject::connect(w,SIGNAL(newFFTSize(int)),radio_op,SLOT(setFFTSize(int)));
     QObject::connect(w,SIGNAL(setWaterfallFPS(int)),radio_op,SLOT(setFFTPollTime(int)));
     QObject::connect(w,SIGNAL(setSampleRate(int)),radio_op,SLOT(setRxSampleRate(int)));
+
+    QObject::connect(radio_op, SIGNAL(setAudioReadMode(bool,bool,int)), audioreader, SLOT(setReadMode(bool,bool,int)));
+    QObject::connect(audioreader, SIGNAL(audioPCM(short*,int,int, bool)), radio_op, SLOT(txAudio(short*,int,int, bool)));
     QObject::connect(radio_op, SIGNAL(printText(QString,bool)), w, SLOT(displayText(QString,bool)));
     QObject::connect(radio_op, SIGNAL(printCallsign(QString)), w, SLOT(displayCallsign(QString)));
     QObject::connect(radio_op, SIGNAL(videoImage(QImage)), w, SLOT(displayImage(QImage)));

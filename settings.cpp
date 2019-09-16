@@ -26,6 +26,7 @@ Settings::Settings()
     show_controls = 0;
     show_constellation = 0;
     show_fft = 0;
+    enable_duplex = 0;
     fft_size = 32768;
     waterfall_fps = 15;
 
@@ -102,6 +103,7 @@ void Settings::readConfig()
         show_controls = cfg.lookup("show_controls");
         show_constellation = cfg.lookup("show_constellation");
         show_fft = cfg.lookup("show_fft");
+        enable_duplex = cfg.lookup("enable_duplex");
         fft_size = cfg.lookup("fft_size");
         waterfall_fps = cfg.lookup("waterfall_fps");
 
@@ -137,6 +139,7 @@ void Settings::readConfig()
         fft_size = 32768;
         waterfall_fps = 15;
         show_fft = 1;
+        enable_duplex = 0;
         std::cerr << "Settings not found in configuration file." << std::endl;
     }
 }
@@ -170,6 +173,7 @@ void Settings::saveConfig()
     root.add("show_controls",libconfig::Setting::TypeInt) = show_controls;
     root.add("show_constellation",libconfig::Setting::TypeInt) = show_constellation;
     root.add("show_fft",libconfig::Setting::TypeInt) = show_fft;
+    root.add("enable_duplex",libconfig::Setting::TypeInt) = enable_duplex;
     root.add("fft_size",libconfig::Setting::TypeInt) = fft_size;
     root.add("waterfall_fps",libconfig::Setting::TypeInt) = waterfall_fps;
     try

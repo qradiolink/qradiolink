@@ -264,9 +264,9 @@ void AudioEncoder::filter_audio(short *audiobuffer, int audiobuffersize, bool pr
             // FIXME:
             if(mode == 0)
             {
-                output = _audio_filter2_1400->do_sample(sample) + 0.6375f * _emph_last_input + 0.1 * (rand() % 1000); // 0.9
+                output = _audio_filter2_1400->do_sample(sample) + 0.1 * (rand() % 1000) + 0.6375f * _emph_last_input ; // 0.9
                 _emph_last_input = output;
-                audiobuffer[i] = (short) (output * 0.5);
+                audiobuffer[i] = (short) (output * 0.9);
             }
             else
             {
