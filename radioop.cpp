@@ -824,7 +824,6 @@ void RadioOp::receiveDigitalAudio(unsigned char *data, int size)
         else if(!_voip_forwarding)
         {
             emit writePCM(audio_out,samples*sizeof(short), true, audio_mode);
-            //_audio->write_short(audio_out,samples*sizeof(short),true, audio_mode);
         }
     }
 }
@@ -851,7 +850,6 @@ void RadioOp::receivePCMAudio(std::vector<float> *audio_data)
     else
     {
         emit writePCM(pcm, size*sizeof(short), false, AudioInterface::AUDIO_MODE_ANALOG);
-        //_audio->write_short(pcm, size*sizeof(short),false, AudioInterface::AUDIO_MODE_ANALOG);
     }
     audio_data->clear();
     delete audio_data;
@@ -1026,7 +1024,6 @@ void RadioOp::processVoipAudioFrame(short *pcm, int samples, quint64 sid)
         else
         {
             emit writePCM(pcm, samples*sizeof(short), true, AudioInterface::AUDIO_MODE_OPUS);
-            //_audio->write_short(pcm, samples*sizeof(short));
             audioFrameReceived();
         }
         _last_voiced_frame_timer.restart();
@@ -1075,7 +1072,6 @@ void RadioOp::callsignReceived(QString callsign)
     short *origin = (short*) _data_rec_sound->data();
     memcpy(samples, origin, _data_rec_sound->size());
     emit writePCM(samples, _data_rec_sound->size(), false, AudioInterface::AUDIO_MODE_ANALOG);
-    //_audio->write_short(samples,_data_rec_sound->size());
 
     emit printText(text,true);
     emit printCallsign(callsign);
@@ -1098,7 +1094,6 @@ void RadioOp::dataFrameReceived()
         short *samples = new short[_data_rec_sound->size()/sizeof(short)];
         memcpy(samples, sound, _data_rec_sound->size());
         emit writePCM(samples, _data_rec_sound->size(), false, AudioInterface::AUDIO_MODE_ANALOG);
-        //_audio->write_short(samples,_data_rec_sound->size());
     }
 
 }
@@ -1117,7 +1112,6 @@ void RadioOp::endAudioTransmission()
     short *origin = (short*) _end_rec_sound->data();
     memcpy(samples, origin, _end_rec_sound->size());
     emit writePCM(samples, _end_rec_sound->size(), false, AudioInterface::AUDIO_MODE_ANALOG);
-    //_audio->write_short(samples,data->size());
 }
 
 void RadioOp::addChannel(Channel *chan)
