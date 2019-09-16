@@ -184,7 +184,7 @@ int AudioInterface::write_short(short *buf, short bufsize, bool preprocess, int 
         int i = 3;
         speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_NOISE_SUPPRESS, &i);
         speex_preprocess_run(_speex_preprocess, buf);
-        compress_audio(buf, bufsize, 1, audio_mode);
+        //compress_audio(buf, bufsize, 1, audio_mode);
     }
 
     if(!_s_short_play)
@@ -212,7 +212,7 @@ int AudioInterface::read_short(short *buf, short bufsize, bool preprocess, int a
         vad = speex_preprocess_run(_speex_preprocess, buf);
     }
 
-    compress_audio(buf, bufsize, 0, audio_mode);
+    //compress_audio(buf, bufsize, 0, audio_mode);
 
     return vad;
 }

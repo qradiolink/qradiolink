@@ -479,13 +479,13 @@ void RadioOp::startTx()
         if((_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL))
             _modem->startTransmission(_callsign);
     }
+    setInputAudioStream();
 }
 
 void RadioOp::stopTx()
 {
     if(_tx_inited)
     {
-
         if(_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL)
             _modem->endTransmission(_callsign);
         if((_tx_radio_type == radio_type::RADIO_TYPE_ANALOG)
@@ -507,6 +507,7 @@ void RadioOp::stopTx()
         if(!_duplex_enabled)
             _modem->enableDemod(true);
     }
+    setInputAudioStream();
 }
 
 void RadioOp::updateFrequency()
@@ -677,7 +678,7 @@ void RadioOp::run()
             ptt_activated = false;
             stopTx();
         }
-        setInputAudioStream();
+
         getFFTData();
         getConstellationData();
         getRSSI();
@@ -718,7 +719,7 @@ void RadioOp::run()
         }
         else
         {
-            struct timespec time_to_sleep = {0, 10000L };
+            struct timespec time_to_sleep = {0, 2000000L };
             nanosleep(&time_to_sleep, NULL);
         }
     }
@@ -1157,13 +1158,14 @@ void RadioOp::toggleRX(bool value)
                                  tx_freq_corr, callsign, video_device);
         try
         {
-
+            _mutex->lock();
             _modem->initRX(_rx_mode, rx_device_args, rx_antenna, rx_freq_corr);
-
+            _mutex->unlock();
         }
         catch(std::runtime_error e)
         {
             _modem->deinitRX(_rx_mode);
+            _mutex->unlock();
 
             emit initError("Could not init RX device, check settings");
             return;
@@ -1171,6 +1173,7 @@ void RadioOp::toggleRX(bool value)
         // FIXME:
         struct timespec time_to_sleep = {1, 30000000L };
         nanosleep(&time_to_sleep, NULL);
+        _mutex->lock();
         _modem->enableGUIFFT(_fft_enabled);
         _modem->enableGUIConst(_constellation_enabled);
         _modem->enableRSSI(_rssi_enabled);
@@ -1181,6 +1184,7 @@ void RadioOp::toggleRX(bool value)
         _modem->set_samp_rate(_rx_sample_rate);
         _modem->tune(_rx_frequency);
         _modem->startRX();
+        _mutex->unlock();
 
         if(_rx_mode == gr_modem_types::ModemTypeQPSK250000 && _net_device == 0)
         {
@@ -1195,9 +1199,10 @@ void RadioOp::toggleRX(bool value)
             delete _net_device;
             _net_device = 0;
         }
-
+        _mutex->lock();
         _modem->stopRX();
         _modem->deinitRX(_rx_mode);
+        _mutex->unlock();
 
         _rx_inited = false;
     }
@@ -1220,24 +1225,25 @@ void RadioOp::toggleTX(bool value)
                                  tx_freq_corr, callsign, video_device);
         try
         {
-
+            _mutex->lock();
             _modem->initTX(_tx_mode, tx_device_args, tx_antenna, tx_freq_corr);
-
+            _mutex->unlock();
         }
         catch(std::runtime_error e)
         {
             _modem->deinitTX(_tx_mode);
-
+            _mutex->unlock();
             emit initError("Could not init TX device, check settings");
             return;
         }
 
-
+        _mutex->lock();
         _modem->setTxPower(_tx_power);
         _modem->setBbGain(_bb_gain);
         _modem->tuneTx(430000000);
         _modem->setTxCTCSS(_tx_ctcss);
         _modem->startTX();
+        _mutex->unlock();
 
         if(_tx_mode == gr_modem_types::ModemTypeQPSKVideo)
             _video = new VideoEncoder(QString::fromStdString(video_device));
@@ -1249,9 +1255,11 @@ void RadioOp::toggleTX(bool value)
     }
     else if(_tx_inited)
     {
+        _mutex->lock();
         _modem->stopTX();
 
         _modem->deinitTX(_tx_mode);
+        _mutex->unlock();
 
         if(_tx_mode == gr_modem_types::ModemTypeQPSKVideo)
         {
@@ -1269,6 +1277,12 @@ void RadioOp::toggleTX(bool value)
 
 void RadioOp::toggleRxMode(int value)
 {
+    if(_rx_inited)
+    {
+        _mutex->lock();
+        _modem->stopRX();
+        _mutex->unlock();
+    }
 
     bool rx_inited_before = _rx_inited;
     if(rx_inited_before)
@@ -1370,11 +1384,18 @@ void RadioOp::toggleRxMode(int value)
         break;
     }
 
-
+    _mutex->lock();
     _modem->toggleRxMode(_rx_mode);
+    _mutex->unlock();
     if(rx_inited_before)
     {
         _rx_inited = true;
+    }
+    if(_rx_inited)
+    {
+        _mutex->lock();
+        _modem->startRX();
+        _mutex->unlock();
     }
 
 }
@@ -1444,8 +1465,13 @@ void RadioOp::toggleTxMode(int value)
         break;
     }
 
-
+    _mutex->lock();
+    if(_tx_inited)
+        _modem->stopTX();
     _modem->toggleTxMode(_tx_mode);
+    if(_tx_inited)
+        _modem->startTX();
+    _mutex->unlock();
 
 }
 

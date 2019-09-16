@@ -45,8 +45,8 @@ void AudioReader::run()
             // FIXME: support different frame durations
             int audiobuffer_size = 640; //40 ms @ 8k
             short *audiobuffer = new short[audiobuffer_size/sizeof(short)];
-            int vad = _audio_reader->read_short(audiobuffer,audiobuffer_size, preprocess, audio_mode);
-            emit audioPCM(audiobuffer, audiobuffer_size, vad, true);
+            int vad = _audio_reader->read_short(audiobuffer,audiobuffer_size, false, audio_mode);
+            emit audioPCM(audiobuffer, audiobuffer_size, vad, false);
         }
 
 
