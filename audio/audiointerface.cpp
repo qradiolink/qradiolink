@@ -25,6 +25,7 @@ AudioInterface::AudioInterface(QObject *parent, unsigned sample_rate, unsigned c
     _s_short_rec = NULL;
     _error=0;
     _speex_preprocess = speex_preprocess_state_init(320, 8000);
+
     int i;
     float f;
     i = 1;

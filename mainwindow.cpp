@@ -962,7 +962,7 @@ void MainWindow::updateRSSI(float value)
     _rssi = value;
     if(!_range_set)
     {
-        setFFTRange(1);
+        setFFTRange(2);
         _range_set = true;
     }
     if(!_settings->show_controls && value != 9999)

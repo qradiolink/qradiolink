@@ -47,11 +47,18 @@ void AudioReader::run()
             short *audiobuffer = new short[audiobuffer_size/sizeof(short)];
             int vad = _audio_reader->read_short(audiobuffer,audiobuffer_size, preprocess, audio_mode);
             emit audioPCM(audiobuffer, audiobuffer_size, vad, false);
+
+            struct timespec time_to_sleep = {0, 2000L };
+            nanosleep(&time_to_sleep, NULL);
+        }
+        else
+        {
+            struct timespec time_to_sleep = {0, 5000000L };
+            nanosleep(&time_to_sleep, NULL);
         }
 
 
-        struct timespec time_to_sleep = {0, 1000000L };
-        nanosleep(&time_to_sleep, NULL);
+
     }
     delete _audio_reader;
 }

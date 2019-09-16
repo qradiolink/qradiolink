@@ -730,7 +730,7 @@ void RadioOp::run()
         }
         else
         {
-            struct timespec time_to_sleep = {0, 2000000L };
+            struct timespec time_to_sleep = {0, 20000000L };
             nanosleep(&time_to_sleep, NULL);
         }
     }
