@@ -234,7 +234,7 @@ private:
     unsigned int getFrameCRC32(unsigned char *data);
 
 
-    void setInputAudioStream();
+    void updateInputAudioStream();
     int processInputVideoStream(bool &frame_flag);
     void processInputNetStream();
     void sendEndBeep();

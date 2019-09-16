@@ -23,6 +23,7 @@
         <file>res/application-exit.png</file>
         <file>res/call-start.png</file>
         <file>res/im-user.png</file>
+        <file>res/speaker.png</file>
     </qresource>
     <qresource prefix="/fonts">
         <file>res/LiquidCrystal-Normal.otf</file>

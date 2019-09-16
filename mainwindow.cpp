@@ -962,7 +962,7 @@ void MainWindow::updateRSSI(float value)
     _rssi = value;
     if(!_range_set)
     {
-        setFFTRange(2);
+        setFFTRange(1);
         _range_set = true;
     }
     if(!_settings->show_controls && value != 9999)
@@ -1013,8 +1013,8 @@ void MainWindow::setFFTRange(int value)
     // value is from one to 10
     if(_rssi == 0)
         _rssi = -80.0;
-    ui->plotterFrame->setPandapterRange(_rssi - 10 / (float)value , _rssi + 70 / (float)value);
-    ui->plotterFrame->setWaterfallRange(_rssi - 10 / (float)value , _rssi + 70 / (float)value);
+    ui->plotterFrame->setPandapterRange(_rssi - 20 / (float)value , _rssi + 70 / (float)value);
+    ui->plotterFrame->setWaterfallRange(_rssi - 20 / (float)value , _rssi + 70 / (float)value);
 }
 
 void MainWindow::autoSquelch()

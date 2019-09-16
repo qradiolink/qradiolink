@@ -243,9 +243,9 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
 
 }
 
-void RadioOp::setInputAudioStream()
+void RadioOp::updateInputAudioStream()
 {
-    // FIXME: this code runs every loop!
+    /// this code runs only in startTx and stopTx
     if(!_transmitting_audio && !_vox_enabled)
     {
         emit setAudioReadMode(false, false, AudioInterface::AUDIO_MODE_ANALOG);
@@ -491,12 +491,12 @@ void RadioOp::startTx()
             _modem->startTransmission(_callsign);
 
     }
-    setInputAudioStream();
+    updateInputAudioStream();
 }
 
 void RadioOp::stopTx()
 {
-    setInputAudioStream();
+    updateInputAudioStream();
     if(_tx_inited)
     {
         if(_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL)

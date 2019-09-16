@@ -611,7 +611,7 @@ void MumbleClient::createVoicePacket(unsigned char *encoded_audio, int packet_si
     else
         type |= (4 << 5);
 
-    int data_size = 1024;
+    int data_size = 1024*1024;
     char data[data_size];
     data[0] = static_cast<unsigned char>(type);
     PacketDataStream pds(data + 1, data_size-1);
