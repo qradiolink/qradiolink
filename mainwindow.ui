@@ -1142,46 +1142,6 @@ font: 12pt &quot;Sans Serif&quot;;
                    </property>
                   </widget>
                  </item>
-                 <item row="2" column="3">
-                  <widget class="QCommandLinkButton" name="pttVoipButton">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>150</width>
-                     <height>40</height>
-                    </size>
-                   </property>
-                   <property name="toolTip">
-                    <string>PTT will talk on VOIP network</string>
-                   </property>
-                   <property name="autoFillBackground">
-                    <bool>false</bool>
-                   </property>
-                   <property name="styleSheet">
-                    <string notr="true">font: 10pt &quot;Sans Serif&quot;;
-color: rgb(240, 240, 119);
-border-width: 4px;
-background-color: rgb(0, 0, 67);
-</string>
-                   </property>
-                   <property name="text">
-                    <string>Use PTT for VOIP</string>
-                   </property>
-                   <property name="icon">
-                    <iconset resource="resources.qrc">
-                     <normaloff>:/res/Button-Blank-Gray-icon.png</normaloff>
-                     <normalon>:/res/text-speak.png</normalon>:/res/Button-Blank-Gray-icon.png</iconset>
-                   </property>
-                   <property name="checkable">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
                  <item row="0" column="1">
                   <widget class="QLabel" name="label_28">
                    <property name="sizePolicy">
@@ -1234,8 +1194,8 @@ color: rgb(0, 0, 71);</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="2" column="2">
-                  <widget class="QCommandLinkButton" name="voipForwardButton">
+                 <item row="3" column="1">
+                  <widget class="QLabel" name="labelDisplayCallsign">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                      <horstretch>0</horstretch>
@@ -1244,33 +1204,46 @@ color: rgb(0, 0, 71);</string>
                    </property>
                    <property name="minimumSize">
                     <size>
-                     <width>150</width>
-                     <height>40</height>
+                     <width>70</width>
+                     <height>30</height>
                     </size>
                    </property>
-                   <property name="toolTip">
-                    <string>Radio is connected to the VOIP server</string>
+                   <property name="font">
+                    <font>
+                     <family>Sans Serif</family>
+                     <pointsize>9</pointsize>
+                     <weight>50</weight>
+                     <italic>false</italic>
+                     <bold>false</bold>
+                    </font>
                    </property>
-                   <property name="autoFillBackground">
-                    <bool>false</bool>
+                   <property name="toolTip">
+                    <string>Incoming transmission callsign</string>
                    </property>
                    <property name="styleSheet">
-                    <string notr="true">font: 10pt &quot;Sans Serif&quot;;
-color: rgb(240, 240, 119);
-border-width: 4px;
-background-color: rgb(0, 0, 67);
+                    <string notr="true">color: rgb(255, 255, 255);
+font: 9pt &quot;Monospace&quot;;
+background-color: rgb(150, 150, 150);
+font: 9pt &quot;Sans Serif&quot;;
 </string>
                    </property>
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Sunken</enum>
+                   </property>
+                   <property name="lineWidth">
+                    <number>1</number>
+                   </property>
                    <property name="text">
-                    <string>Forward radio</string>
+                    <string/>
                    </property>
-                   <property name="icon">
-                    <iconset resource="resources.qrc">
-                     <normaloff>:/res/Button-Blank-Gray-icon.png</normaloff>
-                     <normalon>:/res/Button-Blank-Red-icon.png</normalon>:/res/Button-Blank-Gray-icon.png</iconset>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
                    </property>
-                   <property name="checkable">
-                    <bool>true</bool>
+                   <property name="textInteractionFlags">
+                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -1332,6 +1305,19 @@ font: 12pt &quot;Sans Serif&quot;;</string>
                    </property>
                   </widget>
                  </item>
+                 <item row="1" column="4">
+                  <spacer name="horizontalSpacer_5">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
                  <item row="1" column="1">
                   <widget class="QLineEdit" name="lineEdit">
                    <property name="sizePolicy">
@@ -1348,18 +1334,95 @@ font: 12pt &quot;Sans Serif&quot;;</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="1" column="4">
-                  <spacer name="horizontalSpacer_5">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
+                 <item row="3" column="3">
+                  <widget class="QCommandLinkButton" name="pttVoipButton">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
                    </property>
-                   <property name="sizeHint" stdset="0">
+                   <property name="minimumSize">
                     <size>
-                     <width>40</width>
-                     <height>20</height>
+                     <width>150</width>
+                     <height>40</height>
                     </size>
                    </property>
-                  </spacer>
+                   <property name="toolTip">
+                    <string>PTT will talk on VOIP network</string>
+                   </property>
+                   <property name="autoFillBackground">
+                    <bool>false</bool>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">font: 10pt &quot;Sans Serif&quot;;
+color: rgb(240, 240, 119);
+border-width: 4px;
+background-color: rgb(0, 0, 67);
+</string>
+                   </property>
+                   <property name="text">
+                    <string>Use PTT for VOIP</string>
+                   </property>
+                   <property name="icon">
+                    <iconset resource="resources.qrc">
+                     <normaloff>:/res/Button-Blank-Gray-icon.png</normaloff>
+                     <normalon>:/res/text-speak.png</normalon>:/res/Button-Blank-Gray-icon.png</iconset>
+                   </property>
+                   <property name="checkable">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="2">
+                  <widget class="QCommandLinkButton" name="voipForwardButton">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>150</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                   <property name="toolTip">
+                    <string>Radio is connected to the VOIP server</string>
+                   </property>
+                   <property name="autoFillBackground">
+                    <bool>false</bool>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">font: 10pt &quot;Sans Serif&quot;;
+color: rgb(240, 240, 119);
+border-width: 4px;
+background-color: rgb(0, 0, 67);
+</string>
+                   </property>
+                   <property name="text">
+                    <string>Forward radio</string>
+                   </property>
+                   <property name="icon">
+                    <iconset resource="resources.qrc">
+                     <normaloff>:/res/Button-Blank-Gray-icon.png</normaloff>
+                     <normalon>:/res/Button-Blank-Red-icon.png</normalon>:/res/Button-Blank-Gray-icon.png</iconset>
+                   </property>
+                   <property name="checkable">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="1">
+                  <widget class="QLabel" name="label_22">
+                   <property name="text">
+                    <string>Callsign of last transmission</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
                  </item>
                 </layout>
                </item>
@@ -1415,6 +1478,60 @@ font: 12pt &quot;Sans Serif&quot;;</string>
                   <property name="spacing">
                    <number>5</number>
                   </property>
+                  <item row="0" column="2">
+                   <widget class="QLabel" name="label_29">
+                    <property name="styleSheet">
+                     <string notr="true">font: 12pt &quot;Sans Serif&quot;;</string>
+                    </property>
+                    <property name="text">
+                     <string>Server log</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="2">
+                   <widget class="QTextEdit" name="voipMessagesEdit">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="undoRedoEnabled">
+                     <bool>false</bool>
+                    </property>
+                    <property name="readOnly">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="0">
+                   <widget class="QLabel" name="label_27">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>30</height>
+                     </size>
+                    </property>
+                    <property name="styleSheet">
+                     <string notr="true">font: 12pt &quot;Sans Serif&quot;;</string>
+                    </property>
+                    <property name="frameShape">
+                     <enum>QFrame::NoFrame</enum>
+                    </property>
+                    <property name="frameShadow">
+                     <enum>QFrame::Plain</enum>
+                    </property>
+                    <property name="text">
+                     <string>Channel and user list</string>
+                    </property>
+                   </widget>
+                  </item>
                   <item row="1" column="0">
                    <widget class="QTreeWidget" name="voipTreeWidget">
                     <property name="sizePolicy">
@@ -1493,60 +1610,6 @@ color: rgb(0, 67, 98);</string>
                       <string notr="true">4</string>
                      </property>
                     </column>
-                   </widget>
-                  </item>
-                  <item row="1" column="1">
-                   <widget class="QTextEdit" name="voipMessagesEdit">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="undoRedoEnabled">
-                     <bool>false</bool>
-                    </property>
-                    <property name="readOnly">
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="0">
-                   <widget class="QLabel" name="label_27">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                     <size>
-                      <width>0</width>
-                      <height>30</height>
-                     </size>
-                    </property>
-                    <property name="styleSheet">
-                     <string notr="true">font: 12pt &quot;Sans Serif&quot;;</string>
-                    </property>
-                    <property name="frameShape">
-                     <enum>QFrame::NoFrame</enum>
-                    </property>
-                    <property name="frameShadow">
-                     <enum>QFrame::Plain</enum>
-                    </property>
-                    <property name="text">
-                     <string>Channel and user list</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="1">
-                   <widget class="QLabel" name="label_29">
-                    <property name="styleSheet">
-                     <string notr="true">font: 12pt &quot;Sans Serif&quot;;</string>
-                    </property>
-                    <property name="text">
-                     <string>Server log</string>
-                    </property>
                    </widget>
                   </item>
                  </layout>
@@ -2590,81 +2653,6 @@ background-color: rgb(35, 35, 35);</string>
           <set>Qt::AlignCenter</set>
          </property>
         </widget>
-        <widget class="QLabel" name="labelDisplayCallsign">
-         <property name="geometry">
-          <rect>
-           <x>1000</x>
-           <y>40</y>
-           <width>80</width>
-           <height>30</height>
-          </rect>
-         </property>
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>70</width>
-           <height>30</height>
-          </size>
-         </property>
-         <property name="font">
-          <font>
-           <family>Sans Serif</family>
-           <pointsize>9</pointsize>
-           <weight>50</weight>
-           <italic>false</italic>
-           <bold>false</bold>
-          </font>
-         </property>
-         <property name="toolTip">
-          <string>Incoming transmission callsign</string>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">color: rgb(255, 255, 255);
-font: 9pt &quot;Monospace&quot;;
-background-color: rgb(150, 150, 150);
-font: 9pt &quot;Sans Serif&quot;;
-</string>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Sunken</enum>
-         </property>
-         <property name="lineWidth">
-          <number>1</number>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-         <property name="textInteractionFlags">
-          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-         </property>
-        </widget>
-        <widget class="QLabel" name="label_22">
-         <property name="geometry">
-          <rect>
-           <x>1010</x>
-           <y>19</y>
-           <width>61</width>
-           <height>21</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Callsign</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
         <widget class="QPushButton" name="scanUpButton">
          <property name="geometry">
           <rect>
@@ -2723,7 +2711,7 @@ font: 9pt &quot;Sans Serif&quot;;
         <widget class="QLabel" name="labelRSSI">
          <property name="geometry">
           <rect>
-           <x>920</x>
+           <x>1010</x>
            <y>40</y>
            <width>71</width>
            <height>31</height>
@@ -2754,7 +2742,7 @@ font: 9pt &quot;Sans Serif&quot;;</string>
         <widget class="QLabel" name="label_23">
          <property name="geometry">
           <rect>
-           <x>940</x>
+           <x>1030</x>
            <y>20</y>
            <width>31</width>
            <height>16</height>
@@ -2846,6 +2834,35 @@ font: 9pt &quot;Sans Serif&quot;;</string>
           <iconset resource="resources.qrc">
            <normaloff>:/res/arrow-left-double.png</normaloff>
            <normalon>:/res/go-first-view.png</normalon>:/res/arrow-left-double.png</iconset>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_30">
+         <property name="geometry">
+          <rect>
+           <x>940</x>
+           <y>20</y>
+           <width>51</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Duplex</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="duplexOpButton">
+         <property name="geometry">
+          <rect>
+           <x>930</x>
+           <y>40</y>
+           <width>70</width>
+           <height>32</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Duplex</string>
          </property>
          <property name="checkable">
           <bool>true</bool>

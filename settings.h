@@ -40,6 +40,7 @@ public:
     int scan_step;
     int show_controls;
     int show_constellation;
+    int enable_duplex;
     int fft_size;
     int waterfall_fps;
     int show_fft;

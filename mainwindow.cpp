@@ -112,6 +112,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     QObject::connect(ui->peakHoldCheckBox,SIGNAL(toggled(bool)),ui->plotterFrame,SLOT(setPeakHold(bool)));
     QObject::connect(ui->showControlsButton,SIGNAL(toggled(bool)),this,SLOT(showControls(bool)));
     QObject::connect(ui->showConstellationButton,SIGNAL(toggled(bool)),this,SLOT(showConstellation(bool)));
+    QObject::connect(ui->duplexOpButton,SIGNAL(toggled(bool)),this,SLOT(setEnabledDuplex(bool)));
     QObject::connect(ui->fftEnableCheckBox,SIGNAL(toggled(bool)),this,SLOT(setEnabledFFT(bool)));
     QObject::connect(ui->peakDetectCheckBox,SIGNAL(toggled(bool)),this,SLOT(setPeakDetect(bool)));
     QObject::connect(ui->fpsBox,SIGNAL(currentIndexChanged(int)),this,SLOT(newWaterfallFPS()));
@@ -198,6 +199,7 @@ void MainWindow::initSettings()
     _range_set = false;
     setFFTRange(1);
     setEnabledFFT((bool)_settings->show_fft);
+    setEnabledDuplex((bool) _settings->enable_duplex);
     _range_set = false;
     ui->showConstellationButton->setChecked(_settings->show_constellation);
     showConstellation(_settings->show_constellation);
@@ -299,6 +301,12 @@ void MainWindow::setEnabledFFT(bool value)
     emit enableGUIFFT(value);
 }
 
+void MainWindow::setEnabledDuplex(bool value)
+{
+    _settings->enable_duplex = (int) value;
+    emit enableDuplex(value);
+}
+
 void MainWindow::readConfig()
 {
     ui->lineEditRXDev->setText(_settings->rx_device_args);
@@ -336,6 +344,7 @@ void MainWindow::readConfig()
     ui->fpsBox->setCurrentIndex(ui->fpsBox->findText(QString::number(_settings->waterfall_fps)));
     ui->lineEditScanStep->setText(QString::number(_settings->scan_step));
     ui->fftEnableCheckBox->setChecked((bool)_settings->show_fft);
+    ui->duplexOpButton->setChecked((bool) _settings->enable_duplex);
 
 }
 

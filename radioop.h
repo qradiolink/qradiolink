@@ -127,6 +127,7 @@ public slots:
     void enableGUIConst(bool value);
     void enableGUIFFT(bool value);
     void enableRSSI(bool value);
+    void enableDuplex(bool value);
     void scan(bool receiving, bool wait_for_timer=true);
     void startAutoTune(int step, int direction);
     void stopAutoTune();
@@ -216,6 +217,7 @@ private:
     int _fft_poll_time;
     bool _constellation_enabled;
     bool _rssi_enabled;
+    bool _duplex_enabled;
     QElapsedTimer *_fft_read_timer;
     QElapsedTimer *_const_read_timer;
     QElapsedTimer *_scan_timer;

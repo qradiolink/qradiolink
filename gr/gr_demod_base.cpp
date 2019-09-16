@@ -527,6 +527,11 @@ void gr_demod_base::enable_gui_fft(bool value)
     _fft_valve->set_enabled(value);
 }
 
+void gr_demod_base::enable_demodulator(bool value)
+{
+    _demod_valve->set_enabled(value);
+}
+
 void gr_demod_base::set_squelch(int value)
 {
     _fm_2500->set_squelch(value);

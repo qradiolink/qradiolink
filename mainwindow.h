@@ -100,6 +100,7 @@ public slots:
     void showControls(bool value);
     void showConstellation(bool value);
     void setEnabledFFT(bool value);
+    void setEnabledDuplex(bool value);
     void setPeakDetect(bool value);
     void updateRSSI(float value);
     void updateConstellation(complex_vector* constellation_data);
@@ -131,6 +132,7 @@ signals:
     void setTxCTCSS(float value);
     void enableGUIConst(bool value);
     void enableGUIFFT(bool value);
+    void enableDuplex(bool value);
     void enableRSSI(bool value);
     void startAutoTuneFreq(int step, int scan_direction);
     void stopAutoTuneFreq();
