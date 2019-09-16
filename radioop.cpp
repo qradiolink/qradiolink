@@ -274,7 +274,7 @@ void RadioOp::txAudio(short *audiobuffer, int audiobuffer_size, int vad, bool ra
     {
         if(vad)
         {
-            _vox_timer->start(100);
+            _vox_timer->start(500);
             if(!_tx_started && !_voip_enabled)
                 _transmitting_audio = true;
         }
@@ -458,6 +458,10 @@ void RadioOp::startTx()
 {
     if(_tx_inited)
     {
+        if(_end_tx_timer->isActive())
+        {
+            _end_tx_timer->stop();
+        }
         if(_tx_mode == gr_modem_types::ModemTypeQPSK250000)
         {
             _data_modem_reset_timer->start();
@@ -485,12 +489,14 @@ void RadioOp::startTx()
         _tx_started = true;
         if((_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL))
             _modem->startTransmission(_callsign);
+
     }
     setInputAudioStream();
 }
 
 void RadioOp::stopTx()
 {
+    setInputAudioStream();
     if(_tx_inited)
     {
         if(_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL)
@@ -498,7 +504,7 @@ void RadioOp::stopTx()
         if((_tx_radio_type == radio_type::RADIO_TYPE_ANALOG)
                 && ((_tx_mode == gr_modem_types::ModemTypeNBFM2500) || (_tx_mode == gr_modem_types::ModemTypeNBFM5000)))
         {
-            sendEndBeep();
+            //sendEndBeep(); turned off, annoying
         }
 
         _end_tx_timer->start(1000);
@@ -510,7 +516,6 @@ void RadioOp::stopTx()
         if(!_duplex_enabled)
             _modem->enableDemod(true);
     }
-    setInputAudioStream();
 }
 
 void RadioOp::endTx()

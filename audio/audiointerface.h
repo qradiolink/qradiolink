@@ -22,6 +22,7 @@
 #include <QDebug>
 #include <stdio.h>
 #include "ext/utils.h"
+#include <math.h>
 extern "C"
 {
 #include "ext/compressor.h"
