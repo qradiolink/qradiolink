@@ -861,7 +861,6 @@ void RadioOp::receivePCMAudio(std::vector<float> *audio_data)
     int size = audio_data->size();
 
     short *pcm = new short[size];
-    // FIXME: we only have a single mutex that blocks the thread for everything
     for(int i=0;i<size;i++)
     {
         pcm[i] = (short)(audio_data->at(i) * volume_coeff * 32767.0f);

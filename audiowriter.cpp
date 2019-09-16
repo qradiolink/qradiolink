@@ -53,7 +53,7 @@ void AudioWriter::run()
                 memcpy(pcm, samp->pcm, samp->bytes);
                 delete[] samp->pcm;
                 delete samp;
-                // FIXME: compressor segfaults across threads
+                // FIXME: speex dsp segfaults across threads
                 _audio_writer->write_short(pcm, bytes, preprocess, audio_mode);
 
             }

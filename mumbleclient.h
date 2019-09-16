@@ -51,6 +51,7 @@ signals:
     void connectedToServer(QString message);
     void channelName(QString name);
     void pcmAudio(short *pcm, int size, quint64 session_id);
+    void opusAudio(unsigned char *audio, int size, quint64 session_id);
     void onlineStations(StationList);
     void newStation(Station* s);
     void newChannel(Channel* chan);
