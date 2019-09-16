@@ -51,7 +51,7 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(std::vector<int>signature, int sps, int samp_
                             1, _target_samp_rate, -_filter_width, -20,600,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     _squelch = gr::analog::pwr_squelch_cc::make(-140,0.01,0,true);
     _feed_forward_agc = gr::analog::feedforward_agc_cc::make(16,1);
-    _agc = gr::analog::agc2_cc::make(1e-1, 1e-2, 1, 0.5);
+    _agc = gr::analog::agc2_cc::make(1, 1e-3, 1, 2);
     _complex_to_real = gr::blocks::complex_to_real::make();
     _audio_gain = gr::blocks::multiply_const_ff::make(0.5);
 
