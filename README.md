@@ -42,24 +42,14 @@ Features
 
 Requirements
 ----
-- Build dependencies on Debian Stretch (note that these dependencies are outdated now and Qt4 was replaced with Qt5): 
+- Build dependencies on Debian Stretch for a Qt5 interface: 
 
-<pre>libasound2 (>= 1.0.16), libboost-program-options1.62.0, libboost-system1.62.0, 
-libboost-thread1.62.0, libc6 (>= 2.15), libcodec2-0.4, libconfig++9v5, libgcc1 (>= 1:3.0), 
-libgnuradio-analog3.7.10, libgnuradio-audio3.7.10, libgnuradio-blocks3.7.10, 
-libgnuradio-digital3.7.10, libgnuradio-fec3.7.10, libgnuradio-filter3.7.10, 
-libgnuradio-osmosdr0.1.4, libgnuradio-pmt3.7.10, libgnuradio-qtgui3.7.10, 
-libgnuradio-runtime3.7.10, libgsm1 (>= 1.0.13), libjpeg62-turbo (>= 1.3.1), 
-libopus0 (>= 1.1), libspeexdsp1, libprotobuf10, libpulse0 (>= 0.99.1), libqt4-network (>= 4:4.5.3), 
-libqt4-sql (>= 4:4.5.3), libqtcore4 (>= 4:4.8.0), libqtgui4 (>= 4:4.6.1),
- libstdc++6 (>= 5.2), gnuradio-dev, gr-osmosdr, libgsm1-dev, libprotobuf-dev,
- libopus-dev, libspeexdsp-dev, libpulse-dev, libcodec2-dev, libasound2-dev, libjpeg62-turbo-dev,
- libconfig++-dev, qt4-qmake, libqt4-dev, libqt4-sql-sqlite, qt4-dev-tools
+<pre>libasound2 (>= 1.0.16), libboost-program-options1.62.0, libboost-system1.62.0, libboost-thread1.62.0, libc6 (>= 2.15), libcodec2-0.4, libconfig++9v5, libgcc1 (>= 1:3.0), libgl1-mesa-glx | libgl1, libgnuradio-analog3.7.10, libgnuradio-audio3.7.10, libgnuradio-blocks3.7.10, libgnuradio-digital3.7.10, libgnuradio-fec3.7.10, libgnuradio-fft3.7.10, libgnuradio-filter3.7.10, libgnuradio-osmosdr0.1.4, libgnuradio-pmt3.7.10, libgnuradio-runtime3.7.10, libgsm1 (>= 1.0.13), libjpeg62-turbo (>= 1.3.1), libopus0 (>= 1.1), libprotobuf10, libpulse0 (>= 0.99.1), libqt5core5a (>= 5.7.0), libqt5gui5 (>= 5.3.0), libqt5network5 (>= 5.0.2), libqt5sql5 (>= 5.0.2), libqt5widgets5 (>= 5.2.0), libspeexdsp1 (>= 1.2~beta3.2-1), libstdc++6 (>= 5.2), gnuradio-dev, gr-osmosdr, libgsm1-dev, libprotobuf-dev, libopus-dev, libspeexdsp-dev, libpulse-dev, libcodec2-dev, libasound2-dev, libjpeg62-turbo-dev, libconfig++-dev, qt5-qmake, qt5-default, qtbase5-dev
 </pre>
 
 - Please make sure you have all the development packages installed before building QRadioLink
 - Qt >= 5.2 (Qt 4.8 is supported but not recommended anymore) and Qt5 development packages
-- qmake (either qmake-qt4 - not recommended- or qmake-qt5)
+- qmake (either qmake-qt4 -not recommended- or qmake-qt5)
 - Pulseaudio (native Alsa support is not fully implemented) 
 - Gnuradio >= 3.7.10 built with OsmoSDR and UHD support
 - optionally SoapySDR and SoapyPlutoSDR, LimeSDR software libraries
@@ -111,7 +101,7 @@ make
 </pre>
 
 Known issues:
-- Digital reception sometimes stops working after switching modes. Workaround: select RX mode before starting RX.
+- Segmentation faults when a video frame is received. The source of this is still being searched.
 - In low light, the automatic adjustment of ISO in the video camera can cause very long times to capture a frame.
 Solution: use plenty of lighting for video.
 - On Gnome desktop environments, the Qt color scheme is not displayed correctly
@@ -121,8 +111,8 @@ Solution: use plenty of lighting for video.
 Running
 -------
 - It is recommended to start the application using the command line and check for errors.
-- At first run, see the Setup tab first and configure the application, then click Save before starting TX or RX from the main page, otherwise you may get a segmentation fault.
-- VOIP uses [umurmur](https://github.com/umurmur/umurmur) as a server. A version known to work with qradiolink is mirrored at [qradiolink](https://github.com/qradiolink/umurmur) The available channels and the logged in stations are also listed on the page once you have connected to the server. The server IP/hostname will be saved on application exit. You can use QRadioLink as a pure VOIP client without using the radio by selecting "Use PTT for VOIP". You can also forward the digital or analog radio voice to the VOIP reflector. Any voice packets coming from the reflector will be transmitted directly after transcoding in this case. Currently full duplex audio from more than two VOIP clients at the same time is not supported.
+- At first run, see the Setup tab first and configure the application, then click Save before starting TX or RX from the main page.
+- VOIP uses [umurmur](https://github.com/umurmur/umurmur) as a server. A version known to work with qradiolink is mirrored at [qradiolink](https://github.com/qradiolink/umurmur) The available channels and the logged in stations are also listed on the page once you have connected to the server. You can use QRadioLink as a pure VOIP client without using the radio by selecting "Use PTT for VOIP". You can also forward the digital or analog radio voice to the VOIP reflector. Any voice packets coming from the reflector will be transmitted directly after transcoding in this case. Currently full duplex audio from more than two VOIP clients at the same time is not supported.
 - The configuration file is located in $HOME/.config/qradiolink.cfg
 - The select inputs in the lower right corner toggle between different operating modes. Repeater mode requires both RX and TX to use the same mode.
 - Video will be displayed in the upper right corner. If your camera does not work, see the V4L2 guide for troubleshooting camera settings.
@@ -130,7 +120,7 @@ Running
 
 Credits and License
 -------------------
-- QRadioLink is mostly written by Adrian Musceac YO8RZZ, and is released under an Open Source License,
+- QRadioLink is written by Adrian Musceac YO8RZZ, and is released under an Open Source License,
  the GNU General Public License version 3.
 - It makes use of other code under compatible licenses, and the authors are credited in the source files.
 - The CFreqCtrl and CPlotter widgets are Copyright 2010 Moe Wheatley and Alexandru Csete OZ9AEC.
