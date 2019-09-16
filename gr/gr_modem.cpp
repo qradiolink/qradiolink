@@ -398,14 +398,6 @@ void gr_modem::endTransmission(QString callsign)
     transmit(frames);
 }
 
-void gr_modem::transmitDigitalAudio(unsigned char *data, int size)
-{
-    std::vector<unsigned char> *one_frame = frame(data, size, FrameTypeVoice);
-    QVector<std::vector<unsigned char>*> frames;
-    frames.append(one_frame);
-    transmit(frames);
-    delete[] data;
-}
 
 void gr_modem::textData(QString text, int frame_type)
 {
@@ -450,6 +442,17 @@ void gr_modem::binData(QByteArray bin_data, int frame_type)
     }
     transmit(frames);
 }
+
+
+void gr_modem::transmitDigitalAudio(unsigned char *data, int size)
+{
+    std::vector<unsigned char> *one_frame = frame(data, size, FrameTypeVoice);
+    QVector<std::vector<unsigned char>*> frames;
+    frames.append(one_frame);
+    transmit(frames);
+    delete[] data;
+}
+
 
 void gr_modem::transmitPCMAudio(std::vector<float> *audio_data)
 {

@@ -70,6 +70,7 @@ public:
 
 signals:
     void finished();
+    void setAudioReadMode(bool capture, bool preprocess, int audio_mode);
     void printText(QString text, bool html);
     void printCallsign(QString text);
     void displayReceiveStatus(bool status);
@@ -97,6 +98,7 @@ public slots:
     void run();
     void startTransmission();
     void endTransmission();
+    void txAudio(short *audiobuffer, int audiobuffer_size, int vad, bool radio_only);
     void textData(QString text, bool repeat = false);
     void stop();
     void textReceived(QString text);
@@ -228,9 +230,9 @@ private:
                     int &tx_freq_corr, std::string &callsign, std::string &video_device);
     int getFrameLength(unsigned char *data);
     unsigned int getFrameCRC32(unsigned char *data);
-    void txAudio(short *audiobuffer, int audiobuffer_size);
 
-    void processInputAudioStream();
+
+    void setInputAudioStream();
     int processInputVideoStream(bool &frame_flag);
     void processInputNetStream();
     void sendEndBeep();
