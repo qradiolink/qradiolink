@@ -1,3 +1,13 @@
+qradiolink (0.8.0-rc3) UNRELEASED; urgency=medium
+
+  [ Adrian Musceac ]
+  * Fixed some issues found in 0.8.0-rc2
+  * Added missing button for duplex operation
+  * Fixed segfaults in libspeexdsp
+  * VOX and VOIP forwarding use a different mechanism now
+  * Audio compressor re-enabled
+
+
 qradiolink (0.8.0-rc2) RELEASED; urgency=medium
 
   [ Adrian Musceac ]
