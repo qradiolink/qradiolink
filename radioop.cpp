@@ -1553,18 +1553,21 @@ void RadioOp::fineTuneFreq(long center_freq)
 
 void RadioOp::tuneFreq(qint64 center_freq)
 {
-    // _rx_frequency is the source center frequency
+    /// _rx_frequency is the source center frequency
     _rx_frequency = center_freq;
-
+    _mutex->lock();
+    // FIXME: LimeSDR mini tune requests are blocking
     _modem->tune(_rx_frequency);
-
+    _mutex->unlock();
 }
 
 void RadioOp::tuneTxFreq(qint64 actual_freq)
 {
     _tx_frequency = actual_freq;
-
+    _mutex->lock();
+    // FIXME: LimeSDR mini tune requests are blocking
     _modem->tuneTx(_tx_frequency + _tune_shift_freq);
+    _mutex->unlock();
 
 }
 

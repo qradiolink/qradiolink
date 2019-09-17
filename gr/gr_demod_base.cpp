@@ -60,7 +60,7 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
 
     _osmosdr_source = osmosdr::source::make(device_args);
     _osmosdr_source->set_center_freq(_device_frequency);
-    //_osmosdr_source->set_bandwidth(1500000); // LimeSDR does not support less
+    _osmosdr_source->set_bandwidth(1500000); // LimeSDR does not support less
     _osmosdr_source->set_sample_rate(1000000);
     _osmosdr_source->set_freq_corr(freq_corr);
     _osmosdr_source->set_gain_mode(false);
@@ -638,7 +638,8 @@ void gr_demod_base::set_samp_rate(int samp_rate)
 
 
     _rotator->set_phase_inc(2*M_PI*-_carrier_offset/_samp_rate);
-    _osmosdr_source->set_bandwidth(_samp_rate);
+    int bandwidth = std::max(_samp_rate, 1500000); // LimeSDR mini
+    _osmosdr_source->set_bandwidth(bandwidth);
     _osmosdr_source->set_sample_rate(_samp_rate);
     _top_block->unlock();
     _locked = false;
