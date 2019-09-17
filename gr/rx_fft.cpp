@@ -53,6 +53,7 @@ rx_fft_c::rx_fft_c(unsigned int fftsize, int wintype)
     d_sample_buffer = new std::vector<gr_complex>;
     d_counter = 0;
     d_data_ready = false;
+    d_push = 0;
 
     /* allocate circular buffer */
 
@@ -88,6 +89,11 @@ int rx_fft_c::work(int noutput_items,
 
     /* just throw new samples into the buffer */
     boost::mutex::scoped_lock lock(d_mutex);
+    if(d_push > 0) // not sure if 0 or 1
+    {
+        // not consuming fast enough, no use filling the FFT buffer if no-one is reading it
+        return noutput_items;
+    }
     for (i = 0; i < noutput_items; i++)
     {
         if(d_counter >= d_fftsize)
@@ -100,6 +106,7 @@ int rx_fft_c::work(int noutput_items,
             /* set FFT data */
             memcpy(d_fft_points, d_fft->get_outbuf(), sizeof(gr_complex)*d_fftsize);
             d_data_ready = true;
+            d_push++;
         }
         d_sample_buffer->push_back(in[i]);
         d_counter++;
@@ -116,7 +123,7 @@ int rx_fft_c::work(int noutput_items,
 void rx_fft_c::get_fft_data(std::complex<float>* fftPoints, unsigned int &fftSize)
 {
     boost::mutex::scoped_lock lock(d_mutex);
-
+    d_push = 0; // want more samples in the FFT
     if (!d_data_ready)
     {
         // not enough samples in the buffer

@@ -101,6 +101,7 @@ private:
 
     int d_counter;
     bool d_data_ready;
+    int d_push;
 
     void do_fft(const gr_complex *data_in, unsigned int size);
 

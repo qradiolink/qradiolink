@@ -311,6 +311,7 @@ void RadioOp::txAudio(short *audiobuffer, int audiobuffer_size, int vad, bool ra
 
         for(unsigned int i=0;i<audiobuffer_size/sizeof(short);i++)
         {
+            // FIXME: volume out?
             pcm->push_back((float)audiobuffer[i] / 32767.0f);
         }
 
