@@ -70,6 +70,12 @@ int gr_vector_sink::work(int noutput_items,
         return noutput_items;
     }
     gr::thread::scoped_lock guard(_mutex);
+    if(_data->size() > 1024 * 1024)
+    {
+        // not reading data fast enough, anything more than 400 msec
+        // of data in the buffer is a problem downstream so dropping buffer
+        return noutput_items;
+    }
     unsigned char *in = (unsigned char*)(input_items[0]);
     for(int i=0;i < noutput_items;i++)
     {

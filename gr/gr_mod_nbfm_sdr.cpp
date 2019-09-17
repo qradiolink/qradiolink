@@ -62,8 +62,8 @@ gr_mod_nbfm_sdr::gr_mod_nbfm_sdr(int sps, int samp_rate, int carrier_freq,
 
     connect(self(),0,_audio_filter,0);
     connect(_audio_filter,0,_audio_amplify,0);
-    connect(_audio_amplify,0,_emphasis_filter,0);
-    connect(_emphasis_filter,0,_fm_modulator,0);
+    connect(_audio_amplify,0,_fm_modulator,0);
+    //connect(_emphasis_filter,0,_fm_modulator,0);
     connect(_fm_modulator,0,_resampler,0);
     connect(_resampler,0,_amplify,0);
     connect(_amplify,0,_bb_gain,0);

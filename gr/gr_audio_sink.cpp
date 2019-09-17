@@ -72,6 +72,12 @@ int gr_audio_sink::work(int noutput_items,
     }
     gr::thread::scoped_lock guard(_mutex);
     float *in = (float*)(input_items[0]);
+    if(_data->size() > 320 * 10)
+    {
+        // not reading data fast enough, anything more than 400 msec
+        // of data in the buffer is a problem downstream so dropping buffer
+        return noutput_items;
+    }
     for(int i=0;i < noutput_items;i++)
     {
         _data->push_back(in[i]);

@@ -458,6 +458,7 @@ void RadioOp::sendChannels()
 
 void RadioOp::startTx()
 {
+    updateInputAudioStream(); // moved here, LimeSDR specific thing (calibration at low power)
     if(_tx_inited)
     {
         if(_end_tx_timer->isActive())
@@ -473,21 +474,20 @@ void RadioOp::startTx()
         // FIXME: full duplex mode
         //if(_rx_inited && !_repeat && (_rx_mode != gr_modem_types::ModemTypeQPSK250000))
         //    _modem->stopRX();
-        _mutex->lock();
+
         if(!_duplex_enabled)
             _modem->enableDemod(false);
         //if(_tx_modem_started)
         //    _modem->stopTX();
-
+        //_mutex->lock();
         _modem->tuneTx(_tx_frequency + _tune_shift_freq);
         /// LimeSDR calibration procedure happens after every tune request
         // FIXME: how to handle the LimeSDR calibration better?
         struct timespec time_to_sleep = {0, 10000000L };
         nanosleep(&time_to_sleep, NULL);
-        _modem->setTxPower(_tx_power);
-        _mutex->unlock();
         //_modem->startTX();
-
+        _modem->setTxPower(_tx_power);
+        //_mutex->unlock();
 
         _tx_modem_started = false;
         _tx_started = true;
@@ -495,7 +495,7 @@ void RadioOp::startTx()
             _modem->startTransmission(_callsign);
 
     }
-    updateInputAudioStream();
+
 }
 
 void RadioOp::stopTx()
@@ -503,15 +503,20 @@ void RadioOp::stopTx()
     updateInputAudioStream();
     if(_tx_inited)
     {
+        int tx_tail_msec = 500;
         if(_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL)
+        {
             _modem->endTransmission(_callsign);
+            tx_tail_msec = 1000;
+        }
         if((_tx_radio_type == radio_type::RADIO_TYPE_ANALOG)
                 && ((_tx_mode == gr_modem_types::ModemTypeNBFM2500) || (_tx_mode == gr_modem_types::ModemTypeNBFM5000)))
         {
             //sendEndBeep(); turned off, annoying
+            tx_tail_msec = 100;
         }
         // FIXME: end tail length should be calculated exactly
-        _end_tx_timer->start(1000);
+        _end_tx_timer->start(tx_tail_msec);
         _tx_modem_started = false;
         _tx_started = false;
         // FIXME: full duplex mode
@@ -523,13 +528,11 @@ void RadioOp::stopTx()
 
 void RadioOp::endTx()
 {
-    _mutex->lock();
     // On LimeSDR mini, when I call setTxPower I get a brief spike of the LO
     _modem->setTxPower(0.01);
     //_modem->stopTX();
     if(!_duplex_enabled)
         _modem->enableDemod(true);
-    _mutex->unlock();
 }
 
 void RadioOp::updateFrequency()
@@ -633,14 +636,12 @@ bool RadioOp::getDemodulatorData()
     bool data_to_process = false;
     if(_rx_inited)
     {
-        _mutex->lock();
         if(_rx_radio_type == radio_type::RADIO_TYPE_DIGITAL)
             data_to_process = _modem->demodulate();
         else if(_rx_radio_type == radio_type::RADIO_TYPE_ANALOG)
         {
             data_to_process = _modem->demodulateAnalog();
         }
-        _mutex->unlock();
 
 
         if(!_tuning_done)
@@ -1288,7 +1289,7 @@ void RadioOp::toggleTX(bool value)
     else if(_tx_inited)
     {
         _mutex->lock();
-        _modem->stopTX();
+        //_modem->stopTX();
 
         _modem->deinitTX(_tx_mode);
         _mutex->unlock();
@@ -1555,19 +1556,15 @@ void RadioOp::tuneFreq(qint64 center_freq)
 {
     /// _rx_frequency is the source center frequency
     _rx_frequency = center_freq;
-    _mutex->lock();
     // FIXME: LimeSDR mini tune requests are blocking
     _modem->tune(_rx_frequency);
-    _mutex->unlock();
 }
 
 void RadioOp::tuneTxFreq(qint64 actual_freq)
 {
     _tx_frequency = actual_freq;
-    _mutex->lock();
     // FIXME: LimeSDR mini tune requests are blocking
     _modem->tuneTx(_tx_frequency + _tune_shift_freq);
-    _mutex->unlock();
 
 }
 
@@ -1584,15 +1581,12 @@ void RadioOp::setCarrierOffset(qint64 offset)
 void RadioOp::changeTxShift(qint64 center_freq)
 {
     _tune_shift_freq = center_freq;
-
     _modem->tuneTx(_tx_frequency + _tune_shift_freq);
-
 }
 
 void RadioOp::setTxPower(int dbm)
 {
     _tx_power = (float)dbm/100.0;
-
     _modem->setTxPower(_tx_power);
 
 }
