@@ -87,7 +87,7 @@ int rx_fft_c::work(int noutput_items,
     (void) output_items;
 
     /* just throw new samples into the buffer */
-
+    boost::mutex::scoped_lock lock(d_mutex);
     for (i = 0; i < noutput_items; i++)
     {
         if(d_counter >= d_fftsize)
@@ -98,10 +98,8 @@ int rx_fft_c::work(int noutput_items,
             d_sample_buffer->clear();
 
             /* set FFT data */
-            boost::mutex::scoped_lock lock(d_mutex);
             memcpy(d_fft_points, d_fft->get_outbuf(), sizeof(gr_complex)*d_fftsize);
             d_data_ready = true;
-            lock.unlock();
         }
         d_sample_buffer->push_back(in[i]);
         d_counter++;
