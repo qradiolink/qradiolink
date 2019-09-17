@@ -47,8 +47,9 @@ void gr_const_sink::flush()
 
 std::vector<gr_complex> *gr_const_sink::get_data()
 {
-    gr::thread::scoped_lock guard(_mutex);
     std::vector<gr_complex>* data = new std::vector<gr_complex>;
+    gr::thread::scoped_lock guard(_mutex);
+
     if(_data->size() < 32)
     {
         return data;

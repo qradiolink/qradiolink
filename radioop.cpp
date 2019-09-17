@@ -55,6 +55,8 @@ RadioOp::RadioOp(Settings *settings, QObject *parent) :
     _fft_enabled = true;
     _const_read_timer = new QElapsedTimer();
     _const_read_timer->start();
+    _rssi_read_timer = new QElapsedTimer();
+    _rssi_read_timer->start();
     _constellation_enabled = false;
     _data_modem_sleeping = false;
     _settings = settings;
@@ -76,7 +78,7 @@ RadioOp::RadioOp(Settings *settings, QObject *parent) :
     _tune_shift_freq = 0;
     _tune_limit_lower = -500000;
     _tune_limit_upper = 500000;
-    _step_hz = 12500;
+    _step_hz = 10;
     _carrier_offset = 0;
     _rx_sample_rate = 0;
     _tuning_done = true;
@@ -506,15 +508,14 @@ void RadioOp::stopTx()
         {
             //sendEndBeep(); turned off, annoying
         }
-
+        // FIXME: end tail length should be calculated exactly
         _end_tx_timer->start(1000);
         _tx_modem_started = false;
         _tx_started = false;
         // FIXME: full duplex mode
         //if(_rx_inited && !_repeat && (_rx_mode != gr_modem_types::ModemTypeQPSK250000))
         //   _modem->startRX();
-        if(!_duplex_enabled)
-            _modem->enableDemod(true);
+
     }
 }
 
@@ -523,6 +524,8 @@ void RadioOp::endTx()
     _mutex->lock();
     _modem->setTxPower(0.0);
     //_modem->stopTX();
+    if(!_duplex_enabled)
+        _modem->enableDemod(true);
     _mutex->unlock();
 }
 
@@ -627,13 +630,14 @@ bool RadioOp::getDemodulatorData()
     bool data_to_process = false;
     if(_rx_inited)
     {
-
+        _mutex->lock();
         if(_rx_radio_type == radio_type::RADIO_TYPE_DIGITAL)
             data_to_process = _modem->demodulate();
         else if(_rx_radio_type == radio_type::RADIO_TYPE_ANALOG)
         {
             data_to_process = _modem->demodulateAnalog();
         }
+        _mutex->unlock();
 
 
         if(!_tuning_done)
@@ -720,22 +724,19 @@ void RadioOp::run()
             sendTextData(text_out, gr_modem::FrameTypeText);
             emit displayTransmitStatus(false);
         }
+
+        // FIXME: remove these hardcoded sleeps
         if(!transmitting && !vox_enabled && !process_text)
         {
-            if(data_to_process)
+            if(!data_to_process)
             {
-                struct timespec time_to_sleep = {0, 10000000L };
-                nanosleep(&time_to_sleep, NULL);
-            }
-            else
-            {
-                struct timespec time_to_sleep = {0, 30000000L };
+                struct timespec time_to_sleep = {0, 2000000L };
                 nanosleep(&time_to_sleep, NULL);
             }
         }
         else
         {
-            struct timespec time_to_sleep = {0, 20000000L };
+            struct timespec time_to_sleep = {0, 2000000L };
             nanosleep(&time_to_sleep, NULL);
         }
     }
@@ -748,10 +749,17 @@ void RadioOp::getRSSI()
     if(!_rssi_enabled)
         return;
 
+    qint64 msec = (quint64)_rssi_read_timer->nsecsElapsed() / 1000000;
+    if(msec < _fft_poll_time)
+    {
+        return;
+    }
+
     float rssi = _modem->getRSSI();
 
     if(rssi != 0)
         emit newRSSIValue(rssi);
+    _rssi_read_timer->restart();
 }
 
 void RadioOp::getFFTData()
@@ -1241,11 +1249,15 @@ void RadioOp::toggleTX(bool value)
         try
         {
             _mutex->lock();
+            if(_rx_inited)
+                _modem->stopRX();
             _modem->initTX(_tx_mode, tx_device_args, tx_antenna, tx_freq_corr);
             _mutex->unlock();
         }
         catch(std::runtime_error e)
         {
+            if(_rx_inited)
+                _modem->startRX();
             _modem->deinitTX(_tx_mode);
             _mutex->unlock();
             emit initError("Could not init TX device, check settings");
@@ -1258,6 +1270,8 @@ void RadioOp::toggleTX(bool value)
         _modem->tuneTx(430000000);
         _modem->setTxCTCSS(_tx_ctcss);
         _modem->startTX();
+        if(_rx_inited)
+            _modem->startRX();
         _mutex->unlock();
 
         if(_tx_mode == gr_modem_types::ModemTypeQPSKVideo)
@@ -1350,19 +1364,19 @@ void RadioOp::toggleRxMode(int value)
     case 8:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _rx_mode = gr_modem_types::ModemTypeNBFM2500;
-        _step_hz = 6250;
+        _step_hz = 10;
         _scan_step_hz = 6250;
         break;
     case 9:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _rx_mode = gr_modem_types::ModemTypeNBFM5000;
-        _step_hz = 12500;
+        _step_hz = 10;
         _scan_step_hz = 12500;
         break;
     case 10:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _rx_mode = gr_modem_types::ModemTypeWBFM;
-        _step_hz = 10000;
+        _step_hz = 1000;
         _scan_step_hz = 200000;
         break;
     case 11:
@@ -1380,7 +1394,7 @@ void RadioOp::toggleRxMode(int value)
     case 13:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _rx_mode = gr_modem_types::ModemTypeAM5000;
-        _step_hz = 100;
+        _step_hz = 10;
         _scan_step_hz = 10000;
         break;
     case 14:

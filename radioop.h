@@ -224,6 +224,7 @@ private:
     bool _duplex_enabled;
     QElapsedTimer *_fft_read_timer;
     QElapsedTimer *_const_read_timer;
+    QElapsedTimer *_rssi_read_timer;
     QElapsedTimer *_scan_timer;
     bool _scan_stop;
 

@@ -53,7 +53,6 @@ void AudioWriter::run()
                 memcpy(pcm, samp->pcm, samp->bytes);
                 delete[] samp->pcm;
                 delete samp;
-                // FIXME: speex dsp segfaults across threads
                 _audio_writer->write_short(pcm, bytes, preprocess, audio_mode);
 
             }
@@ -61,8 +60,6 @@ void AudioWriter::run()
             _rx_sample_queue->clear();
             _mutex.unlock();
 
-            struct timespec time_to_sleep = {0, 1000L };
-            nanosleep(&time_to_sleep, NULL);
         }
         else
         {
