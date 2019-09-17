@@ -480,13 +480,15 @@ void RadioOp::startTx()
         //    _modem->stopTX();
 
         _modem->tuneTx(_tx_frequency + _tune_shift_freq);
+        /// LimeSDR calibration procedure happens after every tune request
+        // FIXME: how to handle the LimeSDR calibration better?
+        struct timespec time_to_sleep = {0, 10000000L };
+        nanosleep(&time_to_sleep, NULL);
         _modem->setTxPower(_tx_power);
         _mutex->unlock();
         //_modem->startTX();
 
-        // FIXME: how to handle the LimeSDR calibration better?
-        struct timespec time_to_sleep = {0, 10000000L };
-        nanosleep(&time_to_sleep, NULL);
+
         _tx_modem_started = false;
         _tx_started = true;
         if((_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL))
@@ -522,7 +524,8 @@ void RadioOp::stopTx()
 void RadioOp::endTx()
 {
     _mutex->lock();
-    _modem->setTxPower(0.0);
+    // On LimeSDR mini, when I call setTxPower I get a brief spike of the LO
+    _modem->setTxPower(0.01);
     //_modem->stopTX();
     if(!_duplex_enabled)
         _modem->enableDemod(true);
