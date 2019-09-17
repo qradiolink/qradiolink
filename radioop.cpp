@@ -129,6 +129,7 @@ RadioOp::RadioOp(Settings *settings, QObject *parent) :
     {
         _end_rec_sound = new QByteArray(resfile_end_tx.readAll());
     }
+
     _settings->readConfig();
     toggleRxMode(_settings->rx_mode);
     toggleTxMode(_settings->tx_mode);
@@ -431,23 +432,60 @@ void RadioOp::processInputNetStream()
     }
 }
 
+void RadioOp::sendTextData(QString text, int frame_type)
+{
+    if(_tx_inited)
+    {
+        if(!_tx_modem_started)
+        {
+            stopTx();
+            startTx();
+        }
+        _tx_modem_started = true;
+        _modem->startTransmission(_callsign);
+        _modem->textData(text, frame_type);
+        _modem->endTransmission(_callsign);
+    }
+    if(!_repeat_text)
+    {
+
+        _process_text = false;
+
+    }
+}
+
+void RadioOp::sendBinData(QByteArray data, int frame_type)
+{
+    if(_tx_inited)
+    {
+        if(!_tx_modem_started)
+        {
+            stopTx();
+            startTx();
+        }
+        _tx_modem_started = true;
+        _modem->binData(data, frame_type);
+        _modem->endTransmission(_callsign);
+    }
+    if(!_repeat_text)
+    {
+
+        _process_text = false;
+
+    }
+}
+
 void RadioOp::sendEndBeep()
 {
-    QFile resfile(":/res/end_beep.raw");
-    if(resfile.open(QIODevice::ReadOnly))
+    short *samples = (short*) _end_rec_sound->data();
+    std::vector<float> *pcm = new std::vector<float>;
+
+    for(unsigned int i=0;i<_end_rec_sound->size()/sizeof(short);i++)
     {
-        QByteArray *data = new QByteArray(resfile.readAll());
-        short *samples = (short*) data->data();
-        std::vector<float> *pcm = new std::vector<float>;
-
-        for(unsigned int i=0;i<data->size()/sizeof(short);i++)
-        {
-            pcm->push_back((float)samples[i] / 32767.0f);
-        }
-
-        emit pcmData(pcm);
-        delete data;
+        pcm->push_back((float)samples[i] / 32767.0f * 0.6);
     }
+
+    emit pcmData(pcm);
 }
 
 void RadioOp::sendChannels()
@@ -503,22 +541,23 @@ void RadioOp::stopTx()
     updateInputAudioStream();
     if(_tx_inited)
     {
+        _tx_started = false;
         int tx_tail_msec = 100;
         if(_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL)
         {
             _modem->endTransmission(_callsign);
-            tx_tail_msec = 1000;
+            tx_tail_msec = 2000;
         }
         if((_tx_radio_type == radio_type::RADIO_TYPE_ANALOG)
                 && ((_tx_mode == gr_modem_types::ModemTypeNBFM2500) || (_tx_mode == gr_modem_types::ModemTypeNBFM5000)))
         {
-            //sendEndBeep(); turned off, annoying
-            tx_tail_msec = 500;
+            sendEndBeep();// please turn off, annoying
+            tx_tail_msec = 1500;
         }
         // FIXME: end tail length should be calculated exactly
         _end_tx_timer->start(tx_tail_msec);
         _tx_modem_started = false;
-        _tx_started = false;
+
         // FIXME: full duplex mode
         //if(_rx_inited && !_repeat && (_rx_mode != gr_modem_types::ModemTypeQPSK250000))
         //   _modem->startRX();
@@ -541,48 +580,7 @@ void RadioOp::updateFrequency()
 
 }
 
-void RadioOp::sendTextData(QString text, int frame_type)
-{
-    if(_tx_inited)
-    {
-        if(!_tx_modem_started)
-        {
-            stopTx();
-            startTx();
-        }
-        _tx_modem_started = true;
-        _modem->startTransmission(_callsign);
-        _modem->textData(text, frame_type);
-        _modem->endTransmission(_callsign);
-    }
-    if(!_repeat_text)
-    {
 
-        _process_text = false;
-
-    }
-}
-
-void RadioOp::sendBinData(QByteArray data, int frame_type)
-{
-    if(_tx_inited)
-    {
-        if(!_tx_modem_started)
-        {
-            stopTx();
-            startTx();
-        }
-        _tx_modem_started = true;
-        _modem->binData(data, frame_type);
-        _modem->endTransmission(_callsign);
-    }
-    if(!_repeat_text)
-    {
-
-        _process_text = false;
-
-    }
-}
 
 void RadioOp::flushVoipBuffer()
 {
