@@ -124,12 +124,13 @@ public slots:
     void enableDemod(bool value);
     double getFreqGUI();
     void setRepeater(bool value);
-    void get_fft_data(std::complex<float>* data, unsigned int &size);
-    void set_carrier_offset(long offset);
-    void set_tx_carrier_offset(long offset);
-    void set_samp_rate(int samp_rate);
+    void getFFTData(std::complex<float>* data, unsigned int &size);
+    void setCarrierOffset(long offset);
+    void setTxCarrierOffset(long offset);
+    void setSampRate(int samp_rate);
     void setFFTSize(int size);
     float getRSSI();
+    void flushSources();
     std::vector<gr_complex> *getConstellation();
 
 private:

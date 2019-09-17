@@ -309,12 +309,12 @@ void gr_mod_base::stop()
     _top_block->wait();
 }
 
-int gr_mod_base::setData(std::vector<u_int8_t> *data)
+int gr_mod_base::set_data(std::vector<u_int8_t> *data)
 {
     return _vector_source->set_data(data);
 }
 
-int gr_mod_base::setAudio(std::vector<float> *data)
+int gr_mod_base::set_audio(std::vector<float> *data)
 {
     return _audio_source->set_data(data);
 
@@ -373,6 +373,14 @@ void gr_mod_base::set_carrier_offset(long carrier_offset)
     _carrier_offset = carrier_offset;
     _rotator->set_phase_inc(2*M_PI*-_carrier_offset/_samp_rate);
 
+}
+
+void gr_mod_base::flush_sources()
+{
+    _top_block->lock();
+    _audio_source->flush();
+    _vector_source->flush();
+    _top_block->unlock();
 }
 
 

@@ -43,14 +43,15 @@ public:
 public slots:
     void start();
     void stop();
-    int setData(std::vector<u_int8_t> *data);
+    int set_data(std::vector<u_int8_t> *data);
     void tune(long center_freq);
     void set_power(float dbm);
     void set_ctcss(float value);
     void set_mode(int mode);
-    int setAudio(std::vector<float> *data);
+    int set_audio(std::vector<float> *data);
     void set_bb_gain(int value);
     void set_carrier_offset(long carrier_offset);
+    void flush_sources();
 
 private:
     gr::top_block_sptr _top_block;

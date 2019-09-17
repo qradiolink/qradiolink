@@ -233,6 +233,14 @@ void gr_modem::stopTX()
     }
 }
 
+void gr_modem::flushSources()
+{
+    if(_gr_mod_base)
+    {
+        _gr_mod_base->flush_sources();
+    }
+}
+
 double gr_modem::getFreqGUI()
 {
     if(_gr_demod_base)
@@ -253,19 +261,19 @@ void gr_modem::tuneTx(long center_freq)
         _gr_mod_base->tune(center_freq);
 }
 
-void gr_modem::set_carrier_offset(long offset)
+void gr_modem::setCarrierOffset(long offset)
 {
     if(_gr_demod_base)
         _gr_demod_base->set_carrier_offset(offset);
 }
 
-void gr_modem::set_tx_carrier_offset(long offset)
+void gr_modem::setTxCarrierOffset(long offset)
 {
     // we don't use carrier_offset for TX, fixed sample rate
     Q_UNUSED(offset);
 }
 
-void gr_modem::set_samp_rate(int samp_rate)
+void gr_modem::setSampRate(int samp_rate)
 {
     if(_gr_demod_base)
         _gr_demod_base->set_samp_rate(samp_rate);
@@ -472,7 +480,7 @@ void gr_modem::transmitPCMAudio(std::vector<float> *audio_data)
         {
             struct timespec time_to_sleep = {0, 1000L };
             nanosleep(&time_to_sleep, NULL);
-            ret = _gr_mod_base->setAudio(audio_data);
+            ret = _gr_mod_base->set_audio(audio_data);
         }
     }
 }
@@ -559,7 +567,7 @@ void gr_modem::transmit(QVector<std::vector<unsigned char>*> frames)
     while(ret)
     {
         struct timespec time_to_sleep = {0, 1000L };
-        ret = _gr_mod_base->setData(all_frames);
+        ret = _gr_mod_base->set_data(all_frames);
     }
 
 }
@@ -591,7 +599,7 @@ static void unpackBytes(unsigned char *bitbuf, const unsigned char *bytebuf, int
     }
 }
 
-void gr_modem::get_fft_data(std::complex<float>* data, unsigned int &size)
+void gr_modem::getFFTData(std::complex<float>* data, unsigned int &size)
 {
     if(_gr_demod_base)
         _gr_demod_base->getFFTData(data, size);

@@ -295,7 +295,7 @@ void RadioOp::txAudio(short *audiobuffer, int audiobuffer_size, int vad, bool ra
         return;
     }
 
-    if(!_tx_inited)
+    if(!_tx_inited || !_tx_started)
     {
         delete[] audiobuffer; // safety
         return;
@@ -503,7 +503,7 @@ void RadioOp::stopTx()
     updateInputAudioStream();
     if(_tx_inited)
     {
-        int tx_tail_msec = 500;
+        int tx_tail_msec = 100;
         if(_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL)
         {
             _modem->endTransmission(_callsign);
@@ -513,7 +513,7 @@ void RadioOp::stopTx()
                 && ((_tx_mode == gr_modem_types::ModemTypeNBFM2500) || (_tx_mode == gr_modem_types::ModemTypeNBFM5000)))
         {
             //sendEndBeep(); turned off, annoying
-            tx_tail_msec = 100;
+            tx_tail_msec = 500;
         }
         // FIXME: end tail length should be calculated exactly
         _end_tx_timer->start(tx_tail_msec);
@@ -530,6 +530,7 @@ void RadioOp::endTx()
 {
     // On LimeSDR mini, when I call setTxPower I get a brief spike of the LO
     _modem->setTxPower(0.01);
+    _modem->flushSources();
     //_modem->stopTX();
     if(!_duplex_enabled)
         _modem->enableDemod(true);
@@ -781,7 +782,7 @@ void RadioOp::getFFTData()
 
     unsigned int fft_size = 0;
 
-    _modem->get_fft_data(_fft_data, fft_size);
+    _modem->getFFTData(_fft_data, fft_size);
 
     if(fft_size > 0)
     {
@@ -1207,8 +1208,8 @@ void RadioOp::toggleRX(bool value)
         _modem->setRxSensitivity(_rx_sensitivity);
         _modem->setSquelch(_squelch);
         _modem->setRxCTCSS(_rx_ctcss);
-        _modem->set_carrier_offset(_carrier_offset);
-        _modem->set_samp_rate(_rx_sample_rate);
+        _modem->setCarrierOffset(_carrier_offset);
+        _modem->setSampRate(_rx_sample_rate);
         _modem->tune(_rx_frequency);
         _modem->startRX();
         _mutex->unlock();
@@ -1289,7 +1290,7 @@ void RadioOp::toggleTX(bool value)
     else if(_tx_inited)
     {
         _mutex->lock();
-        //_modem->stopTX();
+        _modem->stopTX();
 
         _modem->deinitTX(_tx_mode);
         _mutex->unlock();
@@ -1548,7 +1549,7 @@ void RadioOp::toggleRepeat(bool value)
 void RadioOp::fineTuneFreq(long center_freq)
 {
 
-    _modem->set_carrier_offset(_carrier_offset + center_freq*_step_hz);
+    _modem->setCarrierOffset(_carrier_offset + center_freq*_step_hz);
 
 }
 
@@ -1573,7 +1574,7 @@ void RadioOp::setCarrierOffset(qint64 offset)
     _carrier_offset = offset;
 
     // we don't use carrier_offset for TX, fixed sample rate
-    _modem->set_carrier_offset(offset);
+    _modem->setCarrierOffset(offset);
 
 }
 
@@ -1603,7 +1604,7 @@ void RadioOp::setRxSampleRate(int samp_rate)
 {
     _rx_sample_rate = samp_rate;
 
-    _modem->set_samp_rate(samp_rate);
+    _modem->setSampRate(samp_rate);
 
 }
 
@@ -1732,7 +1733,7 @@ void RadioOp::scan(bool receiving, bool wait_for_timer)
         _rx_frequency = _rx_frequency - _rx_sample_rate;
         _modem->tune(_rx_frequency);
     }
-    _modem->set_carrier_offset(_autotune_freq);
+    _modem->setCarrierOffset(_autotune_freq);
 
     _carrier_offset = _autotune_freq;
     emit freqToGUI(_rx_frequency, _carrier_offset);
