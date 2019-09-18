@@ -75,6 +75,7 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
     }
     else
     {
+        // FIXME: pluto doesn't report back gain range (why?) at init so it gets set to true by default
         _osmosdr_source->set_gain_mode(true);
     }
 
@@ -505,6 +506,8 @@ double gr_demod_base::get_freq()
 
 void gr_demod_base::set_rx_sensitivity(float value)
 {
+    // FIXME: pluto doesn't report back gain range (why?) at init so it gets set to true by default
+    _osmosdr_source->set_gain_mode(false);
     if (!_gain_range.empty())
     {
         double gain =  _gain_range.start() + value*(_gain_range.stop()-_gain_range.start());

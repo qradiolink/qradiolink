@@ -53,7 +53,7 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(std::vector<int>signature, int sps, int samp_
     _feed_forward_agc = gr::analog::feedforward_agc_cc::make(16,1);
     _agc = gr::analog::agc2_cc::make(1, 1e-3, 1, 5);
     _complex_to_real = gr::blocks::complex_to_real::make();
-    _audio_gain = gr::blocks::multiply_const_ff::make(0.8);
+    _audio_gain = gr::blocks::multiply_const_ff::make(0.5);
 
 
     connect(self(),0,_resampler,0);
