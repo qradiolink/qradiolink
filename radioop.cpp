@@ -443,9 +443,11 @@ void RadioOp::sendTextData(QString text, int frame_type)
             startTx();
         }
         _tx_modem_started = true;
+        _mutex->lock();
         _modem->startTransmission(_callsign);
         _modem->textData(text, frame_type);
         _modem->endTransmission(_callsign);
+        _mutex->unlock();
     }
     if(!_repeat_text)
     {
@@ -465,8 +467,10 @@ void RadioOp::sendBinData(QByteArray data, int frame_type)
             startTx();
         }
         _tx_modem_started = true;
+        _mutex->lock();
         _modem->binData(data, frame_type);
         _modem->endTransmission(_callsign);
+        _mutex->unlock();
     }
     if(!_repeat_text)
     {
@@ -519,19 +523,27 @@ void RadioOp::startTx()
         //if(_tx_modem_started)
         //    _modem->stopTX();
         //_mutex->lock();
+        _mutex->lock();
         _modem->tuneTx(_tx_frequency + _tune_shift_freq);
+        _mutex->unlock();
         /// LimeSDR calibration procedure happens after every tune request
         // FIXME: how to handle the LimeSDR calibration better?
-        struct timespec time_to_sleep = {0, 10000000L };
-        nanosleep(&time_to_sleep, NULL);
+        //struct timespec time_to_sleep = {0, 10000000L };
+        //nanosleep(&time_to_sleep, NULL);
         //_modem->startTX();
+        _mutex->lock();
         _modem->setTxPower(_tx_power);
+        _mutex->unlock();
         //_mutex->unlock();
 
         _tx_modem_started = false;
         _tx_started = true;
         if((_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL))
+        {
+            _mutex->lock();
             _modem->startTransmission(_callsign);
+            _mutex->unlock();
+        }
 
     }
 
@@ -546,7 +558,9 @@ void RadioOp::stopTx()
         int tx_tail_msec = 100;
         if(_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL)
         {
+            _mutex->lock();
             _modem->endTransmission(_callsign);
+            _mutex->unlock();
             tx_tail_msec = 2000;
         }
         if((_tx_radio_type == radio_type::RADIO_TYPE_ANALOG)
@@ -569,8 +583,10 @@ void RadioOp::stopTx()
 void RadioOp::endTx()
 {
     // On LimeSDR mini, when I call setTxPower I get a brief spike of the LO
+    _mutex->lock();
     _modem->setTxPower(0.01);
     _modem->flushSources();
+    _mutex->unlock();
     //_modem->stopTX();
     if(!_duplex_enabled)
         _modem->enableDemod(true);
@@ -625,7 +641,9 @@ void RadioOp::updateDataModemReset(bool transmitting, bool ptt_activated)
             _data_modem_sleep_timer->restart();
             _data_modem_sleeping = false;
             _data_modem_reset_timer->restart();
+            _mutex->lock();
             _modem->startTransmission(_callsign);
+            _mutex->unlock();
             std::cout << "modem reset complete" << std::endl;
         }
     }
@@ -636,6 +654,7 @@ bool RadioOp::getDemodulatorData()
     bool data_to_process = false;
     if(_rx_inited)
     {
+        _mutex->lock();
         if(_rx_radio_type == radio_type::RADIO_TYPE_DIGITAL)
             data_to_process = _modem->demodulate();
         else if(_rx_radio_type == radio_type::RADIO_TYPE_ANALOG)
@@ -643,7 +662,7 @@ bool RadioOp::getDemodulatorData()
             data_to_process = _modem->demodulateAnalog();
         }
 
-
+        _mutex->unlock();
         if(!_tuning_done)
             scan(data_to_process);
     }
@@ -714,7 +733,9 @@ void RadioOp::run()
             {
                 if(rx_inited)
                 {
+                    _mutex->lock();
                     _modem->demodulate();
+                    _mutex->unlock();
                 }
                 if(!data_modem_sleeping)
                     processInputNetStream();
@@ -758,9 +779,9 @@ void RadioOp::getRSSI()
     {
         return;
     }
-
+    _mutex->lock();
     float rssi = _modem->getRSSI();
-
+    _mutex->unlock();
     if(rssi != 0)
         emit newRSSIValue(rssi);
     _rssi_read_timer->restart();
@@ -780,9 +801,9 @@ void RadioOp::getFFTData()
     }
 
     unsigned int fft_size = 0;
-
+    _mutex->lock();
     _modem->getFFTData(_fft_data, fft_size);
-
+    _mutex->unlock();
     if(fft_size > 0)
     {
         emit newFFTData(_fft_data, (int)fft_size);
@@ -806,9 +827,9 @@ void RadioOp::getConstellationData()
     {
         return;
     }
-
+    _mutex->lock();
     std::vector<std::complex<float>> *const_data = _modem->getConstellation();
-
+    _mutex->unlock();
     if(const_data->size() > 1)
     {
         emit newConstellationData(const_data);
@@ -1540,7 +1561,7 @@ void RadioOp::toggleRepeat(bool value)
         _repeat = value;
     }
 
-    _modem->setRepeater(value);
+    _modem->setRepeater(value); // ?mutex?
 
 
 }
@@ -1557,14 +1578,18 @@ void RadioOp::tuneFreq(qint64 center_freq)
     /// _rx_frequency is the source center frequency
     _rx_frequency = center_freq;
     // FIXME: LimeSDR mini tune requests are blocking
+    _mutex->lock();
     _modem->tune(_rx_frequency);
+    _mutex->unlock();
 }
 
 void RadioOp::tuneTxFreq(qint64 actual_freq)
 {
     _tx_frequency = actual_freq;
     // FIXME: LimeSDR mini tune requests are blocking
+    _mutex->lock();
     _modem->tuneTx(_tx_frequency + _tune_shift_freq);
+    _mutex->unlock();
 
 }
 
@@ -1581,14 +1606,18 @@ void RadioOp::setCarrierOffset(qint64 offset)
 void RadioOp::changeTxShift(qint64 center_freq)
 {
     _tune_shift_freq = center_freq;
+    _mutex->lock();
     _modem->tuneTx(_tx_frequency + _tune_shift_freq);
+    _mutex->unlock();
 }
 
 void RadioOp::setTxPower(int dbm)
 {
     _tx_power = (float)dbm/100.0;
-    _modem->setTxPower(_tx_power);
 
+    _mutex->lock();
+    _modem->setTxPower(_tx_power);
+    _mutex->unlock();
 }
 
 void RadioOp::setBbGain(int value)
@@ -1602,8 +1631,9 @@ void RadioOp::setBbGain(int value)
 void RadioOp::setRxSampleRate(int samp_rate)
 {
     _rx_sample_rate = samp_rate;
-
+    _mutex->lock();
     _modem->setSampRate(samp_rate);
+    _mutex->unlock();
 
 }
 
@@ -1725,12 +1755,16 @@ void RadioOp::scan(bool receiving, bool wait_for_timer)
     if(increment_main_frequency)
     {
         _rx_frequency = _rx_frequency + _rx_sample_rate;
+        _mutex->lock();
         _modem->tune(_rx_frequency);
+        _mutex->unlock();
     }
     if(decrement_main_frequency)
     {
         _rx_frequency = _rx_frequency - _rx_sample_rate;
+        _mutex->lock();
         _modem->tune(_rx_frequency);
+        _mutex->unlock();
     }
     _modem->setCarrierOffset(_autotune_freq);
 

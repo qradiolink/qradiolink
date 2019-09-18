@@ -323,9 +323,7 @@ int gr_mod_base::set_audio(std::vector<float> *data)
 void gr_mod_base::tune(long center_freq)
 {
     _device_frequency = center_freq;
-    _top_block->lock();
     _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
-    _top_block->unlock();
 }
 
 void gr_mod_base::set_power(float dbm)

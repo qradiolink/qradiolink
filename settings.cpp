@@ -74,74 +74,233 @@ void Settings::readConfig()
                   << " - " << pex.getError() << std::endl;
         exit(EXIT_FAILURE);
     }
+
+    /// Read values
     try
     {
-
         cfg.lookupValue("rx_freq_corr", rx_freq_corr);
-        cfg.lookupValue("tx_freq_corr", tx_freq_corr);
-
-        rx_device_args = QString(cfg.lookup("rx_device_args"));
-        tx_device_args = QString(cfg.lookup("tx_device_args"));
-        rx_antenna = QString(cfg.lookup("rx_antenna"));
-        tx_antenna = QString(cfg.lookup("tx_antenna"));
-        callsign = QString(cfg.lookup("callsign"));
-        video_device = QString(cfg.lookup("video_device"));
-        tx_power = cfg.lookup("tx_power");
-        bb_gain = cfg.lookup("bb_gain");
-        rx_sensitivity = cfg.lookup("rx_sensitivity");
-        squelch = cfg.lookup("squelch");
-        rx_volume = cfg.lookup("rx_volume");
-        rx_frequency = cfg.lookup("rx_frequency");
-        demod_offset = cfg.lookup("demod_offset");
-        tx_shift = cfg.lookup("tx_shift");
-        voip_server = QString(cfg.lookup("voip_server"));
-        rx_mode = cfg.lookup("rx_mode");
-        tx_mode = cfg.lookup("tx_mode");
-        ip_address = QString(cfg.lookup("ip_address"));
-        rx_sample_rate = cfg.lookup("rx_sample_rate");
-        scan_step = cfg.lookup("scan_step");
-        show_controls = cfg.lookup("show_controls");
-        show_constellation = cfg.lookup("show_constellation");
-        show_fft = cfg.lookup("show_fft");
-        enable_duplex = cfg.lookup("enable_duplex");
-        fft_size = cfg.lookup("fft_size");
-        waterfall_fps = cfg.lookup("waterfall_fps");
-
     }
     catch(const libconfig::SettingNotFoundException &nfex)
     {
-        // FIXME: defaults should not be set this way
-        // if a setting is missing it will reset the whole config
-        rx_device_args = "rtl=0";
-        tx_device_args = "uhd";
-        rx_antenna = "RX2";
-        tx_antenna = "TX/RX";
-        rx_freq_corr = 39;
-        tx_freq_corr = 0;
-        callsign = "CALL";
-        video_device = "/dev/video0";
-        tx_power = 50;
-        bb_gain = 1;
-        rx_sensitivity = 90;
-        squelch = -70;
-        rx_volume = 50;
-        rx_frequency = 434000000;
-        tx_shift = 0;
-        voip_server = "127.0.0.1";
-        rx_mode = 0;
-        tx_mode = 0;
-        ip_address = "10.0.0.1";
-        demod_offset = 0;
-        rx_sample_rate = 1000000;
-        scan_step = 0;
-        show_controls = 1;
-        show_constellation = 0;
-        fft_size = 32768;
-        waterfall_fps = 15;
-        show_fft = 1;
-        enable_duplex = 0;
-        std::cerr << "Settings not found in configuration file." << std::endl;
+        rx_freq_corr = 0;
     }
+    try
+    {
+        cfg.lookupValue("tx_freq_corr", tx_freq_corr);
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        tx_freq_corr = 0;
+    }
+    try
+    {
+        rx_device_args = QString(cfg.lookup("rx_device_args"));
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        rx_device_args = "rtl=0";
+    }
+    try
+    {
+        tx_device_args = QString(cfg.lookup("tx_device_args"));
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        tx_device_args = "uhd";
+    }
+    try
+    {
+        rx_antenna = QString(cfg.lookup("rx_antenna"));
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        rx_antenna = "RX2";
+    }
+    try
+    {
+        tx_antenna = QString(cfg.lookup("tx_antenna"));
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        tx_antenna = "TX/RX";
+    }
+    try
+    {
+        callsign = QString(cfg.lookup("callsign"));
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        callsign = "CALL";
+    }
+    try
+    {
+        video_device = QString(cfg.lookup("video_device"));
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        video_device = "/dev/video0";
+    }
+    try
+    {
+        tx_power = cfg.lookup("tx_power");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        tx_power = 50;
+    }
+    try
+    {
+        bb_gain = cfg.lookup("bb_gain");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        bb_gain = 1;
+    }
+    try
+    {
+        rx_sensitivity = cfg.lookup("rx_sensitivity");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        rx_sensitivity = 90;
+    }
+    try
+    {
+        squelch = cfg.lookup("squelch");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        squelch = -70;
+    }
+    try
+    {
+        rx_volume = cfg.lookup("rx_volume");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        rx_volume = 30;
+    }
+    try
+    {
+        rx_frequency = cfg.lookup("rx_frequency");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        rx_frequency = 434000000;
+    }
+    try
+    {
+        demod_offset = cfg.lookup("demod_offset");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        demod_offset = 0;
+    }
+    try
+    {
+        tx_shift = cfg.lookup("tx_shift");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        tx_shift = 0;
+    }
+    try
+    {
+        voip_server = QString(cfg.lookup("voip_server"));
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        voip_server = "127.0.0.1";
+    }
+    try
+    {
+        rx_mode = cfg.lookup("rx_mode");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        rx_mode = 0;
+    }
+    try
+    {
+        tx_mode = cfg.lookup("tx_mode");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        tx_mode = 0;
+    }
+    try
+    {
+        ip_address = QString(cfg.lookup("ip_address"));
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        ip_address = "10.0.0.1";
+    }
+    try
+    {
+        rx_sample_rate = cfg.lookup("rx_sample_rate");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        rx_sample_rate = 1000000;
+    }
+    try
+    {
+        scan_step = cfg.lookup("scan_step");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        scan_step = 0;
+    }
+    try
+    {
+        show_controls = cfg.lookup("show_controls");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        show_controls = 1;
+    }
+    try
+    {
+        show_constellation = cfg.lookup("show_constellation");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        show_constellation = 0;
+    }
+    try
+    {
+        show_fft = cfg.lookup("show_fft");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        show_fft = 1;
+    }
+    try
+    {
+        fft_size = cfg.lookup("fft_size");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        fft_size = 32768;
+    }
+    try
+    {
+        waterfall_fps = cfg.lookup("waterfall_fps");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        waterfall_fps = 15;
+    }
+    try
+    {
+        enable_duplex = cfg.lookup("enable_duplex");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        enable_duplex = 0;
+    }
+
 }
 
 void Settings::saveConfig()
