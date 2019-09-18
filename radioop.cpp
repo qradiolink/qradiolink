@@ -212,7 +212,7 @@ void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_arg
 
     if(_rx_sensitivity == 0)
     {
-        _rx_sensitivity = (float)rx_sensitivity/100.0;
+        _rx_sensitivity = ((double)rx_sensitivity)/100.0;
     }
     if(_rx_frequency == 0)
     {
@@ -1646,8 +1646,7 @@ void RadioOp::setFFTSize(int size)
 
 void RadioOp::setRxSensitivity(int value)
 {
-    _rx_sensitivity = (float)value/100.0;
-
+    _rx_sensitivity = ((double)value)/100.0;
     _modem->setRxSensitivity(_rx_sensitivity);
 
 }

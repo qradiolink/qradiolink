@@ -63,19 +63,27 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
     _osmosdr_source->set_bandwidth(1500000); // LimeSDR does not support less
     _osmosdr_source->set_sample_rate(1000000);
     _osmosdr_source->set_freq_corr(freq_corr);
-    _osmosdr_source->set_gain_mode(false);
+    _osmosdr_source->set_gain_mode(true);
     _osmosdr_source->set_dc_offset_mode(2);
     _osmosdr_source->set_iq_balance_mode(0);
     _osmosdr_source->set_antenna(device_antenna);
     _gain_range = _osmosdr_source->get_gain_range();
+    _gain_names = _osmosdr_source->get_gain_names();
     if (!_gain_range.empty())
     {
-        double gain =  _gain_range.start() + rf_gain*(_gain_range.stop()-_gain_range.start());
-        _osmosdr_source->set_gain(gain);
+        double gain =  (double)_gain_range.start() + rf_gain*((double)_gain_range.stop()- (double)_gain_range.start());
+        _osmosdr_source->set_gain_mode(false);
+        if(_gain_names.size() == 1)
+        {
+            _osmosdr_source->set_gain(gain, _gain_names.at(0));
+        }
+        else
+        {
+            _osmosdr_source->set_gain(gain);
+        }
     }
     else
     {
-        // FIXME: pluto doesn't report back gain range (why?) at init so it gets set to true by default
         _osmosdr_source->set_gain_mode(true);
     }
 
@@ -487,6 +495,8 @@ void gr_demod_base::tune(long center_freq)
 {
     _device_frequency = center_freq;
     _osmosdr_source->set_center_freq(_device_frequency);
+    int bandwidth = std::max(_samp_rate, 1500000); // LimeSDR mini
+    _osmosdr_source->set_bandwidth(bandwidth);
 }
 
 double gr_demod_base::get_freq()
@@ -504,14 +514,21 @@ double gr_demod_base::get_freq()
     }
 }
 
-void gr_demod_base::set_rx_sensitivity(float value)
+void gr_demod_base::set_rx_sensitivity(double value)
 {
-    // FIXME: pluto doesn't report back gain range (why?) at init so it gets set to true by default
-    _osmosdr_source->set_gain_mode(false);
     if (!_gain_range.empty())
     {
-        double gain =  _gain_range.start() + value*(_gain_range.stop()-_gain_range.start());
-        _osmosdr_source->set_gain(gain);
+
+        double gain =  floor((double)_gain_range.start() + value*((double)_gain_range.stop()- (double)_gain_range.start()));
+        _osmosdr_source->set_gain_mode(false); // Pluto ??!!
+        if(_gain_names.size() == 1)
+        {
+            _osmosdr_source->set_gain(gain, _gain_names.at(0));
+        }
+        else
+        {
+            _osmosdr_source->set_gain(gain);
+        }
     }
 }
 

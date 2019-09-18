@@ -297,7 +297,7 @@ void gr_modem::setBbGain(int value)
         _gr_mod_base->set_bb_gain(value);
 }
 
-void gr_modem::setRxSensitivity(float value)
+void gr_modem::setRxSensitivity(double value)
 {
     if(_gr_demod_base)
         _gr_demod_base->set_rx_sensitivity(value);

@@ -72,7 +72,7 @@ public slots:
     void getFFTData(std::complex<float> *fft_data,  unsigned int &fftSize);
     void tune(long center_freq);
     void set_carrier_offset(long carrier_offset);
-    void set_rx_sensitivity(float value);
+    void set_rx_sensitivity(double value);
     void set_squelch(int value);
     void set_ctcss(float value);
     void enable_gui_const(bool value);
@@ -142,6 +142,7 @@ private:
     int _samp_rate;
     bool _locked;
     osmosdr::gain_range_t _gain_range;
+    std::vector<std::string> _gain_names;
 };
 
 #endif // GR_DEMOD_BASE_H

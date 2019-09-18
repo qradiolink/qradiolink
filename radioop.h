@@ -186,7 +186,7 @@ private:
     float _tx_power;
     int _bb_gain;
     int _squelch;
-    float _rx_sensitivity;
+    double _rx_sensitivity;
     int _step_hz;
     int _scan_step_hz;
     int _tune_limit_lower;
