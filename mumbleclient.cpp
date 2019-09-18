@@ -244,7 +244,7 @@ void MumbleClient::processChannelState(quint8 *message, quint64 size)
         description = QString::fromStdString(ch.description());
     else
         description = "";
-    Channel *c = new Channel(id, parent_id, name, description);
+    MumbleChannel *c = new MumbleChannel(id, parent_id, name, description);
 
     emit newChannel(c);
 
@@ -276,7 +276,7 @@ void MumbleClient::processUserState(quint8 *message, quint64 size)
         {
             _channel_id = us.channel_id();
             emit textMessage( "Joined channel: " + QString::number(_channel_id), false);
-            Channel *c = new Channel(_channel_id,0,"","");
+            MumbleChannel *c = new MumbleChannel(_channel_id,0,"","");
             emit newChannel(c);
             if(_channel_id > 1)
             {

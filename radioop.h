@@ -35,7 +35,7 @@
 #include "ext/agc.h"
 #include "ext/vox.h"
 #include "settings.h"
-#include "channel.h"
+#include "mumblechannel.h"
 #include "radioprotocol.h"
 #include "station.h"
 #include "audio/audioencoder.h"
@@ -142,7 +142,7 @@ public slots:
     void endTx();
     void updateFrequency();
     void toggleRepeat(bool value);
-    void addChannel(Channel* chan);
+    void addChannel(MumbleChannel* chan);
     void setStations(StationList list);
     void setVox(bool value);
     void setCarrierOffset(qint64 offset);

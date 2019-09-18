@@ -41,7 +41,7 @@
 #include "audioreader.h"
 #include "dtmfcommand.h"
 #include "station.h"
-#include "channel.h"
+#include "mumblechannel.h"
 #include "radioop.h"
 
 
@@ -261,8 +261,8 @@ int main(int argc, char *argv[])
     QObject::connect(client,SIGNAL(onlineStations(StationList)),radio_op,SLOT(setStations(StationList)));
     QObject::connect(client,SIGNAL(textMessage(QString,bool)),w,SLOT(displayVOIPText(QString,bool)));
     QObject::connect(client,SIGNAL(connectedToServer(QString)),w,SLOT(connectedToServer(QString)));
-    QObject::connect(client,SIGNAL(newChannel(Channel*)),w,SLOT(newChannel(Channel*)));
-    QObject::connect(client,SIGNAL(newChannel(Channel*)),radio_op,SLOT(addChannel(Channel*)));
+    QObject::connect(client,SIGNAL(newChannel(MumbleChannel*)),w,SLOT(newChannel(MumbleChannel*)));
+    QObject::connect(client,SIGNAL(newChannel(MumbleChannel*)),radio_op,SLOT(addChannel(MumbleChannel*)));
 
     QObject::connect(w,SIGNAL(connectToServer(QString, unsigned)),client,SLOT(connectToServer(QString, unsigned)));
     QObject::connect(w,SIGNAL(disconnectFromServer()),client,SLOT(disconnectFromServer()));

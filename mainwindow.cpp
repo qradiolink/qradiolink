@@ -517,7 +517,7 @@ void MainWindow::displayText(QString text, bool html)
     if(html)
         ui->receivedTextEdit->insertHtml(text);
     else
-        ui->receivedTextEdit->append(text+"\n");
+        ui->receivedTextEdit->append(text);
 
     ui->receivedTextEdit->verticalScrollBar()->setValue(ui->receivedTextEdit->verticalScrollBar()->maximum());
 
@@ -530,7 +530,7 @@ void MainWindow::displayText(QString text, bool html)
     if(html)
         ui->secondaryTextDisplay->insertHtml(text);
     else
-        ui->secondaryTextDisplay->append(text+"\n");
+        ui->secondaryTextDisplay->append(text);
 
     ui->secondaryTextDisplay->verticalScrollBar()->setValue(ui->secondaryTextDisplay->verticalScrollBar()->maximum());
     ui->secondaryTextDisplay->show();
@@ -699,7 +699,7 @@ void MainWindow::resetSpeechIcons()
     }
 }
 
-void MainWindow::newChannel(Channel *chan)
+void MainWindow::newChannel(MumbleChannel *chan)
 {
     if(chan->name.isEmpty())
     {

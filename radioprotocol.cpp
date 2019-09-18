@@ -19,7 +19,7 @@
 RadioProtocol::RadioProtocol(QObject *parent) :
     QObject(parent)
 {
-    _voip_channels = new QVector<Channel*>;
+    _voip_channels = new QVector<MumbleChannel*>;
     _voip_users = new QVector<Station>;
     _buffer = new QByteArray;
 }
@@ -71,7 +71,7 @@ QByteArray RadioProtocol::buildRepeaterInfo()
     return data;
 }
 
-void RadioProtocol::addChannel(Channel *chan)
+void RadioProtocol::addChannel(MumbleChannel *chan)
 {
     _voip_channels->push_back(chan);
 }
@@ -139,7 +139,7 @@ void RadioProtocol::processPayload(QByteArray data)
     {
         QRadioLink::Channel ch;
         ch.ParseFromArray(data,data.size());
-        Channel *chan = new Channel(ch.channel_id(),ch.parent_id(),QString::fromStdString(ch.name()),
+        MumbleChannel *chan = new MumbleChannel(ch.channel_id(),ch.parent_id(),QString::fromStdString(ch.name()),
                                     QString::fromStdString(ch.description()));
         //emit newChannel(chan);
         break;

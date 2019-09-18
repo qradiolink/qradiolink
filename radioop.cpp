@@ -451,8 +451,9 @@ void RadioOp::sendTextData(QString text, int frame_type)
     }
     if(!_repeat_text)
     {
-
+        _mutex->lock();
         _process_text = false;
+        _mutex->unlock();
 
     }
 }
@@ -514,27 +515,31 @@ void RadioOp::startTx()
             _data_modem_sleep_timer->start();
         }
 
+        if(!_duplex_enabled)
+            _modem->enableDemod(false);
+
+        _mutex->lock();
+        _modem->tuneTx(_tx_frequency + _tune_shift_freq);
+        _modem->setTxPower(_tx_power);
+        _mutex->unlock();
+
         // FIXME: full duplex mode
         //if(_rx_inited && !_repeat && (_rx_mode != gr_modem_types::ModemTypeQPSK250000))
         //    _modem->stopRX();
 
-        if(!_duplex_enabled)
-            _modem->enableDemod(false);
+
         //if(_tx_modem_started)
         //    _modem->stopTX();
-        //_mutex->lock();
-        _mutex->lock();
-        _modem->tuneTx(_tx_frequency + _tune_shift_freq);
-        _mutex->unlock();
+
+
+
+
         /// LimeSDR calibration procedure happens after every tune request
         // FIXME: how to handle the LimeSDR calibration better?
         //struct timespec time_to_sleep = {0, 10000000L };
         //nanosleep(&time_to_sleep, NULL);
         //_modem->startTX();
-        _mutex->lock();
-        _modem->setTxPower(_tx_power);
-        _mutex->unlock();
-        //_mutex->unlock();
+
 
         _tx_modem_started = false;
         _tx_started = true;
@@ -1130,7 +1135,7 @@ void RadioOp::repeaterInfoReceived(QByteArray data)
 void RadioOp::callsignReceived(QString callsign)
 {
     QString time= QDateTime::currentDateTime().toString("dd/MMM/yyyy hh:mm:ss");
-    QString text = "<b>" + time + "</b> " + "<font color=\"#FF5555\">" + callsign + " </font><br/>\n";
+    QString text = "\n\n<b>" + time + "</b> " + "<font color=\"#FF5555\">" + callsign + " </font><br/>\n";
 
     short *samples = new short[_data_rec_sound->size()/sizeof(short)];
     short *origin = (short*) _data_rec_sound->data();
@@ -1178,7 +1183,7 @@ void RadioOp::endAudioTransmission()
     emit writePCM(samples, _end_rec_sound->size(), false, AudioInterface::AUDIO_MODE_ANALOG);
 }
 
-void RadioOp::addChannel(Channel *chan)
+void RadioOp::addChannel(MumbleChannel *chan)
 {
     _radio_protocol->addChannel(chan);
 }
@@ -1290,7 +1295,7 @@ void RadioOp::toggleTX(bool value)
         }
 
         _mutex->lock();
-        _modem->setTxPower(_tx_power);
+        _modem->setTxPower(0.01);
         _modem->setBbGain(_bb_gain);
         _modem->tuneTx(430000000);
         _modem->setTxCTCSS(_tx_ctcss);
@@ -1541,6 +1546,7 @@ void RadioOp::setVOIPForwarding(bool value)
 
 void RadioOp::setVox(bool value)
 {
+    _mutex->lock();
     _vox_enabled = value;
     if(_transmitting_audio && !_vox_enabled)
         _transmitting_audio = false;
@@ -1615,9 +1621,9 @@ void RadioOp::setTxPower(int dbm)
 {
     _tx_power = (float)dbm/100.0;
 
-    _mutex->lock();
-    _modem->setTxPower(_tx_power);
-    _mutex->unlock();
+    //_mutex->lock();
+    //_modem->setTxPower(_tx_power);
+    //_mutex->unlock();
 }
 
 void RadioOp::setBbGain(int value)

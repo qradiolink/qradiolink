@@ -34,7 +34,7 @@
 #include "qtgui/freqctrl.h"
 #include <libconfig.h++>
 #include "settings.h"
-#include "channel.h"
+#include "mumblechannel.h"
 #include "qtgui/plotter.h"
 #include <iostream>
 
@@ -91,7 +91,7 @@ public slots:
     void toggleVOIPForwarding(bool value);
     void toggleVox(bool value);
     void toggleRepeater(bool value);
-    void newChannel(Channel *chan);
+    void newChannel(MumbleChannel *chan);
     void channelState(QTreeWidgetItem *item, int k);
     void newFFTData(std::complex<float>* fft_data, int fftsize);
     void carrierOffsetChanged(qint64 freq, qint64 offset);

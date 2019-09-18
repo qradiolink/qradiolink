@@ -96,7 +96,7 @@
 </string>
         </property>
         <property name="currentIndex">
-         <number>2</number>
+         <number>1</number>
         </property>
         <property name="iconSize">
          <size>
@@ -918,18 +918,20 @@ background-color: rgb(0, 0, 67);</string>
             <property name="font">
              <font>
               <family>Sans Serif</family>
-              <pointsize>12</pointsize>
+              <pointsize>10</pointsize>
               <weight>50</weight>
               <italic>false</italic>
               <bold>false</bold>
              </font>
             </property>
             <property name="styleSheet">
-             <string notr="true">background: transparent;
-color: rgb(0, 0, 70);
+             <string notr="true">color: rgb(0, 0, 70);
 background-color: rgba(255, 255, 255, 180);
-font: 12pt &quot;Sans Serif&quot;;
+font: 10pt &quot;Sans Serif&quot;;
 </string>
+            </property>
+            <property name="tabStopWidth">
+             <number>400</number>
             </property>
            </widget>
           </item>
@@ -1025,19 +1027,27 @@ background: none;
            <widget class="QTextEdit" name="receivedTextEdit">
             <property name="minimumSize">
              <size>
-              <width>0</width>
+              <width>500</width>
               <height>300</height>
              </size>
             </property>
             <property name="styleSheet">
-             <string notr="true">background: transparent;
-color: rgb(0, 0, 67);
+             <string notr="true">color: rgb(0, 0, 67);
 background-color: rgb(255, 255, 255, 180);
-font: 12pt &quot;Sans Serif&quot;;
+font: 10pt &quot;Sans Serif&quot;;
 </string>
+            </property>
+            <property name="lineWrapMode">
+             <enum>QTextEdit::WidgetWidth</enum>
+            </property>
+            <property name="lineWrapColumnOrWidth">
+             <number>1024</number>
             </property>
             <property name="readOnly">
              <bool>true</bool>
+            </property>
+            <property name="tabStopWidth">
+             <number>1024</number>
             </property>
            </widget>
           </item>

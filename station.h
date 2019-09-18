@@ -18,11 +18,17 @@
 #define STATION_H
 
 #include <QString>
+#include <QTreeWidgetItem>
+#include <QTimer>
+#include <QIcon>
 
 class Station
 {
 public:
     Station();
+    ~Station();
+    void initWidget();
+    QTreeWidgetItem *getWidget() const;
     int id;
     QString callsign;
     QString radio_id;
@@ -39,6 +45,8 @@ public:
     bool mute;
     bool deaf;
     bool is_user;
+    QTreeWidgetItem *_tree_item;
+    QTimer *_icon_timer;
 };
 
 #endif // STATION_H

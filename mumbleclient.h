@@ -36,7 +36,7 @@
 #include "config_defines.h"
 #include "settings.h"
 #include "station.h"
-#include "channel.h"
+#include "mumblechannel.h"
 
 typedef QVector<Station> StationList;
 class MumbleClient : public QObject
@@ -54,7 +54,7 @@ signals:
     void opusAudio(unsigned char *audio, int size, quint64 session_id);
     void onlineStations(StationList);
     void newStation(Station* s);
-    void newChannel(Channel* chan);
+    void newChannel(MumbleChannel* chan);
     void leftStation(Station*);
     void channelReady(int chan_number);
     void textMessage(QString msg, bool html);

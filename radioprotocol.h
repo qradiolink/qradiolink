@@ -22,7 +22,7 @@
 #include <QString>
 #include <QByteArray>
 #include <QDebug>
-#include "channel.h"
+#include "mumblechannel.h"
 #include "station.h"
 #include "ext/QRadioLink.pb.h"
 
@@ -38,7 +38,7 @@ public:
     explicit RadioProtocol(QObject *parent = 0);
 
     QByteArray buildRepeaterInfo();
-    void addChannel(Channel *chan);
+    void addChannel(MumbleChannel *chan);
     void dataIn(QByteArray data);
     void setStations(QVector<Station> list);
 
@@ -47,7 +47,7 @@ signals:
 public slots:
 
 private:
-    QVector<Channel*> *_voip_channels;
+    QVector<MumbleChannel*> *_voip_channels;
     QVector<Station> *_voip_users;
     QByteArray *_buffer;
     void processPayload(QByteArray data);
