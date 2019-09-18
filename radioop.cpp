@@ -439,6 +439,7 @@ void RadioOp::sendTextData(QString text, int frame_type)
     {
         if(!_tx_modem_started)
         {
+            // FIXME: these should be called from the thread loop only
             stopTx();
             startTx();
         }
@@ -464,6 +465,7 @@ void RadioOp::sendBinData(QByteArray data, int frame_type)
     {
         if(!_tx_modem_started)
         {
+            // FIXME: these should be called from the thread loop only
             stopTx();
             startTx();
         }
@@ -1085,6 +1087,7 @@ void RadioOp::processVoipAudioFrame(short *pcm, int samples, quint64 sid)
         {
             if(!_voip_tx_timer->isActive())
             {
+                // FIXME: these should be called from the thread loop only
                 startTx();
             }
             _voip_tx_timer->start(200);
@@ -1559,10 +1562,13 @@ void RadioOp::toggleRepeat(bool value)
     if(value && !_repeat)
     {
         _repeat = value;
+        // FIXME: these should be called from the thread loop only
+        // Plus this call might get the local audio if we're not careful
         startTx();
     }
     else if(!value && _repeat)
     {
+        // FIXME: these should be called from the thread loop only
         stopTx();
         _repeat = value;
     }

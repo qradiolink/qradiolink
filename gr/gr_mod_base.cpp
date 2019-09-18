@@ -330,8 +330,10 @@ void gr_mod_base::set_power(float dbm)
 {
     if (!_gain_range.empty())
     {
+        _top_block->lock();
         double gain =  _gain_range.start() + dbm*(_gain_range.stop()-_gain_range.start());
         _osmosdr_sink->set_gain(gain);
+        _top_block->unlock();
     }
 }
 

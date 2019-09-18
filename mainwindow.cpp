@@ -918,6 +918,7 @@ void MainWindow::mainTabChanged(int value)
 
 void MainWindow::updateFreqGUI(long long center_freq, long carrier_offset)
 {
+    // Lots of signals flowing around
     _demod_offset = carrier_offset;
     _rx_frequency = (qint64)center_freq;
     ui->frameCtrlFreq->setFrequency(_rx_frequency + _demod_offset, false);
