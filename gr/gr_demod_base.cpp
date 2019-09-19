@@ -52,7 +52,8 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
     _add_const = gr::blocks::add_const_ff::make(-80);
     _rotator = gr::blocks::rotator_cc::make(2*M_PI/1000000);
     std::vector<float> taps;
-    taps = gr::filter::firdes::low_pass(1, _samp_rate, 500000, 250000, gr::filter::firdes::WIN_HAMMING);
+    int tw = std::min(_samp_rate/4, 1500000);
+    taps = gr::filter::firdes::low_pass(1, _samp_rate, 500000, tw, gr::filter::firdes::WIN_HAMMING);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1, 1, taps);
 
 
@@ -627,7 +628,8 @@ void gr_demod_base::set_samp_rate(int samp_rate)
         }
         _resampler.reset();
         std::vector<float> taps;
-        taps = gr::filter::firdes::low_pass(1, _samp_rate, 500000, 250000, gr::filter::firdes::WIN_HAMMING);
+        int tw = std::min(_samp_rate/4, 1500000);
+        taps = gr::filter::firdes::low_pass(1, _samp_rate, 500000, tw, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
 
         _resampler = gr::filter::rational_resampler_base_ccf::make(1, decimation, taps);
         _top_block->connect(_rotator,0, _resampler,0);
