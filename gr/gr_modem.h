@@ -124,7 +124,7 @@ public slots:
     void enableDemod(bool value);
     double getFreqGUI();
     void setRepeater(bool value);
-    void getFFTData(std::complex<float>* data, unsigned int &size);
+    void getFFTData(float *data, unsigned int &size);
     void setCarrierOffset(long offset);
     void setTxCarrierOffset(long offset);
     void setSampRate(int samp_rate);

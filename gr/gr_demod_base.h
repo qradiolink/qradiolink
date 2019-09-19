@@ -69,7 +69,7 @@ public slots:
     std::vector<unsigned char> *getData();
     std::vector<unsigned char> *getData(int nr);
     std::vector<float> *getAudio();
-    void getFFTData(std::complex<float> *fft_data,  unsigned int &fftSize);
+    void getFFTData(float *fft_data,  unsigned int &fftSize);
     void tune(long center_freq);
     void set_carrier_offset(long carrier_offset);
     void set_rx_sensitivity(double value);

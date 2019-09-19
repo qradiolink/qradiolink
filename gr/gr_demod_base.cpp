@@ -480,7 +480,7 @@ std::vector<float>* gr_demod_base::getAudio()
     return data;
 }
 
-void gr_demod_base::getFFTData(std::complex<float> *fft_data,  unsigned int &fftSize)
+void gr_demod_base::getFFTData(float *fft_data,  unsigned int &fftSize)
 {
     if(!_demod_running)
     {

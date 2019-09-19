@@ -409,16 +409,11 @@ void MainWindow::sendTextRequested()
     ui->redLED->setEnabled(true);
 }
 
-void MainWindow::newFFTData(std::complex<float>* fft_data, int fftsize)
+void MainWindow::newFFTData(float *fft_data, int fftsize)
 {
     // don't paint anything if window is minimized
     if(isMinimized())
         return;
-
-    unsigned int    i;
-    float           pwr;
-    float           pwr_scale;
-    std::complex<float> pt;     /* a single FFT point used in calculations */
 
     // FIXME: fftsize is a reference
 
@@ -428,29 +423,20 @@ void MainWindow::newFFTData(std::complex<float>* fft_data, int fftsize)
         return;
     }
 
-    // NB: without cast to float the multiplication will overflow at 64k
-    // and pwr_scale will be inf
-    pwr_scale = 1.0 / ((float)fftsize * (float)fftsize);
-
-    /* Normalize, calculate power and shift the FFT */
-    for (i = 0; i < fftsize; i++)
+    for (int i = 0; i < fftsize; i++)
     {
 
-        /* normalize and shift */
+        // normalize and shift
         if (i < fftsize/2)
         {
-            pt = fft_data[fftsize/2+i];
+            _realFftData[i] = fft_data[fftsize/2+i];
         }
         else
         {
-            pt = fft_data[i-fftsize/2];
+            _realFftData[i] = fft_data[i-fftsize/2];
         }
 
-        /* calculate power in dBFS */
-        pwr = pwr_scale * (pt.imag() * pt.imag() + pt.real() * pt.real());
-        _realFftData[i] = 10.0 * log10f(pwr + 1.0e-20);
-
-        /* FFT averaging */
+        // FFT averaging
         _iirFftData[i] += _fft_averaging * (_realFftData[i] - _iirFftData[i]);
     }
 

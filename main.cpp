@@ -250,7 +250,7 @@ int main(int argc, char *argv[])
     QObject::connect(radio_op, SIGNAL(voipDataPCM(short*,int)), client, SLOT(processPCMAudio(short*,int)));
     QObject::connect(radio_op, SIGNAL(writePCM(short*,int,bool,int)), audiowriter, SLOT(writePCM(short*,int,bool, int)));
     QObject::connect(radio_op, SIGNAL(voipDataOpus(unsigned char*,int)), client, SLOT(processOpusAudio(unsigned char*, int)));
-    QObject::connect(radio_op, SIGNAL(newFFTData(std::complex<float>*,int)), w, SLOT(newFFTData(std::complex<float>*,int)));
+    QObject::connect(radio_op, SIGNAL(newFFTData(float*,int)), w, SLOT(newFFTData(float*,int)));
     QObject::connect(radio_op, SIGNAL(newRSSIValue(float)), w, SLOT(updateRSSI(float)));
     QObject::connect(radio_op, SIGNAL(newConstellationData(complex_vector*)), w, SLOT(updateConstellation(complex_vector*)));
     QObject::connect(radio_op, SIGNAL(initError(QString)), w, SLOT(initError(QString)));

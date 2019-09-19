@@ -93,7 +93,7 @@ public slots:
     void toggleRepeater(bool value);
     void newChannel(MumbleChannel *chan);
     void channelState(QTreeWidgetItem *item, int k);
-    void newFFTData(std::complex<float>* fft_data, int fftsize);
+    void newFFTData(float* fft_data, int fftsize);
     void carrierOffsetChanged(qint64 freq, qint64 offset);
     void setFFTSize(int size);
     void setAveraging(int x);

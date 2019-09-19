@@ -30,6 +30,8 @@
 #include <gnuradio/gr_complex.h>
 #include <boost/thread/mutex.hpp>
 #include <boost/circular_buffer.hpp>
+#include <volk/volk.h>
+#include <volk/volk_32fc_s32f_x2_power_spectral_density_32f.h>
 
 
 #define MAX_FFT_SIZE 1048576
@@ -78,7 +80,7 @@ public:
              gr_vector_const_void_star &input_items,
              gr_vector_void_star &output_items);
 
-    void get_fft_data(std::complex<float>* fftPoints, unsigned int &fftSize);
+    void get_fft_data(float *fftPoints, unsigned int &fftSize);
 
     void set_window_type(int wintype);
     int  get_window_type() const;
@@ -95,11 +97,12 @@ private:
     gr::fft::fft_complex    *d_fft;    /*! FFT object. */
     std::vector<float>  d_window; /*! FFT window taps. */
 
-    gr_complex *d_fft_points;
+    float *d_fft_points;
+    float *d_shift_buffer;
 
     std::vector<gr_complex> *d_sample_buffer;
 
-    int d_counter;
+    unsigned int d_counter;
     bool d_data_ready;
     int d_push;
 

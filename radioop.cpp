@@ -91,7 +91,7 @@ RadioOp::RadioOp(Settings *settings, QObject *parent) :
     _data_led_timer->setSingleShot(true);
     _rand_frame_data = new unsigned char[5000];
     _voip_encode_buffer = new QVector<short>;
-    _fft_data = new std::complex<float>[1024*1024];
+    _fft_data = new float[1024*1024];
 
 
     QObject::connect(_voice_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));

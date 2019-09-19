@@ -49,7 +49,8 @@ rx_fft_c::rx_fft_c(unsigned int fftsize, int wintype)
 
     /* create FFT object */
     d_fft = new gr::fft::fft_complex(d_fftsize, true, 4);
-    d_fft_points = new gr_complex[d_fftsize];
+    d_fft_points = new float[d_fftsize];
+    d_shift_buffer = new float[d_fftsize];
     d_sample_buffer = new std::vector<gr_complex>;
     d_counter = 0;
     d_data_ready = false;
@@ -65,6 +66,7 @@ rx_fft_c::~rx_fft_c()
 {
     delete d_fft;
     delete[] d_fft_points;
+    delete[] d_shift_buffer;
     d_sample_buffer->clear();
     delete d_sample_buffer;
 }
@@ -99,12 +101,11 @@ int rx_fft_c::work(int noutput_items,
         if(d_counter >= d_fftsize)
         {
             d_counter = 0;
-            /* perform FFT */
+
             do_fft(d_sample_buffer->data(), d_fftsize);  // FIXME: array_one() and two() may be faster
             d_sample_buffer->clear();
 
-            /* set FFT data */
-            memcpy(d_fft_points, d_fft->get_outbuf(), sizeof(gr_complex)*d_fftsize);
+            volk_32fc_s32f_x2_power_spectral_density_32f(d_fft_points, d_fft->get_outbuf(), d_fftsize, 1.0, d_fftsize);
             d_data_ready = true;
             d_push++;
         }
@@ -120,7 +121,7 @@ int rx_fft_c::work(int noutput_items,
  *  \param fftPoints Buffer to copy FFT data
  *  \param fftSize Current FFT size (output).
  */
-void rx_fft_c::get_fft_data(std::complex<float>* fftPoints, unsigned int &fftSize)
+void rx_fft_c::get_fft_data(float* fftPoints, unsigned int &fftSize)
 {
     boost::mutex::scoped_lock lock(d_mutex);
     d_push = 0; // want more samples in the FFT
@@ -172,7 +173,9 @@ void rx_fft_c::set_fft_size(unsigned int fftsize)
         /* clear and resize circular buffer */
 
         delete[] d_fft_points;
-        d_fft_points = new gr_complex[d_fftsize];
+        delete[] d_shift_buffer;
+        d_fft_points = new float[d_fftsize];
+        d_shift_buffer = new float[d_fftsize];
 
         /* reset window */
         int wintype = d_wintype; // FIXME: would be nicer with a window_reset()

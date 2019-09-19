@@ -599,7 +599,7 @@ static void unpackBytes(unsigned char *bitbuf, const unsigned char *bytebuf, int
     }
 }
 
-void gr_modem::getFFTData(std::complex<float>* data, unsigned int &size)
+void gr_modem::getFFTData(float* data, unsigned int &size)
 {
     if(_gr_demod_base)
         _gr_demod_base->getFFTData(data, size);
