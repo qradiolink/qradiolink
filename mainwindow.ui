@@ -96,7 +96,7 @@
 </string>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <property name="iconSize">
          <size>
@@ -472,6 +472,16 @@ background-color: rgb(0, 0, 67);</string>
                <item>
                 <property name="text">
                  <string>30000000</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>40000000</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>50000000</string>
                 </property>
                </item>
               </widget>
