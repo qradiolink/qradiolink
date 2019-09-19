@@ -518,7 +518,10 @@ void RadioOp::startTx()
         }
 
         if(!_duplex_enabled)
+        {
             _modem->enableDemod(false);
+            _modem->setRxSensitivity(0.01);
+        }
 
         _mutex->lock();
         _modem->tuneTx(_tx_frequency + _tune_shift_freq);
@@ -596,7 +599,10 @@ void RadioOp::endTx()
     _mutex->unlock();
     //_modem->stopTX();
     if(!_duplex_enabled)
+    {
         _modem->enableDemod(true);
+        _modem->setRxSensitivity(_rx_sensitivity);
+    }
 }
 
 void RadioOp::updateFrequency()
@@ -1628,13 +1634,28 @@ void RadioOp::changeTxShift(qint64 center_freq)
     _mutex->unlock();
 }
 
+void RadioOp::setSquelch(int value)
+{
+    _squelch = value;
+
+    _modem->setSquelch(value);
+
+}
+
+void RadioOp::setRxSensitivity(int value)
+{
+    _rx_sensitivity = ((double)value)/100.0;
+    _modem->setRxSensitivity(_rx_sensitivity);
+
+}
+
 void RadioOp::setTxPower(int dbm)
 {
     _tx_power = (float)dbm/100.0;
 
-    //_mutex->lock();
-    //_modem->setTxPower(_tx_power);
-    //_mutex->unlock();
+    _mutex->lock();
+    _modem->setTxPower(_tx_power);
+    _mutex->unlock();
 }
 
 void RadioOp::setBbGain(int value)
@@ -1661,20 +1682,7 @@ void RadioOp::setFFTSize(int size)
 
 }
 
-void RadioOp::setRxSensitivity(int value)
-{
-    _rx_sensitivity = ((double)value)/100.0;
-    _modem->setRxSensitivity(_rx_sensitivity);
 
-}
-
-void RadioOp::setSquelch(int value)
-{
-    _squelch = value;
-
-    _modem->setSquelch(value);
-
-}
 
 void RadioOp::setVolume(int value)
 {
