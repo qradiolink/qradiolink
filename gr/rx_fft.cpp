@@ -51,7 +51,7 @@ rx_fft_c::rx_fft_c(unsigned int fftsize, int wintype)
     d_fft = new gr::fft::fft_complex(d_fftsize, true, 4);
     d_fft_points = new float[d_fftsize];
     d_shift_buffer = new float[d_fftsize]; // not used yet
-    d_sample_buffer = new std::vector<gr_complex>;
+    d_sample_buffer = new gr_complex[d_fftsize];
     d_counter = 0;
     d_data_ready = false;
     d_enabled = false;
@@ -68,8 +68,7 @@ rx_fft_c::~rx_fft_c()
     delete d_fft;
     delete[] d_fft_points;
     delete[] d_shift_buffer;
-    d_sample_buffer->clear();
-    delete d_sample_buffer;
+    delete[] d_sample_buffer;
 }
 
 
@@ -93,14 +92,13 @@ int rx_fft_c::work(int noutput_items,
         {
             d_counter = 0;
 
-            do_fft(d_sample_buffer->data(), d_fftsize);
-            d_sample_buffer->clear();
+            do_fft(d_sample_buffer, d_fftsize);
 
             volk_32fc_s32f_x2_power_spectral_density_32f(d_fft_points, d_fft->get_outbuf(), d_fftsize, 1.0, d_fftsize);
             d_data_ready = true;
             d_push++;
         }
-        d_sample_buffer->push_back(in[i]);
+        d_sample_buffer[d_counter] = in[i];
         d_counter++;
     }
 
@@ -171,9 +169,11 @@ void rx_fft_c::set_fft_size(unsigned int fftsize)
         /* clear and resize circular buffer */
 
         delete[] d_fft_points;
+        delete[] d_sample_buffer;
         delete[] d_shift_buffer;
         d_fft_points = new float[d_fftsize];
         d_shift_buffer = new float[d_fftsize];
+        d_sample_buffer = new gr_complex[d_fftsize];
 
         /* reset window */
         int wintype = d_wintype; // FIXME: would be nicer with a window_reset()

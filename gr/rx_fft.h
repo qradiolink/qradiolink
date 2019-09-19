@@ -101,7 +101,7 @@ private:
     float *d_fft_points;
     float *d_shift_buffer;
 
-    std::vector<gr_complex> *d_sample_buffer;
+    gr_complex *d_sample_buffer;
 
     unsigned int d_counter;
     bool d_data_ready;
