@@ -16,6 +16,8 @@
 
 #include "gr_demod_base.h"
 
+
+
 gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
                              float rf_gain, std::string device_args, std::string device_antenna,
                               int freq_corr) :
@@ -57,10 +59,16 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
     taps = gr::filter::firdes::low_pass(1, _samp_rate, 500000, tw, gr::filter::firdes::WIN_HAMMING);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1, 1, taps);
 
-
+    // FIXME: LimeSDR bandwidth set to higher value for lower freq
+    _lime_specific = false;
+    QString device(device_args.c_str());
+    if(device.contains("driver=lime", Qt::CaseInsensitive))
+    {
+        _lime_specific = true;
+    }
     _osmosdr_source = osmosdr::source::make(device_args);
     _osmosdr_source->set_center_freq(_device_frequency);
-    _osmosdr_source->set_bandwidth(1500000); // LimeSDR does not support less
+    set_bandwidth_specific();
     _osmosdr_source->set_sample_rate(1000000);
     _osmosdr_source->set_freq_corr(freq_corr);
     _osmosdr_source->set_gain_mode(true);
@@ -494,8 +502,7 @@ void gr_demod_base::tune(long center_freq)
 {
     _device_frequency = center_freq;
     _osmosdr_source->set_center_freq(_device_frequency);
-    int bandwidth = std::max(_samp_rate, 1500000); // LimeSDR mini
-    _osmosdr_source->set_bandwidth(bandwidth);
+    set_bandwidth_specific();
 }
 
 double gr_demod_base::get_freq()
@@ -658,11 +665,26 @@ void gr_demod_base::set_samp_rate(int samp_rate)
 
 
     _rotator->set_phase_inc(2*M_PI*-_carrier_offset/_samp_rate);
-    int bandwidth = std::max(_samp_rate, 1500000); // LimeSDR mini
-    _osmosdr_source->set_bandwidth(bandwidth);
+    _osmosdr_source->set_center_freq(_device_frequency);
     _osmosdr_source->set_sample_rate(_samp_rate);
+    set_bandwidth_specific();
     _top_block->unlock();
     _locked = false;
 
 
+}
+
+void gr_demod_base::set_bandwidth_specific()
+{
+    _osmo_filter_bw = (double)_samp_rate;
+    if((_device_frequency < 30 * 1000 * 1000) && _lime_specific)
+    {
+        _osmo_filter_bw = 40.0 * 1000 * 1000;
+    }
+    else if(_lime_specific)
+    {
+        _osmo_filter_bw = (double)(std::max(1500000, _samp_rate));
+    }
+    qDebug() << "set bw: " << _lime_specific << " " << _osmo_filter_bw;
+    _osmosdr_source->set_bandwidth(_osmo_filter_bw);
 }

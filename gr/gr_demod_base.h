@@ -61,6 +61,7 @@ public:
                                 int freq_corr=0);
     ~gr_demod_base();
 
+    void set_bandwidth_specific();
 signals:
 
 public slots:
@@ -140,6 +141,8 @@ private:
     bool _demod_running;
     int _samp_rate;
     bool _locked;
+    bool _lime_specific; // LimeSDR specific
+    double _osmo_filter_bw;
     osmosdr::gain_range_t _gain_range;
     std::vector<std::string> _gain_names;
 };
