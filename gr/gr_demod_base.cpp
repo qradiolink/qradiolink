@@ -41,6 +41,7 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
     _constellation = make_gr_const_sink();
     _const_valve = gr::blocks::copy::make(8);
     _const_valve->set_enabled(false);
+    // FIXME: this block is using CPU just because I'm lazy
     _demod_valve = gr::blocks::copy::make(8);
     _demod_valve->set_enabled(true);
     _mag_squared = gr::blocks::complex_to_mag_squared::make();
