@@ -50,10 +50,11 @@ rx_fft_c::rx_fft_c(unsigned int fftsize, int wintype)
     /* create FFT object */
     d_fft = new gr::fft::fft_complex(d_fftsize, true, 4);
     d_fft_points = new float[d_fftsize];
-    d_shift_buffer = new float[d_fftsize];
+    d_shift_buffer = new float[d_fftsize]; // not used yet
     d_sample_buffer = new std::vector<gr_complex>;
     d_counter = 0;
     d_data_ready = false;
+    d_enabled = false;
     d_push = 0;
 
     /* allocate circular buffer */
@@ -72,15 +73,6 @@ rx_fft_c::~rx_fft_c()
 }
 
 
-/*! \brief Receiver FFT work method.
- *  \param noutput_items
- *  \param input_items
- *  \param output_items
- *
- * This method does nothing except throwing the incoming samples into the
- * circular buffer.
- * FFT is only executed when the GUI asks for new FFT data via get_fft_data().
- */
 int rx_fft_c::work(int noutput_items,
                    gr_vector_const_void_star &input_items,
                    gr_vector_void_star &output_items)
@@ -89,9 +81,8 @@ int rx_fft_c::work(int noutput_items,
     const gr_complex *in = (const gr_complex*)input_items[0];
     (void) output_items;
 
-    /* just throw new samples into the buffer */
     boost::mutex::scoped_lock lock(d_mutex);
-    if(d_push > 0) // not sure if 0 or 1
+    if(d_push > 0 || !d_enabled) // not sure if 0 or 1
     {
         // not consuming fast enough, no use filling the FFT buffer if no-one is reading it
         return noutput_items;
@@ -102,7 +93,7 @@ int rx_fft_c::work(int noutput_items,
         {
             d_counter = 0;
 
-            do_fft(d_sample_buffer->data(), d_fftsize);  // FIXME: array_one() and two() may be faster
+            do_fft(d_sample_buffer->data(), d_fftsize);
             d_sample_buffer->clear();
 
             volk_32fc_s32f_x2_power_spectral_density_32f(d_fft_points, d_fft->get_outbuf(), d_fftsize, 1.0, d_fftsize);
@@ -115,6 +106,13 @@ int rx_fft_c::work(int noutput_items,
 
     return noutput_items;
 
+}
+
+void rx_fft_c::set_enabled(bool enabled)
+{
+    // no use having a copy block running at high sample rates
+    boost::mutex::scoped_lock lock(d_mutex);
+    d_enabled = enabled;
 }
 
 /*! \brief Get FFT data.

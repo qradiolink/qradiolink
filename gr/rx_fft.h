@@ -87,6 +87,7 @@ public:
 
     void set_fft_size(unsigned int fftsize);
     unsigned int get_fft_size() const;
+    void set_enabled(bool enabled);
 
 private:
     unsigned int d_fftsize;   /*! Current FFT size. */
@@ -105,6 +106,7 @@ private:
     unsigned int d_counter;
     bool d_data_ready;
     int d_push;
+    bool d_enabled;
 
     void do_fft(const gr_complex *data_in, unsigned int size);
 

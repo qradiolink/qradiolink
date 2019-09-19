@@ -39,8 +39,6 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
     _rssi_valve->set_enabled(false);
     _rssi = gr::blocks::probe_signal_f::make();
     _constellation = make_gr_const_sink();
-    _fft_valve = gr::blocks::copy::make(8);
-    _fft_valve->set_enabled(false);
     _const_valve = gr::blocks::copy::make(8);
     _const_valve->set_enabled(false);
     _demod_valve = gr::blocks::copy::make(8);
@@ -101,8 +99,7 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
 
     _top_block->connect(_osmosdr_source,0,_rotator,0);
     _top_block->connect(_rotator,0,_demod_valve,0);
-    _top_block->connect(_osmosdr_source,0,_fft_valve,0);
-    _top_block->connect(_fft_valve,0,_fft_sink,0);
+    _top_block->connect(_osmosdr_source,0,_fft_sink,0);
 
 
     _top_block->connect(_rssi_valve,0,_mag_squared,0);
@@ -544,7 +541,7 @@ void gr_demod_base::enable_rssi(bool value)
 
 void gr_demod_base::enable_gui_fft(bool value)
 {
-    _fft_valve->set_enabled(value);
+    _fft_sink->set_enabled(value);
 }
 
 void gr_demod_base::enable_demodulator(bool value)

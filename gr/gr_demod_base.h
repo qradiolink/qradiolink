@@ -94,7 +94,6 @@ private:
     gr::analog::agc2_ff::sptr _agc2;
     gr::blocks::message_debug::sptr _message_sink;
     gr::blocks::copy::sptr _rssi_valve;
-    gr::blocks::copy::sptr _fft_valve;
     gr::blocks::copy::sptr _const_valve;
     gr::blocks::copy::sptr _demod_valve;
     gr::blocks::probe_signal_f::sptr _rssi;
