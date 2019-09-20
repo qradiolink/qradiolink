@@ -34,26 +34,24 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(std::vector<int>signature, int sps, int samp_
                       gr::io_signature::make (1, 1, sizeof (gr_complex)),
                       gr::io_signature::makev (2, 2, signature))
 {
-    _target_samp_rate = 20000;
+    _target_samp_rate = 8000;
     _samp_rate = samp_rate;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(50, _samp_rate, _filter_width, _filter_width,
+    std::vector<float> taps = gr::filter::firdes::low_pass(125, _samp_rate, _filter_width, _filter_width,
                                                            gr::filter::firdes::WIN_BLACKMAN_HARRIS);
-    std::vector<float> audio_taps = gr::filter::firdes::low_pass(1, _target_samp_rate, _filter_width, 600);
-    _resampler = gr::filter::rational_resampler_base_ccf::make(1,50,taps);
-    _audio_resampler = gr::filter::rational_resampler_base_fff::make(2,5, audio_taps);
+    _resampler = gr::filter::rational_resampler_base_ccf::make(1,125,taps);
 
     _filter_usb = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
                             1, _target_samp_rate, 200, _filter_width,600,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     _filter_lsb = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
                             1, _target_samp_rate, -_filter_width, -20,600,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     _squelch = gr::analog::pwr_squelch_cc::make(-140,0.01,0,true);
-    _feed_forward_agc = gr::analog::feedforward_agc_cc::make(16,1);
+    _feed_forward_agc = gr::analog::feedforward_agc_cc::make(32,1);
     _agc = gr::analog::agc2_cc::make(1, 1e-3, 1, 5);
     _complex_to_real = gr::blocks::complex_to_real::make();
-    _audio_gain = gr::blocks::multiply_const_ff::make(0.9);
+    _audio_gain = gr::blocks::multiply_const_ff::make(0.7);
 
 
     connect(self(),0,_resampler,0);
@@ -69,12 +67,11 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(std::vector<int>signature, int sps, int samp_
         connect(_filter_lsb,0,self(),0);
         connect(_filter_lsb,0,_squelch,0);
     }
-    connect(_squelch,0,_agc,0);
-    //connect(_feed_forward_agc,0,_agc,0);
-    connect(_agc,0,_complex_to_real,0);
+    connect(_squelch,0,_feed_forward_agc,0);
+    connect(_feed_forward_agc,0,_complex_to_real,0);
+    //connect(_agc,0,_complex_to_real,0);
     connect(_complex_to_real,0,_audio_gain,0);
-    connect(_audio_gain,0,_audio_resampler,0);
-    connect(_audio_resampler,0,self(),1);
+    connect(_audio_gain,0,self(),1);
 
 }
 
