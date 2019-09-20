@@ -796,7 +796,7 @@ void RadioOp::getRSSI()
         return;
     }
     float rssi = _modem->getRSSI();
-    if(rssi > 99.0f)
+    if(rssi < 99.0f)
         emit newRSSIValue(rssi);
     _rssi_read_timer->restart();
 }
@@ -1447,6 +1447,12 @@ void RadioOp::toggleRxMode(int value)
         _step_hz = 10;
         _scan_step_hz = 2500;
         break;
+    case 17:
+        _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
+        _rx_mode = gr_modem_types::ModemTypeFREEDV700D;
+        _step_hz = 10;
+        _scan_step_hz = 2500;
+        break;
     default:
         _rx_mode = gr_modem_types::ModemTypeBPSK2000;
         _step_hz = 10;
@@ -1533,6 +1539,10 @@ void RadioOp::toggleTxMode(int value)
     case 16:
         _tx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _tx_mode = gr_modem_types::ModemTypeFREEDV1600;
+        break;
+    case 17:
+        _tx_radio_type = radio_type::RADIO_TYPE_ANALOG;
+        _tx_mode = gr_modem_types::ModemTypeFREEDV700D;
         break;
     default:
         _tx_mode = gr_modem_types::ModemTypeBPSK2000;

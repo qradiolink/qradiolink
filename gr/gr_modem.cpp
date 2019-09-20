@@ -640,7 +640,8 @@ bool gr_modem::demodulateAnalog()
             || (_modem_type_rx == gr_modem_types::ModemTypeLSB2500)
             || (_modem_type_rx == gr_modem_types::ModemTypeAM5000)
             || (_modem_type_rx == gr_modem_types::ModemTypeWBFM)
-            || (_modem_type_rx == gr_modem_types::ModemTypeFREEDV1600))
+            || (_modem_type_rx == gr_modem_types::ModemTypeFREEDV1600)
+            || (_modem_type_rx == gr_modem_types::ModemTypeFREEDV700D))
     {
         audio_data = _gr_demod_base->getAudio();
     }

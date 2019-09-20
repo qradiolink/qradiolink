@@ -53,7 +53,8 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     _filter_widths->push_back(std::complex<int>(-5000, 5000));  // AM
     _filter_widths->push_back(std::complex<int>(-150000, 150000)); // QPSK250000 VIDEO
     _filter_widths->push_back(std::complex<int>(-150000, 150000)); // QPSK250000 DATA
-    _filter_widths->push_back(std::complex<int>(-1, 2800)); // FreeDV1600
+    _filter_widths->push_back(std::complex<int>(-1, 2500)); // FreeDV1600
+    _filter_widths->push_back(std::complex<int>(-1, 2500)); // FreeDV700D
 
 
     ui->comboBoxTxCTCSS->addItems(tones);
