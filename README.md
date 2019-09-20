@@ -17,7 +17,7 @@ It can also be used as an amateur radio SDR transceiver for demonstrating radio 
 
 The application was originally inspired from the [Codec2 GMSK modem](https://github.com/on1arf/gmsk) project by Kristoff Bonne.
 
-[![Screenshot](http://qradiolink.org/images/qradiolink47.png)](http://qradiolink.org)
+[![Screenshot](http://qradiolink.org/images/qradiolink48.png)](http://qradiolink.org)
 
 Features
 ---
@@ -33,7 +33,8 @@ Features
 - Audio codecs: Codec2 700 bit/s, Codec2 1400 bit/s, Opus 9600 bit/s
 - Narrow band digital voice mode with the [Codec2](http://rowetel.com/codec2.html) audio codec
 - Wideband digital voice mode with the [Opus](https://xiph.org) audio codec
-- Digital modulation:  **BPSK**, **DQPSK**, **2FSK**, **4FSK**
+- FreeDV modulator and demodulator (currently supports only 1600 mode)
+- Digital modulation:  **BPSK**, **DQPSK**, **2FSK**, **4FSK**, **FreeDV 1600**
 - Automatic carrier tracking and Doppler effect correction for digital modes. The system can track Doppler shifts of 5-10 kHz, depending on mode. It requires a CNR of at least 10-12 dB, more for FSK modes than for PSK modes.
 - Analog modulation: narrow FM (5 kHz), FM (8 kHz), Wide FM (broadcast, receive-only), AM, SSB
 - CTCSS encoder and decoder for analog FM
@@ -44,7 +45,7 @@ Requirements
 ----
 - Build dependencies on Debian Stretch for a Qt5 interface: 
 
-<pre>libasound2 (>= 1.0.16), libboost-program-options1.62.0, libboost-system1.62.0, libboost-thread1.62.0, libc6 (>= 2.15), libcodec2-0.4, libconfig++9v5, libgcc1 (>= 1:3.0), libgl1-mesa-glx | libgl1, libgnuradio-analog3.7.10, libgnuradio-audio3.7.10, libgnuradio-blocks3.7.10, libgnuradio-digital3.7.10, libgnuradio-fec3.7.10, libgnuradio-fft3.7.10, libgnuradio-filter3.7.10, libgnuradio-osmosdr0.1.4, libgnuradio-pmt3.7.10, libgnuradio-runtime3.7.10, libgsm1 (>= 1.0.13), libjpeg62-turbo (>= 1.3.1), libopus0 (>= 1.1), libprotobuf10, libpulse0 (>= 0.99.1), libqt5core5a (>= 5.7.0), libqt5gui5 (>= 5.3.0), libqt5network5 (>= 5.0.2), libqt5sql5 (>= 5.0.2), libqt5widgets5 (>= 5.2.0), libspeexdsp1 (>= 1.2~beta3.2-1), libstdc++6 (>= 5.2), gnuradio-dev, gr-osmosdr, libgsm1-dev, libprotobuf-dev, libopus-dev, libspeexdsp-dev, libpulse-dev, libcodec2-dev, libasound2-dev, libjpeg62-turbo-dev, libconfig++-dev, qt5-qmake, qt5-default, qtbase5-dev
+<pre>libasound2 (>= 1.0.16), libboost-program-options1.62.0, libboost-system1.62.0, libboost-thread1.62.0, libc6 (>= 2.15), libcodec2-0.4, libconfig++9v5, libgcc1 (>= 1:3.0), libgl1-mesa-glx | libgl1, libgnuradio-analog3.7.10, libgnuradio-audio3.7.10, libgnuradio-blocks3.7.10, libgnuradio-digital3.7.10, libgnuradio-fec3.7.10, libgnuradio-fft3.7.10, libgnuradio-filter3.7.10, libgnuradio-osmosdr0.1.4, libgnuradio-pmt3.7.10, libgnuradio-runtime3.7.10, libgsm1 (>= 1.0.13), libjpeg62-turbo (>= 1.3.1), libopus0 (>= 1.1), libprotobuf10, libpulse0 (>= 0.99.1), libqt5core5a (>= 5.7.0), libqt5gui5 (>= 5.3.0), libqt5network5 (>= 5.0.2), libqt5sql5 (>= 5.0.2), libqt5widgets5 (>= 5.2.0), libspeexdsp1 (>= 1.2~beta3.2-1), libstdc++6 (>= 5.2), gnuradio-dev, gr-osmosdr, libgsm1-dev, libprotobuf-dev, libopus-dev, libspeexdsp-dev, libpulse-dev, libcodec2-dev, libasound2-dev, libjpeg62-turbo-dev, libconfig++-dev, qt5-qmake, qt5-default, qtbase5-dev, libvolk1-dev, libvolk1-bin
 </pre>
 
 - Please make sure you have all the development packages installed before building QRadioLink
@@ -55,7 +56,7 @@ Requirements
 - optionally SoapySDR and SoapyPlutoSDR, LimeSDR software libraries
 - Boost and boost-devel
 - libgnuradio-osmosdr built with UHD, RTL-SDR, SoapySDR, HackRF, RedPitaya or BladeRF support
-- libgsm, libprotobuf, libopus, libspeexdsp, libpulse-simple, libpulse, libasound, libcodec2, libsqlite3, libjpeg, libconfig++
+- libgsm, libprotobuf, libopus, libspeexdsp, libpulse-simple, libpulse, libasound, libcodec2, libsqlite3, libjpeg, libconfig++, libvolk
 - protoc compiler (libprotoc 2.6.1 or greater)
 
 In order to build on Ubuntu 17.10 you have to install the following packages, assuming a full GNU Radio development environment is already installed.
