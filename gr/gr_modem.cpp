@@ -74,7 +74,7 @@ void gr_modem::deinitTX(int modem_type)
 
         _gr_mod_base->stop();
         delete _gr_mod_base;
-        _gr_mod_base =0;
+        _gr_mod_base = 0;
     }
 }
 
@@ -85,7 +85,7 @@ void gr_modem::deinitRX(int modem_type)
         _modem_type_rx = modem_type;
         _gr_demod_base->stop();
         delete _gr_demod_base;
-        _gr_demod_base =0;
+        _gr_demod_base = 0;
     }
 }
 
@@ -610,6 +610,10 @@ float gr_modem::getRSSI()
 {
     if(_gr_demod_base)
         return _gr_demod_base->get_rssi();
+    else
+    {
+        return 100.0;
+    }
 }
 
 std::vector<gr_complex>* gr_modem::getConstellation()
@@ -629,7 +633,7 @@ bool gr_modem::demodulateAnalog()
     {
         return false;
     }
-    std::vector<float> *audio_data;
+    std::vector<float> *audio_data = nullptr;
     if((_modem_type_rx == gr_modem_types::ModemTypeNBFM2500)
             || (_modem_type_rx == gr_modem_types::ModemTypeNBFM5000)
             || (_modem_type_rx == gr_modem_types::ModemTypeUSB2500)

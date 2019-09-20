@@ -352,7 +352,7 @@ int RadioOp::processInputVideoStream(bool &frame_flag)
     microsec = (quint64)timer.nsecsElapsed();
     if(microsec < 100000000)
     {
-        struct timespec time_to_sleep = {0, (100000000 - microsec) };
+        struct timespec time_to_sleep = {0, (100000000 - (long)microsec) };
         nanosleep(&time_to_sleep, NULL);
     }
 
@@ -391,7 +391,7 @@ void RadioOp::processInputNetStream()
         return;
     }
     time_left = time_per_frame - microsec;
-    struct timespec time_to_sleep = {0, time_left };
+    struct timespec time_to_sleep = {0, (long)time_left };
 
     if(time_left > 0)
         nanosleep(&time_to_sleep, NULL);
@@ -667,7 +667,6 @@ bool RadioOp::getDemodulatorData()
     bool data_to_process = false;
     if(_rx_inited)
     {
-        _mutex->lock();
         if(_rx_radio_type == radio_type::RADIO_TYPE_DIGITAL)
             data_to_process = _modem->demodulate();
         else if(_rx_radio_type == radio_type::RADIO_TYPE_ANALOG)
@@ -675,7 +674,6 @@ bool RadioOp::getDemodulatorData()
             data_to_process = _modem->demodulateAnalog();
         }
 
-        _mutex->unlock();
         if(!_tuning_done)
             scan(data_to_process);
     }
@@ -797,10 +795,8 @@ void RadioOp::getRSSI()
     {
         return;
     }
-    _mutex->lock();
     float rssi = _modem->getRSSI();
-    _mutex->unlock();
-    if(rssi != 0)
+    if(rssi > 99.0f)
         emit newRSSIValue(rssi);
     _rssi_read_timer->restart();
 }
@@ -819,9 +815,7 @@ void RadioOp::getFFTData()
     }
 
     unsigned int fft_size = 0;
-    _mutex->lock();
     _modem->getFFTData(_fft_data, fft_size);
-    _mutex->unlock();
     if(fft_size > 0)
     {
         emit newFFTData(_fft_data, (int)fft_size);
@@ -845,9 +839,7 @@ void RadioOp::getConstellationData()
     {
         return;
     }
-    _mutex->lock();
     std::vector<std::complex<float>> *const_data = _modem->getConstellation();
-    _mutex->unlock();
     if(const_data->size() > 1)
     {
         emit newConstellationData(const_data);
