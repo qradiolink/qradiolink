@@ -33,19 +33,20 @@
 #include <gnuradio/blocks/float_to_short.h>
 #include <gnuradio/blocks/short_to_float.h>
 #include <gnuradio/vocoder/freedv_tx_ss.h>
+#include <gnuradio/vocoder/freedv_api.h>
 
 
 class gr_mod_freedv_sdr;
 
 typedef boost::shared_ptr<gr_mod_freedv_sdr> gr_mod_freedv_sdr_sptr;
 gr_mod_freedv_sdr_sptr make_gr_mod_freedv_sdr(int sps=125, int samp_rate=8000, int carrier_freq=1700,
-                                          int filter_width=1000);
+                                          int filter_width=1000, int mode=gr::vocoder::freedv_api::MODE_1600);
 
 class gr_mod_freedv_sdr : public gr::hier_block2
 {
 public:
     explicit gr_mod_freedv_sdr(int sps=125, int samp_rate=8000, int carrier_freq=1700,
-                             int filter_width=1000);
+                             int filter_width=1000, int mode=gr::vocoder::freedv_api::MODE_1600);
     void set_bb_gain(int value);
 private:
 

@@ -21,6 +21,7 @@
 #include "modem_types.h"
 #include <gnuradio/top_block.h>
 #include <gnuradio/blocks/rotator_cc.h>
+#include <gnuradio/vocoder/freedv_api.h>
 #include <osmosdr/sink.h>
 #include <vector>
 #include "gr_vector_source.h"

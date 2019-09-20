@@ -25,24 +25,26 @@
 #include <gnuradio/filter/rational_resampler_base_ccf.h>
 #include <gnuradio/filter/rational_resampler_base_fff.h>
 #include <gnuradio/filter/fft_filter_ccc.h>
+#include <gnuradio/filter/fft_filter_fff.h>
 #include <gnuradio/blocks/complex_to_real.h>
 #include <gnuradio/blocks/float_to_short.h>
 #include <gnuradio/blocks/short_to_float.h>
 #include <gnuradio/blocks/multiply_const_ff.h>
 #include <gnuradio/vocoder/freedv_rx_ss.h>
+#include <gnuradio/vocoder/freedv_api.h>
 
 
 class gr_demod_freedv;
 
 typedef boost::shared_ptr<gr_demod_freedv> gr_demod_freedv_sptr;
 gr_demod_freedv_sptr make_gr_demod_freedv(int sps=125, int samp_rate=8000, int carrier_freq=1700,
-                                          int filter_width=2000);
+                                          int filter_width=2000, int mode=gr::vocoder::freedv_api::MODE_1600);
 
 class gr_demod_freedv : public gr::hier_block2
 {
 public:
     explicit gr_demod_freedv(std::vector<int> signature, int sps=125, int samp_rate=8000, int carrier_freq=1600,
-                               int filter_width=2000);
+                               int filter_width=2000, int mode=gr::vocoder::freedv_api::MODE_1600);
 
     void set_squelch(int value);
 
@@ -56,6 +58,7 @@ private:
     gr::blocks::float_to_short::sptr _float_to_short;
     gr::blocks::short_to_float::sptr _short_to_float;
     gr::blocks::multiply_const_ff::sptr _audio_gain;
+    gr::filter::fft_filter_fff::sptr _audio_filter;
     gr::vocoder::freedv_rx_ss::sptr _freedv;
 
     int _samples_per_symbol;
