@@ -708,6 +708,5 @@ void gr_demod_base::set_bandwidth_specific()
     {
         _osmo_filter_bw = (double)(std::max(1500000, _samp_rate));
     }
-    qDebug() << "set bw: " << _lime_specific << " " << _osmo_filter_bw;
     _osmosdr_source->set_bandwidth(_osmo_filter_bw);
 }

@@ -37,8 +37,8 @@ gr_mod_freedv_sdr::gr_mod_freedv_sdr(int sps, int samp_rate, int carrier_freq,
     _filter_width = filter_width;
 
     _agc = gr::analog::agc2_ff::make(1e-1, 1e-3, 0.95, 2);
-    _float_to_short = gr::blocks::float_to_short::make();
-    _short_to_float = gr::blocks::short_to_float::make();
+    _float_to_short = gr::blocks::float_to_short::make(1, 32765);
+    _short_to_float = gr::blocks::short_to_float::make(1, 32765);
     _freedv = gr::vocoder::freedv_tx_ss::make(mode);
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::band_pass(
@@ -50,7 +50,7 @@ gr_mod_freedv_sdr::gr_mod_freedv_sdr(int sps, int samp_rate, int carrier_freq,
 
     _resampler = gr::filter::rational_resampler_base_ccf::make(125,1, interp_taps);
     _feed_forward_agc = gr::analog::feedforward_agc_cc::make(512,0.95);
-    _amplify = gr::blocks::multiply_const_cc::make(0.25f,1);
+    _amplify = gr::blocks::multiply_const_cc::make(0.99f,1);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
     _filter = gr::filter::fft_filter_ccc::make(
                 1,gr::filter::firdes::complex_band_pass_2(
