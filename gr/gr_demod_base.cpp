@@ -139,7 +139,7 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
     _usb = make_gr_demod_ssb_sdr(0, 1000000,1700,2500);
     _lsb = make_gr_demod_ssb_sdr(1, 1000000,1700,2500);
     _wfm = make_gr_demod_wbfm_sdr(0, 1000000,1700,75000);
-    _freedv_rx1600 = make_gr_demod_freedv(125, 1000000, 1700, 2500, gr::vocoder::freedv_api::MODE_1600);
+    _freedv_rx1600 = make_gr_demod_freedv(125, 1000000, 1700, 2700, gr::vocoder::freedv_api::MODE_1600);
 
 }
 

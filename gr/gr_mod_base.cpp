@@ -56,7 +56,7 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
     _qpsk_video = make_gr_mod_qpsk_sdr(4, 1000000, 1700, 160000);
     _usb = make_gr_mod_ssb_sdr(0, 1000000, 1700, 2500);
     _lsb = make_gr_mod_ssb_sdr(1, 1000000, 1700, 2500);
-    _freedv_tx1600 = make_gr_mod_freedv_sdr(125, 1000000, 1700, 2500, gr::vocoder::freedv_api::MODE_1600);
+    _freedv_tx1600 = make_gr_mod_freedv_sdr(125, 1000000, 1700, 2700, gr::vocoder::freedv_api::MODE_1600);
 
 }
 

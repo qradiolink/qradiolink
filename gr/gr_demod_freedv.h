@@ -20,7 +20,7 @@
 
 #include <gnuradio/hier_block2.h>
 #include <gnuradio/filter/firdes.h>
-#include <gnuradio/analog/agc2_cc.h>
+#include <gnuradio/analog/agc2_ff.h>
 #include <gnuradio/analog/feedforward_agc_cc.h>
 #include <gnuradio/filter/rational_resampler_base_ccf.h>
 #include <gnuradio/filter/rational_resampler_base_fff.h>
@@ -52,12 +52,13 @@ private:
 
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
     gr::filter::fft_filter_ccc::sptr _filter;
-    gr::analog::agc2_cc::sptr _agc;
+    gr::analog::agc2_ff::sptr _agc;
     gr::analog::feedforward_agc_cc::sptr _feed_forward_agc;
     gr::blocks::complex_to_real::sptr _complex_to_real;
     gr::blocks::float_to_short::sptr _float_to_short;
     gr::blocks::short_to_float::sptr _short_to_float;
     gr::blocks::multiply_const_ff::sptr _audio_gain;
+    gr::blocks::multiply_const_ff::sptr _freedv_gain;
     gr::filter::fft_filter_fff::sptr _audio_filter;
     gr::vocoder::freedv_rx_ss::sptr _freedv;
 

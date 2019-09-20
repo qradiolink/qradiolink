@@ -45,30 +45,33 @@ gr_demod_freedv::gr_demod_freedv(std::vector<int>signature, int sps, int samp_ra
 
     _filter = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
                             1, _target_samp_rate, 200, _filter_width,600,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
-    _feed_forward_agc = gr::analog::feedforward_agc_cc::make(16,1);
-    _agc = gr::analog::agc2_cc::make(1, 1e-3, 1, 1);
+    _feed_forward_agc = gr::analog::feedforward_agc_cc::make(512,1);
+    _agc = gr::analog::agc2_ff::make(1e-1, 1e-5, 0.95, 4);
     _complex_to_real = gr::blocks::complex_to_real::make();
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::band_pass(
                     1, _target_samp_rate, 200, _filter_width, 450, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
-    _float_to_short = gr::blocks::float_to_short::make();
+    _freedv_gain = gr::blocks::multiply_const_ff::make(0.1);
+    _float_to_short = gr::blocks::float_to_short::make(1, 32768);
     _freedv = gr::vocoder::freedv_rx_ss::make(mode);
-    _short_to_float = gr::blocks::short_to_float::make();
-    _audio_gain = gr::blocks::multiply_const_ff::make(0.9);
+    _short_to_float = gr::blocks::short_to_float::make(1, 32768);
+    _audio_gain = gr::blocks::multiply_const_ff::make(2);
 
 
     connect(self(),0,_resampler,0);
 
     connect(_resampler,0,_filter,0);
     connect(_filter,0,self(),0);
-    connect(_filter,0,_complex_to_real,0);
-    //connect(_agc,0,_complex_to_real,0);
+    connect(_filter,0,_feed_forward_agc,0);
+    connect(_feed_forward_agc,0,_complex_to_real,0);
     connect(_complex_to_real,0, _audio_filter,0);
-    connect(_audio_filter,0, _float_to_short,0);
+    connect(_audio_filter,0, _freedv_gain,0);
+    connect(_freedv_gain,0, _float_to_short,0);
     connect(_float_to_short, 0, _freedv, 0);
     connect(_freedv, 0 , _short_to_float, 0);
     connect(_short_to_float,0,_audio_gain,0);
-    connect(_audio_gain,0,self(),1);
+    connect(_audio_gain,0,_agc,0);
+    connect(_agc,0,self(),1);
 
 }
 
