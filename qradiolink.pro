@@ -86,7 +86,9 @@ SOURCES += main.cpp\
     audiowriter.cpp \
     audioreader.cpp \
     mumblechannel.cpp \
-    radiochannel.cpp
+    radiochannel.cpp \
+    gr/gr_demod_freedv.cpp \
+    gr/gr_mod_freedv.cpp
 
 HEADERS  += mainwindow.h\
         audio/audioencoder.h\
@@ -159,13 +161,15 @@ HEADERS  += mainwindow.h\
     audiowriter.h \
     audioreader.h \
     mumblechannel.h \
-    radiochannel.h
+    radiochannel.h \
+    gr/gr_demod_freedv.h \
+    gr/gr_mod_freedv.h
 
 
 FORMS    += mainwindow.ui
 
 
-LIBS += -lgnuradio-pmt -lgnuradio-audio -lgnuradio-analog -lgnuradio-blocks -lgnuradio-fft \
+LIBS += -lgnuradio-pmt -lgnuradio-audio -lgnuradio-analog -lgnuradio-blocks -lgnuradio-fft -lgnuradio-vocoder \
         -lgnuradio-osmosdr -lvolk \
         -lgnuradio-blocks -lgnuradio-filter -lgnuradio-digital -lgnuradio-runtime -lgnuradio-fec \
         -lboost_thread$$BOOST_SUFFIX -lboost_system$$BOOST_SUFFIX -lboost_program_options$$BOOST_SUFFIX

@@ -3427,6 +3427,11 @@ background-color: rgb(0, 0, 67);</string>
               <string>QPSK 250K</string>
              </property>
             </item>
+            <item>
+             <property name="text">
+              <string>FreeDV1600</string>
+             </property>
+            </item>
            </widget>
           </item>
           <item row="1" column="1">
@@ -3689,6 +3694,11 @@ background-color: rgb(0, 0, 67);</string>
             <item>
              <property name="text">
               <string>QPSK 250K</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>FreeDV1600</string>
              </property>
             </item>
            </widget>

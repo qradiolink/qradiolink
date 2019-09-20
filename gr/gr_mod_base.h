@@ -32,6 +32,7 @@
 #include "gr_mod_nbfm_sdr.h"
 #include "gr_mod_qpsk_sdr.h"
 #include "gr_mod_ssb_sdr.h"
+#include "gr_mod_freedv.h"
 
 class gr_mod_base : public QObject
 {
@@ -75,6 +76,7 @@ private:
     gr_mod_qpsk_sdr_sptr _qpsk_video;
     gr_mod_ssb_sdr_sptr _usb;
     gr_mod_ssb_sdr_sptr _lsb;
+    gr_mod_freedv_sdr_sptr _freedv_tx1600;
 
     int _samples_per_symbol;
     int _samp_rate;

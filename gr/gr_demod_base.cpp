@@ -139,6 +139,7 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
     _usb = make_gr_demod_ssb_sdr(0, 1000000,1700,2500);
     _lsb = make_gr_demod_ssb_sdr(1, 1000000,1700,2500);
     _wfm = make_gr_demod_wbfm_sdr(0, 1000000,1700,75000);
+    _freedv_rx1600 = make_gr_demod_freedv(125, 1000000, 1700, 3000);
 
 }
 
@@ -266,6 +267,11 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
             _top_block->disconnect(_lsb,0,_rssi_valve,0);
             _top_block->disconnect(_lsb,1,_audio_sink,0);
             break;
+        case gr_modem_types::ModemTypeFREEDV1600:
+            _top_block->disconnect(_demod_valve,0,_freedv_rx1600,0);
+            _top_block->disconnect(_freedv_rx1600,0,_rssi_valve,0);
+            _top_block->disconnect(_freedv_rx1600,1,_audio_sink,0);
+            break;
         case gr_modem_types::ModemTypeWBFM:
             _top_block->disconnect(_demod_valve,0,_wfm,0);
             _top_block->disconnect(_wfm,0,_rssi_valve,0);
@@ -384,6 +390,11 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
             _top_block->connect(_demod_valve,0,_lsb,0);
             _top_block->connect(_lsb,0,_rssi_valve,0);
             _top_block->connect(_lsb,1,_audio_sink,0);
+            break;
+        case gr_modem_types::ModemTypeFREEDV1600:
+            _top_block->connect(_demod_valve,0,_freedv_rx1600,0);
+            _top_block->connect(_freedv_rx1600,0,_rssi_valve,0);
+            _top_block->connect(_freedv_rx1600,1,_audio_sink,0);
             break;
         case gr_modem_types::ModemTypeWBFM:
             //_carrier_offset = 250000;
@@ -565,6 +576,7 @@ void gr_demod_base::set_squelch(int value)
     _am->set_squelch(value);
     _usb->set_squelch(value);
     _lsb->set_squelch(value);
+    //_freedv_rx1600->set_squelch(value);
     _wfm->set_squelch(value);
 }
 

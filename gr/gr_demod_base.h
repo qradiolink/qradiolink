@@ -50,6 +50,7 @@
 #include "gr_demod_qpsk_sdr.h"
 #include "gr_demod_ssb_sdr.h"
 #include "gr_demod_wbfm_sdr.h"
+#include "gr_demod_freedv.h"
 #include "modem_types.h"
 
 class gr_demod_base : public QObject
@@ -131,6 +132,7 @@ private:
     gr_demod_ssb_sdr_sptr _usb;
     gr_demod_ssb_sdr_sptr _lsb;
     gr_demod_wbfm_sdr_sptr _wfm;
+    gr_demod_freedv_sptr _freedv_rx1600;
 
     osmosdr::source::sptr _osmosdr_source;
 

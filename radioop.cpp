@@ -915,7 +915,6 @@ void RadioOp::receivePCMAudio(std::vector<float> *audio_data)
 {
     float volume_coeff = 1e-1*exp(_rx_volume*log(10));
     int size = audio_data->size();
-
     short *pcm = new short[size];
     for(int i=0;i<size;i++)
     {
@@ -1450,6 +1449,12 @@ void RadioOp::toggleRxMode(int value)
         _step_hz = 1000;
         _scan_step_hz = 500000;
         break;
+    case 16:
+        _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
+        _rx_mode = gr_modem_types::ModemTypeFREEDV1600;
+        _step_hz = 10;
+        _scan_step_hz = 2500;
+        break;
     default:
         _rx_mode = gr_modem_types::ModemTypeBPSK2000;
         _step_hz = 10;
@@ -1532,6 +1537,10 @@ void RadioOp::toggleTxMode(int value)
         break;
     case 15:
         _tx_mode = gr_modem_types::ModemTypeQPSK250000;
+        break;
+    case 16:
+        _tx_radio_type = radio_type::RADIO_TYPE_ANALOG;
+        _tx_mode = gr_modem_types::ModemTypeFREEDV1600;
         break;
     default:
         _tx_mode = gr_modem_types::ModemTypeBPSK2000;
