@@ -48,9 +48,9 @@ gr_mod_ssb_sdr::gr_mod_ssb_sdr(int sps, int samp_rate, int carrier_freq,
     std::vector<float> interp_taps = gr::filter::firdes::low_pass(125, _samp_rate,
                                                         _filter_width, 1200);
 
-    _resampler = gr::filter::rational_resampler_base_ccf::make(500,4, interp_taps);
+    _resampler = gr::filter::rational_resampler_base_ccf::make(125,1, interp_taps);
     _feed_forward_agc = gr::analog::feedforward_agc_cc::make(512,0.95);
-    _amplify = gr::blocks::multiply_const_cc::make(5,1);
+    _amplify = gr::blocks::multiply_const_cc::make(0.98,1);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
     _filter_usb = gr::filter::fft_filter_ccc::make(
                 1,gr::filter::firdes::complex_band_pass_2(
