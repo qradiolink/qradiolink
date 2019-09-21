@@ -132,8 +132,10 @@ private:
     gr_demod_ssb_sdr_sptr _usb;
     gr_demod_ssb_sdr_sptr _lsb;
     gr_demod_wbfm_sdr_sptr _wfm;
-    gr_demod_freedv_sptr _freedv_rx1600;
-    gr_demod_freedv_sptr _freedv_rx700C;
+    gr_demod_freedv_sptr _freedv_rx1600_usb;
+    gr_demod_freedv_sptr _freedv_rx700C_usb;
+    gr_demod_freedv_sptr _freedv_rx1600_lsb;
+    gr_demod_freedv_sptr _freedv_rx700C_lsb;
 
     osmosdr::source::sptr _osmosdr_source;
 

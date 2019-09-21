@@ -3328,7 +3328,7 @@ background-color: rgb(0, 0, 67);</string>
             </property>
             <property name="maximumSize">
              <size>
-              <width>120</width>
+              <width>150</width>
               <height>32</height>
              </size>
             </property>
@@ -3347,6 +3347,56 @@ background-color: rgb(0, 0, 67);</string>
             <property name="maxVisibleItems">
              <number>25</number>
             </property>
+            <item>
+             <property name="text">
+              <string>FM</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Narrow FM</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Wide FM</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>USB</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>LSB</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>FreeDV1600 USB</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>FreeDV700 USB</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>FreeDV1600 LSB</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>FreeDV700 LSB</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>AM</string>
+             </property>
+            </item>
             <item>
              <property name="text">
               <string>BPSK  2K</string>
@@ -3369,16 +3419,6 @@ background-color: rgb(0, 0, 67);</string>
             </item>
             <item>
              <property name="text">
-              <string>4FSK  2K</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>4FSK  10K</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
               <string>2FSK 2K</string>
              </property>
             </item>
@@ -3389,32 +3429,12 @@ background-color: rgb(0, 0, 67);</string>
             </item>
             <item>
              <property name="text">
-              <string>Narrow FM</string>
+              <string>4FSK  2K</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>FM</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Wide FM</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>USB</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>LSB</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>AM</string>
+              <string>4FSK  10K</string>
              </property>
             </item>
             <item>
@@ -3425,16 +3445,6 @@ background-color: rgb(0, 0, 67);</string>
             <item>
              <property name="text">
               <string>Net 250K</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>FreeDV1600</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>FreeDV700C</string>
              </property>
             </item>
            </widget>
@@ -3479,7 +3489,7 @@ background-color: rgb(0, 0, 67);</string>
             </property>
             <property name="maximumSize">
              <size>
-              <width>120</width>
+              <width>150</width>
               <height>32</height>
              </size>
             </property>
@@ -3498,6 +3508,56 @@ background-color: rgb(0, 0, 67);</string>
             <property name="maxVisibleItems">
              <number>25</number>
             </property>
+            <item>
+             <property name="text">
+              <string>FM</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Narrow FM</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Wide FM</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>USB</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>LSB</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>FreeDV1600 USB</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>FreeDV700 USB</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>FreeDV1600 LSB</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>FreeDV700 LSB</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>AM</string>
+             </property>
+            </item>
             <item>
              <property name="text">
               <string>BPSK  2K</string>
@@ -3520,16 +3580,6 @@ background-color: rgb(0, 0, 67);</string>
             </item>
             <item>
              <property name="text">
-              <string>4FSK  2K</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>4FSK  10K</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
               <string>2FSK 2K</string>
              </property>
             </item>
@@ -3540,32 +3590,12 @@ background-color: rgb(0, 0, 67);</string>
             </item>
             <item>
              <property name="text">
-              <string>Narrow FM</string>
+              <string>4FSK  2K</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>FM</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Wide FM</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>USB</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>LSB</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>AM</string>
+              <string>4FSK  10K</string>
              </property>
             </item>
             <item>
@@ -3576,16 +3606,6 @@ background-color: rgb(0, 0, 67);</string>
             <item>
              <property name="text">
               <string>Net 250K</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>FreeDV1600</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>FreeDV700C</string>
              </property>
             </item>
            </widget>

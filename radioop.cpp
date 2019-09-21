@@ -1357,105 +1357,117 @@ void RadioOp::toggleRxMode(int value)
     switch(value)
     {
     case 0:
-        _rx_mode = gr_modem_types::ModemTypeBPSK2000;
-        _step_hz = 10;
-        _scan_step_hz = 12500;
-        break;
-    case 1:
-        _rx_mode = gr_modem_types::ModemTypeBPSK1000;
-        _step_hz = 10;
-        _scan_step_hz = 6250;
-        break;
-    case 2:
-        _rx_mode = gr_modem_types::ModemTypeQPSK2000;
-        _step_hz = 10;
-        _scan_step_hz = 6250;
-        break;
-    case 3:
-        _rx_mode = gr_modem_types::ModemTypeQPSK20000;
-        _step_hz = 100;
-        _scan_step_hz = 12500 * 2; // FIXME: channelization
-        break;
-    case 4:
-        _rx_mode = gr_modem_types::ModemType4FSK2000;
-        _step_hz = 10;
-        _scan_step_hz = 12500;
-        break;
-    case 5:
-        _rx_mode = gr_modem_types::ModemType4FSK20000;
-        _step_hz = 500;
-        _scan_step_hz = 50000;
-        break;
-    case 6:
-        _rx_mode = gr_modem_types::ModemType2FSK2000;
-        _step_hz = 10;
-        _scan_step_hz = 12500;
-        break;
-    case 7:
-        _rx_mode = gr_modem_types::ModemType2FSK20000;
-        _step_hz = 500;
-        _scan_step_hz = 50000; // FIXME: channelization
-        break;
-    case 8:
-        _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
-        _rx_mode = gr_modem_types::ModemTypeNBFM2500;
-        _step_hz = 10;
-        _scan_step_hz = 6250;
-        break;
-    case 9:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _rx_mode = gr_modem_types::ModemTypeNBFM5000;
         _step_hz = 10;
+        _scan_step_hz = 6250;
+        break;
+    case 1:
+        _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
+        _rx_mode = gr_modem_types::ModemTypeNBFM2500;
+        _step_hz = 10;
         _scan_step_hz = 12500;
         break;
-    case 10:
+    case 2:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _rx_mode = gr_modem_types::ModemTypeWBFM;
         _step_hz = 1000;
         _scan_step_hz = 200000;
         break;
-    case 11:
+    case 3:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _rx_mode = gr_modem_types::ModemTypeUSB2500;
         _step_hz = 10;
         _scan_step_hz = 2500;
         break;
-    case 12:
+    case 4:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _rx_mode = gr_modem_types::ModemTypeLSB2500;
         _step_hz = 10;
         _scan_step_hz = 2500;
         break;
-    case 13:
+    case 5:
+        _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
+        _rx_mode = gr_modem_types::ModemTypeFREEDV1600USB;
+        _step_hz = 5;
+        _scan_step_hz = 2500;
+        break;
+    case 6:
+        _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
+        _rx_mode = gr_modem_types::ModemTypeFREEDV700DUSB;
+        _step_hz = 5;
+        _scan_step_hz = 2500;
+        break;
+    case 7:
+        _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
+        _rx_mode = gr_modem_types::ModemTypeFREEDV1600LSB;
+        _step_hz = 5;
+        _scan_step_hz = 2500;
+        break;
+    case 8:
+        _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
+        _rx_mode = gr_modem_types::ModemTypeFREEDV700DLSB;
+        _step_hz = 5;
+        _scan_step_hz = 2500;
+        break;
+    case 9:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _rx_mode = gr_modem_types::ModemTypeAM5000;
         _step_hz = 10;
         _scan_step_hz = 10000;
         break;
+    case 10:
+        _rx_mode = gr_modem_types::ModemTypeBPSK2000;
+        _step_hz = 5;
+        _scan_step_hz = 12500;
+        break;
+    case 11:
+        _rx_mode = gr_modem_types::ModemTypeBPSK1000;
+        _step_hz = 5;
+        _scan_step_hz = 6250;
+        break;
+    case 12:
+        _rx_mode = gr_modem_types::ModemTypeQPSK2000;
+        _step_hz = 5;
+        _scan_step_hz = 6250;
+        break;
+    case 13:
+        _rx_mode = gr_modem_types::ModemTypeQPSK20000;
+        _step_hz = 50;
+        _scan_step_hz = 12500 * 2; // FIXME: channelization
+        break;
     case 14:
+        _rx_mode = gr_modem_types::ModemType2FSK2000;
+        _step_hz = 10;
+        _scan_step_hz = 12500;
+        break;
+    case 15:
+        _rx_mode = gr_modem_types::ModemType2FSK20000;
+        _step_hz = 500;
+        _scan_step_hz = 50000; // FIXME: channelization
+        break;
+    case 16:
+        _rx_mode = gr_modem_types::ModemType4FSK2000;
+        _step_hz = 5;
+        _scan_step_hz = 12500;
+        break;
+    case 17:
+        _rx_mode = gr_modem_types::ModemType4FSK20000;
+        _step_hz = 500;
+        _scan_step_hz = 50000;
+        break; 
+    case 18:
         _rx_mode = gr_modem_types::ModemTypeQPSKVideo;
         _step_hz = 1000;
         break;
-    case 15:
+    case 19:
         _rx_mode = gr_modem_types::ModemTypeQPSK250000;
         _step_hz = 1000;
         _scan_step_hz = 500000;
         break;
-    case 16:
-        _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
-        _rx_mode = gr_modem_types::ModemTypeFREEDV1600;
-        _step_hz = 10;
-        _scan_step_hz = 2500;
-        break;
-    case 17:
-        _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
-        _rx_mode = gr_modem_types::ModemTypeFREEDV700D;
-        _step_hz = 10;
-        _scan_step_hz = 2500;
-        break;
     default:
         _rx_mode = gr_modem_types::ModemTypeBPSK2000;
-        _step_hz = 10;
+        _step_hz = 5;
         _scan_step_hz = 12500;
         break;
     }
@@ -1483,66 +1495,74 @@ void RadioOp::toggleTxMode(int value)
     switch(value)
     {
     case 0:
-        _tx_mode = gr_modem_types::ModemTypeBPSK2000;
-        break;
-    case 1:
-        _tx_mode = gr_modem_types::ModemTypeBPSK1000;
-        break;
-    case 2:
-        _tx_mode = gr_modem_types::ModemTypeQPSK2000;
-        break;
-    case 3:
-        _tx_mode = gr_modem_types::ModemTypeQPSK20000;
-        break;
-    case 4:
-        _tx_mode = gr_modem_types::ModemType4FSK2000;
-        break;
-    case 5:
-        _tx_mode = gr_modem_types::ModemType4FSK20000;
-        break;
-    case 6:
-        _tx_mode = gr_modem_types::ModemType2FSK2000;
-        break;
-    case 7:
-        _tx_mode = gr_modem_types::ModemType2FSK20000;
-        break;
-    case 8:
-        _tx_radio_type = radio_type::RADIO_TYPE_ANALOG;
-        _tx_mode = gr_modem_types::ModemTypeNBFM2500;
-        break;
-    case 9:
         _tx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _tx_mode = gr_modem_types::ModemTypeNBFM5000;
         break;
-    case 10:
+    case 1:
+        _tx_radio_type = radio_type::RADIO_TYPE_ANALOG;
+        _tx_mode = gr_modem_types::ModemTypeNBFM2500;
+        break;
+    case 2:
         _tx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _tx_mode = gr_modem_types::ModemTypeWBFM;
         break;
-    case 11:
+    case 3:
         _tx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _tx_mode = gr_modem_types::ModemTypeUSB2500;
         break;
-    case 12:
+    case 4:
         _tx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _tx_mode = gr_modem_types::ModemTypeLSB2500;
         break;
-    case 13:
+    case 5:
+        _tx_radio_type = radio_type::RADIO_TYPE_ANALOG;
+        _tx_mode = gr_modem_types::ModemTypeFREEDV1600USB;
+        break;
+    case 6:
+        _tx_radio_type = radio_type::RADIO_TYPE_ANALOG;
+        _tx_mode = gr_modem_types::ModemTypeFREEDV700DUSB;
+        break;
+    case 7:
+        _tx_radio_type = radio_type::RADIO_TYPE_ANALOG;
+        _tx_mode = gr_modem_types::ModemTypeFREEDV1600LSB;
+        break;
+    case 8:
+        _tx_radio_type = radio_type::RADIO_TYPE_ANALOG;
+        _tx_mode = gr_modem_types::ModemTypeFREEDV700DLSB;
+        break;
+    case 9:
         _tx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _tx_mode = gr_modem_types::ModemTypeAM5000;
         break;
+    case 10:
+        _tx_mode = gr_modem_types::ModemTypeBPSK2000;
+        break;
+    case 11:
+        _tx_mode = gr_modem_types::ModemTypeBPSK1000;
+        break;
+    case 12:
+        _tx_mode = gr_modem_types::ModemTypeQPSK2000;
+        break;
+    case 13:
+        _tx_mode = gr_modem_types::ModemTypeQPSK20000;
+        break;
     case 14:
-        _tx_mode = gr_modem_types::ModemTypeQPSKVideo;
+        _tx_mode = gr_modem_types::ModemType2FSK2000;
         break;
     case 15:
-        _tx_mode = gr_modem_types::ModemTypeQPSK250000;
+        _tx_mode = gr_modem_types::ModemType2FSK20000;
         break;
     case 16:
-        _tx_radio_type = radio_type::RADIO_TYPE_ANALOG;
-        _tx_mode = gr_modem_types::ModemTypeFREEDV1600;
+        _tx_mode = gr_modem_types::ModemType4FSK2000;
         break;
     case 17:
-        _tx_radio_type = radio_type::RADIO_TYPE_ANALOG;
-        _tx_mode = gr_modem_types::ModemTypeFREEDV700D;
+        _tx_mode = gr_modem_types::ModemType4FSK20000;
+        break;
+    case 18:
+        _tx_mode = gr_modem_types::ModemTypeQPSKVideo;
+        break;
+    case 19:
+        _tx_mode = gr_modem_types::ModemTypeQPSK250000;
         break;
     default:
         _tx_mode = gr_modem_types::ModemTypeBPSK2000;

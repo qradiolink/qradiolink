@@ -36,26 +36,29 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
         tones.append(QString::number(tone_list[i]));
     }
 
-    // FIXME: should probably use a map or something
+    // FIXME: should probably use a map or something and keep track of them elsewhere
     _filter_widths = new std::vector<std::complex<int>>;
-    _filter_widths->push_back(std::complex<int>(-2000, 2000)); // BPSK 2K
-    _filter_widths->push_back(std::complex<int>(-700, 700)); // BPSK 700
-    _filter_widths->push_back(std::complex<int>(-1500, 1500));  // QPSK 2K
-    _filter_widths->push_back(std::complex<int>(-7000, 7000));    // QPSK 10K
-    _filter_widths->push_back(std::complex<int>(-4000, 4000));  // 4FSK 2K
-    _filter_widths->push_back(std::complex<int>(-20000, 20000));    // 4FSK 10K
-    _filter_widths->push_back(std::complex<int>(-4000, 4000));  // 2FSK 2K
-    _filter_widths->push_back(std::complex<int>(-12500, 12500));  // 2FSK 10K
-    _filter_widths->push_back(std::complex<int>(-2500, 2500));  // NBFM
     _filter_widths->push_back(std::complex<int>(-5000, 5000));  // FM
+    _filter_widths->push_back(std::complex<int>(-2500, 2500));  // NBFM
     _filter_widths->push_back(std::complex<int>(-100000, 100000));  // WFM
     _filter_widths->push_back(std::complex<int>(-1, 2500)); // USB
     _filter_widths->push_back(std::complex<int>(-2500, 1)); // LSB
+    _filter_widths->push_back(std::complex<int>(-1, 2500)); // FreeDV1600 USB
+    _filter_widths->push_back(std::complex<int>(-1, 2500)); // FreeDV700C USB
+    _filter_widths->push_back(std::complex<int>(-2500, 1)); // FreeDV1600 LSB
+    _filter_widths->push_back(std::complex<int>(-2500, 1)); // FreeDV700C LSB
     _filter_widths->push_back(std::complex<int>(-5000, 5000));  // AM
+    _filter_widths->push_back(std::complex<int>(-2800, 2800)); // BPSK 2K
+    _filter_widths->push_back(std::complex<int>(-1400, 1400)); // BPSK 700
+    _filter_widths->push_back(std::complex<int>(-1500, 1500));  // QPSK 2K
+    _filter_widths->push_back(std::complex<int>(-7000, 7000));    // QPSK 10K
+    _filter_widths->push_back(std::complex<int>(-4600, 4600));  // 2FSK 2K
+    _filter_widths->push_back(std::complex<int>(-15000, 15000));  // 2FSK 10K
+    _filter_widths->push_back(std::complex<int>(-4600, 4600));  // 4FSK 2K
+    _filter_widths->push_back(std::complex<int>(-25000, 25000));    // 4FSK 10K
     _filter_widths->push_back(std::complex<int>(-150000, 150000)); // QPSK250000 VIDEO
     _filter_widths->push_back(std::complex<int>(-150000, 150000)); // QPSK250000 DATA
-    _filter_widths->push_back(std::complex<int>(-1, 2500)); // FreeDV1600
-    _filter_widths->push_back(std::complex<int>(-1, 2500)); // FreeDV700D
+
 
 
     ui->comboBoxTxCTCSS->addItems(tones);

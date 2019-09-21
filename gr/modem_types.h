@@ -20,8 +20,10 @@ namespace gr_modem_types {
         ModemType2FSK20000,
         ModemTypeBPSK1000,
         ModemTypeQPSK250000,
-        ModemTypeFREEDV1600,
-        ModemTypeFREEDV700D,
+        ModemTypeFREEDV1600USB,
+        ModemTypeFREEDV700DUSB,
+        ModemTypeFREEDV1600LSB,
+        ModemTypeFREEDV700DLSB,
     };
 }
 

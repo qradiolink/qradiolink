@@ -25,10 +25,7 @@
 #include <gnuradio/filter/fft_filter_fff.h>
 #include <gnuradio/filter/rational_resampler_base_ccf.h>
 #include <gnuradio/blocks/multiply_const_cc.h>
-#include <gnuradio/blocks/multiply_ff.h>
-#include <gnuradio/blocks/multiply_cc.h>
-#include <gnuradio/analog/sig_source_f.h>
-#include <gnuradio/analog/sig_source_c.h>
+#include <gnuradio/blocks/multiply_const_ff.h>
 #include <gnuradio/blocks/float_to_complex.h>
 #include <gnuradio/blocks/float_to_short.h>
 #include <gnuradio/blocks/short_to_float.h>
@@ -40,13 +37,13 @@ class gr_mod_freedv_sdr;
 
 typedef boost::shared_ptr<gr_mod_freedv_sdr> gr_mod_freedv_sdr_sptr;
 gr_mod_freedv_sdr_sptr make_gr_mod_freedv_sdr(int sps=125, int samp_rate=8000, int carrier_freq=1700,
-                                          int filter_width=1000, int mode=gr::vocoder::freedv_api::MODE_1600);
+                                          int filter_width=1000, int mode=gr::vocoder::freedv_api::MODE_1600, int sb=0);
 
 class gr_mod_freedv_sdr : public gr::hier_block2
 {
 public:
     explicit gr_mod_freedv_sdr(int sps=125, int samp_rate=8000, int carrier_freq=1700,
-                             int filter_width=1000, int mode=gr::vocoder::freedv_api::MODE_1600);
+                             int filter_width=1000, int mode=gr::vocoder::freedv_api::MODE_1600, int sb=0);
     void set_bb_gain(int value);
 private:
 
@@ -61,6 +58,7 @@ private:
     gr::vocoder::freedv_tx_ss::sptr _freedv;
     gr::blocks::float_to_short::sptr _float_to_short;
     gr::blocks::short_to_float::sptr _short_to_float;
+    gr::blocks::multiply_const_ff::sptr _audio_gain;
 
 
 
