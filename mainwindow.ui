@@ -1146,7 +1146,7 @@ font: 10pt &quot;Sans Serif&quot;;
                    </property>
                    <property name="minimumSize">
                     <size>
-                     <width>150</width>
+                     <width>120</width>
                      <height>30</height>
                     </size>
                    </property>
@@ -1361,48 +1361,18 @@ font: 12pt &quot;Sans Serif&quot;;</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="3" column="3">
-                  <widget class="QCommandLinkButton" name="pttVoipButton">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>150</width>
-                     <height>40</height>
-                    </size>
-                   </property>
-                   <property name="toolTip">
-                    <string>PTT will talk on VOIP network</string>
-                   </property>
-                   <property name="autoFillBackground">
-                    <bool>false</bool>
-                   </property>
-                   <property name="styleSheet">
-                    <string notr="true">font: 10pt &quot;Sans Serif&quot;;
-color: rgb(240, 240, 119);
-border-width: 4px;
-background-color: rgb(0, 0, 67);
-</string>
-                   </property>
+                 <item row="2" column="1">
+                  <widget class="QLabel" name="label_22">
                    <property name="text">
-                    <string>Use PTT for VOIP</string>
+                    <string>Callsign of last transmission</string>
                    </property>
-                   <property name="icon">
-                    <iconset resource="resources.qrc">
-                     <normaloff>:/res/Button-Blank-Gray-icon.png</normaloff>
-                     <normalon>:/res/text-speak.png</normalon>:/res/Button-Blank-Gray-icon.png</iconset>
-                   </property>
-                   <property name="checkable">
-                    <bool>true</bool>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
                    </property>
                   </widget>
                  </item>
                  <item row="3" column="2">
-                  <widget class="QCommandLinkButton" name="voipForwardButton">
+                  <widget class="QPushButton" name="voipForwardButton">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                      <horstretch>0</horstretch>
@@ -1411,7 +1381,7 @@ background-color: rgb(0, 0, 67);
                    </property>
                    <property name="minimumSize">
                     <size>
-                     <width>150</width>
+                     <width>120</width>
                      <height>40</height>
                     </size>
                    </property>
@@ -1441,13 +1411,43 @@ background-color: rgb(0, 0, 67);
                    </property>
                   </widget>
                  </item>
-                 <item row="2" column="1">
-                  <widget class="QLabel" name="label_22">
-                   <property name="text">
-                    <string>Callsign of last transmission</string>
+                 <item row="3" column="3">
+                  <widget class="QPushButton" name="pttVoipButton">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
                    </property>
-                   <property name="alignment">
-                    <set>Qt::AlignCenter</set>
+                   <property name="minimumSize">
+                    <size>
+                     <width>120</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                   <property name="toolTip">
+                    <string>PTT will talk on VOIP network</string>
+                   </property>
+                   <property name="autoFillBackground">
+                    <bool>false</bool>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">font: 10pt &quot;Sans Serif&quot;;
+color: rgb(240, 240, 119);
+border-width: 4px;
+background-color: rgb(0, 0, 67);
+</string>
+                   </property>
+                   <property name="text">
+                    <string>PTT for VOIP</string>
+                   </property>
+                   <property name="icon">
+                    <iconset resource="resources.qrc">
+                     <normaloff>:/res/Button-Blank-Gray-icon.png</normaloff>
+                     <normalon>:/res/text-speak.png</normalon>:/res/Button-Blank-Gray-icon.png</iconset>
+                   </property>
+                   <property name="checkable">
+                    <bool>true</bool>
                    </property>
                   </widget>
                  </item>
@@ -3328,7 +3328,7 @@ background-color: rgb(0, 0, 67);</string>
             </property>
             <property name="maximumSize">
              <size>
-              <width>140</width>
+              <width>120</width>
               <height>32</height>
              </size>
             </property>
@@ -3354,7 +3354,7 @@ background-color: rgb(0, 0, 67);</string>
             </item>
             <item>
              <property name="text">
-              <string>BPSK 1K (700B)</string>
+              <string>BPSK 1K</string>
              </property>
             </item>
             <item>
@@ -3419,12 +3419,12 @@ background-color: rgb(0, 0, 67);</string>
             </item>
             <item>
              <property name="text">
-              <string>Video (640x480)</string>
+              <string>Video</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>QPSK 250K</string>
+              <string>Net 250K</string>
              </property>
             </item>
             <item>
@@ -3463,8 +3463,8 @@ background-color: rgb(0, 0, 67);</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QCommandLinkButton" name="toggleRepeaterButton">
+          <item row="1" column="7">
+           <widget class="QComboBox" name="txModemTypeComboBox">
             <property name="sizePolicy">
              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -3473,38 +3473,185 @@ background-color: rgb(0, 0, 67);</string>
             </property>
             <property name="minimumSize">
              <size>
-              <width>80</width>
+              <width>0</width>
               <height>16</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
-              <width>100</width>
+              <width>120</width>
+              <height>32</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
+            <property name="toolTip">
+             <string>TX Modulation</string>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">color: rgb(240, 240, 119);
+background-color: rgb(0, 0, 67);</string>
+            </property>
+            <property name="maxVisibleItems">
+             <number>25</number>
+            </property>
+            <item>
+             <property name="text">
+              <string>BPSK  2K</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>BPSK 1K </string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>QPSK  2K</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>QPSK  10K</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>4FSK  2K</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>4FSK  10K</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>2FSK 2K</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>2FSK 10K</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Narrow FM</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>FM</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Wide FM</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>USB</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>LSB</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>AM</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Video</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Net 250K</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>FreeDV1600</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>FreeDV700D</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <spacer name="horizontalSpacer_6">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>10</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="0" column="5">
+           <widget class="QPushButton" name="rxStatusButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>60</width>
+              <height>16</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>140</width>
               <height>35</height>
              </size>
             </property>
+            <property name="cursor">
+             <cursorShape>PointingHandCursor</cursorShape>
+            </property>
             <property name="toolTip">
-             <string>Enable repeater</string>
+             <string>Enable receiver</string>
             </property>
             <property name="statusTip">
-             <string>Repeater enabled</string>
+             <string>Receiver enabled</string>
+            </property>
+            <property name="layoutDirection">
+             <enum>Qt::LeftToRight</enum>
             </property>
             <property name="autoFillBackground">
              <bool>false</bool>
             </property>
             <property name="styleSheet">
              <string notr="true">font: 12pt &quot;Sans Serif&quot;;
+color: rgb(0, 255, 0);
 border-width: 4px;
-background-color: rgb(0, 67, 98);
-color: rgb(255, 255, 255);</string>
+background-color: rgb(0, 0, 67);
+</string>
             </property>
             <property name="text">
-             <string>Repeat</string>
+             <string>RX</string>
             </property>
             <property name="icon">
              <iconset resource="resources.qrc">
               <normaloff>:/res/Button-Blank-Gray-icon.png</normaloff>
-              <normalon>:/res/Button-Blank-Yellow-icon.png</normalon>:/res/Button-Blank-Gray-icon.png</iconset>
+              <normalon>:/res/Button-Blank-Green-icon.png</normalon>:/res/Button-Blank-Gray-icon.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -3518,7 +3665,7 @@ color: rgb(255, 255, 255);</string>
            </widget>
           </item>
           <item row="0" column="7">
-           <widget class="QCommandLinkButton" name="txStatusButton">
+           <widget class="QPushButton" name="txStatusButton">
             <property name="sizePolicy">
              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -3586,135 +3733,8 @@ color: rgb(255, 78, 78);</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="7">
-           <widget class="QComboBox" name="txModemTypeComboBox">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>16</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>140</width>
-              <height>32</height>
-             </size>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>12</pointsize>
-             </font>
-            </property>
-            <property name="toolTip">
-             <string>TX Modulation</string>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">color: rgb(240, 240, 119);
-background-color: rgb(0, 0, 67);</string>
-            </property>
-            <property name="maxVisibleItems">
-             <number>25</number>
-            </property>
-            <item>
-             <property name="text">
-              <string>BPSK  2K</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>BPSK 1K (700B)</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>QPSK  2K</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>QPSK  10K</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>4FSK  2K</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>4FSK  10K</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>2FSK 2K</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>2FSK 10K</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Narrow FM</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>FM</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Wide FM</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>USB</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>LSB</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>AM</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Video (640x480)</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>QPSK 250K</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>FreeDV1600</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>FreeDV700D</string>
-             </property>
-            </item>
-           </widget>
-          </item>
           <item row="0" column="2">
-           <widget class="QCommandLinkButton" name="toggleVoxButton">
+           <widget class="QPushButton" name="toggleVoxButton">
             <property name="sizePolicy">
              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -3767,8 +3787,8 @@ color: rgb(255, 255, 255);</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="5">
-           <widget class="QCommandLinkButton" name="rxStatusButton">
+          <item row="0" column="1">
+           <widget class="QPushButton" name="toggleRepeaterButton">
             <property name="sizePolicy">
              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -3777,45 +3797,38 @@ color: rgb(255, 255, 255);</string>
             </property>
             <property name="minimumSize">
              <size>
-              <width>60</width>
+              <width>80</width>
               <height>16</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
-              <width>140</width>
+              <width>100</width>
               <height>35</height>
              </size>
             </property>
-            <property name="cursor">
-             <cursorShape>PointingHandCursor</cursorShape>
-            </property>
             <property name="toolTip">
-             <string>Enable receiver</string>
+             <string>Enable repeater</string>
             </property>
             <property name="statusTip">
-             <string>Receiver enabled</string>
-            </property>
-            <property name="layoutDirection">
-             <enum>Qt::LeftToRight</enum>
+             <string>Repeater enabled</string>
             </property>
             <property name="autoFillBackground">
              <bool>false</bool>
             </property>
             <property name="styleSheet">
              <string notr="true">font: 12pt &quot;Sans Serif&quot;;
-color: rgb(0, 255, 0);
 border-width: 4px;
-background-color: rgb(0, 0, 67);
-</string>
+background-color: rgb(0, 67, 98);
+color: rgb(255, 255, 255);</string>
             </property>
             <property name="text">
-             <string>RX</string>
+             <string>Repeat</string>
             </property>
             <property name="icon">
              <iconset resource="resources.qrc">
               <normaloff>:/res/Button-Blank-Gray-icon.png</normaloff>
-              <normalon>:/res/Button-Blank-Green-icon.png</normalon>:/res/Button-Blank-Gray-icon.png</iconset>
+              <normalon>:/res/Button-Blank-Yellow-icon.png</normalon>:/res/Button-Blank-Gray-icon.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -3827,19 +3840,6 @@ background-color: rgb(0, 0, 67);
              <bool>true</bool>
             </property>
            </widget>
-          </item>
-          <item row="1" column="0">
-           <spacer name="horizontalSpacer_6">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>10</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
           </item>
          </layout>
         </item>
