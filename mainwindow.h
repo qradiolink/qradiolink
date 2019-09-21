@@ -168,6 +168,7 @@ private:
     qint64 _tx_shift_frequency;
     QFileInfo *setupConfig();
     void closeEvent(QCloseEvent *);
+    void changeEvent(QEvent *);
     void resizeEvent(QResizeEvent *);
     Settings *_settings;
     int _current_voip_channel;

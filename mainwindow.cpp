@@ -36,6 +36,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
         tones.append(QString::number(tone_list[i]));
     }
 
+    // FIXME: should probably use a map or something
     _filter_widths = new std::vector<std::complex<int>>;
     _filter_widths->push_back(std::complex<int>(-2000, 2000)); // BPSK 2K
     _filter_widths->push_back(std::complex<int>(-700, 700)); // BPSK 700
@@ -257,6 +258,27 @@ void MainWindow::resizeEvent(QResizeEvent *event)
     }
     xy = ui->plotterContainer->geometry();
     ui->videoFrame->move(xy.right() - 360, xy.top());
+    event->accept();
+}
+
+void MainWindow::changeEvent(QEvent *event)
+{
+    if (event->type() == QEvent::WindowStateChange)
+    {
+        if (isMinimized())
+        {
+            emit enableGUIFFT(false);
+            emit enableGUIConst(false);
+            emit enableRSSI(false);
+        }
+        else
+        {
+            emit enableGUIFFT(_settings->show_fft);
+            emit enableGUIConst(_settings->show_constellation);
+            emit enableRSSI(_settings->show_controls);
+        }
+    }
+
     event->accept();
 }
 

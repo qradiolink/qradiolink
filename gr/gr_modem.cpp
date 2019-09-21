@@ -469,12 +469,14 @@ void gr_modem::transmitPCMAudio(std::vector<float> *audio_data)
     {
         return;
     }
+    // FIXME: these checks are useless, duplicate code in radioop
     if((_modem_type_tx == gr_modem_types::ModemTypeNBFM2500)
             || (_modem_type_tx == gr_modem_types::ModemTypeNBFM5000)
             || (_modem_type_tx == gr_modem_types::ModemTypeUSB2500)
             || (_modem_type_tx == gr_modem_types::ModemTypeLSB2500)
             || (_modem_type_tx == gr_modem_types::ModemTypeAM5000)
-            || (_modem_type_tx == gr_modem_types::ModemTypeFREEDV1600))
+            || (_modem_type_tx == gr_modem_types::ModemTypeFREEDV1600)
+            || (_modem_type_tx == gr_modem_types::ModemTypeFREEDV700D))
     {
         int ret = 1;
         while(ret)
@@ -634,6 +636,7 @@ bool gr_modem::demodulateAnalog()
         return false;
     }
     std::vector<float> *audio_data = nullptr;
+    // FIXME: these checks are useless, duplicate code in radioop
     if((_modem_type_rx == gr_modem_types::ModemTypeNBFM2500)
             || (_modem_type_rx == gr_modem_types::ModemTypeNBFM5000)
             || (_modem_type_rx == gr_modem_types::ModemTypeUSB2500)
@@ -669,8 +672,8 @@ bool gr_modem::demodulate()
     {
         return false;
     }
-    std::vector<unsigned char> *demod_data;
-    std::vector<unsigned char> *demod_data2;
+    std::vector<unsigned char> *demod_data = nullptr;
+    std::vector<unsigned char> *demod_data2 = nullptr;
     std::vector<unsigned char> *data;
 
     if((_modem_type_rx == gr_modem_types::ModemTypeBPSK2000)
@@ -789,46 +792,46 @@ int gr_modem::findSync(unsigned char bit)
             _modem_type_rx != gr_modem_types::ModemTypeQPSKVideo)
     {
         temp = _shift_reg & 0xFFFF;
-        if((temp == 0xED89))
+        if(temp == 0xED89)
         {
             _sync_found = true;
             return FrameTypeVoice;
         }
         temp = _shift_reg & 0xFFFFFF;
-        if((temp == 0x89EDAA))
+        if(temp == 0x89EDAA)
         {
             _sync_found = true;
             return FrameTypeText;
         }
-        if((temp == 0xED77AA))
+        if(temp == 0xED77AA)
         {
             _sync_found = true;
             return FrameTypeRepeaterInfo;
         }
 
-        if((temp == 0x98DEAA))
+        if(temp == 0x98DEAA)
         {
             _sync_found = true;
             return FrameTypeVideo;
         }
-        if((temp == 0x8CC8DD))
+        if(temp == 0x8CC8DD)
         {
             _sync_found = true;
             return FrameTypeCallsign;
         }
     }
     temp = _shift_reg & 0xFFFFFF;
-    if((temp == 0xDE98AA))
+    if(temp == 0xDE98AA)
     {
         _sync_found = true;
         return FrameTypeData;
     }
-    if((temp == 0x98DEAA))
+    if(temp == 0x98DEAA)
     {
         _sync_found = true;
         return FrameTypeVideo;
     }
-    if((temp == 0x4C8A2B))
+    if(temp == 0x4C8A2B)
     {
         _sync_found = true;
         return FrameTypeEnd;

@@ -44,14 +44,14 @@ gr_demod_freedv::gr_demod_freedv(std::vector<int>signature, int sps, int samp_ra
     _resampler = gr::filter::rational_resampler_base_ccf::make(1,125,taps);
 
     _filter = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
-                            1, _target_samp_rate, 200, _filter_width,600,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
+                            1, _target_samp_rate, 500, _filter_width,600,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     _feed_forward_agc = gr::analog::feedforward_agc_cc::make(512,1);
     _agc = gr::analog::agc2_ff::make(1e-1, 1e-3, 0.95, 1);
     _complex_to_real = gr::blocks::complex_to_real::make();
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::band_pass(
-                    1, _target_samp_rate, 200, _filter_width, 450, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
-    _freedv_gain = gr::blocks::multiply_const_ff::make(0.1);
+                    1, _target_samp_rate, 200, 3500, 450, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+    _freedv_gain = gr::blocks::multiply_const_ff::make(0.3);
     _float_to_short = gr::blocks::float_to_short::make(1, 32768);
     _freedv = gr::vocoder::freedv_rx_ss::make(mode);
     _short_to_float = gr::blocks::short_to_float::make(1, 32768);

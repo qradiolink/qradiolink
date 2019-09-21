@@ -56,8 +56,8 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
     _qpsk_video = make_gr_mod_qpsk_sdr(4, 1000000, 1700, 160000);
     _usb = make_gr_mod_ssb_sdr(0, 1000000, 1700, 2500);
     _lsb = make_gr_mod_ssb_sdr(1, 1000000, 1700, 2500);
-    _freedv_tx1600 = make_gr_mod_freedv_sdr(125, 1000000, 1700, 2700, gr::vocoder::freedv_api::MODE_1600);
-    _freedv_tx700D = make_gr_mod_freedv_sdr(125, 1000000, 1700, 2700, gr::vocoder::freedv_api::MODE_700D);
+    _freedv_tx1600 = make_gr_mod_freedv_sdr(125, 1000000, 1700, 2500, gr::vocoder::freedv_api::MODE_1600);
+    _freedv_tx700C = make_gr_mod_freedv_sdr(125, 1000000, 1700, 2500, gr::vocoder::freedv_api::MODE_700C);
 
 }
 
@@ -152,8 +152,8 @@ void gr_mod_base::set_mode(int mode)
         _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeFREEDV700D:
-        _top_block->disconnect(_audio_source,0,_freedv_tx700D,0);
-        _top_block->disconnect(_freedv_tx700D,0,_rotator,0);
+        _top_block->disconnect(_audio_source,0,_freedv_tx700C,0);
+        _top_block->disconnect(_freedv_tx700C,0,_rotator,0);
         _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     default:
@@ -311,8 +311,8 @@ void gr_mod_base::set_mode(int mode)
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
         _osmosdr_sink->set_sample_rate(1000000);
-        _top_block->connect(_audio_source,0,_freedv_tx700D,0);
-        _top_block->connect(_freedv_tx700D,0,_rotator,0);
+        _top_block->connect(_audio_source,0,_freedv_tx700C,0);
+        _top_block->connect(_freedv_tx700C,0,_rotator,0);
         _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
     default:

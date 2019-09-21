@@ -133,7 +133,7 @@ private:
     gr_demod_ssb_sdr_sptr _lsb;
     gr_demod_wbfm_sdr_sptr _wfm;
     gr_demod_freedv_sptr _freedv_rx1600;
-    gr_demod_freedv_sptr _freedv_rx700D;
+    gr_demod_freedv_sptr _freedv_rx700C;
 
     osmosdr::source::sptr _osmosdr_source;
 

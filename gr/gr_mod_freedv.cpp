@@ -42,7 +42,7 @@ gr_mod_freedv_sdr::gr_mod_freedv_sdr(int sps, int samp_rate, int carrier_freq,
     _freedv = gr::vocoder::freedv_tx_ss::make(mode);
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::band_pass(
-                    1, target_samp_rate, 200, 3000, 50, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+                    1, target_samp_rate, 200, 2500, 50, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
 
     _float_to_complex = gr::blocks::float_to_complex::make();
     std::vector<float> interp_taps = gr::filter::firdes::low_pass(125, _samp_rate,
@@ -54,7 +54,7 @@ gr_mod_freedv_sdr::gr_mod_freedv_sdr(int sps, int samp_rate, int carrier_freq,
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
     _filter = gr::filter::fft_filter_ccc::make(
                 1,gr::filter::firdes::complex_band_pass_2(
-                    1, target_samp_rate, 200, _filter_width, 50, 120, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+                    1, target_samp_rate, 200, _filter_width, 250, 120, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
 
 
 

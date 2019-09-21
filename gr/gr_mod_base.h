@@ -78,7 +78,7 @@ private:
     gr_mod_ssb_sdr_sptr _usb;
     gr_mod_ssb_sdr_sptr _lsb;
     gr_mod_freedv_sdr_sptr _freedv_tx1600;
-    gr_mod_freedv_sdr_sptr _freedv_tx700D;
+    gr_mod_freedv_sdr_sptr _freedv_tx700C;
 
     int _samples_per_symbol;
     int _samp_rate;
