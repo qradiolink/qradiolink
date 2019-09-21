@@ -51,7 +51,7 @@ rx_fft_c::rx_fft_c(unsigned int fftsize, int wintype)
     d_fft = new gr::fft::fft_complex(d_fftsize, true, 4);
     d_fft_points = new float[d_fftsize];
     d_shift_buffer = new float[d_fftsize]; // not used yet
-    d_sample_buffer = new gr_complex[d_fftsize];
+    d_sample_buffer = d_fft->get_inbuf();
     d_counter = 0;
     d_data_ready = false;
     d_enabled = false;
@@ -68,7 +68,6 @@ rx_fft_c::~rx_fft_c()
     delete d_fft;
     delete[] d_fft_points;
     delete[] d_shift_buffer;
-    delete[] d_sample_buffer;
 }
 
 
@@ -91,14 +90,12 @@ int rx_fft_c::work(int noutput_items,
         if(d_counter >= d_fftsize)
         {
             d_counter = 0;
-
-            do_fft(d_sample_buffer, d_fftsize);
-
+            d_fft->execute();
             volk_32fc_s32f_x2_power_spectral_density_32f(d_fft_points, d_fft->get_outbuf(), d_fftsize, 1.0, d_fftsize);
             d_data_ready = true;
             d_push++;
         }
-        d_sample_buffer[d_counter] = in[i];
+        d_sample_buffer[d_counter] = in[i]; // this is actually FFT's own buffer
         d_counter++;
     }
 
@@ -136,12 +133,12 @@ void rx_fft_c::get_fft_data(float* fftPoints, unsigned int &fftSize)
  *  \param data_in The data to compute FFT on.
  *  \param size The size of data_in.
  *
- * Note that this function does not lock the mutex since the caller, get_fft_data()
- * has alrady locked it.
+ *  unused currently
  */
 void rx_fft_c::do_fft(const gr_complex *data_in, unsigned int size)
 {
     /* apply window, if any */
+    // we don't apply window anymore, FFT should take care of that
     if (d_window.size())
     {
         gr_complex *dst = d_fft->get_inbuf();
@@ -169,11 +166,9 @@ void rx_fft_c::set_fft_size(unsigned int fftsize)
         /* clear and resize circular buffer */
 
         delete[] d_fft_points;
-        delete[] d_sample_buffer;
         delete[] d_shift_buffer;
-        d_fft_points = new float[d_fftsize];
+        d_fft_points = new float[d_fftsize]; // eh, we should probably allocate the maximum possible size and keep track instead of allocating each time
         d_shift_buffer = new float[d_fftsize];
-        d_sample_buffer = new gr_complex[d_fftsize];
 
         /* reset window */
         int wintype = d_wintype; // FIXME: would be nicer with a window_reset()
@@ -183,6 +178,7 @@ void rx_fft_c::set_fft_size(unsigned int fftsize)
         /* reset FFT object (also reset FFTW plan) */
         delete d_fft;
         d_fft = new gr::fft::fft_complex (d_fftsize, true);
+        d_sample_buffer = d_fft->get_inbuf();
     }
 
 }
