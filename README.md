@@ -33,8 +33,8 @@ Features
 - Audio codecs: Codec2 700 bit/s, Codec2 1400 bit/s, Opus 9600 bit/s
 - Narrow band digital voice mode with the [Codec2](http://rowetel.com/codec2.html) audio codec
 - Wideband digital voice mode with the [Opus](https://xiph.org) audio codec
-- FreeDV modulator and demodulator (currently supports only 1600 mode)
-- Digital modulation:  **BPSK**, **DQPSK**, **2FSK**, **4FSK**, **FreeDV 1600**
+- FreeDV modulator and demodulator (currently supports only 1600 and 700C modes)
+- Digital modulation:  **BPSK**, **DQPSK**, **2FSK**, **4FSK**, **FreeDV 1600**, **FreeDV 700C**
 - Automatic carrier tracking and Doppler effect correction for digital modes. The system can track Doppler shifts of 5-10 kHz, depending on mode. It requires a CNR of at least 10-12 dB, more for FSK modes than for PSK modes.
 - Analog modulation: narrow FM (5 kHz), FM (8 kHz), Wide FM (broadcast, receive-only), AM, SSB
 - CTCSS encoder and decoder for analog FM
