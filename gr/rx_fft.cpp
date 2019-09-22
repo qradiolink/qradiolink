@@ -49,25 +49,25 @@ rx_fft_c::rx_fft_c(unsigned int fftsize, int wintype)
 
     /* create FFT object */
     d_fft = new gr::fft::fft_complex(d_fftsize, true, 4);
-    d_fft_points = new float[d_fftsize];
-    d_shift_buffer = new float[d_fftsize]; // not used yet
+    d_fft_points = (float*)volk_malloc((size_t)d_fftsize * sizeof(float), volk_get_alignment());
+    d_shift_buffer = (float*)volk_malloc((size_t)d_fftsize * sizeof(float), volk_get_alignment()); // not used yet // not used yet
+    // must remember to check set_fft_size(), we malloc and free there as well
     d_sample_buffer = d_fft->get_inbuf();
     d_counter = 0;
     d_data_ready = false;
     d_enabled = false;
     d_push = 0;
 
-    /* allocate circular buffer */
-
     /* create FFT window */
+    // skipping the window now
     set_window_type(wintype);
 }
 
 rx_fft_c::~rx_fft_c()
 {
     delete d_fft;
-    delete[] d_fft_points;
-    delete[] d_shift_buffer;
+    volk_free(d_fft_points);
+    volk_free(d_shift_buffer);
 }
 
 
@@ -165,10 +165,10 @@ void rx_fft_c::set_fft_size(unsigned int fftsize)
 
         /* clear and resize circular buffer */
 
-        delete[] d_fft_points;
-        delete[] d_shift_buffer;
-        d_fft_points = new float[d_fftsize]; // eh, we should probably allocate the maximum possible size and keep track instead of allocating each time
-        d_shift_buffer = new float[d_fftsize];
+        volk_free(d_fft_points);
+        volk_free(d_shift_buffer);
+        d_fft_points = (float*)volk_malloc((size_t)d_fftsize * sizeof(float), volk_get_alignment()); // eh, we should probably allocate the maximum possible size and keep track instead of allocating each time
+        d_shift_buffer = (float*)volk_malloc((size_t)d_fftsize * sizeof(float), volk_get_alignment());
 
         /* reset window */
         int wintype = d_wintype; // FIXME: would be nicer with a window_reset()
