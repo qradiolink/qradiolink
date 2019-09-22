@@ -695,7 +695,7 @@ void gr_demod_base::set_samp_rate(int samp_rate)
         _resampler.reset();
         std::vector<float> taps;
         int tw = std::min(_samp_rate/4, 1500000);
-        taps = gr::filter::firdes::low_pass(1, _samp_rate, 500000, tw, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+        taps = gr::filter::firdes::low_pass(1, _samp_rate, 480000, 100000, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
 
         _resampler = gr::filter::rational_resampler_base_ccf::make(1, decimation, taps);
         _top_block->connect(_rotator,0, _resampler,0);
