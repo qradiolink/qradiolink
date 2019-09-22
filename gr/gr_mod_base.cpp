@@ -30,6 +30,15 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
 
     _rotator = gr::blocks::rotator_cc::make(2*M_PI*_carrier_offset/1000000);
     _osmosdr_sink = osmosdr::sink::make(device_args);
+
+    // FIXME: LimeSDR bandwidth set to higher value for lower freq
+    _lime_specific = false;
+    QString device(device_args.c_str());
+    if(device.contains("driver=lime", Qt::CaseInsensitive))
+    {
+        _lime_specific = true;
+    }
+    set_bandwidth_specific();
     _osmosdr_sink->set_sample_rate(1000000);
     _osmosdr_sink->set_antenna(device_antenna);
     _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
@@ -395,6 +404,7 @@ void gr_mod_base::tune(long center_freq)
 {
     _device_frequency = center_freq;
     _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
+    set_bandwidth_specific();
 }
 
 void gr_mod_base::set_power(float dbm)
@@ -453,6 +463,20 @@ void gr_mod_base::flush_sources()
     _audio_source->flush();
     _vector_source->flush();
     _top_block->unlock();
+}
+
+void gr_mod_base::set_bandwidth_specific()
+{
+    _osmo_filter_bw = (double)_samp_rate;
+    if((_device_frequency < 30 * 1000 * 1000) && _lime_specific)
+    {
+        _osmo_filter_bw = 40.0 * 1000 * 1000;
+    }
+    else if(_lime_specific)
+    {
+        _osmo_filter_bw = (double)(std::max(1500000, _samp_rate));
+    }
+    _osmosdr_sink->set_bandwidth(_osmo_filter_bw);
 }
 
 

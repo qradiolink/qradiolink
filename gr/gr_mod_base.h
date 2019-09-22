@@ -89,6 +89,9 @@ private:
     float _device_frequency;
     int _carrier_offset;
     int _mode;
+    bool _lime_specific; // FIXME: ugly hack
+    double _osmo_filter_bw;
+    void set_bandwidth_specific();
     osmosdr::gain_range_t _gain_range;
 
 
