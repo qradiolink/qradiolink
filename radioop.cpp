@@ -352,7 +352,7 @@ int RadioOp::processInputVideoStream(bool &frame_flag)
     microsec = (quint64)timer.nsecsElapsed();
     if(microsec < 100000000)
     {
-        struct timespec time_to_sleep = {0, (100000000 - (long)microsec) };
+        struct timespec time_to_sleep = {0, (100000000 - (long)microsec)};
         nanosleep(&time_to_sleep, NULL);
     }
 
@@ -1009,9 +1009,9 @@ void RadioOp::receiveVideoData(unsigned char *data, int size)
         delete[] raw_output;
         return;
     }
-    img.convertToFormat(QImage::Format_RGB32);
+    QImage image = img.convertToFormat(QImage::Format_RGB32);
 
-    emit videoImage(img);
+    emit videoImage(image);
     delete[] raw_output;
 
 }

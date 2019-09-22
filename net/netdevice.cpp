@@ -39,7 +39,7 @@ int NetDevice::tun_init(QString ip_address)
     char *dev = const_cast<char*>(dev_str.toStdString().c_str());
     if( (_fd_tun = open("/dev/net/tun", O_RDWR)) < 0 )
     {
-        std::cerr << "tun device open failed" << std::endl;
+        std::cerr << "Failed to open tun device" << std::endl;
         return -1;
     }
     int flags = fcntl(_fd_tun, F_GETFL, 0);
@@ -58,7 +58,7 @@ int NetDevice::tun_init(QString ip_address)
 
     if( (err = ioctl(_fd_tun, TUNSETIFF, (void *) &ifr)) < 0 )
     {
-        std::cerr << "creating net device failed" << std::endl;
+        std::cerr << "creating net device failed, run setcap \"cap_net_raw,cap_net_admin+eip\" qradiolink" << std::endl;
         close(_fd_tun);
         return err;
     }
