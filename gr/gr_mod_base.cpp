@@ -57,9 +57,20 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
     _usb = make_gr_mod_ssb_sdr(0, 1000000, 1700, 2500);
     _lsb = make_gr_mod_ssb_sdr(1, 1000000, 1700, 2500);
     _freedv_tx1600_usb = make_gr_mod_freedv_sdr(125, 1000000, 1700, 2500, gr::vocoder::freedv_api::MODE_1600, 0);
+
+#ifdef FREEDV_MODE_700C
     _freedv_tx700C_usb = make_gr_mod_freedv_sdr(125, 1000000, 1700, 2500, gr::vocoder::freedv_api::MODE_700C, 0);
+#else
+    _freedv_tx700C_usb = make_gr_mod_freedv_sdr(125, 1000000, 1700, 2500, gr::vocoder::freedv_api::MODE_700, 0);
+#endif
+
     _freedv_tx1600_lsb = make_gr_mod_freedv_sdr(125, 1000000, 1700, 2500, gr::vocoder::freedv_api::MODE_1600, 1);
+
+#ifdef FREEDV_MODE_700C
     _freedv_tx700C_lsb = make_gr_mod_freedv_sdr(125, 1000000, 1700, 2500, gr::vocoder::freedv_api::MODE_700C, 1);
+#else
+    _freedv_tx700C_lsb = make_gr_mod_freedv_sdr(125, 1000000, 1700, 2500, gr::vocoder::freedv_api::MODE_700, 1);
+#endif
 
 }
 
