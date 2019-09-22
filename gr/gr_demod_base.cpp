@@ -142,7 +142,7 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
     _freedv_rx1600_usb = make_gr_demod_freedv(125, 1000000, 1700, 2500, gr::vocoder::freedv_api::MODE_1600, 0);
 
 #ifdef FREEDV_MODE_700C
-    _freedv_rx700C_usb = make_gr_demod_freedv(125, 1000000, 1700, 2500, gr::vocoder::freedv_api::MODE_700C, 0);
+    _freedv_rx700C_usb = make_gr_demod_freedv(125, 1000000, 1700, 2500, gr::vocoder::freedv_api::MODE_700D, 0);
 #else
     _freedv_rx700C_usb = make_gr_demod_freedv(125, 1000000, 1700, 2500, gr::vocoder::freedv_api::MODE_700, 0);
 #endif
@@ -150,7 +150,7 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
     _freedv_rx1600_lsb = make_gr_demod_freedv(125, 1000000, 1700, 2500, gr::vocoder::freedv_api::MODE_1600, 1);
 
 #ifdef FREEDV_MODE_700C
-    _freedv_rx700C_lsb = make_gr_demod_freedv(125, 1000000, 1700, 2500, gr::vocoder::freedv_api::MODE_700C, 1);
+    _freedv_rx700C_lsb = make_gr_demod_freedv(125, 1000000, 1700, 2500, gr::vocoder::freedv_api::MODE_700D, 1);
 #else
     _freedv_rx700C_lsb = make_gr_demod_freedv(125, 1000000, 1700, 2500, gr::vocoder::freedv_api::MODE_700, 1);
 #endif
@@ -447,6 +447,7 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
             _top_block->connect(_demod_valve,0,_wfm,0);
             _top_block->connect(_wfm,0,_rssi_valve,0);
             _top_block->connect(_wfm,1,_audio_sink,0);
+        break;
         default:
             break;
         }

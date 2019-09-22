@@ -72,6 +72,7 @@ void logMessage(QtMsgType type, const char *msg)
     ts << txt << endl;
 }
 
+
 int main(int argc, char *argv[])
 {
 #if 0
