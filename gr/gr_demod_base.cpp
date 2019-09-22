@@ -447,6 +447,7 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
             _top_block->connect(_demod_valve,0,_wfm,0);
             _top_block->connect(_wfm,0,_rssi_valve,0);
             _top_block->connect(_wfm,1,_audio_sink,0);
+        break;
         default:
             break;
         }

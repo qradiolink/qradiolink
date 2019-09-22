@@ -95,7 +95,7 @@ int rx_fft_c::work(int noutput_items,
             d_data_ready = true;
             d_push++;
         }
-        d_sample_buffer[d_counter] = in[i]; // this is actually FFT's own buffer
+        d_sample_buffer[d_counter] = in[i] * d_window[d_counter]; // this is actually FFT's own buffer
         d_counter++;
     }
 
@@ -138,7 +138,7 @@ void rx_fft_c::get_fft_data(float* fftPoints, unsigned int &fftSize)
 void rx_fft_c::do_fft(const gr_complex *data_in, unsigned int size)
 {
     /* apply window, if any */
-    // we don't apply window anymore, FFT should take care of that
+
     if (d_window.size())
     {
         gr_complex *dst = d_fft->get_inbuf();
