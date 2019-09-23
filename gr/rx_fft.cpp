@@ -91,7 +91,7 @@ int rx_fft_c::work(int noutput_items,
         {
             d_counter = 0;
             d_fft->execute();
-            volk_32fc_s32f_x2_power_spectral_density_32f(d_fft_points, d_fft->get_outbuf(), d_fftsize, 1.0, d_fftsize);
+            volk_32fc_s32f_power_spectrum_32f_a(d_fft_points, d_fft->get_outbuf(), d_fftsize, d_fftsize);
             d_data_ready = true;
             d_push++;
         }

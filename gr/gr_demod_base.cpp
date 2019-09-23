@@ -698,6 +698,7 @@ void gr_demod_base::set_samp_rate(int samp_rate)
         taps = gr::filter::firdes::low_pass(1, _samp_rate, 480000, 100000, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
 
         _resampler = gr::filter::rational_resampler_base_ccf::make(1, decimation, taps);
+        _resampler->set_thread_priority(75);
         _top_block->connect(_rotator,0, _resampler,0);
         _top_block->connect(_resampler,0, _demod_valve,0);
     }
