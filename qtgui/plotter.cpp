@@ -778,7 +778,7 @@ void CPlotter::zoomStepX(float step, int x)
 
     float factor = (float)m_SampleFreq / (float)m_Span;
     emit newZoomLevel(factor);
-    qDebug() << QString("Spectrum zoom: %1x").arg(factor, 0, 'f', 1);
+    //qDebug() << QString("Spectrum zoom: %1x").arg(factor, 0, 'f', 1);
 
     m_PeakHoldValid = false;
 }
