@@ -85,7 +85,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     _speech_icon_timer.setSingleShot(true);
     _secondary_text_timer.setSingleShot(true);
 
-    QObject::connect(ui->buttonTransmit,SIGNAL(toggled(bool)),this,SLOT(startTransmissionRequested()));
+    QObject::connect(ui->buttonTransmit,SIGNAL(toggled(bool)),this,SLOT(startTx()));
     //QObject::connect(ui->buttonTransmit,SIGNAL(released()),this,SLOT(GUIendTransmission()));
     QObject::connect(ui->sendTextButton,SIGNAL(clicked()),this,SLOT(sendTextRequested()));
     QObject::connect(ui->voipConnectButton,SIGNAL(clicked()),this,SLOT(connectVOIPRequested()));
@@ -407,26 +407,24 @@ void MainWindow::saveConfig()
 }
 
 
-void MainWindow::endTransmissionRequested()
+void MainWindow::endTx()
 {
     emit endTransmission();
-    ui->redLED->setEnabled(false);
 }
 
-void MainWindow::startTransmissionRequested()
+void MainWindow::startTx()
 {
     if(!_transmitting_radio)
     {
         emit startTransmission();
         ui->frameCtrlFreq->setFrequency(_rx_frequency + _demod_offset + _tx_shift_frequency, false);
-        ui->redLED->setEnabled(true);
         _transmitting_radio=true;
     }
     else
     {
         ui->frameCtrlFreq->setFrequency(_rx_frequency + _demod_offset, false);
         _transmitting_radio=false;
-        endTransmissionRequested();
+        endTx();
     }
 }
 
@@ -435,7 +433,6 @@ void MainWindow::sendTextRequested()
     QString text = ui->sendTextEdit->toPlainText();
     emit sendText(text, false);
     ui->sendTextEdit->setPlainText("");
-    ui->redLED->setEnabled(true);
 }
 
 void MainWindow::newFFTData(float *fft_data, int fftsize)
@@ -598,7 +595,6 @@ void MainWindow::chooseFile()
         return;
     QString filedata = QString(file.readAll().constData());
     emit sendText(filedata, true);
-    ui->redLED->setEnabled(true);
 }
 
 void MainWindow::displayReceiveStatus(bool status)

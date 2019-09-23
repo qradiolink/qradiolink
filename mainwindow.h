@@ -48,8 +48,8 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public slots:
-    void startTransmissionRequested();
-    void endTransmissionRequested();
+    void startTx();
+    void endTx();
     void connectVOIPRequested();
     void disconnectVOIPRequested();
     void connectedToServer(QString msg);

@@ -567,6 +567,7 @@ void RadioOp::startTx()
             _modem->startTransmission(_callsign);
             _mutex->unlock();
         }
+        emit displayTransmitStatus(true);
 
     }
 
@@ -616,6 +617,7 @@ void RadioOp::endTx()
         _modem->enableDemod(true);
         _modem->setRxSensitivity(_rx_sensitivity);
     }
+    emit displayTransmitStatus(false);
 }
 
 void RadioOp::updateFrequency()
