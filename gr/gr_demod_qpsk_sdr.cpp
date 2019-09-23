@@ -101,21 +101,21 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
     fll_bw = 24;
     if(sps <= 4)
     {
-        gain_mu = 0.001;
-        omega_rel_limit = 0.001;
+        gain_mu = 0.025;
+        omega_rel_limit = 0.005;
         filt_length = 11;
         fll_bw = 2;
     }
     else if(sps >= 125)
     {
         gain_mu = 0.005;
-        omega_rel_limit = 0.001;
+        omega_rel_limit = 0.05;
         filt_length = 21;
     }
     else
     {
-        gain_mu = 0.001;
-        omega_rel_limit = 0.001;
+        gain_mu = 0.005;
+        omega_rel_limit = 0.05;
         filt_length = 11;
     }
 
@@ -128,7 +128,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
     _clock_sync = gr::digital::pfb_clock_sync_ccf::make(_samples_per_symbol,2*M_PI/100,pfb_taps,flt_size, 0, 1.01, 8);
     _costas_loop = gr::digital::costas_loop_cc::make(2*M_PI/100,4,true);
     _equalizer = gr::digital::cma_equalizer_cc::make(11,2,0.008,1);
-    _fll = gr::digital::fll_band_edge_cc::make(_samples_per_symbol, 0.35, 32, 2*M_PI/100);
+    _fll = gr::digital::fll_band_edge_cc::make(_samples_per_symbol, 0.35, 32, fll_bw*M_PI/100);
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
 
     gr::fec::code::cc_decoder::sptr decoder = gr::fec::code::cc_decoder::make(80, 7, 2, polys);

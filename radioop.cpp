@@ -263,11 +263,24 @@ void RadioOp::updateInputAudioStream()
     if((_tx_mode == gr_modem_types::ModemTypeBPSK2000) ||
             (_tx_mode == gr_modem_types::ModemType2FSK2000) ||
             (_tx_mode == gr_modem_types::ModemType4FSK2000) ||
-            (_tx_mode == gr_modem_types::ModemTypeQPSK2000))
+            (_tx_mode == gr_modem_types::ModemTypeQPSK2000) ||
+            (_tx_mode == gr_modem_types::ModemTypeBPSK1000))
+    {
         audio_mode = AudioInterface::AUDIO_MODE_CODEC2;
-    else
+        emit setAudioReadMode(true, true, audio_mode);
+    }
+    else if((_tx_mode == gr_modem_types::ModemTypeQPSK20000) ||
+            (_tx_mode == gr_modem_types::ModemType2FSK20000) ||
+            (_tx_mode == gr_modem_types::ModemType4FSK20000))
+    {
         audio_mode = AudioInterface::AUDIO_MODE_OPUS;
-    emit setAudioReadMode(true, true, audio_mode);
+        emit setAudioReadMode(true, true, audio_mode);
+    }
+    else
+    {
+        audio_mode = AudioInterface::AUDIO_MODE_ANALOG;
+        emit setAudioReadMode(true, false, audio_mode);
+    }
 }
 
 void RadioOp::txAudio(short *audiobuffer, int audiobuffer_size, int vad, bool radio_only)

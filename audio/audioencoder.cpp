@@ -55,12 +55,12 @@ AudioEncoder::AudioEncoder()
     {
         qDebug() << "audio filter creation failed";
     }
-    _audio_filter_700 = new Filter(BPF,32,8,0.2,2.4); // 16,8,0.12,3.8
+    _audio_filter_700 = new Filter(BPF,256,8,0.2,3.0); // 16,8,0.12,3.8
     if( _audio_filter_700->get_error_flag() != 0 )
     {
         qDebug() << "audio filter creation failed";
     }
-    _audio_filter2_700 = new Filter(BPF,32,8,0.2,2.4);
+    _audio_filter2_700 = new Filter(BPF,256,8,0.2,3.0);
     if( _audio_filter2_700->get_error_flag() != 0 )
     {
         qDebug() << "audio filter creation failed";
@@ -272,7 +272,7 @@ void AudioEncoder::filter_audio(short *audiobuffer, int audiobuffersize, bool pr
             {
                 output = _audio_filter2_700->do_sample(sample) + 0.1 * (rand() % 1000); //+ 0.9375f * _emph_last_input;  // 0.9
                 _emph_last_input = output;
-                audiobuffer[i] = (short) (output * 1.5);
+                audiobuffer[i] = (short) (output * 0.9);
             }
         }
         if(pre_emphasis)
@@ -283,7 +283,7 @@ void AudioEncoder::filter_audio(short *audiobuffer, int audiobuffersize, bool pr
             {
                 output = _audio_filter_1400->do_sample(sample);// - 0.9375f * _emph_last_input;
                 _emph_last_input = output;
-                audiobuffer[i] = (short) (output * 0.5);
+                audiobuffer[i] = (short) (output * 0.9);
             }
             else
             {
