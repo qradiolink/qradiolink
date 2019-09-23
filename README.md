@@ -45,14 +45,14 @@ Features
 Requirements
 ----
 
-- Since release 0.8.0, GNU radio can be upgraded to 3.7.13 and Qt5 is used for the graphical interface. Debian Buster is the base GNU/Linux distribution for which packages are built.
+- Since release 0.8.0, GNU radio version is changed to 3.7.13 (although 3.7.10 is still supported) and Qt5 is used for the graphical interface. Debian Buster is the base GNU/Linux distribution for which packages are built.
 - Build dependencies on Debian Buster with Qt5 and GNU radio 3.7.13: 
 
 <pre>
 $ sudo apt-get install gnuradio-dev protobuf-compiler gr-osmosdr gnuradio libvolk1-dev libvolk1-bin libgsm1 libgsm1-dev libprotobuf17 libprotobuf-dev libopus0 libopus-dev libspeexdsp1 libspeexdsp-dev libpulse0 libpulse-dev libcodec2-0.8.1 libcodec2-dev libasound2 libasound2-dev libjpeg62-turbo libjpeg62-turbo-dev libconfig++9v5 libconfig++-dev qt5-qmake qt5-default qtbase5-dev libqt5core5a libqt5gui5 libqt5network5 libqt5sql5
 </pre>
 
-- Qt >= 5.2 and Qt5 development packages
+- Qt >= 5.7 and Qt5 development packages
 - qmake
 - Pulseaudio (native Alsa support is not fully implemented) 
 - Gnuradio >= 3.7.10 built with gr-osmosdr and UHD support
