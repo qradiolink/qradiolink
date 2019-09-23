@@ -1,3 +1,13 @@
+qradiolink (0.8.0) UNRELEASED; urgency=medium
+
+  [ Adrian Musceac ]
+  * Fixed some bugs found in the release candidates
+  * Added FreeDV 1600 and FreeDV 700C digital modes
+  * Performance inprovements to the FFT code
+  * Update to GNU radio 3.7.13 and Qt 5.13
+  * Base release for Debian Buster
+
+
 qradiolink (0.8.0-rc3) UNRELEASED; urgency=medium
 
   [ Adrian Musceac ]

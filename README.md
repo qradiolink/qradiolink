@@ -8,52 +8,55 @@ QRadioLink
 About
 -----
 
-*QRadioLink* is a Linux software defined radio transceiver application using VOIP for inter-communication, built on top of [GNU radio](https://www.gnuradio.org/), 
-which allows experimenting with software defined radio hardware using different digital and analog radio signals and a friendly user interface.
+*QRadioLink* is a GNU/Linux software defined radio VOIP (radio over IP) transceiver application using Internet for communication, 
+built on top of [GNU radio](https://www.gnuradio.org/), 
+which allows experimenting with software defined radio hardware using different digital and analog radio signals and a Qt5 user interface.
 
-Its primary purpose is educational, but it can also be customized for low power data communications
-on various frequency bands.
-It can also be used as an amateur radio SDR transceiver for demonstrating radio communications to students.
+Its primary purpose is educational, but it can also be customized for low power data communications on various ISM frequency bands.
+It can also be used as a low power amateur radio SDR transceiver for demonstrating radio communications to children at schools.
 
 The application was originally inspired from the [Codec2 GMSK modem](https://github.com/on1arf/gmsk) project by Kristoff Bonne.
 
-[![Screenshot](http://qradiolink.org/images/qradiolink48.png)](http://qradiolink.org)
+[![Screenshot](http://qradiolink.org/images/qradiolink47.png)](http://qradiolink.org)
+
 
 Features
 ---
 
+- VOIP (Radio-over-IP) connection between two or more stations operating in simplex or semi-duplex mode
+- Direct VOIP talk-around (only requires connection to a VOIP server and no radio)
 - Transmit and receive analog FM, SSB, AM, digital voice, text messages, digital video, IP protocol.
-- Full duplex 250 kbit/s IP data modem with configurable TX/RX offsets
+- Full duplex 250 kbit/s IP radio modem with configurable TX/RX offsets
 - Analog and digital mode repeater - full duplex mode, no mixed mode support 
 - Radio forwarding over VOIP - forward voice to the VOIP connection and viceversa
-- VOIP connection between two or more stations operating in simplex or semi-duplex mode
-- Direct VOIP talk-around (requires internet connection)
 - VOX mode
 - Mixed operation mode (receive one mode and transmit another)
-- Audio codecs: Codec2 700 bit/s, Codec2 1400 bit/s, Opus 9600 bit/s
-- Narrow band digital voice mode with the [Codec2](http://rowetel.com/codec2.html) audio codec
-- Wideband digital voice mode with the [Opus](https://xiph.org) audio codec
-- FreeDV modulator and demodulator (currently supports only 1600 and 700C modes)
-- Digital modulation:  **BPSK**, **DQPSK**, **2FSK**, **4FSK**, **FreeDV 1600**, **FreeDV 700C**
-- Automatic carrier tracking and Doppler effect correction for digital modes. The system can track Doppler shifts of 5-10 kHz, depending on mode. It requires a CNR of at least 10-12 dB, more for FSK modes than for PSK modes.
-- Analog modulation: narrow FM (5 kHz), FM (8 kHz), Wide FM (broadcast, receive-only), AM, SSB
+- Full duplex operation
+- Split operation (transmit on other frequency than the receive frequency with no shift limitation, used mostly for repeater operation)
+- Digital voice codecs: Codec2 700 bit/s, Codec2 1400 bit/s, Opus 9600 bit/s
+- FreeDV digital voice modulator and demodulator (currently supports only 1600 and 700C modes)
+- Digital modulations:  **BPSK**, **DQPSK**, **2FSK**, **4FSK**, **FreeDV 1600**, **FreeDV 700C**
+- Analog modulations: FM (10 kHz), narrow FM (5 kHz), SSB, AM, Wide FM (broadcast, receive-only)
 - CTCSS encoder and decoder for analog FM
-- Supported hardware: [**Ettus USRP**](https://ettus.com), [**RTL-SDR**](https://osmocom.org/projects/sdr/wiki/rtl-sdr), LimeSDR, [**LimeSDR-mini**](https://www.crowdsupply.com/lime-micro/limesdr-mini) (through SoapySDR), PlutoSDR (through [**SoapyPlutoSDR**](https://github.com/pothosware/SoapyPlutoSDR)), BladeRF, other devices supported by [**gr-osmosdr**](https://osmocom.org/projects/sdr/wiki/GrOsmoSDR) like HackRF and RedPitaya (not tested)
+- Automatic carrier tracking and Doppler effect correction for all digital modes except FreeDV modes. The system can track Doppler shifts of 5-10 kHz, depending on mode. It requires a CNR of at least 10-12 dB, more for FSK modes than for PSK modes.
+- Supported hardware: [**Ettus USRP bus devices**](https://ettus.com), [**RTL-SDR**](https://osmocom.org/projects/sdr/wiki/rtl-sdr), [**ADALM-Pluto (PlutoSDR)**](https://www.analog.com/en/design-center/evaluation-hardware-and-software/evaluation-boards-kits/adalm-pluto.html), (supported with SoapySDR and [**SoapyPlutoSDR**](https://github.com/pothosware/SoapyPlutoSDR)), [**LimeSDR-mini**](https://www.crowdsupply.com/lime-micro/limesdr-mini) (partly supported, through SoapySDR), BladeRF, other devices supported by [**gr-osmosdr**](https://osmocom.org/projects/sdr/wiki/GrOsmoSDR) like HackRF and RedPitaya (not tested)
  
 
 Requirements
 ----
-- Build dependencies on Debian Stretch for a Qt5 interface: 
 
-<pre>libasound2 (>= 1.0.16), libboost-program-options1.62.0, libboost-system1.62.0, libboost-thread1.62.0, libc6 (>= 2.15), libcodec2-0.4, libconfig++9v5, libgcc1 (>= 1:3.0), libgl1-mesa-glx | libgl1, libgnuradio-analog3.7.10, libgnuradio-audio3.7.10, libgnuradio-blocks3.7.10, libgnuradio-digital3.7.10, libgnuradio-fec3.7.10, libgnuradio-fft3.7.10, libgnuradio-filter3.7.10, libgnuradio-osmosdr0.1.4, libgnuradio-pmt3.7.10, libgnuradio-runtime3.7.10, libgsm1 (>= 1.0.13), libjpeg62-turbo (>= 1.3.1), libopus0 (>= 1.1), libprotobuf10, libpulse0 (>= 0.99.1), libqt5core5a (>= 5.7.0), libqt5gui5 (>= 5.3.0), libqt5network5 (>= 5.0.2), libqt5sql5 (>= 5.0.2), libqt5widgets5 (>= 5.2.0), libspeexdsp1 (>= 1.2~beta3.2-1), libstdc++6 (>= 5.2), gnuradio-dev, gr-osmosdr, libgsm1-dev, libprotobuf-dev, libopus-dev, libspeexdsp-dev, libpulse-dev, libcodec2-dev, libasound2-dev, libjpeg62-turbo-dev, libconfig++-dev, qt5-qmake, qt5-default, qtbase5-dev, libvolk1-dev, libvolk1-bin
+- Since release 0.8.0, GNU radio can be upgraded to 3.7.13 and Qt5 is used for the graphical interface. Debian Buster is the base GNU/Linux distribution for which packages are built.
+- Build dependencies on Debian Buster with Qt5 and GNU radio 3.7.13: 
+
+<pre>
+$ sudo apt-get install gnuradio-dev protobuf-compiler gr-osmosdr gnuradio libvolk1-dev libvolk1-bin libgsm1 libgsm1-dev libprotobuf17 libprotobuf-dev libopus0 libopus-dev libspeexdsp1 libspeexdsp-dev libpulse0 libpulse-dev libcodec2-0.8.1 libcodec2-dev libasound2 libasound2-dev libjpeg62-turbo libjpeg62-turbo-dev libconfig++9v5 libconfig++-dev qt5-qmake qt5-default qtbase5-dev libqt5core5a libqt5gui5 libqt5network5 libqt5sql5
 </pre>
 
-- Please make sure you have all the development packages installed before building QRadioLink
-- Qt >= 5.2 (Qt 4.8 is supported but not recommended anymore) and Qt5 development packages
-- qmake (either qmake-qt4 -not recommended- or qmake-qt5)
+- Qt >= 5.2 and Qt5 development packages
+- qmake
 - Pulseaudio (native Alsa support is not fully implemented) 
-- Gnuradio >= 3.7.10 built with OsmoSDR and UHD support
-- optionally SoapySDR and SoapyPlutoSDR, LimeSDR software libraries
+- Gnuradio >= 3.7.10 built with gr-osmosdr and UHD support
+- optionally SoapySDR and SoapyPlutoSDR, SoapyLMS7
 - Boost and boost-devel
 - libgnuradio-osmosdr built with UHD, RTL-SDR, SoapySDR, HackRF, RedPitaya or BladeRF support
 - libgsm, libprotobuf, libopus, libspeexdsp, libpulse-simple, libpulse, libasound, libcodec2, libsqlite3, libjpeg, libconfig++, libvolk
@@ -73,7 +76,7 @@ $ sudo apt install libjpeg-turbo8-dev libjpeg-dev
 [Downloads](https://github.com/kantooon/qradiolink/releases "Downloads")
 ----
 
-Debian Stretch x86_64 packages are provided via Travis CI automated builds
+Debian Buster x86_64 packages are provided via Travis CI automated builds
 Please see the [Github releases page](https://github.com/kantooon/qradiolink/releases) for binary downloads.
 
 Opensuse packages are available from [Opensuse build server](https://build.opensuse.org/package/show/hardware:sdr/qradiolink)
@@ -82,7 +85,16 @@ thanks to Martin Hauke.
 Building the software from source
 -----
 
-The guide assumes you are using Debian Stetch.
+- Clone the Github repository into a directory of your choice
+- Change directory to where you have cloned or unzipped the code
+- Execute build_debian.sh
+
+<pre>
+$ sh ./build_debian.sh
+</pre>
+
+Or alternatively:
+
 - Clone the Github repository into a directory of your choice
 - Compile the protobuf sources for your system
 - Run qmake to generate the Makefile
@@ -90,44 +102,40 @@ The guide assumes you are using Debian Stetch.
 
 <pre>
 cd qradiolink
-mkdir build
+mkdir -p build
 cd ext/
 protoc --cpp_out=. Mumble.proto
 protoc --cpp_out=. QRadioLink.proto
-cd ..
-cd build/
+cd ../build/
 qmake ..
 make
 ./qradiolink
 </pre>
 
 Known issues:
-- Segmentation faults when a video frame is received. The source of this is still being searched.
-- In low light, the automatic adjustment of ISO in the video camera can cause very long times to capture a frame.
-Solution: use plenty of lighting for video.
-- On Gnome desktop environments, the Qt color scheme is not displayed correctly
-
-
+- In low light, the automatic adjustment of ISO in the video camera can cause very long times to capture a frame. The solution is to use plenty of lighting for video.
+- When changing the FFT size, the FFT display can sometimes disappear or look wrong. The application needs to be restarted to correct this.
 
 Running
 -------
-- It is recommended to start the application using the command line and check for errors.
-- At first run, see the Setup tab first and configure the application, then click Save before starting TX or RX from the main page.
-- VOIP uses [umurmur](https://github.com/umurmur/umurmur) as a server. A version known to work with qradiolink is mirrored at [qradiolink](https://github.com/qradiolink/umurmur) The available channels and the logged in stations are also listed on the page once you have connected to the server. You can use QRadioLink as a pure VOIP client without using the radio by selecting "Use PTT for VOIP". You can also forward the digital or analog radio voice to the VOIP reflector. Any voice packets coming from the reflector will be transmitted directly after transcoding in this case. Currently full duplex audio from more than two VOIP clients at the same time is not supported.
+- It is recommended to start the application using the command line when running the first few times.
+- When first run, go to the Setup tab first and configure the options, then click Save before starting TX or RX.
+- VOIP uses [umurmur](https://github.com/umurmur/umurmur) as a server. A version known to work with qradiolink is mirrored at [qradiolink](https://github.com/qradiolink/umurmur)  You can use QRadioLink as a pure VOIP client without using the radio by selecting "Use PTT for VOIP". For radio over IP operation, you need to toggle "Forward radio" to send the digital or analog radio voice to the VOIP server. Any voice packets coming from the server will be transmitted directly after transcoding in this case. Currently full duplex audio from more than two VOIP clients at the same time is not supported.
 - The configuration file is located in $HOME/.config/qradiolink.cfg
-- The select inputs in the lower right corner toggle between different operating modes. Repeater mode requires both RX and TX to use the same mode.
-- Video will be displayed in the upper right corner. If your camera does not work, see the V4L2 guide for troubleshooting camera settings.
+- In full duplex operation you need to have sufficient isolation between the TX antenna port and the RX antenna port to avoid overloading your input.
+- Video will be displayed in the upper right corner. If your camera does not work, see the V4L2 guide in the docs/ directory for troubleshooting camera settings.
+- IP over radio operation mode requires net administration priviledges to be granted to the application. See the instructions in the docs/ directory.
+- VOX mode requires careful setup of system microphone gain to avoid getting stuck on transmit.
 
 
 Credits and License
 -------------------
 - QRadioLink is written by Adrian Musceac YO8RZZ, and is released under an Open Source License,
  the GNU General Public License version 3.
-- It makes use of other code under compatible licenses, and the authors are credited in the source files.
 - The CFreqCtrl and CPlotter widgets are Copyright 2010 Moe Wheatley and Alexandru Csete OZ9AEC.
-- The FFT code from Gqrx is used as well
-- [Codec2](http://rowetel.com/codec2.html) is developed by David Rowe
-- [Opus](https://xiph.org) is developed by the Xiph foundation
+- It makes use of other code under compatible licenses, and the authors are credited in the source files.
 - [GNU radio](https://www.gnuradio.org/)  is a free software development toolkit that provides signal processing
 blocks to implement software-defined radios and signal-processing systems.
+- [Codec2](http://rowetel.com/codec2.html) is developed by David Rowe
+- [Opus](https://xiph.org) is developed by the Xiph foundation
 
