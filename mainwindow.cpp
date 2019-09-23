@@ -175,7 +175,9 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     ui->plotterFrame->setFreqDigits(2);
     ui->plotterFrame->setTooltipsEnabled(true);
     ui->plotterFrame->setClickResolution(1);
-    setFFTRange(1);
+    ui->plotterFrame->setFftRange(-120.0,-30.0);
+    ui->plotterFrame->setWaterfallRange(-120.0,-30.0);
+    //setFFTRange(1);
     _range_set = false;
     //QPixmap pm = QPixmap::grabWidget(ui->frameCtrlFreq);
     //ui->frameCtrlFreq->setMask(pm.createHeuristicMask(false));
@@ -203,7 +205,7 @@ void MainWindow::initSettings()
     readConfig();
     updateRSSI(9999);
     _range_set = false;
-    setFFTRange(1);
+    //setFFTRange(1);
     setEnabledFFT((bool)_settings->show_fft);
     setEnabledDuplex((bool) _settings->enable_duplex);
     _range_set = false;
@@ -968,7 +970,7 @@ void MainWindow::toggleVox(bool value)
 
 void MainWindow::setPeakDetect(bool value)
 {
-    ui->plotterFrame->setPeakDetection(value, 3.0);
+    ui->plotterFrame->setPeakDetection(value, 6.0);
 }
 
 void MainWindow::updateRSSI(float value)
@@ -976,10 +978,10 @@ void MainWindow::updateRSSI(float value)
     _rssi = value;
     if(!_range_set)
     {
-        setFFTRange(1);
+        //setFFTRange(1);
         _range_set = true;
     }
-    if(!_settings->show_controls && value != 9999)
+    if(!_settings->show_controls && value > 90.0)
         return;
 
     float S9 = 80.0; // degrees
