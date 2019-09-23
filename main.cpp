@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
 
 
     QApplication a(argc, argv);
-    a.setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; border: 0px solid white; }");
+
     QStringList arguments = QCoreApplication::arguments();
     QFontDatabase::addApplicationFont(":/fonts/res/LiquidCrystal-Normal.otf");
     QFontDatabase::addApplicationFont(":/fonts/res/LiquidCrystal-Bold.otf");
@@ -159,18 +159,6 @@ int main(int argc, char *argv[])
     QObject::connect(t2, SIGNAL(finished()), t2, SLOT(deleteLater()));
     t2->start();
 
-
-
-    QThread *t3 = new QThread;
-    AudioOp *audio_op = new AudioOp(settings);
-    audio_op->moveToThread(t3);
-    QObject::connect(audio_op,SIGNAL(audioData(short*,short)),client,SLOT(processAudio(short*,short)));
-    QObject::connect(client,SIGNAL(pcmAudio(short*,short)),audio_op,SLOT(pcmAudio(short*,short)));
-    QObject::connect(t3, SIGNAL(started()), audio_op, SLOT(run()));
-    QObject::connect(audio_op, SIGNAL(finished()), t3, SLOT(quit()));
-    QObject::connect(audio_op, SIGNAL(finished()), audio_op, SLOT(deleteLater()));
-    QObject::connect(t3, SIGNAL(finished()), t3, SLOT(deleteLater()));
-    t3->start();
     */
 
 

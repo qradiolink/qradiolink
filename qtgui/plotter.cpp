@@ -189,7 +189,7 @@ CPlotter::CPlotter(QWidget *parent) : QFrame(parent)
     m_GrabPosition = 0;
     m_Percent2DScreen = 30;	//percent of screen used for 2D display
     m_VdivDelta = 30;
-    m_HdivDelta = 70;
+    m_HdivDelta = 100;
 
     m_FreqDigits = 3;
 
@@ -309,8 +309,8 @@ void CPlotter::mouseMoveEvent(QMouseEvent* event)
                 }
                 if (m_TooltipsEnabled)
                     QToolTip::showText(event->globalPos(),
-                                       QString("F: %1 kHz")
-                                       .arg(freqFromX(pt.x())/1.e3f, 0, 'f', 3),
+                                       QString("F: %1 kHz \n%2 dB")
+                                       .arg(freqFromX(pt.x())/1.e3f, 0, 'f', 3).arg(dbFromY(pt.y()), 1, 10, 3),
                                        this);
             }
             m_GrabPosition = 0;
@@ -1357,7 +1357,7 @@ void CPlotter::drawOverlay()
     painter.setPen(QColor(PLOTTER_TEXT_COLOR));
     for (int i = 0; i <= m_HorDivs; i++)
     {
-        int tw = metrics.width(m_HDivText[i]);
+        int tw = metrics.width(m_HDivText[i]) + 3;
         x = (int)((float)i*pixperdiv + adjoffset);
         if (x > m_YAxisWidth)
         {
@@ -1515,6 +1515,15 @@ qint64 CPlotter::freqFromX(int x)
     qint64 StartFreq = m_CenterFreq + m_FftCenter - m_Span / 2;
     qint64 f = (qint64)(StartFreq + (float)m_Span * (float)x / (float)w);
     return f;
+}
+
+float CPlotter::dbFromY(int y)
+{
+    float delta_px = m_Yzero - y;
+    float delta_db = delta_px * fabs(m_PandMindB - m_PandMaxdB) /
+            (float)m_OverlayPixmap.height();
+    float db = m_PandMaxdB + delta_db;
+    return db;
 }
 
 /** Calculate time offset of a given line on the waterfall */

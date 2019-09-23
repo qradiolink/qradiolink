@@ -206,9 +206,9 @@
               </size>
              </property>
              <property name="styleSheet">
-              <string notr="true">font: 7pt &quot;Sans Serif&quot;;
+              <string notr="true">font: 10pt &quot;Sans Serif&quot;;
 QToolTip {
-font-size: 12pt &quot;Sans Serif&quot;;
+font: 12pt &quot;Sans Serif&quot;;
 color:white;
  border-width:0px; s
 border-style:solid; 
@@ -1409,7 +1409,7 @@ background-color: rgb(0, 0, 67);
                    <property name="icon">
                     <iconset resource="resources.qrc">
                      <normaloff>:/res/Button-Blank-Gray-icon.png</normaloff>
-                     <normalon>:/res/Button-Blank-Red-icon.png</normalon>:/res/Button-Blank-Gray-icon.png</iconset>
+                     <normalon>:/res/Button-Blank-Yellow-icon.png</normalon>:/res/Button-Blank-Gray-icon.png</iconset>
                    </property>
                    <property name="checkable">
                     <bool>true</bool>
@@ -1449,7 +1449,7 @@ background-color: rgb(0, 0, 67);
                    <property name="icon">
                     <iconset resource="resources.qrc">
                      <normaloff>:/res/Button-Blank-Gray-icon.png</normaloff>
-                     <normalon>:/res/text-speak.png</normalon>:/res/Button-Blank-Gray-icon.png</iconset>
+                     <normalon>:/res/Button-Blank-Yellow-icon.png</normalon>:/res/Button-Blank-Gray-icon.png</iconset>
                    </property>
                    <property name="checkable">
                     <bool>true</bool>
@@ -2807,10 +2807,13 @@ font: 9pt &quot;Sans Serif&quot;;</string>
          <property name="geometry">
           <rect>
            <x>630</x>
-           <y>10</y>
-           <width>154</width>
-           <height>60</height>
+           <y>8</y>
+           <width>180</width>
+           <height>65</height>
           </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(0, 0, 0);</string>
          </property>
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
@@ -2819,7 +2822,7 @@ font: 9pt &quot;Sans Serif&quot;;</string>
           <enum>QFrame::Sunken</enum>
          </property>
          <property name="lineWidth">
-          <number>1</number>
+          <number>3</number>
          </property>
          <property name="text">
           <string/>
@@ -3644,7 +3647,7 @@ background-color: rgb(0, 0, 67);</string>
             </property>
             <property name="maximumSize">
              <size>
-              <width>140</width>
+              <width>150</width>
               <height>35</height>
              </size>
             </property>
@@ -3705,7 +3708,7 @@ background-color: rgb(0, 0, 67);
             </property>
             <property name="maximumSize">
              <size>
-              <width>140</width>
+              <width>150</width>
               <height>35</height>
              </size>
             </property>
@@ -3799,7 +3802,7 @@ color: rgb(255, 255, 255);</string>
             <property name="icon">
              <iconset resource="resources.qrc">
               <normaloff>:/res/Button-Blank-Gray-icon.png</normaloff>
-              <normalon>:/res/Button-Blank-Blue-icon.png</normalon>:/res/Button-Blank-Gray-icon.png</iconset>
+              <normalon>:/res/Button-Blank-Yellow-icon.png</normalon>:/res/Button-Blank-Gray-icon.png</iconset>
             </property>
             <property name="iconSize">
              <size>

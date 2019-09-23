@@ -177,6 +177,7 @@ private:
     void        makeFrequencyStrs();
     int         xFromFreq(qint64 freq);
     qint64      freqFromX(int x);
+    float dbFromY(int y);
     void        zoomStepX(float factor, int x);
     qint64      roundFreq(qint64 freq, int resolution);
     quint64     msecFromY(int y);

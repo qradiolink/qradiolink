@@ -28,6 +28,7 @@
 #include <QGraphicsOpacityEffect>
 #include <QPropertyAnimation>
 #include <QPainter>
+#include <QToolTip>
 #include "mumbleclient.h"
 #include <math.h>
 #include <complex>
