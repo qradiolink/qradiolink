@@ -120,6 +120,7 @@ Running
 -------
 - It is recommended to start the application using the command line when running the first few times.
 - When first run, go to the Setup tab first and configure the options, then click Save before starting TX or RX.
+- You can only transmit when you have selected a sample rate of 1 Msps (1000000). Other sample rates are for receiving only.
 - VOIP uses [umurmur](https://github.com/umurmur/umurmur) as a server. A version known to work with qradiolink is mirrored at [qradiolink](https://github.com/qradiolink/umurmur)  You can use QRadioLink as a pure VOIP client without using the radio by selecting "Use PTT for VOIP". For radio over IP operation, you need to toggle "Forward radio" to send the digital or analog radio voice to the VOIP server. Any voice packets coming from the server will be transmitted directly after transcoding in this case. Currently full duplex audio from more than two VOIP clients at the same time is not supported.
 - The configuration file is located in $HOME/.config/qradiolink.cfg
 - In full duplex operation you need to have sufficient isolation between the TX antenna port and the RX antenna port to avoid overloading your input.
