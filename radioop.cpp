@@ -1121,6 +1121,8 @@ void RadioOp::processVoipAudioFrame(short *pcm, int samples, quint64 sid)
 
 void RadioOp::startTransmission()
 {
+    if(_rx_inited && _rx_sample_rate != 1000000)
+        return;
     if(_tx_inited || _voip_enabled)
         _transmitting_audio = true;
 }
