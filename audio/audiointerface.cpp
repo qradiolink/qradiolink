@@ -215,7 +215,7 @@ int AudioInterface::read_short(short *buf, short bufsize, bool preprocess, int a
 
     compress_audio(buf, bufsize, 0, audio_mode);
     float power = calc_audio_power(buf, bufsize/sizeof(short));
-    return (power > 0.001);
+    return (power > 2.0);
 }
 
 float AudioInterface::calc_audio_power(short *buf, short samples)

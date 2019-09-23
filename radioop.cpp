@@ -1595,6 +1595,7 @@ void RadioOp::setVox(bool value)
     _vox_enabled = value;
     if(_transmitting_audio && !_vox_enabled)
         _transmitting_audio = false;
+    _mutex->unlock();
 }
 
 void RadioOp::toggleRepeat(bool value)
