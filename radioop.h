@@ -37,6 +37,7 @@
 #include "settings.h"
 #include "mumblechannel.h"
 #include "radioprotocol.h"
+#include "relaycontroller.h"
 #include "station.h"
 #include "audio/audioencoder.h"
 #include "video/videoencoder.h"
@@ -45,6 +46,7 @@
 #include "net/netdevice.h"
 #include <gnuradio/digital/crc32.h>
 #include <libconfig.h++>
+#include <ftdi.h>
 
 typedef QVector<Station> StationList;
 typedef std::vector<std::complex<float>> complex_vector;
@@ -161,6 +163,7 @@ private:
 #endif
     AudioInterface *_audio;
     Settings *_settings;
+    RelayController *_relay_controller;
     bool _transmitting_audio;
     bool _process_text;
     bool _repeat_text;
@@ -246,6 +249,7 @@ private:
     void getFFTData();
     void getConstellationData();
     void getRSSI();
+    void setRelays(bool transmitting);
 
 };
 

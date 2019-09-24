@@ -88,7 +88,8 @@ SOURCES += main.cpp\
     mumblechannel.cpp \
     radiochannel.cpp \
     gr/gr_demod_freedv.cpp \
-    gr/gr_mod_freedv.cpp
+    gr/gr_mod_freedv.cpp \
+    relaycontroller.cpp
 
 HEADERS  += mainwindow.h\
         audio/audioencoder.h\
@@ -163,7 +164,8 @@ HEADERS  += mainwindow.h\
     mumblechannel.h \
     radiochannel.h \
     gr/gr_demod_freedv.h \
-    gr/gr_mod_freedv.h
+    gr/gr_mod_freedv.h \
+    relaycontroller.h
 
 
 FORMS    += mainwindow.ui
@@ -175,7 +177,7 @@ LIBS += -lgnuradio-pmt -lgnuradio-audio -lgnuradio-analog -lgnuradio-blocks -lgn
         -lboost_thread$$BOOST_SUFFIX -lboost_system$$BOOST_SUFFIX -lboost_program_options$$BOOST_SUFFIX
 LIBS += -lrt  # need to include on some distros
 
-LIBS += -lprotobuf -lopus -lpulse-simple -lpulse -lcodec2 -lgsm -lasound -ljpeg -lconfig++ -lspeexdsp
+LIBS += -lprotobuf -lopus -lpulse-simple -lpulse -lcodec2 -lgsm -lasound -ljpeg -lconfig++ -lspeexdsp -lftdi
                     #-lFestival -lestbase -leststring -lestools
 #INCLUDEPATH += /usr/include/speech_tools
 

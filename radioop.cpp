@@ -25,6 +25,7 @@ RadioOp::RadioOp(Settings *settings, QObject *parent) :
     _tx_radio_type = radio_type::RADIO_TYPE_DIGITAL;
     _codec = new AudioEncoder;
     _radio_protocol = new RadioProtocol;
+    _relay_controller = new RelayController;
     _mutex = new QMutex;
     _m_queue = new std::vector<short>;
     _last_session_id = 0;
@@ -515,6 +516,23 @@ void RadioOp::sendChannels()
     sendBinData(data,gr_modem::FrameTypeRepeaterInfo);
 }
 
+void RadioOp::setRelays(bool transmitting)
+{
+    if(transmitting)
+    {
+        _relay_controller->enableRelay(0);
+        _relay_controller->enableRelay(1);
+    }
+    else
+    {
+        _relay_controller->disableRelay(0);
+        _relay_controller->disableRelay(1);
+    }
+    struct timespec time_to_sleep = {0, 10000000L };
+    nanosleep(&time_to_sleep, NULL);
+
+}
+
 void RadioOp::startTx()
 {
     updateInputAudioStream(); // moved here, LimeSDR specific thing (calibration at low power)
@@ -540,6 +558,7 @@ void RadioOp::startTx()
         _modem->tuneTx(_tx_frequency + _tune_shift_freq);
         _modem->setTxPower(_tx_power);
         _mutex->unlock();
+        setRelays(true);
 
         // FIXME: full duplex mode
         //if(_rx_inited && !_repeat && (_rx_mode != gr_modem_types::ModemTypeQPSK250000))
@@ -607,6 +626,7 @@ void RadioOp::stopTx()
 void RadioOp::endTx()
 {
     // On LimeSDR mini, when I call setTxPower I get a brief spike of the LO
+    setRelays(false);
     _mutex->lock();
     _modem->setTxPower(0.01);
     _modem->flushSources();
