@@ -35,7 +35,7 @@ gr_mod_freedv_sdr::gr_mod_freedv_sdr(int sps, int samp_rate, int carrier_freq,
     float target_samp_rate = 8000.0;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
-    _audio_gain = gr::blocks::multiply_const_ff::make(0.2);
+    _audio_gain = gr::blocks::multiply_const_ff::make(0.15);
     _agc = gr::analog::agc2_ff::make(1e-1, 1e-3, 0.95, 1); // FIXME: this seems to hurt audio a bit
     _float_to_short = gr::blocks::float_to_short::make(1, 32765);
     _short_to_float = gr::blocks::short_to_float::make(1, 32765);
