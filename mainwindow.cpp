@@ -18,7 +18,7 @@
 #include "ui_mainwindow.h"
 
 
-MainWindow::MainWindow(Settings *settings, QWidget *parent) :
+MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
@@ -26,6 +26,7 @@ MainWindow::MainWindow(Settings *settings, QWidget *parent) :
     setAnimated(true);
     ui->setupUi(this);
     _settings = settings;
+    _radio_channels = radio_channels;
     static float tone_list[]= {67.0, 71.9, 74.4, 77.0, 79.7, 82.5, 85.4, 88.5, 81.5, 87.4, 94.8, 100.0, 103.5, 107.2, 110.9,
                          114.8, 118.8, 123.0, 127.3, 131.8, 136.5, 141.3, 146.2, 151.4, 156.7, 162.2,
                           167.9, 173.8, 179.9, 186.2, 192.8, 203.5, 210.7, 218.1, 225.7, 233.6, 241.8, 250.3};
@@ -404,6 +405,12 @@ void MainWindow::saveConfig()
     _settings->scan_step = (int)ui->lineEditScanStep->text().toInt();
     _settings->waterfall_fps = (int)ui->fpsBox->currentText().toInt();
     _settings->saveConfig();
+}
+
+void MainWindow::readMemories()
+{
+    _radio_channels->readConfig();
+    QVector<radiochannel> *channels = _radio_channels->getChannels();
 }
 
 

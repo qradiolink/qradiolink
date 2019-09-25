@@ -57,7 +57,7 @@ int RelayController::enableRelay(int relay_number)
 {
     if(!_ftdi_relay_enabled)
     {
-        return 0;
+        return 1;
     }
     if(relay_number > 8)
     {
@@ -79,7 +79,7 @@ int RelayController::disableRelay(int relay_number)
 {
     if(!_ftdi_relay_enabled)
     {
-        return 0;
+        return 1;
     }
     if(relay_number > 8)
     {

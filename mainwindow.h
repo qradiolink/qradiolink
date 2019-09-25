@@ -30,6 +30,7 @@
 #include <QPainter>
 #include <QToolTip>
 #include "mumbleclient.h"
+#include "radiochannel.h"
 #include <math.h>
 #include <complex>
 #include "qtgui/freqctrl.h"
@@ -82,6 +83,7 @@ public slots:
     void displayImage(QImage img);
     void enterFreq();
     void saveConfig();
+    void readMemories();
     void mainTabChanged(int value);
     void clearTextArea();
     void updateFreqGUI(long long center_freq, long carrier_offset);
@@ -153,7 +155,7 @@ signals:
 
 
 public:
-    explicit MainWindow(Settings *settings, QWidget *parent = 0);
+    explicit MainWindow(Settings *settings, RadioChannels *radio_channels, QWidget *parent = 0);
     ~MainWindow();
 
     void readConfig();
@@ -195,6 +197,7 @@ private:
     QTimer _speech_icon_timer;
     QMutex _mutex;
     StationList _user_list;
+    RadioChannels *_radio_channels;
 
 
 

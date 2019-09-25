@@ -1,12 +1,24 @@
 #include "radiochannel.h"
 
-RadioChannel::RadioChannel(QObject *parent) :
+RadioChannels::RadioChannels(QObject *parent) :
     QObject(parent)
 {
     _memories_file = setupConfig();
+    _channels = new QVector<radiochannel>;
 }
 
-QFileInfo *RadioChannel::setupConfig()
+RadioChannels::~RadioChannels()
+{
+    _channels->clear();
+    delete _channels;
+}
+
+QVector<radiochannel>* RadioChannels::getChannels()
+{
+    return _channels;
+}
+
+QFileInfo *RadioChannels::setupConfig()
 {
     QDir files = QDir::homePath();
     // FIXME: standard says own directory, plus need to store more configs separately
@@ -28,7 +40,7 @@ QFileInfo *RadioChannel::setupConfig()
 }
 
 
-void RadioChannel::readConfig()
+void RadioChannels::readConfig()
 {
     libconfig::Config cfg;
     try
@@ -48,29 +60,48 @@ void RadioChannel::readConfig()
     }
 
     /// Read memories
-    try
-    {
-        //cfg.lookupValue("rx_freq_corr", rx_freq_corr);
-    }
-    catch(const libconfig::SettingNotFoundException &nfex)
-    {
-    }
-    try
-    {
-        //rx_device_args = QString(cfg.lookup("rx_device_args"));
-    }
-    catch(const libconfig::SettingNotFoundException &nfex)
-    {
+    libconfig::Setting &root = cfg.getRoot();
 
+    try
+    {
+        const libconfig::Setting &channels = root["channels"];
+        for(int i=0;i<channels.getLength();i++)
+        {
+            radiochannel chan;
+            chan.id = channels[i]["id"];
+            chan.rx_frequency = channels[i]["rx_frequency"];
+            chan.tx_frequency = channels[i]["tx_frequency"];
+            chan.tx_shift = channels[i]["tx_shift"];
+            chan.rx_mode = channels[i]["rx_mode"];
+            chan.tx_mode = channels[i]["tx_mode"];
+            chan.name = std::string(channels[i]["name"].c_str());
+            _channels->push_back(chan);
+        }
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        std::cerr << "No memory channels found." << std::endl;
+        return;
     }
 }
 
 
-void RadioChannel::saveConfig()
+void RadioChannels::saveConfig()
 {
     libconfig::Config cfg;
     libconfig::Setting &root = cfg.getRoot();
-    //root.add("rx_device_args",libconfig::Setting::TypeList) = rx_device_args.toStdString();
+    root.add("channels",libconfig::Setting::TypeList);
+    for(int i=0;i<_channels->size();i++)
+    {
+        radiochannel chan = _channels->at(i);
+        root["channels"][i]["id"] = chan.id;
+        root["channels"][i]["rx_frequency"] = chan.rx_frequency;
+        root["channels"][i]["tx_frequency"] = chan.tx_frequency;
+        root["channels"][i]["tx_shift"] = chan.tx_shift;
+        root["channels"][i]["rx_mode"] = chan.rx_mode;
+        root["channels"][i]["tx_mode"] = chan.rx_mode;
+        root["channels"][i]["name"] = chan.name;
+    }
     try
     {
         cfg.writeFile(_memories_file->absoluteFilePath().toStdString().c_str());

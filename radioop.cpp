@@ -519,18 +519,46 @@ void RadioOp::sendChannels()
 
 void RadioOp::setRelays(bool transmitting)
 {
+    int res;
+    struct timespec time_to_sleep;
     if(transmitting)
     {
-        _relay_controller->enableRelay(0);
-        _relay_controller->enableRelay(1);
+        res = _relay_controller->enableRelay(0);
+        if(!res)
+        {
+            std::cerr << "Relay control failed, stopping to avoid damage" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        time_to_sleep = {0, 10000L };
+        nanosleep(&time_to_sleep, NULL);
+        res = _relay_controller->enableRelay(1);
+        if(!res)
+        {
+            std::cerr << "Relay control failed, stopping to avoid damage" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        time_to_sleep = {0, 10000L };
+        nanosleep(&time_to_sleep, NULL);
     }
     else
     {
-        _relay_controller->disableRelay(0);
-        _relay_controller->disableRelay(1);
+        res = _relay_controller->disableRelay(0);
+        if(!res)
+        {
+            std::cerr << "Relay control failed, stopping to avoid damage" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        time_to_sleep = {0, 10000L };
+        nanosleep(&time_to_sleep, NULL);
+        res = _relay_controller->disableRelay(1);
+        if(!res)
+        {
+            std::cerr << "Relay control failed, stopping to avoid damage" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        time_to_sleep = {0, 10000L };
+        nanosleep(&time_to_sleep, NULL);
     }
-    struct timespec time_to_sleep = {0, 10000000L };
-    nanosleep(&time_to_sleep, NULL);
 
 }
 

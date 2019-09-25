@@ -42,6 +42,7 @@
 #include "dtmfcommand.h"
 #include "station.h"
 #include "mumblechannel.h"
+#include "radiochannel.h"
 #include "radioop.h"
 
 
@@ -101,12 +102,13 @@ int main(int argc, char *argv[])
     std::cout << "Starting qradiolink instance: " << start_time << std::endl;
     DatabaseApi db;
     Settings *settings = new Settings;
+    RadioChannels *radio_channels = new RadioChannels;
     settings->readConfig();
     MumbleClient *client = new MumbleClient(settings);
     RadioOp *radio_op = new RadioOp(settings);
     AudioWriter *audiowriter = new AudioWriter;
     AudioReader *audioreader = new AudioReader;
-    MainWindow *w = new MainWindow(settings);
+    MainWindow *w = new MainWindow(settings, radio_channels);
     w->setWindowTitle("QRadioLink");
 
     w->show();
