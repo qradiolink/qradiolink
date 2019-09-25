@@ -25,6 +25,7 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QTreeWidgetItem>
+#include <QTableWidgetItem>
 #include <QGraphicsOpacityEffect>
 #include <QPropertyAnimation>
 #include <QPainter>
@@ -112,6 +113,8 @@ public slots:
     void setFFTRange(int value);
     void autoSquelch();
     void initError(QString error);
+    void showMemoriesPanel(bool show);
+    void memoryAction(QTableWidgetItem* item);
 
 
 signals:
@@ -169,7 +172,10 @@ private:
     qint64 _rx_frequency;
     qint64 _tx_frequency;
     qint64 _tx_shift_frequency;
+    int _rx_mode;
+    int _tx_mode;
     QFileInfo *setupConfig();
+    void addDisplayChannel(radiochannel *chan, int r);
     void closeEvent(QCloseEvent *);
     void changeEvent(QEvent *);
     void resizeEvent(QResizeEvent *);
@@ -198,8 +204,7 @@ private:
     QMutex _mutex;
     StationList _user_list;
     RadioChannels *_radio_channels;
-
-
+    int _new_mem_index;
 
 };
 

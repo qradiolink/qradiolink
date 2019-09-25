@@ -102,6 +102,7 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     QObject::connect(ui->rxGainDial,SIGNAL(valueChanged(int)),this,SLOT(setRxSensitivityDisplay(int)));
     QObject::connect(ui->rxSquelchDial,SIGNAL(valueChanged(int)),this,SLOT(setSquelchDisplay(int)));
     QObject::connect(ui->autoSquelchButton,SIGNAL(clicked()),this,SLOT(autoSquelch()));
+    QObject::connect(ui->memoriesButton,SIGNAL(toggled(bool)),this,SLOT(showMemoriesPanel(bool)));
     QObject::connect(ui->rxVolumeDial,SIGNAL(valueChanged(int)),this,SLOT(setVolumeDisplay(int)));
     QObject::connect(ui->rxModemTypeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(toggleRxMode(int)));
     QObject::connect(ui->txModemTypeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(toggleTxMode(int)));
@@ -135,6 +136,8 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     QObject::connect(ui->plotterFrame,SIGNAL(newDemodFreq(qint64,qint64)),this,SLOT(carrierOffsetChanged(qint64,qint64)));
 
     QObject::connect(ui->voipTreeWidget,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this,SLOT(channelState(QTreeWidgetItem *,int)));
+    QObject::connect(ui->memoriesTableWidget,SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(memoryAction(QTableWidgetItem*)));
+
     QObject::connect(&_secondary_text_timer,SIGNAL(timeout()),ui->secondaryTextDisplay,SLOT(hide()));
     QObject::connect(&_video_timer,SIGNAL(timeout()),ui->videoFrame,SLOT(hide()));
     QObject::connect(&_speech_icon_timer,SIGNAL(timeout()),this,SLOT(resetSpeechIcons()));
@@ -158,6 +161,7 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     ui->menuBar->hide();
     ui->statusBar->hide();
     ui->mainToolBar->hide();
+    ui->memoriesFrame->hide();
     setWindowIcon(QIcon(":/res/logo.png"));
     _realFftData = new float[1024*1024];
     _pwrFftData = new float[1024*1024];
@@ -204,6 +208,7 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
 void MainWindow::initSettings()
 {
     readConfig();
+    readMemories();
     updateRSSI(9999);
     _range_set = false;
     //setFFTRange(1);
@@ -238,6 +243,7 @@ MainWindow::~MainWindow()
 void MainWindow::closeEvent (QCloseEvent *event)
 {
     saveConfig();
+    _radio_channels->saveConfig();
     emit stopRadio();
     emit disconnectFromServer();
     // FIXME: this is the wrong way to stop the radio
@@ -325,6 +331,18 @@ void MainWindow::showConstellation(bool value)
     emit enableGUIConst(value);
 }
 
+void MainWindow::showMemoriesPanel(bool value)
+{
+    if(value)
+    {
+        ui->memoriesFrame->show();
+    }
+    else
+    {
+        ui->memoriesFrame->hide();
+    }
+}
+
 void MainWindow::setEnabledFFT(bool value)
 {
     _settings->show_fft = (int) value;
@@ -363,6 +381,8 @@ void MainWindow::readConfig()
     ui->voipServerEdit->setText(_settings->voip_server);
     ui->rxModemTypeComboBox->setCurrentIndex(_settings->rx_mode);
     ui->txModemTypeComboBox->setCurrentIndex(_settings->tx_mode);
+    _rx_mode = _settings->rx_mode;
+    _tx_mode = _settings->tx_mode;
     ui->lineEditIPaddress->setText(_settings->ip_address);
     ui->plotterFrame->setFilterOffset((qint64)_settings->demod_offset);
     ui->plotterFrame->setCenterFreq(_rx_frequency);
@@ -401,16 +421,82 @@ void MainWindow::saveConfig()
     _settings->ip_address = ui->lineEditIPaddress->text();
     _settings->demod_offset = (long long)_demod_offset;
     _settings->rx_sample_rate = (long long)(ui->sampleRateBox->currentText().toInt());
-    _settings->fft_size = (long long)(ui->fftSizeBox->currentText().toInt());
+    _settings->fft_size = (ui->fftSizeBox->currentText().toInt());
     _settings->scan_step = (int)ui->lineEditScanStep->text().toInt();
     _settings->waterfall_fps = (int)ui->fpsBox->currentText().toInt();
     _settings->saveConfig();
 }
 
+void MainWindow::addDisplayChannel(radiochannel *chan, int r)
+{
+    QTableWidgetItem *rx_freq_display = new QTableWidgetItem;
+    rx_freq_display->setText(QString::number(chan->rx_frequency));
+    /// unused, using tx_shift
+    //QTableWidgetItem *tx_freq_display = new QTableWidgetItem;
+    //tx_freq_display->setText(QString::number(chan->tx_frequency));
+    QTableWidgetItem *rx_mode_display = new QTableWidgetItem;
+    rx_mode_display->setText(QString::number(chan->rx_mode));
+    QTableWidgetItem *tx_mode_display = new QTableWidgetItem;
+    tx_mode_display->setText(QString::number(chan->tx_mode));
+    QTableWidgetItem *name_display = new QTableWidgetItem;
+    name_display->setText(QString::fromStdString(chan->name));
+    QTableWidgetItem *tx_shift_display = new QTableWidgetItem;
+    tx_shift_display->setText(QString::number(chan->tx_shift));
+    QTableWidgetItem *id_display = new QTableWidgetItem;
+    id_display->setText(QString::number(chan->id));
+    ui->memoriesTableWidget->insertRow(r);
+    ui->memoriesTableWidget->setItem(r, 0, rx_freq_display);
+    //ui->memoriesTableWidget->setItem(r, 1, tx_freq_display);
+    ui->memoriesTableWidget->setItem(r, 4, tx_shift_display);
+    ui->memoriesTableWidget->setItem(r, 1, name_display);
+    ui->memoriesTableWidget->setItem(r, 2, tx_mode_display);
+    ui->memoriesTableWidget->setItem(r, 3, rx_mode_display);
+}
+
 void MainWindow::readMemories()
 {
     _radio_channels->readConfig();
-    QVector<radiochannel> *channels = _radio_channels->getChannels();
+    QVector<radiochannel*> *channels = _radio_channels->getChannels();
+    int r;
+    ui->memoriesTableWidget->setRowCount(channels->size()+1);
+    for(r=0;r<channels->size();r++)
+    {
+        radiochannel *chan = channels->at(r);
+        addDisplayChannel(chan, r);
+    }
+    QTableWidgetItem *new_mem = new QTableWidgetItem;
+    new_mem->setText("Add frequency");
+    new_mem->setBackgroundColor(QColor(225,0,0));
+    new_mem->setTextColor(QColor(255,255,255));
+    ui->memoriesTableWidget->insertRow(r);
+    ui->memoriesTableWidget->setItem(r, 0, new_mem);
+    _new_mem_index = r;
+
+}
+
+void MainWindow::memoryAction(QTableWidgetItem* item)
+{
+    if(item->row() == _new_mem_index)
+    {
+        radiochannel *chan = new radiochannel;
+        chan->rx_frequency = _rx_frequency + _demod_offset;
+        chan->tx_frequency = _tx_frequency;
+        chan->tx_shift = _tx_shift_frequency;
+        chan->rx_mode = _rx_mode;
+        chan->tx_mode = _tx_mode;
+        chan->id = item->row(); // FIXME:
+        chan->name = "";
+        QVector<radiochannel*> *channels = _radio_channels->getChannels();
+        channels->push_back(chan);
+        _new_mem_index++;
+        ui->memoriesTableWidget->removeCellWidget(item->row(),0);
+        addDisplayChannel(chan, item->row());
+        ui->memoriesTableWidget->setItem(_new_mem_index, 0, item);
+    }
+    else
+    {
+
+    }
 }
 
 
@@ -795,6 +881,7 @@ void MainWindow::setFilterWidth(int index)
 
 void MainWindow::toggleRxMode(int value)
 {
+    _rx_mode = value;
     emit toggleRxModemMode(value);
     setFilterWidth(value);
     //mainTabChanged(ui->tabWidget->currentIndex());
@@ -802,6 +889,7 @@ void MainWindow::toggleRxMode(int value)
 
 void MainWindow::toggleTxMode(int value)
 {
+    _tx_mode = value;
     emit toggleTxModemMode(value);
     //mainTabChanged(ui->tabWidget->currentIndex());
 }

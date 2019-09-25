@@ -4,16 +4,20 @@ RadioChannels::RadioChannels(QObject *parent) :
     QObject(parent)
 {
     _memories_file = setupConfig();
-    _channels = new QVector<radiochannel>;
+    _channels = new QVector<radiochannel*>;
 }
 
 RadioChannels::~RadioChannels()
 {
+    for (int i=0;i<_channels->size();i++)
+    {
+        delete _channels->at(i);
+    }
     _channels->clear();
     delete _channels;
 }
 
-QVector<radiochannel>* RadioChannels::getChannels()
+QVector<radiochannel *> *RadioChannels::getChannels()
 {
     return _channels;
 }
@@ -67,14 +71,15 @@ void RadioChannels::readConfig()
         const libconfig::Setting &channels = root["channels"];
         for(int i=0;i<channels.getLength();i++)
         {
-            radiochannel chan;
-            chan.id = channels[i]["id"];
-            chan.rx_frequency = channels[i]["rx_frequency"];
-            chan.tx_frequency = channels[i]["tx_frequency"];
-            chan.tx_shift = channels[i]["tx_shift"];
-            chan.rx_mode = channels[i]["rx_mode"];
-            chan.tx_mode = channels[i]["tx_mode"];
-            chan.name = std::string(channels[i]["name"].c_str());
+            radiochannel *chan = new radiochannel;
+            chan->id = channels[i]["id"];
+            chan->rx_frequency = channels[i]["rx_frequency"];
+            chan->tx_frequency = channels[i]["tx_frequency"];
+            chan->tx_shift = channels[i]["tx_shift"];
+            chan->rx_mode = channels[i]["rx_mode"];
+            chan->tx_mode = channels[i]["tx_mode"];
+            std::string name(channels[i]["name"].c_str());
+            chan->name = name;
             _channels->push_back(chan);
         }
     }
@@ -91,17 +96,25 @@ void RadioChannels::saveConfig()
     libconfig::Config cfg;
     libconfig::Setting &root = cfg.getRoot();
     root.add("channels",libconfig::Setting::TypeList);
+
     for(int i=0;i<_channels->size();i++)
     {
-        radiochannel chan = _channels->at(i);
-        root["channels"][i]["id"] = chan.id;
-        root["channels"][i]["rx_frequency"] = chan.rx_frequency;
-        root["channels"][i]["tx_frequency"] = chan.tx_frequency;
-        root["channels"][i]["tx_shift"] = chan.tx_shift;
-        root["channels"][i]["rx_mode"] = chan.rx_mode;
-        root["channels"][i]["tx_mode"] = chan.rx_mode;
-        root["channels"][i]["name"] = chan.name;
+        radiochannel *chan = _channels->at(i);
+
+        libconfig::Setting &channel = root["channels"].add(libconfig::Setting::TypeGroup);
+
+        channel.add("id", libconfig::Setting::TypeInt) = chan->id;
+
+        channel.add("rx_frequency", libconfig::Setting::TypeInt64) = chan->rx_frequency;
+
+        channel.add("tx_frequency", libconfig::Setting::TypeInt64) = chan->tx_frequency;
+        channel.add("tx_shift", libconfig::Setting::TypeInt64) = chan->tx_shift;
+        channel.add("rx_mode", libconfig::Setting::TypeInt) = chan->rx_mode;
+        channel.add("tx_mode", libconfig::Setting::TypeInt) = chan->rx_mode;
+        channel.add("name", libconfig::Setting::TypeString) = chan->name;
+        std::cerr << chan->rx_frequency <<" " << chan->tx_frequency << " " << chan->name << std::endl;
     }
+
     try
     {
         cfg.writeFile(_memories_file->absoluteFilePath().toStdString().c_str());

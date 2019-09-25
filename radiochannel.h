@@ -2,6 +2,7 @@
 #define RADIOCHANNEL_H
 
 #include <QObject>
+#include <QDebug>
 #include <QVector>
 #include <QFile>
 #include <QDir>
@@ -16,7 +17,7 @@ struct radiochannel
     int id;
     long long rx_frequency;
     long long tx_frequency;
-    long tx_shift;
+    long long tx_shift;
     int rx_mode;
     int tx_mode;
     std::string name;
@@ -31,7 +32,7 @@ public:
     QFileInfo *setupConfig();
     void readConfig();
     void saveConfig();
-    QVector<radiochannel>* getChannels();
+    QVector<radiochannel*>* getChannels();
 
 signals:
 
@@ -39,7 +40,7 @@ public slots:
 
 private:
     QFileInfo *_memories_file;
-    QVector<radiochannel> *_channels;
+    QVector<radiochannel*> *_channels;
 
 };
 
