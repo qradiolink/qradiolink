@@ -99,7 +99,6 @@ private:
     std::vector<float>  d_window; /*! FFT window taps. */
 
     float *d_fft_points;
-    float *d_shift_buffer;
 
     gr_complex *d_sample_buffer;
 

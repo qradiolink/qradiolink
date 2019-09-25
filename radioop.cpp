@@ -160,6 +160,7 @@ RadioOp::~RadioOp()
     delete _voip_encode_buffer;
     _m_queue->clear();
     delete _m_queue;
+    delete _relay_controller;
 }
 
 void RadioOp::stop()

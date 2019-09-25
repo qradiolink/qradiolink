@@ -2,6 +2,7 @@
 #define RADIOCHANNEL_H
 
 #include <QObject>
+#include <QVector>
 #include <QFile>
 #include <QDir>
 #include <QFileInfo>

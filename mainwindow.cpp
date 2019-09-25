@@ -451,21 +451,10 @@ void MainWindow::newFFTData(float *fft_data, int fftsize)
 
     for (int i = 0; i < fftsize; i++)
     {
-
-        // normalize and shift
-        if (i < fftsize/2)
-        {
-            _realFftData[i] = fft_data[fftsize/2+i];
-        }
-        else
-        {
-            _realFftData[i] = fft_data[i-fftsize/2];
-        }
-
+        _realFftData[i] = fft_data[i];
         // FFT averaging
         _iirFftData[i] += _fft_averaging * (_realFftData[i] - _iirFftData[i]);
     }
-
     ui->plotterFrame->setNewFftData(_iirFftData, _realFftData, fftsize);
 }
 
