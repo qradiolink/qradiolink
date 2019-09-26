@@ -49,8 +49,8 @@ rx_fft_c::rx_fft_c(unsigned int fftsize, int wintype)
 
     /* create FFT object */
     d_fft = new gr::fft::fft_complex(d_fftsize, true, 4);
-    d_fft_points = (float*)volk_malloc((size_t)d_fftsize * sizeof(float), volk_get_alignment());
     // must remember to check set_fft_size(), we malloc and free there as well
+    d_fft_points = (float*)volk_malloc((size_t)d_fftsize * sizeof(float), volk_get_alignment());
     d_sample_buffer = d_fft->get_inbuf();
     d_counter = 0;
     d_data_ready = false;
@@ -58,7 +58,6 @@ rx_fft_c::rx_fft_c(unsigned int fftsize, int wintype)
     d_push = 0;
 
     /* create FFT window */
-    // skipping the window now
     set_window_type(wintype);
 }
 
@@ -127,31 +126,6 @@ void rx_fft_c::get_fft_data(float* fftPoints, unsigned int &fftSize)
     memcpy(fftPoints, d_fft_points+(d_fftsize/2), sizeof(float)*(d_fftsize/2));
     fftSize = d_fftsize;
     d_data_ready = false;
-}
-
-/*! \brief Compute FFT on the available input data.
- *  \param data_in The data to compute FFT on.
- *  \param size The size of data_in.
- *
- *  unused currently
- */
-void rx_fft_c::do_fft(const gr_complex *data_in, unsigned int size)
-{
-    /* apply window, if any */
-
-    if (d_window.size())
-    {
-        gr_complex *dst = d_fft->get_inbuf();
-        for (unsigned int i = 0; i < size; i++)
-            dst[i] = data_in[i] * d_window[i];
-    }
-    else
-    {
-        memcpy(d_fft->get_inbuf(), data_in, sizeof(gr_complex)*size);
-    }
-
-    /* compute FFT */
-    d_fft->execute();
 }
 
 /*! \brief Set new FFT size. */

@@ -510,6 +510,7 @@ void MainWindow::removeChannel()
     QList<int> chan_to_remove = row_list.toList();
     for(int i=0;i<chan_to_remove.size();i++)
     {
+        qDebug() << chan_to_remove.at(i);
         channels->remove(chan_to_remove.at(i));
     }
     updateMemories();
