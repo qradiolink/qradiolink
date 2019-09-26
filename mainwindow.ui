@@ -968,6 +968,9 @@ background-color: rgb(0, 0, 67);</string>
            </property>
            <item row="0" column="1">
             <widget class="QTableWidget" name="memoriesTableWidget">
+             <property name="toolTip">
+              <string>Double click to edit</string>
+             </property>
              <property name="styleSheet">
               <string notr="true">background-color: rgb(29, 29, 29);
 color: rgb(240, 240, 119);
@@ -1094,6 +1097,9 @@ font: 9pt &quot;Sans Serif&quot;;</string>
               </property>
               <item>
                <widget class="QPushButton" name="addChannelButton">
+                <property name="toolTip">
+                 <string>Add memory</string>
+                </property>
                 <property name="text">
                  <string/>
                 </property>
@@ -1106,6 +1112,9 @@ font: 9pt &quot;Sans Serif&quot;;</string>
               </item>
               <item>
                <widget class="QPushButton" name="removeChannelButton">
+                <property name="toolTip">
+                 <string>Delete memory</string>
+                </property>
                 <property name="text">
                  <string/>
                 </property>
@@ -3125,6 +3134,9 @@ font: 9pt &quot;Sans Serif&quot;;</string>
            <width>51</width>
            <height>31</height>
           </rect>
+         </property>
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Memory channels&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
           <string>Mem</string>

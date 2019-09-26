@@ -504,15 +504,16 @@ void MainWindow::tuneToMemoryChannel(int row, int col)
     QVector<radiochannel*> *channels = _radio_channels->getChannels();
     radiochannel *chan = channels->at(row);
     ui->frameCtrlFreq->setFrequency(chan->rx_frequency);
-    _tx_shift_frequency = chan->tx_shift;
-    changeTxShift(_tx_shift_frequency);
-    ui->shiftEdit->setText(QString::number(_tx_shift_frequency / 1000));
+    tuneMainFreq(chan->rx_frequency);
+    _tx_shift_frequency = chan->tx_shift * 1000;
+    emit changeTxShift(_tx_shift_frequency);
+    ui->shiftEdit->setText(QString::number(chan->tx_shift));
 
     ui->rxModemTypeComboBox->setCurrentIndex(chan->rx_mode);
     ui->txModemTypeComboBox->setCurrentIndex(chan->tx_mode);
     _rx_mode = chan->rx_mode;
     _tx_mode = chan->tx_mode;
-    tuneMainFreq(chan->rx_frequency);
+
 }
 
 void MainWindow::editMemoryChannel(QTableWidgetItem* item)
