@@ -112,9 +112,10 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     QObject::connect(ui->plotterFrame,SIGNAL(newDemodFreq(qint64,qint64)),this,SLOT(carrierOffsetChanged(qint64,qint64)));
 
     QObject::connect(ui->voipTreeWidget,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this,SLOT(channelState(QTreeWidgetItem *,int)));
-    QObject::connect(ui->memoriesTableWidget,SIGNAL(cellClicked(int, int)),this,SLOT(tuneToMemory(int, int)));
-    QObject::connect(ui->addChannelButton,SIGNAL(clicked()), this, SLOT(addChannel()));
-    QObject::connect(ui->removeChannelButton,SIGNAL(clicked()), this, SLOT(removeChannel()));
+    QObject::connect(ui->memoriesTableWidget,SIGNAL(cellClicked(int, int)),this,SLOT(tuneToMemoryChannel(int, int)));
+    QObject::connect(ui->addChannelButton,SIGNAL(clicked()), this, SLOT(addMemoryChannel()));
+    QObject::connect(ui->removeChannelButton,SIGNAL(clicked()), this, SLOT(removeMemoryChannel()));
+    QObject::connect(ui->memoriesTableWidget,SIGNAL(itemChanged(QTableWidgetItem*)),this,SLOT(editMemoryChannel(QTableWidgetItem*)));
 
     QObject::connect(&_secondary_text_timer,SIGNAL(timeout()),ui->secondaryTextDisplay,SLOT(hide()));
     QObject::connect(&_video_timer,SIGNAL(timeout()),ui->videoFrame,SLOT(hide()));
@@ -444,10 +445,13 @@ void MainWindow::addDisplayChannel(radiochannel *chan, int r)
 
 void MainWindow::updateMemories()
 {
-    ui->memoriesTableWidget->clear();
+
+    for(int i=0;i<ui->memoriesTableWidget->rowCount();i++)
+        ui->memoriesTableWidget->removeRow(i);
+    ui->memoriesTableWidget->clearContents();
+    ui->memoriesTableWidget->setRowCount(0);
     QVector<radiochannel*> *channels = _radio_channels->getChannels();
     int r;
-    //ui->memoriesTableWidget->setRowCount(channels->size()+1);
     for(r=0;r<channels->size();r++)
     {
         radiochannel *chan = channels->at(r);
@@ -457,7 +461,7 @@ void MainWindow::updateMemories()
 
 }
 
-void MainWindow::addChannel()
+void MainWindow::addMemoryChannel()
 {
     radiochannel *chan = new radiochannel;
     chan->rx_frequency = _rx_frequency + _demod_offset;
@@ -473,7 +477,7 @@ void MainWindow::addChannel()
     _new_mem_index++;
 }
 
-void MainWindow::removeChannel()
+void MainWindow::removeMemoryChannel()
 {
     QVector<radiochannel*> *channels = _radio_channels->getChannels();
     QSet<int> row_list;
@@ -488,19 +492,20 @@ void MainWindow::removeChannel()
     QList<int> chan_to_remove = row_list.toList();
     for(int i=0;i<chan_to_remove.size();i++)
     {
-        qDebug() << chan_to_remove.at(i);
+        delete channels->at(chan_to_remove.at(i));
         channels->remove(chan_to_remove.at(i));
     }
     updateMemories();
 }
 
-void MainWindow::tuneToMemory(int row, int col)
+void MainWindow::tuneToMemoryChannel(int row, int col)
 {
     Q_UNUSED(col);
     QVector<radiochannel*> *channels = _radio_channels->getChannels();
     radiochannel *chan = channels->at(row);
     ui->frameCtrlFreq->setFrequency(chan->rx_frequency);
     _tx_shift_frequency = chan->tx_shift;
+    changeTxShift(_tx_shift_frequency);
     ui->shiftEdit->setText(QString::number(_tx_shift_frequency / 1000));
 
     ui->rxModemTypeComboBox->setCurrentIndex(chan->rx_mode);
@@ -508,6 +513,26 @@ void MainWindow::tuneToMemory(int row, int col)
     _rx_mode = chan->rx_mode;
     _tx_mode = chan->tx_mode;
     tuneMainFreq(chan->rx_frequency);
+}
+
+void MainWindow::editMemoryChannel(QTableWidgetItem* item)
+{
+    int row = item->row();
+    int col = item->column();
+    QVector<radiochannel*> *channels = _radio_channels->getChannels();
+    radiochannel *chan = channels->at(row);
+    switch(col)
+    {
+    case 0:
+        chan->rx_frequency = (long)(item->text().replace(",", "").toInt());
+        break;
+    case 1:
+        chan->name = item->text().toStdString();
+        break;
+    case 2:
+        chan->tx_shift = item->text().toInt();
+        break;
+    }
 }
 
 

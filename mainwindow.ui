@@ -917,8 +917,8 @@ background-color: rgb(0, 0, 67);</string>
          <widget class="QFrame" name="memoriesFrame">
           <property name="geometry">
            <rect>
-            <x>570</x>
-            <y>200</y>
+            <x>530</x>
+            <y>170</y>
             <width>600</width>
             <height>250</height>
            </rect>
@@ -970,8 +970,11 @@ background-color: rgb(0, 0, 67);</string>
             <widget class="QTableWidget" name="memoriesTableWidget">
              <property name="styleSheet">
               <string notr="true">background-color: rgb(29, 29, 29);
-color: rgb(191, 191, 95);
+color: rgb(240, 240, 119);
 font: 9pt &quot;Sans Serif&quot;;</string>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::NoFrame</enum>
              </property>
              <property name="autoScrollMargin">
               <number>5</number>
@@ -1023,17 +1026,17 @@ font: 9pt &quot;Sans Serif&quot;;</string>
              </column>
              <column>
               <property name="text">
+               <string>TX Shift</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
                <string>RX Mode</string>
               </property>
              </column>
              <column>
               <property name="text">
                <string>TX Mode</string>
-              </property>
-             </column>
-             <column>
-              <property name="text">
-               <string>TX Shift</string>
               </property>
              </column>
             </widget>
@@ -1062,13 +1065,16 @@ font: 9pt &quot;Sans Serif&quot;;</string>
               <bool>false</bool>
              </property>
              <property name="styleSheet">
-              <string notr="true">background-color: rgb(31, 31, 31);</string>
+              <string notr="true"/>
              </property>
              <property name="frameShape">
-              <enum>QFrame::StyledPanel</enum>
+              <enum>QFrame::NoFrame</enum>
              </property>
              <property name="frameShadow">
               <enum>QFrame::Raised</enum>
+             </property>
+             <property name="lineWidth">
+              <number>0</number>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_6">
               <property name="spacing">

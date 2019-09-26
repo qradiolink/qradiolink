@@ -116,9 +116,10 @@ public slots:
     void autoSquelch();
     void initError(QString error);
     void showMemoriesPanel(bool show);
-    void addChannel();
-    void removeChannel();
-    void tuneToMemory(int row, int col);
+    void addMemoryChannel();
+    void removeMemoryChannel();
+    void tuneToMemoryChannel(int row, int col);
+    void editMemoryChannel(QTableWidgetItem* item);
 
 
 signals:
