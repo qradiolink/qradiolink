@@ -14,7 +14,6 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#include "mainwindow.h"
 #include <QApplication>
 #include <QCoreApplication>
 #include <QThread>
@@ -28,6 +27,7 @@
 #include <QtGlobal>
 #include <QTextStream>
 #include <iostream>
+#include "mainwindow.h"
 #include "dtmfdecoder.h"
 #include "databaseapi.h"
 #include "config_defines.h"
@@ -103,7 +103,6 @@ int main(int argc, char *argv[])
     AudioWriter *audiowriter = new AudioWriter;
     AudioReader *audioreader = new AudioReader;
     MainWindow *w = new MainWindow(settings, radio_channels);
-    w->setWindowTitle("QRadioLink");
 
     w->show();
     if(arguments.length() > 1 && arguments.at(1) == "-f")

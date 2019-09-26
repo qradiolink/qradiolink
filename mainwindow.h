@@ -33,6 +33,7 @@
 #include <math.h>
 #include <complex>
 #include <libconfig.h++>
+#include "ext/utils.h"
 #include "mumbleclient.h"
 #include "radiochannel.h"
 #include "qtgui/freqctrl.h"

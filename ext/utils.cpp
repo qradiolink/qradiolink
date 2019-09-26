@@ -31,6 +31,7 @@
 
 #include "utils.h"
 
+
 void addPreamble(quint8 *buffer, quint16 type, quint32 len)
 {
     buffer[1] = (type) & 0xff;
@@ -65,6 +66,31 @@ void genRandomStr(char *str, const int len)
     str[len] = 0;
 }
 
+std::vector<std::complex<int>>* buildFilterWidthList()
+{
+    std::vector<std::complex<int>> *filter_widths = new std::vector<std::complex<int>>;
+    filter_widths->push_back(std::complex<int>(-5000, 5000));  // FM
+    filter_widths->push_back(std::complex<int>(-2500, 2500));  // NBFM
+    filter_widths->push_back(std::complex<int>(-100000, 100000));  // WFM
+    filter_widths->push_back(std::complex<int>(-1, 2500)); // USB
+    filter_widths->push_back(std::complex<int>(-2500, 1)); // LSB
+    filter_widths->push_back(std::complex<int>(-1, 2500)); // FreeDV1600 USB
+    filter_widths->push_back(std::complex<int>(-1, 2500)); // FreeDV700C USB
+    filter_widths->push_back(std::complex<int>(-2500, 1)); // FreeDV1600 LSB
+    filter_widths->push_back(std::complex<int>(-2500, 1)); // FreeDV700C LSB
+    filter_widths->push_back(std::complex<int>(-5000, 5000));  // AM
+    filter_widths->push_back(std::complex<int>(-2800, 2800)); // BPSK 2K
+    filter_widths->push_back(std::complex<int>(-1400, 1400)); // BPSK 700
+    filter_widths->push_back(std::complex<int>(-1500, 1500));  // QPSK 2K
+    filter_widths->push_back(std::complex<int>(-7000, 7000));    // QPSK 10K
+    filter_widths->push_back(std::complex<int>(-4600, 4600));  // 2FSK 2K
+    filter_widths->push_back(std::complex<int>(-15000, 15000));  // 2FSK 10K
+    filter_widths->push_back(std::complex<int>(-4600, 4600));  // 4FSK 2K
+    filter_widths->push_back(std::complex<int>(-25000, 25000));    // 4FSK 10K
+    filter_widths->push_back(std::complex<int>(-150000, 150000)); // QPSK250000 VIDEO
+    filter_widths->push_back(std::complex<int>(-150000, 150000)); // QPSK250000 DATA
+    return filter_widths;
+}
 
 
 

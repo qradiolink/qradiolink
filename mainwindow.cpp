@@ -27,9 +27,7 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     ui->setupUi(this);
     _settings = settings;
     _radio_channels = radio_channels;
-    static float tone_list[]= {67.0, 71.9, 74.4, 77.0, 79.7, 82.5, 85.4, 88.5, 81.5, 87.4, 94.8, 100.0, 103.5, 107.2, 110.9,
-                         114.8, 118.8, 123.0, 127.3, 131.8, 136.5, 141.3, 146.2, 151.4, 156.7, 162.2,
-                          167.9, 173.8, 179.9, 186.2, 192.8, 203.5, 210.7, 218.1, 225.7, 233.6, 241.8, 250.3};
+
     QStringList tones;
     tones.append("CTCSS");
     for(int i=0;i<38;i++)
@@ -37,28 +35,7 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
         tones.append(QString::number(tone_list[i]));
     }
 
-    // FIXME: should probably use a map or something and keep track of them elsewhere
-    _filter_widths = new std::vector<std::complex<int>>;
-    _filter_widths->push_back(std::complex<int>(-5000, 5000));  // FM
-    _filter_widths->push_back(std::complex<int>(-2500, 2500));  // NBFM
-    _filter_widths->push_back(std::complex<int>(-100000, 100000));  // WFM
-    _filter_widths->push_back(std::complex<int>(-1, 2500)); // USB
-    _filter_widths->push_back(std::complex<int>(-2500, 1)); // LSB
-    _filter_widths->push_back(std::complex<int>(-1, 2500)); // FreeDV1600 USB
-    _filter_widths->push_back(std::complex<int>(-1, 2500)); // FreeDV700C USB
-    _filter_widths->push_back(std::complex<int>(-2500, 1)); // FreeDV1600 LSB
-    _filter_widths->push_back(std::complex<int>(-2500, 1)); // FreeDV700C LSB
-    _filter_widths->push_back(std::complex<int>(-5000, 5000));  // AM
-    _filter_widths->push_back(std::complex<int>(-2800, 2800)); // BPSK 2K
-    _filter_widths->push_back(std::complex<int>(-1400, 1400)); // BPSK 700
-    _filter_widths->push_back(std::complex<int>(-1500, 1500));  // QPSK 2K
-    _filter_widths->push_back(std::complex<int>(-7000, 7000));    // QPSK 10K
-    _filter_widths->push_back(std::complex<int>(-4600, 4600));  // 2FSK 2K
-    _filter_widths->push_back(std::complex<int>(-15000, 15000));  // 2FSK 10K
-    _filter_widths->push_back(std::complex<int>(-4600, 4600));  // 4FSK 2K
-    _filter_widths->push_back(std::complex<int>(-25000, 25000));    // 4FSK 10K
-    _filter_widths->push_back(std::complex<int>(-150000, 150000)); // QPSK250000 VIDEO
-    _filter_widths->push_back(std::complex<int>(-150000, 150000)); // QPSK250000 DATA
+    _filter_widths = buildFilterWidthList();
 
 
 
@@ -87,7 +64,6 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     _secondary_text_timer.setSingleShot(true);
 
     QObject::connect(ui->buttonTransmit,SIGNAL(toggled(bool)),this,SLOT(startTx()));
-    //QObject::connect(ui->buttonTransmit,SIGNAL(released()),this,SLOT(GUIendTransmission()));
     QObject::connect(ui->sendTextButton,SIGNAL(clicked()),this,SLOT(sendTextRequested()));
     QObject::connect(ui->voipConnectButton,SIGNAL(clicked()),this,SLOT(connectVOIPRequested()));
     QObject::connect(ui->voipDisconnectButton,SIGNAL(clicked()),this,SLOT(disconnectVOIPRequested()));
@@ -150,23 +126,26 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     ui->receivedTextEdit->setAttribute(Qt::WA_AcceptTouchEvents);
     ui->voipTreeWidget->setColumnHidden(2,true);
     ui->voipTreeWidget->setColumnHidden(3,true);
-    _transmitting_radio = false;
+
     ui->controlsFrame->hide();
     ui->constellationDisplay->hide();
     ui->secondaryTextDisplay->hide();
     ui->videoFrame->hide();
+    ui->menuBar->hide();
+    ui->statusBar->hide();
+    ui->mainToolBar->hide();
+    ui->memoriesFrame->hide();
     _current_voip_channel = -1;
     _demod_offset = 0;
 
     _video_img = new QPixmap;
     _constellation_img = new QPixmap(300,300);
-    ui->menuBar->hide();
-    ui->statusBar->hide();
-    ui->mainToolBar->hide();
-    ui->memoriesFrame->hide();
-    setWindowIcon(QIcon(":/res/logo.png"));
     _realFftData = new float[1024*1024];
     _iirFftData = new float[1024*1024];
+    _s_meter_bg = new QPixmap(":/res/s-meter-bg-black-small.png");
+
+
+    _transmitting_radio = false;
     _fft_averaging = 1;
     _rssi = 0;
     QRect xy = this->geometry();
@@ -205,8 +184,8 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     _eff_memory_display->setOpacity(0.7);
     ui->memoriesFrame->setGraphicsEffect(_eff_memory_display);
 
-    _s_meter_bg = new QPixmap(":/res/s-meter-bg-black-small.png");
-
+    setWindowIcon(QIcon(":/res/logo.png"));
+    setWindowTitle("QRadioLink");
 }
 
 void MainWindow::initSettings()
@@ -565,14 +544,9 @@ void MainWindow::newFFTData(float *fft_data, int fftsize)
     // don't paint anything if window is minimized
     if(isMinimized())
         return;
-
     // FIXME: fftsize is a reference
-
     if (fftsize == 0)
-    {
-        /* nothing to do, wait until next activation. */
         return;
-    }
 
     for (int i = 0; i < fftsize; i++)
     {
@@ -586,6 +560,7 @@ void MainWindow::newFFTData(float *fft_data, int fftsize)
 
 void MainWindow::setFFTSize(int size)
 {
+    Q_UNUSED(size);
     emit newFFTSize(ui->fftSizeBox->currentText().toInt());
 }
 
@@ -916,14 +891,12 @@ void MainWindow::toggleRxMode(int value)
     _rx_mode = value;
     emit toggleRxModemMode(value);
     setFilterWidth(value);
-    //mainTabChanged(ui->tabWidget->currentIndex());
 }
 
 void MainWindow::toggleTxMode(int value)
 {
     _tx_mode = value;
     emit toggleTxModemMode(value);
-    //mainTabChanged(ui->tabWidget->currentIndex());
 }
 
 void MainWindow::initError(QString error)
@@ -939,6 +912,7 @@ void MainWindow::toggleRepeater(bool value)
 
 void MainWindow::clarifierTuneFreq(int value)
 {
+    Q_UNUSED(value);
     emit fineTuneFreq((int)ui->tuneDial->value());
 }
 
@@ -959,7 +933,7 @@ void MainWindow::tuneMainFreq(qint64 freq)
 }
 
 
-// this happens on middle mouse
+// this happens on middle mouse click
 void MainWindow::tuneFreqPlotter(qint64 freq)
 {
     return; // can't handle this now
@@ -1036,11 +1010,9 @@ void MainWindow::startScan(bool value)
 }
 
 
-
-
 void MainWindow::mainTabChanged(int value)
 {
-
+    Q_UNUSED(value);
 }
 
 void MainWindow::updateFreqGUI(long long center_freq, long carrier_offset)
@@ -1056,11 +1028,13 @@ void MainWindow::updateFreqGUI(long long center_freq, long carrier_offset)
 
 void MainWindow::updateRxCTCSS(int value)
 {
+    Q_UNUSED(value);
     emit setRxCTCSS(ui->comboBoxRxCTCSS->currentText().toFloat());
 }
 
 void MainWindow::updateTxCTCSS(int value)
 {
+    Q_UNUSED(value);
     emit setTxCTCSS(ui->comboBoxTxCTCSS->currentText().toFloat());
 }
 
@@ -1078,7 +1052,6 @@ void MainWindow::toggleVox(bool value)
 {
     emit setVox(value);
 }
-
 
 void MainWindow::setPeakDetect(bool value)
 {
