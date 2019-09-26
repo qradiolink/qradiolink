@@ -917,21 +917,27 @@ background-color: rgb(0, 0, 67);</string>
          <widget class="QFrame" name="memoriesFrame">
           <property name="geometry">
            <rect>
-            <x>660</x>
+            <x>570</x>
             <y>200</y>
-            <width>500</width>
+            <width>600</width>
             <height>250</height>
            </rect>
           </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="minimumSize">
            <size>
-            <width>500</width>
+            <width>600</width>
             <height>250</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>400</width>
+            <width>600</width>
             <height>250</height>
            </size>
           </property>
@@ -942,7 +948,25 @@ background-color: rgb(0, 0, 67);</string>
            <enum>QFrame::Raised</enum>
           </property>
           <layout class="QGridLayout" name="gridLayout_4">
-           <item row="0" column="0">
+           <property name="leftMargin">
+            <number>1</number>
+           </property>
+           <property name="topMargin">
+            <number>1</number>
+           </property>
+           <property name="rightMargin">
+            <number>1</number>
+           </property>
+           <property name="bottomMargin">
+            <number>1</number>
+           </property>
+           <property name="horizontalSpacing">
+            <number>2</number>
+           </property>
+           <property name="verticalSpacing">
+            <number>1</number>
+           </property>
+           <item row="0" column="1">
             <widget class="QTableWidget" name="memoriesTableWidget">
              <property name="styleSheet">
               <string notr="true">background-color: rgb(29, 29, 29);
@@ -952,11 +976,32 @@ font: 9pt &quot;Sans Serif&quot;;</string>
              <property name="autoScrollMargin">
               <number>5</number>
              </property>
+             <property name="dragEnabled">
+              <bool>true</bool>
+             </property>
+             <property name="dragDropOverwriteMode">
+              <bool>false</bool>
+             </property>
+             <property name="dragDropMode">
+              <enum>QAbstractItemView::DragDrop</enum>
+             </property>
+             <property name="alternatingRowColors">
+              <bool>false</bool>
+             </property>
+             <property name="selectionBehavior">
+              <enum>QAbstractItemView::SelectRows</enum>
+             </property>
+             <property name="sortingEnabled">
+              <bool>true</bool>
+             </property>
              <property name="columnCount">
               <number>5</number>
              </property>
              <attribute name="horizontalHeaderVisible">
               <bool>true</bool>
+             </attribute>
+             <attribute name="horizontalHeaderDefaultSectionSize">
+              <number>100</number>
              </attribute>
              <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
               <bool>true</bool>
@@ -964,6 +1009,11 @@ font: 9pt &quot;Sans Serif&quot;;</string>
              <column>
               <property name="text">
                <string>Frequency</string>
+              </property>
+              <property name="font">
+               <font>
+                <family>Sans Serif</family>
+               </font>
               </property>
              </column>
              <column>
@@ -986,6 +1036,81 @@ font: 9pt &quot;Sans Serif&quot;;</string>
                <string>TX Shift</string>
               </property>
              </column>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QFrame" name="frame_4">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="MinimumExpanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>40</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>40</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="autoFillBackground">
+              <bool>false</bool>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(31, 31, 31);</string>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_6">
+              <property name="spacing">
+               <number>10</number>
+              </property>
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QPushButton" name="addChannelButton">
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset>
+                  <normalon>:/res/list-add.png</normalon>
+                 </iconset>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="removeChannelButton">
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset>
+                  <normalon>:/res/list-remove.png</normalon>
+                 </iconset>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </widget>
            </item>
           </layout>

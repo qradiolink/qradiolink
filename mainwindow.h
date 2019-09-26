@@ -84,7 +84,7 @@ public slots:
     void displayImage(QImage img);
     void enterFreq();
     void saveConfig();
-    void readMemories();
+    void updateMemories();
     void mainTabChanged(int value);
     void clearTextArea();
     void updateFreqGUI(long long center_freq, long carrier_offset);
@@ -114,7 +114,8 @@ public slots:
     void autoSquelch();
     void initError(QString error);
     void showMemoriesPanel(bool show);
-    void memoryAction(QTableWidgetItem* item);
+    void addChannel();
+    void removeChannel();
 
 
 signals:
@@ -197,6 +198,7 @@ private:
     QGraphicsOpacityEffect *_eff_const;
     QGraphicsOpacityEffect *_eff_video;
     QGraphicsOpacityEffect *_eff_text_display;
+    QGraphicsOpacityEffect *_eff_memory_display;
     QPixmap *_s_meter_bg;
     QTimer _secondary_text_timer;
     QTimer _video_timer;

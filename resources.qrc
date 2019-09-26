@@ -24,6 +24,8 @@
         <file>res/call-start.png</file>
         <file>res/im-user.png</file>
         <file>res/speaker.png</file>
+        <file>res/list-add.png</file>
+        <file>res/list-remove.png</file>
     </qresource>
     <qresource prefix="/fonts">
         <file>res/LiquidCrystal-Normal.otf</file>
