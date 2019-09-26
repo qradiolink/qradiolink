@@ -116,6 +116,7 @@ public slots:
     void showMemoriesPanel(bool show);
     void addChannel();
     void removeChannel();
+    void tuneToMemory(int row, int col);
 
 
 signals:

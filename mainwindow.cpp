@@ -136,6 +136,7 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     QObject::connect(ui->plotterFrame,SIGNAL(newDemodFreq(qint64,qint64)),this,SLOT(carrierOffsetChanged(qint64,qint64)));
 
     QObject::connect(ui->voipTreeWidget,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this,SLOT(channelState(QTreeWidgetItem *,int)));
+    QObject::connect(ui->memoriesTableWidget,SIGNAL(cellClicked(int, int)),this,SLOT(tuneToMemory(int, int)));
     QObject::connect(ui->addChannelButton,SIGNAL(clicked()), this, SLOT(addChannel()));
     QObject::connect(ui->removeChannelButton,SIGNAL(clicked()), this, SLOT(removeChannel()));
 
@@ -514,6 +515,22 @@ void MainWindow::removeChannel()
         channels->remove(chan_to_remove.at(i));
     }
     updateMemories();
+}
+
+void MainWindow::tuneToMemory(int row, int col)
+{
+    Q_UNUSED(col);
+    QVector<radiochannel*> *channels = _radio_channels->getChannels();
+    radiochannel *chan = channels->at(row);
+    ui->frameCtrlFreq->setFrequency(chan->rx_frequency);
+    _tx_shift_frequency = chan->tx_shift;
+    ui->shiftEdit->setText(QString::number(_tx_shift_frequency / 1000));
+
+    ui->rxModemTypeComboBox->setCurrentIndex(chan->rx_mode);
+    ui->txModemTypeComboBox->setCurrentIndex(chan->tx_mode);
+    _rx_mode = chan->rx_mode;
+    _tx_mode = chan->tx_mode;
+    tuneMainFreq(chan->rx_frequency);
 }
 
 
