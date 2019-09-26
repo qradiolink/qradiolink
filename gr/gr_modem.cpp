@@ -467,9 +467,12 @@ void gr_modem::transmitPCMAudio(std::vector<float> *audio_data)
 
     if(!_gr_mod_base)
     {
+        audio_data->clear();
+        delete audio_data;
         return;
     }
     // FIXME: these checks are useless, duplicate code in radioop
+    /*
     if((_modem_type_tx == gr_modem_types::ModemTypeNBFM2500)
             || (_modem_type_tx == gr_modem_types::ModemTypeNBFM5000)
             || (_modem_type_tx == gr_modem_types::ModemTypeUSB2500)
@@ -479,14 +482,14 @@ void gr_modem::transmitPCMAudio(std::vector<float> *audio_data)
             || (_modem_type_tx == gr_modem_types::ModemTypeFREEDV700DUSB)
             || (_modem_type_tx == gr_modem_types::ModemTypeFREEDV1600LSB)
             || (_modem_type_tx == gr_modem_types::ModemTypeFREEDV700DLSB))
+    */
+
+    int ret = 1;
+    while(ret)
     {
-        int ret = 1;
-        while(ret)
-        {
-            struct timespec time_to_sleep = {0, 1000L };
-            nanosleep(&time_to_sleep, NULL);
-            ret = _gr_mod_base->set_audio(audio_data);
-        }
+        struct timespec time_to_sleep = {0, 1000L };
+        nanosleep(&time_to_sleep, NULL);
+        ret = _gr_mod_base->set_audio(audio_data);
     }
 }
 
@@ -616,7 +619,7 @@ float gr_modem::getRSSI()
         return _gr_demod_base->get_rssi();
     else
     {
-        return 100.0;
+        return 9999.0;
     }
 }
 
@@ -639,6 +642,7 @@ bool gr_modem::demodulateAnalog()
     }
     std::vector<float> *audio_data = nullptr;
     // FIXME: these checks are useless, duplicate code in radioop
+    /*
     if((_modem_type_rx == gr_modem_types::ModemTypeNBFM2500)
             || (_modem_type_rx == gr_modem_types::ModemTypeNBFM5000)
             || (_modem_type_rx == gr_modem_types::ModemTypeUSB2500)
@@ -649,9 +653,8 @@ bool gr_modem::demodulateAnalog()
             || (_modem_type_rx == gr_modem_types::ModemTypeFREEDV700DUSB)
             || (_modem_type_rx == gr_modem_types::ModemTypeFREEDV1600LSB)
             || (_modem_type_rx == gr_modem_types::ModemTypeFREEDV700DLSB))
-    {
-        audio_data = _gr_demod_base->getAudio();
-    }
+    */
+    audio_data = _gr_demod_base->getAudio();
     if(audio_data->size() > 0)
     {
         if(_repeater)

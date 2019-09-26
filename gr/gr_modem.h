@@ -32,10 +32,8 @@
 #include "modem_types.h"
 #include "gr/gr_mod_base.h"
 #include "gr/gr_demod_base.h"
-#include "gr_mod_gmsk.h"
-#include "gr_demod_gmsk.h"
-#include "gr_mod_bpsk.h"
-#include "gr_demod_bpsk.h"
+
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -134,10 +132,6 @@ public slots:
     std::vector<gr_complex> *getConstellation();
 
 private:
-
-    Settings *_settings;
-    quint64 _sequence_number;
-    bool _transmitting;
     std::vector<unsigned char>* frame(unsigned char *encoded_audio, int data_size, int frame_type=FrameTypeVoice);
     void processReceivedData(unsigned char* received_data, int current_frame_type);
     void handleStreamEnd();
@@ -145,13 +139,15 @@ private:
     void transmit(QVector<std::vector<unsigned char>*> frames);
     bool synchronize(int v_size, std::vector<unsigned char> *data);
 
+    Settings *_settings;
     gr_mod_base *_gr_mod_base;
     gr_demod_base *_gr_demod_base;
-    gr_mod_gmsk *_gr_mod_gmsk;
-    gr_demod_gmsk *_gr_demod_gmsk;
-    gr_mod_bpsk *_gr_mod_bpsk;
-    gr_demod_bpsk *_gr_demod_bpsk;
+    unsigned char *_bit_buf;
 
+    long _bit_buf_index;
+    int _bit_buf_len;
+    quint64 _sequence_number;
+    bool _transmitting;
     bool _repeater;
     int _modem_type_rx;
     int _modem_type_tx;
@@ -161,12 +157,7 @@ private:
     quint8 _last_frame_type;
     bool _sync_found;
     int _current_frame_type;
-    long _bit_buf_index;
-    unsigned char *_bit_buf;
-    int _bit_buf_len;
     unsigned long long _shift_reg;
-
-
 
 };
 

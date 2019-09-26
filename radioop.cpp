@@ -172,6 +172,111 @@ void RadioOp::stop()
     _stop=true;
 }
 
+void RadioOp::run()
+{
+
+    bool ptt_activated = false;
+    bool data_to_process = false;
+    bool frame_flag = true;
+    int last_ping_time = 0;
+    int last_channel_broadcast_time = 0;
+    while(!_stop)
+    {
+        _mutex->lock();
+        bool transmitting = _transmitting_audio;
+        bool rx_inited = _rx_inited;
+        bool process_text = _process_text;
+        bool vox_enabled = _vox_enabled;
+        bool voip_forwarding = _voip_forwarding;
+        QString text_out = _text_out;
+        int tx_mode = _tx_mode;
+        bool data_modem_sleeping = _data_modem_sleeping;
+        _mutex->unlock();
+
+        QCoreApplication::processEvents();
+        flushVoipBuffer();
+
+        int time = QDateTime::currentDateTime().toTime_t();
+        if((time - last_ping_time) > 10)
+        {
+            emit pingServer();
+            last_ping_time = time;
+        }
+
+        if((time - last_channel_broadcast_time) > 10)
+        {
+            last_channel_broadcast_time = time;
+            if(voip_forwarding && !transmitting && !ptt_activated)
+            {
+                sendChannels();
+            }
+        }
+
+        updateDataModemReset(transmitting, ptt_activated);
+
+        if(transmitting && !ptt_activated)
+        {
+            ptt_activated = true;
+            startTx();
+        }
+        if(!transmitting && ptt_activated && !data_modem_sleeping)
+        {
+            ptt_activated = false;
+            stopTx();
+        }
+
+        getFFTData();
+        getConstellationData();
+        getRSSI();
+        if(transmitting)
+        {
+            if(tx_mode == gr_modem_types::ModemTypeQPSKVideo)
+                processInputVideoStream(frame_flag);
+            else if((tx_mode == gr_modem_types::ModemTypeQPSK250000) && (_net_device != 0))
+            {
+                if(rx_inited)
+                {
+                    _mutex->lock();
+                    _modem->demodulate();
+                    _mutex->unlock();
+                }
+                if(!data_modem_sleeping)
+                    processInputNetStream();
+            }
+        }
+
+        data_to_process = getDemodulatorData();
+
+        if(process_text && (_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL))
+        {
+            sendTextData(text_out, gr_modem::FrameTypeText);
+            emit displayTransmitStatus(false);
+        }
+
+        // FIXME: remove these hardcoded sleeps
+        if(!transmitting && !vox_enabled && !process_text)
+        {
+            if(!data_to_process)
+            {
+                struct timespec time_to_sleep = {0, 5000000L };
+                nanosleep(&time_to_sleep, NULL);
+            }
+            else
+            {
+                struct timespec time_to_sleep = {0, 1000L };
+                nanosleep(&time_to_sleep, NULL);
+            }
+        }
+        else
+        {
+            struct timespec time_to_sleep = {0, 2000000L };
+            nanosleep(&time_to_sleep, NULL);
+        }
+    }
+
+    emit finished();
+}
+
 void RadioOp::readConfig(std::string &rx_device_args, std::string &tx_device_args,
                          std::string &rx_antenna, std::string &tx_antenna, int &rx_freq_corr,
                          int &tx_freq_corr, std::string &callsign, std::string &video_device)
@@ -283,6 +388,25 @@ void RadioOp::updateInputAudioStream()
         audio_mode = AudioInterface::AUDIO_MODE_ANALOG;
         emit setAudioReadMode(true, false, audio_mode);
     }
+}
+
+void RadioOp::flushVoipBuffer()
+{
+    // FIXME: breakups on official Mumble client
+
+    if(_voip_encode_buffer->size() >= 320)
+    {
+
+        short *pcm = new short[320];
+        for(int i =0; i< 320;i++)
+        {
+            pcm[i] = _voip_encode_buffer->at(i);
+        }
+
+        emit voipDataPCM(pcm,320*sizeof(short));
+        _voip_encode_buffer->remove(0,320);
+    }
+
 }
 
 void RadioOp::txAudio(short *audiobuffer, int audiobuffer_size, int vad, bool radio_only)
@@ -675,26 +799,6 @@ void RadioOp::updateFrequency()
 }
 
 
-
-void RadioOp::flushVoipBuffer()
-{
-    // FIXME: breakups on official Mumble client
-
-    if(_voip_encode_buffer->size() >= 320)
-    {
-
-        short *pcm = new short[320];
-        for(int i =0; i< 320;i++)
-        {
-            pcm[i] = _voip_encode_buffer->at(i);
-        }
-
-        emit voipDataPCM(pcm,320*sizeof(short));
-        _voip_encode_buffer->remove(0,320);
-    }
-
-}
-
 void RadioOp::updateDataModemReset(bool transmitting, bool ptt_activated)
 {
     if((_tx_mode == gr_modem_types::ModemTypeQPSK250000) && !_data_modem_sleeping
@@ -744,110 +848,6 @@ bool RadioOp::getDemodulatorData()
     return data_to_process;
 }
 
-void RadioOp::run()
-{
-
-    bool ptt_activated = false;
-    bool data_to_process = false;
-    bool frame_flag = true;
-    int last_ping_time = 0;
-    int last_channel_broadcast_time = 0;
-    while(!_stop)
-    {
-        _mutex->lock();
-        bool transmitting = _transmitting_audio;
-        bool rx_inited = _rx_inited;
-        bool process_text = _process_text;
-        bool vox_enabled = _vox_enabled;
-        bool voip_forwarding = _voip_forwarding;
-        QString text_out = _text_out;
-        int tx_mode = _tx_mode;
-        bool data_modem_sleeping = _data_modem_sleeping;
-        _mutex->unlock();
-
-        QCoreApplication::processEvents();
-        flushVoipBuffer();
-
-        int time = QDateTime::currentDateTime().toTime_t();
-        if((time - last_ping_time) > 10)
-        {
-            emit pingServer();
-            last_ping_time = time;
-        }
-
-        if((time - last_channel_broadcast_time) > 10)
-        {
-            last_channel_broadcast_time = time;
-            if(voip_forwarding && !transmitting && !ptt_activated)
-            {
-                sendChannels();
-            }
-        }
-
-        updateDataModemReset(transmitting, ptt_activated);
-
-        if(transmitting && !ptt_activated)
-        {
-            ptt_activated = true;
-            startTx();
-        }
-        if(!transmitting && ptt_activated && !data_modem_sleeping)
-        {
-            ptt_activated = false;
-            stopTx();
-        }
-
-        getFFTData();
-        getConstellationData();
-        getRSSI();
-        if(transmitting)
-        {
-            if(tx_mode == gr_modem_types::ModemTypeQPSKVideo)
-                processInputVideoStream(frame_flag);
-            else if((tx_mode == gr_modem_types::ModemTypeQPSK250000) && (_net_device != 0))
-            {
-                if(rx_inited)
-                {
-                    _mutex->lock();
-                    _modem->demodulate();
-                    _mutex->unlock();
-                }
-                if(!data_modem_sleeping)
-                    processInputNetStream();
-            }
-        }
-
-        data_to_process = getDemodulatorData();
-
-        if(process_text && (_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL))
-        {
-            sendTextData(text_out, gr_modem::FrameTypeText);
-            emit displayTransmitStatus(false);
-        }
-
-        // FIXME: remove these hardcoded sleeps
-        if(!transmitting && !vox_enabled && !process_text)
-        {
-            if(!data_to_process)
-            {
-                struct timespec time_to_sleep = {0, 5000000L };
-                nanosleep(&time_to_sleep, NULL);
-            }
-            else
-            {
-                struct timespec time_to_sleep = {0, 1000L };
-                nanosleep(&time_to_sleep, NULL);
-            }
-        }
-        else
-        {
-            struct timespec time_to_sleep = {0, 2000000L };
-            nanosleep(&time_to_sleep, NULL);
-        }
-    }
-
-    emit finished();
-}
 
 void RadioOp::getRSSI()
 {

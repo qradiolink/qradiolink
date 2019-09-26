@@ -25,6 +25,12 @@ SOURCES += main.cpp\
         dtmfdecoder.cpp\
         databaseapi.cpp\
         mumbleclient.cpp\
+        radioprotocol.cpp \
+        audiowriter.cpp \
+        audioreader.cpp \
+        mumblechannel.cpp \
+        radiochannel.cpp \
+        relaycontroller.cpp \
         server.cpp\
         settings.cpp\
         speech.cpp\
@@ -41,18 +47,16 @@ SOURCES += main.cpp\
         ext/compressor.c \
         ext/snd.c \
         ext/mem.c \
-        video/videocapture.cpp\
-    radioop.cpp \
+        audio/alsaaudio.cpp \
+        video/videocapture.cpp \
+        video/videoencoder.cpp \
+        net/netdevice.cpp \
+        radioop.cpp \
     qtgui/freqctrl.cpp \
     qtgui/plotter.cpp \
-    audio/alsaaudio.cpp \
-    gr/gr_mod_gmsk.cpp \
     gr/gr_modem.cpp \
     gr/gr_vector_source.cpp \
-    gr/gr_demod_gmsk.cpp \
     gr/gr_vector_sink.cpp \
-    gr/gr_mod_bpsk.cpp \
-    gr/gr_demod_bpsk.cpp \
     gr/gr_demod_bpsk_sdr.cpp \
     gr/gr_mod_bpsk_sdr.cpp \
     gr/gr_mod_qpsk_sdr.cpp \
@@ -68,28 +72,27 @@ SOURCES += main.cpp\
     gr/gr_demod_ssb_sdr.cpp \
     gr/gr_mod_am_sdr.cpp \
     gr/gr_demod_am_sdr.cpp \
-    video/videoencoder.cpp \
     gr/gr_mod_2fsk_sdr.cpp \
     gr/gr_demod_2fsk_sdr.cpp \
-    net/netdevice.cpp \
+    gr/gr_demod_freedv.cpp \
+    gr/gr_mod_freedv.cpp \
     gr/gr_deframer_bb.cpp \
     gr/gr_audio_source.cpp \
     gr/gr_audio_sink.cpp \
     gr/gr_4fsk_discriminator.cpp \
     gr/gr_const_sink.cpp \
-    radioprotocol.cpp \
-    gr/rx_fft.cpp \
-    audiowriter.cpp \
-    audioreader.cpp \
-    mumblechannel.cpp \
-    radiochannel.cpp \
-    gr/gr_demod_freedv.cpp \
-    gr/gr_mod_freedv.cpp \
-    relaycontroller.cpp
+    gr/rx_fft.cpp
+
 
 HEADERS  += mainwindow.h\
         audio/audioencoder.h\
         audio/audiointerface.h\
+        radioprotocol.h \
+        audiowriter.h \
+        audioreader.h \
+        mumblechannel.h \
+        radiochannel.h \
+        relaycontroller.h \
         dtmfdecoder.h\
         databaseapi.h\
         mumbleclient.h\
@@ -113,17 +116,15 @@ HEADERS  += mainwindow.h\
         ext/snd.h \
         ext/mem.h \
         ext/compressor.h \
-    radioop.h \
+        video/videoencoder.h \
+        net/netdevice.h \
+        radioop.h \
+        audio/alsaaudio.h \
     qtgui/freqctrl.h \
     qtgui/plotter.h \
-    audio/alsaaudio.h \
-    gr/gr_mod_gmsk.h \
     gr/gr_modem.h \
     gr/gr_vector_source.h \
-    gr/gr_demod_gmsk.h \
     gr/gr_vector_sink.h \
-    gr/gr_mod_bpsk.h \
-    gr/gr_demod_bpsk.h \
     gr/gr_demod_bpsk_sdr.h \
     gr/gr_mod_bpsk_sdr.h \
     gr/gr_mod_qpsk_sdr.h \
@@ -139,25 +140,17 @@ HEADERS  += mainwindow.h\
     gr/gr_demod_ssb_sdr.h \
     gr/gr_mod_am_sdr.h \
     gr/gr_demod_am_sdr.h \
-    video/videoencoder.h \
     gr/gr_mod_2fsk_sdr.h \
     gr/gr_demod_2fsk_sdr.h \
-    net/netdevice.h \
+    gr/gr_demod_freedv.h \
+    gr/gr_mod_freedv.h \
+    gr/rx_fft.h \
     gr/gr_deframer_bb.h \
     gr/gr_audio_source.h \
     gr/gr_audio_sink.h \
     gr/gr_4fsk_discriminator.h \
     gr/gr_const_sink.h \
-    gr/modem_types.h \
-    radioprotocol.h \
-    gr/rx_fft.h \
-    audiowriter.h \
-    audioreader.h \
-    mumblechannel.h \
-    radiochannel.h \
-    gr/gr_demod_freedv.h \
-    gr/gr_mod_freedv.h \
-    relaycontroller.h
+    gr/modem_types.h
 
 
 FORMS    += mainwindow.ui
@@ -169,7 +162,7 @@ LIBS += -lgnuradio-pmt -lgnuradio-audio -lgnuradio-analog -lgnuradio-blocks -lgn
         -lboost_thread$$BOOST_SUFFIX -lboost_system$$BOOST_SUFFIX -lboost_program_options$$BOOST_SUFFIX
 LIBS += -lrt  # need to include on some distros
 
-LIBS += -lprotobuf -lopus -lpulse-simple -lpulse -lcodec2 -lgsm -lasound -ljpeg -lconfig++ -lspeexdsp -lftdi
+LIBS += -lprotobuf -lopus -lpulse-simple -lpulse -lcodec2 -lasound -ljpeg -lconfig++ -lspeexdsp -lftdi
                     #-lFestival -lestbase -leststring -lestools
 #INCLUDEPATH += /usr/include/speech_tools
 

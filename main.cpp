@@ -114,12 +114,6 @@ int main(int argc, char *argv[])
     w->activateWindow();
     w->raise();
 
-    /* Uncomment later
-    DtmfCommand *dtmfcommand = new DtmfCommand(settings, &db,client);
-    QObject::connect(client,SIGNAL(channelReady(int)),dtmfcommand,SLOT(channelReady(int)));
-    QObject::connect(client,SIGNAL(newStation(Station*)),dtmfcommand,SLOT(newStation(Station*)));
-    QObject::connect(client,SIGNAL(leftStation(Station*)),dtmfcommand,SLOT(leftStation(Station*)));
-    */
     /*
     QThread *t1= new QThread;
     DtmfDecoder *decoder = new DtmfDecoder(settings);
@@ -127,11 +121,6 @@ int main(int argc, char *argv[])
     {
 
         decoder->moveToThread(t1);
-
-        QObject::connect(decoder,SIGNAL(haveCall(QVector<char>*)),dtmfcommand,SLOT(haveCall(QVector<char>*)));
-        QObject::connect(decoder,SIGNAL(haveCommand(QVector<char>*)),dtmfcommand,SLOT(haveCommand(QVector<char>*)));
-        QObject::connect(dtmfcommand,SIGNAL(readyInput()),decoder,SLOT(resetInput()));
-
         QObject::connect(t1, SIGNAL(started()), decoder, SLOT(run()));
         QObject::connect(decoder, SIGNAL(finished()), t1, SLOT(quit()));
         QObject::connect(decoder, SIGNAL(finished()), decoder, SLOT(deleteLater()));
@@ -259,5 +248,7 @@ int main(int argc, char *argv[])
     client->disconnectFromServer();
     delete w;
     delete client;
+    delete radio_channels;
+    delete settings;
     return ret;
 }

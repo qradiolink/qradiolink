@@ -153,6 +153,55 @@ public slots:
     void setRxSampleRate(int samp_rate);
 
 private:
+    void readConfig(std::string &rx_device_args, std::string &tx_device_args,
+                    std::string &rx_antenna, std::string &tx_antenna, int &rx_freq_corr,
+                    int &tx_freq_corr, std::string &callsign, std::string &video_device);
+    int getFrameLength(unsigned char *data);
+    unsigned int getFrameCRC32(unsigned char *data);
+
+
+    void updateInputAudioStream();
+    int processInputVideoStream(bool &frame_flag);
+    void processInputNetStream();
+    void sendEndBeep();
+    void sendChannels();
+    void sendTextData(QString text, int frame_type);
+    void sendBinData(QByteArray data, int frame_type);
+    bool getDemodulatorData();
+    void getFFTData();
+    void getConstellationData();
+    void getRSSI();
+    void setRelays(bool transmitting);
+
+    // FIXME: inflation of members
+    AudioInterface *_audio;
+    Settings *_settings;
+    RelayController *_relay_controller;
+    AudioEncoder *_codec;
+    VideoEncoder *_video;
+    NetDevice *_net_device;
+    gr_modem *_modem;
+    RadioProtocol *_radio_protocol;
+    QMutex *_mutex;
+    QTimer *_voice_led_timer;
+    QTimer *_data_led_timer;
+    QTimer *_vox_timer;
+    QTimer *_voip_tx_timer;
+    QTimer *_end_tx_timer;
+    QElapsedTimer *_data_read_timer;
+    QElapsedTimer *_data_modem_reset_timer;
+    QElapsedTimer *_data_modem_sleep_timer;
+    QElapsedTimer *_fft_read_timer;
+    QElapsedTimer *_const_read_timer;
+    QElapsedTimer *_rssi_read_timer;
+    QElapsedTimer *_scan_timer;
+    std::vector<short> *_m_queue;
+    unsigned char *_rand_frame_data;
+    float *_fft_data;
+    QVector<short> *_voip_encode_buffer;
+    QByteArray *_data_rec_sound;
+    QByteArray *_end_rec_sound;
+
     bool _stop;
     bool _tx_inited;
     bool _rx_inited;
@@ -161,23 +210,14 @@ private:
 #if 0
     AlsaAudio *_audio;
 #endif
-    AudioInterface *_audio;
-    Settings *_settings;
-    RelayController *_relay_controller;
+
     bool _transmitting_audio;
     bool _process_text;
     bool _repeat_text;
     QString _text_out;
     QString _callsign;
-    QMutex *_mutex;
-    QTimer *_voice_led_timer;
-    QTimer *_data_led_timer;
-    QTimer *_vox_timer;
-    AudioEncoder *_codec;
-    VideoEncoder *_video;
-    NetDevice *_net_device;
-    gr_modem *_modem;
-    RadioProtocol *_radio_protocol;
+
+
     int _rx_mode;
     int _tx_mode;
     int _rx_radio_type;
@@ -202,54 +242,21 @@ private:
     float _rx_volume;
     long long _rx_sample_rate;
     QElapsedTimer _last_voiced_frame_timer;
-    QTimer *_voip_tx_timer;
-    QTimer *_end_tx_timer;
-    QElapsedTimer *_data_read_timer;
-    QElapsedTimer *_data_modem_reset_timer;
-    QElapsedTimer *_data_modem_sleep_timer;
     bool _data_modem_sleeping;
-    unsigned char *_rand_frame_data;
-    std::vector<short> *_m_queue;
     quint64 _last_session_id;
-    QVector<short> *_voip_encode_buffer;
-    QByteArray *_data_rec_sound;
-    QByteArray *_end_rec_sound;
     bool _repeat;
     bool _vox_enabled;
     bool _tx_started;
     int _freq_gui_counter;
     qint64 _carrier_offset;
-    float *_fft_data;
     bool _fft_enabled;
     int _fft_poll_time;
     bool _constellation_enabled;
     bool _rssi_enabled;
     bool _duplex_enabled;
-    QElapsedTimer *_fft_read_timer;
-    QElapsedTimer *_const_read_timer;
-    QElapsedTimer *_rssi_read_timer;
-    QElapsedTimer *_scan_timer;
     bool _scan_stop;
 
-    void readConfig(std::string &rx_device_args, std::string &tx_device_args,
-                    std::string &rx_antenna, std::string &tx_antenna, int &rx_freq_corr,
-                    int &tx_freq_corr, std::string &callsign, std::string &video_device);
-    int getFrameLength(unsigned char *data);
-    unsigned int getFrameCRC32(unsigned char *data);
 
-
-    void updateInputAudioStream();
-    int processInputVideoStream(bool &frame_flag);
-    void processInputNetStream();
-    void sendEndBeep();
-    void sendChannels();
-    void sendTextData(QString text, int frame_type);
-    void sendBinData(QByteArray data, int frame_type);
-    bool getDemodulatorData();
-    void getFFTData();
-    void getConstellationData();
-    void getRSSI();
-    void setRelays(bool transmitting);
 
 };
 

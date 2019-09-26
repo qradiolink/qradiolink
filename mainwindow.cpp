@@ -166,7 +166,6 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     ui->memoriesFrame->hide();
     setWindowIcon(QIcon(":/res/logo.png"));
     _realFftData = new float[1024*1024];
-    _pwrFftData = new float[1024*1024];
     _iirFftData = new float[1024*1024];
     _fft_averaging = 1;
     _rssi = 0;
@@ -239,7 +238,6 @@ MainWindow::~MainWindow()
     delete _constellation_img;
     delete _constellation_painter;
     delete[] _realFftData;
-    delete[] _pwrFftData;
     delete[] _iirFftData;
     delete _eff_freq;
     delete _eff_const;

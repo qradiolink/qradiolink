@@ -30,15 +30,16 @@
 #include <QPropertyAnimation>
 #include <QPainter>
 #include <QToolTip>
-#include "mumbleclient.h"
-#include "radiochannel.h"
 #include <math.h>
 #include <complex>
-#include "qtgui/freqctrl.h"
 #include <libconfig.h++>
+#include "mumbleclient.h"
+#include "radiochannel.h"
+#include "qtgui/freqctrl.h"
+#include "qtgui/plotter.h"
 #include "settings.h"
 #include "mumblechannel.h"
-#include "qtgui/plotter.h"
+
 #include <iostream>
 
 typedef std::vector<std::complex<float>> complex_vector;
@@ -165,48 +166,52 @@ public:
 
     void readConfig();
     void initSettings();
+
 private:
-    Ui::MainWindow *ui;
-    bool _transmitting_radio;
-    QPixmap *_video_img;
-    QPixmap *_constellation_img;
-    QFileInfo *_config_file;
-    qint64 _rx_frequency;
-    qint64 _tx_frequency;
-    qint64 _tx_shift_frequency;
-    int _rx_mode;
-    int _tx_mode;
-    QFileInfo *setupConfig();
     void addDisplayChannel(radiochannel *chan, int r);
     void closeEvent(QCloseEvent *);
     void changeEvent(QEvent *);
     void resizeEvent(QResizeEvent *);
-    Settings *_settings;
-    int _current_voip_channel;
-    float *_realFftData;
-    float *_pwrFftData;
-    float *_iirFftData;
-    float _fft_averaging;
-    int _waterfall_fps;
-    long _rx_sample_rate;
-    qint64 _demod_offset;
+    QFileInfo *setupConfig();
     void setFilterWidth(int index);
-    std::vector<std::complex<int>> *_filter_widths;
-    float _rssi;
+
+    // FIXME: inflation of members
+    Ui::MainWindow *ui;
+    Settings *_settings;
+    RadioChannels *_radio_channels;
+    QPixmap *_video_img;
+    QPixmap *_constellation_img;
+    QFileInfo *_config_file;
     QPainter *_constellation_painter;
-    bool _range_set;
+    QPixmap *_s_meter_bg;
     QGraphicsOpacityEffect *_eff_freq;
     QGraphicsOpacityEffect *_eff_const;
     QGraphicsOpacityEffect *_eff_video;
     QGraphicsOpacityEffect *_eff_text_display;
     QGraphicsOpacityEffect *_eff_memory_display;
-    QPixmap *_s_meter_bg;
+    std::vector<std::complex<int>> *_filter_widths;
+    float *_realFftData;
+    float *_iirFftData;
+
+    StationList _user_list;
+    bool _transmitting_radio;
+    qint64 _rx_frequency;
+    qint64 _tx_frequency;
+    qint64 _tx_shift_frequency;
+    int _rx_mode;
+    int _tx_mode;
+    int _current_voip_channel;
+
+    float _fft_averaging;
+    int _waterfall_fps;
+    long _rx_sample_rate;
+    qint64 _demod_offset;
+    float _rssi;
+    bool _range_set;
     QTimer _secondary_text_timer;
     QTimer _video_timer;
     QTimer _speech_icon_timer;
     QMutex _mutex;
-    StationList _user_list;
-    RadioChannels *_radio_channels;
     int _new_mem_index;
 
 };

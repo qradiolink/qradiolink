@@ -44,7 +44,6 @@ AudioEncoder::AudioEncoder()
     _codec2_700 = codec2_create(CODEC2_MODE_700B);
     _codec2_2400 = codec2_create(CODEC2_MODE_2400);
 
-    _gsm = gsm_create();
     _audio_filter_1400 = new Filter(BPF,256,8,0.2,3.8); // 16,8,0.12,3.8
     if( _audio_filter_1400->get_error_flag() != 0 )
     {
@@ -109,7 +108,6 @@ AudioEncoder::~AudioEncoder()
     opus_decoder_destroy(_dec_voip);
     codec2_destroy(_codec2_1400);
     codec2_destroy(_codec2_700);
-    gsm_destroy(_gsm);
     delete _audio_filter_1400;
     delete _audio_filter2_1400;
 }
@@ -224,21 +222,6 @@ short* AudioEncoder::decode_codec2_2400(unsigned char *audiobuffer, int audiobuf
     return decoded;
 }
 
-unsigned char* AudioEncoder::encode_gsm(short *audiobuffer, int audiobuffersize, int &length)
-{
-    length = sizeof(gsm_frame);
-    unsigned char *encoded = new unsigned char[length];
-    gsm_encode(_gsm,audiobuffer,encoded);
-    return encoded;
-}
-
-short* AudioEncoder::decode_gsm(unsigned char *audiobuffer, int data_length, int &samples)
-{
-    samples = 160;
-    short* decoded = new short[160];
-    gsm_decode(_gsm,audiobuffer,decoded);
-    return decoded;
-}
 // FIXME: enum for mode
 void AudioEncoder::filter_audio(short *audiobuffer, int audiobuffersize, bool pre_emphasis, bool de_emphasis, int mode)
 {

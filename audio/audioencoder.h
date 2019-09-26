@@ -22,10 +22,7 @@
 #include <codec2/codec2.h>
 #include "ext/agc.h"
 #include "ext/filt.h"
-extern "C"
-{
-#include <gsm/gsm.h>
-}
+
 
 class AudioEncoder
 {
@@ -55,7 +52,6 @@ private:
     struct CODEC2 *_codec2_1400;
     struct CODEC2 *_codec2_700;
     struct CODEC2 *_codec2_2400;
-    struct gsm_state *_gsm;
     Filter *_audio_filter_1400;
     Filter *_audio_filter2_1400;
     Filter *_audio_filter_700;
