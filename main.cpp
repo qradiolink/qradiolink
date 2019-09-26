@@ -30,16 +30,10 @@
 #include <iostream>
 #include "dtmfdecoder.h"
 #include "databaseapi.h"
-#include "serverwrapper.h"
 #include "config_defines.h"
-#if 0
-#include "controller.h"
-#endif
 #include "mumbleclient.h"
-#include "audioop.h"
 #include "audiowriter.h"
 #include "audioreader.h"
-#include "dtmfcommand.h"
 #include "station.h"
 #include "mumblechannel.h"
 #include "radiochannel.h"

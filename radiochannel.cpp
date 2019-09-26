@@ -104,15 +104,12 @@ void RadioChannels::saveConfig()
         libconfig::Setting &channel = root["channels"].add(libconfig::Setting::TypeGroup);
 
         channel.add("id", libconfig::Setting::TypeInt) = chan->id;
-
         channel.add("rx_frequency", libconfig::Setting::TypeInt64) = chan->rx_frequency;
-
         channel.add("tx_frequency", libconfig::Setting::TypeInt64) = chan->tx_frequency;
         channel.add("tx_shift", libconfig::Setting::TypeInt64) = chan->tx_shift;
         channel.add("rx_mode", libconfig::Setting::TypeInt) = chan->rx_mode;
         channel.add("tx_mode", libconfig::Setting::TypeInt) = chan->rx_mode;
         channel.add("name", libconfig::Setting::TypeString) = chan->name;
-        std::cerr << chan->rx_frequency <<" " << chan->tx_frequency << " " << chan->name << std::endl;
     }
 
     try

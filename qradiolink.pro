@@ -22,13 +22,9 @@ SOURCES += main.cpp\
         mainwindow.cpp\
         audio/audioencoder.cpp\
         audio/audiointerface.cpp\
-        audioop.cpp\
-        controller.cpp\
-        dtmfcommand.cpp\
         dtmfdecoder.cpp\
         databaseapi.cpp\
         mumbleclient.cpp\
-        serverwrapper.cpp\
         server.cpp\
         settings.cpp\
         speech.cpp\
@@ -94,13 +90,9 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h\
         audio/audioencoder.h\
         audio/audiointerface.h\
-        audioop.h\
-        controller.h\
-        dtmfcommand.h\
         dtmfdecoder.h\
         databaseapi.h\
         mumbleclient.h\
-        serverwrapper.h\
         server.h\
         settings.h\
         speech.h\
