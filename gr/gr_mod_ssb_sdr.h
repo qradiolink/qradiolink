@@ -30,6 +30,7 @@
 #include <gnuradio/analog/sig_source_f.h>
 #include <gnuradio/analog/sig_source_c.h>
 #include <gnuradio/blocks/float_to_complex.h>
+#include <gnuradio/analog/rail_ff.h>
 #include <gnuradio/blocks/delay.h>
 
 
@@ -57,6 +58,7 @@ private:
     gr::filter::fft_filter_ccc::sptr _filter_usb;
     gr::filter::fft_filter_ccc::sptr _filter_lsb;
     gr::blocks::float_to_complex::sptr _float_to_complex;
+    gr::analog::rail_ff::sptr _rail;
 
 
 

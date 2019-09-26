@@ -26,6 +26,7 @@
 #include <gnuradio/filter/fft_filter_ccc.h>
 #include <gnuradio/blocks/complex_to_real.h>
 #include <gnuradio/blocks/multiply_const_ff.h>
+#include <gnuradio/analog/rail_ff.h>
 
 
 class gr_demod_ssb_sdr;
@@ -53,6 +54,7 @@ private:
     gr::analog::feedforward_agc_cc::sptr _feed_forward_agc;
     gr::blocks::complex_to_real::sptr _complex_to_real;
     gr::blocks::multiply_const_ff::sptr _audio_gain;
+    gr::analog::rail_ff::sptr _rail;
 
     int _samples_per_symbol;
     int _samp_rate;

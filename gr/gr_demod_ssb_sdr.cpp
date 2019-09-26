@@ -49,9 +49,10 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(std::vector<int>signature, int sps, int samp_
                             1, _target_samp_rate, -_filter_width, -20,600,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     _squelch = gr::analog::pwr_squelch_cc::make(-140,0.01,0,true);
     _feed_forward_agc = gr::analog::feedforward_agc_cc::make(32,1);
-    _agc = gr::analog::agc2_cc::make(1, 1e-3, 1, 5);
+    _agc = gr::analog::agc2_cc::make(1e-2, 1e-4, 1, 3);
+    _rail = gr::analog::rail_ff::make(-1.0, 1.0);
     _complex_to_real = gr::blocks::complex_to_real::make();
-    _audio_gain = gr::blocks::multiply_const_ff::make(0.7);
+    _audio_gain = gr::blocks::multiply_const_ff::make(0.8);
 
 
     connect(self(),0,_resampler,0);
@@ -67,10 +68,12 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(std::vector<int>signature, int sps, int samp_
         connect(_filter_lsb,0,self(),0);
         connect(_filter_lsb,0,_squelch,0);
     }
-    connect(_squelch,0,_feed_forward_agc,0);
-    connect(_feed_forward_agc,0,_complex_to_real,0);
+    connect(_squelch,0,_agc,0);
+    connect(_agc,0,_complex_to_real,0);
+    //connect(_feed_forward_agc,0,_complex_to_real,0);
     //connect(_agc,0,_complex_to_real,0);
-    connect(_complex_to_real,0,_audio_gain,0);
+    connect(_complex_to_real,0,_rail,0);
+    connect(_rail,0,_audio_gain,0);
     connect(_audio_gain,0,self(),1);
 
 }
