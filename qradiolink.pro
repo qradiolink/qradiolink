@@ -38,10 +38,8 @@ SOURCES += main.cpp\
         station.cpp\
         telnetclient.cpp\
         telnetserver.cpp\
-        ext/agc.cpp\
         ext/Mumble.pb.cc\
         ext/QRadioLink.pb.cc\
-        ext/vox.cpp\
         ext/utils.cpp\
         ext/filt.cpp\
         ext/compressor.c \
@@ -104,13 +102,11 @@ HEADERS  += mainwindow.h\
         telnetclient.h\
         telnetserver.h\
         config_defines.h\
-        ext/agc.h\
         ext/dec.h\
         ext/Goertzel.h\
         ext/Mumble.pb.h\
         ext/PacketDataStream.h\
         ext/QRadioLink.pb.h\
-        ext/vox.h\
         ext/utils.h \
         ext/filt.h \
         ext/snd.h \

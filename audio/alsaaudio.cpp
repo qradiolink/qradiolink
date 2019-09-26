@@ -1,5 +1,5 @@
 // Written by Adrian Musceac YO8RZZ , started October 2013.
-// Parts of the code are based on previous work by Kamal Mostafa <kamal@whence.com>
+// Code based on work by Kamal Mostafa <kamal@whence.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License as

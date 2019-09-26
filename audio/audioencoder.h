@@ -20,7 +20,6 @@
 #include <QDebug>
 #include <opus/opus.h>
 #include <codec2/codec2.h>
-#include "ext/agc.h"
 #include "ext/filt.h"
 
 

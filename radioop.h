@@ -32,8 +32,6 @@
 #include <unistd.h>
 #include <math.h>
 #include "audio/audiointerface.h"
-#include "ext/agc.h"
-#include "ext/vox.h"
 #include "settings.h"
 #include "mumblechannel.h"
 #include "radioprotocol.h"
