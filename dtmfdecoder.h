@@ -23,9 +23,7 @@
 #include <QCoreApplication>
 #include <QDateTime>
 #include "audio/audiointerface.h"
-#include "speech.h"
 #include "config_defines.h"
-//#include "ext/goertzel.h" // Goertzel class below is GPL
 #include "ext/Goertzel.h"
 #include "settings.h"
 

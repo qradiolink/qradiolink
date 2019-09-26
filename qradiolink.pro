@@ -33,7 +33,6 @@ SOURCES += main.cpp\
         relaycontroller.cpp \
         server.cpp\
         settings.cpp\
-        speech.cpp\
         sslclient.cpp\
         station.cpp\
         telnetclient.cpp\
@@ -96,7 +95,6 @@ HEADERS  += mainwindow.h\
         mumbleclient.h\
         server.h\
         settings.h\
-        speech.h\
         sslclient.h\
         station.h\
         telnetclient.h\
