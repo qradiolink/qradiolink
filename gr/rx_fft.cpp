@@ -167,7 +167,8 @@ void rx_fft_c::set_fft_size(unsigned int fftsize)
 
         volk_free(d_fft_points);
         d_fft_points = (float*)volk_malloc((size_t)d_fftsize * sizeof(float), volk_get_alignment()); // eh, we should probably allocate the maximum possible size and keep track instead of allocating each time
-
+        d_counter = 0;
+        d_data_ready = false;
         /* reset window */
         int wintype = d_wintype; // FIXME: would be nicer with a window_reset()
         d_wintype = -1;
