@@ -35,6 +35,7 @@
 #include <gnuradio/blocks/rotator_cc.h>
 #include <gnuradio/blocks/message_debug.h>
 #include <gnuradio/blocks/probe_signal_f.h>
+#include <gnuradio/constants.h>
 #include <osmosdr/source.h>
 #include <vector>
 #include "gr_audio_sink.h"
