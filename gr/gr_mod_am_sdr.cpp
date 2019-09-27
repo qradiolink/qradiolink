@@ -39,7 +39,7 @@ gr_mod_am_sdr::gr_mod_am_sdr(int sps, int samp_rate, int carrier_freq,
     _signal_source = gr::analog::sig_source_f::make(target_samp_rate,gr::analog::GR_COS_WAVE, 0, 0.9);
     _add = gr::blocks::add_ff::make();
     _audio_amplify = gr::blocks::multiply_const_ff::make(0.1,1);
-    _agc = gr::analog::agc2_ff::make(1e-1, 1e-3, 1, 1);
+    _agc = gr::analog::agc2_ff::make(1e-2, 1e-4, 1, 1);
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::low_pass(
                     1, target_samp_rate, _filter_width, 1200, gr::filter::firdes::WIN_HAMMING));
@@ -52,7 +52,7 @@ gr_mod_am_sdr::gr_mod_am_sdr(int sps, int samp_rate, int carrier_freq,
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
     _filter = gr::filter::fft_filter_ccc::make(
                 1,gr::filter::firdes::complex_band_pass_2(
-                    1, _samp_rate, -_filter_width, _filter_width, _filter_width/2, 120, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+                    1, _samp_rate, -_filter_width, _filter_width, _filter_width, 120, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
 
 
 
