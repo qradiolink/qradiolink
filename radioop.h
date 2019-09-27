@@ -238,7 +238,7 @@ private:
     int _tune_limit_lower;
     int _tune_limit_upper;
     bool _scan_done;
-    int _memory_index;
+    int _memory_scan_index;
     bool _memory_scan_done;
     bool _tx_modem_started;
     int _tune_counter;

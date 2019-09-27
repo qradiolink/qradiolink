@@ -1152,6 +1152,9 @@ font: 9pt &quot;Sans Serif&quot;;</string>
               </item>
               <item>
                <widget class="QPushButton" name="memoryScanUpButton">
+                <property name="toolTip">
+                 <string>Memory Scan Up</string>
+                </property>
                 <property name="text">
                  <string/>
                 </property>
@@ -1171,6 +1174,9 @@ font: 9pt &quot;Sans Serif&quot;;</string>
               </item>
               <item>
                <widget class="QPushButton" name="memoryScanDownButton">
+                <property name="toolTip">
+                 <string>Memory Scan Down</string>
+                </property>
                 <property name="text">
                  <string/>
                 </property>

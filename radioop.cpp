@@ -1942,8 +1942,7 @@ void RadioController::stopMemoryScan()
 {
     _memory_scan_done = true;
     _scan_stop = false;
-    _carrier_offset = _autotune_freq;
-    emit freqToGUI(_rx_frequency, _autotune_freq);
+    emit freqToGUI(_rx_frequency, _carrier_offset);
 }
 
 void RadioController::memoryScan(bool receiving, bool wait_for_timer)
@@ -1967,21 +1966,35 @@ void RadioController::memoryScan(bool receiving, bool wait_for_timer)
     if(wait_for_timer)
     {
         qint64 msec = (quint64)_scan_timer->nsecsElapsed() / 1000000;
-        if(msec < _fft_poll_time)
+        if(msec < 200) // FIXME: hardcoded
         {
             return;
         }
     }
+    struct timespec time_to_sleep;
     radiochannel *chan = _memory_channels.at(_memory_scan_index);
     _rx_frequency = chan->rx_frequency - _carrier_offset;
-    tuneFreq(chan->rx_frequency);
+
+    tuneFreq(_rx_frequency);
+    time_to_sleep = {0, 1000L }; // Give PLL time to settle
+    nanosleep(&time_to_sleep, NULL);
+
+    emit freqToGUI(_rx_frequency, _carrier_offset);
+    toggleRxMode(chan->rx_mode);
+    time_to_sleep = {0, 1000L };
+    nanosleep(&time_to_sleep, NULL);
+
     _tune_shift_freq = chan->tx_shift;
     tuneTxFreq(chan->rx_frequency);
-    //toggleRxMode(chan->rx_mode);
-    //toggleTxMode(chan->tx_mode);
+    time_to_sleep = {0, 1000L };
+    nanosleep(&time_to_sleep, NULL);
+
+    toggleTxMode(chan->tx_mode);
+    time_to_sleep = {0, 1000L };
+    nanosleep(&time_to_sleep, NULL);
     _memory_scan_index++;
     if(_memory_scan_index >= _memory_channels.size())
         _memory_scan_index = 0;
-    emit freqToGUI(_rx_frequency, _carrier_offset);
+
     _scan_timer->restart();
 }

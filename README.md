@@ -32,6 +32,7 @@ Features
 - VOX mode
 - Mixed operation mode (receive one mode and transmit another)
 - Full duplex operation
+- Memory channels and memory channel scan
 - Split operation (transmit on other frequency than the receive frequency with no shift limitation, used mostly for repeater operation)
 - Digital voice codecs: Codec2 700 bit/s, Codec2 1400 bit/s, Opus 9600 bit/s
 - FreeDV digital voice modulator and demodulator (currently supports only 1600 and 700C modes)
