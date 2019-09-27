@@ -181,9 +181,6 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     _eff_text_display = new QGraphicsOpacityEffect(this);
     _eff_text_display->setOpacity(0.5);
     ui->secondaryTextDisplay->setGraphicsEffect(_eff_text_display);
-    _eff_memory_display = new QGraphicsOpacityEffect(this);
-    _eff_memory_display->setOpacity(0.7);
-    ui->memoriesFrame->setGraphicsEffect(_eff_memory_display);
 
     setWindowIcon(QIcon(":/res/logo.png"));
     setWindowTitle("QRadioLink");
@@ -223,7 +220,6 @@ MainWindow::~MainWindow()
     delete _eff_const;
     delete _eff_video;
     delete _eff_text_display;
-    delete _eff_memory_display;
 }
 
 void MainWindow::closeEvent (QCloseEvent *event)
@@ -247,12 +243,14 @@ void MainWindow::resizeEvent(QResizeEvent *event)
         ui->plotterContainer->resize(xy.right() -xy.left()-20,xy.bottom()-xy.top()-210);
         xy = ui->plotterContainer->geometry();
         ui->secondaryTextDisplay->move(xy.left(), xy.bottom() - 150);
+        ui->memoriesFrame->move(xy.right() - 30 - 600, xy.bottom() - 285);
     }
     else
     {
         ui->plotterContainer->resize(xy.right() -xy.left()-20,xy.bottom()-xy.top()-120);
         xy = ui->plotterContainer->geometry();
         ui->secondaryTextDisplay->move(xy.left(), xy.bottom() - 150);
+        ui->memoriesFrame->move(xy.right() - 30 - 600, xy.bottom() - 285);
     }
     xy = ui->plotterContainer->geometry();
     ui->videoFrame->move(xy.right() - 360, xy.top());
@@ -289,6 +287,7 @@ void MainWindow::showControls(bool value)
         ui->controlsFrame->show();
         xy = ui->plotterContainer->geometry();
         ui->secondaryTextDisplay->move(xy.left(), xy.bottom() - 150);
+        ui->memoriesFrame->move(xy.right() - 30 - 600, xy.bottom() - 285);
         _settings->show_controls = 1;
     }
     else
@@ -297,6 +296,7 @@ void MainWindow::showControls(bool value)
         ui->controlsFrame->hide();
         xy = ui->plotterContainer->geometry();
         ui->secondaryTextDisplay->move(xy.left(), xy.bottom() - 150);
+        ui->memoriesFrame->move(xy.right() - 30 - 600, xy.bottom() - 285);
         _settings->show_controls = 0;
     }
     emit enableRSSI(value);
@@ -490,10 +490,13 @@ void MainWindow::removeMemoryChannel()
         }
     }
     QList<int> chan_to_remove = row_list.toList();
+    std::sort(chan_to_remove.begin(), chan_to_remove.end());
+    std::reverse(chan_to_remove.begin(), chan_to_remove.end());
     for(int i=0;i<chan_to_remove.size();i++)
     {
-        delete channels->at(chan_to_remove.at(i));
+        radiochannel *chan = channels->at(chan_to_remove.at(i));
         channels->remove(chan_to_remove.at(i));
+        delete chan;
     }
     updateMemories();
 }

@@ -45,27 +45,27 @@ Features
 Requirements
 ----
 
-- Since release 0.8.0, GNU radio version is changed to 3.7.13 (although 3.7.10 is still supported) and Qt5 is used for the graphical interface. Debian Buster is the base GNU/Linux distribution for which packages are built.
+- Since release 0.8.0-2, GNU radio version is changed to 3.7.13 (although 3.7.10 is still partly supported) and Qt5 is used for the graphical interface. Debian Buster is the base GNU/Linux distribution for which packages are built.
 - Build dependencies on Debian Buster with Qt5 and GNU radio 3.7.13: 
 
 <pre>
-$ sudo apt-get install gnuradio-dev protobuf-compiler gr-osmosdr gnuradio libvolk1-dev libvolk1-bin libgsm1 libgsm1-dev libprotobuf17 libprotobuf-dev libopus0 libopus-dev libspeexdsp1 libspeexdsp-dev libpulse0 libpulse-dev libcodec2-0.8.1 libcodec2-dev libasound2 libasound2-dev libjpeg62-turbo libjpeg62-turbo-dev libconfig++9v5 libconfig++-dev qt5-qmake qt5-default qtbase5-dev libqt5core5a libqt5gui5 libqt5network5 libqt5sql5 libftdi1-dev libftdi1
+$ sudo apt-get install gnuradio-dev protobuf-compiler gr-osmosdr gnuradio libvolk1-dev libvolk1-bin libprotobuf17 libprotobuf-dev libopus0 libopus-dev libspeexdsp1 libspeexdsp-dev libpulse0 libpulse-dev libcodec2-0.8.1 libcodec2-dev libasound2 libasound2-dev libjpeg62-turbo libjpeg62-turbo-dev libconfig++9v5 libconfig++-dev qt5-qmake qt5-default qtbase5-dev libqt5core5a libqt5gui5 libqt5network5 libqt5sql5 libftdi1-dev libftdi1
 </pre>
 
-- Qt >= 5.7 and Qt5 development packages
+- Qt >= 5.13 and Qt5 development packages
 - qmake
 - Pulseaudio (native Alsa support is not fully implemented) 
-- Gnuradio >= 3.7.10 built with gr-osmosdr and UHD support
+- Gnuradio >= 3.7.13 built with gr-osmosdr and UHD support
 - optionally SoapySDR and SoapyPlutoSDR, SoapyLMS7
 - Boost and boost-devel
 - libgnuradio-osmosdr built with UHD, RTL-SDR, SoapySDR, HackRF, RedPitaya or BladeRF support
-- libgsm, libprotobuf, libopus, libspeexdsp, libpulse-simple, libpulse, libasound, libcodec2, libsqlite3, libjpeg, libconfig++, libvolk, libftdi
+- libprotobuf, libopus, libspeexdsp, libpulse-simple, libpulse, libasound, libcodec2, libsqlite3, libjpeg, libconfig++, libvolk, libftdi
 - protoc compiler (libprotoc 2.6.1 or greater)
 
 In order to build on Ubuntu 17.10 you have to install the following packages, assuming a full GNU Radio development environment is already installed.
 
 <pre>
-$ sudo apt install libconfig++-dev libgsm1-dev libprotobuf-dev libopus-dev libpulse-dev libasound2-dev libcodec2-dev libsqlite3-dev libjpeg-dev libprotoc-dev protobuf-compiler
+$ sudo apt install libconfig++-dev libprotobuf-dev libopus-dev libpulse-dev libasound2-dev libcodec2-dev libsqlite3-dev libjpeg-dev libprotoc-dev protobuf-compiler
 </pre>
 
 On Ubuntu 18.04 LTS, replace libjpeg62-turbo and libjpeg62-turbo-dev with libjpeg-turbo8-dev and libjpeg-dev

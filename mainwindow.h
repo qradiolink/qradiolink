@@ -190,7 +190,6 @@ private:
     QGraphicsOpacityEffect *_eff_const;
     QGraphicsOpacityEffect *_eff_video;
     QGraphicsOpacityEffect *_eff_text_display;
-    QGraphicsOpacityEffect *_eff_memory_display;
     std::vector<std::complex<int>> *_filter_widths;
     float *_realFftData;
     float *_iirFftData;

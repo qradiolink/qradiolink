@@ -378,7 +378,7 @@ color: rgb(255, 255, 255);</string>
             </widget>
            </item>
            <item row="1" column="1">
-            <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0">
+            <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0">
              <property name="spacing">
               <number>2</number>
              </property>
@@ -898,6 +898,31 @@ background-color: rgb(0, 0, 67);</string>
               </widget>
              </item>
              <item>
+              <widget class="QPushButton" name="memoriesButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>60</width>
+                 <height>28</height>
+                </size>
+               </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Memory channels&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="text">
+                <string>Mem</string>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
               <spacer name="horizontalSpacer_8">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
@@ -917,7 +942,7 @@ background-color: rgb(0, 0, 67);</string>
          <widget class="QFrame" name="memoriesFrame">
           <property name="geometry">
            <rect>
-            <x>530</x>
+            <x>150</x>
             <y>170</y>
             <width>600</width>
             <height>250</height>
@@ -942,7 +967,7 @@ background-color: rgb(0, 0, 67);</string>
            </size>
           </property>
           <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
+           <enum>QFrame::NoFrame</enum>
           </property>
           <property name="frameShadow">
            <enum>QFrame::Raised</enum>
@@ -972,12 +997,12 @@ background-color: rgb(0, 0, 67);</string>
               <string>Double click to edit</string>
              </property>
              <property name="styleSheet">
-              <string notr="true">background-color: rgb(29, 29, 29);
+              <string notr="true">background-color: rgb(0, 0, 85);
 color: rgb(240, 240, 119);
 font: 9pt &quot;Sans Serif&quot;;</string>
              </property>
              <property name="frameShape">
-              <enum>QFrame::NoFrame</enum>
+              <enum>QFrame::StyledPanel</enum>
              </property>
              <property name="autoScrollMargin">
               <number>5</number>
@@ -1068,10 +1093,10 @@ font: 9pt &quot;Sans Serif&quot;;</string>
               <bool>false</bool>
              </property>
              <property name="styleSheet">
-              <string notr="true"/>
+              <string notr="true">background-color: rgb(193, 193, 193);</string>
              </property>
              <property name="frameShape">
-              <enum>QFrame::NoFrame</enum>
+              <enum>QFrame::StyledPanel</enum>
              </property>
              <property name="frameShadow">
               <enum>QFrame::Raised</enum>
@@ -3121,25 +3146,6 @@ font: 9pt &quot;Sans Serif&quot;;</string>
            <width>12</width>
            <height>12</height>
           </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-        <widget class="QPushButton" name="memoriesButton">
-         <property name="geometry">
-          <rect>
-           <x>800</x>
-           <y>40</y>
-           <width>51</width>
-           <height>31</height>
-          </rect>
-         </property>
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Memory channels&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="text">
-          <string>Mem</string>
          </property>
          <property name="checkable">
           <bool>true</bool>
