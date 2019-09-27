@@ -1858,7 +1858,8 @@ void RadioController::scan(bool receiving, bool wait_for_timer)
     if(wait_for_timer)
     {
         qint64 msec = (quint64)_scan_timer->nsecsElapsed() / 1000000;
-        if(msec < _fft_poll_time)
+        // Buffers are at least 40 msec, so we need at least twice as much time
+        if(msec < 100)
         {
             return;
         }
@@ -1966,7 +1967,8 @@ void RadioController::memoryScan(bool receiving, bool wait_for_timer)
     if(wait_for_timer)
     {
         qint64 msec = (quint64)_scan_timer->nsecsElapsed() / 1000000;
-        if(msec < 200) // FIXME: hardcoded
+        // Buffers are at least 40 msec, so we need at least twice as much time
+        if(msec < 100) // FIXME: hardcoded
         {
             return;
         }
@@ -1981,8 +1983,6 @@ void RadioController::memoryScan(bool receiving, bool wait_for_timer)
 
     emit freqToGUI(_rx_frequency, _carrier_offset);
     toggleRxMode(chan->rx_mode);
-    time_to_sleep = {0, 1000L };
-    nanosleep(&time_to_sleep, NULL);
 
     _tune_shift_freq = chan->tx_shift;
     tuneTxFreq(chan->rx_frequency);
@@ -1990,8 +1990,6 @@ void RadioController::memoryScan(bool receiving, bool wait_for_timer)
     nanosleep(&time_to_sleep, NULL);
 
     toggleTxMode(chan->tx_mode);
-    time_to_sleep = {0, 1000L };
-    nanosleep(&time_to_sleep, NULL);
     _memory_scan_index++;
     if(_memory_scan_index >= _memory_channels.size())
         _memory_scan_index = 0;

@@ -115,7 +115,6 @@ make
 
 Known issues:
 - In low light, the automatic adjustment of ISO in the video camera can cause very long times to capture a frame. The solution is to use plenty of lighting for video.
-- When changing the FFT size, the FFT display can sometimes disappear or look wrong. The application needs to be restarted to correct this.
 
 Running
 -------
