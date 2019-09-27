@@ -50,6 +50,8 @@ RadioController::RadioController(Settings *settings, QObject *parent) :
     _data_modem_sleep_timer = new QElapsedTimer();
     _scan_timer = new QElapsedTimer();
     _scan_stop = false;
+    _scan_done = true;
+    _memory_scan_done = true;
     _fft_read_timer = new QElapsedTimer();
     _fft_read_timer->start();
     _fft_poll_time = 75;
@@ -82,7 +84,7 @@ RadioController::RadioController(Settings *settings, QObject *parent) :
     _step_hz = 10;
     _carrier_offset = 0;
     _rx_sample_rate = 0;
-    _scan_done = true;
+
     _tune_counter = 0;
     _freq_gui_counter = 0;
     _tx_modem_started = false;
@@ -844,6 +846,8 @@ bool RadioController::getDemodulatorData()
 
         if(!_scan_done)
             scan(data_to_process);
+        if(!_memory_scan_done)
+            memoryScan(data_to_process);
     }
     return data_to_process;
 }
@@ -1896,7 +1900,7 @@ void RadioController::scan(bool receiving, bool wait_for_timer)
 
 void RadioController::startScan(int step, int direction)
 {
-    if(!_rx_inited)
+    if(!_rx_inited || !_scan_done || !_memory_scan_done)
         return;
     if(step != 0)
         _scan_step_hz = step;
@@ -1920,22 +1924,23 @@ void RadioController::stopScan()
 
 void RadioController::startMemoryScan(RadioChannels *channels, int direction)
 {
-    _memory_channels = channels;
-    if(!_rx_inited)
+    _memory_channels = channels->getChannels()->toList();
+    if(!_rx_inited || !_scan_done || !_memory_scan_done || _memory_channels.size() < 1)
         return;
+
     if(direction == 0)
-        _scan_step_hz = -_scan_step_hz;
-    _tune_limit_lower = -_rx_sample_rate / 2;
-    _tune_limit_upper = _rx_sample_rate / 2;
-    _autotune_freq = _carrier_offset;
+    {
+        std::reverse(_memory_channels.begin(), _memory_channels.end());
+    }
     _scan_timer->start();
-    _scan_done = false;
+    _memory_scan_done = false;
+    _memory_scan_index = 0;
     memoryScan(false, false);
 }
 
 void RadioController::stopMemoryScan()
 {
-    _scan_done = true;
+    _memory_scan_done = true;
     _scan_stop = false;
     _carrier_offset = _autotune_freq;
     emit freqToGUI(_rx_frequency, _autotune_freq);
@@ -1967,4 +1972,16 @@ void RadioController::memoryScan(bool receiving, bool wait_for_timer)
             return;
         }
     }
+    radiochannel *chan = _memory_channels.at(_memory_scan_index);
+    _rx_frequency = chan->rx_frequency - _carrier_offset;
+    tuneFreq(chan->rx_frequency);
+    _tune_shift_freq = chan->tx_shift;
+    tuneTxFreq(chan->rx_frequency);
+    //toggleRxMode(chan->rx_mode);
+    //toggleTxMode(chan->tx_mode);
+    _memory_scan_index++;
+    if(_memory_scan_index >= _memory_channels.size())
+        _memory_scan_index = 0;
+    emit freqToGUI(_rx_frequency, _carrier_offset);
+    _scan_timer->restart();
 }

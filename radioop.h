@@ -174,7 +174,7 @@ private:
     void getConstellationData();
     void getRSSI();
     void setRelays(bool transmitting);
-    void memoryScan(bool receiving, bool wait_for_timer);
+    void memoryScan(bool receiving, bool wait_for_timer=true);
 
     // FIXME: inflation of members
     AudioInterface *_audio;
@@ -238,6 +238,8 @@ private:
     int _tune_limit_lower;
     int _tune_limit_upper;
     bool _scan_done;
+    int _memory_index;
+    bool _memory_scan_done;
     bool _tx_modem_started;
     int _tune_counter;
     float _rx_ctcss;
@@ -258,7 +260,8 @@ private:
     bool _rssi_enabled;
     bool _duplex_enabled;
     bool _scan_stop;
-    RadioChannels *_memory_channels;
+    QList<radiochannel*> _memory_channels;
+
 
 
 
