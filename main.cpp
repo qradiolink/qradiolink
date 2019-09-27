@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
     RadioChannels *radio_channels = new RadioChannels;
     settings->readConfig();
     MumbleClient *client = new MumbleClient(settings);
-    RadioOp *radio_op = new RadioOp(settings);
+    RadioController *radio_op = new RadioController(settings);
     AudioWriter *audiowriter = new AudioWriter;
     AudioReader *audioreader = new AudioReader;
     MainWindow *w = new MainWindow(settings, radio_channels);
@@ -184,8 +184,10 @@ int main(int argc, char *argv[])
     QObject::connect(w,SIGNAL(tuneFreq(qint64)),radio_op,SLOT(tuneFreq(qint64)));
     QObject::connect(w,SIGNAL(tuneTxFreq(qint64)),radio_op,SLOT(tuneTxFreq(qint64)));
     QObject::connect(w,SIGNAL(changeTxShift(qint64)),radio_op,SLOT(changeTxShift(qint64)));
-    QObject::connect(w,SIGNAL(startAutoTuneFreq(int, int)),radio_op,SLOT(startAutoTune(int, int)));
-    QObject::connect(w,SIGNAL(stopAutoTuneFreq()),radio_op,SLOT(stopAutoTune()));
+    QObject::connect(w,SIGNAL(startAutoTuneFreq(int, int)),radio_op,SLOT(startScan(int, int)));
+    QObject::connect(w,SIGNAL(stopAutoTuneFreq()),radio_op,SLOT(stopScan()));
+    QObject::connect(w,SIGNAL(startMemoryTune(RadioChannels*, int)),radio_op,SLOT(startMemoryScan(RadioChannels*, int)));
+    QObject::connect(w,SIGNAL(stopMemoryTune()),radio_op,SLOT(stopMemoryScan()));
     QObject::connect(w,SIGNAL(fineTuneFreq(long)),radio_op,SLOT(fineTuneFreq(long)));
     QObject::connect(w,SIGNAL(setTxPower(int)),radio_op,SLOT(setTxPower(int)));
     //QObject::connect(w,SIGNAL(setBbGain(int)),radio_op,SLOT(setBbGain(int)));

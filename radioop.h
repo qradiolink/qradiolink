@@ -31,8 +31,12 @@
 #include <iostream>
 #include <unistd.h>
 #include <math.h>
+#include <gnuradio/digital/crc32.h>
+#include <libconfig.h++>
+#include <ftdi.h>
 #include "audio/audiointerface.h"
 #include "settings.h"
+#include "radiochannel.h"
 #include "mumblechannel.h"
 #include "radioprotocol.h"
 #include "relaycontroller.h"
@@ -42,9 +46,7 @@
 #include "audio/alsaaudio.h"
 #include "gr/gr_modem.h"
 #include "net/netdevice.h"
-#include <gnuradio/digital/crc32.h>
-#include <libconfig.h++>
-#include <ftdi.h>
+
 
 typedef QVector<Station> StationList;
 typedef std::vector<std::complex<float>> complex_vector;
@@ -57,13 +59,13 @@ namespace radio_type
     };
 }
 
-class RadioOp : public QObject
+class RadioController : public QObject
 {
     Q_OBJECT
 public:
-    explicit RadioOp(Settings *settings,
+    explicit RadioController(Settings *settings,
                       QObject *parent = 0);
-    ~RadioOp();
+    ~RadioController();
 
     void flushVoipBuffer();
     void updateDataModemReset(bool transmitting, bool ptt_activated);
@@ -131,8 +133,10 @@ public slots:
     void enableRSSI(bool value);
     void enableDuplex(bool value);
     void scan(bool receiving, bool wait_for_timer=true);
-    void startAutoTune(int step, int direction);
-    void stopAutoTune();
+    void startScan(int step, int direction);
+    void stopScan();
+    void startMemoryScan(RadioChannels *mem, int direction);
+    void stopMemoryScan();
     void endAudioTransmission();
     void processVoipAudioFrame(short *pcm, int samples, quint64 sid);
     void usePTTForVOIP(bool value);
@@ -170,6 +174,7 @@ private:
     void getConstellationData();
     void getRSSI();
     void setRelays(bool transmitting);
+    void memoryScan(bool receiving, bool wait_for_timer);
 
     // FIXME: inflation of members
     AudioInterface *_audio;
@@ -232,7 +237,7 @@ private:
     int _scan_step_hz;
     int _tune_limit_lower;
     int _tune_limit_upper;
-    bool _tuning_done;
+    bool _scan_done;
     bool _tx_modem_started;
     int _tune_counter;
     float _rx_ctcss;
@@ -253,6 +258,7 @@ private:
     bool _rssi_enabled;
     bool _duplex_enabled;
     bool _scan_stop;
+    RadioChannels *_memory_channels;
 
 
 

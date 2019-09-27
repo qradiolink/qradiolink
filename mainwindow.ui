@@ -1150,6 +1150,44 @@ font: 9pt &quot;Sans Serif&quot;;</string>
                 </property>
                </widget>
               </item>
+              <item>
+               <widget class="QPushButton" name="memoryScanUpButton">
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset>
+                  <normalon>:/res/arrow-right-double.png</normalon>
+                  <activeoff>:/res/arrow-right-double.png</activeoff>
+                  <activeon>:/res/go-last-view.png</activeon>
+                  <selectedoff>:/res/arrow-right-double.png</selectedoff>
+                  <selectedon>:/res/go-last-view.png</selectedon>
+                 </iconset>
+                </property>
+                <property name="checkable">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="memoryScanDownButton">
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset>
+                  <normalon>:/res/arrow-left-double.png</normalon>
+                  <activeoff>:/res/arrow-left-double.png</activeoff>
+                  <activeon>:/res/go-first-view.png</activeon>
+                  <selectedoff>:/res/arrow-left-double.png</selectedoff>
+                  <selectedon>:/res/go-first-view.png</selectedon>
+                 </iconset>
+                </property>
+                <property name="checkable">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
              </layout>
             </widget>
            </item>

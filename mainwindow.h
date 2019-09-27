@@ -120,6 +120,7 @@ public slots:
     void removeMemoryChannel();
     void tuneToMemoryChannel(int row, int col);
     void editMemoryChannel(QTableWidgetItem* item);
+    void startMemoryScan(bool value);
 
 
 signals:
@@ -147,6 +148,8 @@ signals:
     void enableRSSI(bool value);
     void startAutoTuneFreq(int step, int scan_direction);
     void stopAutoTuneFreq();
+    void startMemoryTune(RadioChannels* channels, int scan_direction);
+    void stopMemoryTune();
     void usePTTForVOIP(bool value);
     void setVOIPForwarding(bool value);
     void setVox(bool value);

@@ -84,6 +84,8 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     QObject::connect(ui->txModemTypeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(toggleTxMode(int)));
     QObject::connect(ui->scanUpButton,SIGNAL(toggled(bool)),this,SLOT(startScan(bool)));
     QObject::connect(ui->scanDownButton,SIGNAL(toggled(bool)),this,SLOT(startScan(bool)));
+    QObject::connect(ui->memoryScanUpButton,SIGNAL(toggled(bool)),this,SLOT(startMemoryScan(bool)));
+    QObject::connect(ui->memoryScanDownButton,SIGNAL(toggled(bool)),this,SLOT(startMemoryScan(bool)));
     QObject::connect(ui->saveOptionsButton,SIGNAL(clicked()),this,SLOT(saveConfig()));
     QObject::connect(ui->tabWidget,SIGNAL(currentChanged(int)),this,SLOT(mainTabChanged(int)));
     QObject::connect(ui->comboBoxRxCTCSS,SIGNAL(currentIndexChanged(int)),this,SLOT(updateRxCTCSS(int)));
@@ -1036,6 +1038,21 @@ void MainWindow::startScan(bool value)
     }
     else
         emit stopAutoTuneFreq();
+}
+
+void MainWindow::startMemoryScan(bool value)
+{
+    int scan_direction = 0;
+    QObject *which_button = this->sender();
+    if(which_button == ui->memoryScanUpButton)
+        scan_direction = 1;
+    if(value)
+    {
+
+        emit startMemoryTune(_radio_channels, scan_direction);
+    }
+    else
+        emit stopMemoryTune();
 }
 
 
