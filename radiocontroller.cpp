@@ -19,26 +19,15 @@
 RadioController::RadioController(Settings *settings, QObject *parent) :
     QObject(parent)
 {
-    _rx_mode = gr_modem_types::ModemTypeBPSK2000;
-    _tx_mode = gr_modem_types::ModemTypeBPSK2000;
-    _rx_radio_type = radio_type::RADIO_TYPE_DIGITAL;
-    _tx_radio_type = radio_type::RADIO_TYPE_DIGITAL;
+    _settings = settings;
     _codec = new AudioEncoder;
     _radio_protocol = new RadioProtocol;
     _relay_controller = new RelayController;
+    _video = new VideoEncoder(_settings->video_device);
+    _net_device = new NetDevice(0, _settings->ip_address);
     _mutex = new QMutex;
     _m_queue = new std::vector<short>;
-    _last_session_id = 0;
-    _net_device = 0;
-    _video = 0;
-    _stop =false;
-    _tx_inited = false;
-    _rx_inited = false;
-    _tx_started = false;
-    _voip_enabled = false;
-    _vox_enabled = false;
-    _voip_forwarding = false;
-    _last_voiced_frame_timer.start();
+
     _voip_tx_timer = new QTimer(this);
     _voip_tx_timer->setSingleShot(true);
     _vox_timer = new QTimer(this);
@@ -49,9 +38,6 @@ RadioController::RadioController(Settings *settings, QObject *parent) :
     _data_modem_reset_timer = new QElapsedTimer();
     _data_modem_sleep_timer = new QElapsedTimer();
     _scan_timer = new QElapsedTimer();
-    _scan_stop = false;
-    _scan_done = true;
-    _memory_scan_done = true;
     _fft_read_timer = new QElapsedTimer();
     _fft_read_timer->start();
     _fft_poll_time = 75;
@@ -60,14 +46,28 @@ RadioController::RadioController(Settings *settings, QObject *parent) :
     _const_read_timer->start();
     _rssi_read_timer = new QElapsedTimer();
     _rssi_read_timer->start();
+
+    _last_session_id = 0;
+
+    _stop =false;
+    _tx_inited = false;
+    _rx_inited = false;
+    _tx_started = false;
+    _voip_enabled = false;
+    _vox_enabled = false;
+    _voip_forwarding = false;
+    _last_voiced_frame_timer.start();
+
+    _scan_stop = false;
+    _scan_done = true;
+    _memory_scan_done = true;
+
     _constellation_enabled = false;
     _data_modem_sleeping = false;
-    _settings = settings;
     _transmitting_audio = false;
     _process_text = false;
     _repeat_text = false;
     _repeat = false;
-    _settings = settings;
     _tx_power = 0;
     _bb_gain = 0;
     _rx_sensitivity = 0;
@@ -84,6 +84,11 @@ RadioController::RadioController(Settings *settings, QObject *parent) :
     _step_hz = 10;
     _carrier_offset = 0;
     _rx_sample_rate = 0;
+
+    _rx_mode = gr_modem_types::ModemTypeBPSK2000;
+    _tx_mode = gr_modem_types::ModemTypeBPSK2000;
+    _rx_radio_type = radio_type::RADIO_TYPE_DIGITAL;
+    _tx_radio_type = radio_type::RADIO_TYPE_DIGITAL;
 
     _tune_counter = 0;
     _freq_gui_counter = 0;
@@ -133,7 +138,6 @@ RadioController::RadioController(Settings *settings, QObject *parent) :
         _end_rec_sound = new QByteArray(resfile_end_tx.readAll());
     }
 
-    _settings->readConfig();
     toggleRxMode(_settings->rx_mode);
     toggleTxMode(_settings->tx_mode);
 
@@ -146,10 +150,8 @@ RadioController::~RadioController()
     if(_tx_inited)
         toggleTX(false);
     delete _codec;
-    if(_video != 0)
-        delete _video;
-    if(_net_device != 0)
-        delete _net_device;
+    delete _video;
+    delete _net_device;
     delete _radio_protocol;
     delete _voice_led_timer;
     delete _data_led_timer;
@@ -234,7 +236,7 @@ void RadioController::run()
         {
             if(tx_mode == gr_modem_types::ModemTypeQPSKVideo)
                 processInputVideoStream(frame_flag);
-            else if((tx_mode == gr_modem_types::ModemTypeQPSK250000) && (_net_device != 0))
+            else if(tx_mode == gr_modem_types::ModemTypeQPSK250000)
             {
                 if(rx_inited)
                 {
@@ -1314,19 +1316,10 @@ void RadioController::toggleRX(bool value)
         _modem->startRX();
         _mutex->unlock();
 
-        if(_rx_mode == gr_modem_types::ModemTypeQPSK250000 && _net_device == 0)
-        {
-            _net_device = new NetDevice(0, _settings->ip_address);
-        }
         _rx_inited = true;
     }
     else if (_rx_inited)
     {
-        if(_rx_mode == gr_modem_types::ModemTypeQPSK250000 && _net_device != 0 && !_tx_inited)
-        {
-            delete _net_device;
-            _net_device = 0;
-        }
         _mutex->lock();
         _modem->stopRX();
         _modem->deinitRX(_rx_mode);
@@ -1369,11 +1362,9 @@ void RadioController::toggleTX(bool value)
             return;
         }
         if(_tx_mode == gr_modem_types::ModemTypeQPSKVideo)
-            _video = new VideoEncoder(QString::fromStdString(video_device));
-        if(_tx_mode == gr_modem_types::ModemTypeQPSK250000 && _net_device == 0)
-        {
-            _net_device = new NetDevice(0, _settings->ip_address);
-        }
+            _video->init();
+        else
+            _video->deinit();
 
         _mutex->lock();
         _modem->setTxPower(0.01);
@@ -1395,17 +1386,8 @@ void RadioController::toggleTX(bool value)
 
         _modem->deinitTX(_tx_mode);
         _mutex->unlock();
+        _video->deinit();
 
-        if(_tx_mode == gr_modem_types::ModemTypeQPSKVideo)
-        {
-            delete _video;
-            _video = 0;
-        }
-        if(_tx_mode == gr_modem_types::ModemTypeQPSK250000 && _net_device != 0 && !_rx_inited)
-        {
-            delete _net_device;
-            _net_device = 0;
-        }
         _tx_inited = false;
     }
 }
@@ -1659,7 +1641,10 @@ void RadioController::toggleTxMode(int value)
         _tx_mode = gr_modem_types::ModemTypeBPSK2000;
         break;
     }
-
+    if(_tx_mode == gr_modem_types::ModemTypeQPSKVideo)
+        _video->init();
+    else
+        _video->deinit();
     _mutex->lock();
     if(_tx_inited)
         _modem->stopTX();

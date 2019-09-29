@@ -23,18 +23,35 @@
 
 VideoEncoder::VideoEncoder(QString device_name)
 {
-    dev_name = (char*)(device_name.toStdString().c_str());
-    std::cerr << "Using video device: " << dev_name << std::endl;
-    open_device();
-    init_device();
-    start_capturing();
+    _device_name = device_name;
+    _init = false;
 }
 
 VideoEncoder::~VideoEncoder()
 {
+    deinit();
+}
+
+void VideoEncoder::init()
+{
+    if(_init)
+        return;
+    dev_name = (char*)(_device_name.toStdString().c_str());
+    std::cerr << "Using video device: " << dev_name << std::endl;
+    open_device();
+    init_device();
+    start_capturing();
+    _init = true;
+}
+
+void VideoEncoder::deinit()
+{
+    if(!_init)
+        return;
     stop_capturing();
     uninit_device();
     close_device();
+    _init = false;
 }
 
 void VideoEncoder::encode_jpeg(unsigned char *videobuffer, unsigned long &encoded_size, int max_video_frame_size)
