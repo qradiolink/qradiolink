@@ -37,7 +37,7 @@
 #include "station.h"
 #include "mumblechannel.h"
 #include "radiochannel.h"
-#include "radioop.h"
+#include "radiocontroller.h"
 
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)

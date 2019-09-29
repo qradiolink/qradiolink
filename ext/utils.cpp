@@ -76,8 +76,10 @@ std::vector<std::complex<int>>* buildFilterWidthList()
     filter_widths->push_back(std::complex<int>(-2500, 1)); // LSB
     filter_widths->push_back(std::complex<int>(-1, 2500)); // FreeDV1600 USB
     filter_widths->push_back(std::complex<int>(-1, 2500)); // FreeDV700C USB
+    filter_widths->push_back(std::complex<int>(-1, 2500)); // FreeDV800XA USB
     filter_widths->push_back(std::complex<int>(-2500, 1)); // FreeDV1600 LSB
     filter_widths->push_back(std::complex<int>(-2500, 1)); // FreeDV700C LSB
+    filter_widths->push_back(std::complex<int>(-2500, 1)); // FreeDV800XA LSB
     filter_widths->push_back(std::complex<int>(-5000, 5000));  // AM
     filter_widths->push_back(std::complex<int>(-2800, 2800)); // BPSK 2K
     filter_widths->push_back(std::complex<int>(-1400, 1400)); // BPSK 700

@@ -3677,12 +3677,22 @@ background-color: rgb(0, 0, 67);</string>
             </item>
             <item>
              <property name="text">
+              <string>FreeDV800XA USB</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
               <string>FreeDV1600 LSB</string>
              </property>
             </item>
             <item>
              <property name="text">
               <string>FreeDV700 LSB</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>FreeDV800XA LSB</string>
              </property>
             </item>
             <item>
@@ -3838,12 +3848,22 @@ background-color: rgb(0, 0, 67);</string>
             </item>
             <item>
              <property name="text">
+              <string>FreeDV800XA USB</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
               <string>FreeDV1600 LSB</string>
              </property>
             </item>
             <item>
              <property name="text">
               <string>FreeDV700 LSB</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>FreeDV800XA LSB</string>
              </property>
             </item>
             <item>

@@ -72,7 +72,7 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
         _freedv_tx700C_usb = make_gr_mod_freedv_sdr(125, 1000000, 1700, 2500, gr::vocoder::freedv_api::MODE_700C, 0);
     else
         _freedv_tx700C_usb = make_gr_mod_freedv_sdr(125, 1000000, 1700, 2500, gr::vocoder::freedv_api::MODE_700, 0);
-
+    _freedv_tx800XA_usb = make_gr_mod_freedv_sdr(125, 1000000, 1700, 2500, gr::vocoder::freedv_api::MODE_800XA, 0);
 
     _freedv_tx1600_lsb = make_gr_mod_freedv_sdr(125, 1000000, 1700, 2500, gr::vocoder::freedv_api::MODE_1600, 1);
 
@@ -80,6 +80,7 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
         _freedv_tx700C_lsb = make_gr_mod_freedv_sdr(125, 1000000, 1700, 2500, gr::vocoder::freedv_api::MODE_700C, 1);
     else
         _freedv_tx700C_lsb = make_gr_mod_freedv_sdr(125, 1000000, 1700, 2500, gr::vocoder::freedv_api::MODE_700, 1);
+    _freedv_tx800XA_lsb = make_gr_mod_freedv_sdr(125, 1000000, 1700, 2500, gr::vocoder::freedv_api::MODE_800XA, 1);
 
 }
 
@@ -178,6 +179,11 @@ void gr_mod_base::set_mode(int mode)
         _top_block->disconnect(_freedv_tx700C_usb,0,_rotator,0);
         _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
+    case gr_modem_types::ModemTypeFREEDV800XAUSB:
+        _top_block->disconnect(_audio_source,0,_freedv_tx800XA_usb,0);
+        _top_block->disconnect(_freedv_tx800XA_usb,0,_rotator,0);
+        _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
+        break;
     case gr_modem_types::ModemTypeFREEDV1600LSB:
         _top_block->disconnect(_audio_source,0,_freedv_tx1600_lsb,0);
         _top_block->disconnect(_freedv_tx1600_lsb,0,_rotator,0);
@@ -186,6 +192,11 @@ void gr_mod_base::set_mode(int mode)
     case gr_modem_types::ModemTypeFREEDV700DLSB:
         _top_block->disconnect(_audio_source,0,_freedv_tx700C_lsb,0);
         _top_block->disconnect(_freedv_tx700C_lsb,0,_rotator,0);
+        _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
+        break;
+    case gr_modem_types::ModemTypeFREEDV800XALSB:
+        _top_block->disconnect(_audio_source,0,_freedv_tx800XA_lsb,0);
+        _top_block->disconnect(_freedv_tx800XA_lsb,0,_rotator,0);
         _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     default:
@@ -347,6 +358,15 @@ void gr_mod_base::set_mode(int mode)
         _top_block->connect(_freedv_tx700C_usb,0,_rotator,0);
         _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
+    case gr_modem_types::ModemTypeFREEDV800XAUSB:
+        _carrier_offset = 50000;
+        _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
+        _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
+        _osmosdr_sink->set_sample_rate(1000000);
+        _top_block->connect(_audio_source,0,_freedv_tx800XA_usb,0);
+        _top_block->connect(_freedv_tx800XA_usb,0,_rotator,0);
+        _top_block->connect(_rotator,0,_osmosdr_sink,0);
+        break;
     case gr_modem_types::ModemTypeFREEDV1600LSB:
         _carrier_offset = 50000;
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
@@ -363,6 +383,15 @@ void gr_mod_base::set_mode(int mode)
         _osmosdr_sink->set_sample_rate(1000000);
         _top_block->connect(_audio_source,0,_freedv_tx700C_lsb,0);
         _top_block->connect(_freedv_tx700C_lsb,0,_rotator,0);
+        _top_block->connect(_rotator,0,_osmosdr_sink,0);
+        break;
+    case gr_modem_types::ModemTypeFREEDV800XALSB:
+        _carrier_offset = 50000;
+        _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
+        _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
+        _osmosdr_sink->set_sample_rate(1000000);
+        _top_block->connect(_audio_source,0,_freedv_tx800XA_lsb,0);
+        _top_block->connect(_freedv_tx800XA_lsb,0,_rotator,0);
         _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
     default:

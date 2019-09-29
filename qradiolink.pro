@@ -31,6 +31,7 @@ SOURCES += main.cpp\
         mumblechannel.cpp \
         radiochannel.cpp \
         relaycontroller.cpp \
+        radiocontroller.cpp \
         server.cpp\
         settings.cpp\
         sslclient.cpp\
@@ -48,7 +49,6 @@ SOURCES += main.cpp\
         video/videocapture.cpp \
         video/videoencoder.cpp \
         net/netdevice.cpp \
-        radioop.cpp \
     qtgui/freqctrl.cpp \
     qtgui/plotter.cpp \
     gr/gr_modem.cpp \
@@ -112,7 +112,7 @@ HEADERS  += mainwindow.h\
         ext/compressor.h \
         video/videoencoder.h \
         net/netdevice.h \
-        radioop.h \
+        radiocontroller.h \
         audio/alsaaudio.h \
     qtgui/freqctrl.h \
     qtgui/plotter.h \
