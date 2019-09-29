@@ -1,3 +1,11 @@
+qradiolink (0.8.0-3) UNRELEASED; urgency=medium
+
+  [ Adrian Musceac ]
+  * Fixed a number of long standing issues
+  * FreeDV 800XA
+  * Channel memories
+
+
 qradiolink (0.8.0-2) UNRELEASED; urgency=medium
 
   [ Adrian Musceac ]
