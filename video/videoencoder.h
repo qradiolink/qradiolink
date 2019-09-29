@@ -25,15 +25,14 @@
 class VideoEncoder
 {
 public:
-    VideoEncoder(QString device_name="/dev/video0");
+    VideoEncoder();
     ~VideoEncoder();
-    void init();
+    void init(QString device_name);
     void deinit();
     void encode_jpeg(unsigned char *videobuffer, unsigned long &encoded_size, int max_video_frame_size);
     unsigned char *decode_jpeg(unsigned char *videobuffer, int data_length);
 
 private:
-    QString _device_name;
     bool _init;
 
 };

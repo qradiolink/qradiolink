@@ -21,9 +21,8 @@
 #include <setjmp.h>
 
 
-VideoEncoder::VideoEncoder(QString device_name)
+VideoEncoder::VideoEncoder()
 {
-    _device_name = device_name;
     _init = false;
 }
 
@@ -32,11 +31,11 @@ VideoEncoder::~VideoEncoder()
     deinit();
 }
 
-void VideoEncoder::init()
+void VideoEncoder::init(QString device_name)
 {
     if(_init)
         return;
-    dev_name = (char*)(_device_name.toStdString().c_str());
+    dev_name = (char*)(device_name.toStdString().c_str());
     std::cerr << "Using video device: " << dev_name << std::endl;
     open_device();
     init_device();

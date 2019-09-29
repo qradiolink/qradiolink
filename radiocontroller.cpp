@@ -23,7 +23,7 @@ RadioController::RadioController(Settings *settings, QObject *parent) :
     _codec = new AudioEncoder;
     _radio_protocol = new RadioProtocol;
     _relay_controller = new RelayController;
-    _video = new VideoEncoder(_settings->video_device);
+    _video = new VideoEncoder;
     _net_device = new NetDevice(0, _settings->ip_address);
     _mutex = new QMutex;
     _m_queue = new std::vector<short>;
@@ -285,6 +285,7 @@ void RadioController::readConfig(std::string &rx_device_args, std::string &tx_de
                          std::string &rx_antenna, std::string &tx_antenna, int &rx_freq_corr,
                          int &tx_freq_corr, std::string &callsign, std::string &video_device)
 {
+    // to handle user updating device settings at runtime
     _settings->readConfig();
     int tx_power, rx_sensitivity, squelch, rx_volume, bb_gain;
     long long rx_frequency, tx_shift, demod_offset, rx_sample_rate;
@@ -1359,7 +1360,7 @@ void RadioController::toggleTX(bool value)
             return;
         }
         if(_tx_mode == gr_modem_types::ModemTypeQPSKVideo)
-            _video->init();
+            _video->init(QString::fromStdString(video_device));
         else
             _video->deinit();
 
@@ -1639,7 +1640,7 @@ void RadioController::toggleTxMode(int value)
         break;
     }
     if(_tx_mode == gr_modem_types::ModemTypeQPSKVideo)
-        _video->init();
+        _video->init(_settings->video_device);
     else
         _video->deinit();
     _mutex->lock();
