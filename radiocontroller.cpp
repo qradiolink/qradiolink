@@ -352,7 +352,7 @@ void RadioController::readConfig(std::string &rx_device_args, std::string &tx_de
     }
     if(_rx_volume == 0)
     {
-        _rx_volume = (float)rx_volume/50.0;
+        _rx_volume = 1e-3*exp(((float)rx_volume/100.0)*6.908);
     }
 
 }
@@ -921,7 +921,6 @@ void RadioController::getConstellationData()
 
 void RadioController::receiveDigitalAudio(unsigned char *data, int size)
 {
-    float volume_coeff = 1e-1*exp(_rx_volume*log(10));
     short *audio_out;
     int samples;
     int audio_mode = AudioInterface::AUDIO_MODE_OPUS;
@@ -960,7 +959,7 @@ void RadioController::receiveDigitalAudio(unsigned char *data, int size)
         }
         for(int i=0;i<samples;i++)
         {
-            audio_out[i] = (short)((float)audio_out[i] * amplif * volume_coeff);
+            audio_out[i] = (short)((float)audio_out[i] * amplif * _rx_volume);
         }
         if(_voip_forwarding && audio_mode!=AudioInterface::AUDIO_MODE_OPUS)
         {
@@ -975,12 +974,11 @@ void RadioController::receiveDigitalAudio(unsigned char *data, int size)
 
 void RadioController::receivePCMAudio(std::vector<float> *audio_data)
 {
-    float volume_coeff = 1e-1*exp(_rx_volume*log(10));
     int size = audio_data->size();
     short *pcm = new short[size];
     for(int i=0;i<size;i++)
     {
-        pcm[i] = (short)(audio_data->at(i) * volume_coeff * 32767.0f);
+        pcm[i] = (short)(audio_data->at(i) * _rx_volume * 32767.0f);
         if(_voip_forwarding)
         {
             _voip_encode_buffer->push_back(pcm[i]);
@@ -1122,7 +1120,6 @@ void RadioController::receiveNetData(unsigned char *data, int size)
 void RadioController::processVoipAudioFrame(short *pcm, int samples, quint64 sid)
 {
     // FIXME: refactor refactor refactor
-    float volume_coeff = 1e-1*exp(_rx_volume*log(10));
     if(_m_queue->empty())
     {
         for(int i=0;i<samples;i++)
@@ -1153,7 +1150,7 @@ void RadioController::processVoipAudioFrame(short *pcm, int samples, quint64 sid
         short *pcm = new short[_m_queue->size()];
         for(unsigned int i = 0;i<_m_queue->size();i++)
         {
-            pcm[i] = (short)((float)_m_queue->at(i) * volume_coeff);
+            pcm[i] = (short)((float)_m_queue->at(i) * _rx_volume);
         }
         if(_voip_forwarding && _tx_inited)
         {
@@ -1793,7 +1790,7 @@ void RadioController::setFFTSize(int size)
 
 void RadioController::setVolume(int value)
 {
-    _rx_volume = (float)value/50.0;
+    _rx_volume = 1e-3*exp(((float)value/100.0)*6.908);
 }
 
 void RadioController::setRxCTCSS(float value)
