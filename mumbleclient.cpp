@@ -17,8 +17,6 @@
 #include "mumbleclient.h"
 
 
-
-
 MumbleClient::MumbleClient(Settings *settings, QObject *parent) :
     QObject(parent)
 {
@@ -268,10 +266,11 @@ void MumbleClient::processUserState(quint8 *message, quint64 size)
             s = _stations.at(i);
             if(s->id == _session_id)
             {
+                s->is_user = true;
                 break;
             }
         }
-        s->is_user = true;
+
         if(us.has_channel_id())
         {
             _channel_id = us.channel_id();

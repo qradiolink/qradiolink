@@ -11,7 +11,27 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = qradiolink
 TEMPLATE = app
 
-CONFIG  += thread
+CONFIG  += qt thread
+
+message($$QMAKESPEC)
+
+linux-g++ {
+    message(GNU/Linux)
+}
+
+CONFIG(opengl) {
+    message(Building with OpenGL support.)
+    DEFINES += USE_OPENGL_PLOTTER
+} else {
+    message(Building without OpenGL support)
+}
+
+CONFIG(alsa) {
+    message(Building with Alsa support.)
+    DEFINES += USE_ALSA
+} else {
+    message(Building without Alsa support)
+}
 
 #QMAKE_CXXFLAGS += -Werror
 QMAKE_CXXFLAGS += $$(CXXFLAGS)
@@ -146,6 +166,9 @@ HEADERS  += mainwindow.h\
     gr/gr_const_sink.h \
     gr/modem_types.h
 
+
+#CONFIG += link_pkgconfig
+#PKGCONFIG += gnuradio
 
 FORMS    += mainwindow.ui
 
