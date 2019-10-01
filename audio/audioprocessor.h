@@ -22,6 +22,7 @@
 #include <QDebug>
 #include <stdio.h>
 #include "ext/utils.h"
+#include "ext/filt.h"
 #include <math.h>
 extern "C"
 {
@@ -47,6 +48,9 @@ public:
     int write_preprocess(short *buf, int bufsize, bool preprocess, int audio_mode);
     int read_preprocess(short *buf, int bufsize, bool preprocess, int audio_mode);
 
+    void filter_audio(short *audiobuffer, int audiobuffersize,
+                      bool pre_emphasis=false, bool de_emphasis=false, int mode=0);
+
 signals:
 
 public slots:
@@ -57,6 +61,11 @@ private:
     sf_compressor_state_st _cm_state_read_codec2;
     sf_compressor_state_st _cm_state_write;
     sf_compressor_state_st _cm_state_write_codec2;
+    Filter *_audio_filter_1400;
+    Filter *_audio_filter2_1400;
+    Filter *_audio_filter_700;
+    Filter *_audio_filter2_700;
+    double _emph_last_input;
     int _error;
     float calc_audio_power(short *buf, short samples);
 

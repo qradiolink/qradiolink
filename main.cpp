@@ -94,11 +94,11 @@ int main(int argc, char *argv[])
 
     std::string start_time= QDateTime::currentDateTime().toString("d/MMM/yyyy hh:mm:ss").toStdString();
     std::cout << "Starting qradiolink instance: " << start_time << std::endl;
-    DatabaseApi db;
+    //DatabaseApi db;
     Settings *settings = new Settings;
     RadioChannels *radio_channels = new RadioChannels;
     settings->readConfig();
-    MumbleClient *client = new MumbleClient(settings);
+    MumbleClient *mumbleclient = new MumbleClient(settings);
     RadioController *radio_op = new RadioController(settings);
     AudioWriter *audiowriter = new AudioWriter;
     AudioReader *audioreader = new AudioReader;
@@ -219,38 +219,38 @@ int main(int argc, char *argv[])
     QObject::connect(radio_op, SIGNAL(displayTransmitStatus(bool)), w, SLOT(displayTransmitStatus(bool)));
     QObject::connect(radio_op, SIGNAL(displayDataReceiveStatus(bool)), w, SLOT(displayDataReceiveStatus(bool)));
     QObject::connect(radio_op, SIGNAL(freqToGUI(long long, long)), w, SLOT(updateFreqGUI(long long, long)));
-    QObject::connect(radio_op, SIGNAL(pingServer()), client, SLOT(pingServer()));
-    QObject::connect(client, SIGNAL(pcmAudio(short*,int,quint64)), radio_op, SLOT(processVoipAudioFrame(short*, int, quint64)));
-    QObject::connect(radio_op, SIGNAL(voipDataPCM(short*,int)), client, SLOT(processPCMAudio(short*,int)));
+    QObject::connect(radio_op, SIGNAL(pingServer()), mumbleclient, SLOT(pingServer()));
+    QObject::connect(mumbleclient, SIGNAL(pcmAudio(short*,int,quint64)), radio_op, SLOT(processVoipAudioFrame(short*, int, quint64)));
+    QObject::connect(radio_op, SIGNAL(voipDataPCM(short*,int)), mumbleclient, SLOT(processPCMAudio(short*,int)));
     QObject::connect(radio_op, SIGNAL(writePCM(short*,int,bool,int)), audiowriter, SLOT(writePCM(short*,int,bool, int)));
-    QObject::connect(radio_op, SIGNAL(voipDataOpus(unsigned char*,int)), client, SLOT(processOpusAudio(unsigned char*, int)));
+    QObject::connect(radio_op, SIGNAL(voipDataOpus(unsigned char*,int)), mumbleclient, SLOT(processOpusAudio(unsigned char*, int)));
     QObject::connect(radio_op, SIGNAL(newFFTData(float*,int)), w, SLOT(newFFTData(float*,int)));
     QObject::connect(radio_op, SIGNAL(newRSSIValue(float)), w, SLOT(updateRSSI(float)));
     QObject::connect(radio_op, SIGNAL(newConstellationData(complex_vector*)), w, SLOT(updateConstellation(complex_vector*)));
     QObject::connect(radio_op, SIGNAL(initError(QString)), w, SLOT(initError(QString)));
 
-    QObject::connect(client,SIGNAL(onlineStations(StationList)),w,SLOT(updateOnlineStations(StationList)));
-    QObject::connect(client,SIGNAL(leftStation(Station*)),w,SLOT(leftStation(Station*)));
-    QObject::connect(client,SIGNAL(userSpeaking(quint64)),w,SLOT(userSpeaking(quint64)));
-    QObject::connect(client,SIGNAL(onlineStations(StationList)),radio_op,SLOT(setStations(StationList)));
-    QObject::connect(client,SIGNAL(textMessage(QString,bool)),w,SLOT(displayVOIPText(QString,bool)));
-    QObject::connect(client,SIGNAL(connectedToServer(QString)),w,SLOT(connectedToServer(QString)));
-    QObject::connect(client,SIGNAL(newChannel(MumbleChannel*)),w,SLOT(newChannel(MumbleChannel*)));
-    QObject::connect(client,SIGNAL(newChannel(MumbleChannel*)),radio_op,SLOT(addChannel(MumbleChannel*)));
+    QObject::connect(mumbleclient,SIGNAL(onlineStations(StationList)),w,SLOT(updateOnlineStations(StationList)));
+    QObject::connect(mumbleclient,SIGNAL(leftStation(Station*)),w,SLOT(leftStation(Station*)));
+    QObject::connect(mumbleclient,SIGNAL(userSpeaking(quint64)),w,SLOT(userSpeaking(quint64)));
+    QObject::connect(mumbleclient,SIGNAL(onlineStations(StationList)),radio_op,SLOT(setStations(StationList)));
+    QObject::connect(mumbleclient,SIGNAL(textMessage(QString,bool)),w,SLOT(displayVOIPText(QString,bool)));
+    QObject::connect(mumbleclient,SIGNAL(connectedToServer(QString)),w,SLOT(connectedToServer(QString)));
+    QObject::connect(mumbleclient,SIGNAL(newChannel(MumbleChannel*)),w,SLOT(newChannel(MumbleChannel*)));
+    QObject::connect(mumbleclient,SIGNAL(newChannel(MumbleChannel*)),radio_op,SLOT(addChannel(MumbleChannel*)));
 
-    QObject::connect(w,SIGNAL(connectToServer(QString, unsigned)),client,SLOT(connectToServer(QString, unsigned)));
-    QObject::connect(w,SIGNAL(disconnectFromServer()),client,SLOT(disconnectFromServer()));
-    QObject::connect(w,SIGNAL(setMute(bool)),client,SLOT(setMute(bool)));
-    QObject::connect(w,SIGNAL(changeChannel(int)),client,SLOT(joinChannel(int)));
+    QObject::connect(w,SIGNAL(connectToServer(QString, unsigned)),mumbleclient,SLOT(connectToServer(QString, unsigned)));
+    QObject::connect(w,SIGNAL(disconnectFromServer()),mumbleclient,SLOT(disconnectFromServer()));
+    QObject::connect(w,SIGNAL(setMute(bool)),mumbleclient,SLOT(setMute(bool)));
+    QObject::connect(w,SIGNAL(changeChannel(int)),mumbleclient,SLOT(joinChannel(int)));
 
     w->initSettings();
     int ret = a.exec();
 
-    client->disconnectFromServer();
+    mumbleclient->disconnectFromServer();
     audiowriter->stop();
     audioreader->stop();
     delete w;
-    delete client;
+    delete mumbleclient;
     delete radio_channels;
     delete settings;
     return ret;

@@ -20,7 +20,8 @@
 #include <QDebug>
 #include <opus/opus.h>
 #include <codec2/codec2.h>
-#include "ext/filt.h"
+#include "audio/audioprocessor.h"
+
 
 
 class AudioEncoder
@@ -38,11 +39,8 @@ public:
     short* decode_codec2_1400(unsigned char *audiobuffer, int audiobuffersize, int &samples);
     short* decode_codec2_700(unsigned char *audiobuffer, int audiobuffersize, int &samples);
     short* decode_codec2_2400(unsigned char *audiobuffer, int audiobuffersize, int &samples);
-    unsigned char* encode_gsm(short *audiobuffer, int audiobuffersize, int &length);
-    short* decode_gsm(unsigned char *audiobuffer, int data_length, int &samples);
 
 
-    void filter_audio(short *audiobuffer, int audiobuffersize, bool pre_emphasis=false, bool de_emphasis=false, int mode=0);
 private:
     OpusEncoder *_enc;
     OpusDecoder *_dec;
@@ -51,11 +49,8 @@ private:
     struct CODEC2 *_codec2_1400;
     struct CODEC2 *_codec2_700;
     struct CODEC2 *_codec2_2400;
-    Filter *_audio_filter_1400;
-    Filter *_audio_filter2_1400;
-    Filter *_audio_filter_700;
-    Filter *_audio_filter2_700;
-    double _emph_last_input;
+    AudioProcessor *_processor;
+
 };
 
 #endif // AUDIOENCODER_H

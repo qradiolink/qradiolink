@@ -82,11 +82,36 @@ AudioProcessor::AudioProcessor(QObject *parent) : QObject(parent)
                   0.125f    // release
                   );
 
+    _audio_filter_1400 = new Filter(BPF,256,8,0.2,3.8); // 16,8,0.12,3.8
+    if( _audio_filter_1400->get_error_flag() != 0 )
+    {
+        qDebug() << "audio filter creation failed";
+    }
+    _audio_filter2_1400 = new Filter(BPF,256,8,0.2,3.8);
+    if( _audio_filter2_1400->get_error_flag() != 0 )
+    {
+        qDebug() << "audio filter creation failed";
+    }
+    _audio_filter_700 = new Filter(BPF,256,8,0.2,3.0); // 16,8,0.12,3.8
+    if( _audio_filter_700->get_error_flag() != 0 )
+    {
+        qDebug() << "audio filter creation failed";
+    }
+    _audio_filter2_700 = new Filter(BPF,256,8,0.2,3.0);
+    if( _audio_filter2_700->get_error_flag() != 0 )
+    {
+        qDebug() << "audio filter creation failed";
+    }
+    _emph_last_input = 0.0;
 }
 
 AudioProcessor::~AudioProcessor()
 {
     speex_preprocess_state_destroy(_speex_preprocess);
+    delete _audio_filter_1400;
+    delete _audio_filter2_1400;
+    delete _audio_filter_700;
+    delete _audio_filter2_700;
 }
 
 int AudioProcessor::write_preprocess(short *buf, int bufsize, bool preprocess, int audio_mode)
@@ -164,5 +189,61 @@ void AudioProcessor::compress_audio(short *buf, short bufsize, int direction, in
     }
     sf_snd_free(input_snd);
     sf_snd_free(output_snd);
+}
+
+// FIXME: enum for mode
+void AudioProcessor::filter_audio(short *audiobuffer, int audiobuffersize, bool pre_emphasis, bool de_emphasis, int mode)
+{
+
+    for(unsigned int i = 0;i<audiobuffersize/sizeof(short);i++)
+    {
+        double sample = (double) audiobuffer[i];
+        if(!pre_emphasis && !de_emphasis)
+        {
+            // FIXME:
+            if(mode == 0)
+            {
+                audiobuffer[i] = (short) _audio_filter_1400->do_sample(sample);
+            }
+            else
+            {
+                audiobuffer[i] = (short) _audio_filter_700->do_sample(sample);
+            }
+        }
+        if(de_emphasis)
+        {
+            double output;
+            // FIXME:
+            if(mode == 0)
+            {
+                output = _audio_filter2_1400->do_sample(sample) + 0.1 * (rand() % 1000);// + 0.6375f * _emph_last_input ; // 0.9
+                _emph_last_input = output;
+                audiobuffer[i] = (short) (output * 0.9);
+            }
+            else
+            {
+                output = _audio_filter2_700->do_sample(sample) + 0.1 * (rand() % 1000); //+ 0.9375f * _emph_last_input;  // 0.9
+                _emph_last_input = output;
+                audiobuffer[i] = (short) (output * 0.9);
+            }
+        }
+        if(pre_emphasis)
+        {
+            double output;
+            // FIXME:
+            if(mode == 0)
+            {
+                output = _audio_filter_1400->do_sample(sample);// - 0.9375f * _emph_last_input;
+                _emph_last_input = output;
+                audiobuffer[i] = (short) (output * 0.9);
+            }
+            else
+            {
+                output = _audio_filter_700->do_sample(sample); // 0.9
+                _emph_last_input = output;
+                audiobuffer[i] = (short) (output * 0.9); // I'm still getting clipping and don't know where
+            }
+        }
+    }
 }
 

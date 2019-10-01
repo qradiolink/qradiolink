@@ -399,17 +399,17 @@ void RadioController::flushVoipBuffer()
 {
     // FIXME: breakups on official Mumble client
 
-    if(_voip_encode_buffer->size() >= 320)
+    if(_voip_encode_buffer->size() >= 960)
     {
 
-        short *pcm = new short[320];
-        for(int i =0; i< 320;i++)
+        short *pcm = new short[960];
+        for(int i =0; i< 960;i++)
         {
             pcm[i] = _voip_encode_buffer->at(i);
         }
 
-        emit voipDataPCM(pcm,320*sizeof(short));
-        _voip_encode_buffer->remove(0,320);
+        emit voipDataPCM(pcm,960*sizeof(short));
+        _voip_encode_buffer->remove(0,960);
     }
 
 }
@@ -436,8 +436,11 @@ void RadioController::txAudio(short *audiobuffer, int audiobuffer_size, int vad,
 
     if(_voip_enabled && !radio_only)
     {
-        emit voipDataPCM(audiobuffer,audiobuffer_size);
-        return;
+
+        for(int i=0;i< audiobuffer_size/sizeof(short);i++)
+        {
+            _voip_encode_buffer->push_back(audiobuffer[i]);
+        }
     }
 
     if(!_tx_inited || !_tx_started)
@@ -740,9 +743,7 @@ void RadioController::startTx()
         _tx_started = true;
         if((_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL))
         {
-            _mutex->lock();
             _modem->startTransmission(_callsign);
-            _mutex->unlock();
         }
         emit displayTransmitStatus(true);
 
@@ -759,9 +760,7 @@ void RadioController::stopTx()
         int tx_tail_msec = 100;
         if(_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL)
         {
-            _mutex->lock();
             _modem->endTransmission(_callsign);
-            _mutex->unlock();
             tx_tail_msec = 2000;
         }
         if((_tx_radio_type == radio_type::RADIO_TYPE_ANALOG)
@@ -936,13 +935,6 @@ void RadioController::receiveDigitalAudio(unsigned char *data, int size)
         audio_out = _codec->decode_codec2_700(data, size, samples);
     else
     {
-        if(_voip_forwarding)
-        {
-            // FIXME: should not transcode Opus
-            unsigned char *voip_packet_opus = new unsigned char[size];
-            memcpy(voip_packet_opus, data, size);
-            emit voipDataOpus(voip_packet_opus,size);
-        }
         audio_out = _codec->decode_opus(data, size, samples);
     }
     delete[] data;
@@ -962,9 +954,12 @@ void RadioController::receiveDigitalAudio(unsigned char *data, int size)
         {
             audio_out[i] = (short)((float)audio_out[i] * amplif * _rx_volume);
         }
-        if(_voip_forwarding && audio_mode!=AudioProcessor::AUDIO_MODE_OPUS)
+        if(_voip_forwarding)
         {
-            emit voipDataPCM(audio_out,samples*sizeof(short));
+            for(int i=0;i< samples;i++)
+            {
+                _voip_encode_buffer->push_back(audio_out[i]);
+            }
         }
         else if(!_voip_forwarding)
         {
