@@ -29,14 +29,14 @@ public:
     ~Station();
     void initWidget();
     QTreeWidgetItem *getWidget() const;
-    int id;
+    quint64 id;
     QString callsign;
     QString radio_id;
     QString ip;
     QString hostname;
     int in_call;
-    int channel_id;
-    int called_by;     // calling station id
+    quint64 channel_id;
+    quint64 called_by;     // calling station id
     int call_time;     // time of call
     int repeater;
     int local;

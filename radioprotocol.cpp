@@ -19,8 +19,6 @@
 RadioProtocol::RadioProtocol(QObject *parent) :
     QObject(parent)
 {
-    _voip_channels = new QVector<MumbleChannel*>;
-    _voip_users = new QVector<Station>;
     _buffer = new QByteArray;
 }
 
@@ -29,7 +27,7 @@ QByteArray RadioProtocol::buildRepeaterInfo()
 {
     QByteArray data;
 
-    for(int i=0;i <_voip_channels->size();i++)
+    for(int i=0;i <_voip_channels.size();i++)
     {
         data.append(0xCF);
         data.append(0x77);
@@ -37,10 +35,10 @@ QByteArray RadioProtocol::buildRepeaterInfo()
         data.append(0xAB);
         data.append(0x1); // TODO: msg type channel
         QRadioLink::Channel ch;
-        ch.set_channel_id(_voip_channels->at(i)->id);
-        ch.set_parent_id(_voip_channels->at(i)->parent_id);
-        ch.set_name(_voip_channels->at(i)->name.toStdString().c_str());
-        ch.set_description(_voip_channels->at(i)->description.toStdString().c_str());
+        ch.set_channel_id(_voip_channels.at(i)->id);
+        ch.set_parent_id(_voip_channels.at(i)->parent_id);
+        ch.set_name(_voip_channels.at(i)->name.toStdString().c_str());
+        ch.set_description(_voip_channels.at(i)->description.toStdString().c_str());
         char bin[ch.ByteSize()];
         ch.SerializeToArray(bin,ch.ByteSize());
         data.append(bin, ch.ByteSize());
@@ -49,7 +47,7 @@ QByteArray RadioProtocol::buildRepeaterInfo()
         data.append(0x77);
         data.append(0xCF);
     }
-    for(int i=0;i <_voip_users->size();i++)
+    for(int i=0;i <_voip_users.size();i++)
     {
         data.append(0xCF);
         data.append(0x77);
@@ -57,9 +55,9 @@ QByteArray RadioProtocol::buildRepeaterInfo()
         data.append(0xAB);
         data.append(0x2); // TODO: msg type user
         QRadioLink::User u;
-        u.set_user_id(_voip_users->at(i).id);
-        u.set_channel_id(_voip_users->at(i).channel_id);
-        u.set_name(_voip_users->at(i).callsign.toStdString().c_str());
+        u.set_user_id(_voip_users.at(i)->id);
+        u.set_channel_id(_voip_users.at(i)->channel_id);
+        u.set_name(_voip_users.at(i)->callsign.toStdString().c_str());
         char bin[u.ByteSize()];
         u.SerializeToArray(bin,u.ByteSize());
         data.append(bin, u.ByteSize());
@@ -71,15 +69,16 @@ QByteArray RadioProtocol::buildRepeaterInfo()
     return data;
 }
 
-void RadioProtocol::addChannel(MumbleChannel *chan)
+
+void RadioProtocol::setStations(QVector<Station *> list)
 {
-    _voip_channels->push_back(chan);
+
+    _voip_users = list;
 }
 
-void RadioProtocol::setStations(QVector<Station> list)
+void RadioProtocol::setChannels(QVector<MumbleChannel *> list)
 {
-    delete _voip_users;
-    _voip_users = new QVector<Station>(list);
+    _voip_channels = list;
 }
 
 void RadioProtocol::dataIn(QByteArray data)

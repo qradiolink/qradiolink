@@ -31,14 +31,14 @@
 #include "ext/PacketDataStream.h"
 #include "ext/utils.h"
 #include "sslclient.h"
-#include "audio/audiointerface.h"
 #include "audio/audioencoder.h"
 #include "config_defines.h"
 #include "settings.h"
 #include "station.h"
 #include "mumblechannel.h"
 
-typedef QVector<Station> StationList;
+typedef QVector<Station*> StationList;
+typedef QVector<MumbleChannel*> ChannelList;
 class MumbleClient : public QObject
 {
     Q_OBJECT
@@ -49,12 +49,14 @@ public:
 
 signals:
     void connectedToServer(QString message);
+    void disconnected();
     void channelName(QString name);
     void pcmAudio(short *pcm, int size, quint64 session_id);
     void opusAudio(unsigned char *audio, int size, quint64 session_id);
-    void onlineStations(StationList);
+    void onlineStations(StationList stations);
     void newStation(Station* s);
-    void newChannel(MumbleChannel* chan);
+    void newChannels(ChannelList channes);
+    void joinedChannel(quint64 channel_id);
     void leftStation(Station*);
     void channelReady(int chan_number);
     void textMessage(QString msg, bool html);
@@ -64,6 +66,7 @@ signals:
 public slots:
     void connectToServer(QString address, unsigned port);
     void disconnectFromServer();
+    void cleanup();
     void sendVersion();
     void authenticate();
     void pingServer();
@@ -76,10 +79,9 @@ public slots:
     int getChannelId();
     QString createChannel(QString channel_name="");
     void joinChannel(int id);
-    int callStation(QString radio_id);
+    int unmuteStation(QString radio_id);
     void disconnectFromCall();
-    int disconnectStation(QString radio_id);
-    void disconnectAllStations();
+    int muteStation(QString radio_id);
     void setMute(bool mute);
     void logMessage(QString log_msg);
 
@@ -96,6 +98,8 @@ private:
     void processIncomingAudioPacket(quint8 *data, quint64 size, quint8 type);
     void decodeAudio(unsigned char *audiobuffer, short audiobuffersize, quint8 type, quint64 session_id);
 
+    AudioEncoder *_codec;
+    Settings *_settings;
     SSLClient *_socket_client;
 #ifndef NO_CRYPT
     CryptState *_crypt_state;
@@ -107,13 +111,14 @@ private:
     bool _encryption_set;
     bool _synchronized;
     bool _authenticated;
-    int _session_id;
+    bool _connection_in_progress;
+    quint64 _session_id;
     int _max_bandwidth;
-    int _channel_id;
-    AudioEncoder *_codec;
-    Settings *_settings;
+    quint64 _channel_id;
     quint64 _sequence_number;
+
     QVector<Station*> _stations;
+    QVector<MumbleChannel*> _channels;
 
 };
 

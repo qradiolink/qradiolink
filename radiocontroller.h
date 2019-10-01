@@ -48,7 +48,7 @@
 #include "net/netdevice.h"
 
 
-typedef QVector<Station> StationList;
+typedef QVector<Station*> StationList;
 typedef std::vector<std::complex<float>> complex_vector;
 namespace radio_type
 {
@@ -146,7 +146,7 @@ public slots:
     void endTx();
     void updateFrequency();
     void toggleRepeat(bool value);
-    void addChannel(MumbleChannel* chan);
+    void setChannels(ChannelList channels);
     void setStations(StationList list);
     void setVox(bool value);
     void setCarrierOffset(qint64 offset);

@@ -114,11 +114,11 @@ AudioProcessor::~AudioProcessor()
     delete _audio_filter2_700;
 }
 
-int AudioProcessor::write_preprocess(short *buf, int bufsize, bool preprocess, int audio_mode)
+void AudioProcessor::write_preprocess(short *buf, int bufsize, bool preprocess, int audio_mode)
 {
     if(preprocess)
     {
-        int i = 3;
+        //int i = 3;
         //speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_NOISE_SUPPRESS, &i);
         //speex_preprocess_run(_speex_preprocess, buf);
         compress_audio(buf, bufsize, 1, audio_mode);

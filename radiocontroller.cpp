@@ -437,7 +437,7 @@ void RadioController::txAudio(short *audiobuffer, int audiobuffer_size, int vad,
     if(_voip_enabled && !radio_only)
     {
 
-        for(int i=0;i< audiobuffer_size/sizeof(short);i++)
+        for(unsigned int i=0;i< (unsigned int)audiobuffer_size/sizeof(short);i++)
         {
             _voip_encode_buffer->push_back(audiobuffer[i]);
         }
@@ -1125,12 +1125,12 @@ void RadioController::processVoipAudioFrame(short *pcm, int samples, quint64 sid
     }
     else
     {
-        unsigned int size = (_m_queue->size() > samples) ? samples : _m_queue->size();
+        unsigned int size = (_m_queue->size() > (unsigned int)samples) ? (unsigned int)samples : _m_queue->size();
         for(unsigned int i=0;i<size;i++)
         {
             _m_queue->at(i) = _m_queue->at(i)/2-1 + pcm[i]/2-1;
         }
-        if(_m_queue->size() < samples)
+        if(_m_queue->size() < (unsigned int)samples)
         {
             for(int i=_m_queue->size();i<samples;i++)
             {
@@ -1253,9 +1253,9 @@ void RadioController::endAudioTransmission()
     emit writePCM(samples, _end_rec_sound->size(), false, AudioProcessor::AUDIO_MODE_ANALOG);
 }
 
-void RadioController::addChannel(MumbleChannel *chan)
+void RadioController::setChannels(ChannelList channels)
 {
-    _radio_protocol->addChannel(chan);
+    _radio_protocol->setChannels(channels);
 }
 
 void RadioController::setStations(StationList list)

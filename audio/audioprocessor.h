@@ -45,7 +45,7 @@ public:
         AUDIO_MODE_OPUS
     };
     void compress_audio(short *buf, short bufsize, int direction, int audio_mode);
-    int write_preprocess(short *buf, int bufsize, bool preprocess, int audio_mode);
+    void write_preprocess(short *buf, int bufsize, bool preprocess, int audio_mode);
     int read_preprocess(short *buf, int bufsize, bool preprocess, int audio_mode);
 
     void filter_audio(short *audiobuffer, int audiobuffersize,

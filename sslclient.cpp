@@ -97,7 +97,7 @@ QSslCipher SSLClient::getCipher()
 void SSLClient::connectionFailed(QAbstractSocket::SocketError)
 {
 
-
+    emit connectionFailure();
     emit logMessage("Outgoing connection failed " + _socket->errorString());
     if(_status==1)
     {
@@ -121,7 +121,7 @@ void SSLClient::tryReconnect()
     // FIXME: blocks the main thread
     QTimer timer;
     timer.setSingleShot(true);
-    timer.start(5000);
+    timer.start(1000);
     while(timer.isActive())
     {
         QCoreApplication::processEvents();
@@ -130,12 +130,10 @@ void SSLClient::tryReconnect()
     {
         QMetaObject::invokeMethod(this, "connectHost", Qt:: QueuedConnection,
         Q_ARG(QString, _hostname), Q_ARG(const unsigned, _port));
-        //connectHost(_hostname,_port);
     }
     else
     {
-
-        emit connectionFailure();
+        return;
     }
 }
 
@@ -177,7 +175,6 @@ void SSLClient::disconnectHost()
     _connection_tries=0;
     emit disconnectedFromHost();
 }
-
 
 
 void SSLClient::sendBin(quint8 *payload, quint64 size)
@@ -228,7 +225,6 @@ void SSLClient::processData()
 
     }
     //qDebug() << QString::fromLocal8Bit(buf.data());
-
     emit haveMessage(buf);
 }
 
@@ -240,10 +236,8 @@ void SSLClient::readPendingDatagrams()
         datagram.resize(_udp_socket->pendingDatagramSize());
         QHostAddress sender;
         quint16 senderPort;
-
         _udp_socket->readDatagram(datagram.data(), datagram.size(),
                              &sender, &senderPort);
-
         emit haveUDPData(datagram);
     }
 }
@@ -256,7 +250,6 @@ void SSLClient::sendUDP(quint8 *payload, quint64 size)
     _udp_socket->flush();
     if(sent <= 0)
         std::cerr << "UDP transmit error" << std::endl;
-
 }
 
 

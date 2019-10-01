@@ -29,11 +29,12 @@ MumbleClient::MumbleClient(Settings *settings, QObject *parent) :
     _encryption_set = false;
     _authenticated = false;
     _synchronized = false;
-    _session_id = -1;
+    _session_id = INT64_MAX;
     _max_bandwidth = -1;
-    _channel_id = -1;
+    _channel_id = INT64_MAX;
     _temp_channel_name = "";
     _sequence_number = 0;
+    _connection_in_progress = false;
 }
 
 MumbleClient::~MumbleClient()
@@ -47,28 +48,48 @@ MumbleClient::~MumbleClient()
 
 void MumbleClient::connectToServer(QString address, unsigned port)
 {
+    if(_connection_in_progress)
+        return;
+    _connection_in_progress = true;
     _socket_client->connectHost(address,port);
     QObject::connect(_socket_client,SIGNAL(connectedToHost()),this,SLOT(sendVersion()));
     QObject::connect(_socket_client,SIGNAL(haveMessage(QByteArray)),this,SLOT(processProtoMessage(QByteArray)));
     QObject::connect(_socket_client,SIGNAL(haveUDPData(QByteArray)),this,SLOT(processUDPData(QByteArray)));
     QObject::connect(_socket_client,SIGNAL(logMessage(QString)),this,SLOT(logMessage(QString)));
+    QObject::connect(_socket_client,SIGNAL(connectionFailure()),this,SLOT(cleanup()));
 }
 
 void MumbleClient::disconnectFromServer()
 {
-    if(_authenticated)
+    _connection_in_progress = false;
+
+    _socket_client->disconnectHost();
+    QObject::disconnect(_socket_client,SIGNAL(connectedToHost()),this,SLOT(sendVersion()));
+    QObject::disconnect(_socket_client,SIGNAL(haveMessage(QByteArray)),this,SLOT(processProtoMessage(QByteArray)));
+    QObject::disconnect(_socket_client,SIGNAL(haveUDPData(QByteArray)),this,SLOT(processUDPData(QByteArray)));
+    QObject::disconnect(_socket_client,SIGNAL(logMessage(QString)),this,SLOT(logMessage(QString)));
+    cleanup();
+
+}
+
+void MumbleClient::cleanup()
+{
+    _encryption_set = false;
+    _authenticated = false;
+    _synchronized = false;
+    _session_id = INT64_MAX;
+    for(int i=0; i < _channels.size();i++)
     {
-        _socket_client->disconnectHost();
-        QObject::disconnect(_socket_client,SIGNAL(connectedToHost()),this,SLOT(sendVersion()));
-        QObject::disconnect(_socket_client,SIGNAL(haveMessage(QByteArray)),this,SLOT(processProtoMessage(QByteArray)));
-        QObject::disconnect(_socket_client,SIGNAL(haveUDPData(QByteArray)),this,SLOT(processUDPData(QByteArray)));
-        QObject::disconnect(_socket_client,SIGNAL(logMessage(QString)),this,SLOT(logMessage(QString)));
-        _encryption_set = false;
-        _authenticated = false;
-        _synchronized = false;
-        _session_id = -1;
-        emit textMessage("Disconnected", false);
+        delete _channels.at(i);
     }
+    _channels.clear();
+    for(int i=0; i < _stations.size();i++)
+    {
+        delete _stations.at(i);
+    }
+    _stations.clear();
+    emit disconnected();
+    emit textMessage("Disconnected", false);
 }
 
 void MumbleClient::sendVersion()
@@ -143,14 +164,14 @@ void MumbleClient::processProtoMessage(QByteArray data)
     memcpy(message,bin_data+6,message_size);
     switch(type)
     {
+    case 0: // Version
+        // processVersion(message,message_size);
+        break;
     case 15:
         setupEncryption(message,message_size);
         break;
     case 5: // ServerSync
         processServerSync(message,message_size);
-        break;
-    case 0: // Version
-        // processVersion(message,message_size);
         break;
     case 3: // ping
         break;
@@ -193,6 +214,9 @@ void MumbleClient::processServerSync(quint8 *message, quint64 size)
     MumbleProto::ServerSync sync;
     sync.ParseFromArray(message,size);
     _session_id = sync.session();
+    Station *s = new Station;
+    s->id = _session_id;
+    _stations.append(s);
     _max_bandwidth = sync.max_bandwidth();
     std::string welcome = sync.welcome_text();
     _synchronized = true;
@@ -202,22 +226,6 @@ void MumbleClient::processServerSync(quint8 *message, quint64 size)
              + " session: " + QString::number(_session_id);
     std::cout << msg.toStdString() << std::endl;
     emit connectedToServer(msg);
-    return;
-
-    // FIXME: leftover from another state
-#ifndef NO_CRYPT
-    //createChannel();
-#endif
-    MumbleProto::UserState us;
-    us.set_session(_session_id);
-    us.set_actor(_session_id);
-    us.set_self_deaf(true);
-    us.set_self_mute(true);
-    us.set_comment(_settings->callsign.toStdString().c_str());
-    int msize = us.ByteSize();
-    quint8 data[msize];
-    us.SerializeToArray(data,msize);
-    sendMessage(data,9,msize);
 }
 
 void MumbleClient::processChannelState(quint8 *message, quint64 size)
@@ -243,8 +251,9 @@ void MumbleClient::processChannelState(quint8 *message, quint64 size)
     else
         description = "";
     MumbleChannel *c = new MumbleChannel(id, parent_id, name, description);
+    _channels.append(c);
 
-    emit newChannel(c);
+    emit newChannels(_channels);
 
 }
 
@@ -253,10 +262,11 @@ void MumbleClient::processUserState(quint8 *message, quint64 size)
 
     MumbleProto::UserState us;
     us.ParseFromArray(message,size);
-    if((_session_id==-1) && (us.has_channel_id()))
+    if((_session_id==INT64_MAX) && (us.has_channel_id()))
     {
         _channel_id = us.channel_id();
         emit textMessage("Joined channel: " + QString::number(_channel_id), false);
+        emit joinedChannel(_channel_id);
     }
     if(us.session() == _session_id)
     {
@@ -275,14 +285,8 @@ void MumbleClient::processUserState(quint8 *message, quint64 size)
         {
             _channel_id = us.channel_id();
             emit textMessage( "Joined channel: " + QString::number(_channel_id), false);
-            MumbleChannel *c = new MumbleChannel(_channel_id,0,"","");
-            emit newChannel(c);
-            if(_channel_id > 1)
-            {
-                emit channelReady(_channel_id);
-            }
+            emit joinedChannel(_channel_id);
             s->channel_id = us.channel_id();
-
         }
     }
 
@@ -322,25 +326,10 @@ void MumbleClient::processUserState(quint8 *message, quint64 size)
             if(us.has_comment())
                 s->callsign += QString::fromStdString(us.comment());
             _stations.push_back(s);
-            emit newStation(s);
         }
     }
-    /* Just debug code
-    for(int i = 0;i < _stations.size();i++)
-    {
-        Station *s = _stations.at(i);
-        qDebug() << "Session: " << QString::number(s->_id)
-                 << " radio_id: " << s->_radio_id << " channel: "
-                 << QString::number(s->_conference_id) << s->_callsign;
-    }
-    */
 
-    StationList sl;
-    for(int i =0;i<_stations.size();++i)
-    {
-        sl.append(*(_stations.at(i)));
-    }
-    emit onlineStations(sl);
+    emit onlineStations(_stations);
 
 }
 
@@ -354,26 +343,12 @@ void MumbleClient::processUserRemove(quint8 *message, quint64 size)
         Station *s = _stations.at(i);
         if(s->id == us.session())
         {
-            emit leftStation(s);
             _stations.remove(i);
+            delete s;
         }
     }
-    /* Just debug code
-    for(int i = 0;i < _stations.size();i++)
-    {
-        Station *s = _stations.at(i);
-        qDebug() << "Session: " << QString::number(s->_id)
-                 << " radio_id: " << s->_radio_id << " channel: "
-                 << QString::number(s->_conference_id) << s->_callsign;
-    }
-    */
 
-    StationList sl;
-    for(int i =0;i<_stations.size();++i)
-    {
-        sl.append(*(_stations.at(i)));
-    }
-    emit onlineStations(sl);
+    emit onlineStations(_stations);
 
 }
 
@@ -384,6 +359,7 @@ void MumbleClient::joinChannel(int id)
     us.set_self_deaf(false);
     us.set_self_mute(false);
     us.set_channel_id(id);
+    us.set_comment(_settings->callsign.toStdString().c_str());
     int size = us.ByteSize();
     quint8 data[size];
     us.SerializeToArray(data,size);
@@ -392,7 +368,40 @@ void MumbleClient::joinChannel(int id)
 
 }
 
-int MumbleClient::callStation(QString radio_id)
+int MumbleClient::muteStation(QString radio_id)
+{
+    int sessid = 0;
+    for(int i =0;i<_stations.size();i++)
+    {
+        Station *s = _stations.at(i);
+        if(s->radio_id == radio_id)
+        {
+            sessid = s->id;
+            if(s->channel_id != _channel_id)
+                return -2;
+            if(s->called_by != _session_id)
+                return -3;
+            s->called_by = 0;
+            s->in_call = 0;
+            s->channel_id = -1;
+        }
+    }
+    if(sessid ==0)
+        return -1;
+    MumbleProto::UserState us;
+    us.set_channel_id(1);
+    us.set_session(sessid);
+    us.set_actor(_session_id);
+    us.set_self_mute(true);
+    us.set_self_deaf(true);
+    int size = us.ByteSize();
+    quint8 data[size];
+    us.SerializeToArray(data,size);
+    sendMessage(data,9,size);
+    return 0;
+}
+
+int MumbleClient::unmuteStation(QString radio_id)
 {
     int sessid = 0;
     for(int i =0;i<_stations.size();i++)
@@ -427,7 +436,6 @@ void MumbleClient::disconnectFromCall()
 {
     if(_channel_id < 2)
     {
-        qDebug() << "something went wrong";
         return;
     }
     _temp_channel_name = "";
@@ -440,70 +448,6 @@ void MumbleClient::disconnectFromCall()
     quint8 data[size];
     us.SerializeToArray(data,size);
     sendMessage(data,9,size);
-}
-
-int MumbleClient::disconnectStation(QString radio_id)
-{
-    int sessid = 0;
-    for(int i =0;i<_stations.size();i++)
-    {
-        Station *s = _stations.at(i);
-        if(s->radio_id == radio_id)
-        {
-            sessid = s->id;
-            if(s->channel_id != _channel_id)
-                return -2;
-            if(s->called_by != _session_id)
-                return -3;
-            s->called_by = 0;
-            s->in_call = 0;
-            s->channel_id = -1;
-        }
-    }
-    if(sessid ==0)
-        return -1;
-    MumbleProto::UserState us;
-    us.set_channel_id(1);
-    us.set_session(sessid);
-    us.set_actor(_session_id);
-    us.set_self_mute(true);
-    us.set_self_deaf(true);
-    int size = us.ByteSize();
-    quint8 data[size];
-    us.SerializeToArray(data,size);
-    sendMessage(data,9,size);
-    return 0;
-}
-
-void MumbleClient::disconnectAllStations()
-{
-
-    for(int i =0;i<_stations.size();i++)
-    {
-        Station *s = _stations.at(i);
-        if((s->called_by == _session_id) &&
-                (s->in_call == 1) &&
-                (s->channel_id == _channel_id))
-        {
-            s->called_by = 0;
-            s->in_call = 0;
-            s->channel_id = -1;
-
-            MumbleProto::UserState us;
-            us.set_channel_id(1);
-            us.set_session(s->id);
-            us.set_actor(_session_id);
-            us.set_self_mute(true);
-            us.set_self_deaf(true);
-            int size = us.ByteSize();
-            quint8 data[size];
-            us.SerializeToArray(data,size);
-            sendMessage(data,9,size);
-
-        }
-    }
-
-
 }
 
 
@@ -556,13 +500,8 @@ QString MumbleClient::createChannel(QString channel_name)
 
 void MumbleClient::setMute(bool mute)
 {
-    while(!_synchronized)
-    {
-        // FIXME: remove all these sleeps in the main thread
-        struct timespec time_to_sleep = {0, 10000000L };
-        nanosleep(&time_to_sleep, NULL);
-        QCoreApplication::processEvents();
-    }
+    if(!_synchronized)
+        return;
     MumbleProto::UserState us;
     us.set_self_deaf(mute);
     us.set_self_mute(mute);
@@ -656,7 +595,7 @@ void MumbleClient::processIncomingAudioPacket(quint8 *data, quint64 size, quint8
     int audio_size = pds.left();
     if(audio_size <= 0)
     {
-        std::cerr << "malformed audio frame" << std::endl;
+        std::cerr << "Received malformed audio frame" << std::endl;
         delete[] data;
         return;
     }

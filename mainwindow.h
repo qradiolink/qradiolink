@@ -44,6 +44,8 @@
 #include <iostream>
 
 typedef std::vector<std::complex<float>> complex_vector;
+typedef QVector<MumbleChannel*> ChannelList;
+typedef QVector<Station*> StationList;
 namespace Ui {
 class MainWindow;
 }
@@ -57,6 +59,7 @@ public slots:
     void endTx();
     void connectVOIPRequested();
     void disconnectVOIPRequested();
+    void disconnectedFromServer();
     void connectedToServer(QString msg);
     void resetSpeechIcons();
     void sendTextRequested();
@@ -68,7 +71,8 @@ public slots:
     void displayTransmitStatus(bool status);
     void displayDataReceiveStatus(bool status);
     void updateOnlineStations(StationList stations);
-    void leftStation(Station *s);
+    void updateChannels(ChannelList channels);
+    void joinedChannel(quint64 channel_id);
     void userSpeaking(quint64 id);
     void toggleRXwin(bool value);
     void toggleTXwin(bool value);
@@ -97,7 +101,6 @@ public slots:
     void toggleVOIPForwarding(bool value);
     void toggleVox(bool value);
     void toggleRepeater(bool value);
-    void newChannel(MumbleChannel *chan);
     void channelState(QTreeWidgetItem *item, int k);
     void newFFTData(float* fft_data, int fftsize);
     void carrierOffsetChanged(qint64 freq, qint64 offset);
@@ -204,7 +207,7 @@ private:
     qint64 _tx_shift_frequency;
     int _rx_mode;
     int _tx_mode;
-    int _current_voip_channel;
+    quint64 _current_voip_channel;
 
     float _fft_averaging;
     int _waterfall_fps;

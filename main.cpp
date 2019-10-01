@@ -48,6 +48,9 @@ void logMessage(QtMsgType type, const char *msg)
 {
     QString txt;
     switch (type) {
+    case QtInfoMsg:
+        txt = QString("Info: %1").arg(msg);
+        break;
     case QtDebugMsg:
         txt = QString("Debug: %1").arg(msg);
         break;
@@ -77,8 +80,10 @@ int main(int argc, char *argv[])
 #endif
 #endif
 
-    typedef QVector<Station> StationList;
+    typedef QVector<Station*> StationList;
+    typedef QVector<MumbleChannel*> ChannelList;
     qRegisterMetaType<StationList>("StationList");
+    qRegisterMetaType<ChannelList>("ChannelList");
     typedef std::vector<std::complex<float>> complex_vector;
     qRegisterMetaType<complex_vector>("complex_vector");
 
@@ -230,13 +235,14 @@ int main(int argc, char *argv[])
     QObject::connect(radio_op, SIGNAL(initError(QString)), w, SLOT(initError(QString)));
 
     QObject::connect(mumbleclient,SIGNAL(onlineStations(StationList)),w,SLOT(updateOnlineStations(StationList)));
-    QObject::connect(mumbleclient,SIGNAL(leftStation(Station*)),w,SLOT(leftStation(Station*)));
     QObject::connect(mumbleclient,SIGNAL(userSpeaking(quint64)),w,SLOT(userSpeaking(quint64)));
     QObject::connect(mumbleclient,SIGNAL(onlineStations(StationList)),radio_op,SLOT(setStations(StationList)));
     QObject::connect(mumbleclient,SIGNAL(textMessage(QString,bool)),w,SLOT(displayVOIPText(QString,bool)));
     QObject::connect(mumbleclient,SIGNAL(connectedToServer(QString)),w,SLOT(connectedToServer(QString)));
-    QObject::connect(mumbleclient,SIGNAL(newChannel(MumbleChannel*)),w,SLOT(newChannel(MumbleChannel*)));
-    QObject::connect(mumbleclient,SIGNAL(newChannel(MumbleChannel*)),radio_op,SLOT(addChannel(MumbleChannel*)));
+    QObject::connect(mumbleclient,SIGNAL(newChannels(ChannelList)),w,SLOT(updateChannels(ChannelList)));
+    QObject::connect(mumbleclient,SIGNAL(joinedChannel(quint64)),w,SLOT(joinedChannel(quint64)));
+    QObject::connect(mumbleclient,SIGNAL(newChannels(ChannelList)),radio_op,SLOT(setChannels(ChannelList)));
+    QObject::connect(mumbleclient,SIGNAL(disconnected()),w,SLOT(disconnectedFromServer()));
 
     QObject::connect(w,SIGNAL(connectToServer(QString, unsigned)),mumbleclient,SLOT(connectToServer(QString, unsigned)));
     QObject::connect(w,SIGNAL(disconnectFromServer()),mumbleclient,SLOT(disconnectFromServer()));
