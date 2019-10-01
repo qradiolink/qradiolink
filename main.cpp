@@ -247,6 +247,8 @@ int main(int argc, char *argv[])
     int ret = a.exec();
 
     client->disconnectFromServer();
+    audiowriter->stop();
+    audioreader->stop();
     delete w;
     delete client;
     delete radio_channels;

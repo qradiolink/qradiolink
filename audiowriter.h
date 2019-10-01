@@ -21,7 +21,8 @@
 #include <vector>
 #include <QCoreApplication>
 #include <QMutex>
-#include "audio/audiointerface.h"
+#include <QAudioOutput>
+#include "audio/audioprocessor.h"
 
 class AudioWriter : public QObject
 {
@@ -48,9 +49,7 @@ private:
         int audio_mode;
     };
 
-    AudioInterface *_audio_writer;
     std::vector<audio_samples*> *_rx_sample_queue;
-    //std::vector<audio_samples*> *_tx_sample_queue;
     bool _working;
     QMutex _mutex;
 

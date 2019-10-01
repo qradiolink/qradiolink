@@ -34,7 +34,7 @@
 #include <gnuradio/digital/crc32.h>
 #include <libconfig.h++>
 #include <ftdi.h>
-#include "audio/audiointerface.h"
+#include "audio/audioprocessor.h"
 #include "settings.h"
 #include "radiochannel.h"
 #include "mumblechannel.h"
@@ -177,7 +177,6 @@ private:
     void memoryScan(bool receiving, bool wait_for_timer=true);
 
     // FIXME: inflation of members
-    AudioInterface *_audio;
     Settings *_settings;
     RelayController *_relay_controller;
     AudioEncoder *_codec;

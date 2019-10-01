@@ -23,8 +23,9 @@ AudioReader::AudioReader(QObject *parent) :
 
     _working = true;
     _capture_audio = false;
-    _read_audio_mode = AudioInterface::AUDIO_MODE_ANALOG;
+    _read_audio_mode = AudioProcessor::AUDIO_MODE_ANALOG;
     _read_preprocess = false;
+
 }
 
 
@@ -46,7 +47,27 @@ void AudioReader::setReadMode(bool capture, bool preprocess, int audio_mode)
 
 void AudioReader::run()
 {
-    _audio_reader = new AudioInterface;
+    AudioProcessor *processor = new AudioProcessor;
+    _buffer = new QByteArray;
+    // FIXME: support different frame durations
+    int audiobuffer_size = 640; //40 ms @ 8k
+    QAudioFormat format;
+    format.setSampleRate(8000);
+    format.setChannelCount(1);
+    format.setSampleSize(16);
+    format.setCodec("audio/pcm");
+    format.setByteOrder(QAudioFormat::LittleEndian);
+    format.setSampleType(QAudioFormat::SignedInt);
+
+    QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
+    if (!info.isFormatSupported(format)) {
+       qWarning() << "Raw audio format not supported by backend, cannot play audio.";
+       return;
+    }
+
+    QAudioInput *audio_reader = new QAudioInput(format, this);
+    audio_reader->setBufferSize(4098);
+    QIODevice *audio_dev = audio_reader->start();
     while(_working)
     {
         QCoreApplication::processEvents();
@@ -56,16 +77,20 @@ void AudioReader::run()
         bool preprocess = _read_preprocess;
         int audio_mode = _read_audio_mode;
         _mutex.unlock();
-
+        QByteArray data = audio_dev->readAll();
         if(capture)
         {
-            // FIXME: support different frame durations
-            int audiobuffer_size = 640; //40 ms @ 8k
-            short *audiobuffer = new short[audiobuffer_size/sizeof(short)];
-            int vad = _audio_reader->read_short(audiobuffer,audiobuffer_size, preprocess, audio_mode);
-            emit audioPCM(audiobuffer, audiobuffer_size, vad, false);
+            _buffer->append(data);
+            if(_buffer->size() >= audiobuffer_size)
+            {
+                short *audiobuffer = new short[audiobuffer_size/sizeof(short)];
+                memcpy(audiobuffer, (short*)_buffer->data(), audiobuffer_size);
+                int vad = processor->read_preprocess(audiobuffer, audiobuffer_size, preprocess, audio_mode);
+                emit audioPCM(audiobuffer, audiobuffer_size, vad, false);
+                _buffer->remove(0, audiobuffer_size);
+            }
 
-            struct timespec time_to_sleep = {0, 2000L };
+            struct timespec time_to_sleep = {0, 2000000L };
             nanosleep(&time_to_sleep, NULL);
         }
         else
@@ -74,8 +99,9 @@ void AudioReader::run()
             nanosleep(&time_to_sleep, NULL);
         }
 
-
-
     }
-    delete _audio_reader;
+    audio_reader->stop();
+    delete audio_reader;
+    delete processor;
+    delete _buffer;
 }

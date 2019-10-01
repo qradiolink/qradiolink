@@ -53,7 +53,28 @@ void AudioWriter::writePCM(short *pcm, int bytes, bool preprocess, int audio_mod
 
 void AudioWriter::run()
 {
-    _audio_writer = new AudioInterface;
+    // FIXME: support different frame durations
+    AudioProcessor *processor = new AudioProcessor;
+    QAudioFormat format;
+    format.setSampleRate(8000);
+    format.setChannelCount(1);
+    format.setSampleSize(16);
+    format.setCodec("audio/pcm");
+    format.setByteOrder(QAudioFormat::LittleEndian);
+    format.setSampleType(QAudioFormat::SignedInt);
+
+    QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
+    if (!info.isFormatSupported(format)) {
+       qWarning() << "Raw audio format not supported by backend, cannot play audio.";
+       return;
+    }
+
+    QAudioOutput *audio_writer = new QAudioOutput(format, this);
+    audio_writer->setObjectName("QRadioLink audio output");
+    audio_writer->setCategory("QRadioLink audio output");
+    audio_writer->setBufferSize(4098);
+    QIODevice *audio_dev = audio_writer->start();
+
     while(_working)
     {
         QCoreApplication::processEvents();
@@ -70,7 +91,8 @@ void AudioWriter::run()
                 memcpy(pcm, samp->pcm, samp->bytes);
                 delete[] samp->pcm;
                 delete samp;
-                _audio_writer->write_short(pcm, bytes, preprocess, audio_mode);
+                processor->write_preprocess(pcm, bytes, preprocess, audio_mode);
+                audio_dev->write((char*)pcm, bytes);
 
             }
             _mutex.lock();
@@ -84,5 +106,6 @@ void AudioWriter::run()
             nanosleep(&time_to_sleep, NULL);
         }
     }
-    delete _audio_writer;
+    audio_writer->stop();
+    delete audio_writer;
 }

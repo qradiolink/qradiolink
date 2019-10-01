@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui network sql
+QT       += core gui network sql multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -42,6 +42,7 @@ SOURCES += main.cpp\
         mainwindow.cpp\
         audio/audioencoder.cpp\
         audio/audiointerface.cpp\
+        audio/audioprocessor.cpp \
         dtmfdecoder.cpp\
         databaseapi.cpp\
         mumbleclient.cpp\
@@ -101,9 +102,11 @@ SOURCES += main.cpp\
     gr/rx_fft.cpp
 
 
+
 HEADERS  += mainwindow.h\
         audio/audioencoder.h\
         audio/audiointerface.h\
+        audio/audioprocessor.h \
         radioprotocol.h \
         audiowriter.h \
         audioreader.h \
@@ -165,6 +168,7 @@ HEADERS  += mainwindow.h\
     gr/gr_4fsk_discriminator.h \
     gr/gr_const_sink.h \
     gr/modem_types.h
+
 
 
 #CONFIG += link_pkgconfig

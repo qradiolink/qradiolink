@@ -363,12 +363,12 @@ void RadioController::updateInputAudioStream()
     /// this code runs only in startTx and stopTx
     if(!_transmitting_audio && !_vox_enabled)
     {
-        emit setAudioReadMode(false, false, AudioInterface::AUDIO_MODE_ANALOG);
+        emit setAudioReadMode(false, false, AudioProcessor::AUDIO_MODE_ANALOG);
         return;
     }
     if(_tx_mode == gr_modem_types::ModemTypeQPSK250000)
     {
-        emit setAudioReadMode(false, false, AudioInterface::AUDIO_MODE_ANALOG);
+        emit setAudioReadMode(false, false, AudioProcessor::AUDIO_MODE_ANALOG);
         return;
     }
     int audio_mode;
@@ -378,19 +378,19 @@ void RadioController::updateInputAudioStream()
             (_tx_mode == gr_modem_types::ModemTypeQPSK2000) ||
             (_tx_mode == gr_modem_types::ModemTypeBPSK1000))
     {
-        audio_mode = AudioInterface::AUDIO_MODE_CODEC2;
+        audio_mode = AudioProcessor::AUDIO_MODE_CODEC2;
         emit setAudioReadMode(true, true, audio_mode);
     }
     else if((_tx_mode == gr_modem_types::ModemTypeQPSK20000) ||
             (_tx_mode == gr_modem_types::ModemType2FSK20000) ||
             (_tx_mode == gr_modem_types::ModemType4FSK20000))
     {
-        audio_mode = AudioInterface::AUDIO_MODE_OPUS;
+        audio_mode = AudioProcessor::AUDIO_MODE_OPUS;
         emit setAudioReadMode(true, true, audio_mode);
     }
     else
     {
-        audio_mode = AudioInterface::AUDIO_MODE_ANALOG;
+        audio_mode = AudioProcessor::AUDIO_MODE_ANALOG;
         emit setAudioReadMode(true, false, audio_mode);
     }
 }
@@ -924,7 +924,7 @@ void RadioController::receiveDigitalAudio(unsigned char *data, int size)
 {
     short *audio_out;
     int samples;
-    int audio_mode = AudioInterface::AUDIO_MODE_OPUS;
+    int audio_mode = AudioProcessor::AUDIO_MODE_OPUS;
     if((_rx_mode == gr_modem_types::ModemTypeBPSK2000) ||
             (_rx_mode == gr_modem_types::ModemType2FSK2000) ||
             (_rx_mode == gr_modem_types::ModemType4FSK2000) ||
@@ -956,13 +956,13 @@ void RadioController::receiveDigitalAudio(unsigned char *data, int size)
                 (_rx_mode == gr_modem_types::ModemTypeBPSK1000))
         {
             amplif = 1.0;
-            audio_mode = AudioInterface::AUDIO_MODE_CODEC2;
+            audio_mode = AudioProcessor::AUDIO_MODE_CODEC2;
         }
         for(int i=0;i<samples;i++)
         {
             audio_out[i] = (short)((float)audio_out[i] * amplif * _rx_volume);
         }
-        if(_voip_forwarding && audio_mode!=AudioInterface::AUDIO_MODE_OPUS)
+        if(_voip_forwarding && audio_mode!=AudioProcessor::AUDIO_MODE_OPUS)
         {
             emit voipDataPCM(audio_out,samples*sizeof(short));
         }
@@ -991,7 +991,7 @@ void RadioController::receivePCMAudio(std::vector<float> *audio_data)
     }
     else
     {
-        emit writePCM(pcm, size*sizeof(short), false, AudioInterface::AUDIO_MODE_ANALOG);
+        emit writePCM(pcm, size*sizeof(short), false, AudioProcessor::AUDIO_MODE_ANALOG);
     }
     audio_data->clear();
     delete audio_data;
@@ -1165,7 +1165,7 @@ void RadioController::processVoipAudioFrame(short *pcm, int samples, quint64 sid
         }
         else
         {
-            emit writePCM(pcm, samples*sizeof(short), true, AudioInterface::AUDIO_MODE_OPUS);
+            emit writePCM(pcm, samples*sizeof(short), true, AudioProcessor::AUDIO_MODE_OPUS);
             audioFrameReceived();
         }
         _last_voiced_frame_timer.restart();
@@ -1215,7 +1215,7 @@ void RadioController::callsignReceived(QString callsign)
     short *samples = new short[_data_rec_sound->size()/sizeof(short)];
     short *origin = (short*) _data_rec_sound->data();
     memcpy(samples, origin, _data_rec_sound->size());
-    emit writePCM(samples, _data_rec_sound->size(), false, AudioInterface::AUDIO_MODE_ANALOG);
+    emit writePCM(samples, _data_rec_sound->size(), false, AudioProcessor::AUDIO_MODE_ANALOG);
 
     emit printText(text,true);
     emit printCallsign(callsign);
@@ -1237,7 +1237,7 @@ void RadioController::dataFrameReceived()
         short *sound = (short*) _data_rec_sound->data();
         short *samples = new short[_data_rec_sound->size()/sizeof(short)];
         memcpy(samples, sound, _data_rec_sound->size());
-        emit writePCM(samples, _data_rec_sound->size(), false, AudioInterface::AUDIO_MODE_ANALOG);
+        emit writePCM(samples, _data_rec_sound->size(), false, AudioProcessor::AUDIO_MODE_ANALOG);
     }
 
 }
@@ -1255,7 +1255,7 @@ void RadioController::endAudioTransmission()
     short *samples = new short[_end_rec_sound->size()/sizeof(short)];
     short *origin = (short*) _end_rec_sound->data();
     memcpy(samples, origin, _end_rec_sound->size());
-    emit writePCM(samples, _end_rec_sound->size(), false, AudioInterface::AUDIO_MODE_ANALOG);
+    emit writePCM(samples, _end_rec_sound->size(), false, AudioProcessor::AUDIO_MODE_ANALOG);
 }
 
 void RadioController::addChannel(MumbleChannel *chan)

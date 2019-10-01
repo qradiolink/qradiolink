@@ -19,7 +19,9 @@
 
 #include <QCoreApplication>
 #include <QMutex>
-#include "audio/audiointerface.h"
+#include <QAudioInput>
+#include <QDebug>
+#include "audio/audioprocessor.h"
 
 class AudioReader : public QObject
 {
@@ -37,13 +39,13 @@ public slots:
     void stop();
 
 private:
-    AudioInterface *_audio_reader;
+
     bool _working;
     bool _capture_audio;
     bool _read_preprocess;
     int _read_audio_mode;
     QMutex _mutex;
-
+    QByteArray *_buffer;
 
 };
 
