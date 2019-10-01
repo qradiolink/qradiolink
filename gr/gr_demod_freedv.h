@@ -38,13 +38,13 @@ class gr_demod_freedv;
 
 typedef boost::shared_ptr<gr_demod_freedv> gr_demod_freedv_sptr;
 gr_demod_freedv_sptr make_gr_demod_freedv(int sps=125, int samp_rate=8000, int carrier_freq=1700,
-                                          int filter_width=2000, int mode=gr::vocoder::freedv_api::MODE_1600, int sb=0);
+                                          int filter_width=2000, int low_cutoff=200, int mode=gr::vocoder::freedv_api::MODE_1600, int sb=0);
 
 class gr_demod_freedv : public gr::hier_block2
 {
 public:
     explicit gr_demod_freedv(std::vector<int> signature, int sps=125, int samp_rate=8000, int carrier_freq=1600,
-                               int filter_width=2000, int mode=gr::vocoder::freedv_api::MODE_1600, int sb=0);
+                               int filter_width=2000, int low_cutoff=200, int mode=gr::vocoder::freedv_api::MODE_1600, int sb=0);
 
     void set_squelch(int value);
 

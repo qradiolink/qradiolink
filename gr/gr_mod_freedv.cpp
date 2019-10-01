@@ -17,14 +17,14 @@
 #include "gr_mod_freedv.h"
 
 gr_mod_freedv_sdr_sptr make_gr_mod_freedv_sdr(int sps, int samp_rate, int carrier_freq,
-                                          int filter_width, int mode, int sb)
+                                          int filter_width, int low_cutoff, int mode, int sb)
 {
     return gnuradio::get_initial_sptr(new gr_mod_freedv_sdr(sps, samp_rate, carrier_freq,
-                                                      filter_width, mode, sb));
+                                                      filter_width, low_cutoff, mode, sb));
 }
 
 gr_mod_freedv_sdr::gr_mod_freedv_sdr(int sps, int samp_rate, int carrier_freq,
-                                 int filter_width, int mode, int sb) :
+                                 int filter_width, int low_cutoff, int mode, int sb) :
     gr::hier_block2 ("gr_mod_freedv_sdr",
                       gr::io_signature::make (1, 1, sizeof (float)),
                       gr::io_signature::make (1, 1, sizeof (gr_complex)))
@@ -49,21 +49,21 @@ gr_mod_freedv_sdr::gr_mod_freedv_sdr(int sps, int samp_rate, int carrier_freq,
                                                         _filter_width, 1200);
 
     _resampler = gr::filter::rational_resampler_base_ccf::make(125,1, interp_taps);
-    _feed_forward_agc = gr::analog::feedforward_agc_cc::make(512,0.95);
-    _amplify = gr::blocks::multiply_const_cc::make(0.7f,1);
+    _feed_forward_agc = gr::analog::feedforward_agc_cc::make(512,1.0f);
+    _amplify = gr::blocks::multiply_const_cc::make(0.98f,1);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
     if(sb == 0)
     {
         _filter = gr::filter::fft_filter_ccc::make(
                     1,gr::filter::firdes::complex_band_pass_2(
-                        1, target_samp_rate, 200, _filter_width, 250, 120,
+                        1, target_samp_rate, low_cutoff, _filter_width, 250, 120,
                         gr::filter::firdes::WIN_BLACKMAN_HARRIS));
     }
     else
     {
         _filter = gr::filter::fft_filter_ccc::make(
                     1,gr::filter::firdes::complex_band_pass_2(
-                        1, target_samp_rate, -_filter_width, -200, 250, 120,
+                        1, target_samp_rate, -_filter_width, -low_cutoff, 250, 120,
                         gr::filter::firdes::WIN_BLACKMAN_HARRIS));
     }
 

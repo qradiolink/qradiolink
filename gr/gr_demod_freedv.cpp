@@ -17,19 +17,19 @@
 #include "gr_demod_freedv.h"
 
 gr_demod_freedv_sptr make_gr_demod_freedv(int sps, int samp_rate, int carrier_freq,
-                                          int filter_width, int mode, int sb)
+                                          int filter_width, int low_cutoff, int mode, int sb)
 {
     std::vector<int> signature;
     signature.push_back(sizeof (gr_complex));
     signature.push_back(sizeof (float));
     return gnuradio::get_initial_sptr(new gr_demod_freedv(signature, sps, samp_rate, carrier_freq,
-                                                      filter_width, mode, sb));
+                                                      filter_width, low_cutoff, mode, sb));
 }
 
 
 
 gr_demod_freedv::gr_demod_freedv(std::vector<int>signature, int sps, int samp_rate, int carrier_freq,
-                                 int filter_width, int mode, int sb) :
+                                 int filter_width, int low_cutoff, int mode, int sb) :
     gr::hier_block2 ("gr_demod_freedv",
                       gr::io_signature::make (1, 1, sizeof (gr_complex)),
                       gr::io_signature::makev (2, 2, signature))
@@ -45,12 +45,12 @@ gr_demod_freedv::gr_demod_freedv(std::vector<int>signature, int sps, int samp_ra
     if(sb ==0)
     {
         _filter = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
-                                1, _target_samp_rate, 200, _filter_width,600,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
+                                1, _target_samp_rate, low_cutoff, _filter_width,600,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     }
     else
     {
         _filter = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
-                                1, _target_samp_rate, -_filter_width, -200,600,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
+                                1, _target_samp_rate, -_filter_width, -low_cutoff,600,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     }
 
     _feed_forward_agc = gr::analog::feedforward_agc_cc::make(512,1);
@@ -70,8 +70,8 @@ gr_demod_freedv::gr_demod_freedv(std::vector<int>signature, int sps, int samp_ra
 
     connect(_resampler,0,_filter,0);
     connect(_filter,0,self(),0);
-    connect(_filter,0,_feed_forward_agc,0);
-    connect(_feed_forward_agc,0,_complex_to_real,0);
+    connect(_filter,0,_complex_to_real,0);
+    //connect(_feed_forward_agc,0,_complex_to_real,0);
     connect(_complex_to_real,0, _audio_filter,0);
     connect(_audio_filter,0, _freedv_gain,0);
     connect(_freedv_gain,0, _float_to_short,0);
