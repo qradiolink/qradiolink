@@ -34,7 +34,11 @@ Build-Depends: debhelper (>= 9),
       libqt5core5a,
       libqt5gui5,
       libqt5network5,
-      libqt5sql5
+      libqt5sql5,
+      qtmultimedia5-dev,
+      libqt5multimediawidgets5,
+      libqt5multimedia5-plugins,
+      libqt5multimedia5
 
 Package: qradiolink
 Architecture: any
@@ -68,5 +72,9 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
       libqt5core5a,
       libqt5gui5,
       libqt5network5,
-      libqt5sql5
+      libqt5sql5,
+      qtmultimedia5-dev,
+      libqt5multimediawidgets5,
+      libqt5multimedia5-plugins,
+      libqt5multimedia5
 Description: Gnuradio SDR wrapper
