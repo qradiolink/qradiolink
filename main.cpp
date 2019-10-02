@@ -42,10 +42,13 @@
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 void logMessage(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
+    Q_UNUSED(context);
 #else
 void logMessage(QtMsgType type, const char *msg)
-#endif
 {
+#endif
+
     QString txt;
     switch (type) {
     case QtInfoMsg:
