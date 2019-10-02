@@ -80,6 +80,7 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     QObject::connect(ui->autoSquelchButton,SIGNAL(clicked()),this,SLOT(autoSquelch()));
     QObject::connect(ui->memoriesButton,SIGNAL(toggled(bool)),this,SLOT(showMemoriesPanel(bool)));
     QObject::connect(ui->rxVolumeDial,SIGNAL(valueChanged(int)),this,SLOT(setVolumeDisplay(int)));
+    QObject::connect(ui->micGainSlider,SIGNAL(valueChanged(int)),this,SLOT(setTxVolumeDisplay(int)));
     QObject::connect(ui->rxModemTypeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(toggleRxMode(int)));
     QObject::connect(ui->txModemTypeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(toggleTxMode(int)));
     QObject::connect(ui->scanUpButton,SIGNAL(toggled(bool)),this,SLOT(startScan(bool)));
@@ -358,6 +359,7 @@ void MainWindow::readConfig()
     ui->rxGainDial->setValue(_settings->rx_sensitivity);
     ui->rxSquelchDial->setValue(_settings->squelch);
     ui->rxVolumeDial->setValue(_settings->rx_volume);
+    ui->micGainSlider->setValue(_settings->tx_volume);
     ui->voipServerPortEdit->setText(QString::number(_settings->voip_port));
 
     _rx_frequency = _settings->rx_frequency;
@@ -402,6 +404,7 @@ void MainWindow::saveConfig()
     _settings->rx_sensitivity = (int)ui->rxGainDial->value();
     _settings->squelch = (int)ui->rxSquelchDial->value();
     _settings->rx_volume = (int)ui->rxVolumeDial->value();
+    _settings->tx_volume = (int)ui->micGainSlider->value();
     _settings->rx_frequency = _rx_frequency;
     _settings->tx_shift = _tx_shift_frequency;
     _settings->voip_server = ui->voipServerEdit->text();
@@ -1033,6 +1036,11 @@ void MainWindow::setVolumeDisplay(int value)
 {
     ui->rxVolumeDisplay->display(value);
     emit setVolume((int)value);
+}
+
+void MainWindow::setTxVolumeDisplay(int value)
+{
+    emit setTxVolume((int)value);
 }
 
 void MainWindow::startScan(bool value)

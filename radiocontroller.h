@@ -125,6 +125,7 @@ public slots:
     void setBbGain(int value);
     void setSquelch(int value);
     void setVolume(int value);
+    void setTxVolume(int value);
     void setRxSensitivity(int value);
     void setRxCTCSS(float value);
     void setTxCTCSS(float value);
@@ -204,18 +205,30 @@ private:
     QByteArray *_data_rec_sound;
     QByteArray *_end_rec_sound;
 
+    QList<radiochannel*> _memory_channels;
+
     bool _stop;
     bool _tx_inited;
     bool _rx_inited;
     bool _voip_enabled;
     bool _voip_forwarding;
-#if 0
-    AlsaAudio *_audio;
-#endif
-
     bool _transmitting_audio;
     bool _process_text;
     bool _repeat_text;
+    bool _scan_done;
+    bool _scan_stop;
+    bool _memory_scan_done;
+    bool _tx_modem_started;
+    bool _data_modem_sleeping;
+    bool _repeat;
+    bool _vox_enabled;
+    bool _tx_started;
+    bool _fft_enabled;
+    bool _constellation_enabled;
+    bool _rssi_enabled;
+    bool _duplex_enabled;
+
+
     QString _text_out;
     QString _callsign;
 
@@ -236,30 +249,18 @@ private:
     int _scan_step_hz;
     int _tune_limit_lower;
     int _tune_limit_upper;
-    bool _scan_done;
     int _memory_scan_index;
-    bool _memory_scan_done;
-    bool _tx_modem_started;
     int _tune_counter;
     float _rx_ctcss;
     float _tx_ctcss;
     float _rx_volume;
+    float _tx_volume;
     long long _rx_sample_rate;
     QElapsedTimer _last_voiced_frame_timer;
-    bool _data_modem_sleeping;
     quint64 _last_session_id;
-    bool _repeat;
-    bool _vox_enabled;
-    bool _tx_started;
     int _freq_gui_counter;
     qint64 _carrier_offset;
-    bool _fft_enabled;
     int _fft_poll_time;
-    bool _constellation_enabled;
-    bool _rssi_enabled;
-    bool _duplex_enabled;
-    bool _scan_stop;
-    QList<radiochannel*> _memory_channels;
 
 };
 

@@ -27,6 +27,7 @@ public:
     int tx_freq_corr;
     int squelch;
     int rx_volume;
+    int tx_volume;
     long long rx_frequency;
     long long tx_shift;
     QString callsign;

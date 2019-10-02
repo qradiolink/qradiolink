@@ -182,6 +182,14 @@ void Settings::readConfig()
     }
     try
     {
+        tx_volume = cfg.lookup("tx_volume");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        tx_volume = 50;
+    }
+    try
+    {
         rx_frequency = cfg.lookup("rx_frequency");
     }
     catch(const libconfig::SettingNotFoundException &nfex)
@@ -328,6 +336,7 @@ void Settings::saveConfig()
     root.add("rx_sensitivity",libconfig::Setting::TypeInt) = rx_sensitivity;
     root.add("squelch",libconfig::Setting::TypeInt) = squelch;
     root.add("rx_volume",libconfig::Setting::TypeInt) = rx_volume;
+    root.add("tx_volume",libconfig::Setting::TypeInt) = tx_volume;
     root.add("rx_frequency",libconfig::Setting::TypeInt64) = rx_frequency;
     root.add("tx_shift",libconfig::Setting::TypeInt64) = tx_shift;
     root.add("voip_server",libconfig::Setting::TypeString) = voip_server.toStdString();

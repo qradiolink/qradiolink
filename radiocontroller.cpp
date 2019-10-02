@@ -72,6 +72,7 @@ RadioController::RadioController(Settings *settings, QObject *parent) :
     _bb_gain = 0;
     _rx_sensitivity = 0;
     _rx_volume = 0.0;
+    _tx_volume = 0.0;
     _squelch = 0;
     _rx_ctcss = 0.0;
     _tx_ctcss = 0.0;
@@ -443,7 +444,7 @@ void RadioController::txAudio(short *audiobuffer, int audiobuffer_size, int vad,
 
         for(unsigned int i=0;i< (unsigned int)audiobuffer_size/sizeof(short);i++)
         {
-            _voip_encode_buffer->push_back(audiobuffer[i]);
+            _voip_encode_buffer->push_back(audiobuffer[i] * _tx_volume);
         }
     }
 
@@ -463,7 +464,7 @@ void RadioController::txAudio(short *audiobuffer, int audiobuffer_size, int vad,
         for(unsigned int i=0;i<audiobuffer_size/sizeof(short);i++)
         {
             // FIXME: volume out?
-            pcm->push_back((float)audiobuffer[i] / 32767.0f);
+            pcm->push_back((float)audiobuffer[i] / 32767.0f * _tx_volume);
         }
 
         emit pcmData(pcm);
@@ -1801,6 +1802,11 @@ void RadioController::setFFTSize(int size)
 void RadioController::setVolume(int value)
 {
     _rx_volume = 1e-3*exp(((float)value/100.0)*6.908);
+}
+
+void RadioController::setTxVolume(int value)
+{
+    _tx_volume = 1e-3*exp(((float)value/50.0)*6.908);
 }
 
 void RadioController::setRxCTCSS(float value)

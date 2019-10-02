@@ -86,6 +86,7 @@ public slots:
     void setRxSensitivityDisplay(int value);
     void setSquelchDisplay(int value);
     void setVolumeDisplay(int value);
+    void setTxVolumeDisplay(int value);
     void startScan(bool value);
     void displayImage(QImage img);
     void enterFreq();
@@ -143,6 +144,7 @@ signals:
     void setRxSensitivity(int value);
     void setSquelch(int value);
     void setVolume(int value);
+    void setTxVolume(int value);
     void setRxCTCSS(float value);
     void setTxCTCSS(float value);
     void enableGUIConst(bool value);
