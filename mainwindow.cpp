@@ -1123,7 +1123,7 @@ void MainWindow::updateRSSI(float value)
     if(!_settings->show_controls && value > 90.0)
         return;
 
-    float S9 = 80.0; // degrees
+    //float S9 = 80.0; // degrees
     float arc_min = 135.0;
     float arc_max = 45.0;
     float abs_rssi = fabs(_rssi);

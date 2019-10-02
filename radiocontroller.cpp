@@ -288,6 +288,7 @@ void RadioController::readConfig(std::string &rx_device_args, std::string &tx_de
                          std::string &rx_antenna, std::string &tx_antenna, int &rx_freq_corr,
                          int &tx_freq_corr, std::string &callsign, std::string &video_device)
 {
+    Q_UNUSED(callsign);
     // to handle user updating device settings at runtime
     _settings->readConfig();
     int tx_power, rx_sensitivity, squelch, rx_volume, bb_gain;
@@ -488,6 +489,7 @@ void RadioController::txAudio(short *audiobuffer, int audiobuffer_size, int vad,
 
 int RadioController::processInputVideoStream(bool &frame_flag)
 {
+    Q_UNUSED(frame_flag);
     unsigned int max_video_frame_size = 3122;
     unsigned long encoded_size;
 
@@ -1036,6 +1038,7 @@ unsigned int RadioController::getFrameCRC32(unsigned char *data)
 
 void RadioController::receiveVideoData(unsigned char *data, int size)
 {
+    Q_UNUSED(size);
     int frame_size = getFrameLength(data);
     unsigned int crc = getFrameCRC32(data);
     if(frame_size == 0)
@@ -1085,6 +1088,7 @@ void RadioController::receiveVideoData(unsigned char *data, int size)
 
 void RadioController::receiveNetData(unsigned char *data, int size)
 {
+    Q_UNUSED(size);
     int frame_size = getFrameLength(data);
     if(frame_size < 0)
     {
@@ -1114,6 +1118,7 @@ void RadioController::receiveNetData(unsigned char *data, int size)
     }
 
     int res = _net_device->write_buffered(net_frame,frame_size);
+    Q_UNUSED(res);
 }
 
 void RadioController::processVoipAudioFrame(short *pcm, int samples, quint64 sid)

@@ -138,8 +138,8 @@ void RadioProtocol::processPayload(QByteArray data)
     {
         QRadioLink::Channel ch;
         ch.ParseFromArray(data,data.size());
-        MumbleChannel *chan = new MumbleChannel(ch.channel_id(),ch.parent_id(),QString::fromStdString(ch.name()),
-                                    QString::fromStdString(ch.description()));
+        //MumbleChannel *chan = new MumbleChannel(ch.channel_id(),ch.parent_id(),QString::fromStdString(ch.name()),
+        //                            QString::fromStdString(ch.description()));
         //emit newChannel(chan);
         break;
     }

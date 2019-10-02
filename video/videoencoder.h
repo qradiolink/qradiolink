@@ -29,7 +29,7 @@ public:
     ~VideoEncoder();
     void init(QString device_name);
     void deinit();
-    void encode_jpeg(unsigned char *videobuffer, unsigned long &encoded_size, int max_video_frame_size);
+    void encode_jpeg(unsigned char *videobuffer, unsigned long &encoded_size, unsigned long max_video_frame_size);
     unsigned char *decode_jpeg(unsigned char *videobuffer, int data_length);
 
 private:

@@ -166,7 +166,6 @@ void DtmfDecoder::run()
 
     }
 
-    finish:
     emit finished();
 }
 

@@ -53,7 +53,7 @@ void VideoEncoder::deinit()
     _init = false;
 }
 
-void VideoEncoder::encode_jpeg(unsigned char *videobuffer, unsigned long &encoded_size, int max_video_frame_size)
+void VideoEncoder::encode_jpeg(unsigned char *videobuffer, unsigned long &encoded_size, unsigned long max_video_frame_size)
 {
     int len;
     unsigned char *frame = new unsigned char[230400];
@@ -61,6 +61,7 @@ void VideoEncoder::encode_jpeg(unsigned char *videobuffer, unsigned long &encode
     capture_frame(frame, len);
     QDateTime dateTime2 = QDateTime::currentDateTime();
     qint64 milliseconds = dateTime1.msecsTo(dateTime2);
+    Q_UNUSED(milliseconds);
     //std::cout << "video capture " << milliseconds << " / " << len << std::endl;
 
     unsigned char *input = frame;
@@ -68,6 +69,8 @@ void VideoEncoder::encode_jpeg(unsigned char *videobuffer, unsigned long &encode
     struct jpeg_error_mgr jerr;
     JSAMPROW row_ptr[1];
     int row_stride;
+    Q_UNUSED(row_ptr);
+    Q_UNUSED(row_stride);
 
     encoded_size = 0;
 

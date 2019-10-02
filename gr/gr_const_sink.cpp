@@ -65,6 +65,7 @@ int gr_const_sink::work(int noutput_items,
        gr_vector_const_void_star &input_items,
        gr_vector_void_star &output_items)
 {
+    (void) output_items;
     gr_complex *in = (gr_complex*)(input_items[0]);
     if(noutput_items < 1)
     {

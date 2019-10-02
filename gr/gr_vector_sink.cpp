@@ -65,6 +65,7 @@ int gr_vector_sink::work(int noutput_items,
        gr_vector_const_void_star &input_items,
        gr_vector_void_star &output_items)
 {
+    (void) output_items;
     if(noutput_items < 1)
     {
         return noutput_items;

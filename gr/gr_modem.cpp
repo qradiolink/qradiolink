@@ -571,7 +571,6 @@ void gr_modem::transmit(QVector<std::vector<unsigned char>*> frames)
     int ret = 1;
     while(ret)
     {
-        struct timespec time_to_sleep = {0, 1000L };
         ret = _gr_mod_base->set_data(all_frames);
     }
 

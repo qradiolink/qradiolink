@@ -16,7 +16,7 @@ CONFIG  += qt thread
 message($$QMAKESPEC)
 
 linux-g++ {
-    message(GNU/Linux)
+    message(Building for GNU/Linux)
 }
 
 CONFIG(opengl) {
@@ -26,11 +26,11 @@ CONFIG(opengl) {
     message(Building without OpenGL support)
 }
 
-CONFIG(alsa) {
-    message(Building with Alsa support.)
-    DEFINES += USE_ALSA
+CONFIG(qtaudio) {
+    message(Building with Qt audio support.)
+    DEFINES += USE_QT_AUDIO
 } else {
-    message(Building without Alsa support)
+    message(Building without Qt audio support)
 }
 
 #QMAKE_CXXFLAGS += -Werror
