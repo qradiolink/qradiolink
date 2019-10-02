@@ -358,6 +358,7 @@ void MainWindow::readConfig()
     ui->rxGainDial->setValue(_settings->rx_sensitivity);
     ui->rxSquelchDial->setValue(_settings->squelch);
     ui->rxVolumeDial->setValue(_settings->rx_volume);
+    ui->voipServerPortEdit->setText(QString::number(_settings->voip_port));
 
     _rx_frequency = _settings->rx_frequency;
     _demod_offset = _settings->demod_offset;
@@ -404,6 +405,7 @@ void MainWindow::saveConfig()
     _settings->rx_frequency = _rx_frequency;
     _settings->tx_shift = _tx_shift_frequency;
     _settings->voip_server = ui->voipServerEdit->text();
+    _settings->voip_port = ui->voipServerPortEdit->text().toInt();
     _settings->rx_mode = ui->rxModemTypeComboBox->currentIndex();
     _settings->tx_mode = ui->txModemTypeComboBox->currentIndex();
     _settings->ip_address = ui->lineEditIPaddress->text();
@@ -734,7 +736,7 @@ void MainWindow::displayTransmitStatus(bool status)
 
 void MainWindow::connectVOIPRequested()
 {
-    emit connectToServer(ui->voipServerEdit->text(), 64738);
+    emit connectToServer(ui->voipServerEdit->text(), ui->voipServerPortEdit->text().toInt());
     emit setMute(false);
 }
 

@@ -214,6 +214,14 @@ void Settings::readConfig()
     }
     try
     {
+        voip_port = cfg.lookup("voip_port");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        voip_port = 64738;
+    }
+    try
+    {
         rx_mode = cfg.lookup("rx_mode");
     }
     catch(const libconfig::SettingNotFoundException &nfex)
@@ -323,6 +331,7 @@ void Settings::saveConfig()
     root.add("rx_frequency",libconfig::Setting::TypeInt64) = rx_frequency;
     root.add("tx_shift",libconfig::Setting::TypeInt64) = tx_shift;
     root.add("voip_server",libconfig::Setting::TypeString) = voip_server.toStdString();
+    root.add("voip_port",libconfig::Setting::TypeInt) = voip_port;
     root.add("rx_mode",libconfig::Setting::TypeInt) = rx_mode;
     root.add("tx_mode",libconfig::Setting::TypeInt) = tx_mode;
     root.add("ip_address",libconfig::Setting::TypeString) = ip_address.toStdString();

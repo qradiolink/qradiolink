@@ -96,7 +96,7 @@
 </string>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>2</number>
         </property>
         <property name="iconSize">
          <size>
@@ -1029,7 +1029,7 @@ font: 9pt &quot;Sans Serif&quot;;</string>
               <number>5</number>
              </property>
              <attribute name="horizontalHeaderVisible">
-              <bool>true</bool>
+              <bool>false</bool>
              </attribute>
              <attribute name="horizontalHeaderDefaultSectionSize">
               <number>100</number>
@@ -1426,8 +1426,8 @@ font: 10pt &quot;Sans Serif&quot;;
                  <property name="verticalSpacing">
                   <number>5</number>
                  </property>
-                 <item row="1" column="3">
-                  <widget class="QPushButton" name="voipDisconnectButton">
+                 <item row="1" column="0">
+                  <widget class="QLineEdit" name="voipServerEdit">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                      <horstretch>0</horstretch>
@@ -1436,19 +1436,44 @@ font: 10pt &quot;Sans Serif&quot;;
                    </property>
                    <property name="minimumSize">
                     <size>
-                     <width>120</width>
+                     <width>250</width>
+                     <height>25</height>
+                    </size>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">background-color: rgb(255, 255, 255);
+color: rgb(0, 0, 66);
+font: 12pt &quot;Sans Serif&quot;;</string>
+                   </property>
+                   <property name="text">
+                    <string>127.0.0.1</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="3">
+                  <widget class="QPushButton" name="voipConnectButton">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>100</width>
                      <height>30</height>
                     </size>
                    </property>
                    <property name="styleSheet">
-                    <string notr="true">font: 10pt &quot;Sans Serif&quot;;</string>
+                    <string notr="true">font: 10pt &quot;Sans Serif&quot;;
+</string>
                    </property>
                    <property name="text">
-                    <string>Disconnect</string>
+                    <string>Connect</string>
                    </property>
                    <property name="icon">
                     <iconset>
-                     <normalon>:/res/application-exit.png</normalon>
+                     <normalon>:/res/call-start.png</normalon>
                     </iconset>
                    </property>
                    <property name="iconSize">
@@ -1459,7 +1484,7 @@ font: 10pt &quot;Sans Serif&quot;;
                    </property>
                   </widget>
                  </item>
-                 <item row="0" column="1">
+                 <item row="0" column="2">
                   <widget class="QLabel" name="label_28">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -1511,7 +1536,20 @@ color: rgb(0, 0, 71);</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="3" column="1">
+                 <item row="1" column="5">
+                  <spacer name="horizontalSpacer_5">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="3" column="2">
                   <widget class="QLabel" name="labelDisplayCallsign">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -1564,8 +1602,8 @@ font: 9pt &quot;Sans Serif&quot;;
                    </property>
                   </widget>
                  </item>
-                 <item row="1" column="0">
-                  <widget class="QLineEdit" name="voipServerEdit">
+                 <item row="1" column="2">
+                  <widget class="QLineEdit" name="lineEdit">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                      <horstretch>0</horstretch>
@@ -1574,22 +1612,20 @@ font: 9pt &quot;Sans Serif&quot;;
                    </property>
                    <property name="minimumSize">
                     <size>
-                     <width>250</width>
+                     <width>120</width>
                      <height>25</height>
                     </size>
                    </property>
-                   <property name="styleSheet">
-                    <string notr="true">background-color: rgb(255, 255, 255);
-color: rgb(0, 0, 66);
-font: 12pt &quot;Sans Serif&quot;;</string>
-                   </property>
-                   <property name="text">
-                    <string>127.0.0.1</string>
+                   <property name="maximumSize">
+                    <size>
+                     <width>150</width>
+                     <height>16777215</height>
+                    </size>
                    </property>
                   </widget>
                  </item>
-                 <item row="1" column="2">
-                  <widget class="QPushButton" name="voipConnectButton">
+                 <item row="1" column="4">
+                  <widget class="QPushButton" name="voipDisconnectButton">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                      <horstretch>0</horstretch>
@@ -1598,20 +1634,19 @@ font: 12pt &quot;Sans Serif&quot;;</string>
                    </property>
                    <property name="minimumSize">
                     <size>
-                     <width>100</width>
+                     <width>120</width>
                      <height>30</height>
                     </size>
                    </property>
                    <property name="styleSheet">
-                    <string notr="true">font: 10pt &quot;Sans Serif&quot;;
-</string>
+                    <string notr="true">font: 10pt &quot;Sans Serif&quot;;</string>
                    </property>
                    <property name="text">
-                    <string>Connect</string>
+                    <string>Disconnect</string>
                    </property>
                    <property name="icon">
                     <iconset>
-                     <normalon>:/res/call-start.png</normalon>
+                     <normalon>:/res/application-exit.png</normalon>
                     </iconset>
                    </property>
                    <property name="iconSize">
@@ -1622,46 +1657,17 @@ font: 12pt &quot;Sans Serif&quot;;</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="1" column="4">
-                  <spacer name="horizontalSpacer_5">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>40</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                 <item row="1" column="1">
-                  <widget class="QLineEdit" name="lineEdit">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>200</width>
-                     <height>25</height>
-                    </size>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="1">
+                 <item row="2" column="2">
                   <widget class="QLabel" name="label_22">
                    <property name="text">
-                    <string>Callsign of last transmission</string>
+                    <string>Last Callsign received</string>
                    </property>
                    <property name="alignment">
                     <set>Qt::AlignCenter</set>
                    </property>
                   </widget>
                  </item>
-                 <item row="3" column="2">
+                 <item row="3" column="3">
                   <widget class="QPushButton" name="voipForwardButton">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -1701,7 +1707,7 @@ background-color: rgb(0, 0, 67);
                    </property>
                   </widget>
                  </item>
-                 <item row="3" column="3">
+                 <item row="3" column="4">
                   <widget class="QPushButton" name="pttVoipButton">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -1738,6 +1744,45 @@ background-color: rgb(0, 0, 67);
                    </property>
                    <property name="checkable">
                     <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1">
+                  <widget class="QLineEdit" name="voipServerPortEdit">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>100</width>
+                     <height>30</height>
+                    </size>
+                   </property>
+                   <property name="inputMethodHints">
+                    <set>Qt::ImhDigitsOnly</set>
+                   </property>
+                   <property name="text">
+                    <string>64738</string>
+                   </property>
+                   <property name="maxLength">
+                    <number>5</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QLabel" name="label_31">
+                   <property name="styleSheet">
+                    <string notr="true">font: 10pt &quot;Sans Serif&quot;;
+color: rgb(0, 0, 71);</string>
+                   </property>
+                   <property name="text">
+                    <string>Port number</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -1949,12 +1994,12 @@ color: rgb(0, 67, 98);</string>
             <x>10</x>
             <y>10</y>
             <width>1006</width>
-            <height>331</height>
+            <height>336</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_5">
-           <item row="3" column="1">
-            <widget class="QLineEdit" name="lineEditTXAntenna">
+           <item row="4" column="3">
+            <widget class="QLineEdit" name="lineEditVideoDevice">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -1972,55 +2017,68 @@ color: rgb(0, 67, 98);</string>
 color: rgb(0, 0, 61);
 font: 10pt &quot;Sans Serif&quot;;</string>
              </property>
+             <property name="maxLength">
+              <number>100</number>
+             </property>
             </widget>
            </item>
-           <item row="8" column="0">
-            <widget class="QPushButton" name="saveOptionsButton">
+           <item row="5" column="3">
+            <widget class="QLineEdit" name="lineEditIPaddress">
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(255, 255, 255);
+color: rgb(0, 0, 61);
+font: 10pt &quot;Sans Serif&quot;;</string>
+             </property>
+             <property name="maxLength">
+              <number>100</number>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="3">
+            <widget class="QLineEdit" name="lineEditCallsign">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>300</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(255, 255, 255);
+color: rgb(0, 0, 61);
+font: 10pt &quot;Sans Serif&quot;;</string>
+             </property>
+             <property name="maxLength">
+              <number>25</number>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QLabel" name="label_7">
+             <property name="text">
+              <string>RX Freq Correction ppm</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0">
+            <widget class="QLabel" name="label_19">
+             <property name="text">
+              <string>Baseband gain</string>
+             </property>
+            </widget>
+           </item>
+           <item row="8" column="2">
+            <widget class="QCheckBox" name="checkBoxStopScan">
              <property name="toolTip">
-              <string>Save settings</string>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">font: 18pt &quot;Sans Serif&quot;;
-color: rgb(255, 255, 255);
-background-color: rgb(132, 0, 0);</string>
+              <string>Unchecked will delay for 5 seconds</string>
              </property>
              <property name="text">
-              <string>Save</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_2">
-             <property name="text">
-              <string>RX device args</string>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="1">
-            <widget class="QLineEdit" name="lineEditRXAntenna">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>300</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">background-color: rgb(255, 255, 255);
-color: rgb(0, 0, 61);
-font: 10pt &quot;Sans Serif&quot;;</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="2">
-            <widget class="QLabel" name="label_4">
-             <property name="text">
-              <string>Callsign</string>
+              <string>Stop scan on signal</string>
              </property>
             </widget>
            </item>
@@ -2052,8 +2110,8 @@ font: 10pt &quot;Sans Serif&quot;;</string>
              </property>
             </widget>
            </item>
-           <item row="1" column="1">
-            <widget class="QLineEdit" name="lineEditTXDev">
+           <item row="3" column="3">
+            <widget class="QLineEdit" name="lineEditTXFreqCorrection">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -2073,10 +2131,31 @@ font: 10pt &quot;Sans Serif&quot;;</string>
              </property>
             </widget>
            </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="label_5">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_2">
              <property name="text">
-              <string>TX antenna</string>
+              <string>RX device args</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QLineEdit" name="lineEditRXAntenna">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>300</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(255, 255, 255);
+color: rgb(0, 0, 61);
+font: 10pt &quot;Sans Serif&quot;;</string>
              </property>
             </widget>
            </item>
@@ -2087,43 +2166,8 @@ font: 10pt &quot;Sans Serif&quot;;</string>
              </property>
             </widget>
            </item>
-           <item row="1" column="2">
-            <widget class="QLabel" name="label_7">
-             <property name="text">
-              <string>RX Freq Correction ppm</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="3">
-            <widget class="QLineEdit" name="lineEditCallsign">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>300</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">background-color: rgb(255, 255, 255);
-color: rgb(0, 0, 61);
-font: 10pt &quot;Sans Serif&quot;;</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="2">
-            <widget class="QLabel" name="label_8">
-             <property name="text">
-              <string>TX Freq Correction ppm</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="3">
-            <widget class="QLineEdit" name="lineEditRXFreqCorrection">
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="lineEditTXDev">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -2150,24 +2194,28 @@ font: 10pt &quot;Sans Serif&quot;;</string>
              </property>
             </widget>
            </item>
-           <item row="3" column="3">
-            <widget class="QLineEdit" name="lineEditTXFreqCorrection">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
+           <item row="8" column="1">
+            <widget class="QCheckBox" name="checkBoxAudioCompressor">
+             <property name="text">
+              <string>Audio compressor</string>
              </property>
-             <property name="minimumSize">
-              <size>
-               <width>300</width>
-               <height>0</height>
-              </size>
+            </widget>
+           </item>
+           <item row="3" column="2">
+            <widget class="QLabel" name="label_8">
+             <property name="text">
+              <string>TX Freq Correction ppm</string>
              </property>
-             <property name="styleSheet">
-              <string notr="true">background-color: rgb(255, 255, 255);
-color: rgb(0, 0, 61);
-font: 10pt &quot;Sans Serif&quot;;</string>
+            </widget>
+           </item>
+           <item row="7" column="0">
+            <widget class="QLabel" name="label_21">
+             <property name="text">
+              <string>Manual frequency
+ entry (kHz)</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
              </property>
             </widget>
            </item>
@@ -2180,66 +2228,19 @@ font: 10pt &quot;Sans Serif&quot;;</string>
               </sizepolicy>
              </property>
              <property name="text">
-              <string>IP address</string>
+              <string>IP address for radio modem</string>
              </property>
             </widget>
            </item>
-           <item row="4" column="3">
-            <widget class="QLineEdit" name="lineEditVideoDevice">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>300</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">background-color: rgb(255, 255, 255);
-color: rgb(0, 0, 61);
-font: 10pt &quot;Sans Serif&quot;;</string>
-             </property>
-             <property name="maxLength">
-              <number>100</number>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="0">
-            <widget class="QLabel" name="label_19">
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_5">
              <property name="text">
-              <string>Baseband gain</string>
+              <string>TX antenna</string>
              </property>
             </widget>
            </item>
-           <item row="5" column="3">
-            <widget class="QLineEdit" name="lineEditIPaddress">
-             <property name="styleSheet">
-              <string notr="true">background-color: rgb(255, 255, 255);
-color: rgb(0, 0, 61);
-font: 10pt &quot;Sans Serif&quot;;</string>
-             </property>
-             <property name="maxLength">
-              <number>100</number>
-             </property>
-            </widget>
-           </item>
-           <item row="6" column="0">
-            <widget class="QLabel" name="label_21">
-             <property name="text">
-              <string>Manual frequency
- entry (kHz)</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="1">
-            <widget class="QLineEdit" name="lineEditBBgain">
+           <item row="3" column="1">
+            <widget class="QLineEdit" name="lineEditTXAntenna">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -2259,17 +2260,50 @@ font: 10pt &quot;Sans Serif&quot;;</string>
              </property>
             </widget>
            </item>
-           <item row="6" column="2">
-            <widget class="QLabel" name="label_24">
+           <item row="9" column="0">
+            <widget class="QPushButton" name="saveOptionsButton">
+             <property name="toolTip">
+              <string>Save settings</string>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">font: 18pt &quot;Sans Serif&quot;;
+color: rgb(255, 255, 255);
+background-color: rgb(132, 0, 0);</string>
+             </property>
              <property name="text">
-              <string>Scan step</string>
+              <string>Save</string>
              </property>
             </widget>
            </item>
-           <item row="6" column="3">
-            <widget class="QLineEdit" name="lineEditScanStep"/>
+           <item row="1" column="3">
+            <widget class="QLineEdit" name="lineEditRXFreqCorrection">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>300</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(255, 255, 255);
+color: rgb(0, 0, 61);
+font: 10pt &quot;Sans Serif&quot;;</string>
+             </property>
+            </widget>
            </item>
-           <item row="6" column="1">
+           <item row="0" column="2">
+            <widget class="QLabel" name="label_4">
+             <property name="text">
+              <string>Callsign</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="1">
             <widget class="QLineEdit" name="frequencyEdit">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -2321,22 +2355,65 @@ font: 10pt &quot;Sans Serif&quot;;</string>
              </property>
             </widget>
            </item>
-           <item row="7" column="1">
-            <widget class="QCheckBox" name="checkBoxAudioCompressor">
-             <property name="text">
-              <string>Audio compressor</string>
+           <item row="5" column="1">
+            <widget class="QLineEdit" name="lineEditBBgain">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>300</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(255, 255, 255);
+color: rgb(0, 0, 61);
+font: 10pt &quot;Sans Serif&quot;;</string>
              </property>
             </widget>
            </item>
-           <item row="7" column="2">
-            <widget class="QCheckBox" name="checkBoxStopScan">
-             <property name="toolTip">
-              <string>Unchecked will delay for 5 seconds</string>
+           <item row="6" column="1">
+            <widget class="QSlider" name="micGainSlider">
+             <property name="maximum">
+              <number>100</number>
              </property>
-             <property name="text">
-              <string>Stop scan on signal</string>
+             <property name="singleStep">
+              <number>10</number>
+             </property>
+             <property name="value">
+              <number>50</number>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="tickPosition">
+              <enum>QSlider::TicksBelow</enum>
+             </property>
+             <property name="tickInterval">
+              <number>10</number>
              </property>
             </widget>
+           </item>
+           <item row="6" column="0">
+            <widget class="QLabel" name="label_30">
+             <property name="text">
+              <string>Microphone gain</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="2">
+            <widget class="QLabel" name="label_24">
+             <property name="text">
+              <string>Scan step</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="3">
+            <widget class="QLineEdit" name="lineEditScanStep"/>
            </item>
           </layout>
          </widget>
@@ -2374,10 +2451,10 @@ font: 10pt &quot;Sans Serif&quot;;</string>
         <widget class="QLabel" name="label">
          <property name="geometry">
           <rect>
-           <x>312</x>
-           <y>45</y>
+           <x>290</x>
+           <y>54</y>
            <width>51</width>
-           <height>21</height>
+           <height>20</height>
           </rect>
          </property>
          <property name="sizePolicy">
@@ -2405,8 +2482,8 @@ font: 10pt &quot;Sans Serif&quot;;</string>
         <widget class="QLabel" name="label_14">
          <property name="geometry">
           <rect>
-           <x>183</x>
-           <y>48</y>
+           <x>166</x>
+           <y>56</y>
            <width>51</width>
            <height>16</height>
           </rect>
@@ -2427,10 +2504,10 @@ font: 10pt &quot;Sans Serif&quot;;</string>
         <widget class="QLabel" name="label_11">
          <property name="geometry">
           <rect>
-           <x>59</x>
-           <y>48</y>
-           <width>60</width>
-           <height>21</height>
+           <x>32</x>
+           <y>55</y>
+           <width>51</width>
+           <height>20</height>
           </rect>
          </property>
          <property name="sizePolicy">
@@ -2441,8 +2518,8 @@ font: 10pt &quot;Sans Serif&quot;;</string>
          </property>
          <property name="minimumSize">
           <size>
-           <width>60</width>
-           <height>20</height>
+           <width>20</width>
+           <height>5</height>
           </size>
          </property>
          <property name="font">
@@ -2464,8 +2541,8 @@ font: 10pt &quot;Sans Serif&quot;;</string>
         <widget class="QLCDNumber" name="rxSquelchDisplay">
          <property name="geometry">
           <rect>
-           <x>60</x>
-           <y>10</y>
+           <x>59</x>
+           <y>22</y>
            <width>50</width>
            <height>30</height>
           </rect>
@@ -2514,8 +2591,8 @@ color: rgb(182, 182, 182);</string>
         <widget class="QLCDNumber" name="rxSensitivityDisplay">
          <property name="geometry">
           <rect>
-           <x>441</x>
-           <y>10</y>
+           <x>434</x>
+           <y>21</y>
            <width>50</width>
            <height>30</height>
           </rect>
@@ -2564,8 +2641,8 @@ background-color: rgb(35, 35, 35);</string>
         <widget class="QLCDNumber" name="txPowerDisplay">
          <property name="geometry">
           <rect>
-           <x>312</x>
-           <y>10</y>
+           <x>307</x>
+           <y>20</y>
            <width>50</width>
            <height>30</height>
           </rect>
@@ -2615,7 +2692,7 @@ background-color: rgb(35, 35, 35);</string>
          <property name="geometry">
           <rect>
            <x>183</x>
-           <y>10</y>
+           <y>21</y>
            <width>50</width>
            <height>30</height>
           </rect>
@@ -2667,8 +2744,8 @@ color: rgb(182, 182, 182);</string>
         <widget class="QLabel" name="label_9">
          <property name="geometry">
           <rect>
-           <x>443</x>
-           <y>46</y>
+           <x>425</x>
+           <y>57</y>
            <width>51</width>
            <height>16</height>
           </rect>
@@ -2877,8 +2954,8 @@ color: rgb(182, 182, 182);</string>
         <widget class="QLabel" name="label_20">
          <property name="geometry">
           <rect>
-           <x>570</x>
-           <y>45</y>
+           <x>540</x>
+           <y>58</y>
            <width>51</width>
            <height>16</height>
           </rect>

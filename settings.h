@@ -32,6 +32,7 @@ public:
     QString callsign;
     QString video_device;
     QString voip_server;
+    int voip_port;
     int rx_mode;
     int tx_mode;
     QString ip_address;
