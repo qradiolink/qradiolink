@@ -142,6 +142,22 @@ void Settings::readConfig()
     }
     try
     {
+        audio_input_device = QString(cfg.lookup("audio_input_device"));
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        audio_input_device = "default";
+    }
+    try
+    {
+        audio_output_device = QString(cfg.lookup("audio_output_device"));
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        audio_output_device = "default";
+    }
+    try
+    {
         tx_power = cfg.lookup("tx_power");
     }
     catch(const libconfig::SettingNotFoundException &nfex)
@@ -331,6 +347,8 @@ void Settings::saveConfig()
     root.add("tx_freq_corr",libconfig::Setting::TypeInt) = tx_freq_corr;
     root.add("callsign",libconfig::Setting::TypeString) = callsign.toStdString();
     root.add("video_device",libconfig::Setting::TypeString) = video_device.toStdString();
+    root.add("audio_input_device",libconfig::Setting::TypeString) = audio_input_device.toStdString();
+    root.add("audio_output_device",libconfig::Setting::TypeString) = audio_output_device.toStdString();
     root.add("tx_power",libconfig::Setting::TypeInt) = tx_power;
     root.add("bb_gain",libconfig::Setting::TypeInt) = bb_gain;
     root.add("rx_sensitivity",libconfig::Setting::TypeInt) = rx_sensitivity;

@@ -104,12 +104,12 @@ int main(int argc, char *argv[])
     std::cout << "Starting qradiolink instance: " << start_time << std::endl;
     //DatabaseApi db;
     Settings *settings = new Settings;
-    RadioChannels *radio_channels = new RadioChannels;
     settings->readConfig();
+    RadioChannels *radio_channels = new RadioChannels;
     MumbleClient *mumbleclient = new MumbleClient(settings);
     RadioController *radio_op = new RadioController(settings);
-    AudioWriter *audiowriter = new AudioWriter;
-    AudioReader *audioreader = new AudioReader;
+    AudioWriter *audiowriter = new AudioWriter(settings);
+    AudioReader *audioreader = new AudioReader(settings);
     MainWindow *w = new MainWindow(settings, radio_channels);
 
     w->show();

@@ -30,6 +30,7 @@
 #include <QPropertyAnimation>
 #include <QPainter>
 #include <QToolTip>
+#include <QAudioDeviceInfo>
 #include <math.h>
 #include <complex>
 #include <libconfig.h++>
@@ -222,6 +223,9 @@ private:
     QTimer _speech_icon_timer;
     QMutex _mutex;
     int _new_mem_index;
+
+    QList<QAudioDeviceInfo> _audio_output_devices;
+    QList<QAudioDeviceInfo> _audio_input_devices;
 
 };
 

@@ -17,10 +17,10 @@
 
 #include "audiowriter.h"
 
-AudioWriter::AudioWriter(QObject *parent) :
+AudioWriter::AudioWriter(Settings *settings, QObject *parent) :
     QObject(parent)
 {
-
+    _settings = settings;
     _rx_sample_queue = new std::vector<audio_samples*>;
     _working = true;
 }
@@ -63,13 +63,22 @@ void AudioWriter::run()
     format.setByteOrder(QAudioFormat::LittleEndian);
     format.setSampleType(QAudioFormat::SignedInt);
 
-    QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
-    if (!info.isFormatSupported(format)) {
-       qWarning() << "Raw audio format not supported by backend, cannot play audio.";
+    QAudioDeviceInfo device = QAudioDeviceInfo::defaultOutputDevice();
+    QList<QAudioDeviceInfo> devices = QAudioDeviceInfo::availableDevices(QAudio::AudioOutput);
+    for(int i = 0;i<devices.size();i++)
+    {
+        if(_settings->audio_output_device == devices.at(i).deviceName())
+        {
+            device = devices.at(i);
+            break;
+        }
+    }
+    if (!device.isFormatSupported(format)) {
+       std::cerr << "Raw audio format not supported by backend, cannot play audio." << std::endl;
        return;
     }
 
-    QAudioOutput *audio_writer = new QAudioOutput(format, this);
+    QAudioOutput *audio_writer = new QAudioOutput(device, format, this);
     audio_writer->setObjectName("QRadioLink audio output");
     audio_writer->setCategory("QRadioLink audio output");
     audio_writer->setBufferSize(4098);

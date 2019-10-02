@@ -37,6 +37,16 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
 
     _filter_widths = buildFilterWidthList();
 
+    _audio_output_devices = QAudioDeviceInfo::availableDevices(QAudio::AudioOutput);
+    _audio_input_devices = QAudioDeviceInfo::availableDevices(QAudio::AudioInput);
+    for(int i = 0;i<_audio_input_devices.size();i++)
+    {
+        ui->audioInputComboBox->addItem(_audio_input_devices.at(i).deviceName());
+    }
+    for(int i = 0;i<_audio_output_devices.size();i++)
+    {
+        ui->audioOutputComboBox->addItem(_audio_output_devices.at(i).deviceName());
+    }
 
 
     ui->comboBoxTxCTCSS->addItems(tones);
@@ -354,6 +364,8 @@ void MainWindow::readConfig()
     ui->lineEditTXFreqCorrection->setText(QString::number(_settings->tx_freq_corr));
     ui->lineEditCallsign->setText(_settings->callsign);
     ui->lineEditVideoDevice->setText(_settings->video_device);
+    ui->audioInputComboBox->setCurrentText(_settings->audio_input_device);
+    ui->audioOutputComboBox->setCurrentText(_settings->audio_output_device);
     ui->txGainDial->setValue(_settings->tx_power);
     ui->lineEditBBgain->setText(QString::number(_settings->bb_gain));
     ui->rxGainDial->setValue(_settings->rx_sensitivity);
@@ -399,6 +411,8 @@ void MainWindow::saveConfig()
     _settings->tx_freq_corr = ui->lineEditTXFreqCorrection->text().toInt();
     _settings->callsign = ui->lineEditCallsign->text();
     _settings->video_device = ui->lineEditVideoDevice->text();
+    _settings->audio_input_device = ui->audioInputComboBox->currentText();
+    _settings->audio_output_device = ui->audioOutputComboBox->currentText();
     _settings->tx_power = (int)ui->txGainDial->value();
     _settings->bb_gain = (int)ui->lineEditBBgain->text().toInt();
     _settings->rx_sensitivity = (int)ui->rxGainDial->value();
@@ -511,6 +525,16 @@ void MainWindow::removeMemoryChannel()
 void MainWindow::tuneToMemoryChannel(int row, int col)
 {
     Q_UNUSED(col);
+    /*
+    QList<QTableWidgetItem *> items = ui->memoriesTableWidget->selectedItems();
+    for(int i =0;i<items.size();i++)
+    {
+        QTableWidgetItem *item = items.at(i);
+        item->setBackgroundColor(QColor("#cc0000"));
+        item->setTextColor(QColor("#ffffff"));
+    }
+    */
+
     QVector<radiochannel*> *channels = _radio_channels->getChannels();
     radiochannel *chan = channels->at(row);
     ui->frameCtrlFreq->setFrequency(chan->rx_frequency);

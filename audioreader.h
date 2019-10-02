@@ -22,12 +22,13 @@
 #include <QAudioInput>
 #include <QDebug>
 #include "audio/audioprocessor.h"
+#include "settings.h"
 
 class AudioReader : public QObject
 {
     Q_OBJECT
 public:
-    explicit AudioReader(QObject *parent = 0);
+    explicit AudioReader(Settings *settings, QObject *parent = 0);
 
 signals:
     void finished();
@@ -39,13 +40,13 @@ public slots:
     void stop();
 
 private:
-
+    Settings *_settings;
+    QByteArray *_buffer;
     bool _working;
     bool _capture_audio;
     bool _read_preprocess;
     int _read_audio_mode;
     QMutex _mutex;
-    QByteArray *_buffer;
 
 };
 

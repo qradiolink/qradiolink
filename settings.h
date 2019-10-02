@@ -46,6 +46,8 @@ public:
     int fft_size;
     int waterfall_fps;
     int show_fft;
+    QString audio_output_device;
+    QString audio_input_device;
 
 
     quint32 _id;

@@ -17,10 +17,10 @@
 
 #include "audioreader.h"
 
-AudioReader::AudioReader(QObject *parent) :
+AudioReader::AudioReader(Settings *settings, QObject *parent) :
     QObject(parent)
 {
-
+    _settings = settings;
     _working = true;
     _capture_audio = false;
     _read_audio_mode = AudioProcessor::AUDIO_MODE_ANALOG;
@@ -58,14 +58,22 @@ void AudioReader::run()
     format.setCodec("audio/pcm");
     format.setByteOrder(QAudioFormat::LittleEndian);
     format.setSampleType(QAudioFormat::SignedInt);
-
-    QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
-    if (!info.isFormatSupported(format)) {
-       qWarning() << "Raw audio format not supported by backend, cannot play audio.";
+    QAudioDeviceInfo device = QAudioDeviceInfo::defaultInputDevice();
+    QList<QAudioDeviceInfo> devices = QAudioDeviceInfo::availableDevices(QAudio::AudioInput);
+    for(int i = 0;i<devices.size();i++)
+    {
+        if(_settings->audio_input_device == devices.at(i).deviceName())
+        {
+            device = devices.at(i);
+            break;
+        }
+    }
+    if (!device.isFormatSupported(format)) {
+       std::cerr << "Raw audio format not supported by backend, cannot record audio." << std::endl;
        return;
     }
 
-    QAudioInput *audio_reader = new QAudioInput(format, this);
+    QAudioInput *audio_reader = new QAudioInput(device,format, this);
     audio_reader->setBufferSize(4098);
     QIODevice *audio_dev = audio_reader->start();
     while(_working)
