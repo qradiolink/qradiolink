@@ -46,7 +46,7 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(std::vector<int>signature, int sps, int samp_
     _filter_usb = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
                             1, _target_samp_rate, 200, _filter_width,600,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     _filter_lsb = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
-                            1, _target_samp_rate, -_filter_width, -20,600,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
+                            1, _target_samp_rate, -_filter_width, -200,600,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     _squelch = gr::analog::pwr_squelch_cc::make(-140,0.01,0,true);
     _feed_forward_agc = gr::analog::feedforward_agc_cc::make(32,1);
     _agc = gr::analog::agc2_cc::make(1e-2, 1e-4, 1, 3);
@@ -78,6 +78,21 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(std::vector<int>signature, int sps, int samp_
 
 }
 
+
+void gr_demod_ssb_sdr::set_filter_width(int filter_width)
+{
+    _filter_width = filter_width;
+    std::vector<float> taps = gr::filter::firdes::low_pass(50, _samp_rate, _filter_width, _filter_width,
+                                                           gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+    std::vector<gr_complex> filter_usb_taps = gr::filter::firdes::complex_band_pass(
+                1, _target_samp_rate, 200, _filter_width,600,gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+    std::vector<gr_complex> filter_lsb_taps = gr::filter::firdes::complex_band_pass(
+                1, _target_samp_rate, -_filter_width, -200,600,gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+
+    _resampler->set_taps(taps);
+    _filter_usb->set_taps(filter_usb_taps);
+    _filter_lsb->set_taps(filter_lsb_taps);
+}
 
 void gr_demod_ssb_sdr::set_squelch(int value)
 {

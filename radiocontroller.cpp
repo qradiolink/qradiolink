@@ -1757,6 +1757,11 @@ void RadioController::setSquelch(int value)
 
 }
 
+void RadioController::setFilterWidth(int width, int mode)
+{
+    _modem->setFilterWidth(width, mode);
+}
+
 void RadioController::setRxSensitivity(int value)
 {
     _rx_sensitivity = ((double)value)/100.0;

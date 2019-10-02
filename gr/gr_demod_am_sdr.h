@@ -43,6 +43,7 @@ public:
                                int filter_width=1800);
 
     void set_squelch(int value);
+    void set_filter_width(int filter_width);
 private:
 
     gr::filter::rational_resampler_base_ccf::sptr _resampler;

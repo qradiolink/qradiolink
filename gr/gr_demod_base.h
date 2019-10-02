@@ -88,6 +88,7 @@ public slots:
     float get_rssi();
     std::vector<gr_complex> *get_constellation_data();
     void set_samp_rate(int samp_rate);
+    void set_filter_width(int filter_width, int mode);
 
 private:
     gr::top_block_sptr _top_block;

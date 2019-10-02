@@ -635,6 +635,34 @@ void gr_demod_base::enable_demodulator(bool value)
     _demod_valve->set_enabled(value);
 }
 
+void gr_demod_base::set_filter_width(int filter_width, int mode)
+{
+    switch(mode)
+    {
+    case gr_modem_types::ModemTypeWBFM:
+        _wfm->set_filter_width(filter_width);
+        break;
+    case gr_modem_types::ModemTypeAM5000:
+        _am->set_filter_width(filter_width);
+        break;
+    case gr_modem_types::ModemTypeNBFM2500:
+        _fm_2500->set_filter_width(filter_width);
+        break;
+    case gr_modem_types::ModemTypeNBFM5000:
+        _fm_5000->set_filter_width(filter_width);
+        break;
+    case gr_modem_types::ModemTypeUSB2500:
+        _usb->set_filter_width(filter_width);
+        break;
+    case gr_modem_types::ModemTypeLSB2500:
+        _lsb->set_filter_width(filter_width);
+        break;
+    default:
+        break;
+    }
+
+}
+
 void gr_demod_base::set_squelch(int value)
 {
     _fm_2500->set_squelch(value);

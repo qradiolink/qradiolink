@@ -43,6 +43,7 @@ public:
 
 
     void set_squelch(int value);
+    void set_filter_width(int filter_width);
 
 private:
     gr::analog::quadrature_demod_cf::sptr _fm_demod;

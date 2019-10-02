@@ -45,6 +45,7 @@ public:
 
     void set_squelch(int value);
     void set_ctcss(float value);
+    void set_filter_width(int filter_width);
 
 
 private:
