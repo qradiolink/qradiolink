@@ -362,7 +362,7 @@ void RadioController::readConfig(std::string &rx_device_args, std::string &tx_de
 
 }
 
-/// this code runs only in startTx and stopTx
+/// this code runs only in startTx and stopTx and enableVox
 void RadioController::updateInputAudioStream()
 {
     if(!_transmitting_audio && !_vox_enabled)
@@ -438,7 +438,7 @@ void RadioController::txAudio(short *audiobuffer, int audiobuffer_size, int vad,
         }
     }
 
-    if(_voip_enabled && !radio_only)
+    if(_transmitting_audio && _voip_enabled && !radio_only)
     {
 
         for(unsigned int i=0;i< (unsigned int)audiobuffer_size/sizeof(short);i++)
@@ -1668,11 +1668,17 @@ void RadioController::setVOIPForwarding(bool value)
 
 void RadioController::setVox(bool value)
 {
-    _mutex->lock();
     _vox_enabled = value;
-    if(_transmitting_audio && !_vox_enabled)
+    if(!_vox_enabled)
+    {
         _transmitting_audio = false;
-    _mutex->unlock();
+        updateInputAudioStream();
+    }
+    if(_vox_enabled)
+    {
+        _transmitting_audio = true;
+        updateInputAudioStream();
+    }
 }
 
 void RadioController::toggleRepeat(bool value)
