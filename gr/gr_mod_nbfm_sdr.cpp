@@ -87,7 +87,7 @@ void gr_mod_nbfm_sdr::set_ctcss(float value)
             disconnect(_tone_source,0,_add,1);
             connect(_emphasis_filter,0,_fm_modulator,0);
         }
-        catch(std::invalid_argument e)
+        catch(std::invalid_argument &e)
         {
         }
     }
@@ -100,7 +100,7 @@ void gr_mod_nbfm_sdr::set_ctcss(float value)
             connect(_add,0,_fm_modulator,0);
             connect(_tone_source,0,_add,1);
         }
-        catch(std::invalid_argument e)
+        catch(std::invalid_argument &e)
         {
         }
     }

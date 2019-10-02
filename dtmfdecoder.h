@@ -22,7 +22,6 @@
 #include <QtDebug>
 #include <QCoreApplication>
 #include <QDateTime>
-#include "audio/audiointerface.h"
 #include "config_defines.h"
 #include "ext/Goertzel.h"
 #include "settings.h"

@@ -89,6 +89,7 @@ void gr_modem::deinitRX(int modem_type)
     }
 }
 
+
 void gr_modem::toggleTxMode(int modem_type)
 {
     _modem_type_tx = modem_type;
@@ -200,6 +201,10 @@ void gr_modem::toggleRxMode(int modem_type)
     }
 }
 
+
+///
+/// Start of proxy methods, will be refactored
+///
 
 void gr_modem::startRX()
 {
@@ -344,6 +349,10 @@ void gr_modem::enableDemod(bool value)
     if(_gr_demod_base)
         _gr_demod_base->enable_demodulator(value);
 }
+
+///
+/// End of proxy methods (for refactor)
+///
 
 void gr_modem::setRepeater(bool value)
 {

@@ -91,7 +91,7 @@ void gr_demod_nbfm_sdr::set_ctcss(float value)
             disconnect(_ctcss,0,_amplify,0);
             connect(_deemphasis_filter,0,_amplify,0);
         }
-        catch(std::invalid_argument e)
+        catch(std::invalid_argument &e)
         {
 
         }
@@ -104,7 +104,7 @@ void gr_demod_nbfm_sdr::set_ctcss(float value)
             connect(_deemphasis_filter,0,_ctcss,0);
             connect(_ctcss,0,_amplify,0);
         }
-        catch(std::invalid_argument e)
+        catch(std::invalid_argument &e)
         {
 
         }

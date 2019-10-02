@@ -82,7 +82,6 @@ void DtmfDecoder::run()
     char command_key='D';
     char clear_key = '*';
 
-    AudioInterface *audio= new AudioInterface(0,samp_rate,1,0);
 
     while(true)
     {
@@ -95,8 +94,6 @@ void DtmfDecoder::run()
 
         float buf[buffer_size];
         memset(buf,0,buffer_size*sizeof(float));
-
-        audio->read(buf, buffer_size);
 
         char letter = '?';
 
@@ -170,7 +167,6 @@ void DtmfDecoder::run()
     }
 
     finish:
-    delete audio;
     emit finished();
 }
 

@@ -212,7 +212,8 @@ void RadioController::run()
             last_channel_broadcast_time = time;
             if(voip_forwarding && !transmitting && !ptt_activated)
             {
-                sendChannels();
+                // FIXME: poke repeater to VOIP logic here
+                //sendChannels();
             }
         }
 
@@ -229,9 +230,11 @@ void RadioController::run()
             stopTx();
         }
 
+        // FIXME: large data transfer blocking demod
         getFFTData();
         getConstellationData();
         getRSSI();
+
         if(transmitting)
         {
             if(tx_mode == gr_modem_types::ModemTypeQPSKVideo)
@@ -358,9 +361,9 @@ void RadioController::readConfig(std::string &rx_device_args, std::string &tx_de
 
 }
 
+/// this code runs only in startTx and stopTx
 void RadioController::updateInputAudioStream()
 {
-    /// this code runs only in startTx and stopTx
     if(!_transmitting_audio && !_vox_enabled)
     {
         emit setAudioReadMode(false, false, AudioProcessor::AUDIO_MODE_ANALOG);
@@ -397,8 +400,8 @@ void RadioController::updateInputAudioStream()
 
 void RadioController::flushVoipBuffer()
 {
-    // FIXME: breakups on official Mumble client
 
+    /// Large size of frames (120 ms) helps Mumble client
     if(_voip_encode_buffer->size() >= 960)
     {
 
@@ -1285,7 +1288,7 @@ void RadioController::toggleRX(bool value)
             _modem->initRX(_rx_mode, rx_device_args, rx_antenna, rx_freq_corr);
             _mutex->unlock();
         }
-        catch(std::runtime_error e)
+        catch(std::runtime_error &e)
         {
             _modem->deinitRX(_rx_mode);
             _mutex->unlock();
@@ -1345,7 +1348,7 @@ void RadioController::toggleTX(bool value)
             _modem->initTX(_tx_mode, tx_device_args, tx_antenna, tx_freq_corr);
             _mutex->unlock();
         }
-        catch(std::runtime_error e)
+        catch(std::runtime_error &e)
         {
             if(_rx_inited)
                 _modem->startRX();

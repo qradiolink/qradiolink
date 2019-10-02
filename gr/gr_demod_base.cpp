@@ -699,7 +699,7 @@ void gr_demod_base::set_samp_rate(int samp_rate)
         {
             _top_block->disconnect(_rotator,0, _demod_valve,0);
         }
-        catch(std::invalid_argument e)
+        catch(std::invalid_argument &e)
         {
 
         }
@@ -708,7 +708,7 @@ void gr_demod_base::set_samp_rate(int samp_rate)
             _top_block->disconnect(_rotator,0, _resampler,0);
             _top_block->disconnect(_resampler,0, _demod_valve,0);
         }
-        catch(std::invalid_argument e)
+        catch(std::invalid_argument &e)
         {
 
         }
@@ -729,7 +729,7 @@ void gr_demod_base::set_samp_rate(int samp_rate)
             _top_block->disconnect(_rotator,0, _resampler,0);
             _top_block->disconnect(_resampler,0, _demod_valve,0);
         }
-        catch(std::invalid_argument e)
+        catch(std::invalid_argument &e)
         {
             _top_block->disconnect(_rotator,0, _demod_valve,0);
         }
@@ -737,7 +737,7 @@ void gr_demod_base::set_samp_rate(int samp_rate)
         {
             _top_block->connect(_rotator,0, _demod_valve,0);
         }
-        catch(std::invalid_argument e)
+        catch(std::invalid_argument &e)
         {
         }
     }

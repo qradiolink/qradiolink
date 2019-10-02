@@ -22,6 +22,7 @@
 #include <QDebug>
 #include <stdio.h>
 #include "ext/utils.h"
+#include "audio/audioprocessor.h"
 #include <math.h>
 extern "C"
 {
@@ -59,14 +60,8 @@ private:
     pa_simple *_s_play;
     pa_simple *_s_short_play;
     pa_simple *_s_short_rec;
-    SpeexPreprocessState *_speex_preprocess;
-    sf_compressor_state_st _cm_state_read;
-    sf_compressor_state_st _cm_state_read_codec2;
-    sf_compressor_state_st _cm_state_write;
-    sf_compressor_state_st _cm_state_write_codec2;
+    AudioProcessor *_processor;
     int _error;
-    float calc_audio_power(short *buf, short samples);
-
     
 };
 
