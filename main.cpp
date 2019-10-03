@@ -29,7 +29,6 @@
 #include <iostream>
 #include "mainwindow.h"
 #include "dtmfdecoder.h"
-#include "databaseapi.h"
 #include "config_defines.h"
 #include "mumbleclient.h"
 #include "audiowriter.h"
@@ -102,7 +101,7 @@ int main(int argc, char *argv[])
 
     std::string start_time= QDateTime::currentDateTime().toString("d/MMM/yyyy hh:mm:ss").toStdString();
     std::cout << "Starting qradiolink instance: " << start_time << std::endl;
-    //DatabaseApi db;
+
     Settings *settings = new Settings;
     settings->readConfig();
     RadioChannels *radio_channels = new RadioChannels;
@@ -120,38 +119,6 @@ int main(int argc, char *argv[])
     }
     w->activateWindow();
     w->raise();
-
-    /*
-    QThread *t1= new QThread;
-    DtmfDecoder *decoder = new DtmfDecoder(settings);
-    if(settings->_use_dtmf)
-    {
-
-        decoder->moveToThread(t1);
-        QObject::connect(t1, SIGNAL(started()), decoder, SLOT(run()));
-        QObject::connect(decoder, SIGNAL(finished()), t1, SLOT(quit()));
-        QObject::connect(decoder, SIGNAL(finished()), decoder, SLOT(deleteLater()));
-        QObject::connect(t1, SIGNAL(finished()), t1, SLOT(deleteLater()));
-        t1->start();
-    }
-
-
-    QThread *t2= new QThread;
-    ServerWrapper *telnet_server_wrapper = new ServerWrapper(settings, &db);
-    telnet_server_wrapper->moveToThread(t2);
-    QObject::connect(dtmfcommand,SIGNAL(speak(QString)),telnet_server_wrapper,SLOT(addSpeech(QString)));
-    QObject::connect(telnet_server_wrapper,SIGNAL(pingServer()),client,SLOT(pingServer()));
-    QObject::connect(client,SIGNAL(onlineStations(StationList)),telnet_server_wrapper,SLOT(updateOnlineStations(StationList)));
-    QObject::connect(dtmfcommand,SIGNAL(tellStations()),telnet_server_wrapper,SLOT(tellOnlineStations()));
-    //QObject::connect(telnet_server_wrapper,SIGNAL(joinConference(int,int,int)),controller,SLOT(joinConference(int,int,int)));
-    //QObject::connect(telnet_server_wrapper,SIGNAL(leaveConference(int,int,int)),controller,SLOT(leaveConference(int,int,int)));
-    QObject::connect(t2, SIGNAL(started()), telnet_server_wrapper, SLOT(run()));
-    QObject::connect(telnet_server_wrapper, SIGNAL(finished()), t2, SLOT(quit()));
-    QObject::connect(telnet_server_wrapper, SIGNAL(finished()), telnet_server_wrapper, SLOT(deleteLater()));
-    QObject::connect(t2, SIGNAL(finished()), t2, SLOT(deleteLater()));
-    t2->start();
-
-    */
 
 
 

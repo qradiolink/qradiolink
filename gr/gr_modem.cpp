@@ -598,17 +598,6 @@ static void packBytes(unsigned char *pktbuf, const unsigned char *bitbuf, int bi
     }
 }
 
-static void unpackBytes(unsigned char *bitbuf, const unsigned char *bytebuf, int bytecount)
-{
-    for(int i=0; i<bytecount; i++)
-    {
-        for(int j=0; j<8; j++)
-        {
-            bitbuf[i*8+j] = (bytebuf[i] & (128 >> j)) != 0;
-        }
-    }
-}
-
 void gr_modem::getFFTData(float* data, unsigned int &size)
 {
     if(_gr_demod_base)

@@ -141,4 +141,13 @@ void buildFilterWidthList(std::vector<std::complex<int>>* filter_widths, std::ve
 }
 
 
-
+void unpackBytes(unsigned char *bitbuf, const unsigned char *bytebuf, int bytecount)
+{
+    for(int i=0; i<bytecount; i++)
+    {
+        for(int j=0; j<8; j++)
+        {
+            bitbuf[i*8+j] = (bytebuf[i] & (128 >> j)) != 0;
+        }
+    }
+}

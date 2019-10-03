@@ -44,7 +44,6 @@ SOURCES += main.cpp\
         audio/audiointerface.cpp\
         audio/audioprocessor.cpp \
         dtmfdecoder.cpp\
-        databaseapi.cpp\
         mumbleclient.cpp\
         radioprotocol.cpp \
         audiowriter.cpp \
@@ -58,7 +57,6 @@ SOURCES += main.cpp\
         sslclient.cpp\
         station.cpp\
         telnetclient.cpp\
-        telnetserver.cpp\
         ext/Mumble.pb.cc\
         ext/QRadioLink.pb.cc\
         ext/utils.cpp\
@@ -114,14 +112,12 @@ HEADERS  += mainwindow.h\
         radiochannel.h \
         relaycontroller.h \
         dtmfdecoder.h\
-        databaseapi.h\
         mumbleclient.h\
         server.h\
         settings.h\
         sslclient.h\
         station.h\
         telnetclient.h\
-        telnetserver.h\
         config_defines.h\
         ext/dec.h\
         ext/Goertzel.h\

@@ -20,6 +20,6 @@ void getPreamble(quint8 *buffer, int *type, int *len);
 void buildFilterWidthList(std::vector<std::complex<int> > *filter_widths,
                           std::vector<std::complex<int> > *ranges, std::vector<bool> *symmetric);
 
-
+void unpackBytes(unsigned char *bitbuf, const unsigned char *bytebuf, int bytecount);
 
 #endif // UTILS_H
