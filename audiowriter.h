@@ -18,7 +18,7 @@
 #define AUDIOWRITER_H
 
 #include <QObject>
-#include <vector>
+#include <QVector>
 #include <QCoreApplication>
 #include <QMutex>
 #include <QAudioOutput>
@@ -50,7 +50,7 @@ private:
         int audio_mode;
     };
     Settings *_settings;
-    std::vector<audio_samples*> *_rx_sample_queue;
+    QVector<audio_samples*> *_rx_sample_queue;
     bool _working;
     QMutex _mutex;
 

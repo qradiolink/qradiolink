@@ -26,7 +26,7 @@ RadioController::RadioController(Settings *settings, QObject *parent) :
     _video = new VideoEncoder;
     _net_device = new NetDevice(0, _settings->ip_address);
     _mutex = new QMutex;
-    _m_queue = new std::vector<short>;
+    _voip_to_radio_queue = new QVector<short>;
 
     _voip_tx_timer = new QTimer(this);
     _voip_tx_timer->setSingleShot(true);
@@ -163,8 +163,8 @@ RadioController::~RadioController()
     delete[] _rand_frame_data;
     _voip_encode_buffer->clear();
     delete _voip_encode_buffer;
-    _m_queue->clear();
-    delete _m_queue;
+    _voip_to_radio_queue->clear();
+    delete _voip_to_radio_queue;
     delete _relay_controller;
     delete _end_rec_sound;
     delete _data_rec_sound;
@@ -202,6 +202,7 @@ void RadioController::run()
 
         QCoreApplication::processEvents();
         flushVoipBuffer();
+        processVOIPQueue();
 
         int time = QDateTime::currentDateTime().toTime_t();
         if((time - last_ping_time) > 10)
@@ -418,8 +419,37 @@ void RadioController::flushVoipBuffer()
         emit voipDataPCM(pcm,960*sizeof(short));
         _voip_encode_buffer->remove(0,960);
     }
-
 }
+
+void RadioController::processVOIPQueue()
+{
+    if(_voip_to_radio_queue->size() >= 320)
+    {
+        short *pcm = new short[320];
+        for(unsigned int i = 0;i<320;i++)
+        {
+            pcm[i] = (short)((float)_voip_to_radio_queue->at(i) * _rx_volume);
+        }
+        if(_voip_forwarding && _tx_inited)
+        {
+            if(!_voip_tx_timer->isActive())
+            {
+                // FIXME: these should be called from the thread loop only
+                startTx();
+            }
+            _voip_tx_timer->start(500);
+            txAudio(pcm, 320*sizeof(short), 1, true); // don't loop back to Mumble
+        }
+        else
+        {
+            emit writePCM(pcm, 320*sizeof(short), true, AudioProcessor::AUDIO_MODE_OPUS);
+            audioFrameReceived();
+        }
+        _last_voiced_frame_timer.restart();
+        _voip_to_radio_queue->remove(0,320);
+    }
+}
+
 
 void RadioController::txAudio(short *audiobuffer, int audiobuffer_size, int vad, bool radio_only)
 {
@@ -1124,60 +1154,22 @@ void RadioController::receiveNetData(unsigned char *data, int size)
     Q_UNUSED(res);
 }
 
+
 void RadioController::processVoipAudioFrame(short *pcm, int samples, quint64 sid)
 {
-    // FIXME: refactor refactor refactor
-    if(_m_queue->empty())
+
+    for(int i=0;i<samples;i++)
     {
-        for(int i=0;i<samples;i++)
-        {
-            _m_queue->push_back(pcm[i]);
-        }
-    }
-    else
-    {
-        unsigned int size = (_m_queue->size() > (unsigned int)samples) ? (unsigned int)samples : _m_queue->size();
-        for(unsigned int i=0;i<size;i++)
-        {
-            _m_queue->at(i) = _m_queue->at(i)/2-1 + pcm[i]/2-1;
-        }
-        if(_m_queue->size() < (unsigned int)samples)
-        {
-            for(int i=_m_queue->size();i<samples;i++)
-            {
-                _m_queue->push_back(pcm[i]);
-            }
-        }
+        _voip_to_radio_queue->push_back(pcm[i]);
     }
     delete[] pcm;
+    /*
     quint64 milisec = (quint64)_last_voiced_frame_timer.nsecsElapsed()/1000000;
-    if((milisec >= 20) || (sid == _last_session_id))
+    if((milisec >= 120) || (sid == _last_session_id))
     {
-
-        short *pcm = new short[_m_queue->size()];
-        for(unsigned int i = 0;i<_m_queue->size();i++)
-        {
-            pcm[i] = (short)((float)_m_queue->at(i) * _rx_volume);
-        }
-        if(_voip_forwarding && _tx_inited)
-        {
-            if(!_voip_tx_timer->isActive())
-            {
-                // FIXME: these should be called from the thread loop only
-                startTx();
-            }
-            _voip_tx_timer->start(200);
-            txAudio(pcm, samples*sizeof(short), 1, true); // don't loop back to Mumble
-        }
-        else
-        {
-            emit writePCM(pcm, samples*sizeof(short), true, AudioProcessor::AUDIO_MODE_OPUS);
-            audioFrameReceived();
-        }
-        _last_voiced_frame_timer.restart();
-        _m_queue->clear();
-        _last_session_id = sid;
     }
+    */
+    _last_session_id = sid;
 }
 
 void RadioController::startTransmission()

@@ -199,7 +199,7 @@ private:
     QElapsedTimer *_const_read_timer;
     QElapsedTimer *_rssi_read_timer;
     QElapsedTimer *_scan_timer;
-    std::vector<short> *_m_queue;
+    QVector<short> *_voip_to_radio_queue;
     unsigned char *_rand_frame_data;
     float *_fft_data;
     QVector<short> *_voip_encode_buffer;
@@ -263,6 +263,7 @@ private:
     qint64 _carrier_offset;
     int _fft_poll_time;
 
+    void processVOIPQueue();
 };
 
 #endif // RADIOOP_H

@@ -21,7 +21,7 @@ AudioWriter::AudioWriter(Settings *settings, QObject *parent) :
     QObject(parent)
 {
     _settings = settings;
-    _rx_sample_queue = new std::vector<audio_samples*>;
+    _rx_sample_queue = new QVector<audio_samples*>;
     _working = true;
 }
 
@@ -79,15 +79,15 @@ void AudioWriter::run()
     }
 
     QAudioOutput *audio_writer = new QAudioOutput(device, format, this);
-    audio_writer->setObjectName("QRadioLink audio output");
-    audio_writer->setCategory("QRadioLink audio output");
     audio_writer->setBufferSize(2048);
     QIODevice *audio_dev = audio_writer->start();
 
     while(_working)
     {
         QCoreApplication::processEvents();
+        _mutex.lock();
         int size = _rx_sample_queue->size();
+        _mutex.unlock();
         if(size > 0)
         {
             for(int i=0;i< size;i++)
@@ -102,10 +102,9 @@ void AudioWriter::run()
                 delete samp;
                 processor->write_preprocess(pcm, bytes, preprocess, audio_mode);
                 audio_dev->write((char*)pcm, bytes);
-
             }
             _mutex.lock();
-            _rx_sample_queue->clear();
+            _rx_sample_queue->remove(0, size);
             _mutex.unlock();
 
         }
