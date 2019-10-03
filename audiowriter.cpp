@@ -79,7 +79,7 @@ void AudioWriter::run()
     }
 
     QAudioOutput *audio_writer = new QAudioOutput(device, format, this);
-    audio_writer->setBufferSize(2048);
+    audio_writer->setBufferSize(4096);
     QIODevice *audio_dev = audio_writer->start();
 
     while(_working)
