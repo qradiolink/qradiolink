@@ -116,4 +116,5 @@ void AudioWriter::run()
     }
     audio_writer->stop();
     delete audio_writer;
+    delete processor;
 }
