@@ -166,6 +166,8 @@ RadioController::~RadioController()
     _m_queue->clear();
     delete _m_queue;
     delete _relay_controller;
+    delete _end_rec_sound;
+    delete _data_rec_sound;
 }
 
 void RadioController::stop()

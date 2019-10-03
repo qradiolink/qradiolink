@@ -74,7 +74,7 @@ void AudioReader::run()
     }
 
     QAudioInput *audio_reader = new QAudioInput(device,format, this);
-    audio_reader->setBufferSize(4098);
+    audio_reader->setBufferSize(2048);
     QIODevice *audio_dev = audio_reader->start();
     while(_working)
     {

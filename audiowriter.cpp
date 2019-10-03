@@ -81,7 +81,7 @@ void AudioWriter::run()
     QAudioOutput *audio_writer = new QAudioOutput(device, format, this);
     audio_writer->setObjectName("QRadioLink audio output");
     audio_writer->setCategory("QRadioLink audio output");
-    audio_writer->setBufferSize(4098);
+    audio_writer->setBufferSize(2048);
     QIODevice *audio_dev = audio_writer->start();
 
     while(_working)

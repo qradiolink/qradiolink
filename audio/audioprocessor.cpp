@@ -127,14 +127,13 @@ void AudioProcessor::write_preprocess(short *buf, int bufsize, bool preprocess, 
 
 int AudioProcessor::read_preprocess(short *buf, int bufsize, bool preprocess, int audio_mode)
 {
-    Q_UNUSED(preprocess);
     //int vad;
-    //if(preprocess)
-    //{
+    if(preprocess)
+    {
+        compress_audio(buf, bufsize, 0, audio_mode);
         //vad = speex_preprocess_run(_speex_preprocess, buf);
-    //}
+    }
 
-    compress_audio(buf, bufsize, 0, audio_mode);
     float power = calc_audio_power(buf, bufsize/sizeof(short));
     return (power > 2.0);
 }
