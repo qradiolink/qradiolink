@@ -133,7 +133,7 @@ RadioController::RadioController(Settings *settings, QObject *parent) :
     {
         _data_rec_sound = new QByteArray(resfile.readAll());
     }
-    QFile resfile_end_tx(":/res/end_beep.raw");
+    QFile resfile_end_tx(":/res/end_beep1.raw");
     if(resfile_end_tx.open(QIODevice::ReadOnly))
     {
         _end_rec_sound = new QByteArray(resfile_end_tx.readAll());
@@ -1209,12 +1209,12 @@ void RadioController::callsignReceived(QString callsign)
 {
     QString time= QDateTime::currentDateTime().toString("dd/MMM/yyyy hh:mm:ss");
     QString text = "\n\n<b>" + time + "</b> " + "<font color=\"#FF5555\">" + callsign + " </font><br/>\n";
-
+    /*
     short *samples = new short[_data_rec_sound->size()/sizeof(short)];
     short *origin = (short*) _data_rec_sound->data();
     memcpy(samples, origin, _data_rec_sound->size());
     emit writePCM(samples, _data_rec_sound->size(), false, AudioProcessor::AUDIO_MODE_ANALOG);
-
+    */
     emit printText(text,true);
     emit printCallsign(callsign);
 }
@@ -1250,10 +1250,11 @@ void RadioController::endAudioTransmission()
 {
     QString time= QDateTime::currentDateTime().toString("d/MMM/yyyy hh:mm:ss");
     emit printText("<b>" + time + "</b> <font color=\"#77FF77\">Transmission end</font><br/>\n",true);
-    short *samples = new short[_end_rec_sound->size()/sizeof(short)];
-    short *origin = (short*) _end_rec_sound->data();
-    memcpy(samples, origin, _end_rec_sound->size());
-    emit writePCM(samples, _end_rec_sound->size(), false, AudioProcessor::AUDIO_MODE_ANALOG);
+    unsigned int size = _end_rec_sound->size();
+    short *samples = new short[size/sizeof(short)];
+    short *origin = reinterpret_cast<short*>(_end_rec_sound->data());
+    memcpy(samples, origin, size);
+    emit writePCM(samples, size, false, AudioProcessor::AUDIO_MODE_ANALOG);
 }
 
 void RadioController::setChannels(ChannelList channels)

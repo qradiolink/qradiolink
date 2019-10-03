@@ -869,19 +869,10 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
     else if (current_frame_type == FrameTypeCallsign)
     {
         _last_frame_type = FrameTypeCallsign;
-        char *text_data = new char[_rx_frame_length];
-        memcpy(text_data, received_data, _rx_frame_length);
-        quint8 string_length = _rx_frame_length;
+        char *text_data = new char[7];
+        memcpy(text_data, received_data, 7);
 
-        for(int ii=_rx_frame_length-1;ii>=0;ii--)
-        {
-            QChar x(text_data[ii]);
-            if(x.unicode()==0)
-            {
-                string_length--;
-            }
-        }
-        QString callsign = QString::fromLocal8Bit(text_data,string_length);
+        QString callsign = QString::fromLocal8Bit(text_data,7);
         if(_repeater)
         {
             sendCallsign(callsign);
