@@ -5,6 +5,7 @@
 #include <QFile>
 #include <QFileDialog>
 #include <QDir>
+#include <QDebug>
 #include <QFileInfo>
 #include <libconfig.h++>
 #include <iostream>

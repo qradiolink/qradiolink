@@ -37,8 +37,16 @@ Settings::Settings()
 QFileInfo *Settings::setupConfig()
 {
     QDir files = QDir::homePath();
-    // FIXME: standard says own directory, plus need to store memories separately
-    QFileInfo new_file = files.filePath(".config/qradiolink.cfg");
+    if(!QDir(files.absolutePath()+"/.config/qradiolink").exists())
+    {
+        QDir().mkdir(files.absolutePath()+"/.config/qradiolink");
+    }
+    QFileInfo old_file = files.filePath(".config/qradiolink.cfg");
+    if(old_file.exists())
+    {
+        QDir().rename(old_file.filePath(), files.filePath(".config/qradiolink/qradiolink.cfg"));
+    }
+    QFileInfo new_file = files.filePath(".config/qradiolink/qradiolink.cfg");
     if(!new_file.exists())
     {
         QString config = "// Automatically generated\n";
