@@ -1234,25 +1234,28 @@ void MainWindow::autoSquelch()
 
 void MainWindow::changeFilterWidth(int low, int up)
 {
-    qDebug() << _filter_low_cut << " " << _filter_high_cut;
+    // FIXME: plotter whould emit the signal when mouse is released
     if(_filter_is_symmetric)
     {
-        if(low >= _filter_low_cut)
+        int abs_limit_lower = 800;
+        int abs_width = std::max(abs(low), abs(up));
+        if((low >= _filter_low_cut) && (abs_width >= abs_limit_lower))
         {
-            emit newFilterWidth(abs(low));
+            emit newFilterWidth(abs_width);
         }
-        else if(up <= _filter_high_cut)
+        else if((up <= _filter_high_cut) && (abs_width >= abs_limit_lower))
         {
-            emit newFilterWidth(abs(up));
+            emit newFilterWidth(abs_width);
         }
     }
     else
     {
         int abs_width = std::max(abs(low), abs(up));
-        int abs_limit = std::max(abs(_filter_low_cut), abs(_filter_high_cut));
-        if(abs_width <= abs_limit)
+        int abs_limit_upper = std::max(abs(_filter_low_cut), abs(_filter_high_cut));
+        int abs_limit_lower = 800;
+        if((abs_width <= abs_limit_upper) && (abs_width >= abs_limit_lower))
         {
-            emit newFilterWidth(abs(abs_width));
+            emit newFilterWidth(abs_width);
         }
     }
 }
