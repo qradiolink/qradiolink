@@ -35,7 +35,11 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
         tones.append(QString::number(tone_list[i]));
     }
 
-    _filter_widths = buildFilterWidthList();
+    _filter_widths = new std::vector<std::complex<int>>;
+    _filter_ranges = new std::vector<std::complex<int>>;
+    _filter_symmetric = new std::vector<bool>;
+
+    buildFilterWidthList(_filter_widths, _filter_ranges, _filter_symmetric);
 
     _audio_output_devices = QAudioDeviceInfo::availableDevices(QAudio::AudioOutput);
     _audio_input_devices = QAudioDeviceInfo::availableDevices(QAudio::AudioInput);
@@ -119,6 +123,7 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
     QObject::connect(ui->plotterFrame,SIGNAL(pandapterRangeChanged(float,float)),ui->plotterFrame,SLOT(setWaterfallRange(float,float)));
     QObject::connect(ui->plotterFrame,SIGNAL(newCenterFreq(qint64)),this,SLOT(tuneFreqPlotter(qint64)));
+    QObject::connect(ui->plotterFrame,SIGNAL(newFilterFreq(int, int)),this,SLOT(changeFilterWidth(int, int)));
     QObject::connect(ui->panadapterSlider,SIGNAL(valueChanged(int)),ui->plotterFrame,SLOT(setPercent2DScreen(int)));
     QObject::connect(ui->averagingSlider,SIGNAL(valueChanged(int)),this,SLOT(setAveraging(int)));
     QObject::connect(ui->rangeSlider,SIGNAL(valueChanged(int)),this,SLOT(setFFTRange(int)));
@@ -214,6 +219,8 @@ void MainWindow::initSettings()
     showConstellation(_settings->show_constellation);
     ui->showControlsButton->setChecked((bool)_settings->show_controls);
     showControls((bool)_settings->show_controls);
+    toggleRxMode(_settings->rx_mode);
+    toggleTxMode(_settings->tx_mode);
 
 }
 
@@ -222,6 +229,10 @@ MainWindow::~MainWindow()
     delete ui;
     _filter_widths->clear();
     delete _filter_widths;
+    _filter_ranges->clear();
+    delete _filter_ranges;
+    _filter_symmetric->clear();
+    delete _filter_symmetric;
     delete _video_img;
     if(_constellation_painter->isActive())
         _constellation_painter->end();
@@ -951,7 +962,13 @@ void MainWindow::toggleWideband(bool value)
 void MainWindow::setFilterWidth(int index)
 {
     std::complex<int> widths = _filter_widths->at(index);
+    std::complex<int> ranges = _filter_ranges->at(index);
+    bool symmetric = _filter_symmetric->at(index);
+    ui->plotterFrame->setDemodRanges(ranges.real(),ranges.imag(),ranges.real(),ranges.imag(),symmetric);
     ui->plotterFrame->setHiLowCutFrequencies(widths.real(), widths.imag());
+    _filter_low_cut = ranges.real();
+    _filter_high_cut = ranges.imag();
+    _filter_is_symmetric = symmetric;
 }
 
 void MainWindow::toggleRxMode(int value)
@@ -1213,4 +1230,29 @@ void MainWindow::autoSquelch()
     int squelch = (int)_rssi + 50;
     setSquelchDisplay(squelch);
     ui->rxSquelchDial->setValue(squelch);
+}
+
+void MainWindow::changeFilterWidth(int low, int up)
+{
+    qDebug() << _filter_low_cut << " " << _filter_high_cut;
+    if(_filter_is_symmetric)
+    {
+        if(low >= _filter_low_cut)
+        {
+            emit newFilterWidth(abs(low));
+        }
+        else if(up <= _filter_high_cut)
+        {
+            emit newFilterWidth(abs(up));
+        }
+    }
+    else
+    {
+        int abs_width = std::max(abs(low), abs(up));
+        int abs_limit = std::max(abs(_filter_low_cut), abs(_filter_high_cut));
+        if(abs_width <= abs_limit)
+        {
+            emit newFilterWidth(abs(abs_width));
+        }
+    }
 }

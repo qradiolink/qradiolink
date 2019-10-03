@@ -66,9 +66,8 @@ void genRandomStr(char *str, const int len)
     str[len] = 0;
 }
 
-std::vector<std::complex<int>>* buildFilterWidthList()
+void buildFilterWidthList(std::vector<std::complex<int>>* filter_widths, std::vector<std::complex<int>>*ranges, std::vector<bool> *symmetric)
 {
-    std::vector<std::complex<int>> *filter_widths = new std::vector<std::complex<int>>;
     filter_widths->push_back(std::complex<int>(-5000, 5000));  // FM
     filter_widths->push_back(std::complex<int>(-2500, 2500));  // NBFM
     filter_widths->push_back(std::complex<int>(-100000, 100000));  // WFM
@@ -91,7 +90,54 @@ std::vector<std::complex<int>>* buildFilterWidthList()
     filter_widths->push_back(std::complex<int>(-25000, 25000));    // 4FSK 10K
     filter_widths->push_back(std::complex<int>(-150000, 150000)); // QPSK250000 VIDEO
     filter_widths->push_back(std::complex<int>(-150000, 150000)); // QPSK250000 DATA
-    return filter_widths;
+
+
+    ranges->push_back(std::complex<int>(-9000, 9000));  // FM
+    ranges->push_back(std::complex<int>(-9000, 9000));  // NBFM
+    ranges->push_back(std::complex<int>(-100000, 100000));  // WFM
+    ranges->push_back(std::complex<int>(200, 3800)); // USB
+    ranges->push_back(std::complex<int>(-3800, -200)); // LSB
+    ranges->push_back(std::complex<int>(200, 2500)); // FreeDV1600 USB
+    ranges->push_back(std::complex<int>(200, 2500)); // FreeDV700C USB
+    ranges->push_back(std::complex<int>(200, 2500)); // FreeDV800XA USB
+    ranges->push_back(std::complex<int>(-2500, -200)); // FreeDV1600 LSB
+    ranges->push_back(std::complex<int>(-2500, -200)); // FreeDV700C LSB
+    ranges->push_back(std::complex<int>(-2500, -200)); // FreeDV800XA LSB
+    ranges->push_back(std::complex<int>(-9000, 9000));  // AM
+    ranges->push_back(std::complex<int>(-2800, 2800)); // BPSK 2K
+    ranges->push_back(std::complex<int>(-1400, 1400)); // BPSK 700
+    ranges->push_back(std::complex<int>(-1500, 1500));  // QPSK 2K
+    ranges->push_back(std::complex<int>(-7000, 7000));    // QPSK 10K
+    ranges->push_back(std::complex<int>(-4600, 4600));  // 2FSK 2K
+    ranges->push_back(std::complex<int>(-15000, 15000));  // 2FSK 10K
+    ranges->push_back(std::complex<int>(-4600, 4600));  // 4FSK 2K
+    ranges->push_back(std::complex<int>(-25000, 25000));    // 4FSK 10K
+    ranges->push_back(std::complex<int>(-150000, 150000)); // QPSK250000 VIDEO
+    ranges->push_back(std::complex<int>(-150000, 150000)); // QPSK250000 DATA
+
+    symmetric->push_back(true);  // FM
+    symmetric->push_back(true);  // NBFM
+    symmetric->push_back(true);  // WFM
+    symmetric->push_back(false); // USB
+    symmetric->push_back(false); // LSB
+    symmetric->push_back(false); // FreeDV1600 USB
+    symmetric->push_back(false); // FreeDV700C USB
+    symmetric->push_back(false); // FreeDV800XA USB
+    symmetric->push_back(false); // FreeDV1600 LSB
+    symmetric->push_back(false); // FreeDV700C LSB
+    symmetric->push_back(false); // FreeDV800XA LSB
+    symmetric->push_back(true);  // AM
+    symmetric->push_back(true); // BPSK 2K
+    symmetric->push_back(true); // BPSK 700
+    symmetric->push_back(true);  // QPSK 2K
+    symmetric->push_back(true);    // QPSK 10K
+    symmetric->push_back(true);  // 2FSK 2K
+    symmetric->push_back(true);  // 2FSK 10K
+    symmetric->push_back(true);  // 4FSK 2K
+    symmetric->push_back(true);    // 4FSK 10K
+    symmetric->push_back(true); // QPSK250000 VIDEO
+    symmetric->push_back(true); // QPSK250000 DATA
+
 }
 
 

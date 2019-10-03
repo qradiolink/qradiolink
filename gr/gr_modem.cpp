@@ -314,10 +314,10 @@ void gr_modem::setSquelch(int value)
         _gr_demod_base->set_squelch(value);
 }
 
-void gr_modem::setFilterWidth(int width, int mode)
+void gr_modem::setFilterWidth(int width)
 {
     if(_gr_demod_base)
-        _gr_demod_base->set_filter_width(width, mode);
+        _gr_demod_base->set_filter_width(width, _modem_type_rx);
 }
 
 void gr_modem::setRxCTCSS(float value)

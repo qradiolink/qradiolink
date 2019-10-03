@@ -1725,9 +1725,7 @@ void RadioController::tuneTxFreq(qint64 actual_freq)
 {
     _tx_frequency = actual_freq;
     // FIXME: LimeSDR mini tune requests are blocking
-    _mutex->lock();
     _modem->tuneTx(_tx_frequency + _tune_shift_freq);
-    _mutex->unlock();
 
 }
 
@@ -1744,9 +1742,7 @@ void RadioController::setCarrierOffset(qint64 offset)
 void RadioController::changeTxShift(qint64 center_freq)
 {
     _tune_shift_freq = center_freq;
-    _mutex->lock();
     _modem->tuneTx(_tx_frequency + _tune_shift_freq);
-    _mutex->unlock();
 }
 
 void RadioController::setSquelch(int value)
@@ -1757,9 +1753,9 @@ void RadioController::setSquelch(int value)
 
 }
 
-void RadioController::setFilterWidth(int width, int mode)
+void RadioController::setFilterWidth(int width)
 {
-    _modem->setFilterWidth(width, mode);
+    _modem->setFilterWidth(width);
 }
 
 void RadioController::setRxSensitivity(int value)

@@ -124,7 +124,7 @@ public slots:
     void setTxPower(int dbm);
     void setBbGain(int value);
     void setSquelch(int value);
-    void setFilterWidth(int width, int mode);
+    void setFilterWidth(int width);
     void setVolume(int value);
     void setTxVolume(int value);
     void setRxSensitivity(int value);

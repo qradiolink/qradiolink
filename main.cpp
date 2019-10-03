@@ -218,6 +218,7 @@ int main(int argc, char *argv[])
     QObject::connect(w,SIGNAL(newFFTSize(int)),radio_op,SLOT(setFFTSize(int)));
     QObject::connect(w,SIGNAL(setWaterfallFPS(int)),radio_op,SLOT(setFFTPollTime(int)));
     QObject::connect(w,SIGNAL(setSampleRate(int)),radio_op,SLOT(setRxSampleRate(int)));
+    QObject::connect(w,SIGNAL(newFilterWidth(int)),radio_op,SLOT(setFilterWidth(int)));
 
     QObject::connect(radio_op, SIGNAL(setAudioReadMode(bool,bool,int)), audioreader, SLOT(setReadMode(bool,bool,int)));
     QObject::connect(audioreader, SIGNAL(audioPCM(short*,int,int, bool)), radio_op, SLOT(txAudio(short*,int,int, bool)));

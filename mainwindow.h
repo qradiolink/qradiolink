@@ -126,6 +126,7 @@ public slots:
     void tuneToMemoryChannel(int row, int col);
     void editMemoryChannel(QTableWidgetItem* item);
     void startMemoryScan(bool value);
+    void changeFilterWidth(int low, int up);
 
 
 signals:
@@ -169,6 +170,7 @@ signals:
     void newFFTSize(int);
     void setWaterfallFPS(int);
     void setSampleRate(int);
+    void newFilterWidth(int);
 
 
 public:
@@ -200,6 +202,8 @@ private:
     QGraphicsOpacityEffect *_eff_video;
     QGraphicsOpacityEffect *_eff_text_display;
     std::vector<std::complex<int>> *_filter_widths;
+    std::vector<std::complex<int>> *_filter_ranges;
+    std::vector<bool> *_filter_symmetric;
     float *_realFftData;
     float *_iirFftData;
 
@@ -223,6 +227,9 @@ private:
     QTimer _speech_icon_timer;
     QMutex _mutex;
     int _new_mem_index;
+    int _filter_low_cut;
+    int _filter_high_cut;
+    bool _filter_is_symmetric;
 
     QList<QAudioDeviceInfo> _audio_output_devices;
     QList<QAudioDeviceInfo> _audio_input_devices;

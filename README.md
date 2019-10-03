@@ -55,7 +55,7 @@ $ sudo apt-get install gnuradio-dev protobuf-compiler gr-osmosdr gnuradio libvol
 
 - Qt >= 5.11 and Qt5 development packages (older versions of Qt5 >= 5.2 might work as well)
 - qmake
-- Pulseaudio (native Alsa support is not fully implemented) 
+- Pulseaudio or Alsa or Jack
 - Gnuradio >= 3.7.13 built with UHD support and FreeDV/Codec2 support
 - Boost and boost-devel
 - libgnuradio-osmosdr (gr-osmosdr) built with UHD, RTL-SDR, SoapySDR, HackRF, RedPitaya or BladeRF support

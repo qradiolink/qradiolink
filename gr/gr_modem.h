@@ -113,7 +113,7 @@ public slots:
     void setTxPower(float value);
     void setBbGain(int value);
     void setSquelch(int value);
-    void setFilterWidth(int filter_width, int mode);
+    void setFilterWidth(int filter_width);
     void setRxSensitivity(double value);
     void setRxCTCSS(float value);
     void setTxCTCSS(float value);

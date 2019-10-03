@@ -79,13 +79,10 @@ void gr_demod_wbfm_sdr::set_filter_width(int filter_width)
     _filter_width = filter_width;
     std::vector<float> taps = gr::filter::firdes::low_pass(50, _samp_rate, _filter_width, _filter_width,
                                                            gr::filter::firdes::WIN_BLACKMAN_HARRIS);
-    std::vector<float> audio_taps = gr::filter::firdes::low_pass(2, _target_samp_rate, 4000, 500,
-                                                                 gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     std::vector<float> filter_taps = gr::filter::firdes::low_pass(
                                 1, _target_samp_rate, _filter_width,1200,gr::filter::firdes::WIN_BLACKMAN_HARRIS);
 
     _resampler->set_taps(taps);
-    _audio_resampler->set_taps(audio_taps);
     _filter->set_taps(filter_taps);
 }
 

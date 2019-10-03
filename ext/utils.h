@@ -17,7 +17,8 @@ static const float tone_list[]= {67.0, 71.9, 74.4, 77.0, 79.7, 82.5, 85.4, 88.5,
 void genRandomStr(char *str, const int len);
 void addPreamble(quint8 *buffer, quint16 type, quint32 len);
 void getPreamble(quint8 *buffer, int *type, int *len);
-std::vector<std::complex<int>>* buildFilterWidthList();
+void buildFilterWidthList(std::vector<std::complex<int> > *filter_widths,
+                          std::vector<std::complex<int> > *ranges, std::vector<bool> *symmetric);
 
 
 
