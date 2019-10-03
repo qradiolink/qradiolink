@@ -505,7 +505,7 @@ int RadioController::processInputVideoStream(bool &frame_flag)
     microsec = (quint64)timer.nsecsElapsed();
     if(microsec < 100000000)
     {
-        struct timespec time_to_sleep = {0, (100000000 - (long)microsec)};
+        struct timespec time_to_sleep = {0, (100000000 - (long)microsec) - 5000000};
         nanosleep(&time_to_sleep, NULL);
     }
 
