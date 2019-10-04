@@ -20,7 +20,7 @@ Build-Depends: debhelper (>= 10),
       qt5-default,
       qtbase5-dev,
       qtmultimedia5-dev,
-      libqt5multimedia5-plugins,
+      libqt5multimedia5-plugins
 
 Package: qradiolink
 Architecture: any
