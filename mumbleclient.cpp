@@ -187,6 +187,9 @@ void MumbleClient::processProtoMessage(QByteArray data)
     case 1: // UDPTunnel
         processIncomingAudioPacket(message, message_size, type);
         break;
+    case 11: // TextMessage
+        processTextMessage(message, message_size);
+        break;
     default:
         break;
     }
@@ -511,6 +514,26 @@ void MumbleClient::setMute(bool mute)
     quint8 mdata[msize];
     us.SerializeToArray(mdata,msize);
     sendMessage(mdata,9,msize);
+}
+
+void MumbleClient::processTextMessage(quint8 *message, quint64 size)
+{
+    MumbleProto::TextMessage tm;
+    tm.ParseFromArray(message,size);
+    QString sender = "None";
+    for(int i =0;i<_stations.size();i++)
+    {
+        Station *s = _stations.at(i);
+        if(s->id == tm.actor())
+        {
+            sender = s->callsign;
+            break;
+        }
+    }
+    QString text = QString::fromStdString(tm.message());
+    QString msg("\n<br/><b>%1</b>: %2<br/>\n");
+    msg = msg.arg(sender).arg(text);
+    emit textMessage(msg, true);
 }
 
 void MumbleClient::processPCMAudio(short *audiobuffer, int audiobuffersize)
