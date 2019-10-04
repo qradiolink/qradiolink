@@ -221,6 +221,7 @@ void MainWindow::initSettings()
     showControls((bool)_settings->show_controls);
     toggleRxMode(_settings->rx_mode);
     toggleTxMode(_settings->tx_mode);
+    setTxVolumeDisplay(_settings->tx_volume);
 
 }
 
