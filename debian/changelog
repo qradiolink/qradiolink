@@ -1,3 +1,13 @@
+qradiolink (0.8.1-4) UNRELEASED; urgency=medium
+
+  [ Adrian Musceac ]
+  * Use Qt5 audio backend (Alsa, Pulse, Jack etc.)
+  * Mumble client compatibility
+
+
+ -- Adrian Musceac <kantooon@gmail.com>  Fri, 4 Oct 2019 23:00:00 +0300
+
+
 qradiolink (0.8.1-3) UNRELEASED; urgency=medium
 
   [ Adrian Musceac ]

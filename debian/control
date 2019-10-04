@@ -44,7 +44,6 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
       libqt5multimediawidgets5,
       libqt5multimedia5-plugins,
       libqt5multimedia5
-
 Description: Multimode SDR transceiver for GNU radio
     QRadioLink is a GNU/Linux software defined radio VOIP (radio over IP)
     transceiver application using Internet for communication, built on
