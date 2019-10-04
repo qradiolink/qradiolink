@@ -430,7 +430,7 @@ void RadioController::processVOIPQueue()
         {
             pcm[i] = (short)((float)_voip_to_radio_queue->at(i) * _rx_volume);
         }
-        if(_voip_forwarding && _tx_inited)
+        if(_voip_forwarding)
         {
             if(!_voip_tx_timer->isActive())
             {
