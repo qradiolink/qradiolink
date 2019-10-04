@@ -70,7 +70,7 @@ gr_mod_4fsk_sdr::gr_mod_4fsk_sdr(int sps, int samp_rate, int carrier_freq,
                 1,gr::filter::firdes::low_pass(
                     1, _samp_rate, _filter_width, _filter_width/2,gr::filter::firdes::WIN_BLACKMAN_HARRIS));
     _resampler2 = gr::filter::rational_resampler_base_ccf::make(20, 1,
-                                  gr::filter::firdes::low_pass(20,_samp_rate,_filter_width,_filter_width*20));
+                                  gr::filter::firdes::low_pass(20,_samp_rate,_filter_width,_filter_width*5));
 
 
     connect(self(),0,_packed_to_unpacked,0);
