@@ -3,78 +3,56 @@ Maintainer: Adrian Musceac <kantooon@gmail.com>
 Section: misc
 Priority: optional
 Standards-Version: 3.9.2
-Build-Depends: debhelper (>= 9),
+Build-Depends: debhelper (>= 10),
       gnuradio-dev,
       protobuf-compiler,
       gr-osmosdr,
-      gnuradio,
-      libvolk1-dev,
-      libvolk1-bin,
-      libftdi1,
       libftdi-dev,
-      libprotobuf17,
       libprotobuf-dev,
-      libopus0,
       libopus-dev,
-      libspeexdsp1,
       libspeexdsp-dev,
-      libpulse0,
       libpulse-dev,
-      libcodec2-0.8.1,
       libcodec2-dev,
-      libasound2,
       libasound2-dev,
-      libjpeg62-turbo,
       libjpeg62-turbo-dev,
-      libconfig++9v5,
       libconfig++-dev,
       qt5-qmake,
       qt5-default,
       qtbase5-dev,
-      libqt5core5a,
-      libqt5gui5,
-      libqt5network5,
-      libqt5sql5,
       qtmultimedia5-dev,
-      libqt5multimediawidgets5,
       libqt5multimedia5-plugins,
-      libqt5multimedia5
 
 Package: qradiolink
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},
-      gnuradio-dev,
       gr-osmosdr,
       gnuradio,
-      libvolk1-dev,
-      libvolk1-bin,
       libftdi1,
-      libftdi-dev,
       libprotobuf17,
-      libprotobuf-dev,
       libopus0,
-      libopus-dev,
       libspeexdsp1,
-      libspeexdsp-dev,
       libpulse0,
-      libpulse-dev,
       libcodec2-0.8.1,
-      libcodec2-dev,
       libasound2,
-      libasound2-dev,
       libjpeg62-turbo,
-      libjpeg62-turbo-dev,
       libconfig++9v5,
-      libconfig++-dev,
-      qt5-qmake,
       qt5-default,
-      qtbase5-dev,
       libqt5core5a,
       libqt5gui5,
       libqt5network5,
       libqt5sql5,
-      qtmultimedia5-dev,
       libqt5multimediawidgets5,
       libqt5multimedia5-plugins,
       libqt5multimedia5
-Description: Gnuradio SDR wrapper
+
+Description: Multimode SDR transceiver for GNU radio
+QRadioLink is a GNU/Linux software defined radio VOIP (radio over IP)
+transceiver application using Internet for communication, built on
+top of GNU radio, which allows experimenting with software defined
+radio hardware using different digital and analog radio signals and a
+Qt5 user interface.
+.
+Its primary purpose is educational, but it can also be customized for
+low power data communications on various ISM frequency bands. It can
+also be used as a low power amateur radio SDR transceiver for
+demonstrating radio communications to children at schools.

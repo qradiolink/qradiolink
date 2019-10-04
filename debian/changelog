@@ -6,6 +6,9 @@ qradiolink (0.8.0-3) UNRELEASED; urgency=medium
   * Channel memories
 
 
+ -- Adrian Musceac <kantooon@gmail.com>  Sat, 2 Oct 2019 23:00:00 +0300
+
+  
 qradiolink (0.8.0-2) UNRELEASED; urgency=medium
 
   [ Adrian Musceac ]
@@ -16,6 +19,9 @@ qradiolink (0.8.0-2) UNRELEASED; urgency=medium
   * Base release for Debian Buster
 
 
+ -- Adrian Musceac <kantooon@gmail.com>  Sat, 19 Sep 2019 23:00:00 +0300
+
+
 qradiolink (0.8.0-rc3) UNRELEASED; urgency=medium
 
   [ Adrian Musceac ]
@@ -24,6 +30,9 @@ qradiolink (0.8.0-rc3) UNRELEASED; urgency=medium
   * Fixed segfaults in libspeexdsp
   * VOX and VOIP forwarding use a different mechanism now
   * Audio compressor re-enabled
+
+
+ -- Adrian Musceac <kantooon@gmail.com>  Sat, 7 Sep 2019 23:00:00 +0300
 
 
 qradiolink (0.8.0-rc2) RELEASED; urgency=medium
@@ -40,6 +49,9 @@ qradiolink (0.8.0-rc2) RELEASED; urgency=medium
   * Display FPS configurable from 5 FPS to 50 FPS
   * Options to improve CPU performance (toggle on/off FFT and constellation)
 
+  
+ -- Adrian Musceac <kantooon@gmail.com>  Wed, 25 Aug 2019 23:00:00 +0300
+
 
 qradiolink (0.8.0-rc1) RELEASED; urgency=medium
 
@@ -55,7 +67,7 @@ qradiolink (0.8.0-rc1) RELEASED; urgency=medium
   * Options to improve CPU performance (toggle on/off FFT and constellation)
 
 
- -- Adrian Musceac <kantooon@gmail.com>  Wed, 25 Jul 2018 23:00:00 +0300
+ -- Adrian Musceac <kantooon@gmail.com>  Wed, 25 Aug 2019 23:00:00 +0300
 
 
 qradiolink (0.5.2-1) UNRELEASED; urgency=medium
