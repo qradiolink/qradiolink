@@ -11,7 +11,12 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = qradiolink
 TEMPLATE = app
 
-CONFIG  += qt thread
+CONFIG  += qt thread qtaudio
+
+#QMAKE_CXXFLAGS += -Werror
+QMAKE_CXXFLAGS += $$(CXXFLAGS)
+QMAKE_CFLAGS += $$(CFLAGS)
+QMAKE_LFLAGS += $$(LDFLAGS)
 
 message($$QMAKESPEC)
 
@@ -29,20 +34,22 @@ CONFIG(opengl) {
 CONFIG(qtaudio) {
     message(Building with Qt audio support.)
     DEFINES += USE_QT_AUDIO
+    SOURCES += video/imagecapture.cpp
+    HEADERS += video/imagecapture.h
 } else {
     message(Building without Qt audio support)
+    SOURCES += audio/audiointerface.cpp \
+    HEADERS += audio/audiointerface.h
+    LIBS += -lpulse-simple -lpulse
 }
 
-#QMAKE_CXXFLAGS += -Werror
-QMAKE_CXXFLAGS += $$(CXXFLAGS)
-QMAKE_CFLAGS += $$(CFLAGS)
-QMAKE_LFLAGS += $$(LDFLAGS)
 
 SOURCES += main.cpp\
         mainwindow.cpp\
         audio/audioencoder.cpp\
-        audio/audiointerface.cpp\
         audio/audioprocessor.cpp \
+        video/videoencoder.cpp \
+        video/videocapture.cpp \
         dtmfdecoder.cpp\
         mumbleclient.cpp\
         radioprotocol.cpp \
@@ -64,9 +71,6 @@ SOURCES += main.cpp\
         ext/compressor.c \
         ext/snd.c \
         ext/mem.c \
-        audio/alsaaudio.cpp \
-        video/videocapture.cpp \
-        video/videoencoder.cpp \
         net/netdevice.cpp \
     qtgui/freqctrl.cpp \
     qtgui/plotter.cpp \
@@ -97,15 +101,15 @@ SOURCES += main.cpp\
     gr/gr_audio_sink.cpp \
     gr/gr_4fsk_discriminator.cpp \
     gr/gr_const_sink.cpp \
-    gr/rx_fft.cpp \
-    video/imagecapture.cpp
+    gr/rx_fft.cpp
+
 
 
 
 HEADERS  += mainwindow.h\
         audio/audioencoder.h\
-        audio/audiointerface.h\
         audio/audioprocessor.h \
+        video/videoencoder.h \
         radioprotocol.h \
         audiowriter.h \
         audioreader.h \
@@ -130,10 +134,8 @@ HEADERS  += mainwindow.h\
         ext/snd.h \
         ext/mem.h \
         ext/compressor.h \
-        video/videoencoder.h \
         net/netdevice.h \
         radiocontroller.h \
-        audio/alsaaudio.h \
     qtgui/freqctrl.h \
     qtgui/plotter.h \
     gr/gr_modem.h \
@@ -164,8 +166,8 @@ HEADERS  += mainwindow.h\
     gr/gr_audio_sink.h \
     gr/gr_4fsk_discriminator.h \
     gr/gr_const_sink.h \
-    gr/modem_types.h \
-    video/imagecapture.h
+    gr/modem_types.h
+
 
 
 
@@ -181,9 +183,8 @@ LIBS += -lgnuradio-pmt -lgnuradio-audio -lgnuradio-analog -lgnuradio-blocks -lgn
         -lboost_thread$$BOOST_SUFFIX -lboost_system$$BOOST_SUFFIX
 LIBS += -lrt  # need to include on some distros
 
-LIBS += -lprotobuf -lopus -lpulse-simple -lpulse -lcodec2 -lasound -ljpeg -lconfig++ -lspeexdsp -lftdi
+LIBS += -lprotobuf -lopus -lcodec2 -ljpeg -lconfig++ -lspeexdsp -lftdi
                     #-lFestival -lestbase -leststring -lestools
-#INCLUDEPATH += /usr/include/speech_tools
 
 
 RESOURCES += resources.qrc

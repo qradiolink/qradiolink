@@ -43,7 +43,6 @@
 #include "station.h"
 #include "audio/audioencoder.h"
 #include "video/videoencoder.h"
-#include "audio/alsaaudio.h"
 #include "gr/gr_modem.h"
 #include "net/netdevice.h"
 
@@ -177,6 +176,7 @@ private:
     void getRSSI();
     void setRelays(bool transmitting);
     void memoryScan(bool receiving, bool wait_for_timer=true);
+    void processVOIPQueue();
 
     // FIXME: inflation of members
     Settings *_settings;
@@ -263,7 +263,6 @@ private:
     qint64 _carrier_offset;
     int _fft_poll_time;
 
-    void processVOIPQueue();
 };
 
 #endif // RADIOOP_H

@@ -55,7 +55,9 @@ void ImageCapture::deinit()
 
 void ImageCapture::capture_image(unsigned char *frame, int &len)
 {
+    _camera->searchAndLock();
     _capture->capture();
+    _camera->unlock();
 }
 
 void ImageCapture::process_image()
