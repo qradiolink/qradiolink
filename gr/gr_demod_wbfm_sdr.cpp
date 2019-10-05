@@ -34,7 +34,7 @@ gr_demod_wbfm_sdr::gr_demod_wbfm_sdr(std::vector<int>signature, int sps, int sam
                       gr::io_signature::make (1, 1, sizeof (gr_complex)),
                       gr::io_signature::makev (2, 2, signature))
 {
-
+    (void) sps;
     _target_samp_rate = 200000;
 
     _samp_rate = samp_rate;

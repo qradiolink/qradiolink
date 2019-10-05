@@ -39,14 +39,12 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
 
     int decimation;
     int interpolation;
-    int filt_bandwidth;
     if(sps > 4 && sps < 125)
     {
         interpolation = 1;
         decimation = 25;
         _samples_per_symbol = sps*4/25;
         _target_samp_rate = 40000;
-        filt_bandwidth = 5000;
     }
     else if(sps >= 125)
     {
@@ -54,7 +52,6 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
         decimation = 100;
         _samples_per_symbol = sps/25;
         _target_samp_rate = 10000;
-        filt_bandwidth = 2000;
     }
     else
     {
@@ -62,7 +59,6 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
         decimation = 2;
         _samples_per_symbol = sps;
         _target_samp_rate = 500000;
-        filt_bandwidth = 50000;
     }
     _samp_rate =samp_rate;
     _carrier_freq = carrier_freq;

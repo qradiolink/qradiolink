@@ -178,7 +178,7 @@ FORMS    += mainwindow.ui
 LIBS += -lgnuradio-pmt -lgnuradio-audio -lgnuradio-analog -lgnuradio-blocks -lgnuradio-fft -lgnuradio-vocoder \
         -lgnuradio-osmosdr -lvolk \
         -lgnuradio-blocks -lgnuradio-filter -lgnuradio-digital -lgnuradio-runtime -lgnuradio-fec \
-        -lboost_thread$$BOOST_SUFFIX -lboost_system$$BOOST_SUFFIX -lboost_program_options$$BOOST_SUFFIX
+        -lboost_thread$$BOOST_SUFFIX -lboost_system$$BOOST_SUFFIX
 LIBS += -lrt  # need to include on some distros
 
 LIBS += -lprotobuf -lopus -lpulse-simple -lpulse -lcodec2 -lasound -ljpeg -lconfig++ -lspeexdsp -lftdi
