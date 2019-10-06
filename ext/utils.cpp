@@ -71,8 +71,8 @@ void buildFilterWidthList(std::vector<std::complex<int>>* filter_widths, std::ve
     filter_widths->push_back(std::complex<int>(-5000, 5000));  // FM
     filter_widths->push_back(std::complex<int>(-2500, 2500));  // NBFM
     filter_widths->push_back(std::complex<int>(-100000, 100000));  // WFM
-    filter_widths->push_back(std::complex<int>(-1, 2500)); // USB
-    filter_widths->push_back(std::complex<int>(-2500, 1)); // LSB
+    filter_widths->push_back(std::complex<int>(100, 2700)); // USB
+    filter_widths->push_back(std::complex<int>(-2700, -100)); // LSB
     filter_widths->push_back(std::complex<int>(-1, 2500)); // FreeDV1600 USB
     filter_widths->push_back(std::complex<int>(-1, 2500)); // FreeDV700C USB
     filter_widths->push_back(std::complex<int>(-1, 2500)); // FreeDV800XA USB

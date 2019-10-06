@@ -63,8 +63,8 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
     _qpsk_10k = make_gr_mod_qpsk_sdr(100, 1000000, 1700, 6500);
     _qpsk_250k = make_gr_mod_qpsk_sdr(4, 1000000, 1700, 160000);
     _qpsk_video = make_gr_mod_qpsk_sdr(4, 1000000, 1700, 160000);
-    _usb = make_gr_mod_ssb_sdr(0, 1000000, 1700, 2500);
-    _lsb = make_gr_mod_ssb_sdr(1, 1000000, 1700, 2500);
+    _usb = make_gr_mod_ssb_sdr(0, 1000000, 1700, 2700);
+    _lsb = make_gr_mod_ssb_sdr(1, 1000000, 1700, 2700);
     _freedv_tx1600_usb = make_gr_mod_freedv_sdr(125, 1000000, 1700, 2500, 200, gr::vocoder::freedv_api::MODE_1600, 0);
 
     int version = atoi(gr::minor_version().c_str());
