@@ -127,6 +127,7 @@ public slots:
     void editMemoryChannel(QTableWidgetItem* item);
     void startMemoryScan(bool value);
     void changeFilterWidth(int low, int up);
+    void setAudioCompressor(bool value);
 
 
 signals:
@@ -171,6 +172,7 @@ signals:
     void setWaterfallFPS(int);
     void setSampleRate(int);
     void newFilterWidth(int);
+    void enableAudioCompressor(bool value);
 
 
 public:

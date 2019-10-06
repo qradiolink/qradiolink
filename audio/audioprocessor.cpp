@@ -58,8 +58,8 @@ AudioProcessor::AudioProcessor(QObject *parent) : QObject(parent)
                   8000, // audio rate
                   0,   // audio boost
                   -35,  // kick in (dB)
-                  40,   // knee
-                  30,   // inverse scale
+                  20,   // knee
+                  20,   // inverse scale
                   0.009f,   // attack
                   0.125f    // release
                   );
@@ -67,8 +67,8 @@ AudioProcessor::AudioProcessor(QObject *parent) : QObject(parent)
                   8000, // audio rate
                   0,   // audio boost
                   -35,  // kick in (dB)
-                  40,   // knee
-                  40,   // inverse scale
+                  20,   // knee
+                  20,   // inverse scale
                   0.001f,   // attack
                   0.125f    // release
                   );

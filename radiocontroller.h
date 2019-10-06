@@ -154,6 +154,7 @@ public slots:
     void setFFTSize(int size);
     void setFFTPollTime(int fps);
     void setRxSampleRate(int samp_rate);
+    void enableAudioCompressor(bool value);
 
 private:
     void readConfig(std::string &rx_device_args, std::string &tx_device_args,
@@ -228,6 +229,7 @@ private:
     bool _constellation_enabled;
     bool _rssi_enabled;
     bool _duplex_enabled;
+    bool _audio_compressor_enabled;
 
 
     QString _text_out;

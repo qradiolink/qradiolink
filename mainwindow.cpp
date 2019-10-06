@@ -118,6 +118,7 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     QObject::connect(ui->peakDetectCheckBox,SIGNAL(toggled(bool)),this,SLOT(setPeakDetect(bool)));
     QObject::connect(ui->fpsBox,SIGNAL(currentIndexChanged(int)),this,SLOT(newWaterfallFPS()));
     QObject::connect(ui->sampleRateBox,SIGNAL(currentIndexChanged(int)),this,SLOT(updateSampleRate()));
+    QObject::connect(ui->checkBoxAudioCompressor,SIGNAL(toggled(bool)),this,SLOT(setAudioCompressor(bool)));
 
 
     QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
@@ -214,6 +215,7 @@ void MainWindow::initSettings()
     //setFFTRange(1);
     setEnabledFFT((bool)_settings->show_fft);
     setEnabledDuplex((bool) _settings->enable_duplex);
+    setAudioCompressor((bool) _settings->audio_compressor);
     _range_set = false;
     ui->showConstellationButton->setChecked(_settings->show_constellation);
     showConstellation(_settings->show_constellation);
@@ -410,6 +412,7 @@ void MainWindow::readConfig()
     ui->lineEditScanStep->setText(QString::number(_settings->scan_step));
     ui->fftEnableCheckBox->setChecked((bool)_settings->show_fft);
     ui->duplexOpButton->setChecked((bool) _settings->enable_duplex);
+    ui->checkBoxAudioCompressor->setChecked((bool)_settings->audio_compressor);
 
 }
 
@@ -1259,4 +1262,10 @@ void MainWindow::changeFilterWidth(int low, int up)
             emit newFilterWidth(abs_width);
         }
     }
+}
+
+void MainWindow::setAudioCompressor(bool value)
+{
+    _settings->audio_compressor = (int)value;
+     emit enableAudioCompressor(value);
 }

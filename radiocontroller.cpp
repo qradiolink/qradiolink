@@ -55,6 +55,7 @@ RadioController::RadioController(Settings *settings, QObject *parent) :
     _tx_started = false;
     _voip_enabled = false;
     _vox_enabled = false;
+    _audio_compressor_enabled = false;
     _voip_forwarding = false;
     _last_voiced_frame_timer.start();
 
@@ -394,12 +395,12 @@ void RadioController::updateInputAudioStream()
             (_tx_mode == gr_modem_types::ModemType4FSK20000))
     {
         audio_mode = AudioProcessor::AUDIO_MODE_OPUS;
-        emit setAudioReadMode(true, true, audio_mode);
+        emit setAudioReadMode(true, _audio_compressor_enabled, audio_mode);
     }
     else
     {
         audio_mode = AudioProcessor::AUDIO_MODE_ANALOG;
-        emit setAudioReadMode(true, false, audio_mode);
+        emit setAudioReadMode(true, _audio_compressor_enabled, audio_mode);
     }
 }
 
@@ -1001,7 +1002,7 @@ void RadioController::receiveDigitalAudio(unsigned char *data, int size)
         }
         else if(!_voip_forwarding)
         {
-            emit writePCM(audio_out,samples*sizeof(short), true, audio_mode);
+            emit writePCM(audio_out,samples*sizeof(short), _audio_compressor_enabled, audio_mode);
         }
     }
 }
@@ -1793,7 +1794,10 @@ void RadioController::setFFTSize(int size)
 
 }
 
-
+void RadioController::enableAudioCompressor(bool value)
+{
+    _audio_compressor_enabled = value;
+}
 
 void RadioController::setVolume(int value)
 {

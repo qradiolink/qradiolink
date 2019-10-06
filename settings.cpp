@@ -340,6 +340,14 @@ void Settings::readConfig()
     {
         enable_duplex = 0;
     }
+    try
+    {
+        audio_compressor = cfg.lookup("audio_compressor");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        audio_compressor = 0;
+    }
 
 }
 
@@ -379,6 +387,7 @@ void Settings::saveConfig()
     root.add("enable_duplex",libconfig::Setting::TypeInt) = enable_duplex;
     root.add("fft_size",libconfig::Setting::TypeInt) = fft_size;
     root.add("waterfall_fps",libconfig::Setting::TypeInt) = waterfall_fps;
+    root.add("audio_compressor",libconfig::Setting::TypeInt) = audio_compressor;
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());

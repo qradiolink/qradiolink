@@ -47,6 +47,7 @@ public:
     int fft_size;
     int waterfall_fps;
     int show_fft;
+    int audio_compressor;
     QString audio_output_device;
     QString audio_input_device;
 
