@@ -84,7 +84,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
                 constellation->points(),pre_diff_code,4,2,2,1,1,const_map);
     */
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _target_samp_rate/2, _filter_width*10,
+    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _target_samp_rate/2, _target_samp_rate/2,
                                                            gr::filter::firdes::WIN_BLACKMAN_HARRIS);
 
     _resampler = gr::filter::rational_resampler_base_ccf::make(interpolation, decimation, taps);
