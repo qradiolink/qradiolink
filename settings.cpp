@@ -348,6 +348,14 @@ void Settings::readConfig()
     {
         audio_compressor = 0;
     }
+    try
+    {
+        enable_relays = cfg.lookup("enable_relays");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        enable_relays = 0;
+    }
 
 }
 
@@ -388,6 +396,7 @@ void Settings::saveConfig()
     root.add("fft_size",libconfig::Setting::TypeInt) = fft_size;
     root.add("waterfall_fps",libconfig::Setting::TypeInt) = waterfall_fps;
     root.add("audio_compressor",libconfig::Setting::TypeInt) = audio_compressor;
+    root.add("enable_relays",libconfig::Setting::TypeInt) = enable_relays;
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());

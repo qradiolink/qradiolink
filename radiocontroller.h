@@ -154,6 +154,7 @@ public slots:
     void setFFTPollTime(int fps);
     void setRxSampleRate(int samp_rate);
     void enableAudioCompressor(bool value);
+    void enableRelays(bool value);
 
 private:
     void readConfig(std::string &rx_device_args, std::string &tx_device_args,
@@ -177,6 +178,7 @@ private:
     void setRelays(bool transmitting);
     void memoryScan(bool receiving, bool wait_for_timer=true);
     void processVOIPToRadioQueue();
+
 
     // FIXME: inflation of members
     Settings *_settings;
@@ -229,6 +231,7 @@ private:
     bool _rssi_enabled;
     bool _duplex_enabled;
     bool _audio_compressor_enabled;
+    bool _relays_enabled;
 
 
     QString _text_out;

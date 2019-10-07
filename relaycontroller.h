@@ -31,6 +31,8 @@ public:
 signals:
 
 public slots:
+    void init();
+    void deinit();
     int enableRelay(int relay_number);
     int disableRelay(int relay_number);
 

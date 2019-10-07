@@ -119,6 +119,7 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     QObject::connect(ui->fpsBox,SIGNAL(currentIndexChanged(int)),this,SLOT(newWaterfallFPS()));
     QObject::connect(ui->sampleRateBox,SIGNAL(currentIndexChanged(int)),this,SLOT(updateSampleRate()));
     QObject::connect(ui->checkBoxAudioCompressor,SIGNAL(toggled(bool)),this,SLOT(setAudioCompressor(bool)));
+    QObject::connect(ui->checkBoxRelays,SIGNAL(toggled(bool)),this,SLOT(setRelays(bool)));
 
 
     QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
@@ -224,7 +225,7 @@ void MainWindow::initSettings()
     toggleRxMode(_settings->rx_mode);
     toggleTxMode(_settings->tx_mode);
     setTxVolumeDisplay(_settings->tx_volume);
-
+    setRelays((bool)_settings->enable_relays);
 }
 
 MainWindow::~MainWindow()
@@ -413,6 +414,7 @@ void MainWindow::readConfig()
     ui->fftEnableCheckBox->setChecked((bool)_settings->show_fft);
     ui->duplexOpButton->setChecked((bool) _settings->enable_duplex);
     ui->checkBoxAudioCompressor->setChecked((bool)_settings->audio_compressor);
+    ui->checkBoxRelays->setChecked((bool)_settings->enable_relays);
 
 }
 
@@ -581,6 +583,12 @@ void MainWindow::editMemoryChannel(QTableWidgetItem* item)
         break;
     case 2:
         chan->tx_shift = item->text().toInt();
+        break;
+    case 3:
+        chan->rx_mode = item->text().toInt();
+        break;
+    case 4:
+        chan->tx_mode = item->text().toInt();
         break;
     }
 }
@@ -1268,4 +1276,10 @@ void MainWindow::setAudioCompressor(bool value)
 {
     _settings->audio_compressor = (int)value;
      emit enableAudioCompressor(value);
+}
+
+void MainWindow::setRelays(bool value)
+{
+    _settings->enable_relays = (int) value;
+    emit enableRelays(value);
 }

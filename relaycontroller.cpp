@@ -18,12 +18,22 @@
 
 RelayController::RelayController(QObject *parent) : QObject(parent)
 {
-
     _ftdi_relay = 0;
     _ftdi_relay_enabled = false;
     _relay_mask = new unsigned char[1];
     memset(_relay_mask,0,1);
+}
 
+RelayController::~RelayController()
+{
+    delete[] _relay_mask;
+    deinit();
+}
+
+void RelayController::init()
+{
+    if(_ftdi_relay_enabled)
+        return;
     if ((_ftdi_relay = ftdi_new()) == 0)
     {
         std::cerr <<  "Could not open FTDI context" << std::endl;
@@ -42,7 +52,7 @@ RelayController::RelayController(QObject *parent) : QObject(parent)
     _ftdi_relay_enabled = true;
 }
 
-RelayController::~RelayController()
+void RelayController::deinit()
 {
     if(_ftdi_relay_enabled)
     {
@@ -50,7 +60,6 @@ RelayController::~RelayController()
         ftdi_usb_close(_ftdi_relay);
         ftdi_free(_ftdi_relay);
     }
-    delete[] _relay_mask;
 }
 
 int RelayController::enableRelay(int relay_number)

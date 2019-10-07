@@ -128,6 +128,7 @@ public slots:
     void startMemoryScan(bool value);
     void changeFilterWidth(int low, int up);
     void setAudioCompressor(bool value);
+    void setRelays(bool value);
 
 
 signals:
@@ -173,6 +174,7 @@ signals:
     void setSampleRate(int);
     void newFilterWidth(int);
     void enableAudioCompressor(bool value);
+    void enableRelays(bool value);
 
 
 public:

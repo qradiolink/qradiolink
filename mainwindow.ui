@@ -96,7 +96,7 @@
 </string>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>3</number>
         </property>
         <property name="iconSize">
          <size>
@@ -2436,6 +2436,13 @@ Requires restart</string>
            </item>
            <item row="7" column="3">
             <widget class="QComboBox" name="audioOutputComboBox"/>
+           </item>
+           <item row="9" column="3">
+            <widget class="QCheckBox" name="checkBoxRelays">
+             <property name="text">
+              <string>Enable relays</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>

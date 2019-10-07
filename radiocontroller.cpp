@@ -1844,6 +1844,19 @@ void RadioController::enableDuplex(bool value)
     _duplex_enabled = value;
 }
 
+void RadioController::enableRelays(bool value)
+{
+    _relays_enabled = value;
+    if(_relays_enabled)
+    {
+        _relay_controller->init();
+    }
+    else
+    {
+        _relay_controller->deinit();
+    }
+}
+
 void RadioController::scan(bool receiving, bool wait_for_timer)
 {
     bool increment_main_frequency = false;
