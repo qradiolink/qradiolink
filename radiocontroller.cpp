@@ -675,7 +675,7 @@ void RadioController::sendEndBeep()
 
     for(unsigned int i=0;i<_end_rec_sound->size()/sizeof(short);i++)
     {
-        pcm->push_back((float)samples[i] / 32767.0f * 0.6);
+        pcm->push_back((float)samples[i] / 32767.0f * 0.5);
     }
 
     emit pcmData(pcm);
@@ -689,6 +689,8 @@ void RadioController::sendChannels()
 
 void RadioController::setRelays(bool transmitting)
 {
+    if(!_relays_enabled)
+        return;
     int res;
     struct timespec time_to_sleep;
     if(transmitting)

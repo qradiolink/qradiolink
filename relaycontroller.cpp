@@ -59,6 +59,7 @@ void RelayController::deinit()
         ftdi_disable_bitbang(_ftdi_relay);
         ftdi_usb_close(_ftdi_relay);
         ftdi_free(_ftdi_relay);
+        _ftdi_relay_enabled = false;
     }
 }
 
