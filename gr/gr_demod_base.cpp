@@ -50,7 +50,6 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
     _single_pole_filter = gr::filter::single_pole_iir_filter_ff::make(0.04);
     _log10 = gr::blocks::nlog10_ff::make();
     _multiply_const_ff = gr::blocks::multiply_const_ff::make(10);
-    _agc2 = gr::analog::agc2_ff::make(100, 100, 1, 1);
     _moving_average = gr::blocks::moving_average_ff::make(2000,1,2000);
     _add_const = gr::blocks::add_const_ff::make(-80);
     _rotator = gr::blocks::rotator_cc::make(2*M_PI/1000000);

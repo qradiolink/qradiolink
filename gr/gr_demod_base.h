@@ -95,7 +95,6 @@ private:
     gr_audio_sink_sptr _audio_sink;
     gr_vector_sink_sptr _vector_sink;
     rx_fft_c_sptr _fft_sink;
-    gr::analog::agc2_ff::sptr _agc2;
     gr::blocks::message_debug::sptr _message_sink;
     gr::blocks::copy::sptr _rssi_valve;
     gr::blocks::copy::sptr _const_valve;

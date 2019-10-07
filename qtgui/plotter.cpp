@@ -70,7 +70,7 @@ int gettimeofday(struct timeval * tp, struct timezone * tzp)
 //#define PLOTTER_DEBUG
 
 
-#define CUR_CUT_DELTA 1		//cursor capture delta in pixels
+#define CUR_CUT_DELTA 2		//cursor capture delta in pixels
 
 #define FFT_MIN_DB     -180.f
 #define FFT_MAX_DB      30.f
@@ -173,7 +173,7 @@ CPlotter::CPlotter(QWidget *parent) : QFrame(parent)
     m_Span = 96000;
     m_SampleFreq = 96000;
 
-    m_HorDivs = 12;
+    m_HorDivs = 10;
     m_VerDivs = 6;
     m_PandMaxdB = m_WfMaxdB = 0.f;
     m_PandMindB = m_WfMindB = -150.f;
@@ -1350,11 +1350,11 @@ void CPlotter::drawOverlay()
     painter.setPen(QColor(PLOTTER_TEXT_COLOR));
     for (int i = 0; i <= m_HorDivs; i++)
     {
-        int tw = metrics.width(m_HDivText[i]) + 3;
+        int tw = metrics.width(m_HDivText[i]);
         x = (int)((float)i*pixperdiv + adjoffset);
         if (x > m_YAxisWidth)
         {
-            rect.setRect(x - tw/2, fLabelTop, tw, metrics.height());
+            rect.setRect(x - tw/2, fLabelTop, tw*2, metrics.height());
             painter.drawText(rect, Qt::AlignHCenter|Qt::AlignBottom, m_HDivText[i]);
         }
     }

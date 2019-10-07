@@ -177,7 +177,7 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     //ui->plotterFrame->setFftRate(10);
     ui->plotterFrame->setPercent2DScreen(50);
     ui->plotterFrame->setFftFill(true);
-    ui->plotterFrame->setFreqDigits(2);
+    ui->plotterFrame->setFreqDigits(3);
     ui->plotterFrame->setTooltipsEnabled(true);
     ui->plotterFrame->setClickResolution(1);
     ui->plotterFrame->setFftRange(-120.0,-30.0);
