@@ -30,6 +30,7 @@
 #include <gnuradio/blocks/multiply_const_ff.h>
 #include <gnuradio/blocks/multiply_ff.h>
 #include <gnuradio/analog/sig_source_f.h>
+#include <gnuradio/analog/rail_ff.h>
 
 
 class gr_mod_nbfm_sdr;
@@ -59,6 +60,7 @@ private:
     gr::filter::fft_filter_ccf::sptr _filter;
     gr::analog::sig_source_f::sptr _signal_source;
     gr::blocks::multiply_ff::sptr _multiply;
+    gr::analog::rail_ff::sptr _rail;
 
 
     int _samp_rate;

@@ -24,6 +24,7 @@
 #include <gnuradio/filter/rational_resampler_base_ccf.h>
 #include <gnuradio/analog/pwr_squelch_cc.h>
 #include <gnuradio/filter/fft_filter_ccc.h>
+#include <gnuradio/filter/fft_filter_fff.h>
 #include <gnuradio/blocks/complex_to_real.h>
 #include <gnuradio/blocks/multiply_const_ff.h>
 #include <gnuradio/analog/rail_ff.h>
@@ -50,6 +51,7 @@ private:
     gr::analog::pwr_squelch_cc::sptr _squelch;
     gr::filter::fft_filter_ccc::sptr _filter_usb;
     gr::filter::fft_filter_ccc::sptr _filter_lsb;
+    gr::filter::fft_filter_fff::sptr _audio_filter;
     gr::analog::agc2_cc::sptr _agc;
     gr::analog::feedforward_agc_cc::sptr _feed_forward_agc;
     gr::blocks::complex_to_real::sptr _complex_to_real;

@@ -36,8 +36,8 @@ gr_mod_nbfm_sdr::gr_mod_nbfm_sdr(int sps, int samp_rate, int carrier_freq,
     _filter_width = filter_width;
 
     _fm_modulator = gr::analog::frequency_modulator_fc::make(4*M_PI*_filter_width/target_samp_rate);
-
-    _audio_amplify = gr::blocks::multiply_const_ff::make(0.8,1); // overmodulating?
+    _rail = gr::analog::rail_ff::make(-0.98, 0.98);
+    _audio_amplify = gr::blocks::multiply_const_ff::make(0.98,1);
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::band_pass(
                     1, target_samp_rate, 250, 3700, 600, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
@@ -56,11 +56,12 @@ gr_mod_nbfm_sdr::gr_mod_nbfm_sdr(int sps, int samp_rate, int carrier_freq,
     _amplify = gr::blocks::multiply_const_cc::make(0.8,1);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
     _filter = gr::filter::fft_filter_ccf::make(
-                1,gr::filter::firdes::low_pass(
-                    1, _samp_rate, _filter_width, _filter_width, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+                1,gr::filter::firdes::low_pass_2(
+                    1, _samp_rate, _filter_width, 1200, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
 
 
-    connect(self(),0,_audio_filter,0);
+    connect(self(),0,_rail,0);
+    connect(_rail,0,_audio_filter,0);
     connect(_audio_filter,0,_audio_amplify,0);
     connect(_audio_amplify,0,_emphasis_filter,0);
     connect(_emphasis_filter,0,_fm_modulator,0);
@@ -81,6 +82,7 @@ void gr_mod_nbfm_sdr::set_ctcss(float value)
 {
     if(value == 0)
     {
+        _audio_amplify->set_k(0.98);
         try {
             disconnect(_emphasis_filter,0,_add,0);
             disconnect(_add,0,_fm_modulator,0);
@@ -93,6 +95,7 @@ void gr_mod_nbfm_sdr::set_ctcss(float value)
     }
     else
     {
+        _audio_amplify->set_k(0.88);
         _tone_source->set_frequency(value);
         try {
             disconnect(_emphasis_filter,0,_fm_modulator,0);

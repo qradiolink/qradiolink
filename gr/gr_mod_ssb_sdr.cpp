@@ -39,8 +39,8 @@ gr_mod_ssb_sdr::gr_mod_ssb_sdr(int sps, int samp_rate, int carrier_freq,
     _agc = gr::analog::agc2_ff::make(1e-2, 1e-3, 0.95, 2);
     _rail = gr::analog::rail_ff::make(-0.95, 0.95);
     _audio_filter = gr::filter::fft_filter_fff::make(
-                1,gr::filter::firdes::band_pass(
-                    1, target_samp_rate, 200, _filter_width, 150, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+                1,gr::filter::firdes::band_pass_2(
+                    1, target_samp_rate, 150, _filter_width, 150, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
     static const float coeff[] =  {-0.026316914707422256, -0.2512197494506836, 1.5501943826675415,
                                    -0.2512197494506836, -0.026316914707422256};
     std::vector<float> emph_taps(coeff, coeff + sizeof(coeff) / sizeof(coeff[0]) );
@@ -55,10 +55,10 @@ gr_mod_ssb_sdr::gr_mod_ssb_sdr(int sps, int samp_rate, int carrier_freq,
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
     _filter_usb = gr::filter::fft_filter_ccc::make(
                 1,gr::filter::firdes::complex_band_pass_2(
-                    1, target_samp_rate, 200, _filter_width, 150, 120, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+                    1, target_samp_rate, 150, _filter_width, 150, 120, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
     _filter_lsb = gr::filter::fft_filter_ccc::make(
                 1,gr::filter::firdes::complex_band_pass_2(
-                    1, target_samp_rate, -_filter_width, -200, 150, 120, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+                    1, target_samp_rate, -_filter_width, -150, 150, 120, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
 
 
 

@@ -29,6 +29,7 @@
 #include <gnuradio/blocks/add_ff.h>
 #include <gnuradio/analog/sig_source_f.h>
 #include <gnuradio/blocks/float_to_complex.h>
+#include <gnuradio/analog/rail_ff.h>
 
 class gr_mod_am_sdr;
 
@@ -55,6 +56,7 @@ private:
     gr::analog::sig_source_f::sptr _signal_source;
     gr::blocks::add_ff::sptr _add;
     gr::blocks::float_to_complex::sptr _float_to_complex;
+    gr::analog::rail_ff::sptr _rail;
 
 
     int _samp_rate;
