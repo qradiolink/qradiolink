@@ -103,7 +103,7 @@ void AudioReader::run()
         }
         else
         {
-            struct timespec time_to_sleep = {0, 5000000L };
+            struct timespec time_to_sleep = {0, 10000000L };
             nanosleep(&time_to_sleep, NULL);
         }
 

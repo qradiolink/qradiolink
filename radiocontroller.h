@@ -66,7 +66,7 @@ public:
                       QObject *parent = 0);
     ~RadioController();
 
-    void flushVoipBuffer();
+    void flushVoipToNetBuffer();
     void updateDataModemReset(bool transmitting, bool ptt_activated);
 
 signals:
@@ -145,7 +145,6 @@ public slots:
     void startTx();
     void stopTx();
     void endTx();
-    void updateFrequency();
     void toggleRepeat(bool value);
     void setChannels(ChannelList channels);
     void setStations(StationList list);
@@ -160,7 +159,7 @@ private:
     void readConfig(std::string &rx_device_args, std::string &tx_device_args,
                     std::string &rx_antenna, std::string &tx_antenna, int &rx_freq_corr,
                     int &tx_freq_corr, std::string &callsign, std::string &video_device);
-    int getFrameLength(unsigned char *data);
+    unsigned int getFrameLength(unsigned char *data);
     unsigned int getFrameCRC32(unsigned char *data);
 
 
@@ -177,7 +176,7 @@ private:
     void getRSSI();
     void setRelays(bool transmitting);
     void memoryScan(bool receiving, bool wait_for_timer=true);
-    void processVOIPQueue();
+    void processVOIPToRadioQueue();
 
     // FIXME: inflation of members
     Settings *_settings;

@@ -202,8 +202,8 @@ void RadioController::run()
         _mutex->unlock();
 
         QCoreApplication::processEvents();
-        flushVoipBuffer();
-        processVOIPQueue();
+        flushVoipToNetBuffer();
+        processVOIPToRadioQueue();
 
         int time = QDateTime::currentDateTime().toTime_t();
         if((time - last_ping_time) > 10)
@@ -388,7 +388,7 @@ void RadioController::updateInputAudioStream()
             (_tx_mode == gr_modem_types::ModemTypeBPSK1000))
     {
         audio_mode = AudioProcessor::AUDIO_MODE_CODEC2;
-        emit setAudioReadMode(true, true, audio_mode);
+        emit setAudioReadMode(true, _audio_compressor_enabled, audio_mode);
     }
     else if((_tx_mode == gr_modem_types::ModemTypeQPSK20000) ||
             (_tx_mode == gr_modem_types::ModemType2FSK20000) ||
@@ -404,7 +404,7 @@ void RadioController::updateInputAudioStream()
     }
 }
 
-void RadioController::flushVoipBuffer()
+void RadioController::flushVoipToNetBuffer()
 {
 
     /// Large size of frames (120 ms) helps Mumble client
@@ -422,7 +422,7 @@ void RadioController::flushVoipBuffer()
     }
 }
 
-void RadioController::processVOIPQueue()
+void RadioController::processVOIPToRadioQueue()
 {
     if(_voip_to_radio_queue->size() >= 320)
     {
@@ -443,7 +443,7 @@ void RadioController::processVOIPQueue()
         }
         else
         {
-            emit writePCM(pcm, 320*sizeof(short), true, AudioProcessor::AUDIO_MODE_OPUS);
+            emit writePCM(pcm, 320*sizeof(short), _audio_compressor_enabled, AudioProcessor::AUDIO_MODE_OPUS);
             audioFrameReceived();
         }
         _last_voiced_frame_timer.restart();
@@ -496,7 +496,6 @@ void RadioController::txAudio(short *audiobuffer, int audiobuffer_size, int vad,
 
         for(unsigned int i=0;i<audiobuffer_size/sizeof(short);i++)
         {
-            // FIXME: volume out?
             pcm->push_back((float)audiobuffer[i] / 32767.0f * _tx_volume);
         }
 
@@ -836,11 +835,6 @@ void RadioController::endTx()
     emit displayTransmitStatus(false);
 }
 
-void RadioController::updateFrequency()
-{
-
-}
-
 
 void RadioController::updateDataModemReset(bool transmitting, bool ptt_activated)
 {
@@ -1025,6 +1019,7 @@ void RadioController::receivePCMAudio(std::vector<float> *audio_data)
     }
     else
     {
+        /// Noise kills the compressor, so disabled
         emit writePCM(pcm, size*sizeof(short), false, AudioProcessor::AUDIO_MODE_ANALOG);
     }
     audio_data->clear();
@@ -1032,21 +1027,21 @@ void RadioController::receivePCMAudio(std::vector<float> *audio_data)
     audioFrameReceived();
 }
 
-int RadioController::getFrameLength(unsigned char *data)
+unsigned int RadioController::getFrameLength(unsigned char *data)
 {
-    int frame_size1;
-    int frame_size2;
-    int frame_size3;
+    unsigned int frame_size1;
+    unsigned int frame_size2;
+    unsigned int frame_size3;
 
     memcpy(&frame_size1, &data[0], 4);
     memcpy(&frame_size2, &data[4], 4);
     memcpy(&frame_size3, &data[8], 4);
     if(frame_size1 == frame_size2)
-        return (int)frame_size1;
+        return frame_size1;
     else if(frame_size1 == frame_size3)
-        return (int)frame_size1;
+        return frame_size1;
     else if(frame_size2 == frame_size3)
-        return (int)frame_size2;
+        return frame_size2;
     else
         return 0;
 }
@@ -1073,7 +1068,7 @@ unsigned int RadioController::getFrameCRC32(unsigned char *data)
 void RadioController::receiveVideoData(unsigned char *data, int size)
 {
     Q_UNUSED(size);
-    int frame_size = getFrameLength(data);
+    unsigned int frame_size = getFrameLength(data);
     unsigned int crc = getFrameCRC32(data);
     if(frame_size == 0)
     {
@@ -1123,13 +1118,8 @@ void RadioController::receiveVideoData(unsigned char *data, int size)
 void RadioController::receiveNetData(unsigned char *data, int size)
 {
     Q_UNUSED(size);
-    int frame_size = getFrameLength(data);
-    if(frame_size < 0)
-    {
-        dataFrameReceived();
-        delete[] data;
-        return;
-    }
+    unsigned int frame_size = getFrameLength(data);
+
     if((frame_size == 0) || (frame_size > 1500))
     {
         std::cerr << "received wrong frame size, dropping frame " << std::endl;
