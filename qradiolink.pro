@@ -11,7 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = qradiolink
 TEMPLATE = app
 
-CONFIG  += qt thread qtaudio
+CONFIG  += qt thread Q_AUDIO
 
 #QMAKE_CXXFLAGS += -Werror
 QMAKE_CXXFLAGS += $$(CXXFLAGS)
@@ -31,7 +31,7 @@ CONFIG(opengl) {
     message(Building without OpenGL support)
 }
 
-CONFIG(qtaudio) {
+CONFIG(Q_AUDIO) {
     message(Building with Qt audio support.)
     DEFINES += USE_QT_AUDIO
     SOURCES += video/imagecapture.cpp
