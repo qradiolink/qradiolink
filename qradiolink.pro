@@ -38,7 +38,7 @@ CONFIG(qtaudio) {
     HEADERS += video/imagecapture.h
 } else {
     message(Building without Qt audio support)
-    SOURCES += audio/audiointerface.cpp \
+    SOURCES += audio/audiointerface.cpp
     HEADERS += audio/audiointerface.h
     LIBS += -lpulse-simple -lpulse
 }
