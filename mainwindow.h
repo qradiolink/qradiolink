@@ -129,6 +129,7 @@ public slots:
     void changeFilterWidth(int low, int up);
     void setAudioCompressor(bool value);
     void setRelays(bool value);
+    void setRSSICalibration();
 
 
 signals:
@@ -175,6 +176,7 @@ signals:
     void newFilterWidth(int);
     void enableAudioCompressor(bool value);
     void enableRelays(bool value);
+    void calibrateRSSI(float value);
 
 
 public:

@@ -188,6 +188,7 @@ int main(int argc, char *argv[])
     QObject::connect(w,SIGNAL(newFilterWidth(int)),radio_op,SLOT(setFilterWidth(int)));
     QObject::connect(w,SIGNAL(enableAudioCompressor(bool)),radio_op,SLOT(enableAudioCompressor(bool)));
     QObject::connect(w,SIGNAL(enableRelays(bool)),radio_op,SLOT(enableRelays(bool)));
+    QObject::connect(w,SIGNAL(calibrateRSSI(float)), radio_op,SLOT(calibrateRSSI(float)));
 
 
     QObject::connect(radio_op, SIGNAL(setAudioReadMode(bool,bool,int)), audioreader, SLOT(setReadMode(bool,bool,int)));

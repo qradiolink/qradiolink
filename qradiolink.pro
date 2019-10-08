@@ -18,30 +18,30 @@ QMAKE_CXXFLAGS += $$(CXXFLAGS)
 QMAKE_CFLAGS += $$(CFLAGS)
 QMAKE_LFLAGS += $$(LDFLAGS)
 
-message($$QMAKESPEC)
+#message($$QMAKESPEC)
 
-linux-g++ {
-    message(Building for GNU/Linux)
-}
+#linux-g++ {
+#    message(Building for GNU/Linux)
+#}
 
-CONFIG(opengl) {
-    message(Building with OpenGL support.)
-    DEFINES += USE_OPENGL_PLOTTER
-} else {
-    message(Building without OpenGL support)
-}
+#CONFIG(opengl) {
+#    message(Building with OpenGL support.)
+#    DEFINES += USE_OPENGL_PLOTTER
+#} else {
+#    message(Building without OpenGL support)
+#}
 
-CONFIG(Q_AUDIO) {
-    message(Building with Qt audio support.)
-    DEFINES += USE_QT_AUDIO
-    SOURCES += video/imagecapture.cpp
-    HEADERS += video/imagecapture.h
-} else {
-    message(Building without Qt audio support)
-    SOURCES += audio/audiointerface.cpp
-    HEADERS += audio/audiointerface.h
-    LIBS += -lpulse-simple -lpulse
-}
+#CONFIG(qtaudio) {
+#    message(Building with Qt audio support.)
+#    DEFINES += USE_QT_AUDIO
+#    SOURCES += video/imagecapture.cpp
+#    HEADERS += video/imagecapture.h
+#} else {
+#    message(Building without Qt audio support)
+#    SOURCES += audio/audiointerface.cpp
+#    HEADERS += audio/audiointerface.h
+#    LIBS += -lpulse-simple -lpulse
+#}
 
 
 SOURCES += main.cpp\

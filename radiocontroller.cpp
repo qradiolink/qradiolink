@@ -1303,6 +1303,7 @@ void RadioController::toggleRX(bool value)
         _modem->setCarrierOffset(_carrier_offset);
         _modem->setSampRate(_rx_sample_rate);
         _modem->tune(_rx_frequency);
+        _modem->calibrateRSSI(_settings->rssi_calibration_value);
         _modem->startRX();
         _mutex->unlock();
 
@@ -1857,6 +1858,11 @@ void RadioController::enableRelays(bool value)
     {
         _relay_controller->deinit();
     }
+}
+
+void RadioController::calibrateRSSI(float value)
+{
+    _modem->calibrateRSSI(value);
 }
 
 void RadioController::scan(bool receiving, bool wait_for_timer)

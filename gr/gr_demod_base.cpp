@@ -795,3 +795,8 @@ void gr_demod_base::set_bandwidth_specific()
     }
     _osmosdr_source->set_bandwidth(_osmo_filter_bw);
 }
+
+void gr_demod_base::calibrate_rssi(float value)
+{
+    _add_const->set_k(value);
+}
