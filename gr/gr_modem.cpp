@@ -350,6 +350,12 @@ void gr_modem::enableRSSI(bool value)
         _gr_demod_base->enable_rssi(value);
 }
 
+void gr_modem::calibrateRSSI(float value)
+{
+    if(_gr_demod_base)
+        _gr_demod_base->calibrate_rssi(value);
+}
+
 void gr_modem::enableDemod(bool value)
 {
     if(_gr_demod_base)

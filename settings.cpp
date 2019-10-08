@@ -356,6 +356,14 @@ void Settings::readConfig()
     {
         enable_relays = 0;
     }
+    try
+    {
+        rssi_calibration_value = cfg.lookup("rssi_calibration_value");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        rssi_calibration_value = 0;
+    }
 
 }
 
@@ -397,6 +405,7 @@ void Settings::saveConfig()
     root.add("waterfall_fps",libconfig::Setting::TypeInt) = waterfall_fps;
     root.add("audio_compressor",libconfig::Setting::TypeInt) = audio_compressor;
     root.add("enable_relays",libconfig::Setting::TypeInt) = enable_relays;
+    root.add("rssi_calibration_value",libconfig::Setting::TypeInt) = rssi_calibration_value;
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());

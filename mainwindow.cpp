@@ -120,7 +120,7 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     QObject::connect(ui->sampleRateBox,SIGNAL(currentIndexChanged(int)),this,SLOT(updateSampleRate()));
     QObject::connect(ui->checkBoxAudioCompressor,SIGNAL(toggled(bool)),this,SLOT(setAudioCompressor(bool)));
     QObject::connect(ui->checkBoxRelays,SIGNAL(toggled(bool)),this,SLOT(setRelays(bool)));
-
+    QObject::connect(ui->rssiCalibrateButton,SIGNAL(clicked()),this,SLOT(setRSSICalibration()));
 
     QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
     QObject::connect(ui->plotterFrame,SIGNAL(pandapterRangeChanged(float,float)),ui->plotterFrame,SLOT(setWaterfallRange(float,float)));
@@ -226,6 +226,7 @@ void MainWindow::initSettings()
     toggleTxMode(_settings->tx_mode);
     setTxVolumeDisplay(_settings->tx_volume);
     setRelays((bool)_settings->enable_relays);
+    setRSSICalibration();
 }
 
 MainWindow::~MainWindow()
@@ -415,6 +416,7 @@ void MainWindow::readConfig()
     ui->duplexOpButton->setChecked((bool) _settings->enable_duplex);
     ui->checkBoxAudioCompressor->setChecked((bool)_settings->audio_compressor);
     ui->checkBoxRelays->setChecked((bool)_settings->enable_relays);
+    ui->rssiCalibrateEdit->setText(QString::number(_settings->rssi_calibration_value));
 
 }
 
@@ -1239,7 +1241,8 @@ void MainWindow::autoSquelch()
 {
     if(_rssi == 0)
         return;
-    int squelch = (int)_rssi + 50;
+    int calibration = ui->rssiCalibrateEdit->text().toInt();
+    int squelch = (int)_rssi + (abs(calibration) - 80) + 50;
     setSquelchDisplay(squelch);
     ui->rxSquelchDial->setValue(squelch);
 }
@@ -1282,4 +1285,11 @@ void MainWindow::setRelays(bool value)
 {
     _settings->enable_relays = (int) value;
     emit enableRelays(value);
+}
+
+void MainWindow::setRSSICalibration()
+{
+    int value = ui->rssiCalibrateEdit->text().toInt();
+    _settings->rssi_calibration_value = (int) value;
+    emit calibrateRSSI((float) value);
 }

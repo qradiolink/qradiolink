@@ -155,6 +155,7 @@ public slots:
     void setRxSampleRate(int samp_rate);
     void enableAudioCompressor(bool value);
     void enableRelays(bool value);
+    void calibrateRSSI(float value);
 
 private:
     void readConfig(std::string &rx_device_args, std::string &tx_device_args,

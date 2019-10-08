@@ -120,6 +120,7 @@ public slots:
     void enableGUIConst(bool value);
     void enableGUIFFT(bool value);
     void enableRSSI(bool value);
+    void calibrateRSSI(float value);
     void enableDemod(bool value);
     double getFreqGUI();
     void setRepeater(bool value);
