@@ -32,20 +32,25 @@ gr_mod_nbfm_sdr::gr_mod_nbfm_sdr(int sps, int samp_rate, int carrier_freq,
 
     _samp_rate =samp_rate;
     float target_samp_rate = 8000;
+    float if_samp_rate = 20000;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
 
-    _fm_modulator = gr::analog::frequency_modulator_fc::make(4*M_PI*_filter_width/target_samp_rate);
-    _rail = gr::analog::rail_ff::make(-0.98, 0.98);
-    _audio_amplify = gr::blocks::multiply_const_ff::make(0.98,1);
+    _fm_modulator = gr::analog::frequency_modulator_fc::make(4*M_PI*_filter_width/if_samp_rate);
+    _rail = gr::analog::rail_ff::make(-1, 1);
+    _audio_amplify = gr::blocks::multiply_const_ff::make(0.99,1);
     _audio_filter = gr::filter::fft_filter_fff::make(
-                1,gr::filter::firdes::band_pass(
-                    1, target_samp_rate, 250, 3700, 600, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+                1,gr::filter::firdes::band_pass_2(
+                    1, target_samp_rate, 250, 3800, 200, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
 
     static const float coeff[] =  {-0.026316914707422256, -0.2512197494506836, 1.5501943826675415,
                                    -0.2512197494506836, -0.026316914707422256};
     std::vector<float> emph_taps(coeff, coeff + sizeof(coeff) / sizeof(coeff[0]) );
     _emphasis_filter = gr::filter::fft_filter_fff::make(1,emph_taps);
+
+    std::vector<float> if_taps = gr::filter::firdes::low_pass(10, if_samp_rate * 4,
+                                                        _filter_width, _filter_width, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+    _audio_resampler = gr::filter::rational_resampler_base_fff::make(10,4, if_taps);
 
     _tone_source = gr::analog::sig_source_f::make(target_samp_rate,gr::analog::GR_COS_WAVE,88.5,0.1);
     _add = gr::blocks::add_ff::make();
@@ -64,7 +69,8 @@ gr_mod_nbfm_sdr::gr_mod_nbfm_sdr(int sps, int samp_rate, int carrier_freq,
     connect(_rail,0,_audio_filter,0);
     connect(_audio_filter,0,_audio_amplify,0);
     connect(_audio_amplify,0,_emphasis_filter,0);
-    connect(_emphasis_filter,0,_fm_modulator,0);
+    connect(_emphasis_filter,0,_audio_resampler,0);
+    connect(_audio_resampler,0,_fm_modulator,0);
     connect(_fm_modulator,0,_resampler,0);
     connect(_resampler,0,_amplify,0);
     connect(_amplify,0,_bb_gain,0);

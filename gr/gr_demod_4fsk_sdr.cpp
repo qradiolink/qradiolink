@@ -50,7 +50,7 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
         interpolation = 2;
         rs = 10000;
         bw = 4000;
-        gain_mu = 0.005;
+        gain_mu = 0.025;
         omega_rel_limit = 0.001;
     }
     if(sps == 125)

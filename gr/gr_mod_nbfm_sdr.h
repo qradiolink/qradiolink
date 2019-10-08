@@ -26,6 +26,7 @@
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/filter/fft_filter_fff.h>
 #include <gnuradio/filter/rational_resampler_base_ccf.h>
+#include <gnuradio/filter/rational_resampler_base_fff.h>
 #include <gnuradio/blocks/multiply_const_cc.h>
 #include <gnuradio/blocks/multiply_const_ff.h>
 #include <gnuradio/blocks/multiply_ff.h>
@@ -52,6 +53,7 @@ private:
     gr::analog::sig_source_f::sptr _tone_source;
     gr::blocks::add_ff::sptr _add;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
+    gr::filter::rational_resampler_base_fff::sptr _audio_resampler;
     gr::blocks::multiply_const_cc::sptr _amplify;
     gr::blocks::multiply_const_cc::sptr _bb_gain;
     gr::blocks::multiply_const_ff::sptr _audio_amplify;
