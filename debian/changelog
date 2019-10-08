@@ -1,3 +1,13 @@
+qradiolink (0.8.1-6) UNRELEASED; urgency=medium
+
+  [ Adrian Musceac ]
+  * AM, FM, SSB modulation improvement with compressor on
+  * Relay control is optional and configurable now
+
+
+ -- Adrian Musceac <kantooon@gmail.com>  Mon, 7 Oct 2019 23:00:00 +0300
+
+
 qradiolink (0.8.1-5) UNRELEASED; urgency=medium
 
   [ Adrian Musceac ]
@@ -6,7 +16,7 @@ qradiolink (0.8.1-5) UNRELEASED; urgency=medium
   * Audio compressor is an option now
 
 
- -- Adrian Musceac <kantooon@gmail.com>  Fri, 4 Oct 2019 23:00:00 +0300
+ -- Adrian Musceac <kantooon@gmail.com>  Mon, 7 Oct 2019 23:00:00 +0300
 
 
 qradiolink (0.8.1-4) UNRELEASED; urgency=medium
