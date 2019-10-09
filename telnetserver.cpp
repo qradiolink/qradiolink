@@ -21,23 +21,29 @@ static QString CRLF ="\r\n";
 TelnetServer::TelnetServer(Settings *settings, QObject *parent) :
     QObject(parent)
 {
+    _settings = settings;
+    _command_processor = new CommandProcessor(settings);
     _hostaddr = QHostAddress::Any;
     _stop=false;
     _server = new QTcpServer;
-    if(settings->control_port != 0)
-        _server->listen(_hostaddr,settings->control_port);
-    else
-        _server->listen(_hostaddr,CONTROL_PORT);
-    QObject::connect(_server,SIGNAL(newConnection()),this,SLOT(getConnection()));
-    qDebug() << "Telnet server init completed";
 }
 
 TelnetServer::~TelnetServer()
 {
     _server->close();
     delete _server;
-    qDebug() << "Telnet server exiting";
+    delete _command_processor;
 }
+
+void TelnetServer::start()
+{
+    if(_settings->control_port != 0)
+        _server->listen(_hostaddr,_settings->control_port);
+    else
+        _server->listen(_hostaddr,CONTROL_PORT);
+    QObject::connect(_server,SIGNAL(newConnection()),this,SLOT(getConnection()));
+}
+
 
 void TelnetServer::stop()
 {
@@ -56,11 +62,14 @@ void TelnetServer::getConnection()
 {
     // ok
     QTcpSocket *socket = _server->nextPendingConnection();
-    qDebug() << "Incoming connection" << socket->peerAddress().toString();
+    std::cout << "Incoming connection from: "
+              << socket->peerAddress().toString().toStdString()
+              << " port: " << socket->peerPort() << std::endl;
     if(socket->state() == QTcpSocket::ConnectedState)
-        qDebug() << "Connection established";
+        std::cout << "Connection established" << std::endl;
 
-    QObject::connect(socket,SIGNAL(error(QAbstractSocket::SocketError )),this,SLOT(connectionFailed(QAbstractSocket::SocketError)));
+    QObject::connect(socket,SIGNAL(error(QAbstractSocket::SocketError )),
+                     this,SLOT(connectionFailed(QAbstractSocket::SocketError)));
     QObject::connect(socket,SIGNAL(connected()),this,SLOT(connectionSuccess()));
     QObject::connect(socket,SIGNAL(readyRead()),this,SLOT(processData()));
     QObject::connect(socket, SIGNAL(disconnected()), socket, SLOT(deleteLater()));
@@ -74,7 +83,7 @@ void TelnetServer::connectionFailed(QAbstractSocket::SocketError error)
     Q_UNUSED(error);
     // ok
     QTcpSocket *socket = dynamic_cast<QTcpSocket*>(QObject::sender());
-    qDebug() << "Connection error: " << socket->errorString();
+    std::cerr << "Connection error: " << socket->errorString().toStdString() << std::endl;
     int i = _connected_clients.indexOf(socket);
     _connected_clients.remove(i);
 
@@ -83,7 +92,9 @@ void TelnetServer::connectionFailed(QAbstractSocket::SocketError error)
 void TelnetServer::connectionSuccess()
 {
     QTcpSocket *socket = dynamic_cast<QTcpSocket*>(QObject::sender());
-    qDebug() << "Connection established: " << socket->peerAddress().toString() << ":" << socket->peerPort();
+    std::cout << "Connection established with: "
+              << socket->peerAddress().toString().toStdString()
+              << ":" << socket->peerPort() << std::endl;
 }
 
 
@@ -92,11 +103,21 @@ void TelnetServer::processData()
 
     QTcpSocket *socket = dynamic_cast<QTcpSocket*>(QObject::sender());
     QByteArray data;
+    QElapsedTimer timer;
+    qint64 msec;
+    timer.start();
 
-    bool endOfLine = false;
-
-    while ((!endOfLine))
+    // FIXME: why the sequential read??!!!
+    while (true)
     {
+        msec = (quint64)timer.nsecsElapsed() / 1000000;
+        if(msec > 2)
+        {
+            std::cerr << "Receiving packet too large... Dropping." << std::endl;
+            _connected_clients.remove(_connected_clients.indexOf(socket));
+            socket->close(); // TODO: blacklist?
+            return;
+        }
         char ch;
         if(socket->bytesAvailable()>0)
         {
@@ -106,8 +127,13 @@ void TelnetServer::processData()
                 data.append(ch);
                 if (socket->bytesAvailable()==0)
                 {
-                    endOfLine = true;
+                    break;
                 }
+            }
+            else
+            {
+                std::cerr << "Server socket read error" << std::endl;
+                break;
             }
         }
         else
@@ -116,36 +142,74 @@ void TelnetServer::processData()
         }
     }
     qDebug() << "Message from: " << socket->peerAddress().toString();
-    QByteArray response = processCommand(data);
-    socket->write(response.data(),response.size());
+    QByteArray response = processCommand(data, socket);
+    if(response.length() > 0)
+    {
+        socket->write(response.data(),response.size());
+        socket->flush();
+    }
 
 }
 
-QByteArray TelnetServer::processCommand(QByteArray data)
+void TelnetServer::getCommandList(QByteArray &response)
 {
-    quint8 type = static_cast<quint8>(data.at(0));
-    quint8 size = static_cast<quint8>(data.at(1));
-    QByteArray command = data.remove(0,2);
-    if(size < 2)
+    QStringList available_commands = _command_processor->listAvailableCommands();
+    response.append("Available commands:\n");
+    for(int i=0;i<available_commands.length();i++)
     {
-        qDebug() << "Invalid command " << type;
-        return NULL;
+        response.append(available_commands.at(i));
     }
-    if(type == static_cast<quint8>(Parameters))
+}
+
+QByteArray TelnetServer::processCommand(QByteArray data, QTcpSocket *socket)
+{
+    /// sanity checks:
+    if(data.length() > 512)
     {
-        char bin_data[size+2];
-        return QByteArray(bin_data, size+2);
+        QByteArray response("");
+        std::cerr << "Received message to large (dropping) from: "
+                  << socket->peerAddress().toString().toStdString() << std::endl;
+        _connected_clients.remove(_connected_clients.indexOf(socket));
+        socket->close();
+        return response;
     }
-    else if(type == static_cast<quint8>(JoinConference))
+    if(data.length() < 3)
     {
-        return QByteArray(0);
+        QByteArray response("Command too short\n");
+        return response;
     }
-    else if(type == static_cast<quint8>(LeaveConference))
+    QRegularExpression re(
+                "[a-zA-Z]+\\s*[a-zA-Z0-9]*\\s*[a-zA-Z0-9]*\\s+[a-zA-Z0-9]*\\s*[a-zA-Z0-9]*\\s*");
+    QRegularExpressionValidator validator(re, 0);
+    QString message = QString::fromLocal8Bit(data);
+    int pos = 0;
+    if(QValidator::Acceptable != validator.validate(message, pos))
     {
-        return QByteArray(0);
+        QByteArray response("Command format is wrong\n");
+        getCommandList(response);
+        return response;
+    }
+
+    /// poked processor logic:
+    if(!_command_processor->validateCommand(message))
+    {
+        QByteArray response("Command not recognized\n");
+        getCommandList(response);
+        return response;
+    }
+
+    QString result = _command_processor->runCommand(message);
+    if(result != "")
+    {
+        QByteArray response;
+        response.append(result.toStdString().c_str());
+        response.append("\n");
+        return response;
     }
     else
     {
-        return QByteArray(0);
+        QByteArray response("Command not processed\n");
+        return response;
     }
+
 }

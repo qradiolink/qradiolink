@@ -16,12 +16,38 @@
 
 #include "commandprocessor.h"
 
-CommandProcessor::CommandProcessor(QObject *parent) : QObject(parent)
+CommandProcessor::CommandProcessor(Settings *settings, QObject *parent) : QObject(parent)
 {
-
+    _settings = settings;
+    _command_list = new QVector<command*>;
 }
 
 CommandProcessor::~CommandProcessor()
 {
+    for(int i=0;i<_command_list->length();i++)
+    {
+        delete _command_list->at(i);
+    }
+    _command_list->clear();
+    delete _command_list;
+}
 
+QStringList CommandProcessor::listAvailableCommands()
+{
+    QStringList list;
+    for(int i=0;i<_command_list->size();i++)
+    {
+        list.append(_command_list->at(i)->action);
+    }
+    return list;
+}
+
+bool CommandProcessor::validateCommand(QString message)
+{
+    return false;
+}
+
+QString CommandProcessor::runCommand(QString message)
+{
+    return "Command not recognized";
 }

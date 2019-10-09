@@ -23,15 +23,63 @@
 #include <QStringList>
 #include <QList>
 #include <QVector>
+#include "settings.h"
 
 class CommandProcessor : public QObject
 {
     Q_OBJECT
 public:
-    explicit CommandProcessor(QObject *parent = nullptr);
+    explicit CommandProcessor(Settings *settings, QObject *parent = nullptr);
     ~CommandProcessor();
+    QStringList listAvailableCommands();
+    bool validateCommand(QString message);
+    QString runCommand(QString message);
 
 signals:
+    // FIXME: duplicates main window signals
+    void startTransmission();
+    void endTransmission();
+    void sendText(QString text, bool repeat);
+    void toggleRX(bool value);
+    void toggleTX(bool value);
+    void tuneFreq(qint64 center_freq);
+    void tuneTxFreq(qint64 freq);
+    void changeTxShift(qint64 center_freq);
+    void fineTuneFreq(long center_freq);
+    void toggleRxModemMode(int value);
+    void toggleTxModemMode(int value);
+    void setTxPower(int value);
+    void setRxSensitivity(int value);
+    void setSquelch(int value);
+    void setVolume(int value);
+    void setTxVolume(int value);
+    void setRxCTCSS(float value);
+    void setTxCTCSS(float value);
+    void enableGUIConst(bool value);
+    void enableGUIFFT(bool value);
+    void enableRSSI(bool value);
+    void enableDuplex(bool value);
+    void startAutoTuneFreq(int step, int scan_direction);
+    void stopAutoTuneFreq();
+    //void startMemoryTune(RadioChannels* channels, int scan_direction);
+    void stopMemoryTune();
+    void usePTTForVOIP(bool value);
+    void setVOIPForwarding(bool value);
+    void setVox(bool value);
+    void connectToServer(QString server, unsigned port);
+    void disconnectFromServer();
+    void changeChannel(int id);
+    void setMute(bool value);
+    void toggleRepeat(bool value);
+    void stopRadio();
+    void setCarrierOffset(qint64 offset);
+    void newFFTSize(int);
+    void setWaterfallFPS(int);
+    void setSampleRate(int);
+    void newFilterWidth(int);
+    void enableAudioCompressor(bool value);
+    void enableRelays(bool value);
+    void calibrateRSSI(float value);
 
 public slots:
 
@@ -45,6 +93,9 @@ private:
         QString param3;
         QString param4;
     };
+
+    Settings *_settings;
+    QVector<command*> *_command_list;
 };
 
 #endif // COMMANDPROCESSOR_H

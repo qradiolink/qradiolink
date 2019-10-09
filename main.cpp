@@ -111,6 +111,7 @@ int main(int argc, char *argv[])
     AudioWriter *audiowriter = new AudioWriter(settings);
     AudioReader *audioreader = new AudioReader(settings);
     TelnetServer *telnet_server = new TelnetServer(settings);
+    telnet_server->start(); // FIXME
     MainWindow *w = new MainWindow(settings, radio_channels);
 
     w->show();

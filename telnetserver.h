@@ -22,16 +22,20 @@
 #include <QTcpSocket>
 #include <QString>
 #include <QStringList>
+#include <QRegularExpressionValidator>
 #include <QTime>
 #include <QAbstractSocket>
+#include <QElapsedTimer>
 #include <QVector>
 #include <QHostAddress>
 #include <QDebug>
 #include <QCoreApplication>
+#include <iostream>
 #include "config_defines.h"
 #include "ext/dec.h"
 #include "settings.h"
 #include "station.h"
+#include "commandprocessor.h"
 
 class TelnetServer : public QObject
 {
@@ -46,6 +50,7 @@ signals:
 
 public slots:
     void stop();
+    void start();
 
 private slots:
     void getConnection();
@@ -55,13 +60,17 @@ private slots:
 
 private:
     QTcpServer *_server;
+    Settings *_settings;
+    QVector<QTcpSocket*> _connected_clients;
+    CommandProcessor *_command_processor;
     QTcpSocket _socket;
     int _status;
     bool _stop;
     QHostAddress _hostaddr;
-    QVector<QTcpSocket*> _connected_clients;
-    QByteArray processCommand(QByteArray data);
 
+
+    QByteArray processCommand(QByteArray data, QTcpSocket *socket);
+    void getCommandList(QByteArray &response);
 };
 
 #endif // TELNETSERVER_H
