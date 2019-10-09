@@ -11,7 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = qradiolink
 TEMPLATE = app
 
-CONFIG  += qt thread Q_AUDIO
+CONFIG  += qt thread
 
 #QMAKE_CXXFLAGS += -Werror
 QMAKE_CXXFLAGS += $$(CXXFLAGS)
