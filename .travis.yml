@@ -7,7 +7,7 @@ services:
   - docker
 
 script:
-  - wget -O - http://travis.debian.net/script.sh | sh -
+  - sh travis/script.sh
 
 branches:
   except:
