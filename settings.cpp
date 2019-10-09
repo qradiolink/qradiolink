@@ -362,7 +362,7 @@ void Settings::readConfig()
     }
     catch(const libconfig::SettingNotFoundException &nfex)
     {
-        rssi_calibration_value = 0;
+        rssi_calibration_value = -80;
     }
 
 }

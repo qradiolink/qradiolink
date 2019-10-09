@@ -4,44 +4,44 @@
 #
 #-------------------------------------------------
 
-QT       += core gui network sql multimedia
+QT       += core gui network multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = qradiolink
 TEMPLATE = app
 
-CONFIG  += qt thread
+CONFIG  += qt thread qtaudio
 
 #QMAKE_CXXFLAGS += -Werror
 QMAKE_CXXFLAGS += $$(CXXFLAGS)
 QMAKE_CFLAGS += $$(CFLAGS)
 QMAKE_LFLAGS += $$(LDFLAGS)
 
-#message($$QMAKESPEC)
+message($$QMAKESPEC)
 
-#linux-g++ {
-#    message(Building for GNU/Linux)
-#}
+linux-g++ {
+    message(Building for GNU/Linux)
+}
 
-#CONFIG(opengl) {
-#    message(Building with OpenGL support.)
-#    DEFINES += USE_OPENGL_PLOTTER
-#} else {
-#    message(Building without OpenGL support)
-#}
+CONFIG(opengl) {
+    message(Building with OpenGL support.)
+    DEFINES += USE_OPENGL_PLOTTER
+} else {
+    message(Building without OpenGL support)
+}
 
-#CONFIG(qtaudio) {
-#    message(Building with Qt audio support.)
-#    DEFINES += USE_QT_AUDIO
-#    SOURCES += video/imagecapture.cpp
-#    HEADERS += video/imagecapture.h
-#} else {
-#    message(Building without Qt audio support)
-#    SOURCES += audio/audiointerface.cpp
-#    HEADERS += audio/audiointerface.h
-#    LIBS += -lpulse-simple -lpulse
-#}
+CONFIG(qtaudio) {
+    message(Building with Qt audio support.)
+    DEFINES += USE_QT_AUDIO
+    SOURCES += video/imagecapture.cpp
+    HEADERS += video/imagecapture.h
+} else {
+    message(Building without Qt audio support)
+    SOURCES += audio/audiointerface.cpp
+    HEADERS += audio/audiointerface.h
+    LIBS += -lpulse-simple -lpulse
+}
 
 
 SOURCES += main.cpp\
@@ -177,10 +177,10 @@ HEADERS  += mainwindow.h\
 FORMS    += mainwindow.ui
 
 
-LIBS += -lgnuradio-pmt -lgnuradio-audio -lgnuradio-analog -lgnuradio-blocks -lgnuradio-fft -lgnuradio-vocoder \
+LIBS += -lgnuradio-pmt -lgnuradio-analog -lgnuradio-fft -lgnuradio-vocoder \
         -lgnuradio-osmosdr -lvolk \
         -lgnuradio-blocks -lgnuradio-filter -lgnuradio-digital -lgnuradio-runtime -lgnuradio-fec \
-        -lboost_thread$$BOOST_SUFFIX -lboost_system$$BOOST_SUFFIX
+        -lboost_system$$BOOST_SUFFIX
 LIBS += -lrt  # need to include on some distros
 
 LIBS += -lprotobuf -lopus -lcodec2 -ljpeg -lconfig++ -lspeexdsp -lftdi
