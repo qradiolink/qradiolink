@@ -5,3 +5,4 @@ extend-diff-ignore = "^ext/*"
 extend-diff-ignore = "^docs/*"
 extend-diff-ignore = "^README\.md$"
 extend-diff-ignore = "^travis/*"
+auto-commit
