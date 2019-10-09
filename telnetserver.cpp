@@ -66,7 +66,14 @@ void TelnetServer::getConnection()
               << socket->peerAddress().toString().toStdString()
               << " port: " << socket->peerPort() << std::endl;
     if(socket->state() == QTcpSocket::ConnectedState)
+    {
         std::cout << "Connection established" << std::endl;
+        QByteArray response;
+        response.append("Welcome! ");
+        getCommandList(response);
+        socket->write(response);
+        socket->flush();
+    }
 
     QObject::connect(socket,SIGNAL(error(QAbstractSocket::SocketError )),
                      this,SLOT(connectionFailed(QAbstractSocket::SocketError)));
@@ -81,9 +88,9 @@ void TelnetServer::getConnection()
 void TelnetServer::connectionFailed(QAbstractSocket::SocketError error)
 {
     Q_UNUSED(error);
-    // ok
+
     QTcpSocket *socket = dynamic_cast<QTcpSocket*>(QObject::sender());
-    std::cerr << "Connection error: " << socket->errorString().toStdString() << std::endl;
+    std::cout << "Connection status: " << socket->errorString().toStdString() << std::endl;
     int i = _connected_clients.indexOf(socket);
     _connected_clients.remove(i);
 
@@ -154,7 +161,7 @@ void TelnetServer::processData()
 void TelnetServer::getCommandList(QByteArray &response)
 {
     QStringList available_commands = _command_processor->listAvailableCommands();
-    response.append("Available commands:\n");
+    response.append("Available commands are: \n");
     for(int i=0;i<available_commands.length();i++)
     {
         response.append(available_commands.at(i));
@@ -164,7 +171,7 @@ void TelnetServer::getCommandList(QByteArray &response)
 QByteArray TelnetServer::processCommand(QByteArray data, QTcpSocket *socket)
 {
     /// sanity checks:
-    if(data.length() > 512)
+    if(data.length() > 1024) // not expecting novels
     {
         QByteArray response("");
         std::cerr << "Received message to large (dropping) from: "
@@ -175,22 +182,12 @@ QByteArray TelnetServer::processCommand(QByteArray data, QTcpSocket *socket)
     }
     if(data.length() < 3)
     {
-        QByteArray response("Command too short\n");
-        return response;
-    }
-    QRegularExpression re(
-                "[a-zA-Z]+\\s*[a-zA-Z0-9]*\\s*[a-zA-Z0-9]*\\s+[a-zA-Z0-9]*\\s*[a-zA-Z0-9]*\\s*");
-    QRegularExpressionValidator validator(re, 0);
-    QString message = QString::fromLocal8Bit(data);
-    int pos = 0;
-    if(QValidator::Acceptable != validator.validate(message, pos))
-    {
-        QByteArray response("Command format is wrong\n");
-        getCommandList(response);
+        QByteArray response("\n");
         return response;
     }
 
     /// poked processor logic:
+    QString message = QString::fromLocal8Bit(data);
     if(!_command_processor->validateCommand(message))
     {
         QByteArray response("Command not recognized\n");

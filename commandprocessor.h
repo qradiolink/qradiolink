@@ -22,6 +22,7 @@
 #include <QString>
 #include <QStringList>
 #include <QList>
+#include <QRegularExpressionValidator>
 #include <QVector>
 #include "settings.h"
 
@@ -34,6 +35,7 @@ public:
     QStringList listAvailableCommands();
     bool validateCommand(QString message);
     QString runCommand(QString message);
+    void buildCommandList();
 
 signals:
     // FIXME: duplicates main window signals
@@ -86,16 +88,15 @@ public slots:
 private:
     struct command
     {
-        command() : action(""), param1(""), param2(""), param3(""), param4("") {}
+        command(QString what, int c_id) : action(what), id(c_id) {}
         QString action;
-        QString param1;
-        QString param2;
-        QString param3;
-        QString param4;
+        int id;
     };
 
     Settings *_settings;
     QVector<command*> *_command_list;
+
+    QStringList getCommand(QString message, int &command_index);
 };
 
 #endif // COMMANDPROCESSOR_H

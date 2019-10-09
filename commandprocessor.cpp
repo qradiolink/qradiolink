@@ -20,6 +20,7 @@ CommandProcessor::CommandProcessor(Settings *settings, QObject *parent) : QObjec
 {
     _settings = settings;
     _command_list = new QVector<command*>;
+    buildCommandList();
 }
 
 CommandProcessor::~CommandProcessor()
@@ -32,22 +33,84 @@ CommandProcessor::~CommandProcessor()
     delete _command_list;
 }
 
+void CommandProcessor::buildCommandList()
+{
+    command *c = new command("rxtest", 1);
+    _command_list->append(c);
+}
+
 QStringList CommandProcessor::listAvailableCommands()
 {
     QStringList list;
     for(int i=0;i<_command_list->size();i++)
     {
-        list.append(_command_list->at(i)->action);
+        list.append(_command_list->at(i)->action + "\n");
     }
     return list;
 }
 
+QStringList CommandProcessor::getCommand(QString message, int &command_index)
+{
+    command_index = -1;
+    message = message.trimmed();
+    QStringList tokens = message.split(" ");
+    if((tokens.length() > 4) || (tokens.length() < 1))
+    {
+        QStringList none("");
+        return none;
+    }
+
+    QString action = tokens.at(0);
+
+    for(int i=0; i< _command_list->length();i++)
+    {
+        if(_command_list->at(i)->action == action)
+        {
+            command_index = i;
+            break;
+        }
+    }
+    return tokens;
+}
+
 bool CommandProcessor::validateCommand(QString message)
 {
-    return false;
+    QRegularExpression re(
+                "[a-zA-Z]+\\s*[a-zA-Z0-9]*\\s*[a-zA-Z0-9]*\\s+[a-zA-Z0-9]*\\s*[a-zA-Z0-9]*\\s*");
+    QRegularExpressionValidator validator(re, 0);
+
+    int pos = 0;
+    if(QValidator::Acceptable != validator.validate(message, pos))
+    {
+        return false;
+    }
+    int command_index = -1;
+    getCommand(message, command_index);
+
+    if(command_index < 0)
+    {
+        return false;
+    }
+    return true;
 }
 
 QString CommandProcessor::runCommand(QString message)
 {
-    return "Command not recognized";
+    int command_index;
+    QString response;
+    QStringList tokens = getCommand(message, command_index);
+    command *run = _command_list->at(command_index);
+
+    switch (run->id) {
+    case 1:
+        response.append("Testing radio...\n");
+        emit toggleRX(true);
+        // wait a while
+        response.append("Test OK\n");
+        break;
+    default:
+        response.append("Command not found\n");
+        break;
+    }
+    return response;
 }
