@@ -35,8 +35,9 @@ CommandProcessor::~CommandProcessor()
 
 void CommandProcessor::buildCommandList()
 {
-    command *c = new command("rxtest", 1);
-    _command_list->append(c);
+    _command_list->append(new command("rxstatus", 0));
+    _command_list->append(new command("txstatus", 0));
+    _command_list->append(new command("txactive", 0));
 }
 
 QStringList CommandProcessor::listAvailableCommands()
@@ -99,15 +100,47 @@ QString CommandProcessor::runCommand(QString message)
     int command_index;
     QString response;
     QStringList tokens = getCommand(message, command_index);
+    QString param1, param2, param3;
+    if(tokens.size() > 1)
+    {
+        param1 = tokens.at(1);
+    }
+    if(tokens.size() > 2)
+    {
+        param2 = tokens.at(2);
+    }
+    if(tokens.size() > 3)
+    {
+        param3 = tokens.at(3);
+    }
     command *run = _command_list->at(command_index);
 
-    switch (run->id) {
-    case 1:
-        response.append("Testing radio...\n");
-        emit toggleRX(true);
-        // wait a while
-        response.append("Test OK\n");
+
+    /// Actual command processing
+    ///
+    switch (command_index) {
+
+    case 0:
+        if(_settings->_rx_status)
+            response.append("RX status is active.\n");
+        else
+            response.append("RX status is inactive.\n");
         break;
+
+    case 1:
+        if(_settings->_tx_status)
+            response.append("TX status is active.\n");
+        else
+            response.append("TX status is inactive.\n");
+        break;
+
+    case 2:
+        if(_settings->_in_transmission)
+            response.append("Currently transmitting.\n");
+        else
+            response.append("Not transmitting.\n");
+        break;
+
     default:
         response.append("Command not found\n");
         break;

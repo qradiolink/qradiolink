@@ -214,6 +214,11 @@ private:
     float *_realFftData;
     float *_iirFftData;
 
+    QTimer _secondary_text_timer;
+    QTimer _video_timer;
+    QTimer _speech_icon_timer;
+    QMutex _mutex;
+
     StationList _user_list;
     bool _transmitting_radio;
     qint64 _rx_frequency;
@@ -222,17 +227,15 @@ private:
     int _rx_mode;
     int _tx_mode;
     quint64 _current_voip_channel;
+    long _rx_sample_rate;
 
     float _fft_averaging;
     int _waterfall_fps;
-    long _rx_sample_rate;
+
     qint64 _demod_offset;
     float _rssi;
+
     bool _range_set;
-    QTimer _secondary_text_timer;
-    QTimer _video_timer;
-    QTimer _speech_icon_timer;
-    QMutex _mutex;
     int _new_mem_index;
     int _filter_low_cut;
     int _filter_high_cut;

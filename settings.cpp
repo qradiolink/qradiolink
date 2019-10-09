@@ -31,6 +31,12 @@ Settings::Settings()
     _enable_agc = 0; // unused
     _ident_time = 300; // used
     _radio_id = "";
+
+    _rx_status = false;
+    _tx_status = false;
+    _in_transmission = false;
+
+
     demod_offset = 0;
     rx_mode = 0;
     tx_mode = 0;

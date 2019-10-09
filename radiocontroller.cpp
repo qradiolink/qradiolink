@@ -778,7 +778,7 @@ void RadioController::startTx()
         //nanosleep(&time_to_sleep, NULL);
         //_modem->startTX();
 
-
+        _settings->_in_transmission = true;
         _tx_modem_started = false;
         _tx_started = true;
         if((_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL))
@@ -822,12 +822,14 @@ void RadioController::stopTx()
 
 void RadioController::endTx()
 {
-    // On LimeSDR mini, when I call setTxPower I get a brief spike of the LO
-    setRelays(false);
+
     _mutex->lock();
     _modem->setTxPower(0.01);
     _modem->flushSources();
     _mutex->unlock();
+    // On LimeSDR mini, when I call setTxPower I get a brief spike of the LO
+    setRelays(false);
+
     //_modem->stopTX();
     if(!_duplex_enabled)
     {
@@ -835,6 +837,7 @@ void RadioController::endTx()
         _modem->setRxSensitivity(_rx_sensitivity);
     }
     emit displayTransmitStatus(false);
+    _settings->_in_transmission = false;
 }
 
 

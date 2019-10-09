@@ -166,6 +166,7 @@ void TelnetServer::getCommandList(QByteArray &response)
     {
         response.append(available_commands.at(i));
     }
+    response.append("\n\n");
 }
 
 QByteArray TelnetServer::processCommand(QByteArray data, QTcpSocket *socket)

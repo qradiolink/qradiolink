@@ -39,15 +39,10 @@ public:
 
 signals:
     // FIXME: duplicates main window signals
-    void startTransmission();
-    void endTransmission();
-    void sendText(QString text, bool repeat);
+
+    /// general settings
     void toggleRX(bool value);
     void toggleTX(bool value);
-    void tuneFreq(qint64 center_freq);
-    void tuneTxFreq(qint64 freq);
-    void changeTxShift(qint64 center_freq);
-    void fineTuneFreq(long center_freq);
     void toggleRxModemMode(int value);
     void toggleTxModemMode(int value);
     void setTxPower(int value);
@@ -57,40 +52,60 @@ signals:
     void setTxVolume(int value);
     void setRxCTCSS(float value);
     void setTxCTCSS(float value);
-    void enableGUIConst(bool value);
-    void enableGUIFFT(bool value);
-    void enableRSSI(bool value);
+    void setSampleRate(int);
+    void usePTTForVOIP(bool value);
+    void setVOIPForwarding(bool value);
+    void setVox(bool value);
+    void toggleRepeat(bool value);
+    void enableAudioCompressor(bool value);
+    void enableRelays(bool value);
     void enableDuplex(bool value);
+    void calibrateRSSI(float value);
+
+    /// Tuning the radio
+    void setCarrierOffset(qint64 offset);
+    void tuneFreq(qint64 center_freq);
+    void tuneTxFreq(qint64 freq);
+    void changeTxShift(qint64 center_freq);
+    void fineTuneFreq(long center_freq);
+
+    /// Transmit
+    void startTransmission();
+    void endTransmission();
+    void sendText(QString text, bool repeat);
+
+
+    /// Scannning
     void startAutoTuneFreq(int step, int scan_direction);
     void stopAutoTuneFreq();
     //void startMemoryTune(RadioChannels* channels, int scan_direction);
     void stopMemoryTune();
-    void usePTTForVOIP(bool value);
-    void setVOIPForwarding(bool value);
-    void setVox(bool value);
+
+    /// VOIP
     void connectToServer(QString server, unsigned port);
     void disconnectFromServer();
     void changeChannel(int id);
     void setMute(bool value);
-    void toggleRepeat(bool value);
-    void stopRadio();
-    void setCarrierOffset(qint64 offset);
+
+    //void stopRadio();
+
+    /// GUI
+    void enableGUIFFT(bool value);
+    void enableRSSI(bool value);
+    void enableGUIConst(bool value);
     void newFFTSize(int);
     void setWaterfallFPS(int);
-    void setSampleRate(int);
     void newFilterWidth(int);
-    void enableAudioCompressor(bool value);
-    void enableRelays(bool value);
-    void calibrateRSSI(float value);
+
 
 public slots:
 
 private:
     struct command
     {
-        command(QString what, int c_id) : action(what), id(c_id) {}
+        command(QString what, int n_param=0) : action(what), params(n_param) {}
         QString action;
-        int id;
+        int params;
     };
 
     Settings *_settings;

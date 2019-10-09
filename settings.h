@@ -33,6 +33,8 @@ public:
     QFileInfo *setupConfig();
     void readConfig();
     void saveConfig();
+
+    /// Saved to config
     QString rx_device_args;
     QString tx_device_args;
     QString rx_antenna;
@@ -70,7 +72,23 @@ public:
     QString audio_input_device;
     int control_port; // FIXME: this should be unsigned uint16
 
+    /// Used by remote interface
+    bool _rx_status;
+    bool _tx_status;
+    bool _in_transmission; // FIXME: this should be set by radioop
 
+    /// Used by both GUI and remote interface, should be removed from GUI
+    bool _transmitting_radio;
+    qint64 _rx_frequency;
+    qint64 _tx_frequency;
+    qint64 _tx_shift_frequency;
+    int _rx_mode;
+    int _tx_mode;
+    quint64 _current_voip_channel;
+    long _rx_sample_rate;
+
+
+    /// Old stuff, not used now
     quint32 _id;
     quint8 _mumble_tcp;
     quint8 _use_codec2;

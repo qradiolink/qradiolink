@@ -956,6 +956,7 @@ void MainWindow::channelState(QTreeWidgetItem *item, int k)
 
 void MainWindow::toggleRXwin(bool value)
 {
+    _settings->_rx_status = value;
     emit setSampleRate(ui->sampleRateBox->currentText().toInt());
     emit toggleRX(value);
     ui->plotterFrame->setRunningState(value);
@@ -966,6 +967,7 @@ void MainWindow::toggleRXwin(bool value)
 
 void MainWindow::toggleTXwin(bool value)
 {
+    _settings->_tx_status = value;
     emit toggleTX(value);
 }
 
