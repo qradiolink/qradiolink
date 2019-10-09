@@ -1,3 +1,19 @@
+// Written by Adrian Musceac YO8RZZ , started August 2016.
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License as
+// published by the Free Software Foundation; either version 3 of the
+// License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
@@ -52,6 +68,7 @@ public:
     int rssi_calibration_value;
     QString audio_output_device;
     QString audio_input_device;
+    int control_port; // FIXME: this should be unsigned uint16
 
 
     quint32 _id;
@@ -61,9 +78,7 @@ public:
     float _audio_treshhold;
     float _voice_activation;
     quint16 _voice_activation_timeout;
-    quint16 _voice_server_port;
     quint16 _local_udp_port;
-    quint16 _control_port;
     quint8 _enable_vox;
     quint8 _enable_agc;
     quint16 _ident_time;

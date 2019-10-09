@@ -133,6 +133,7 @@ public slots:
 
 
 signals:
+    void terminateConnections();
     void startTransmission();
     void endTransmission();
     void sendText(QString text, bool repeat);

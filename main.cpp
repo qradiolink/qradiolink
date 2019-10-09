@@ -37,6 +37,7 @@
 #include "mumblechannel.h"
 #include "radiochannel.h"
 #include "radiocontroller.h"
+#include "telnetserver.h"
 
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
@@ -109,6 +110,7 @@ int main(int argc, char *argv[])
     RadioController *radio_op = new RadioController(settings);
     AudioWriter *audiowriter = new AudioWriter(settings);
     AudioReader *audioreader = new AudioReader(settings);
+    TelnetServer *telnet_server = new TelnetServer(settings);
     MainWindow *w = new MainWindow(settings, radio_channels);
 
     w->show();
@@ -222,16 +224,18 @@ int main(int argc, char *argv[])
 
     QObject::connect(w,SIGNAL(connectToServer(QString, unsigned)),mumbleclient,SLOT(connectToServer(QString, unsigned)));
     QObject::connect(w,SIGNAL(disconnectFromServer()),mumbleclient,SLOT(disconnectFromServer()));
+    QObject::connect(w,SIGNAL(terminateConnections()),audiowriter,SLOT(stop()));
+    QObject::connect(w,SIGNAL(terminateConnections()),audioreader,SLOT(stop()));
+    QObject::connect(w,SIGNAL(terminateConnections()),telnet_server,SLOT(stop()));
     QObject::connect(w,SIGNAL(setMute(bool)),mumbleclient,SLOT(setMute(bool)));
     QObject::connect(w,SIGNAL(changeChannel(int)),mumbleclient,SLOT(joinChannel(int)));
 
     w->initSettings();
     int ret = a.exec();
 
-    mumbleclient->disconnectFromServer();
-    audiowriter->stop();
-    audioreader->stop();
+
     delete w;
+    delete telnet_server;
     delete mumbleclient;
     delete radio_channels;
     delete settings;

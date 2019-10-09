@@ -62,7 +62,7 @@ CFreqCtrl::CFreqCtrl(QWidget *parent) :
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setFocusPolicy(Qt::StrongFocus);
     setMouseTracking(true);
-    m_BkColor = QColor(0x0,0x0,0x127,0xFF);
+    m_BkColor = QColor(0x0,0x0,0x27,0xFF);
     m_DigitColor = QColor(0xFF, 0xE6, 0xC8, 0xFF);
     m_HighlightColor = QColor(0x5A, 0x5A, 0x5A, 0xFF);
     m_UnitsColor = Qt::gray;

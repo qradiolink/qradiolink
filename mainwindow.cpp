@@ -257,8 +257,9 @@ void MainWindow::closeEvent (QCloseEvent *event)
     _radio_channels->saveConfig();
     emit stopRadio();
     emit disconnectFromServer();
+    emit terminateConnections();
     // FIXME: this is the wrong way to stop the radio
-    struct timespec time_to_sleep = {0, 200000000L };
+    struct timespec time_to_sleep = {0, 800000000L };
     nanosleep(&time_to_sleep, NULL);
     event->accept();
 }

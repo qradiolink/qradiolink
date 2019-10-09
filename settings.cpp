@@ -1,3 +1,19 @@
+// Written by Adrian Musceac YO8RZZ , started August 2016.
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License as
+// published by the Free Software Foundation; either version 3 of the
+// License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 #include "settings.h"
 
 Settings::Settings()
@@ -10,9 +26,7 @@ Settings::Settings()
     _audio_treshhold = -15; // used
     _voice_activation = 0.5; // used
     _voice_activation_timeout = 50; // used
-    _voice_server_port = 64738;
     _local_udp_port = 4938;
-    _control_port = 4939;
     _enable_vox = 0; // unused
     _enable_agc = 0; // unused
     _ident_time = 300; // used
@@ -29,6 +43,7 @@ Settings::Settings()
     enable_duplex = 0;
     fft_size = 32768;
     waterfall_fps = 15;
+    control_port = 4939;
 
     voip_server="127.0.0.1";
     _config_file = setupConfig();
@@ -364,6 +379,14 @@ void Settings::readConfig()
     {
         rssi_calibration_value = -80;
     }
+    try
+    {
+        control_port = cfg.lookup("control_port");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        control_port = 4939;
+    }
 
 }
 
@@ -406,6 +429,7 @@ void Settings::saveConfig()
     root.add("audio_compressor",libconfig::Setting::TypeInt) = audio_compressor;
     root.add("enable_relays",libconfig::Setting::TypeInt) = enable_relays;
     root.add("rssi_calibration_value",libconfig::Setting::TypeInt) = rssi_calibration_value;
+    root.add("control_port",libconfig::Setting::TypeInt) = control_port;
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());

@@ -59,7 +59,9 @@ SOURCES += main.cpp\
         radiochannel.cpp \
         relaycontroller.cpp \
         radiocontroller.cpp \
+        commandprocessor.cpp \
         server.cpp\
+        telnetserver.cpp \
         settings.cpp\
         sslclient.cpp\
         station.cpp\
@@ -116,9 +118,11 @@ HEADERS  += mainwindow.h\
         mumblechannel.h \
         radiochannel.h \
         relaycontroller.h \
+        commandprocessor.h \
         dtmfdecoder.h\
         mumbleclient.h\
         server.h\
+        telnetserver.h \
         settings.h\
         sslclient.h\
         station.h\
