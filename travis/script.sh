@@ -419,7 +419,7 @@ RUN rm -f Dockerfile
 RUN git checkout Dockerfile .travis.yml || true
 RUN mkdir -p ${TRAVIS_DEBIAN_BUILD_DIR}
 
-CMD ${TRAVIS_DEBIAN_GIT_BUILDPACKAGE} ${TRAVIS_DEBIAN_GIT_BUILDPACKAGE_OPTIONS} --git-ignore-branch --git-export-dir=${TRAVIS_DEBIAN_BUILD_DIR} -uc -us -sa
+CMD ${TRAVIS_DEBIAN_GIT_BUILDPACKAGE} ${TRAVIS_DEBIAN_GIT_BUILDPACKAGE_OPTIONS} --git-ignore-new --git-force-create --git-no-pristine-tar --git-ignore-branch --git-export-dir=${TRAVIS_DEBIAN_BUILD_DIR} -uc -us -sa
 EOF
 
 Info "Using Dockerfile:"
