@@ -1,3 +1,13 @@
+qradiolink (0.8.1-7) UNRELEASED; urgency=medium
+
+  [ Adrian Musceac ]
+  * Increase FM deviation to +/- 6 kHz
+  * S-meter calibration code
+
+
+ -- Adrian Musceac <kantooon@gmail.com>  Mon, 7 Oct 2019 23:00:00 +0300
+
+
 qradiolink (0.8.1-6) UNRELEASED; urgency=medium
 
   [ Adrian Musceac ]
