@@ -35,6 +35,7 @@ Settings::Settings()
     _rx_status = false;
     _tx_status = false;
     _in_transmission = false;
+    _current_voip_channel = -1;
 
 
     demod_offset = 0;
@@ -50,8 +51,8 @@ Settings::Settings()
     fft_size = 32768;
     waterfall_fps = 15;
     control_port = 4939;
-
     voip_server="127.0.0.1";
+
     _config_file = setupConfig();
 }
 

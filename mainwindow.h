@@ -218,22 +218,10 @@ private:
     QTimer _video_timer;
     QTimer _speech_icon_timer;
     QMutex _mutex;
+    float _fft_averaging;
+    float _rssi;
 
     StationList _user_list;
-    bool _transmitting_radio;
-    qint64 _rx_frequency;
-    qint64 _tx_frequency;
-    qint64 _tx_shift_frequency;
-    int _rx_mode;
-    int _tx_mode;
-    quint64 _current_voip_channel;
-    long _rx_sample_rate;
-
-    float _fft_averaging;
-    int _waterfall_fps;
-
-    qint64 _demod_offset;
-    float _rssi;
 
     bool _range_set;
     int _new_mem_index;

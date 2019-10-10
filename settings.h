@@ -34,7 +34,7 @@ public:
     void readConfig();
     void saveConfig();
 
-    /// Saved to config
+    /// Saved to config file
     QString rx_device_args;
     QString tx_device_args;
     QString rx_antenna;
@@ -75,17 +75,12 @@ public:
     /// Used by remote interface
     bool _rx_status;
     bool _tx_status;
-    bool _in_transmission; // FIXME: this should be set by radioop
+     // FIXME: this should be set by radioop
 
-    /// Used by both GUI and remote interface, should be removed from GUI
-    bool _transmitting_radio;
-    qint64 _rx_frequency;
+    /// Used by both GUI and remote interface
+    bool _in_transmission;
     qint64 _tx_frequency;
-    qint64 _tx_shift_frequency;
-    int _rx_mode;
-    int _tx_mode;
-    quint64 _current_voip_channel;
-    long _rx_sample_rate;
+    int _current_voip_channel;
 
 
     /// Old stuff, not used now

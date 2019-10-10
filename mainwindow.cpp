@@ -156,8 +156,6 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     ui->statusBar->hide();
     ui->mainToolBar->hide();
     ui->memoriesFrame->hide();
-    _current_voip_channel = -1;
-    _demod_offset = 0;
 
     _video_img = new QPixmap;
     _constellation_img = new QPixmap(300,300);
@@ -165,8 +163,6 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     _iirFftData = new float[1024*1024];
     _s_meter_bg = new QPixmap(":/res/s-meter-bg-black-small.png");
 
-
-    _transmitting_radio = false;
     _fft_averaging = 1;
     _rssi = 0;
     QRect xy = this->geometry();
@@ -391,22 +387,15 @@ void MainWindow::readConfig()
     ui->micGainSlider->setValue(_settings->tx_volume);
     ui->voipServerPortEdit->setText(QString::number(_settings->voip_port));
 
-    _rx_frequency = _settings->rx_frequency;
-    _demod_offset = _settings->demod_offset;
-    _rx_sample_rate = _settings->rx_sample_rate;
-
-    ui->frequencyEdit->setText(QString::number(ceil(_rx_frequency/1000)));
-    _tx_shift_frequency = _settings->tx_shift;
-    ui->shiftEdit->setText(QString::number(_tx_shift_frequency / 1000));
+    ui->frequencyEdit->setText(QString::number(ceil(_settings->rx_frequency/1000)));
+    ui->shiftEdit->setText(QString::number(_settings->tx_shift / 1000));
     ui->voipServerEdit->setText(_settings->voip_server);
     ui->rxModemTypeComboBox->setCurrentIndex(_settings->rx_mode);
     ui->txModemTypeComboBox->setCurrentIndex(_settings->tx_mode);
-    _rx_mode = _settings->rx_mode;
-    _tx_mode = _settings->tx_mode;
     ui->lineEditIPaddress->setText(_settings->ip_address);
     ui->plotterFrame->setFilterOffset((qint64)_settings->demod_offset);
-    ui->plotterFrame->setCenterFreq(_rx_frequency);
-    ui->frameCtrlFreq->setFrequency(_rx_frequency + _demod_offset);
+    ui->plotterFrame->setCenterFreq(_settings->rx_frequency);
+    ui->frameCtrlFreq->setFrequency(_settings->rx_frequency + _settings->demod_offset);
     ui->plotterFrame->setSampleRate(_settings->rx_sample_rate);
     ui->plotterFrame->setSpanFreq((quint32)_settings->rx_sample_rate);
     ui->sampleRateBox->setCurrentIndex(ui->sampleRateBox->findText(QString::number(_settings->rx_sample_rate)));
@@ -439,14 +428,11 @@ void MainWindow::saveConfig()
     _settings->squelch = (int)ui->rxSquelchDial->value();
     _settings->rx_volume = (int)ui->rxVolumeDial->value();
     _settings->tx_volume = (int)ui->micGainSlider->value();
-    _settings->rx_frequency = _rx_frequency;
-    _settings->tx_shift = _tx_shift_frequency;
     _settings->voip_server = ui->voipServerEdit->text();
     _settings->voip_port = ui->voipServerPortEdit->text().toInt();
     _settings->rx_mode = ui->rxModemTypeComboBox->currentIndex();
     _settings->tx_mode = ui->txModemTypeComboBox->currentIndex();
     _settings->ip_address = ui->lineEditIPaddress->text();
-    _settings->demod_offset = (long long)_demod_offset;
     _settings->rx_sample_rate = (long long)(ui->sampleRateBox->currentText().toInt());
     _settings->fft_size = (ui->fftSizeBox->currentText().toInt());
     _settings->scan_step = (int)ui->lineEditScanStep->text().toInt();
@@ -505,11 +491,11 @@ void MainWindow::updateMemories()
 void MainWindow::addMemoryChannel()
 {
     radiochannel *chan = new radiochannel;
-    chan->rx_frequency = _rx_frequency + _demod_offset;
-    chan->tx_frequency = _tx_frequency;
-    chan->tx_shift = _tx_shift_frequency;
-    chan->rx_mode = _rx_mode;
-    chan->tx_mode = _tx_mode;
+    chan->rx_frequency = _settings->rx_frequency + _settings->demod_offset;
+    chan->tx_frequency = _settings->_tx_frequency;
+    chan->tx_shift = _settings->tx_shift;
+    chan->rx_mode = _settings->rx_mode;
+    chan->tx_mode = _settings->tx_mode;
     chan->id = _new_mem_index; // FIXME:
     chan->name = "";
     QVector<radiochannel*> *channels = _radio_channels->getChannels();
@@ -559,14 +545,14 @@ void MainWindow::tuneToMemoryChannel(int row, int col)
     radiochannel *chan = channels->at(row);
     ui->frameCtrlFreq->setFrequency(chan->rx_frequency);
     tuneMainFreq(chan->rx_frequency);
-    _tx_shift_frequency = chan->tx_shift * 1000;
-    emit changeTxShift(_tx_shift_frequency);
+    _settings->tx_shift = chan->tx_shift * 1000;
+    emit changeTxShift(_settings->tx_shift);
     ui->shiftEdit->setText(QString::number(chan->tx_shift));
 
     ui->rxModemTypeComboBox->setCurrentIndex(chan->rx_mode);
     ui->txModemTypeComboBox->setCurrentIndex(chan->tx_mode);
-    _rx_mode = chan->rx_mode;
-    _tx_mode = chan->tx_mode;
+    _settings->rx_mode = chan->rx_mode;
+    _settings->tx_mode = chan->tx_mode;
 
 }
 
@@ -604,16 +590,16 @@ void MainWindow::endTx()
 
 void MainWindow::startTx()
 {
-    if(!_transmitting_radio)
+    if(!_settings->_in_transmission)
     {
         emit startTransmission();
-        ui->frameCtrlFreq->setFrequency(_rx_frequency + _demod_offset + _tx_shift_frequency, false);
-        _transmitting_radio=true;
+        ui->frameCtrlFreq->setFrequency(_settings->rx_frequency + _settings->demod_offset + _settings->tx_shift, false);
+        _settings->_in_transmission=true;
     }
     else
     {
-        ui->frameCtrlFreq->setFrequency(_rx_frequency + _demod_offset, false);
-        _transmitting_radio=false;
+        ui->frameCtrlFreq->setFrequency(_settings->rx_frequency + _settings->demod_offset, false);
+        _settings->_in_transmission=false; // FIXME: should be set by radioop
         endTx();
     }
 }
@@ -657,9 +643,9 @@ void MainWindow::setAveraging(int x)
 
 void MainWindow::newWaterfallFPS()
 {
-    _waterfall_fps = ui->fpsBox->currentText().toInt();
-    //ui->plotterFrame->setFftRate(_waterfall_fps);
-    emit setWaterfallFPS(_waterfall_fps);
+    _settings->waterfall_fps = ui->fpsBox->currentText().toInt();
+    //ui->plotterFrame->setFftRate(waterfall_fps);
+    emit setWaterfallFPS(_settings->waterfall_fps);
 }
 
 void MainWindow::updateConstellation(complex_vector *constellation_data)
@@ -815,7 +801,7 @@ void MainWindow::connectedToServer(QString msg)
 
 void MainWindow::updateOnlineStations(StationList stations)
 {
-
+    _user_list = stations;
     for(int i=0;i<stations.size();i++)
     {
         QList<QTreeWidgetItem*> list = ui->voipTreeWidget->findItems(".", Qt::MatchRegExp | Qt::MatchExactly | Qt::MatchRecursive,3);
@@ -918,7 +904,7 @@ void MainWindow::updateChannels(ChannelList channels)
 
 void MainWindow::joinedChannel(quint64 channel_id)
 {
-    QList<QTreeWidgetItem*> old_channel_list = ui->voipTreeWidget->findItems(QString::number(_current_voip_channel),Qt::MatchExactly | Qt::MatchRecursive,2);
+    QList<QTreeWidgetItem*> old_channel_list = ui->voipTreeWidget->findItems(QString::number(_settings->_current_voip_channel),Qt::MatchExactly | Qt::MatchRecursive,2);
     if(old_channel_list.size() > 0)
     {
         QTreeWidgetItem *t = old_channel_list.at(0);
@@ -944,7 +930,7 @@ void MainWindow::joinedChannel(quint64 channel_id)
         t->setTextColor(2,QColor("#ffffff"));
         t->setIcon(0,QIcon(":/res/call-start.png"));
     }
-    _current_voip_channel = channel_id;
+    _settings->_current_voip_channel = channel_id;
     ui->voipTreeWidget->expandAll();
 }
 
@@ -960,7 +946,7 @@ void MainWindow::toggleRXwin(bool value)
     emit setSampleRate(ui->sampleRateBox->currentText().toInt());
     emit toggleRX(value);
     ui->plotterFrame->setRunningState(value);
-    setFFTSize(_settings->waterfall_fps);
+    setFFTSize(_settings->fft_size);
     newWaterfallFPS();
     _range_set = false;
 }
@@ -990,14 +976,14 @@ void MainWindow::setFilterWidth(int index)
 
 void MainWindow::toggleRxMode(int value)
 {
-    _rx_mode = value;
+    _settings->rx_mode = value;
     emit toggleRxModemMode(value);
     setFilterWidth(value);
 }
 
 void MainWindow::toggleTxMode(int value)
 {
-    _tx_mode = value;
+    _settings->tx_mode = value;
     emit toggleTxModemMode(value);
 }
 
@@ -1023,14 +1009,14 @@ void MainWindow::tuneMainFreq(qint64 freq)
 
     ui->frequencyEdit->setText(QString::number(ceil(freq/1000)));
     ui->tuneDial->setValue(0);
-    // _rx_frequency is the center frequency of the source
-    _rx_frequency = freq - _demod_offset;
+    // rx_frequency is the center frequency of the source
+    _settings->rx_frequency = freq - _settings->demod_offset;
     // tx_frequency is the actual frequency
-    _tx_frequency = freq;
-    ui->plotterFrame->setCenterFreq(_rx_frequency);
-    ui->plotterFrame->setDemodCenterFreq(_rx_frequency + _demod_offset);
-    emit setCarrierOffset(_demod_offset);
-    emit tuneFreq(_rx_frequency);
+    _settings->_tx_frequency = freq;
+    ui->plotterFrame->setCenterFreq(_settings->rx_frequency);
+    ui->plotterFrame->setDemodCenterFreq(_settings->rx_frequency + _settings->demod_offset);
+    emit setCarrierOffset(_settings->demod_offset);
+    emit tuneFreq(_settings->rx_frequency);
     emit tuneTxFreq(freq);
 }
 
@@ -1039,15 +1025,15 @@ void MainWindow::tuneMainFreq(qint64 freq)
 void MainWindow::tuneFreqPlotter(qint64 freq)
 {
     return; // can't handle this now
-    _tx_frequency = freq;
-    tuneMainFreq(freq - _demod_offset);
-    ui->frameCtrlFreq->setFrequency(freq + _demod_offset);
+    _settings->_tx_frequency = freq;
+    tuneMainFreq(freq - _settings->demod_offset);
+    ui->frameCtrlFreq->setFrequency(freq + _settings->demod_offset);
 }
 
 void MainWindow::carrierOffsetChanged(qint64 freq, qint64 offset)
 {
-    _demod_offset = offset;
-    ui->frameCtrlFreq->setFrequency(_rx_frequency + _demod_offset, false);
+    _settings->demod_offset = offset;
+    ui->frameCtrlFreq->setFrequency(_settings->rx_frequency + _settings->demod_offset, false);
     emit setCarrierOffset(offset);
     emit tuneTxFreq(freq);
 }
@@ -1055,16 +1041,16 @@ void MainWindow::carrierOffsetChanged(qint64 freq, qint64 offset)
 void MainWindow::enterFreq()
 {
     ui->frameCtrlFreq->setFrequency(ui->frequencyEdit->text().toLong()*1000);
-    _rx_frequency = ui->frequencyEdit->text().toLong()*1000 - _demod_offset;
-    emit tuneFreq(_rx_frequency);
+    _settings->rx_frequency = ui->frequencyEdit->text().toLong()*1000 - _settings->demod_offset;
+    emit tuneFreq(_settings->rx_frequency);
 }
 
 void MainWindow::enterShift()
 {
-    if(!_transmitting_radio)
+    if(!_settings->_in_transmission)
     {
-        _tx_shift_frequency = ui->shiftEdit->text().toLong()*1000;
-        emit changeTxShift(_tx_shift_frequency);
+        _settings->tx_shift = ui->shiftEdit->text().toLong()*1000;
+        emit changeTxShift(_settings->tx_shift);
     }
     else
     {
@@ -1140,12 +1126,12 @@ void MainWindow::mainTabChanged(int value)
 void MainWindow::updateFreqGUI(long long center_freq, long carrier_offset)
 {
     // Lots of signals flowing around
-    _demod_offset = carrier_offset;
-    _rx_frequency = (qint64)center_freq;
-    ui->frameCtrlFreq->setFrequency(_rx_frequency + _demod_offset, false);
-    ui->plotterFrame->setFilterOffset((qint64)_demod_offset);
-    ui->plotterFrame->setCenterFreq(_rx_frequency);
-    ui->frequencyEdit->setText(QString::number(ceil((_rx_frequency+_demod_offset)/1000)));
+    _settings->demod_offset = carrier_offset;
+    _settings->rx_frequency = (qint64)center_freq;
+    ui->frameCtrlFreq->setFrequency(_settings->rx_frequency + _settings->demod_offset, false);
+    ui->plotterFrame->setFilterOffset((qint64)_settings->demod_offset);
+    ui->plotterFrame->setCenterFreq(_settings->rx_frequency);
+    ui->frequencyEdit->setText(QString::number(ceil((_settings->rx_frequency + _settings->demod_offset)/1000)));
 }
 
 void MainWindow::updateRxCTCSS(int value)
@@ -1225,7 +1211,7 @@ void MainWindow::updateRSSI(float value)
 void MainWindow::updateSampleRate()
 {
     int samp_rate = ui->sampleRateBox->currentText().toInt();
-    _rx_sample_rate = samp_rate;
+    _settings->rx_sample_rate = samp_rate;
     ui->plotterFrame->setSampleRate(samp_rate);
     ui->plotterFrame->setSpanFreq((quint32)samp_rate);
     emit setSampleRate(samp_rate);
