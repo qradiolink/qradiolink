@@ -121,6 +121,7 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     QObject::connect(ui->checkBoxAudioCompressor,SIGNAL(toggled(bool)),this,SLOT(setAudioCompressor(bool)));
     QObject::connect(ui->checkBoxRelays,SIGNAL(toggled(bool)),this,SLOT(setRelays(bool)));
     QObject::connect(ui->rssiCalibrateButton,SIGNAL(clicked()),this,SLOT(setRSSICalibration()));
+    QObject::connect(ui->saveChannelsButton,SIGNAL(clicked()),this,SLOT(saveMemoryChannes()));
 
     QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
     QObject::connect(ui->plotterFrame,SIGNAL(pandapterRangeChanged(float,float)),ui->plotterFrame,SLOT(setWaterfallRange(float,float)));
@@ -269,14 +270,14 @@ void MainWindow::resizeEvent(QResizeEvent *event)
         ui->plotterContainer->resize(xy.right() -xy.left()-20,xy.bottom()-xy.top()-210);
         xy = ui->plotterContainer->geometry();
         ui->secondaryTextDisplay->move(xy.left(), xy.bottom() - 150);
-        ui->memoriesFrame->move(xy.right() - 30 - 600, xy.bottom() - 285);
+        ui->memoriesFrame->move(xy.right() - 30 - 900, xy.bottom() - 285);
     }
     else
     {
         ui->plotterContainer->resize(xy.right() -xy.left()-20,xy.bottom()-xy.top()-120);
         xy = ui->plotterContainer->geometry();
         ui->secondaryTextDisplay->move(xy.left(), xy.bottom() - 150);
-        ui->memoriesFrame->move(xy.right() - 30 - 600, xy.bottom() - 285);
+        ui->memoriesFrame->move(xy.right() - 30 - 900, xy.bottom() - 285);
     }
     xy = ui->plotterContainer->geometry();
     ui->videoFrame->move(xy.right() - 360, xy.top());
@@ -313,7 +314,7 @@ void MainWindow::showControls(bool value)
         ui->controlsFrame->show();
         xy = ui->plotterContainer->geometry();
         ui->secondaryTextDisplay->move(xy.left(), xy.bottom() - 150);
-        ui->memoriesFrame->move(xy.right() - 30 - 600, xy.bottom() - 285);
+        ui->memoriesFrame->move(xy.right() - 30 - 900, xy.bottom() - 285);
         _settings->show_controls = 1;
     }
     else
@@ -322,7 +323,7 @@ void MainWindow::showControls(bool value)
         ui->controlsFrame->hide();
         xy = ui->plotterContainer->geometry();
         ui->secondaryTextDisplay->move(xy.left(), xy.bottom() - 150);
-        ui->memoriesFrame->move(xy.right() - 30 - 600, xy.bottom() - 285);
+        ui->memoriesFrame->move(xy.right() - 30 - 900, xy.bottom() - 285);
         _settings->show_controls = 0;
     }
     emit enableRSSI(value);
@@ -407,6 +408,14 @@ void MainWindow::readConfig()
     ui->checkBoxAudioCompressor->setChecked((bool)_settings->audio_compressor);
     ui->checkBoxRelays->setChecked((bool)_settings->enable_relays);
     ui->rssiCalibrateEdit->setText(QString::number(_settings->rssi_calibration_value));
+    if(_settings->rx_ctcss > 0.0)
+        ui->comboBoxRxCTCSS->setCurrentText(QString::number(_settings->rx_ctcss));
+    else
+        ui->comboBoxRxCTCSS->setCurrentText("CTCSS");
+    if(_settings->tx_ctcss > 0.0)
+        ui->comboBoxTxCTCSS->setCurrentText(QString::number(_settings->tx_ctcss));
+    else
+        ui->comboBoxTxCTCSS->setCurrentText("CTCSS");
 
 }
 
@@ -445,28 +454,60 @@ void MainWindow::addDisplayChannel(radiochannel *chan, int r)
     QTableWidgetItem *rx_freq_display = new QTableWidgetItem;
     QString rx_freq = QString("%L1").arg(chan->rx_frequency);
     rx_freq_display->setText(rx_freq);
+
     /// unused, using tx_shift
     //QTableWidgetItem *tx_freq_display = new QTableWidgetItem;
     //tx_freq_display->setText(QString::number(chan->tx_frequency));
+
     QTableWidgetItem *rx_mode_display = new QTableWidgetItem;
     rx_mode_display->setText(QString::number(chan->rx_mode));
+
     QTableWidgetItem *tx_mode_display = new QTableWidgetItem;
     tx_mode_display->setText(QString::number(chan->tx_mode));
+
     QTableWidgetItem *name_display = new QTableWidgetItem;
     name_display->setText(QString::fromStdString(chan->name));
+
     QTableWidgetItem *tx_shift_display = new QTableWidgetItem;
-    tx_shift_display->setText(QString::number(chan->tx_shift));
+    tx_shift_display->setText(QString::number(chan->tx_shift / 1000));
+
+    QTableWidgetItem *squelch_display = new QTableWidgetItem;
+    squelch_display->setText(QString::number(chan->squelch));
+
+    QTableWidgetItem *rx_volume_display = new QTableWidgetItem;
+    rx_volume_display->setText(QString::number(chan->rx_volume));
+
+    QTableWidgetItem *tx_power_display = new QTableWidgetItem;
+    tx_power_display->setText(QString::number(chan->tx_power));
+
+    QTableWidgetItem *rx_sensitivity_display = new QTableWidgetItem;
+    rx_sensitivity_display->setText(QString::number(chan->rx_sensitivity));
+
+    QTableWidgetItem *rx_ctcss_display = new QTableWidgetItem;
+    rx_ctcss_display->setText(QString::number(chan->rx_ctcss));
+
+    QTableWidgetItem *tx_ctcss_display = new QTableWidgetItem;
+    tx_ctcss_display->setText(QString::number(chan->tx_ctcss));
+
     //QTableWidgetItem *id_display = new QTableWidgetItem;
     //id_display->setText(QString::number(chan->id));
+
     ui->memoriesTableWidget->insertRow(r);
     ui->memoriesTableWidget->setItem(r, 0, rx_freq_display);
     ui->memoriesTableWidget->setItem(r, 1, name_display);
     ui->memoriesTableWidget->setItem(r, 2, tx_shift_display);
     ui->memoriesTableWidget->setItem(r, 3, tx_mode_display);
     ui->memoriesTableWidget->setItem(r, 4, rx_mode_display);
+    ui->memoriesTableWidget->setItem(r, 5, squelch_display);
+    ui->memoriesTableWidget->setItem(r, 6, rx_volume_display);
+    ui->memoriesTableWidget->setItem(r, 7, tx_power_display);
+    ui->memoriesTableWidget->setItem(r, 8, rx_sensitivity_display);
+    ui->memoriesTableWidget->setItem(r, 9, rx_ctcss_display);
+    ui->memoriesTableWidget->setItem(r, 10, tx_ctcss_display);
+
     //ui->memoriesTableWidget->setItem(r, 5, id_display);
     //ui->memoriesTableWidget->setItem(r, 6, tx_freq_display);
-
+    ui->memoriesTableWidget->horizontalHeader()->setHidden(false);
 
 }
 
@@ -496,6 +537,12 @@ void MainWindow::addMemoryChannel()
     chan->tx_shift = _settings->tx_shift;
     chan->rx_mode = _settings->rx_mode;
     chan->tx_mode = _settings->tx_mode;
+    chan->squelch = _settings->squelch;
+    chan->rx_volume = _settings->rx_volume;
+    chan->tx_power = _settings->tx_power;
+    chan->rx_sensitivity = _settings->rx_sensitivity;
+    chan->rx_ctcss = _settings->rx_ctcss;
+    chan->tx_ctcss = _settings->tx_ctcss;
     chan->id = _new_mem_index; // FIXME:
     chan->name = "";
     QVector<radiochannel*> *channels = _radio_channels->getChannels();
@@ -543,16 +590,33 @@ void MainWindow::tuneToMemoryChannel(int row, int col)
 
     QVector<radiochannel*> *channels = _radio_channels->getChannels();
     radiochannel *chan = channels->at(row);
+
     ui->frameCtrlFreq->setFrequency(chan->rx_frequency);
     tuneMainFreq(chan->rx_frequency);
-    _settings->tx_shift = chan->tx_shift * 1000;
+    _settings->tx_shift = chan->tx_shift;
     emit changeTxShift(_settings->tx_shift);
-    ui->shiftEdit->setText(QString::number(chan->tx_shift));
+    ui->shiftEdit->setText(QString::number(chan->tx_shift / 1000));
 
     ui->rxModemTypeComboBox->setCurrentIndex(chan->rx_mode);
     ui->txModemTypeComboBox->setCurrentIndex(chan->tx_mode);
     _settings->rx_mode = chan->rx_mode;
     _settings->tx_mode = chan->tx_mode;
+
+    setSquelchDisplay(chan->squelch);
+    setVolumeDisplay(chan->rx_volume);
+    setTxPowerDisplay(chan->tx_power);
+    setRxSensitivityDisplay(chan->rx_sensitivity);
+    setRxCTCSS(chan->rx_ctcss);
+    setTxCTCSS(chan->tx_ctcss);
+    if(chan->rx_ctcss > 0.0)
+        ui->comboBoxRxCTCSS->setCurrentText(QString::number(chan->rx_ctcss));
+    else
+        ui->comboBoxRxCTCSS->setCurrentText("CTCSS");
+    if(chan->tx_ctcss > 0.0)
+        ui->comboBoxTxCTCSS->setCurrentText(QString::number(chan->tx_ctcss));
+    else
+        ui->comboBoxTxCTCSS->setCurrentText("CTCSS");
+
 
 }
 
@@ -571,7 +635,7 @@ void MainWindow::editMemoryChannel(QTableWidgetItem* item)
         chan->name = item->text().toStdString();
         break;
     case 2:
-        chan->tx_shift = item->text().toInt();
+        chan->tx_shift = item->text().toInt() * 1000;
         break;
     case 3:
         chan->rx_mode = item->text().toInt();
@@ -579,7 +643,30 @@ void MainWindow::editMemoryChannel(QTableWidgetItem* item)
     case 4:
         chan->tx_mode = item->text().toInt();
         break;
+    case 5:
+        chan->squelch = item->text().toInt();
+        break;
+    case 6:
+        chan->rx_volume = item->text().toInt();
+        break;
+    case 7:
+        chan->tx_power = item->text().toInt();
+        break;
+    case 8:
+        chan->rx_sensitivity = item->text().toInt();
+        break;
+    case 9:
+        chan->rx_ctcss = item->text().toFloat();
+        break;
+    case 10:
+        chan->tx_ctcss = item->text().toFloat();
+        break;
     }
+}
+
+void MainWindow::saveMemoryChannes()
+{
+    _radio_channels->saveConfig();
 }
 
 
@@ -1060,24 +1147,28 @@ void MainWindow::enterShift()
 
 void MainWindow::setTxPowerDisplay(int value)
 {
+    _settings->tx_power = value;
     ui->txPowerDisplay->display(value);
     emit setTxPower((int)value);
 }
 
 void MainWindow::setRxSensitivityDisplay(int value)
 {
+    _settings->rx_sensitivity = value;
     ui->rxSensitivityDisplay->display(value);
     emit setRxSensitivity((int)value);
 }
 
 void MainWindow::setSquelchDisplay(int value)
 {
+    _settings->squelch = value;
     ui->rxSquelchDisplay->display(value);
     emit setSquelch((int)value);
 }
 
 void MainWindow::setVolumeDisplay(int value)
 {
+    _settings->rx_volume = value;
     ui->rxVolumeDisplay->display(value);
     emit setVolume((int)value);
 }
@@ -1137,13 +1228,15 @@ void MainWindow::updateFreqGUI(long long center_freq, long carrier_offset)
 void MainWindow::updateRxCTCSS(int value)
 {
     Q_UNUSED(value);
-    emit setRxCTCSS(ui->comboBoxRxCTCSS->currentText().toFloat());
+    _settings->rx_ctcss = ui->comboBoxRxCTCSS->currentText().toFloat();
+    emit setRxCTCSS(_settings->rx_ctcss);
 }
 
 void MainWindow::updateTxCTCSS(int value)
 {
     Q_UNUSED(value);
-    emit setTxCTCSS(ui->comboBoxTxCTCSS->currentText().toFloat());
+    _settings->tx_ctcss = ui->comboBoxTxCTCSS->currentText().toFloat();
+    emit setTxCTCSS(_settings->tx_ctcss);
 }
 
 void MainWindow::togglePTTVOIP(bool value)

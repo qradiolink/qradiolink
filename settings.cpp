@@ -41,6 +41,8 @@ Settings::Settings()
     demod_offset = 0;
     rx_mode = 0;
     tx_mode = 0;
+    rx_ctcss = 0.0;
+    tx_ctcss = 0.0;
     ip_address = "";
     rx_sample_rate = 1000000;
     scan_step = 0;
@@ -96,13 +98,13 @@ void Settings::readConfig()
     catch(const libconfig::FileIOException &fioex)
     {
         std::cerr << "I/O error while reading configuration file." << std::endl;
-        exit(EXIT_FAILURE);
+        exit(EXIT_FAILURE); // a bit radical
     }
     catch(const libconfig::ParseException &pex)
     {
         std::cerr << "Configuration parse error at " << pex.getFile() << ":" << pex.getLine()
                   << " - " << pex.getError() << std::endl;
-        exit(EXIT_FAILURE);
+        exit(EXIT_FAILURE); // a bit radical
     }
 
     /// Read values
@@ -233,6 +235,22 @@ void Settings::readConfig()
     catch(const libconfig::SettingNotFoundException &nfex)
     {
         tx_volume = 50;
+    }
+    try
+    {
+        rx_ctcss = cfg.lookup("rx_ctcss");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        rx_ctcss = 0.0;
+    }
+    try
+    {
+        tx_ctcss = cfg.lookup("tx_ctcss");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        tx_ctcss = 0.0;
     }
     try
     {
@@ -423,6 +441,8 @@ void Settings::saveConfig()
     root.add("voip_port",libconfig::Setting::TypeInt) = voip_port;
     root.add("rx_mode",libconfig::Setting::TypeInt) = rx_mode;
     root.add("tx_mode",libconfig::Setting::TypeInt) = tx_mode;
+    root.add("rx_ctcss",libconfig::Setting::TypeFloat) = rx_ctcss;
+    root.add("tx_ctcss",libconfig::Setting::TypeFloat) = tx_ctcss;
     root.add("ip_address",libconfig::Setting::TypeString) = ip_address.toStdString();
     root.add("demod_offset",libconfig::Setting::TypeInt64) = demod_offset;
     root.add("rx_sample_rate",libconfig::Setting::TypeInt64) = rx_sample_rate;

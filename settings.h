@@ -47,6 +47,8 @@ public:
     int squelch;
     int rx_volume;
     int tx_volume;
+    float rx_ctcss;
+    float tx_ctcss;
     long long rx_frequency;
     long long tx_shift;
     QString callsign;

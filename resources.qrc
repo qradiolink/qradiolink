@@ -27,6 +27,8 @@
         <file>res/list-add.png</file>
         <file>res/list-remove.png</file>
         <file>res/end_beep1.raw</file>
+        <file>res/dialog-close.png</file>
+        <file>res/document-save.png</file>
     </qresource>
     <qresource prefix="/fonts">
         <file>res/LiquidCrystal-Normal.otf</file>

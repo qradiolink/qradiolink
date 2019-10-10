@@ -89,13 +89,23 @@ void RadioChannels::readConfig()
 
     /// Read memories
     libconfig::Setting &root = cfg.getRoot();
-
+    libconfig::Setting *channels_ptr;
     try
     {
-        const libconfig::Setting &channels = root["channels"];
-        for(int i=0;i<channels.getLength();i++)
+        libconfig::Setting &channels_priv = root["channels"];
+        channels_ptr = &channels_priv;
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        std::cerr << "No memory channels found." << std::endl;
+        return;
+    }
+    const libconfig::Setting &channels = *channels_ptr;
+    for(int i=0;i<channels.getLength();i++)
+    {
+        radiochannel *chan = new radiochannel;
+        try
         {
-            radiochannel *chan = new radiochannel;
             chan->id = channels[i]["id"];
             chan->rx_frequency = channels[i]["rx_frequency"];
             chan->tx_frequency = channels[i]["tx_frequency"];
@@ -104,14 +114,28 @@ void RadioChannels::readConfig()
             chan->tx_mode = channels[i]["tx_mode"];
             std::string name(channels[i]["name"].c_str());
             chan->name = name;
-            _channels->push_back(chan);
         }
+        catch (const libconfig::SettingNotFoundException &nfex)
+        {
+            delete chan;
+            continue;
+        }
+        try
+        {
+            chan->squelch = channels[i]["squelch"];
+            chan->rx_volume = channels[i]["rx_volume"];
+            chan->tx_power = channels[i]["tx_power"];
+            chan->rx_sensitivity = channels[i]["rx_sensitivity"];
+            chan->rx_ctcss = channels[i]["rx_ctcss"];
+            chan->tx_ctcss = channels[i]["tx_ctcss"];
+        }
+        catch (const libconfig::SettingNotFoundException &nfex)
+        {
+            // FIXME: upgrade config!
+        }
+        _channels->push_back(chan);
     }
-    catch(const libconfig::SettingNotFoundException &nfex)
-    {
-        std::cerr << "No memory channels found." << std::endl;
-        return;
-    }
+
 }
 
 
@@ -133,6 +157,12 @@ void RadioChannels::saveConfig()
         channel.add("tx_shift", libconfig::Setting::TypeInt64) = chan->tx_shift;
         channel.add("rx_mode", libconfig::Setting::TypeInt) = chan->rx_mode;
         channel.add("tx_mode", libconfig::Setting::TypeInt) = chan->rx_mode;
+        channel.add("squelch", libconfig::Setting::TypeInt) = chan->squelch;
+        channel.add("rx_volume", libconfig::Setting::TypeInt) = chan->rx_volume;
+        channel.add("tx_power", libconfig::Setting::TypeInt) = chan->tx_power;
+        channel.add("rx_sensitivity", libconfig::Setting::TypeInt) = chan->rx_sensitivity;
+        channel.add("rx_ctcss", libconfig::Setting::TypeFloat) = chan->rx_ctcss;
+        channel.add("tx_ctcss", libconfig::Setting::TypeFloat) = chan->tx_ctcss;
         channel.add("name", libconfig::Setting::TypeString) = chan->name;
     }
 

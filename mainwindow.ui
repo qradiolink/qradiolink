@@ -96,7 +96,7 @@
 </string>
         </property>
         <property name="currentIndex">
-         <number>3</number>
+         <number>0</number>
         </property>
         <property name="iconSize">
          <size>
@@ -944,7 +944,7 @@ background-color: rgb(0, 0, 67);</string>
            <rect>
             <x>150</x>
             <y>170</y>
-            <width>600</width>
+            <width>900</width>
             <height>250</height>
            </rect>
           </property>
@@ -956,13 +956,13 @@ background-color: rgb(0, 0, 67);</string>
           </property>
           <property name="minimumSize">
            <size>
-            <width>600</width>
+            <width>900</width>
             <height>250</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>600</width>
+            <width>900</width>
             <height>250</height>
            </size>
           </property>
@@ -1026,13 +1026,13 @@ font: 9pt &quot;Sans Serif&quot;;</string>
               <bool>true</bool>
              </property>
              <property name="columnCount">
-              <number>5</number>
+              <number>11</number>
              </property>
              <attribute name="horizontalHeaderVisible">
               <bool>false</bool>
              </attribute>
              <attribute name="horizontalHeaderDefaultSectionSize">
-              <number>100</number>
+              <number>90</number>
              </attribute>
              <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
               <bool>true</bool>
@@ -1065,6 +1065,36 @@ font: 9pt &quot;Sans Serif&quot;;</string>
              <column>
               <property name="text">
                <string>TX Mode</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Squelch</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Volume</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>TX Power</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>RX Gain</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>RX CTCSS</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>TX CTCSS</string>
               </property>
              </column>
             </widget>
@@ -1147,6 +1177,27 @@ font: 9pt &quot;Sans Serif&quot;;</string>
                  <iconset>
                   <normalon>:/res/list-remove.png</normalon>
                  </iconset>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="saveChannelsButton">
+                <property name="toolTip">
+                 <string>Save channels</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset>
+                  <normalon>:/res/document-save.png</normalon>
+                 </iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>24</width>
+                  <height>24</height>
+                 </size>
                 </property>
                </widget>
               </item>
