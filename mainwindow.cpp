@@ -28,12 +28,17 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     _settings = settings;
     _radio_channels = radio_channels;
 
+    _speech_icon_timer.setSingleShot(true);
+    _secondary_text_timer.setSingleShot(true);
+
     QStringList tones;
     tones.append("CTCSS");
     for(int i=0;i<38;i++)
     {
         tones.append(QString::number(tone_list[i]));
     }
+    ui->comboBoxTxCTCSS->addItems(tones);
+    ui->comboBoxRxCTCSS->addItems(tones);
 
     _filter_widths = new std::vector<std::complex<int>>;
     _filter_ranges = new std::vector<std::complex<int>>;
@@ -53,9 +58,6 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     }
 
 
-    ui->comboBoxTxCTCSS->addItems(tones);
-    ui->comboBoxRxCTCSS->addItems(tones);
-
     ui->tabWidget->setCurrentIndex(0);
 
     ui->frameCtrlFreq->setup(10, 10U, 9000000000U, 1, UNITS_MHZ );
@@ -74,8 +76,6 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     ui->tuneDial->setStyleSheet("background-color: rgb(150, 150, 150);");
     ui->txGainDial->setNotchesVisible(true);
 
-    _speech_icon_timer.setSingleShot(true);
-    _secondary_text_timer.setSingleShot(true);
 
     QObject::connect(ui->buttonTransmit,SIGNAL(toggled(bool)),this,SLOT(startTx()));
     QObject::connect(ui->sendTextButton,SIGNAL(clicked()),this,SLOT(sendTextRequested()));
@@ -101,7 +101,7 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     QObject::connect(ui->scanDownButton,SIGNAL(toggled(bool)),this,SLOT(startScan(bool)));
     QObject::connect(ui->memoryScanUpButton,SIGNAL(toggled(bool)),this,SLOT(startMemoryScan(bool)));
     QObject::connect(ui->memoryScanDownButton,SIGNAL(toggled(bool)),this,SLOT(startMemoryScan(bool)));
-    QObject::connect(ui->saveOptionsButton,SIGNAL(clicked()),this,SLOT(saveConfig()));
+    QObject::connect(ui->saveOptionsButton,SIGNAL(clicked()),this,SLOT(saveUiConfig()));
     QObject::connect(ui->tabWidget,SIGNAL(currentChanged(int)),this,SLOT(mainTabChanged(int)));
     QObject::connect(ui->comboBoxRxCTCSS,SIGNAL(currentIndexChanged(int)),this,SLOT(updateRxCTCSS(int)));
     QObject::connect(ui->comboBoxTxCTCSS,SIGNAL(currentIndexChanged(int)),this,SLOT(updateTxCTCSS(int)));
@@ -205,8 +205,7 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
 
 void MainWindow::initSettings()
 {
-    readConfig();
-    _radio_channels->readConfig();
+    setConfig();
     updateMemories();
     updateRSSI(9999);
     _range_set = false;
@@ -250,13 +249,12 @@ MainWindow::~MainWindow()
 
 void MainWindow::closeEvent (QCloseEvent *event)
 {
-    saveConfig();
-    _radio_channels->saveConfig();
+    saveUiConfig();
     emit stopRadio();
     emit disconnectFromServer();
     emit terminateConnections();
     // FIXME: this is the wrong way to stop the radio
-    struct timespec time_to_sleep = {0, 800000000L };
+    struct timespec time_to_sleep = {0, 200000000L };
     nanosleep(&time_to_sleep, NULL);
     event->accept();
 }
@@ -368,7 +366,7 @@ void MainWindow::setEnabledDuplex(bool value)
     emit enableDuplex(value);
 }
 
-void MainWindow::readConfig()
+void MainWindow::setConfig()
 {
     ui->lineEditRXDev->setText(_settings->rx_device_args);
     ui->lineEditTXDev->setText(_settings->tx_device_args);
@@ -419,7 +417,7 @@ void MainWindow::readConfig()
 
 }
 
-void MainWindow::saveConfig()
+void MainWindow::saveUiConfig()
 {
     _settings->rx_device_args = ui->lineEditRXDev->text();
     _settings->tx_device_args = ui->lineEditTXDev->text();
@@ -446,7 +444,6 @@ void MainWindow::saveConfig()
     _settings->fft_size = (ui->fftSizeBox->currentText().toInt());
     _settings->scan_step = (int)ui->lineEditScanStep->text().toInt();
     _settings->waterfall_fps = (int)ui->fpsBox->currentText().toInt();
-    _settings->saveConfig();
 }
 
 void MainWindow::addDisplayChannel(radiochannel *chan, int r)
@@ -505,15 +502,14 @@ void MainWindow::addDisplayChannel(radiochannel *chan, int r)
     ui->memoriesTableWidget->setItem(r, 9, rx_ctcss_display);
     ui->memoriesTableWidget->setItem(r, 10, tx_ctcss_display);
 
-    //ui->memoriesTableWidget->setItem(r, 5, id_display);
-    //ui->memoriesTableWidget->setItem(r, 6, tx_freq_display);
+    //ui->memoriesTableWidget->setItem(r, 11, id_display);
+    //ui->memoriesTableWidget->setItem(r, 12, tx_freq_display);
     ui->memoriesTableWidget->horizontalHeader()->setHidden(false);
 
 }
 
 void MainWindow::updateMemories()
 {
-
     for(int i=0;i<ui->memoriesTableWidget->rowCount();i++)
         ui->memoriesTableWidget->removeRow(i);
     ui->memoriesTableWidget->clearContents();
@@ -526,7 +522,6 @@ void MainWindow::updateMemories()
         addDisplayChannel(chan, r);
     }
     _new_mem_index = r;
-
 }
 
 void MainWindow::addMemoryChannel()
@@ -779,7 +774,8 @@ void MainWindow::displayText(QString text, bool html)
     else
         ui->receivedTextEdit->append(text);
 
-    ui->receivedTextEdit->verticalScrollBar()->setValue(ui->receivedTextEdit->verticalScrollBar()->maximum());
+    ui->receivedTextEdit->verticalScrollBar()->setValue(
+                ui->receivedTextEdit->verticalScrollBar()->maximum());
 
     // text widget
     ui->secondaryTextDisplay->moveCursor(QTextCursor::End);
@@ -792,7 +788,8 @@ void MainWindow::displayText(QString text, bool html)
     else
         ui->secondaryTextDisplay->append(text);
 
-    ui->secondaryTextDisplay->verticalScrollBar()->setValue(ui->secondaryTextDisplay->verticalScrollBar()->maximum());
+    ui->secondaryTextDisplay->verticalScrollBar()->setValue(
+                ui->secondaryTextDisplay->verticalScrollBar()->maximum());
     ui->secondaryTextDisplay->show();
     _secondary_text_timer.start(10000);
 }
@@ -809,14 +806,16 @@ void MainWindow::displayVOIPText(QString text, bool html)
     else
         ui->voipMessagesEdit->append(text);
 
-    ui->voipMessagesEdit->verticalScrollBar()->setValue(ui->voipMessagesEdit->verticalScrollBar()->maximum());
+    ui->voipMessagesEdit->verticalScrollBar()->setValue(
+                ui->voipMessagesEdit->verticalScrollBar()->maximum());
 }
 
 void MainWindow::clearTextArea()
 {
     ui->receivedTextEdit->setPlainText("");
     ui->receivedTextEdit->moveCursor(QTextCursor::End);
-    ui->receivedTextEdit->verticalScrollBar()->setValue(ui->receivedTextEdit->verticalScrollBar()->maximum());
+    ui->receivedTextEdit->verticalScrollBar()->setValue(
+                ui->receivedTextEdit->verticalScrollBar()->maximum());
 }
 
 void MainWindow::displayImage(QImage img)
@@ -863,7 +862,7 @@ void MainWindow::displayTransmitStatus(bool status)
 void MainWindow::connectVOIPRequested()
 {
     emit connectToServer(ui->voipServerEdit->text(), ui->voipServerPortEdit->text().toInt());
-    emit setMute(false);
+    emit setMute(false); // FIXME: ???
 }
 
 void MainWindow::disconnectVOIPRequested()
@@ -889,9 +888,11 @@ void MainWindow::connectedToServer(QString msg)
 void MainWindow::updateOnlineStations(StationList stations)
 {
     _user_list = stations;
+    // FIXME: code below is unmaintainable!
     for(int i=0;i<stations.size();i++)
     {
-        QList<QTreeWidgetItem*> list = ui->voipTreeWidget->findItems(".", Qt::MatchRegExp | Qt::MatchExactly | Qt::MatchRecursive,3);
+        QList<QTreeWidgetItem*> list = ui->voipTreeWidget->findItems(
+                    ".", Qt::MatchRegExp | Qt::MatchExactly | Qt::MatchRecursive,3);
         if(list.size()>0)
         {
             delete list.at(0);
@@ -899,8 +900,9 @@ void MainWindow::updateOnlineStations(StationList stations)
     }
     for(int i=0;i<stations.size();i++)
     {
-        QList<QTreeWidgetItem*> channel_list = ui->voipTreeWidget->findItems(QString::number(stations.at(i)->channel_id),
-                                                                             Qt::MatchExactly | Qt::MatchRecursive,2);
+        QList<QTreeWidgetItem*> channel_list = ui->voipTreeWidget->findItems(
+                    QString::number(stations.at(i)->channel_id),
+                    Qt::MatchExactly | Qt::MatchRecursive,2);
         if(channel_list.size()>0)
         {
             if(QString::number(stations.at(i)->id) == ".")
@@ -938,7 +940,8 @@ void MainWindow::resetSpeechIcons()
 {
     for(int i =0;i<_user_list.size();i++)
     {
-        QList<QTreeWidgetItem*> list = ui->voipTreeWidget->findItems(QString::number(_user_list.at(i)->id),
+        QList<QTreeWidgetItem*> list = ui->voipTreeWidget->findItems(
+                    QString::number(_user_list.at(i)->id),
                  Qt::MatchExactly | Qt::MatchRecursive,3);
         if(list.size()>0)
         {
@@ -976,7 +979,8 @@ void MainWindow::updateChannels(ChannelList channels)
             ui->voipTreeWidget->addTopLevelItem(t);
         else
         {
-            QList<QTreeWidgetItem*> channel_list = ui->voipTreeWidget->findItems(QString::number(chan->parent_id),Qt::MatchExactly | Qt::MatchRecursive,2);
+            QList<QTreeWidgetItem*> channel_list = ui->voipTreeWidget->findItems(
+                        QString::number(chan->parent_id),Qt::MatchExactly | Qt::MatchRecursive,2);
             if(channel_list.size() > 0)
             {
                 QTreeWidgetItem *parent = channel_list.at(0);
@@ -991,7 +995,9 @@ void MainWindow::updateChannels(ChannelList channels)
 
 void MainWindow::joinedChannel(quint64 channel_id)
 {
-    QList<QTreeWidgetItem*> old_channel_list = ui->voipTreeWidget->findItems(QString::number(_settings->_current_voip_channel),Qt::MatchExactly | Qt::MatchRecursive,2);
+    QList<QTreeWidgetItem*> old_channel_list = ui->voipTreeWidget->findItems(
+                QString::number(_settings->_current_voip_channel),
+                Qt::MatchExactly | Qt::MatchRecursive,2);
     if(old_channel_list.size() > 0)
     {
         QTreeWidgetItem *t = old_channel_list.at(0);
@@ -1005,7 +1011,8 @@ void MainWindow::joinedChannel(quint64 channel_id)
     }
 
 
-    QList<QTreeWidgetItem*> channel_list = ui->voipTreeWidget->findItems(QString::number(channel_id),Qt::MatchExactly | Qt::MatchRecursive,2);
+    QList<QTreeWidgetItem*> channel_list = ui->voipTreeWidget->findItems(
+                QString::number(channel_id),Qt::MatchExactly | Qt::MatchRecursive,2);
     if(channel_list.size() > 0)
     {
         QTreeWidgetItem *t = channel_list.at(0);
@@ -1046,6 +1053,7 @@ void MainWindow::toggleTXwin(bool value)
 
 void MainWindow::toggleWideband(bool value)
 {
+    // ????
     emit toggleWidebandMode(value);
 }
 
@@ -1096,9 +1104,9 @@ void MainWindow::tuneMainFreq(qint64 freq)
 
     ui->frequencyEdit->setText(QString::number(ceil(freq/1000)));
     ui->tuneDial->setValue(0);
-    // rx_frequency is the center frequency of the source
+    /// rx_frequency is the center frequency of the source
     _settings->rx_frequency = freq - _settings->demod_offset;
-    // tx_frequency is the actual frequency
+    /// tx_frequency is the actual frequency
     _settings->_tx_frequency = freq;
     ui->plotterFrame->setCenterFreq(_settings->rx_frequency);
     ui->plotterFrame->setDemodCenterFreq(_settings->rx_frequency + _settings->demod_offset);
@@ -1141,6 +1149,7 @@ void MainWindow::enterShift()
     }
     else
     {
+        // FIXME: dialog maybe
         std::cerr << "Cannot set TX shift frequency while transmitting" << std::endl;
     }
 }
@@ -1175,6 +1184,8 @@ void MainWindow::setVolumeDisplay(int value)
 
 void MainWindow::setTxVolumeDisplay(int value)
 {
+    _settings->tx_volume = value;
+    ui->micGainSlider->setSliderPosition(value);
     emit setTxVolume((int)value);
 }
 
@@ -1222,7 +1233,8 @@ void MainWindow::updateFreqGUI(long long center_freq, long carrier_offset)
     ui->frameCtrlFreq->setFrequency(_settings->rx_frequency + _settings->demod_offset, false);
     ui->plotterFrame->setFilterOffset((qint64)_settings->demod_offset);
     ui->plotterFrame->setCenterFreq(_settings->rx_frequency);
-    ui->frequencyEdit->setText(QString::number(ceil((_settings->rx_frequency + _settings->demod_offset)/1000)));
+    ui->frequencyEdit->setText(QString::number(
+                    ceil((_settings->rx_frequency + _settings->demod_offset)/1000)));
 }
 
 void MainWindow::updateRxCTCSS(int value)
@@ -1312,7 +1324,7 @@ void MainWindow::updateSampleRate()
 
 void MainWindow::setFFTRange(int value)
 {
-    // value is from one to 10
+    /// value is from one to 10
     if(_rssi == 0)
         _rssi = -80.0;
     ui->plotterFrame->setPandapterRange(_rssi - 20 / (float)value , _rssi + 70 / (float)value);
@@ -1321,7 +1333,7 @@ void MainWindow::setFFTRange(int value)
 
 void MainWindow::autoSquelch()
 {
-    if(_rssi == 0)
+    if(_rssi == 0) // FIXME: float?
         return;
     int calibration = ui->rssiCalibrateEdit->text().toInt();
     int squelch = (int)_rssi + (abs(calibration) - 80) + 50;

@@ -91,7 +91,7 @@ public slots:
     void startScan(bool value);
     void displayImage(QImage img);
     void enterFreq();
-    void saveConfig();
+    void saveUiConfig();
     void updateMemories();
     void mainTabChanged(int value);
     void clearTextArea();
@@ -185,7 +185,7 @@ public:
     explicit MainWindow(Settings *settings, RadioChannels *radio_channels, QWidget *parent = 0);
     ~MainWindow();
 
-    void readConfig();
+    void setConfig();
     void initSettings();
 
 private:

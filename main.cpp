@@ -29,7 +29,6 @@
 #include <iostream>
 #include "mainwindow.h"
 #include "dtmfdecoder.h"
-#include "config_defines.h"
 #include "mumbleclient.h"
 #include "audiowriter.h"
 #include "audioreader.h"
@@ -84,8 +83,8 @@ int main(int argc, char *argv[])
 #endif
 
     typedef QVector<Station*> StationList;
-    typedef QVector<MumbleChannel*> ChannelList;
     qRegisterMetaType<StationList>("StationList");
+    typedef QVector<MumbleChannel*> ChannelList;
     qRegisterMetaType<ChannelList>("ChannelList");
     typedef std::vector<std::complex<float>> complex_vector;
     qRegisterMetaType<complex_vector>("complex_vector");
@@ -106,6 +105,7 @@ int main(int argc, char *argv[])
     Settings *settings = new Settings;
     settings->readConfig();
     RadioChannels *radio_channels = new RadioChannels;
+    radio_channels->readConfig();
     MumbleClient *mumbleclient = new MumbleClient(settings);
     RadioController *radio_op = new RadioController(settings);
     AudioWriter *audiowriter = new AudioWriter(settings);
@@ -125,32 +125,32 @@ int main(int argc, char *argv[])
 
 
 
-    QThread *t4 = new QThread;
-    t4->setObjectName("radioop");
-    radio_op->moveToThread(t4);
-    QObject::connect(t4, SIGNAL(started()), radio_op, SLOT(run()));
-    QObject::connect(radio_op, SIGNAL(finished()), t4, SLOT(quit()));
+    QThread *t1 = new QThread;
+    t1->setObjectName("radioop");
+    radio_op->moveToThread(t1);
+    QObject::connect(t1, SIGNAL(started()), radio_op, SLOT(run()));
+    QObject::connect(radio_op, SIGNAL(finished()), t1, SLOT(quit()));
     QObject::connect(radio_op, SIGNAL(finished()), radio_op, SLOT(deleteLater()));
-    QObject::connect(t4, SIGNAL(finished()), t4, SLOT(deleteLater()));
-    t4->start();
+    QObject::connect(t1, SIGNAL(finished()), t1, SLOT(deleteLater()));
+    t1->start();
 
-    QThread *t5 = new QThread;
-    t5->setObjectName("audiowriter");
-    audiowriter->moveToThread(t5);
-    QObject::connect(t5, SIGNAL(started()), audiowriter, SLOT(run()));
-    QObject::connect(audiowriter, SIGNAL(finished()), t5, SLOT(quit()));
+    QThread *t2 = new QThread;
+    t2->setObjectName("audiowriter");
+    audiowriter->moveToThread(t2);
+    QObject::connect(t2, SIGNAL(started()), audiowriter, SLOT(run()));
+    QObject::connect(audiowriter, SIGNAL(finished()), t2, SLOT(quit()));
     QObject::connect(audiowriter, SIGNAL(finished()), audiowriter, SLOT(deleteLater()));
-    QObject::connect(t5, SIGNAL(finished()), t5, SLOT(deleteLater()));
-    t5->start();
+    QObject::connect(t2, SIGNAL(finished()), t2, SLOT(deleteLater()));
+    t2->start();
 
-    QThread *t6 = new QThread;
-    t6->setObjectName("audioreader");
-    audioreader->moveToThread(t6);
-    QObject::connect(t6, SIGNAL(started()), audioreader, SLOT(run()));
-    QObject::connect(audioreader, SIGNAL(finished()), t6, SLOT(quit()));
+    QThread *t3 = new QThread;
+    t3->setObjectName("audioreader");
+    audioreader->moveToThread(t3);
+    QObject::connect(t3, SIGNAL(started()), audioreader, SLOT(run()));
+    QObject::connect(audioreader, SIGNAL(finished()), t3, SLOT(quit()));
     QObject::connect(audioreader, SIGNAL(finished()), audioreader, SLOT(deleteLater()));
-    QObject::connect(t6, SIGNAL(finished()), t6, SLOT(deleteLater()));
-    t6->start();
+    QObject::connect(t3, SIGNAL(finished()), t3, SLOT(deleteLater()));
+    t3->start();
 
     QObject::connect(w,SIGNAL(startTransmission()),radio_op,SLOT(startTransmission()));
     QObject::connect(w,SIGNAL(endTransmission()),radio_op,SLOT(endTransmission()));
@@ -204,7 +204,6 @@ int main(int argc, char *argv[])
     QObject::connect(radio_op, SIGNAL(displayDataReceiveStatus(bool)), w, SLOT(displayDataReceiveStatus(bool)));
     QObject::connect(radio_op, SIGNAL(freqToGUI(long long, long)), w, SLOT(updateFreqGUI(long long, long)));
     QObject::connect(radio_op, SIGNAL(pingServer()), mumbleclient, SLOT(pingServer()));
-    QObject::connect(mumbleclient, SIGNAL(pcmAudio(short*,int,quint64)), radio_op, SLOT(processVoipAudioFrame(short*, int, quint64)));
     QObject::connect(radio_op, SIGNAL(voipDataPCM(short*,int)), mumbleclient, SLOT(processPCMAudio(short*,int)));
     QObject::connect(radio_op, SIGNAL(writePCM(short*,int,bool,int)), audiowriter, SLOT(writePCM(short*,int,bool, int)));
     QObject::connect(radio_op, SIGNAL(voipDataOpus(unsigned char*,int)), mumbleclient, SLOT(processOpusAudio(unsigned char*, int)));
@@ -215,6 +214,7 @@ int main(int argc, char *argv[])
 
     QObject::connect(mumbleclient,SIGNAL(onlineStations(StationList)),w,SLOT(updateOnlineStations(StationList)));
     QObject::connect(mumbleclient,SIGNAL(userSpeaking(quint64)),w,SLOT(userSpeaking(quint64)));
+    QObject::connect(mumbleclient, SIGNAL(pcmAudio(short*,int,quint64)), radio_op, SLOT(processVoipAudioFrame(short*, int, quint64)));
     QObject::connect(mumbleclient,SIGNAL(onlineStations(StationList)),radio_op,SLOT(setStations(StationList)));
     QObject::connect(mumbleclient,SIGNAL(textMessage(QString,bool)),w,SLOT(displayVOIPText(QString,bool)));
     QObject::connect(mumbleclient,SIGNAL(connectedToServer(QString)),w,SLOT(connectedToServer(QString)));
@@ -238,7 +238,9 @@ int main(int argc, char *argv[])
     delete w;
     delete telnet_server;
     delete mumbleclient;
+    radio_channels->saveConfig();
     delete radio_channels;
+    settings->saveConfig();
     delete settings;
     return ret;
 }
