@@ -8,7 +8,7 @@ QRadioLink
 About
 -----
 
-*QRadioLink* is a GNU/Linux software defined radio VOIP (radio over IP) transceiver application using Internet for communication, 
+*QRadioLink* is a GNU/Linux software defined radio VOIP (radio over IP) transceiver application using Internet protocols for communication, 
 built on top of [GNU radio](https://www.gnuradio.org/), 
 which allows experimenting with software defined radio hardware using different digital and analog radio signals and a Qt5 user interface.
 
@@ -30,15 +30,15 @@ Features
 - Full duplex 250 kbit/s IP radio modem with configurable TX/RX offsets
 - Mixed operation mode (receive one mode and transmit another)
 - Full duplex and simplex operation
-- Memory channels and memory channel scan
+- Memory channels and memory channel scan (store frequency, name, TX shift, operating mode, squelch value, volume, TX power, RX gain, TX and RX CTCSS)
 - Split operation (transmit on other frequency than the receive frequency with no shift limitation, used mostly for repeater operation)
 - Digital voice codecs: Codec2 700 bit/s, Codec2 1400 bit/s, Opus 9600 bit/s
 - FreeDV digital voice modulator and demodulator (currently supports only 1600, 700C and 800XA modes)
-- Digital modulations:  **BPSK**, **DQPSK**, **2FSK**, **4FSK**, **FreeDV 1600**, **FreeDV 700C**, **FreeDV 800XA**
+- Digital modulations: **FreeDV 1600**, **FreeDV 700C**, **FreeDV 800XA**, **BPSK**, **DQPSK**, **2FSK**, **4FSK**
 - Analog modulations: FM (10 kHz), narrow FM (5 kHz), SSB, AM, Wide FM (broadcast, receive-only)
 - CTCSS encoder and decoder for analog FM
 - VOX mode
-- Analog and digital mode repeater - full duplex mode, no mixed mode support
+- Analog and digital mode repeater - full duplex mode, no mixed mode support (yet)
 - Automatic carrier tracking and Doppler effect correction for all digital modes except FreeDV modes. The system can track Doppler shifts of 5-10 kHz, depending on mode. It requires a CNR of at least 10-12 dB, more for FSK modes than for PSK modes.
 - Supported hardware: [**Ettus USRP bus devices**](https://ettus.com), [**RTL-SDR**](https://osmocom.org/projects/sdr/wiki/rtl-sdr), [**ADALM-Pluto (PlutoSDR)**](https://www.analog.com/en/design-center/evaluation-hardware-and-software/evaluation-boards-kits/adalm-pluto.html), (supported with SoapySDR and [**SoapyPlutoSDR**](https://github.com/pothosware/SoapyPlutoSDR)), [**LimeSDR-mini**](https://www.crowdsupply.com/lime-micro/limesdr-mini) (partly supported, through SoapySDR), BladeRF, other devices supported by [**gr-osmosdr**](https://osmocom.org/projects/sdr/wiki/GrOsmoSDR) like HackRF and RedPitaya (not tested)
  
@@ -91,6 +91,8 @@ Building the software from source
 - Execute build_debian.sh
 
 <pre>
+$ git clone https://github.com/kantooon/qradiolink
+$ cd qradiolink/
 $ sh ./build_debian.sh
 </pre>
 
@@ -102,7 +104,8 @@ Or alternatively:
 - Run make (with the optional -j flag)
 
 <pre>
-cd qradiolink
+git clone https://github.com/kantooon/qradiolink
+cd qradiolink/
 mkdir -p build
 cd ext/
 protoc --cpp_out=. Mumble.proto
@@ -114,19 +117,65 @@ make
 </pre>
 
 Known issues:
-- In low light, the automatic adjustment of ISO in the video camera can cause very long times to capture a frame. The solution is to use plenty of lighting for video.
+- In low light, the automatic adjustment of ISO in the video camera can cause very long times to capture a frame. The solution is to use plenty of lighting for video. Otherwise the video transmission will experience very frequent interruptions.
 
-Running
+
+Setup and running
 -------
-- It is recommended to start the application using the command line when running the first few times.
-- When first run, go to the Setup tab first and configure the options, then click Save before starting TX or RX.
-- You can only transmit when you have selected a sample rate of 1 Msps (1000000). Other sample rates are for receiving only.
-- VOIP uses [umurmur](https://github.com/umurmur/umurmur) as a server. A version known to work with qradiolink is mirrored at [qradiolink](https://github.com/qradiolink/umurmur)  You can use QRadioLink as a pure VOIP client without using the radio by selecting "Use PTT for VOIP". For radio over IP operation, you need to toggle "Forward radio" to send the digital or analog radio voice to the VOIP server. Any voice packets coming from the server will be transmitted directly after transcoding in this case. Currently full duplex audio from more than two VOIP clients at the same time is not supported.
-- The configuration file is located in $HOME/.config/qradiolink.cfg
-- In full duplex operation you need to have sufficient isolation between the TX antenna port and the RX antenna port to avoid overloading your input.
+- It is recommended to start the application using the command line when running the first few times and look for any error messages output to the console. Some of them can be ignored safely, others are critical. Logging to a file is not yet enabled.
+- When first run, go to the **Setup** tab first and configure the options, then click Save before starting TX or RX. Without the correct device arguments, the application can crash when enabling RX or TX. This is not something that the application can control and keep functioning properly.
+- You can only transmit when you have selected a sample rate of 1 Msps (1000000). Other sample rates are for receiving only (except if you are using two different devices for receive and transmit). This is a hardware limitation on most devices.
+- VOIP uses [umurmur](https://github.com/umurmur/umurmur) as a server. A version known to work with qradiolink is mirrored at [qradiolink](https://github.com/qradiolink/umurmur)  You can use QRadioLink as a pure VOIP client without using the radio by selecting "Use PTT for VOIP". For radio over IP operation, you need to toggle "Forward radio" to send the digital or analog radio voice to the VOIP server and viceversa. Any voice packets coming from the server will be transmitted directly after transcoding in this case. Currently full duplex audio from more than two VOIP clients at the same time is not supported. The **Mumble** application can now receive and talk to QRadioLink normally. You should enable **Push To Talk** in Mumble and maximize the network robustness settings. Text messages from Mumble are displayed inside the application, but not action is taken on them (yet).
+The Mumble VOIP connection uses the Opus codec at a higher bitrate, so ensure the server can handle bitrates up to 50 kbit/s per client.
+- The VOIP username will be your callsign, plus a number of 4 random characters allowing you to use multiple clients on the same server. VOIP password is not yet supported.
+- The configuration file is located in $HOME/.config/qradiolink/qradiolink.cfg
+- The memory channels storage file is located in $HOME/.config/qradiolink/qradiolink_mem.cfg
+- After adding a memory channel, you can edit its values by double clicking on a table cell. This may cause the radio to switch to that channel. The settings are not updated instantly, so if you make a change, after you press Enter, switch to another channel and back to get the updates. Saving sorted channels is not possible yet. A button allows you to save channels before the window is closed. Otherwise, the channels, like the settings, will be stored on exit (if no application crash meanwhile).
+- Before any upgrade, please make a backup of the $HOME/.config/qradiolink/ directory in case something goes wrong, to avoid losing settings and channels.
+- Baseband gain can be safely ignored on most devices. It was added as a workaround for the PlutoSDR and is not longer required. Leave it at 1 unless you know better.
+- In full duplex operation you need to have sufficient isolation between the TX antenna port and the RX antenna port to avoid overloading your input or destroying the LNA stage.
+- In half duplex mode the receiver is muted during transmit and the RX gain is minimized. Do not rely on this feature if using a power amplifier, please use a RF switch (antenna switch) with enough isolation, or introduce attenuators in the relay sequence to avoid destroying the receiver LNA.
+- The transmitter of the device is active at all times if enabled, even when no samples are being output. Although there is no signal being generated, local oscillator leakage may be present and show up on the spectrum display. This is not a problem usually, unless if you keep a power amplifier connected and enabled at all times. You can use the USB relays to disable it in this case when not transmitting.
+- FreeDV modes and PSK modes are very sensitive to amplifier non-linearity. You should not try to use them within a non-linear envelope to avoid signal distortion, splatter or harmonics. Gain for this modes has been set in such a way to avoid non-linear zone for most devices output stages. If this is not satisfactory, you can use the baseband gain setting to increase the digital gain.
+- Receive and transmit gains currently operate as described in the gr-osmosdr manual. At lowest settings, the programmable gain attenuator will be set, following with any IF stages if present and finally any LNA stages if present. This behaviour is desirable since there is no point setting the LNA to a higher value then the PGA if the signal power is already above the P1dB point of the LNA stage. While this behaviour is simple and easy to understand, in the future it may be possible to adjust all gain stages separately.
+- Transmit shift can be positive or negative. After changing the value, you need to press **Enter** to put it into effect. Although the shift is stored as Hertz and you can edit this value in the config, the UI will only allow a value in kHz to be entered (e.g. -7600 kHz standard EU UHF repeater shift).
+- USB relays using FTDI chipsets are used to control RF switches, power amplifiers and filter boards. To determine if your USB relay board is supported, look for a similar line in  the output of lsusb:
+<pre>
+Bus 002 Device 003: ID 0403:6001 Future Technology Devices International, Ltd FT232 Serial (UART) IC
+</pre>
+Do note that the identifier digits are the most important: **0403:6001**
+- QRadioLink can control a maximum of 8 relays, however only 2 are used at the moment. This is work in progress. Other types of relays may be supported in the future.
 - Video will be displayed in the upper right corner. If your camera does not work, see the V4L2 guide in the docs/ directory for troubleshooting camera settings.
-- IP over radio operation mode requires net administration priviledges to be granted to the application. See the instructions in the docs/ directory.
-- VOX mode requires careful setup of system microphone gain to avoid getting stuck on transmit.
+- IP over radio operation mode requires net administration priviledges to be granted to the application. See the instructions in the docs/ directory. An error message will be output at startup if this priviledges are not present. You can safely ignore this message if you don't need to use the IP modem facility.
+- VOX mode requires careful setup of system microphone gain to avoid getting stuck on transmit. The voice activation system is not very robust right now and may be improved in the future.
+- Setting application internal microphone gain above the middle of the scale might cause clipping and distortion of audio, as the system volume also affects what goes to the radio.
+- The S-meter calibration feature is not complete yet, however you can enter in the Setup tab the level (in dBm) of a known signal (e.g. sent by a generator) to correct the reading. Do NOT apply signals with levels above -30 to 0 dBm to the receiver input as this might damage your receiver, depending on hardware. Please note that the RSSI and S-meter values displayed are relative the the current operating mode filter bandwidth, so the FM reading will be different to a SSB reading! Calibration tables support for different bands may be provided in the future.
+- The network control feature (for headless mode) is not complete yet. For testing purposes, the control port is 4939 (apologies if I stepped onto some IANA assignment). To test and use this feature, you can simply use telnet from the same computer:
+<pre>
+$ telnet localhost 4939
+Trying ::1...
+Connected to localhost.
+Escape character is '^]'.
+Welcome! Available commands are: 
+rxstatus
+txstatus
+txactive
+rxstatus
+RX status is inactive.
+rxstatus
+RX status is active.
+txstatus
+TX status is inactive.
+txstatus
+TX status is active.
+txactive
+Not transmitting.
+txactive
+Currently transmitting.
+Server is stopping now.
+Connection closed by foreign host.
+</pre>
+
 
 
 Credits and License
