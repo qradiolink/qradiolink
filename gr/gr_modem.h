@@ -33,22 +33,7 @@
 #include "gr/gr_mod_base.h"
 #include "gr/gr_demod_base.h"
 
-
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-// posix interrupt timers
-#include <time.h>
-// needed for usleep
-#include <unistd.h>
-#include <strings.h>
 #include <math.h>
-// ioctl for CS driving serial port (PTT)
-#include <sys/ioctl.h>
-// for serial port out (PTT)
-#include <termios.h>
-
 
 
 class gr_modem : public QObject
@@ -88,6 +73,7 @@ signals:
     void syncIssues();
     void receiveEnd();
     void endAudioTransmission();
+
 public slots:
     void transmitPCMAudio(std::vector<float> *audio_data);
     void transmitDigitalAudio(unsigned char *data, int size);
@@ -98,8 +84,10 @@ public slots:
     void endTransmission(QString callsign);
     void textData(QString text, int frame_type = FrameTypeText);
     void binData(QByteArray bin_data, int frame_type = FrameTypeRepeaterInfo);
-    void initTX(int modem_type, std::string device_args, std::string device_antenna, int freq_corr);
-    void initRX(int modem_type, std::string device_args, std::string device_antenna, int freq_corr);
+    void initTX(int modem_type, std::string device_args,
+                std::string device_antenna, int freq_corr);
+    void initRX(int modem_type, std::string device_args,
+                std::string device_antenna, int freq_corr);
     void deinitTX(int modem_type);
     void deinitRX(int modem_type);
     void toggleRxMode(int modem_type);
@@ -134,7 +122,8 @@ public slots:
     std::vector<gr_complex> *getConstellation();
 
 private:
-    std::vector<unsigned char>* frame(unsigned char *encoded_audio, int data_size, int frame_type=FrameTypeVoice);
+    std::vector<unsigned char>* frame(unsigned char *encoded_audio,
+                                      int data_size, int frame_type=FrameTypeVoice);
     void processReceivedData(unsigned char* received_data, int current_frame_type);
     void handleStreamEnd();
     int findSync(unsigned char bit);

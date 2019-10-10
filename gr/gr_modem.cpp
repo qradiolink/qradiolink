@@ -53,7 +53,8 @@ gr_modem::~gr_modem()
 void gr_modem::initTX(int modem_type, std::string device_args, std::string device_antenna, int freq_corr)
 {
     _modem_type_tx = modem_type;
-    _gr_mod_base = new gr_mod_base(0, _requested_frequency_hz, 0.5, device_args, device_antenna, freq_corr);
+    _gr_mod_base = new gr_mod_base(
+                0, _requested_frequency_hz, 0.5, device_args, device_antenna, freq_corr);
     toggleTxMode(modem_type);
 
 }
@@ -61,7 +62,8 @@ void gr_modem::initTX(int modem_type, std::string device_args, std::string devic
 void gr_modem::initRX(int modem_type, std::string device_args, std::string device_antenna, int freq_corr)
 {
     _modem_type_rx = modem_type;
-    _gr_demod_base = new gr_demod_base(0, _requested_frequency_hz, 0.9, device_args, device_antenna, freq_corr);
+    _gr_demod_base = new gr_demod_base(
+                0, _requested_frequency_hz, 0.9, device_args, device_antenna, freq_corr);
     toggleRxMode(modem_type);
 
 }
@@ -444,9 +446,7 @@ void gr_modem::textData(QString text, int frame_type)
         memset(data, 0, _tx_frame_length);
         memcpy(data,chunk.toStdString().c_str(),chunk.length());
         std::vector<unsigned char> *one_frame = frame(data,_tx_frame_length, frame_type);
-
         frames.append(one_frame);
-
         delete[] data;
     }
     transmit(frames);
@@ -466,8 +466,8 @@ void gr_modem::binData(QByteArray bin_data, int frame_type)
         memset(data, 0, _tx_frame_length);
         memcpy(data, c, copy);
         std::vector<unsigned char> *one_frame = frame(data,_tx_frame_length, frame_type);
-
         frames.append(one_frame);
+        delete[] data;
     }
     transmit(frames);
 }
@@ -485,14 +485,12 @@ void gr_modem::transmitDigitalAudio(unsigned char *data, int size)
 
 void gr_modem::transmitPCMAudio(std::vector<float> *audio_data)
 {
-
     if(!_gr_mod_base)
     {
         audio_data->clear();
         delete audio_data;
         return;
     }
-
     int ret = 1;
     while(ret)
     {
@@ -564,13 +562,13 @@ std::vector<unsigned char>* gr_modem::frame(unsigned char *encoded_audio, int da
     }
 
     return data;
-
 }
 
 void gr_modem::transmit(QVector<std::vector<unsigned char>*> frames)
 {
     if(!_gr_mod_base)
     {
+        exit(EXIT_FAILURE);
         return;
     }
     std::vector<unsigned char> *all_frames = new std::vector<unsigned char>;
