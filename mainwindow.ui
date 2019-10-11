@@ -1003,9 +1003,6 @@ background-color: rgb(0, 0, 67);</string>
            </property>
            <item row="0" column="1">
             <widget class="QTableWidget" name="memoriesTableWidget">
-             <property name="toolTip">
-              <string>Double click to edit</string>
-             </property>
              <property name="styleSheet">
               <string notr="true"/>
              </property>
@@ -1108,7 +1105,7 @@ background-color: rgb(0, 0, 67);</string>
             </widget>
            </item>
            <item row="0" column="0">
-            <widget class="QFrame" name="frame_4">
+            <widget class="QFrame" name="memoryControlsFrame">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="MinimumExpanding">
                <horstretch>0</horstretch>
@@ -1131,7 +1128,7 @@ background-color: rgb(0, 0, 67);</string>
               <bool>false</bool>
              </property>
              <property name="styleSheet">
-              <string notr="true">background-color: rgb(193, 193, 193);</string>
+              <string notr="true"/>
              </property>
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>

@@ -197,11 +197,12 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     _eff_text_display = new QGraphicsOpacityEffect(this);
     _eff_text_display->setOpacity(0.5);
     ui->secondaryTextDisplay->setGraphicsEffect(_eff_text_display);
-    /** Qt5 bug
     _eff_mem_display = new QGraphicsOpacityEffect(ui->memoriesFrame);
     _eff_mem_display->setOpacity(0.8);
     ui->memoriesFrame->setGraphicsEffect(_eff_mem_display);
-    */
+    ui->memoryControlsFrame->setGraphicsEffect(_eff_mem_display);
+    ui->memoriesTableWidget->setGraphicsEffect(_eff_mem_display);
+
 
     setWindowIcon(QIcon(":/res/logo.png"));
     setWindowTitle("QRadioLink");
@@ -513,8 +514,9 @@ void MainWindow::addDisplayChannel(radiochannel *chan, int r)
     //ui->memoriesTableWidget->setItem(r, 12, tx_freq_display);
     ui->memoriesTableWidget->horizontalHeader()->setHidden(false);
     ui->memoriesTableWidget->setStyleSheet(
-        "color: rgb(240, 240, 119);background-color: rgb(0, 40, 102);font: 9pt \"Sans Serif\";"\
-        "QTableWidget::item {color: rgb(240, 240, 119);background-color: rgb(0, 40, 102);font: 9pt \"Sans Serif\";}" \
+        "color: rgb(240, 240, 119);background-color: rgb(0, 40, 102);font: 9pt \"Sans Serif\"; "\
+        "QTableWidget {color: rgb(240, 240, 119);background-color: rgb(0, 40, 102);font: 9pt \"Sans Serif\";} "\
+        "QTableWidget::item {color: rgb(240, 240, 119);background-color: rgb(0, 40, 102);font: 9pt \"Sans Serif\";} " \
         "QTableWidget::item:selected{ color: rgb(240, 240, 119);background-color: rgba(99, 0, 0, 125);"\
         "font: 9pt \"Sans Serif\"; }");
 
