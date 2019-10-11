@@ -77,6 +77,7 @@ public:
     /// Used by remote interface
     bool _rx_status;
     bool _tx_status;
+    int _rssi;
      // FIXME: this should be set by radioop
 
     /// Used by both GUI and remote interface

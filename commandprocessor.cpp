@@ -34,19 +34,13 @@ CommandProcessor::~CommandProcessor()
     delete _command_list;
 }
 
-void CommandProcessor::buildCommandList()
-{
-    _command_list->append(new command("rxstatus", 0));
-    _command_list->append(new command("txstatus", 0));
-    _command_list->append(new command("txactive", 0));
-}
 
 QStringList CommandProcessor::listAvailableCommands()
 {
     QStringList list;
     for(int i=0;i<_command_list->size();i++)
     {
-        list.append("\e[31m" + _command_list->at(i)->action
+        list.append("\e[33m" + _command_list->at(i)->action
                     + QString(" (%1 parameters)").arg(
                         _command_list->at(i)->params) + "\e[0m\n");
     }
@@ -131,24 +125,81 @@ QString CommandProcessor::runCommand(QString message)
         else
             response.append("RX status is inactive.\n");
         break;
-
     case 1:
         if(_settings->_tx_status)
             response.append("TX status is active.\n");
         else
             response.append("TX status is inactive.\n");
         break;
-
     case 2:
         if(_settings->_in_transmission)
-            response.append("Currently transmitting.\n");
+            response.append("Currently transmitting.");
         else
-            response.append("Not transmitting.\n");
+            response.append("Not transmitting.");
+        break;
+    case 3:
+        response.append(QString("Current RX mode is %1.").arg(_settings->rx_mode));
+        break;
+    case 4:
+        response.append(QString("Current TX mode is %1.").arg(_settings->tx_mode));
+        break;
+    case 5:
+        response.append(QString("Current RX CTCSS tone is %1.").arg(_settings->rx_ctcss));
+        break;
+    case 6:
+        response.append(QString("Current TX CTCSS tone is %1.").arg(_settings->tx_ctcss));
+        break;
+    case 7:
+        response.append(QString("Current RX volume is %1.").arg(_settings->rx_volume));
+        break;
+    case 8:
+        response.append(QString("Current TX volume is %1.").arg(_settings->tx_volume));
+        break;
+    case 9:
+        response.append(QString("Current Squelch value is %1.").arg(_settings->squelch));
+        break;
+    case 10:
+        response.append(QString("Current RX gain is %1.").arg(_settings->rx_sensitivity));
+        break;
+    case 11:
+        response.append(QString("Current TX gain value is %1.").arg(_settings->tx_power));
+        break;
+    case 12:
+        response.append(QString("Current RSSI value is %1.").arg(_settings->_rssi));
+        break;
+    case 13:
+        response.append(
+            QString("Current VOIP status is: Connected: %1; Channel: %2.").arg(
+                    false).arg(_settings->_current_voip_channel));
+        break;
+    case 14:
+        response.append(QString("Not forwarding radio."));
         break;
 
     default:
-        response.append("Command not found\n");
+        response.append("Command not found");
         break;
     }
-    return response;
+
+    return "\e[32m" + response + "\e[0m\n";
+}
+
+void CommandProcessor::buildCommandList()
+{
+    _command_list->append(new command("rxstatus", 0));
+    _command_list->append(new command("txstatus", 0));
+    _command_list->append(new command("txactive", 0));
+    _command_list->append(new command("rxmode", 0));
+    _command_list->append(new command("txmode", 0));
+    _command_list->append(new command("rxctcss", 0));
+    _command_list->append(new command("txctcss", 0));
+    _command_list->append(new command("rxvolume", 0));
+    _command_list->append(new command("txvolume", 0));
+    _command_list->append(new command("squelch", 0));
+    _command_list->append(new command("rxgain", 0));
+    _command_list->append(new command("txgain", 0));
+    _command_list->append(new command("rssi", 0));
+    _command_list->append(new command("voipstatus", 0));
+    _command_list->append(new command("radioforwarding", 0));
+
 }

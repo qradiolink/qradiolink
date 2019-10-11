@@ -36,6 +36,7 @@ Settings::Settings()
     _tx_status = false;
     _in_transmission = false;
     _current_voip_channel = -1;
+    _rssi = 0;
 
 
     demod_offset = 0;
