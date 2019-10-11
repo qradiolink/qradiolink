@@ -123,7 +123,7 @@
             <x>0</x>
             <y>0</y>
             <width>1200</width>
-            <height>300</height>
+            <height>391</height>
            </rect>
           </property>
           <property name="sizePolicy">
@@ -378,7 +378,7 @@ color: rgb(255, 255, 255);</string>
             </widget>
            </item>
            <item row="1" column="1">
-            <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0">
+            <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0">
              <property name="spacing">
               <number>2</number>
              </property>
@@ -638,6 +638,16 @@ background-color: rgb(0, 0, 67);</string>
                 </size>
                </property>
               </spacer>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_35">
+               <property name="styleSheet">
+                <string notr="true">font: 8pt &quot;Sans Serif&quot;;</string>
+               </property>
+               <property name="text">
+                <string>FFT Averaging</string>
+               </property>
+              </widget>
              </item>
              <item>
               <widget class="QSlider" name="averagingSlider">
@@ -943,7 +953,7 @@ background-color: rgb(0, 0, 67);</string>
           <property name="geometry">
            <rect>
             <x>150</x>
-            <y>170</y>
+            <y>10</y>
             <width>900</width>
             <height>250</height>
            </rect>
@@ -997,9 +1007,7 @@ background-color: rgb(0, 0, 67);</string>
               <string>Double click to edit</string>
              </property>
              <property name="styleSheet">
-              <string notr="true">background-color: rgb(0, 0, 85);
-color: rgb(240, 240, 119);
-font: 9pt &quot;Sans Serif&quot;;</string>
+              <string notr="true"/>
              </property>
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
