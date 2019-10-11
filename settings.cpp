@@ -35,6 +35,10 @@ Settings::Settings()
     _rx_status = false;
     _tx_status = false;
     _in_transmission = false;
+    _voip_connected = false;
+    _voip_forwarding = false;
+    _vox_enabled = false;
+    _repeater_enabled = false;
     _current_voip_channel = -1;
     _rssi = 0;
 

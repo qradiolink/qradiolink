@@ -100,6 +100,7 @@ QString CommandProcessor::runCommand(QString message)
     QString response;
     QStringList tokens = getCommand(message, command_index);
     QString param1, param2, param3;
+
     if(tokens.size() > 1)
     {
         param1 = tokens.at(1);
@@ -112,24 +113,33 @@ QString CommandProcessor::runCommand(QString message)
     {
         param3 = tokens.at(3);
     }
-    command *run = _command_list->at(command_index);
 
 
     /// Actual command processing
     ///
-    switch (command_index) {
+    processStatusCommands(command_index, response);
+    processActionCommands(command_index, response);
 
+    if(response.length() < 1)
+        response = "Command not found";
+
+    return "\e[32m" + response + "\e[0m\n";
+}
+
+void CommandProcessor::processStatusCommands(int command_index, QString &response)
+{
+    switch (command_index) {
     case 0:
         if(_settings->_rx_status)
-            response.append("RX status is active.\n");
+            response.append("RX status is active.");
         else
-            response.append("RX status is inactive.\n");
+            response.append("RX status is inactive.");
         break;
     case 1:
         if(_settings->_tx_status)
-            response.append("TX status is active.\n");
+            response.append("TX status is active.");
         else
-            response.append("TX status is inactive.\n");
+            response.append("TX status is inactive.");
         break;
     case 2:
         if(_settings->_in_transmission)
@@ -168,20 +178,50 @@ QString CommandProcessor::runCommand(QString message)
         response.append(QString("Current RSSI value is %1.").arg(_settings->_rssi));
         break;
     case 13:
-        response.append(
-            QString("Current VOIP status is: Connected: %1; Channel: %2.").arg(
-                    false).arg(_settings->_current_voip_channel));
+        if(_settings->_voip_connected)
+        {
+            response.append(
+                QString("Connected to VOIP server: %1; Channel number: %2.").arg(
+                        _settings->voip_server).arg(_settings->_current_voip_channel));
+        }
+        else
+        {
+            response.append("Not connected to VOIP network");
+        }
+
         break;
     case 14:
-        response.append(QString("Not forwarding radio."));
+        if(_settings->_voip_forwarding)
+            response.append(QString("Radio is forwarded to VOIP network."));
+        else
+            response.append(QString("Radio is not forwarded to VOIP network."));
+        break;
+    case 15:
+        if(_settings->_vox_enabled)
+            response.append(QString("VOX is on."));
+        else
+            response.append(QString("VOX is off."));
+        break;
+    case 16:
+        if(_settings->_repeater_enabled)
+            response.append(QString("Repeater is enabled."));
+        else
+            response.append(QString("Repeater is disabled."));
         break;
 
     default:
-        response.append("Command not found");
         break;
     }
+}
 
-    return "\e[32m" + response + "\e[0m\n";
+void CommandProcessor::processActionCommands(int command_index, QString &response)
+{
+    switch (command_index) {
+    case 99:
+        break;
+    default:
+        break;
+    }
 }
 
 void CommandProcessor::buildCommandList()
@@ -200,6 +240,8 @@ void CommandProcessor::buildCommandList()
     _command_list->append(new command("txgain", 0));
     _command_list->append(new command("rssi", 0));
     _command_list->append(new command("voipstatus", 0));
-    _command_list->append(new command("radioforwarding", 0));
+    _command_list->append(new command("forwardingstatus", 0));
+    _command_list->append(new command("voxstatus", 0));
+    _command_list->append(new command("repeaterstatus", 0));
 
 }

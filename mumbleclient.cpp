@@ -17,7 +17,7 @@
 #include "mumbleclient.h"
 
 
-MumbleClient::MumbleClient(const Settings *settings, QObject *parent) :
+MumbleClient::MumbleClient(Settings *settings, QObject *parent) :
     QObject(parent)
 {
     _socket_client = new SSLClient;
@@ -84,7 +84,10 @@ void MumbleClient::cleanup()
     _encryption_set = false;
     _authenticated = false;
     _synchronized = false;
+    _settings->_voip_connected = false;
+    _settings->_current_voip_channel = -1;
     _session_id = INT64_MAX;
+    _channel_id = INT64_MAX;
     for(int i=0; i < _channels.size();i++)
     {
         delete _channels.at(i);
@@ -236,6 +239,7 @@ void MumbleClient::processServerSync(quint8 *message, quint64 size)
              + " session: " + QString::number(_session_id);
     std::cout << msg.toStdString() << std::endl;
     emit connectedToServer(msg);
+    _settings->_voip_connected = true;
 }
 
 void MumbleClient::processChannelState(quint8 *message, quint64 size)
@@ -277,6 +281,7 @@ void MumbleClient::processUserState(quint8 *message, quint64 size)
         _channel_id = us.channel_id();
         emit textMessage("Joined channel: " + QString::number(_channel_id), false);
         emit joinedChannel(_channel_id);
+        _settings->_current_voip_channel = _channel_id;
     }
     if(us.session() == _session_id)
     {
@@ -297,6 +302,7 @@ void MumbleClient::processUserState(quint8 *message, quint64 size)
             emit textMessage( "Joined channel: " + QString::number(_channel_id), false);
             emit joinedChannel(_channel_id);
             s->channel_id = us.channel_id();
+            _settings->_current_voip_channel = _channel_id;
         }
     }
 
@@ -373,6 +379,7 @@ void MumbleClient::joinChannel(int id)
     us.SerializeToArray(data,size);
     sendMessage(data,9,size);
     _channel_id = id;
+    _settings->_current_voip_channel = _channel_id;
 
 }
 

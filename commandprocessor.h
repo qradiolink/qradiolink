@@ -112,6 +112,8 @@ private:
     QVector<command*> *_command_list;
 
     QStringList getCommand(QString message, int &command_index);
+    void processStatusCommands(int command_index, QString &response);
+    void processActionCommands(int command_index, QString &response);
 };
 
 #endif // COMMANDPROCESSOR_H

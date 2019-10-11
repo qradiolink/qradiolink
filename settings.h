@@ -84,6 +84,10 @@ public:
     /// Used by both GUI and remote interface
     bool _in_transmission;
     qint64 _tx_frequency;
+    bool _voip_connected;
+    bool _vox_enabled;
+    bool _repeater_enabled;
+    bool _voip_forwarding;
     int _current_voip_channel;
 
 
