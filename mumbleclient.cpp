@@ -30,7 +30,6 @@ MumbleClient::MumbleClient(const Settings *settings, QObject *parent) :
     _authenticated = false;
     _synchronized = false;
     _session_id = INT64_MAX;
-    _max_bandwidth = -1;
     _channel_id = INT64_MAX;
     _temp_channel_name = "";
     _sequence_number = 0;
@@ -52,10 +51,14 @@ void MumbleClient::connectToServer(QString address, unsigned port)
         return;
     _connection_in_progress = true;
     _socket_client->connectHost(address,port);
-    QObject::connect(_socket_client,SIGNAL(connectedToHost()),this,SLOT(sendVersion()));
-    QObject::connect(_socket_client,SIGNAL(haveMessage(QByteArray)),this,SLOT(processProtoMessage(QByteArray)));
-    QObject::connect(_socket_client,SIGNAL(haveUDPData(QByteArray)),this,SLOT(processUDPData(QByteArray)));
-    QObject::connect(_socket_client,SIGNAL(logMessage(QString)),this,SLOT(logMessage(QString)));
+    QObject::connect(_socket_client,SIGNAL(connectedToHost()),
+                     this,SLOT(sendVersion()));
+    QObject::connect(_socket_client,SIGNAL(haveMessage(QByteArray)),
+                     this,SLOT(processProtoMessage(QByteArray)));
+    QObject::connect(_socket_client,SIGNAL(haveUDPData(QByteArray)),
+                     this,SLOT(processUDPData(QByteArray)));
+    QObject::connect(_socket_client,SIGNAL(logMessage(QString)),
+                     this,SLOT(logMessage(QString)));
     QObject::connect(_socket_client,SIGNAL(connectionFailure()),this,SLOT(cleanup()));
 }
 
@@ -64,10 +67,14 @@ void MumbleClient::disconnectFromServer()
     _connection_in_progress = false;
 
     _socket_client->disconnectHost();
-    QObject::disconnect(_socket_client,SIGNAL(connectedToHost()),this,SLOT(sendVersion()));
-    QObject::disconnect(_socket_client,SIGNAL(haveMessage(QByteArray)),this,SLOT(processProtoMessage(QByteArray)));
-    QObject::disconnect(_socket_client,SIGNAL(haveUDPData(QByteArray)),this,SLOT(processUDPData(QByteArray)));
-    QObject::disconnect(_socket_client,SIGNAL(logMessage(QString)),this,SLOT(logMessage(QString)));
+    QObject::disconnect(_socket_client,SIGNAL(connectedToHost()),
+                        this,SLOT(sendVersion()));
+    QObject::disconnect(_socket_client,SIGNAL(haveMessage(QByteArray)),
+                        this,SLOT(processProtoMessage(QByteArray)));
+    QObject::disconnect(_socket_client,SIGNAL(haveUDPData(QByteArray)),
+                        this,SLOT(processUDPData(QByteArray)));
+    QObject::disconnect(_socket_client,SIGNAL(logMessage(QString)),
+                        this,SLOT(logMessage(QString)));
     cleanup();
 
 }
@@ -220,12 +227,12 @@ void MumbleClient::processServerSync(quint8 *message, quint64 size)
     Station *s = new Station;
     s->id = _session_id;
     _stations.append(s);
-    _max_bandwidth = sync.max_bandwidth();
+    int max_bandwidth = sync.max_bandwidth();
     std::string welcome = sync.welcome_text();
     _synchronized = true;
     QString msg;
     msg = QString::fromStdString(welcome)
-             + " max bandwidth: " + _max_bandwidth
+             + " max bandwidth: " + max_bandwidth
              + " session: " + QString::number(_session_id);
     std::cout << msg.toStdString() << std::endl;
     emit connectedToServer(msg);
@@ -350,9 +357,7 @@ void MumbleClient::processUserRemove(quint8 *message, quint64 size)
             delete s;
         }
     }
-
     emit onlineStations(_stations);
-
 }
 
 void MumbleClient::joinChannel(int id)
@@ -582,7 +587,7 @@ void MumbleClient::createVoicePacket(unsigned char *encoded_audio, int packet_si
 
     pds << _sequence_number;
     int real_packet_size = packet_size;
-    _sequence_number +=nr_of_frames;
+    _sequence_number += nr_of_frames;
     //packet_size |= 1 << 13;
     pds << packet_size;
 
@@ -649,7 +654,8 @@ void MumbleClient::processUDPData(QByteArray data)
 #endif
 }
 
-void MumbleClient::decodeAudio(unsigned char *audiobuffer, short audiobuffersize, quint8 type, quint64 session_id)
+void MumbleClient::decodeAudio(unsigned char *audiobuffer,
+                               short audiobuffersize, quint8 type, quint64 session_id)
 {
 
     int samples =0;
@@ -725,5 +731,5 @@ void MumbleClient::sendUDPPing()
 
 void MumbleClient::logMessage(QString log_msg)
 {
-    textMessage(log_msg, false);
+    emit textMessage(log_msg, false);
 }

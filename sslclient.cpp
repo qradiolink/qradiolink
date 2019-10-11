@@ -47,9 +47,11 @@ SSLClient::SSLClient(QObject *parent) :
 #else
     _socket->setProtocol(QSsl::TlsV1);
 #endif
-    QObject::connect(_socket,SIGNAL(error(QAbstractSocket::SocketError )),this,SLOT(connectionFailed(QAbstractSocket::SocketError)));
+    QObject::connect(_socket,SIGNAL(error(QAbstractSocket::SocketError )),
+                     this,SLOT(connectionFailed(QAbstractSocket::SocketError)));
     QObject::connect(_socket,SIGNAL(disconnected()),this,SLOT(tryReconnect()));
-    QObject::connect(_socket,SIGNAL(sslErrors(QList<QSslError>)),this,SLOT(sslError(QList<QSslError>)));
+    QObject::connect(_socket,SIGNAL(sslErrors(QList<QSslError>)),
+                     this,SLOT(sslError(QList<QSslError>)));
     QObject::connect(_socket,SIGNAL(encrypted()),this,SLOT(connectionSuccess()));
     QObject::connect(_socket,SIGNAL(readyRead()),this,SLOT(processData()));
 
@@ -60,7 +62,8 @@ SSLClient::SSLClient(QObject *parent) :
 #else
     _udp_socket->bind(QHostAddress(QHostAddress::Any),UDP_PORT);
 #endif
-    QObject::connect(_udp_socket, SIGNAL(readyRead()), this, SLOT(readPendingDatagrams()));
+    QObject::connect(_udp_socket, SIGNAL(readyRead()),
+                     this, SLOT(readPendingDatagrams()));
 
 }
 
@@ -187,7 +190,8 @@ void SSLClient::sendBin(quint8 *payload, quint64 size)
 
 void SSLClient::processData()
 {
-    //std::cout << "Received message from " << _socket->peerAddress().toString().toStdString() << std::endl;
+    //std::cout << "Received message from "
+    // << _socket->peerAddress().toString().toStdString() << std::endl;
     if (_status !=1) return;
 
     QByteArray buf;
@@ -224,7 +228,6 @@ void SSLClient::processData()
         }
 
     }
-    //qDebug() << QString::fromLocal8Bit(buf.data());
     emit haveMessage(buf);
 }
 
@@ -246,7 +249,8 @@ void SSLClient::sendUDP(quint8 *payload, quint64 size)
 {
     char *message = reinterpret_cast<char*>(payload);
 
-    quint64 sent = _udp_socket->writeDatagram(message,size,QHostAddress(_hostname),_port);
+    quint64 sent = _udp_socket->writeDatagram(
+                message,size,QHostAddress(_hostname),_port);
     _udp_socket->flush();
     if(sent <= 0)
         std::cerr << "UDP transmit error" << std::endl;

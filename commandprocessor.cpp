@@ -16,7 +16,8 @@
 
 #include "commandprocessor.h"
 
-CommandProcessor::CommandProcessor(const Settings *settings, QObject *parent) : QObject(parent)
+CommandProcessor::CommandProcessor(const Settings *settings, QObject *parent)
+    : QObject(parent)
 {
     _settings = settings;
     _command_list = new QVector<command*>;
@@ -45,7 +46,9 @@ QStringList CommandProcessor::listAvailableCommands()
     QStringList list;
     for(int i=0;i<_command_list->size();i++)
     {
-        list.append(_command_list->at(i)->action + "\n");
+        list.append("\e[31m" + _command_list->at(i)->action
+                    + QString(" (%1 parameters)").arg(
+                        _command_list->at(i)->params) + "\e[0m\n");
     }
     return list;
 }
@@ -65,7 +68,8 @@ QStringList CommandProcessor::getCommand(QString message, int &command_index)
 
     for(int i=0; i< _command_list->length();i++)
     {
-        if(_command_list->at(i)->action == action)
+        if((_command_list->at(i)->action == action)
+                && (_command_list->at(i)->params == (tokens.length() - 1)))
         {
             command_index = i;
             break;
@@ -76,13 +80,13 @@ QStringList CommandProcessor::getCommand(QString message, int &command_index)
 
 bool CommandProcessor::validateCommand(QString message)
 {
-    QRegularExpression re(
-                "[a-zA-Z]+\\s*[a-zA-Z0-9]*\\s*[a-zA-Z0-9]*\\s+[a-zA-Z0-9]*\\s*[a-zA-Z0-9]*\\s*");
+    QRegularExpression re("^[a-zA-Z0-9_]+[\\sa-zA-Z0-9_]*\\r\\n$");
     QRegularExpressionValidator validator(re, 0);
 
     int pos = 0;
     if(QValidator::Acceptable != validator.validate(message, pos))
     {
+        // regex match failed
         return false;
     }
     int command_index = -1;
@@ -90,6 +94,7 @@ bool CommandProcessor::validateCommand(QString message)
 
     if(command_index < 0)
     {
+        // command not found
         return false;
     }
     return true;

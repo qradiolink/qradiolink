@@ -16,7 +16,8 @@
 
 #include "mumblechannel.h"
 
-MumbleChannel::MumbleChannel(int id, int parent_id, QString name, QString description, QObject *parent) :
+MumbleChannel::MumbleChannel(int id, int parent_id, QString name,
+                             QString description, QObject *parent) :
     QObject(parent)
 {
     this->id = id;

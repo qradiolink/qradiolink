@@ -23,13 +23,13 @@ class Server
 {
 public:
     Server();
-    int _id;
-    QString _ip;
-    QString _hostname;
-    int _connected;
-    int _active;
-    QString _username;
-    QString _password;
+    int id;
+    QString ip;
+    QString hostname;
+    int connected;
+    int active;
+    QString username;
+    QString password;
 
 };
 

@@ -192,7 +192,13 @@ int main(int argc, char *argv[])
     QObject::connect(w,SIGNAL(enableAudioCompressor(bool)),radio_op,SLOT(enableAudioCompressor(bool)));
     QObject::connect(w,SIGNAL(enableRelays(bool)),radio_op,SLOT(enableRelays(bool)));
     QObject::connect(w,SIGNAL(calibrateRSSI(float)), radio_op,SLOT(calibrateRSSI(float)));
-
+    QObject::connect(w,SIGNAL(connectToServer(QString, unsigned)),mumbleclient,SLOT(connectToServer(QString, unsigned)));
+    QObject::connect(w,SIGNAL(disconnectFromServer()),mumbleclient,SLOT(disconnectFromServer()));
+    QObject::connect(w,SIGNAL(terminateConnections()),audiowriter,SLOT(stop()));
+    QObject::connect(w,SIGNAL(terminateConnections()),audioreader,SLOT(stop()));
+    QObject::connect(w,SIGNAL(terminateConnections()),telnet_server,SLOT(stop()));
+    QObject::connect(w,SIGNAL(setMute(bool)),mumbleclient,SLOT(setMute(bool)));
+    QObject::connect(w,SIGNAL(changeChannel(int)),mumbleclient,SLOT(joinChannel(int)));
 
     QObject::connect(radio_op, SIGNAL(setAudioReadMode(bool,bool,int)), audioreader, SLOT(setReadMode(bool,bool,int)));
     QObject::connect(audioreader, SIGNAL(audioPCM(short*,int,int, bool)), radio_op, SLOT(txAudio(short*,int,int, bool)));
@@ -223,13 +229,6 @@ int main(int argc, char *argv[])
     QObject::connect(mumbleclient,SIGNAL(newChannels(ChannelList)),radio_op,SLOT(setChannels(ChannelList)));
     QObject::connect(mumbleclient,SIGNAL(disconnected()),w,SLOT(disconnectedFromServer()));
 
-    QObject::connect(w,SIGNAL(connectToServer(QString, unsigned)),mumbleclient,SLOT(connectToServer(QString, unsigned)));
-    QObject::connect(w,SIGNAL(disconnectFromServer()),mumbleclient,SLOT(disconnectFromServer()));
-    QObject::connect(w,SIGNAL(terminateConnections()),audiowriter,SLOT(stop()));
-    QObject::connect(w,SIGNAL(terminateConnections()),audioreader,SLOT(stop()));
-    QObject::connect(w,SIGNAL(terminateConnections()),telnet_server,SLOT(stop()));
-    QObject::connect(w,SIGNAL(setMute(bool)),mumbleclient,SLOT(setMute(bool)));
-    QObject::connect(w,SIGNAL(changeChannel(int)),mumbleclient,SLOT(joinChannel(int)));
 
     w->initSettings();
     int ret = a.exec();

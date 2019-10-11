@@ -105,6 +105,9 @@ private:
 #ifndef NO_CRYPT
     CryptState *_crypt_state;
 #endif
+    QVector<Station*> _stations;
+    QVector<MumbleChannel*> _channels;
+
     std::string _key;
     std::string _client_nonce;
     std::string _server_nonce;
@@ -114,12 +117,8 @@ private:
     bool _authenticated;
     bool _connection_in_progress;
     quint64 _session_id;
-    int _max_bandwidth;
     quint64 _channel_id;
     quint64 _sequence_number;
-
-    QVector<Station*> _stations;
-    QVector<MumbleChannel*> _channels;
 
 };
 
