@@ -1172,6 +1172,7 @@ void MainWindow::setTxPowerDisplay(int value)
 {
     _settings->tx_power = value;
     ui->txPowerDisplay->display(value);
+    ui->txGainDial->setValue(value);
     emit setTxPower((int)value);
 }
 
@@ -1179,6 +1180,7 @@ void MainWindow::setRxSensitivityDisplay(int value)
 {
     _settings->rx_sensitivity = value;
     ui->rxSensitivityDisplay->display(value);
+    ui->rxGainDial->setValue(value);
     emit setRxSensitivity((int)value);
 }
 
@@ -1186,6 +1188,7 @@ void MainWindow::setSquelchDisplay(int value)
 {
     _settings->squelch = value;
     ui->rxSquelchDisplay->display(value);
+    ui->rxSquelchDial->setValue(value);
     emit setSquelch((int)value);
 }
 
@@ -1193,6 +1196,7 @@ void MainWindow::setVolumeDisplay(int value)
 {
     _settings->rx_volume = value;
     ui->rxVolumeDisplay->display(value);
+    ui->rxVolumeDial->setValue(value);
     emit setVolume((int)value);
 }
 

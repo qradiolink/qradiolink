@@ -77,11 +77,11 @@ int gettimeofday(struct timeval * tp, struct timezone * tzp)
 
 // Colors of type QRgb in 0xAARRGGBB format (unsigned int)
 #define PLOTTER_BGD_COLOR           0xFF1F1D1D
-#define PLOTTER_GRID_COLOR          0xFF8F8F00
+#define PLOTTER_GRID_COLOR          0xFF373737
 #define PLOTTER_TEXT_COLOR          0xFFDADADA
 #define PLOTTER_CENTER_LINE_COLOR   0xFF00B0B0
 #define PLOTTER_FILTER_LINE_COLOR   0xFFE10000
-#define PLOTTER_FILTER_BOX_COLOR    0xFF00664B
+#define PLOTTER_FILTER_BOX_COLOR    0xFF00882B
 // FIXME: Should cache the QColors also
 
 static inline bool val_is_out_of_range(float val, float min, float max)
@@ -1305,10 +1305,11 @@ void CPlotter::drawOverlay()
 
     // solid background
     QLinearGradient gradient(w/2, 0, w/2, h);
-    gradient.setColorAt(1, QColor("#00004d")); // QColor("#053856")
-    gradient.setColorAt(0, QColor("#004667")); // QColor("#24678e")
+    gradient.setColorAt(1, QColor("#181818")); // #053856
+    gradient.setColorAt(0, QColor("#181818")); // #24678e
+    Q_UNUSED(gradient);
     painter.setBrush(Qt::SolidPattern);
-    painter.fillRect(0, 0, w, h, gradient);
+    painter.fillRect(0, 0, w, h, QColor(PLOTTER_BGD_COLOR));
 
 #define HOR_MARGIN 5
 #define VER_MARGIN 5
@@ -1415,12 +1416,12 @@ void CPlotter::drawOverlay()
 
         int dw = m_DemodHiCutFreqX - m_DemodLowCutFreqX;
 
-        painter.setOpacity(0.6);
+        painter.setOpacity(0.4);
         painter.fillRect(m_DemodLowCutFreqX, 0, dw, h,
                          QColor(PLOTTER_FILTER_BOX_COLOR));
 
         painter.setOpacity(1.0);
-        painter.setPen(QPen(QColor(PLOTTER_FILTER_LINE_COLOR), 2, Qt::SolidLine, Qt::SquareCap, Qt::RoundJoin));
+        painter.setPen(QPen(QColor(PLOTTER_FILTER_LINE_COLOR), 1, Qt::SolidLine, Qt::SquareCap, Qt::RoundJoin));
         painter.drawLine(m_DemodFreqX, 0, m_DemodFreqX, h);
     }
 
