@@ -16,7 +16,7 @@
 
 #include "commandprocessor.h"
 
-CommandProcessor::CommandProcessor(Settings *settings, QObject *parent) : QObject(parent)
+CommandProcessor::CommandProcessor(const Settings *settings, QObject *parent) : QObject(parent)
 {
     _settings = settings;
     _command_list = new QVector<command*>;

@@ -66,7 +66,7 @@ public:
                       QObject *parent = 0);
     ~RadioController();
 
-    void flushVoipToNetBuffer();
+    void flushRadioToVoipBuffer();
     void updateDataModemReset(bool transmitting, bool ptt_activated);
 
 signals:
@@ -178,7 +178,7 @@ private:
     void getRSSI();
     void setRelays(bool transmitting);
     void memoryScan(bool receiving, bool wait_for_timer=true);
-    void processVOIPToRadioQueue();
+    void processVoipToRadioQueue();
 
 
     // FIXME: inflation of members

@@ -18,7 +18,7 @@
 
 static QString CRLF ="\r\n";
 
-TelnetServer::TelnetServer(Settings *settings, QObject *parent) :
+TelnetServer::TelnetServer(const Settings *settings, QObject *parent) :
     QObject(parent)
 {
     _settings = settings;

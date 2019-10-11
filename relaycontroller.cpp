@@ -42,7 +42,8 @@ void RelayController::init()
     int f = ftdi_usb_open(_ftdi_relay, 0x0403, 0x6001);
     if (f < 0 && f != -5)
     {
-        std::cerr << "Unable to open FTDI FT245R USB FIFO device 0x0403, 0x6001: " << f << " " << ftdi_get_error_string(_ftdi_relay) << std::endl;
+        std::cerr << "Unable to open FTDI FT245R USB FIFO device 0x0403, 0x6001: "
+                  << f << " " << ftdi_get_error_string(_ftdi_relay) << std::endl;
         ftdi_free(_ftdi_relay);
         return;
     }
@@ -79,7 +80,9 @@ int RelayController::enableRelay(int relay_number)
     int ret = ftdi_write_data(_ftdi_relay, _relay_mask, 1);
     if (ret < 0)
     {
-        std::cerr << "Enable failed for relay number " << relay_number << " " << _relay_mask[0] << " " << ftdi_get_error_string(_ftdi_relay) << std::endl;
+        std::cerr << "Enable failed for relay number " << relay_number
+                  << " " << _relay_mask[0] << " "
+                  << ftdi_get_error_string(_ftdi_relay) << std::endl;
         return 0;
     }
     return 1;
@@ -101,7 +104,9 @@ int RelayController::disableRelay(int relay_number)
     int ret = ftdi_write_data(_ftdi_relay, _relay_mask, 1);
     if (ret < 0)
     {
-        std::cerr << "Disable failed for relay number " << relay_number << " " << ftdi_get_error_string(_ftdi_relay) << std::endl;
+        std::cerr << "Disable failed for relay number "
+                  << relay_number << " "
+                  << ftdi_get_error_string(_ftdi_relay) << std::endl;
         return 0;
     }
     return 1;

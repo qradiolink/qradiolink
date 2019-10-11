@@ -41,7 +41,7 @@ class TelnetServer : public QObject
 {
     Q_OBJECT
 public:
-    explicit TelnetServer(Settings *settings, QObject *parent = 0);
+    explicit TelnetServer(const Settings *settings, QObject *parent = 0);
     ~TelnetServer();
 
 
@@ -59,8 +59,8 @@ private slots:
     void processData();
 
 private:
+    const Settings *_settings;
     QTcpServer *_server;
-    Settings *_settings;
     QVector<QTcpSocket*> _connected_clients;
     CommandProcessor *_command_processor;
     QTcpSocket _socket;

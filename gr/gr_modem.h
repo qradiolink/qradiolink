@@ -52,7 +52,8 @@ public:
         FrameTypeRepeaterInfo,
         FrameTypeEnd
     };
-    explicit gr_modem(Settings *settings, QObject *parent = 0);
+    // FIXME: there is no reason for the modem to use the settings
+    explicit gr_modem(const Settings *settings, QObject *parent = 0);
     ~gr_modem();
     long _frequency_found;
     long _requested_frequency_hz;
@@ -130,7 +131,7 @@ private:
     void transmit(QVector<std::vector<unsigned char>*> frames);
     bool synchronize(int v_size, std::vector<unsigned char> *data);
 
-    Settings *_settings;
+    const Settings *_settings;
     gr_mod_base *_gr_mod_base;
     gr_demod_base *_gr_demod_base;
     unsigned char *_bit_buf;

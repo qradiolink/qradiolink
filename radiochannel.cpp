@@ -48,7 +48,8 @@ QFileInfo *RadioChannels::setupConfig()
     QFileInfo old_file = files.filePath(".config/qradiolink_mem.cfg");
     if(old_file.exists())
     {
-        QDir().rename(old_file.filePath(), files.filePath(".config/qradiolink/qradiolink_mem.cfg"));
+        QDir().rename(old_file.filePath(),
+                      files.filePath(".config/qradiolink/qradiolink_mem.cfg"));
     }
     QFileInfo new_file = files.filePath(".config/qradiolink/qradiolink_mem.cfg");
     if(!new_file.exists())
@@ -82,7 +83,8 @@ void RadioChannels::readConfig()
     }
     catch(const libconfig::ParseException &pex)
     {
-        std::cerr << "Configuration parse error at " << pex.getFile() << ":" << pex.getLine()
+        std::cerr << "Configuration parse error at "
+                  << pex.getFile() << ":" << pex.getLine()
                   << " - " << pex.getError() << std::endl;
         exit(EXIT_FAILURE);
     }
@@ -149,7 +151,8 @@ void RadioChannels::saveConfig()
     {
         radiochannel *chan = _channels->at(i);
 
-        libconfig::Setting &channel = root["channels"].add(libconfig::Setting::TypeGroup);
+        libconfig::Setting &channel = root["channels"].add(
+                    libconfig::Setting::TypeGroup);
 
         channel.add("id", libconfig::Setting::TypeInt) = chan->id;
         channel.add("rx_frequency", libconfig::Setting::TypeInt64) = chan->rx_frequency;
@@ -172,7 +175,8 @@ void RadioChannels::saveConfig()
     }
     catch(const libconfig::FileIOException &fioex)
     {
-        std::cerr << "I/O error while writing configuration file: " << _memories_file->absoluteFilePath().toStdString() << std::endl;
+        std::cerr << "I/O error while writing configuration file: "
+                  << _memories_file->absoluteFilePath().toStdString() << std::endl;
         exit(EXIT_FAILURE);
     }
 }

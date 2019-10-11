@@ -109,6 +109,9 @@ RadioController::RadioController(Settings *settings, QObject *parent) :
     QObject::connect(_data_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));
     QObject::connect(_voip_tx_timer, SIGNAL(timeout()), this, SLOT(stopTx()));
     QObject::connect(_end_tx_timer, SIGNAL(timeout()), this, SLOT(endTx()));
+
+    // FIXME: there is no reason for the modem to use the settings
+    // All control happens in the radioop or main thread
     _modem = new gr_modem(_settings);
 
     QObject::connect(_modem,SIGNAL(textReceived(QString)),this,SLOT(textReceived(QString)));
@@ -202,9 +205,10 @@ void RadioController::run()
         _mutex->unlock();
 
         QCoreApplication::processEvents();
-        flushVoipToNetBuffer();
-        processVOIPToRadioQueue();
+        flushRadioToVoipBuffer();
+        processVoipToRadioQueue();
 
+        // FIXME: this is the wrong place to control the Mumble client
         int time = QDateTime::currentDateTime().toTime_t();
         if((time - last_ping_time) > 10)
         {
@@ -262,6 +266,7 @@ void RadioController::run()
         if(process_text && (_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL))
         {
             sendTextData(text_out, gr_modem::FrameTypeText);
+            // FIXME: how do I know when transmit is done?
             emit displayTransmitStatus(false);
         }
 
@@ -404,7 +409,7 @@ void RadioController::updateInputAudioStream()
     }
 }
 
-void RadioController::flushVoipToNetBuffer()
+void RadioController::flushRadioToVoipBuffer()
 {
 
     /// Large size of frames (120 ms) helps Mumble client
@@ -422,7 +427,7 @@ void RadioController::flushVoipToNetBuffer()
     }
 }
 
-void RadioController::processVOIPToRadioQueue()
+void RadioController::processVoipToRadioQueue()
 {
     if(_voip_to_radio_queue->size() >= 320)
     {
@@ -443,7 +448,8 @@ void RadioController::processVOIPToRadioQueue()
         }
         else
         {
-            emit writePCM(pcm, 320*sizeof(short), _audio_compressor_enabled, AudioProcessor::AUDIO_MODE_OPUS);
+            emit writePCM(pcm, 320*sizeof(short), _audio_compressor_enabled,
+                          AudioProcessor::AUDIO_MODE_OPUS);
             audioFrameReceived();
         }
         _last_voiced_frame_timer.restart();
@@ -452,7 +458,8 @@ void RadioController::processVOIPToRadioQueue()
 }
 
 
-void RadioController::txAudio(short *audiobuffer, int audiobuffer_size, int vad, bool radio_only)
+void RadioController::txAudio(short *audiobuffer, int audiobuffer_size,
+                              int vad, bool radio_only)
 {
     /// first check the other places we need to send it
     if(_vox_enabled)
@@ -506,6 +513,11 @@ void RadioController::txAudio(short *audiobuffer, int audiobuffer_size, int vad,
 
     int packet_size = 0;
     unsigned char *encoded_audio;
+    /// digital volume adjust
+    for(unsigned int i = 0;i< audiobuffer_size/sizeof(short);i++)
+    {
+        audiobuffer[i] = audiobuffer[i] * _tx_volume;
+    }
     if((_tx_mode == gr_modem_types::ModemTypeBPSK2000) ||
             (_tx_mode == gr_modem_types::ModemType2FSK2000) ||
             (_tx_mode == gr_modem_types::ModemType4FSK2000) ||

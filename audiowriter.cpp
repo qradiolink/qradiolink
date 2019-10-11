@@ -17,7 +17,7 @@
 
 #include "audiowriter.h"
 
-AudioWriter::AudioWriter(Settings *settings, QObject *parent) :
+AudioWriter::AudioWriter(const Settings *settings, QObject *parent) :
     QObject(parent)
 {
     _settings = settings;

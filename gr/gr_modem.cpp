@@ -16,7 +16,7 @@
 
 #include "gr_modem.h"
 
-gr_modem::gr_modem(Settings *settings, QObject *parent) :
+gr_modem::gr_modem(const Settings *settings, QObject *parent) :
     QObject(parent)
 {
     _modem_type_rx = gr_modem_types::ModemTypeBPSK2000;

@@ -30,7 +30,7 @@ class CommandProcessor : public QObject
 {
     Q_OBJECT
 public:
-    explicit CommandProcessor(Settings *settings, QObject *parent = nullptr);
+    explicit CommandProcessor(const Settings *settings, QObject *parent = nullptr);
     ~CommandProcessor();
     QStringList listAvailableCommands();
     bool validateCommand(QString message);
@@ -108,7 +108,7 @@ private:
         int params;
     };
 
-    Settings *_settings;
+    const Settings *_settings;
     QVector<command*> *_command_list;
 
     QStringList getCommand(QString message, int &command_index);

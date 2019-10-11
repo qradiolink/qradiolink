@@ -28,7 +28,7 @@ class AudioReader : public QObject
 {
     Q_OBJECT
 public:
-    explicit AudioReader(Settings *settings, QObject *parent = 0);
+    explicit AudioReader(const Settings *settings, QObject *parent = 0);
 
 signals:
     void finished();
@@ -40,7 +40,7 @@ public slots:
     void stop();
 
 private:
-    Settings *_settings;
+    const Settings *_settings;
     QByteArray *_buffer;
     bool _working;
     bool _capture_audio;

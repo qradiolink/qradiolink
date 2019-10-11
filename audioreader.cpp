@@ -17,7 +17,7 @@
 
 #include "audioreader.h"
 
-AudioReader::AudioReader(Settings *settings, QObject *parent) :
+AudioReader::AudioReader(const Settings *settings, QObject *parent) :
     QObject(parent)
 {
     _settings = settings;

@@ -17,7 +17,7 @@
 #include "mumbleclient.h"
 
 
-MumbleClient::MumbleClient(Settings *settings, QObject *parent) :
+MumbleClient::MumbleClient(const Settings *settings, QObject *parent) :
     QObject(parent)
 {
     _socket_client = new SSLClient;
