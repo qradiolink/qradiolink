@@ -219,7 +219,6 @@ private:
     QTimer _video_timer;
     QTimer _speech_icon_timer;
     QMutex _mutex;
-    float _fft_averaging;
     float _rssi;
 
     StationList _user_list;

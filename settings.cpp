@@ -367,6 +367,14 @@ void Settings::readConfig()
     }
     try
     {
+        fft_averaging = cfg.lookup("fft_averaging");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        fft_averaging = 1.0;
+    }
+    try
+    {
         waterfall_fps = cfg.lookup("waterfall_fps");
     }
     catch(const libconfig::SettingNotFoundException &nfex)
@@ -453,6 +461,7 @@ void Settings::saveConfig()
     root.add("show_fft",libconfig::Setting::TypeInt) = show_fft;
     root.add("enable_duplex",libconfig::Setting::TypeInt) = enable_duplex;
     root.add("fft_size",libconfig::Setting::TypeInt) = fft_size;
+    root.add("fft_averaging",libconfig::Setting::TypeFloat) = fft_averaging;
     root.add("waterfall_fps",libconfig::Setting::TypeInt) = waterfall_fps;
     root.add("audio_compressor",libconfig::Setting::TypeInt) = audio_compressor;
     root.add("enable_relays",libconfig::Setting::TypeInt) = enable_relays;

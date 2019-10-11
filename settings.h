@@ -65,6 +65,7 @@ public:
     int show_constellation;
     int enable_duplex;
     int fft_size;
+    float fft_averaging;
     int waterfall_fps;
     int show_fft;
     int audio_compressor;

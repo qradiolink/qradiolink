@@ -164,7 +164,6 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     _iirFftData = new float[1024*1024];
     _s_meter_bg = new QPixmap(":/res/s-meter-bg-black-small.png");
 
-    _fft_averaging = 1;
     _rssi = 0;
     QRect xy = this->geometry();
     ui->plotterContainer->resize(xy.right() -xy.left()-20,xy.bottom()-xy.top()-120);
@@ -398,6 +397,7 @@ void MainWindow::setConfig()
     ui->plotterFrame->setSampleRate(_settings->rx_sample_rate);
     ui->plotterFrame->setSpanFreq((quint32)_settings->rx_sample_rate);
     ui->sampleRateBox->setCurrentIndex(ui->sampleRateBox->findText(QString::number(_settings->rx_sample_rate)));
+    ui->averagingSlider->setValue((int)(1.0f/_settings->fft_averaging));
     ui->fftSizeBox->setCurrentIndex(ui->fftSizeBox->findText(QString::number(_settings->fft_size)));
     ui->fpsBox->setCurrentIndex(ui->fpsBox->findText(QString::number(_settings->waterfall_fps)));
     ui->lineEditScanStep->setText(QString::number(_settings->scan_step));
@@ -706,7 +706,7 @@ void MainWindow::newFFTData(float *fft_data, int fftsize)
     {
         _realFftData[i] = fft_data[i];
         // FFT averaging
-        _iirFftData[i] += _fft_averaging * (_realFftData[i] - _iirFftData[i]);
+        _iirFftData[i] += _settings->fft_averaging * (_realFftData[i] - _iirFftData[i]);
     }
     ui->plotterFrame->setNewFftData(_iirFftData, _realFftData, fftsize);
 }
@@ -720,7 +720,7 @@ void MainWindow::setFFTSize(int size)
 
 void MainWindow::setAveraging(int x)
 {
-    _fft_averaging = 1.0 / x;
+    _settings->fft_averaging = 1.0 / x;
 }
 
 void MainWindow::newWaterfallFPS()
