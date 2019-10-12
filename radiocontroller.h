@@ -119,7 +119,7 @@ public slots:
     void fineTuneFreq(long center_freq);
     void tuneFreq(qint64 center_freq);
     void tuneTxFreq(qint64 actual_freq);
-    void changeTxShift(qint64 center_freq);
+    void changeTxShift(qint64 shift_freq);
     void setTxPower(int dbm);
     void setBbGain(int value);
     void setSquelch(int value);
@@ -156,11 +156,9 @@ public slots:
     void enableAudioCompressor(bool value);
     void enableRelays(bool value);
     void calibrateRSSI(float value);
+    void setCallsign();
 
 private:
-    void readConfig(std::string &rx_device_args, std::string &tx_device_args,
-                    std::string &rx_antenna, std::string &tx_antenna, int &rx_freq_corr,
-                    int &tx_freq_corr, std::string &callsign, std::string &video_device);
     unsigned int getFrameLength(unsigned char *data);
     unsigned int getFrameCRC32(unsigned char *data);
 
@@ -211,12 +209,16 @@ private:
 
     QList<radiochannel*> _memory_channels;
 
+    QString _text_out;
+    QString _callsign;
+    QElapsedTimer _last_voiced_frame_timer;
+
     bool _stop;
     bool _tx_inited;
     bool _rx_inited;
     bool _voip_enabled;
     bool _voip_forwarding;
-    bool _transmitting_audio;
+    bool _transmitting;
     bool _process_text;
     bool _repeat_text;
     bool _scan_done;
@@ -234,35 +236,21 @@ private:
     bool _audio_compressor_enabled;
     bool _relays_enabled;
 
-
-    QString _text_out;
-    QString _callsign;
-
-
     int _rx_mode;
     int _tx_mode;
     int _rx_radio_type;
     int _tx_radio_type;
-    long long _rx_frequency;
     long long _tx_frequency;
     long long _autotune_freq;
-    long long _tune_shift_freq;
-    float _tx_power;
-    int _bb_gain;
-    int _squelch;
-    double _rx_sensitivity;
     int _step_hz;
     int _scan_step_hz;
     int _tune_limit_lower;
     int _tune_limit_upper;
     int _memory_scan_index;
     int _tune_counter;
-    float _rx_ctcss;
-    float _tx_ctcss;
     float _rx_volume;
     float _tx_volume;
-    long long _rx_sample_rate;
-    QElapsedTimer _last_voiced_frame_timer;
+
     quint64 _last_session_id;
     int _freq_gui_counter;
     qint64 _carrier_offset;

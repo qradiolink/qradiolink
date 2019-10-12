@@ -432,7 +432,7 @@ void MainWindow::saveUiConfig()
     _settings->rx_antenna = ui->lineEditRXAntenna->text();
     _settings->tx_antenna = ui->lineEditTXAntenna->text();
     _settings->rx_freq_corr = ui->lineEditRXFreqCorrection->text().toInt();
-    _settings->tx_freq_corr = ui->lineEditTXFreqCorrection->text().toInt();
+    _settings->tx_freq_corr = ui->lineEditTXFreqCorrection->text().toInt();    
     _settings->callsign = ui->lineEditCallsign->text();
     _settings->video_device = ui->lineEditVideoDevice->text();
     _settings->audio_input_device = ui->audioInputComboBox->currentText();
@@ -615,8 +615,10 @@ void MainWindow::tuneToMemoryChannel(int row, int col)
     setVolumeDisplay(chan->rx_volume);
     setTxPowerDisplay(chan->tx_power);
     setRxSensitivityDisplay(chan->rx_sensitivity);
-    setRxCTCSS(chan->rx_ctcss);
-    setTxCTCSS(chan->tx_ctcss);
+    _settings->rx_ctcss = chan->rx_ctcss;
+    _settings->tx_ctcss = chan->tx_ctcss;
+    emit setRxCTCSS(chan->rx_ctcss);
+    emit setTxCTCSS(chan->tx_ctcss);
     if(chan->rx_ctcss > 0.0)
         ui->comboBoxRxCTCSS->setCurrentText(QString::number(chan->rx_ctcss));
     else
@@ -1189,7 +1191,7 @@ void MainWindow::setSquelchDisplay(int value)
     _settings->squelch = value;
     ui->rxSquelchDisplay->display(value);
     ui->rxSquelchDial->setValue(value);
-    emit setSquelch((int)value);
+    emit setSquelch(value);
 }
 
 void MainWindow::setVolumeDisplay(int value)
