@@ -30,7 +30,6 @@ TelnetServer::TelnetServer(const Settings *settings, QObject *parent) :
 
 TelnetServer::~TelnetServer()
 {
-    _server->close();
     delete _server;
     delete _command_processor;
 }
@@ -55,7 +54,8 @@ void TelnetServer::stop()
         s->flush();
         s->disconnectFromHost();
     }
-    _connected_clients.clear();
+     _connected_clients.clear();
+    _server->close();
 }
 
 void TelnetServer::getConnection()
@@ -82,7 +82,6 @@ void TelnetServer::getConnection()
     QObject::connect(socket, SIGNAL(disconnected()), socket, SLOT(deleteLater()));
 
     _connected_clients.append(socket);
-
 }
 
 void TelnetServer::connectionFailed(QAbstractSocket::SocketError error)

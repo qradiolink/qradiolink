@@ -68,7 +68,7 @@ void genRandomStr(char *str, const int len)
 
 void buildFilterWidthList(std::vector<std::complex<int>>* filter_widths, std::vector<std::complex<int>>*ranges, std::vector<bool> *symmetric)
 {
-    filter_widths->push_back(std::complex<int>(-5000, 5000));  // FM
+    filter_widths->push_back(std::complex<int>(-6500, 6500));  // FM
     filter_widths->push_back(std::complex<int>(-2500, 2500));  // NBFM
     filter_widths->push_back(std::complex<int>(-100000, 100000));  // WFM
     filter_widths->push_back(std::complex<int>(100, 2700)); // USB
@@ -92,7 +92,7 @@ void buildFilterWidthList(std::vector<std::complex<int>>* filter_widths, std::ve
     filter_widths->push_back(std::complex<int>(-150000, 150000)); // QPSK250000 DATA
 
 
-    ranges->push_back(std::complex<int>(-9000, 9000));  // FM
+    ranges->push_back(std::complex<int>(-10000, 10000));  // FM
     ranges->push_back(std::complex<int>(-9000, 9000));  // NBFM
     ranges->push_back(std::complex<int>(-100000, 100000));  // WFM
     ranges->push_back(std::complex<int>(200, 3800)); // USB

@@ -45,8 +45,10 @@ class gr_mod_nbfm_sdr : public gr::hier_block2
 public:
     explicit gr_mod_nbfm_sdr(int sps=125, int samp_rate=250000, int carrier_freq=1700,
                              int filter_width=8000);
+    void set_filter_width(int filter_width);
     void set_ctcss(float value);
     void set_bb_gain(int value);
+
 private:
 
     gr::analog::frequency_modulator_fc::sptr _fm_modulator;
@@ -66,6 +68,7 @@ private:
 
 
     int _samp_rate;
+    int _sps;
     int _carrier_freq;
     int _filter_width;
 

@@ -49,6 +49,7 @@ public slots:
     int set_data(std::vector<u_int8_t> *data);
     void tune(long center_freq);
     void set_power(float dbm);
+    void set_filter_width(int filter_width, int mode);
     void set_ctcss(float value);
     void set_mode(int mode);
     int set_audio(std::vector<float> *data);

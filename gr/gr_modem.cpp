@@ -320,6 +320,8 @@ void gr_modem::setFilterWidth(int width)
 {
     if(_gr_demod_base)
         _gr_demod_base->set_filter_width(width, _modem_type_rx);
+    if(_gr_mod_base)
+        _gr_mod_base->set_filter_width(width, _modem_type_tx);
 }
 
 void gr_modem::setRxCTCSS(float value)

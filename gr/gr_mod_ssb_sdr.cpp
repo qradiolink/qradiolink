@@ -17,14 +17,14 @@
 #include "gr_mod_ssb_sdr.h"
 
 gr_mod_ssb_sdr_sptr make_gr_mod_ssb_sdr(int sps, int samp_rate, int carrier_freq,
-                                          int filter_width)
+                                          int filter_width, int sb)
 {
     return gnuradio::get_initial_sptr(new gr_mod_ssb_sdr(sps, samp_rate, carrier_freq,
-                                                      filter_width));
+                                                      filter_width, sb));
 }
 
 gr_mod_ssb_sdr::gr_mod_ssb_sdr(int sps, int samp_rate, int carrier_freq,
-                                 int filter_width) :
+                                 int filter_width, int sb) :
     gr::hier_block2 ("gr_mod_ssb_sdr",
                       gr::io_signature::make (1, 1, sizeof (float)),
                       gr::io_signature::make (1, 1, sizeof (gr_complex)))
@@ -32,6 +32,7 @@ gr_mod_ssb_sdr::gr_mod_ssb_sdr(int sps, int samp_rate, int carrier_freq,
 
 
     _samp_rate =samp_rate;
+    _sps = sps;
     float target_samp_rate = 8000.0;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
@@ -40,16 +41,16 @@ gr_mod_ssb_sdr::gr_mod_ssb_sdr(int sps, int samp_rate, int carrier_freq,
     _rail = gr::analog::rail_ff::make(-0.95, 0.95);
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::band_pass_2(
-                    1, target_samp_rate, 150, _filter_width, 150, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+                    1, target_samp_rate, 150, 3800, 150, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
     static const float coeff[] =  {-0.026316914707422256, -0.2512197494506836, 1.5501943826675415,
                                    -0.2512197494506836, -0.026316914707422256};
     std::vector<float> emph_taps(coeff, coeff + sizeof(coeff) / sizeof(coeff[0]) );
     _emphasis_filter = gr::filter::fft_filter_fff::make(1,emph_taps);
     _float_to_complex = gr::blocks::float_to_complex::make();
-    std::vector<float> interp_taps = gr::filter::firdes::low_pass(125, _samp_rate,
+    std::vector<float> interp_taps = gr::filter::firdes::low_pass(_sps, _samp_rate,
                                                         _filter_width, _filter_width, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
 
-    _resampler = gr::filter::rational_resampler_base_ccf::make(125,1, interp_taps);
+    _resampler = gr::filter::rational_resampler_base_ccf::make(_sps,1, interp_taps);
     _feed_forward_agc = gr::analog::feedforward_agc_cc::make(512,0.95);
     _amplify = gr::blocks::multiply_const_cc::make(3.8,1);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
@@ -66,7 +67,7 @@ gr_mod_ssb_sdr::gr_mod_ssb_sdr(int sps, int samp_rate, int carrier_freq,
     connect(_rail,0,_audio_filter,0);
     connect(_audio_filter,0,_emphasis_filter,0);
     connect(_emphasis_filter,0,_float_to_complex,0);
-    if(!sps)
+    if(!sb)
     {
         connect(_float_to_complex,0,_filter_usb,0);
         connect(_filter_usb,0,_resampler,0);
@@ -81,6 +82,23 @@ gr_mod_ssb_sdr::gr_mod_ssb_sdr(int sps, int samp_rate, int carrier_freq,
     connect(_amplify,0,_bb_gain,0);
     connect(_bb_gain,0,self(),0);
 
+}
+
+void gr_mod_ssb_sdr::set_filter_width(int filter_width)
+{
+    _filter_width = filter_width;
+    float target_samp_rate = 8000.0;
+    std::vector<float> interp_taps = gr::filter::firdes::low_pass(_sps, _samp_rate,
+                                                        _filter_width, _filter_width, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+
+    std::vector<gr_complex> filter_usb_taps = gr::filter::firdes::complex_band_pass_2(
+                1, target_samp_rate, 150, _filter_width, 150, 120, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+    std::vector<gr_complex> filter_lsb_taps = gr::filter::firdes::complex_band_pass_2(
+                1, target_samp_rate, -_filter_width, -150, 150, 120, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+
+    _resampler->set_taps(interp_taps);
+    _filter_usb->set_taps(filter_usb_taps);
+    _filter_lsb->set_taps(filter_lsb_taps);
 }
 
 void gr_mod_ssb_sdr::set_bb_gain(int value)

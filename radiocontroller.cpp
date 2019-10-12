@@ -641,11 +641,9 @@ void RadioController::sendTextData(QString text, int frame_type)
             startTx();
         }
         _tx_modem_started = true;
-        _mutex->lock();
         _modem->startTransmission(_callsign);
         _modem->textData(text, frame_type);
         _modem->endTransmission(_callsign);
-        _mutex->unlock();
     }
     if(!_repeat_text)
     {
@@ -667,10 +665,8 @@ void RadioController::sendBinData(QByteArray data, int frame_type)
             startTx();
         }
         _tx_modem_started = true;
-        _mutex->lock();
         _modem->binData(data, frame_type);
         _modem->endTransmission(_callsign);
-        _mutex->unlock();
     }
     if(!_repeat_text)
     {
@@ -726,7 +722,7 @@ void RadioController::setRelays(bool transmitting)
     }
     else
     {
-        res = _relay_controller->disableRelay(0);
+        res = _relay_controller->disableRelay(1);
         if(!res)
         {
             std::cerr << "Relay control failed, stopping to avoid damage" << std::endl;
@@ -734,7 +730,7 @@ void RadioController::setRelays(bool transmitting)
         }
         time_to_sleep = {0, 10000L };
         nanosleep(&time_to_sleep, NULL);
-        res = _relay_controller->disableRelay(1);
+        res = _relay_controller->disableRelay(0);
         if(!res)
         {
             std::cerr << "Relay control failed, stopping to avoid damage" << std::endl;
@@ -767,19 +763,19 @@ void RadioController::startTx()
             _modem->setRxSensitivity(0.01);
         }
 
-        _mutex->lock();
+        setRelays(true);
         _modem->tuneTx(_tx_frequency + _tune_shift_freq);
         _modem->setTxPower(_tx_power);
-        _mutex->unlock();
-        setRelays(true);
 
         // FIXME: full duplex mode
-        //if(_rx_inited && !_repeat && (_rx_mode != gr_modem_types::ModemTypeQPSK250000))
-        //    _modem->stopRX();
+        /**
+        if(_rx_inited && !_repeat && (_rx_mode != gr_modem_types::ModemTypeQPSK250000))
+            _modem->stopRX();
 
 
-        //if(_tx_modem_started)
-        //    _modem->stopTX();
+        if(_tx_modem_started)
+            _modem->stopTX();
+        */
 
 
 
@@ -797,10 +793,13 @@ void RadioController::startTx()
         {
             _modem->startTransmission(_callsign);
         }
+        if((_tx_radio_type == radio_type::RADIO_TYPE_ANALOG)
+                && ((_tx_mode == gr_modem_types::ModemTypeNBFM2500) || (_tx_mode == gr_modem_types::ModemTypeNBFM5000)))
+        {
+            sendEndBeep();
+        }
         emit displayTransmitStatus(true);
-
     }
-
 }
 
 void RadioController::stopTx()
@@ -813,36 +812,34 @@ void RadioController::stopTx()
         if(_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL)
         {
             _modem->endTransmission(_callsign);
-            tx_tail_msec = 2000;
+            tx_tail_msec = 1500;
         }
         if((_tx_radio_type == radio_type::RADIO_TYPE_ANALOG)
                 && ((_tx_mode == gr_modem_types::ModemTypeNBFM2500) || (_tx_mode == gr_modem_types::ModemTypeNBFM5000)))
         {
-            sendEndBeep();// please turn off, annoying
-            tx_tail_msec = 1500;
+            sendEndBeep();
+            tx_tail_msec = 1000;
         }
         // FIXME: end tail length should be calculated exactly
         _end_tx_timer->start(tx_tail_msec);
         _tx_modem_started = false;
 
         // FIXME: full duplex mode
-        //if(_rx_inited && !_repeat && (_rx_mode != gr_modem_types::ModemTypeQPSK250000))
-        //   _modem->startRX();
-
+        /**
+        if(_rx_inited && !_repeat && (_rx_mode != gr_modem_types::ModemTypeQPSK250000))
+           _modem->startRX();
+        */
     }
 }
 
 void RadioController::endTx()
 {
 
-    _mutex->lock();
     _modem->setTxPower(0.01);
     _modem->flushSources();
-    _mutex->unlock();
     // On LimeSDR mini, when I call setTxPower I get a brief spike of the LO
     setRelays(false);
 
-    //_modem->stopTX();
     if(!_duplex_enabled)
     {
         _modem->enableDemod(true);
@@ -1382,7 +1379,6 @@ void RadioController::toggleTX(bool value)
             _modem->startRX();
         _mutex->unlock();
 
-
         _tx_inited = true;
     }
     else if(_tx_inited)
@@ -1556,12 +1552,10 @@ void RadioController::toggleRxMode(int value)
         _modem->startRX();
         _mutex->unlock();
     }
-
 }
 
 void RadioController::toggleTxMode(int value)
 {
-
     _tx_radio_type = radio_type::RADIO_TYPE_DIGITAL;
     switch(value)
     {
@@ -1658,7 +1652,6 @@ void RadioController::toggleTxMode(int value)
     if(_tx_inited)
         _modem->startTX();
     _mutex->unlock();
-
 }
 
 void RadioController::usePTTForVOIP(bool value)
@@ -1705,24 +1698,18 @@ void RadioController::toggleRepeat(bool value)
     }
 
     _modem->setRepeater(value); // ?mutex?
-
-
 }
 
 void RadioController::fineTuneFreq(long center_freq)
 {
-
     _modem->setCarrierOffset(_carrier_offset + center_freq*_step_hz);
-
 }
 
 void RadioController::tuneFreq(qint64 center_freq)
 {
     /// _rx_frequency is the source center frequency
     _rx_frequency = center_freq;
-
     _modem->tune(_rx_frequency);
-
 }
 
 void RadioController::tuneTxFreq(qint64 actual_freq)
@@ -1736,7 +1723,6 @@ void RadioController::tuneTxFreq(qint64 actual_freq)
 void RadioController::setCarrierOffset(qint64 offset)
 {
     _carrier_offset = offset;
-
     // we don't use carrier_offset for TX, fixed sample rate
     _modem->setCarrierOffset(offset);
 
@@ -1772,18 +1758,13 @@ void RadioController::setRxSensitivity(int value)
 void RadioController::setTxPower(int dbm)
 {
     _tx_power = (float)dbm/100.0;
-
-    _mutex->lock();
     _modem->setTxPower(_tx_power);
-    _mutex->unlock();
 }
 
 void RadioController::setBbGain(int value)
 {
     _bb_gain = value;
-
     _modem->setBbGain(_bb_gain);
-
 }
 
 void RadioController::setRxSampleRate(int samp_rate)
@@ -1797,9 +1778,7 @@ void RadioController::setRxSampleRate(int samp_rate)
 
 void RadioController::setFFTSize(int size)
 {
-
     _modem->setFFTSize(size);
-
 }
 
 void RadioController::enableAudioCompressor(bool value)
@@ -1820,41 +1799,31 @@ void RadioController::setTxVolume(int value)
 void RadioController::setRxCTCSS(float value)
 {
     _rx_ctcss = value;
-
     _modem->setRxCTCSS(value);
-
 }
 
 void RadioController::setTxCTCSS(float value)
 {
     _tx_ctcss = value;
-
     _modem->setTxCTCSS(value);
-
 }
 
 void RadioController::enableGUIConst(bool value)
 {
     _constellation_enabled = value;
-
     _modem->enableGUIConst(value);
-
 }
 
 void RadioController::enableRSSI(bool value)
 {
     _rssi_enabled = value;
-
     _modem->enableRSSI(value);
-
 }
 
 void RadioController::enableGUIFFT(bool value)
 {
     _fft_enabled = value;
-
     _modem->enableGUIFFT(value);
-
 }
 
 void RadioController::enableDuplex(bool value)

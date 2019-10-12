@@ -31,6 +31,7 @@ gr_mod_nbfm_sdr::gr_mod_nbfm_sdr(int sps, int samp_rate, int carrier_freq,
 {
 
     _samp_rate =samp_rate;
+    _sps = sps;
     float target_samp_rate = 8000;
     float if_samp_rate = 20000;
     _carrier_freq = carrier_freq;
@@ -41,7 +42,7 @@ gr_mod_nbfm_sdr::gr_mod_nbfm_sdr(int sps, int samp_rate, int carrier_freq,
     _audio_amplify = gr::blocks::multiply_const_ff::make(0.99,1);
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::band_pass_2(
-                    1, target_samp_rate, 250, 3800, 200, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+                    1, target_samp_rate, 200, 3800, 200, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
 
     static const float coeff[] =  {-0.026316914707422256, -0.2512197494506836, 1.5501943826675415,
                                    -0.2512197494506836, -0.026316914707422256};
@@ -55,9 +56,9 @@ gr_mod_nbfm_sdr::gr_mod_nbfm_sdr(int sps, int samp_rate, int carrier_freq,
     _tone_source = gr::analog::sig_source_f::make(target_samp_rate,gr::analog::GR_COS_WAVE,88.5,0.1);
     _add = gr::blocks::add_ff::make();
 
-    std::vector<float> interp_taps = gr::filter::firdes::low_pass(sps, _samp_rate,
+    std::vector<float> interp_taps = gr::filter::firdes::low_pass(_sps, _samp_rate,
                                                         _filter_width, _filter_width);
-    _resampler = gr::filter::rational_resampler_base_ccf::make(sps,1, interp_taps);
+    _resampler = gr::filter::rational_resampler_base_ccf::make(_sps,1, interp_taps);
     _amplify = gr::blocks::multiply_const_cc::make(0.8,1);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
     _filter = gr::filter::fft_filter_ccf::make(
@@ -76,6 +77,22 @@ gr_mod_nbfm_sdr::gr_mod_nbfm_sdr(int sps, int samp_rate, int carrier_freq,
     connect(_amplify,0,_bb_gain,0);
     connect(_bb_gain,0,_filter,0);
     connect(_filter,0,self(),0);
+}
+
+void gr_mod_nbfm_sdr::set_filter_width(int filter_width)
+{
+    _filter_width = filter_width;
+    float if_samp_rate = 20000;
+    std::vector<float> if_taps = gr::filter::firdes::low_pass(10, if_samp_rate * 4,
+                                                        _filter_width, _filter_width, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+    std::vector<float> interp_taps = gr::filter::firdes::low_pass(_sps, _samp_rate,
+                                                        _filter_width, _filter_width);
+    std::vector<float> filter_taps = gr::filter::firdes::low_pass_2(
+                1, _samp_rate, _filter_width, 1200, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+
+    _audio_resampler->set_taps(if_taps);
+    _resampler->set_taps(interp_taps);
+    _filter->set_taps(filter_taps);
 }
 
 void gr_mod_nbfm_sdr::set_bb_gain(int value)
