@@ -78,19 +78,21 @@ public:
     int agc_decay;
 
     /// Used by remote interface
-    bool _rx_status;
-    bool _tx_status;
+
     int _rssi;
      // FIXME: this should be set by radioop
 
     /// Used by both GUI and remote interface
-    bool _in_transmission;
+    bool _tx_started;
     qint64 _tx_frequency;
     bool _voip_connected;
     bool _vox_enabled;
     bool _repeater_enabled;
     bool _voip_forwarding;
+    bool _voip_ptt_enabled;
     int _current_voip_channel;
+    bool _rx_inited;
+    bool _tx_inited;
 
 
     /// Old stuff, not used now

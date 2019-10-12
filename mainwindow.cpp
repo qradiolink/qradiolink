@@ -695,16 +695,16 @@ void MainWindow::endTx()
 
 void MainWindow::startTx()
 {
-    if(!_settings->_in_transmission)
+    if(!_ptt_activated)
     {
         emit startTransmission();
         ui->frameCtrlFreq->setFrequency(_settings->rx_frequency + _settings->demod_offset + _settings->tx_shift, false);
-        _settings->_in_transmission=true;
+        _ptt_activated=true;
     }
     else
     {
         ui->frameCtrlFreq->setFrequency(_settings->rx_frequency + _settings->demod_offset, false);
-        _settings->_in_transmission=false; // FIXME: should be set by radioop
+        _ptt_activated=false;
         endTx();
     }
 }
@@ -1068,7 +1068,6 @@ void MainWindow::channelState(QTreeWidgetItem *item, int k)
 
 void MainWindow::toggleRXwin(bool value)
 {
-    _settings->_rx_status = value;
     emit setSampleRate(ui->sampleRateBox->currentText().toInt());
     emit toggleRX(value);
     ui->plotterFrame->setRunningState(value);
@@ -1079,7 +1078,6 @@ void MainWindow::toggleRXwin(bool value)
 
 void MainWindow::toggleTXwin(bool value)
 {
-    _settings->_tx_status = value;
     emit toggleTX(value);
 }
 
@@ -1174,7 +1172,7 @@ void MainWindow::enterFreq()
 
 void MainWindow::enterShift()
 {
-    if(!_settings->_in_transmission)
+    if(!_ptt_activated)
     {
         _settings->tx_shift = ui->shiftEdit->text().toLong()*1000;
         emit changeTxShift(_settings->tx_shift);
@@ -1379,7 +1377,6 @@ void MainWindow::autoSquelch()
 
 void MainWindow::changeFilterWidth(int low, int up)
 {
-    // FIXME: plotter whould emit the signal when mouse is released
     if(_filter_is_symmetric)
     {
         int abs_limit_lower = 800;

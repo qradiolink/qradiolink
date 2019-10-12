@@ -32,11 +32,12 @@ Settings::Settings()
     _ident_time = 300; // used
     _radio_id = "";
 
-    _rx_status = false;
-    _tx_status = false;
-    _in_transmission = false;
+    _rx_inited = false;
+    _tx_inited = false;
+    _tx_started = false;
     _voip_connected = false;
     _voip_forwarding = false;
+    _voip_ptt_enabled = false;
     _vox_enabled = false;
     _repeater_enabled = false;
     _current_voip_channel = -1;

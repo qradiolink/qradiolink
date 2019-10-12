@@ -130,19 +130,19 @@ void CommandProcessor::processStatusCommands(int command_index, QString &respons
 {
     switch (command_index) {
     case 0:
-        if(_settings->_rx_status)
+        if(_settings->_rx_inited)
             response.append("RX status is active.");
         else
             response.append("RX status is inactive.");
         break;
     case 1:
-        if(_settings->_tx_status)
+        if(_settings->_tx_inited)
             response.append("TX status is active.");
         else
             response.append("TX status is inactive.");
         break;
     case 2:
-        if(_settings->_in_transmission)
+        if(_settings->_tx_started)
             response.append("Currently transmitting.");
         else
             response.append("Not transmitting.");

@@ -211,7 +211,6 @@ private:
     QVector<short> *_voip_encode_buffer;
     QByteArray *_data_rec_sound;
     QByteArray *_end_rec_sound;
-
     QList<radiochannel*> _memory_channels;
 
     QString _text_out;
@@ -219,10 +218,6 @@ private:
     QElapsedTimer _last_voiced_frame_timer;
 
     bool _stop;
-    bool _tx_inited;
-    bool _rx_inited;
-    bool _voip_enabled;
-    bool _voip_forwarding;
     bool _transmitting;
     bool _process_text;
     bool _repeat_text;
@@ -231,15 +226,6 @@ private:
     bool _memory_scan_done;
     bool _tx_modem_started;
     bool _data_modem_sleeping;
-    bool _repeat;
-    bool _vox_enabled;
-    bool _tx_started;
-    bool _fft_enabled;
-    bool _constellation_enabled;
-    bool _rssi_enabled;
-    bool _duplex_enabled;
-    bool _audio_compressor_enabled;
-    bool _relays_enabled;
 
     int _rx_mode;
     int _tx_mode;
@@ -252,14 +238,10 @@ private:
     int _tune_limit_lower;
     int _tune_limit_upper;
     int _memory_scan_index;
-    int _tune_counter;
     float _rx_volume;
     float _tx_volume;
-
-    quint64 _last_session_id;
-    int _freq_gui_counter;
-    qint64 _carrier_offset;
     int _fft_poll_time;
+    quint64 _last_session_id;
 
 };
 

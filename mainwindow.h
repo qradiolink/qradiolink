@@ -234,6 +234,7 @@ private:
     QTimer _speech_icon_timer;
     QMutex _mutex;
     float _rssi;
+    bool _ptt_activated;
 
     StationList _user_list;
 
