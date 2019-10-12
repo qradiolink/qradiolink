@@ -104,6 +104,8 @@ public slots:
     void setSquelch(int value);
     void setFilterWidth(int filter_width);
     void setRxSensitivity(double value);
+    void setAgcAttack(float value);
+    void setAgcDecay(float value);
     void setRxCTCSS(float value);
     void setTxCTCSS(float value);
     void enableGUIConst(bool value);

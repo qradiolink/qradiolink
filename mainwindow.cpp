@@ -123,6 +123,8 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     QObject::connect(ui->checkBoxRelays,SIGNAL(toggled(bool)),this,SLOT(setRelays(bool)));
     QObject::connect(ui->rssiCalibrateButton,SIGNAL(clicked()),this,SLOT(setRSSICalibration()));
     QObject::connect(ui->saveChannelsButton,SIGNAL(clicked()),this,SLOT(saveMemoryChannes()));
+    QObject::connect(ui->agcAttackSpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateAgcAttack(int)));
+    QObject::connect(ui->agcDecaySpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateAgcDecay(int)));
 
     QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
     QObject::connect(ui->plotterFrame,SIGNAL(pandapterRangeChanged(float,float)),ui->plotterFrame,SLOT(setWaterfallRange(float,float)));
@@ -423,6 +425,8 @@ void MainWindow::setConfig()
         ui->comboBoxTxCTCSS->setCurrentText(QString::number(_settings->tx_ctcss));
     else
         ui->comboBoxTxCTCSS->setCurrentText("CTCSS");
+    ui->agcAttackSpinBox->setValue(_settings->agc_attack);
+    ui->agcDecaySpinBox->setValue(_settings->agc_decay);
 
 }
 
@@ -1413,6 +1417,22 @@ void MainWindow::setDigitalGain(int value)
 {
     _settings->bb_gain = value;
     emit setBbGain(value);
+}
+
+void MainWindow::updateAgcAttack(int value)
+{
+    Q_UNUSED(value);
+    _settings->agc_attack = value;
+    float attack = (float)pow(10, -value);
+    emit setAgcAttack(attack);
+}
+
+void MainWindow::updateAgcDecay(int value)
+{
+    Q_UNUSED(value);
+    _settings->agc_decay = value;
+    float decay = (float)pow(10, -value);
+    emit setAgcDecay(decay);
 }
 
 void MainWindow::setRxGainStages(string_vector rx_gains)

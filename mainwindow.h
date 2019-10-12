@@ -135,6 +135,8 @@ public slots:
     void setRelays(bool value);
     void setRSSICalibration();
     void setDigitalGain(int value);
+    void updateAgcAttack(int value);
+    void updateAgcDecay(int value);
     void setRxGainStages(string_vector rx_gains);
     void setTxGainStages(string_vector tx_gains);
 
@@ -186,6 +188,8 @@ signals:
     void enableRelays(bool value);
     void calibrateRSSI(float value);
     void setBbGain(int value);
+    void setAgcAttack(float value);
+    void setAgcDecay(float value);
 
 
 public:

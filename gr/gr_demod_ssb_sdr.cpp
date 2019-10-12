@@ -49,8 +49,8 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(std::vector<int>signature, int sps, int samp_
                             1, _target_samp_rate, -_filter_width, -100,600, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     _squelch = gr::analog::pwr_squelch_cc::make(-140,0.01,0,true);
     _feed_forward_agc = gr::analog::feedforward_agc_cc::make(32,1);
-    _agc = gr::analog::agc2_cc::make(1e-2, 1e-4, 1, 3);
-    _rail = gr::analog::rail_ff::make(-0.98, 0.98);
+    _agc = gr::analog::agc2_cc::make(1e-2, 1e-4, 1, 1);
+    _rail = gr::analog::rail_ff::make(-1.0, 1.0);
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::band_pass_2(
                     1, _target_samp_rate, 150, 2700, 600, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
@@ -101,4 +101,14 @@ void gr_demod_ssb_sdr::set_filter_width(int filter_width)
 void gr_demod_ssb_sdr::set_squelch(int value)
 {
     _squelch->set_threshold(value);
+}
+
+void gr_demod_ssb_sdr::set_agc_attack(float value)
+{
+    _agc->set_attack_rate(value);
+}
+
+void gr_demod_ssb_sdr::set_agc_decay(float value)
+{
+    _agc->set_decay_rate(value);
 }

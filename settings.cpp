@@ -212,6 +212,22 @@ void Settings::readConfig()
     }
     try
     {
+        agc_attack = cfg.lookup("agc_attack");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        agc_attack = 2;
+    }
+    try
+    {
+        agc_decay = cfg.lookup("agc_decay");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        agc_decay = 4;
+    }
+    try
+    {
         rx_sensitivity = cfg.lookup("rx_sensitivity");
     }
     catch(const libconfig::SettingNotFoundException &nfex)
@@ -472,6 +488,8 @@ void Settings::saveConfig()
     root.add("enable_relays",libconfig::Setting::TypeInt) = enable_relays;
     root.add("rssi_calibration_value",libconfig::Setting::TypeInt) = rssi_calibration_value;
     root.add("control_port",libconfig::Setting::TypeInt) = control_port;
+    root.add("agc_attack",libconfig::Setting::TypeInt) = agc_attack;
+    root.add("agc_decay",libconfig::Setting::TypeInt) = agc_decay;
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());

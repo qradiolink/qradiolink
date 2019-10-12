@@ -64,6 +64,7 @@ public:
     ~gr_demod_base();
 
     void set_bandwidth_specific();
+
 signals:
 
 public slots:
@@ -77,6 +78,8 @@ public slots:
     void set_carrier_offset(long carrier_offset);
     void set_rx_sensitivity(double value);
     void set_squelch(int value);
+    void set_agc_attack(float value);
+    void set_agc_decay(float value);
     void set_ctcss(float value);
     void enable_gui_const(bool value);
     void enable_gui_fft(bool value);

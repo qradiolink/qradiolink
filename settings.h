@@ -74,6 +74,8 @@ public:
     QString audio_output_device;
     QString audio_input_device;
     int control_port; // FIXME: this should be unsigned uint16
+    int agc_attack;
+    int agc_decay;
 
     /// Used by remote interface
     bool _rx_status;

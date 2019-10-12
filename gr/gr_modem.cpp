@@ -333,6 +333,17 @@ void gr_modem::setRxSensitivity(double value)
         _gr_demod_base->set_rx_sensitivity(value);
 }
 
+void gr_modem::setAgcAttack(float value)
+{
+    if(_gr_demod_base)
+        _gr_demod_base->set_agc_attack(value);
+}
+void gr_modem::setAgcDecay(float value)
+{
+    if(_gr_demod_base)
+        _gr_demod_base->set_agc_decay(value);
+}
+
 void gr_modem::setSquelch(int value)
 {
     if(_gr_demod_base)

@@ -805,3 +805,15 @@ void gr_demod_base::calibrate_rssi(float value)
 {
     _add_const->set_k(value);
 }
+
+void gr_demod_base::set_agc_attack(float value)
+{
+    _usb->set_agc_attack(value);
+    _lsb->set_agc_attack(value);
+}
+
+void gr_demod_base::set_agc_decay(float value)
+{
+    _usb->set_agc_decay(value);
+    _lsb->set_agc_decay(value);
+}

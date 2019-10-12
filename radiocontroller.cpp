@@ -1678,6 +1678,16 @@ void RadioController::setBbGain(int value)
     _modem->setBbGain(_settings->bb_gain);
 }
 
+void RadioController::setAgcAttack(float value)
+{
+    _modem->setAgcAttack(value);
+}
+
+void RadioController::setAgcDecay(float value)
+{
+    _modem->setAgcDecay(value);
+}
+
 void RadioController::setRxSampleRate(int samp_rate)
 {
     _settings->rx_sample_rate = samp_rate;

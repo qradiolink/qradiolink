@@ -44,6 +44,8 @@ public:
 
     void set_squelch(int value);
     void set_filter_width(int filter_width);
+    void set_agc_attack(float value);
+    void set_agc_decay(float value);
 
 private:
 
