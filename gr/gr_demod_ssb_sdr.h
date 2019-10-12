@@ -34,13 +34,13 @@ class gr_demod_ssb_sdr;
 
 typedef boost::shared_ptr<gr_demod_ssb_sdr> gr_demod_ssb_sdr_sptr;
 gr_demod_ssb_sdr_sptr make_gr_demod_ssb_sdr(int sps=125, int samp_rate=250000, int carrier_freq=1700,
-                                          int filter_width=8000);
+                                          int filter_width=8000, int sb=0);
 
 class gr_demod_ssb_sdr : public gr::hier_block2
 {
 public:
     explicit gr_demod_ssb_sdr(std::vector<int> signature, int sps=4, int samp_rate=8000, int carrier_freq=1600,
-                               int filter_width=1800);
+                               int filter_width=1800, int sb=0);
 
     void set_squelch(int value);
     void set_filter_width(int filter_width);
@@ -62,6 +62,7 @@ private:
 
     int _samples_per_symbol;
     int _samp_rate;
+    int _sps;
     int _carrier_freq;
     int _filter_width;
     int _target_samp_rate;
