@@ -95,6 +95,7 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     QObject::connect(ui->memoriesButton,SIGNAL(toggled(bool)),this,SLOT(showMemoriesPanel(bool)));
     QObject::connect(ui->rxVolumeDial,SIGNAL(valueChanged(int)),this,SLOT(setVolumeDisplay(int)));
     QObject::connect(ui->micGainSlider,SIGNAL(valueChanged(int)),this,SLOT(setTxVolumeDisplay(int)));
+    QObject::connect(ui->digitalGainSlider,SIGNAL(valueChanged(int)),this,SLOT(setDigitalGain(int)));
     QObject::connect(ui->rxModemTypeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(toggleRxMode(int)));
     QObject::connect(ui->txModemTypeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(toggleTxMode(int)));
     QObject::connect(ui->scanUpButton,SIGNAL(toggled(bool)),this,SLOT(startScan(bool)));
@@ -386,7 +387,7 @@ void MainWindow::setConfig()
     ui->audioInputComboBox->setCurrentText(_settings->audio_input_device);
     ui->audioOutputComboBox->setCurrentText(_settings->audio_output_device);
     ui->txGainDial->setValue(_settings->tx_power);
-    ui->lineEditBBgain->setText(QString::number(_settings->bb_gain));
+    ui->digitalGainSlider->setValue(_settings->bb_gain);
     ui->rxGainDial->setValue(_settings->rx_sensitivity);
     ui->rxSquelchDial->setValue(_settings->squelch);
     ui->rxVolumeDial->setValue(_settings->rx_volume);
@@ -438,7 +439,7 @@ void MainWindow::saveUiConfig()
     _settings->audio_input_device = ui->audioInputComboBox->currentText();
     _settings->audio_output_device = ui->audioOutputComboBox->currentText();
     _settings->tx_power = (int)ui->txGainDial->value();
-    _settings->bb_gain = (int)ui->lineEditBBgain->text().toInt();
+    _settings->bb_gain = (int)ui->digitalGainSlider->value();
     _settings->rx_sensitivity = (int)ui->rxGainDial->value();
     _settings->squelch = (int)ui->rxSquelchDial->value();
     _settings->rx_volume = (int)ui->rxVolumeDial->value();
@@ -1406,6 +1407,12 @@ void MainWindow::setRSSICalibration()
     int value = ui->rssiCalibrateEdit->text().toInt();
     _settings->rssi_calibration_value = (int) value;
     emit calibrateRSSI((float) value);
+}
+
+void MainWindow::setDigitalGain(int value)
+{
+    _settings->bb_gain = value;
+    emit setBbGain(value);
 }
 
 void MainWindow::setRxGainStages(string_vector rx_gains)

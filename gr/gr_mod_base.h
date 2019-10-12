@@ -53,7 +53,7 @@ public slots:
     void set_ctcss(float value);
     void set_mode(int mode);
     int set_audio(std::vector<float> *data);
-    void set_bb_gain(int value);
+    void set_bb_gain(float value);
     void set_carrier_offset(long carrier_offset);
     void flush_sources();
     const std::vector<std::string> get_gain_names() const;

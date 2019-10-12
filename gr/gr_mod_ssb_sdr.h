@@ -46,7 +46,7 @@ public:
     explicit gr_mod_ssb_sdr(int sps=125, int samp_rate=250000, int carrier_freq=1700,
                              int filter_width=8000, int sb=0);
     void set_filter_width(int filter_width);
-    void set_bb_gain(int value);
+    void set_bb_gain(float value);
 private:
 
     gr::filter::rational_resampler_base_ccf::sptr _resampler;

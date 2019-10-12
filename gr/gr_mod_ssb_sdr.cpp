@@ -101,7 +101,7 @@ void gr_mod_ssb_sdr::set_filter_width(int filter_width)
     _filter_lsb->set_taps(filter_lsb_taps);
 }
 
-void gr_mod_ssb_sdr::set_bb_gain(int value)
+void gr_mod_ssb_sdr::set_bb_gain(float value)
 {
     _bb_gain->set_k(value);
 }

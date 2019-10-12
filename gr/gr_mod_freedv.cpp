@@ -85,7 +85,7 @@ gr_mod_freedv_sdr::gr_mod_freedv_sdr(int sps, int samp_rate, int carrier_freq,
     connect(_bb_gain,0,self(),0);
 }
 
-void gr_mod_freedv_sdr::set_bb_gain(int value)
+void gr_mod_freedv_sdr::set_bb_gain(float value)
 {
     _bb_gain->set_k(value);
 }

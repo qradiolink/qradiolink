@@ -322,8 +322,9 @@ void gr_modem::setTxPower(float value)
 
 void gr_modem::setBbGain(int value)
 {
+    float bb_gain = (float)value / 5.0;
     if(_gr_mod_base)
-        _gr_mod_base->set_bb_gain(value);
+        _gr_mod_base->set_bb_gain(bb_gain);
 }
 
 void gr_modem::setRxSensitivity(double value)

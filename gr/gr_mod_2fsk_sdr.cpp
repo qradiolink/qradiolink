@@ -93,7 +93,7 @@ gr_mod_2fsk_sdr::gr_mod_2fsk_sdr(int sps, int samp_rate, int carrier_freq,
     connect(_filter,0,self(),0);
 }
 
-void gr_mod_2fsk_sdr::set_bb_gain(int value)
+void gr_mod_2fsk_sdr::set_bb_gain(float value)
 {
     _bb_gain->set_k(value);
 }

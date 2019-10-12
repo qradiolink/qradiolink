@@ -47,7 +47,7 @@ public:
                              int filter_width=8000);
     void set_filter_width(int filter_width);
     void set_ctcss(float value);
-    void set_bb_gain(int value);
+    void set_bb_gain(float value);
 
 private:
 

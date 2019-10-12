@@ -59,6 +59,7 @@ Settings::Settings()
     waterfall_fps = 15;
     control_port = 4939;
     voip_server="127.0.0.1";
+    bb_gain = 1;
 
     _config_file = setupConfig();
 }

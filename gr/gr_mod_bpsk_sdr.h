@@ -51,7 +51,7 @@ class gr_mod_bpsk_sdr : public gr::hier_block2
 public:
     explicit gr_mod_bpsk_sdr(int sps=125, int samp_rate=250000, int carrier_freq=1700,
                              int filter_width=8000);
-    void set_bb_gain(int value);
+    void set_bb_gain(float value);
 
 private:
     gr::blocks::packed_to_unpacked_bb::sptr _packed_to_unpacked;

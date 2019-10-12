@@ -484,7 +484,7 @@ void gr_mod_base::set_filter_width(int filter_width, int mode)
     }
 }
 
-void gr_mod_base::set_bb_gain(int value)
+void gr_mod_base::set_bb_gain(float value)
 {
     _2fsk->set_bb_gain(value);
     _2fsk_10k->set_bb_gain(value);
@@ -502,6 +502,11 @@ void gr_mod_base::set_bb_gain(int value)
     _usb->set_bb_gain(value);
     _lsb->set_bb_gain(value);
     _freedv_tx1600_usb->set_bb_gain(value);
+    _freedv_tx1600_lsb->set_bb_gain(value);
+    _freedv_tx700C_usb->set_bb_gain(value);
+    _freedv_tx700C_lsb->set_bb_gain(value);
+    _freedv_tx800XA_usb->set_bb_gain(value);
+    _freedv_tx800XA_lsb->set_bb_gain(value);
 }
 
 // unused because of fixed sample rate

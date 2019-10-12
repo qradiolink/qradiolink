@@ -134,6 +134,7 @@ public slots:
     void setAudioCompressor(bool value);
     void setRelays(bool value);
     void setRSSICalibration();
+    void setDigitalGain(int value);
     void setRxGainStages(string_vector rx_gains);
     void setTxGainStages(string_vector tx_gains);
 
@@ -184,6 +185,7 @@ signals:
     void enableAudioCompressor(bool value);
     void enableRelays(bool value);
     void calibrateRSSI(float value);
+    void setBbGain(int value);
 
 
 public:
