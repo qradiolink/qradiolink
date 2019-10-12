@@ -84,6 +84,7 @@ void gr_demod_wbfm_sdr::set_filter_width(int filter_width)
 
     _resampler->set_taps(taps);
     _filter->set_taps(filter_taps);
+    _fm_demod->set_gain(_target_samp_rate/(2*M_PI* _filter_width));
 }
 
 

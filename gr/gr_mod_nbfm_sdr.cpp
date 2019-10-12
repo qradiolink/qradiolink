@@ -93,6 +93,7 @@ void gr_mod_nbfm_sdr::set_filter_width(int filter_width)
     _audio_resampler->set_taps(if_taps);
     _resampler->set_taps(interp_taps);
     _filter->set_taps(filter_taps);
+    _fm_modulator->set_sensitivity(4*M_PI*_filter_width/if_samp_rate);
 }
 
 void gr_mod_nbfm_sdr::set_bb_gain(float value)

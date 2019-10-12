@@ -1420,7 +1420,7 @@ void MainWindow::setRxGainStages(string_vector rx_gains)
     for(unsigned int i=0;i<rx_gains.size();i++)
     {
         QString gain_stage_name = QString::fromStdString(rx_gains.at(i));
-        qDebug() << gain_stage_name;
+
     }
 }
 
@@ -1429,6 +1429,6 @@ void MainWindow::setTxGainStages(string_vector tx_gains)
     for(unsigned int i=0;i<tx_gains.size();i++)
     {
         QString gain_stage_name = QString::fromStdString(tx_gains.at(i));
-        qDebug() << gain_stage_name;
+
     }
 }
