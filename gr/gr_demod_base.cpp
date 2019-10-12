@@ -636,7 +636,7 @@ void gr_demod_base::enable_demodulator(bool value)
 
 void gr_demod_base::set_filter_width(int filter_width, int mode)
 {
-    _top_block->lock();
+
     switch(mode)
     {
     case gr_modem_types::ModemTypeWBFM:
@@ -660,7 +660,7 @@ void gr_demod_base::set_filter_width(int filter_width, int mode)
     default:
         break;
     }
-    _top_block->unlock();
+
 
 }
 

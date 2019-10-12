@@ -217,7 +217,11 @@ void CommandProcessor::processStatusCommands(int command_index, QString &respons
 void CommandProcessor::processActionCommands(int command_index, QString &response)
 {
     switch (command_index) {
-    case 99:
+    case 17:
+        break;
+    case 18:
+        break;
+    case 19:
         break;
     default:
         break;
@@ -243,5 +247,10 @@ void CommandProcessor::buildCommandList()
     _command_list->append(new command("forwardingstatus", 0));
     _command_list->append(new command("voxstatus", 0));
     _command_list->append(new command("repeaterstatus", 0));
+
+
+    _command_list->append(new command("rxinit", 1));
+    _command_list->append(new command("txinit", 1));
+    _command_list->append(new command("rxtune", 1));
 
 }
