@@ -44,6 +44,7 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
     _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
     _osmosdr_sink->set_freq_corr(freq_corr);
     _gain_range = _osmosdr_sink->get_gain_range();
+    _gain_names = _osmosdr_sink->get_gain_names();
     if (!_gain_range.empty())
     {
         double gain =  _gain_range.start() + rf_gain*(_gain_range.stop()-_gain_range.start());
@@ -82,6 +83,11 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
         _freedv_tx700C_lsb = make_gr_mod_freedv_sdr(125, 1000000, 1700, 2300, 600, gr::vocoder::freedv_api::MODE_700, 1);
     _freedv_tx800XA_lsb = make_gr_mod_freedv_sdr(125, 1000000, 1700, 2500, 200, gr::vocoder::freedv_api::MODE_800XA, 1);
 
+}
+
+const std::vector<std::string> gr_mod_base::get_gain_names() const
+{
+    return _gain_names;
 }
 
 void gr_mod_base::set_mode(int mode)

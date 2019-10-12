@@ -72,7 +72,7 @@ public slots:
     std::vector<unsigned char> *getData();
     std::vector<unsigned char> *getData(int nr);
     std::vector<float> *getAudio();
-    void getFFTData(float *fft_data,  unsigned int &fftSize);
+    void get_FFT_data(float *fft_data,  unsigned int &fftSize);
     void tune(long center_freq);
     void set_carrier_offset(long carrier_offset);
     void set_rx_sensitivity(double value);
@@ -90,6 +90,7 @@ public slots:
     void set_samp_rate(int samp_rate);
     void set_filter_width(int filter_width, int mode);
     void calibrate_rssi(float value);
+    const std::vector<std::string> get_gain_names() const;
 
 private:
     gr::top_block_sptr _top_block;

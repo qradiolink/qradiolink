@@ -49,6 +49,7 @@
 
 typedef QVector<Station*> StationList;
 typedef std::vector<std::complex<float>> complex_vector;
+typedef std::vector<std::string> string_vector;
 namespace radio_type
 {
     enum
@@ -93,6 +94,8 @@ signals:
     void newRSSIValue(float rssi);
     void initError(QString error);
     void writePCM(short *pcm, int bytes, bool preprocess, int mode);
+    void rxGainStages(string_vector rx_gains);
+    void txGainStages(string_vector tx_gains);
 
 
 public slots:
@@ -120,12 +123,12 @@ public slots:
     void tuneFreq(qint64 center_freq);
     void tuneTxFreq(qint64 actual_freq);
     void changeTxShift(qint64 shift_freq);
-    void setTxPower(int dbm);
+    void setTxPower(int dbm, std::string gain_stage="");
+    void setRxSensitivity(int value, std::string gain_stage="");
     void setBbGain(int value);
     void setSquelch(int value);
     void setVolume(int value);
     void setTxVolume(int value);
-    void setRxSensitivity(int value);
     void setRxCTCSS(float value);
     void setTxCTCSS(float value);
     void setFilterWidth(int width);

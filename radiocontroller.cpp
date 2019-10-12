@@ -1237,6 +1237,8 @@ void RadioController::toggleRX(bool value)
         _modem->calibrateRSSI(_settings->rssi_calibration_value);
         _modem->startRX();
         _mutex->unlock();
+        const std::vector<std::string> rx_gains = _modem->getRxGainGames();
+        emit rxGainStages(rx_gains);
 
         _rx_inited = true;
     }
@@ -1288,6 +1290,8 @@ void RadioController::toggleTX(bool value)
         if(_rx_inited)
             _modem->startRX();
         _mutex->unlock();
+        const std::vector<std::string> tx_gains = _modem->getTxGainGames();
+        emit txGainStages(tx_gains);
 
         _tx_inited = true;
     }
@@ -1656,13 +1660,13 @@ void RadioController::setFilterWidth(int width)
     _modem->setFilterWidth(width);
 }
 
-void RadioController::setRxSensitivity(int value)
+void RadioController::setRxSensitivity(int value, std::string gain_stage)
 {
     _settings->rx_sensitivity = value;
     _modem->setRxSensitivity(((double)_settings->rx_sensitivity)/100.0);
 }
 
-void RadioController::setTxPower(int dbm)
+void RadioController::setTxPower(int dbm, std::string gain_stage)
 {
     _settings->tx_power = dbm;
     _modem->setTxPower((float)dbm/100.0);

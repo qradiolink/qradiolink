@@ -8,7 +8,7 @@ QRadioLink
 About
 -----
 
-*QRadioLink* is a GNU/Linux software defined radio VOIP (radio over IP) transceiver application using Internet protocols for communication, 
+*QRadioLink* is a VOIP (radio over IP) GNU/Linux software defined radio transceiver application using Internet protocols for communication, 
 built on top of [GNU radio](https://www.gnuradio.org/), 
 which allows experimenting with software defined radio hardware using different digital and analog radio signals and a Qt5 user interface.
 
@@ -27,7 +27,6 @@ Features
 - Radio forwarding over VOIP - forward voice to the VOIP connection and viceversa
 - Direct VOIP talk-around (only requires connection to a VOIP server and no radio)
 - Transmit and receive analog FM, SSB, AM, digital voice, text messages, digital video, IP protocol.
-- Full duplex 250 kbit/s IP radio modem with configurable TX/RX offsets
 - Mixed operation mode (receive one mode and transmit another)
 - Full duplex and simplex operation
 - Memory channels (store frequency, name, TX shift, operating mode, squelch value, volume, TX power, RX gain, TX and RX CTCSS) and memory channel scan 
@@ -37,10 +36,11 @@ Features
 - Digital modulations: **FreeDV 1600**, **FreeDV 700C**, **FreeDV 800XA**, **BPSK**, **DQPSK**, **2FSK**, **4FSK**
 - Digital voice modem bitrates over the air from 1 kbit/s to 10 kbit/s
 - Video bitrate below 250 kbit/s at 10 frames/second (currently no sound with video)
-- Analog modulations: FM (10 kHz), narrow FM (5 kHz), SSB, AM, Wide FM (broadcast, receive-only)
+- Analog modulations: FM (12.5 kHz), narrow FM (6.25 kHz), SSB, AM, Wide FM (broadcast, receive-only)
 - CTCSS encoder and decoder for analog FM
 - VOX mode
 - Analog and digital mode repeater - full duplex mode, no mixed mode support (yet)
+- Full duplex 250 kbit/s IP radio modem with configurable TX/RX offsets
 - Automatic carrier tracking and Doppler effect correction for all digital modes except FreeDV modes. The system can track Doppler shifts of 5-10 kHz, depending on mode. It requires a CNR of at least 10-12 dB, more for FSK modes than for PSK modes.
 - Supported hardware: [**Ettus USRP bus devices**](https://ettus.com), [**RTL-SDR**](https://osmocom.org/projects/sdr/wiki/rtl-sdr), [**ADALM-Pluto (PlutoSDR)**](https://www.analog.com/en/design-center/evaluation-hardware-and-software/evaluation-boards-kits/adalm-pluto.html), (supported with SoapySDR and [**SoapyPlutoSDR**](https://github.com/pothosware/SoapyPlutoSDR)), [**LimeSDR-mini**](https://www.crowdsupply.com/lime-micro/limesdr-mini) (partly supported, through SoapySDR), BladeRF, other devices supported by [**gr-osmosdr**](https://osmocom.org/projects/sdr/wiki/GrOsmoSDR) like HackRF and RedPitaya (not tested)
  

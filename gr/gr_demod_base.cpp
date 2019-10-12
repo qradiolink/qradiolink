@@ -162,6 +162,11 @@ gr_demod_base::~gr_demod_base()
     _osmosdr_source.reset();
 }
 
+const std::vector<std::string> gr_demod_base::get_gain_names() const
+{
+    return _gain_names;
+}
+
 void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
 {
     _demod_running = false;
@@ -563,7 +568,7 @@ std::vector<float>* gr_demod_base::getAudio()
     return data;
 }
 
-void gr_demod_base::getFFTData(float *fft_data,  unsigned int &fftSize)
+void gr_demod_base::get_FFT_data(float *fft_data,  unsigned int &fftSize)
 {
     if(!_demod_running)
     {

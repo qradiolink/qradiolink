@@ -121,6 +121,8 @@ public slots:
     float getRSSI();
     void flushSources();
     std::vector<gr_complex> *getConstellation();
+    const std::vector<std::string> getRxGainGames() const;
+    const std::vector<std::string> getTxGainGames() const;
 
 private:
     std::vector<unsigned char>* frame(unsigned char *encoded_audio,

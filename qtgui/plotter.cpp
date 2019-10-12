@@ -77,7 +77,7 @@ int gettimeofday(struct timeval * tp, struct timezone * tzp)
 
 // Colors of type QRgb in 0xAARRGGBB format (unsigned int)
 #define PLOTTER_BGD_COLOR           0xFF1F1D1D
-#define PLOTTER_GRID_COLOR          0xFF373737
+#define PLOTTER_GRID_COLOR          0xFF444242
 #define PLOTTER_TEXT_COLOR          0xFFDADADA
 #define PLOTTER_CENTER_LINE_COLOR   0xFF00B0B0
 #define PLOTTER_FILTER_LINE_COLOR   0xFFE10000

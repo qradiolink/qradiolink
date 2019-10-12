@@ -33,6 +33,7 @@
 #include <QAudioDeviceInfo>
 #include <math.h>
 #include <complex>
+#include <iostream>
 #include <libconfig.h++>
 #include "ext/utils.h"
 #include "mumbleclient.h"
@@ -42,11 +43,13 @@
 #include "settings.h"
 #include "mumblechannel.h"
 
-#include <iostream>
 
 typedef std::vector<std::complex<float>> complex_vector;
+typedef std::vector<std::string> string_vector;
 typedef QVector<MumbleChannel*> ChannelList;
 typedef QVector<Station*> StationList;
+
+
 namespace Ui {
 class MainWindow;
 }
@@ -131,6 +134,8 @@ public slots:
     void setAudioCompressor(bool value);
     void setRelays(bool value);
     void setRSSICalibration();
+    void setRxGainStages(string_vector rx_gains);
+    void setTxGainStages(string_vector tx_gains);
 
 
 signals:

@@ -56,6 +56,7 @@ public slots:
     void set_bb_gain(int value);
     void set_carrier_offset(long carrier_offset);
     void flush_sources();
+    const std::vector<std::string> get_gain_names() const;
 
 private:
     gr::top_block_sptr _top_block;
@@ -97,7 +98,7 @@ private:
     double _osmo_filter_bw;
     void set_bandwidth_specific();
     osmosdr::gain_range_t _gain_range;
-
+    std::vector<std::string> _gain_names;
 
 };
 

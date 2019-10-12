@@ -1215,13 +1215,13 @@ background-color: rgb(0, 0, 67);</string>
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset>
-                  <normalon>:/res/arrow-right-double.png</normalon>
+                 <iconset resource="resources.qrc">
+                  <normaloff>:/res/arrow-right-double.png</normaloff>
+                  <normalon>:/res/go-last-view.png</normalon>
                   <activeoff>:/res/arrow-right-double.png</activeoff>
                   <activeon>:/res/go-last-view.png</activeon>
                   <selectedoff>:/res/arrow-right-double.png</selectedoff>
-                  <selectedon>:/res/go-last-view.png</selectedon>
-                 </iconset>
+                  <selectedon>:/res/go-last-view.png</selectedon>:/res/arrow-right-double.png</iconset>
                 </property>
                 <property name="checkable">
                  <bool>true</bool>
@@ -1238,7 +1238,7 @@ background-color: rgb(0, 0, 67);</string>
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normalon>:/res/arrow-left-double.png</normalon>
+                  <normalon>:/res/go-first-view.png</normalon>
                   <activeoff>:/res/arrow-left-double.png</activeoff>
                   <activeon>:/res/go-first-view.png</activeon>
                   <selectedoff>:/res/arrow-left-double.png</selectedoff>

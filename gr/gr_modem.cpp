@@ -208,6 +208,28 @@ void gr_modem::toggleRxMode(int modem_type)
 /// Start of proxy methods, will be refactored
 ///
 
+const std::vector<std::string> gr_modem::getRxGainGames() const
+{
+    if(_gr_demod_base)
+        return _gr_demod_base->get_gain_names();
+    else
+    {
+        std::vector<std::string> none;
+        return none;
+    }
+}
+
+const std::vector<std::string> gr_modem::getTxGainGames() const
+{
+    if(_gr_mod_base)
+        return _gr_mod_base->get_gain_names();
+    else
+    {
+        std::vector<std::string> none;
+        return none;
+    }
+}
+
 void gr_modem::startRX()
 {
     if(_gr_demod_base)
@@ -607,7 +629,7 @@ static void packBytes(unsigned char *pktbuf, const unsigned char *bitbuf, int bi
 void gr_modem::getFFTData(float* data, unsigned int &size)
 {
     if(_gr_demod_base)
-        _gr_demod_base->getFFTData(data, size);
+        _gr_demod_base->get_FFT_data(data, size);
 }
 
 float gr_modem::getRSSI()
