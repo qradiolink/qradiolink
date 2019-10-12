@@ -121,7 +121,7 @@ QString CommandProcessor::runCommand(QString message)
     processActionCommands(command_index, response);
 
     if(response.length() < 1)
-        response = "Command not found";
+        response = "Command not implemented";
 
     return "\e[32m" + response + "\e[0m\n";
 }
@@ -230,6 +230,7 @@ void CommandProcessor::processActionCommands(int command_index, QString &respons
 
 void CommandProcessor::buildCommandList()
 {
+    /// status commands
     _command_list->append(new command("rxstatus", 0));
     _command_list->append(new command("txstatus", 0));
     _command_list->append(new command("txactive", 0));
@@ -248,9 +249,25 @@ void CommandProcessor::buildCommandList()
     _command_list->append(new command("voxstatus", 0));
     _command_list->append(new command("repeaterstatus", 0));
 
-
-    _command_list->append(new command("rxinit", 1));
-    _command_list->append(new command("txinit", 1));
-    _command_list->append(new command("rxtune", 1));
+    /// action commands
+    _command_list->append(new command("setrxmode", 1));
+    _command_list->append(new command("settxmode", 1));
+    _command_list->append(new command("setsquelch", 1));
+    _command_list->append(new command("setrxvolume", 1));
+    _command_list->append(new command("settxvolume", 1));
+    _command_list->append(new command("setrxgain", 1));
+    _command_list->append(new command("settxgain", 1));
+    _command_list->append(new command("tunerx", 1));
+    _command_list->append(new command("setoffset", 1));
+    _command_list->append(new command("setshift", 1));
+    _command_list->append(new command("setduplex", 1));
+    _command_list->append(new command("setautosq", 0));
+    _command_list->append(new command("setforwarding", 1));
+    _command_list->append(new command("setrepeater", 1));
+    _command_list->append(new command("setvox", 1));
+    _command_list->append(new command("setrx", 1));
+    _command_list->append(new command("settx", 1));
+    _command_list->append(new command("ptton", 0));
+    _command_list->append(new command("pttoff", 0));
 
 }

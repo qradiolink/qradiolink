@@ -123,12 +123,12 @@ public slots:
     void setTxPower(int dbm);
     void setBbGain(int value);
     void setSquelch(int value);
-    void setFilterWidth(int width);
     void setVolume(int value);
     void setTxVolume(int value);
     void setRxSensitivity(int value);
     void setRxCTCSS(float value);
     void setTxCTCSS(float value);
+    void setFilterWidth(int width);
     void enableGUIConst(bool value);
     void enableGUIFFT(bool value);
     void enableRSSI(bool value);
