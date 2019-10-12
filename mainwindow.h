@@ -139,6 +139,7 @@ public slots:
     void updateAgcDecay(int value);
     void setRxGainStages(string_vector rx_gains);
     void setTxGainStages(string_vector tx_gains);
+    void sendMumbleTextMessage();
 
 
 signals:
@@ -190,6 +191,7 @@ signals:
     void setBbGain(int value);
     void setAgcAttack(float value);
     void setAgcDecay(float value);
+    void newMumbleMessage(QString text);
 
 
 public:

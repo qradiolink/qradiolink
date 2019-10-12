@@ -125,6 +125,8 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     QObject::connect(ui->saveChannelsButton,SIGNAL(clicked()),this,SLOT(saveMemoryChannes()));
     QObject::connect(ui->agcAttackSpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateAgcAttack(int)));
     QObject::connect(ui->agcDecaySpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateAgcDecay(int)));
+    QObject::connect(ui->mumbleTextMessageButton,SIGNAL(clicked()),this,SLOT(sendMumbleTextMessage()));
+    QObject::connect(ui->mumbleTextMessageEdit,SIGNAL(returnPressed()),this,SLOT(sendMumbleTextMessage()));
 
     QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
     QObject::connect(ui->plotterFrame,SIGNAL(pandapterRangeChanged(float,float)),ui->plotterFrame,SLOT(setWaterfallRange(float,float)));
@@ -712,6 +714,15 @@ void MainWindow::sendTextRequested()
     QString text = ui->sendTextEdit->toPlainText();
     emit sendText(text, false);
     ui->sendTextEdit->setPlainText("");
+}
+
+void MainWindow::sendMumbleTextMessage()
+{
+    QString text = ui->mumbleTextMessageEdit->text();
+    if(text.size() < 1)
+        return;
+    emit newMumbleMessage(text);
+    ui->mumbleTextMessageEdit->setText("");
 }
 
 void MainWindow::newFFTData(float *fft_data, int fftsize)

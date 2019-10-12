@@ -528,6 +528,18 @@ void MumbleClient::setMute(bool mute)
     sendMessage(mdata,9,msize);
 }
 
+void MumbleClient::newMumbleMessage(QString text)
+{
+    MumbleProto::TextMessage tm;
+    tm.add_channel_id(_channel_id);
+    tm.add_session(_session_id);
+    tm.set_message(text.toStdString());
+    int msize = tm.ByteSize();
+    quint8 mdata[msize];
+    tm.SerializeToArray(mdata,msize);
+    sendMessage(mdata,11,msize);
+}
+
 void MumbleClient::processTextMessage(quint8 *message, quint64 size)
 {
     MumbleProto::TextMessage tm;

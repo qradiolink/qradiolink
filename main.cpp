@@ -203,6 +203,7 @@ int main(int argc, char *argv[])
     QObject::connect(w,SIGNAL(terminateConnections()),telnet_server,SLOT(stop()));
     QObject::connect(w,SIGNAL(setMute(bool)),mumbleclient,SLOT(setMute(bool)));
     QObject::connect(w,SIGNAL(changeChannel(int)),mumbleclient,SLOT(joinChannel(int)));
+    QObject::connect(w,SIGNAL(newMumbleMessage(QString)),mumbleclient,SLOT(newMumbleMessage(QString)));
 
     QObject::connect(radio_op, SIGNAL(setAudioReadMode(bool,bool,int)), audioreader, SLOT(setReadMode(bool,bool,int)));
     QObject::connect(audioreader, SIGNAL(audioPCM(short*,int,int, bool)), radio_op, SLOT(txAudio(short*,int,int, bool)));

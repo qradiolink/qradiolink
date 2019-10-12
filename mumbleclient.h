@@ -84,6 +84,7 @@ public slots:
     int muteStation(QString radio_id);
     void setMute(bool mute);
     void logMessage(QString log_msg);
+    void newMumbleMessage(QString msg);
 
 private:
     void sendUDPMessage(quint8 *message, int size);
