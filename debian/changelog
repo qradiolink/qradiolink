@@ -1,3 +1,13 @@
+qradiolink (0.8.1-11) UNRELEASED; urgency=medium
+
+  [ Adrian Musceac ]
+  * Configurable TX filter widths for FM, SSB, AM
+  * Memory channels now store more settings
+
+
+ -- Adrian Musceac <kantooon@gmail.com>  Sat, 12 Oct 2019 23:00:00 +0300
+
+
 qradiolink (0.8.1-9) UNRELEASED; urgency=medium
 
   [ Adrian Musceac ]
