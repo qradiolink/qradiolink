@@ -459,6 +459,7 @@ void MainWindow::saveUiConfig()
     _settings->fft_size = (ui->fftSizeBox->currentText().toInt());
     _settings->scan_step = (int)ui->lineEditScanStep->text().toInt();
     _settings->waterfall_fps = (int)ui->fpsBox->currentText().toInt();
+    _settings->saveConfig();
 }
 
 void MainWindow::addDisplayChannel(radiochannel *chan, int r)
@@ -804,7 +805,7 @@ void MainWindow::displayText(QString text, bool html)
     if(html)
         ui->receivedTextEdit->insertHtml(text);
     else
-        ui->receivedTextEdit->append(text);
+        ui->receivedTextEdit->insertPlainText(text);
 
     ui->receivedTextEdit->verticalScrollBar()->setValue(
                 ui->receivedTextEdit->verticalScrollBar()->maximum());
@@ -818,7 +819,7 @@ void MainWindow::displayText(QString text, bool html)
     if(html)
         ui->secondaryTextDisplay->insertHtml(text);
     else
-        ui->secondaryTextDisplay->append(text);
+        ui->secondaryTextDisplay->insertPlainText(text);
 
     ui->secondaryTextDisplay->verticalScrollBar()->setValue(
                 ui->secondaryTextDisplay->verticalScrollBar()->maximum());
