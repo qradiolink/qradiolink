@@ -71,6 +71,7 @@ void TelnetServer::getConnection()
         QByteArray response;
         response.append("Welcome! ");
         getCommandList(response);
+        response.append("qradiolink> ");
         socket->write(response);
         socket->flush();
     }
@@ -147,8 +148,9 @@ void TelnetServer::processData()
             break;
         }
     }
-    qDebug() << "Message from: " << socket->peerAddress().toString();
+    //qDebug() << "Message from: " << socket->peerAddress().toString();
     QByteArray response = processCommand(data, socket);
+    response.append("qradiolink> ");
     if(response.length() > 0)
     {
         socket->write(response.data(),response.size());

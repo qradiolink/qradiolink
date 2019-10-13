@@ -121,7 +121,7 @@ QString CommandProcessor::runCommand(QString message)
     processActionCommands(command_index, response);
 
     if(response.length() < 1)
-        response = "Command not implemented";
+        return "\e[31mCommand not implemented\e[0m\n";
 
     return "\e[32m" + response + "\e[0m\n";
 }
@@ -211,7 +211,6 @@ bool CommandProcessor::processStatusCommands(int command_index, QString &respons
         break;
 
     default:
-        success = false;
         break;
     }
     return success;
