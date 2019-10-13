@@ -61,6 +61,9 @@ signals:
     void enableRelays(bool value);
     void enableDuplex(bool value);
     void calibrateRSSI(float value);
+    void setAgcAttack(float value);
+    void setAgcDecay(float value);
+    void newFilterWidth(int);
 
     /// Tuning the radio
     void setCarrierOffset(qint64 offset);
@@ -86,6 +89,7 @@ signals:
     void disconnectFromServer();
     void changeChannel(int id);
     void setMute(bool value);
+    void newMumbleMessage(QString text);
 
     //void stopRadio();
 
@@ -95,7 +99,7 @@ signals:
     void enableGUIConst(bool value);
     void newFFTSize(int);
     void setWaterfallFPS(int);
-    void newFilterWidth(int);
+
 
 
 public slots:
@@ -103,9 +107,11 @@ public slots:
 private:
     struct command
     {
-        command(QString what, int n_param=0) : action(what), params(n_param) {}
+        command(QString what, int n_param=0) : action(what), params(n_param),
+            help_msg("") {}
         QString action;
         int params;
+        QString help_msg;
     };
 
     const Settings *_settings;
