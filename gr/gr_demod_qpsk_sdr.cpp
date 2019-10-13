@@ -94,7 +94,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
                                 1, _target_samp_rate, _filter_width, filter_slope,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     float gain_mu, omega_rel_limit;
     int filt_length, fll_bw;
-    fll_bw = 24;
+    fll_bw = 16;
     if(sps <= 4)
     {
         gain_mu = 0.025;
@@ -110,7 +110,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
     }
     else
     {
-        gain_mu = 0.005;
+        gain_mu = 0.015;
         omega_rel_limit = 0.005;
         filt_length = 11;
     }

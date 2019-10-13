@@ -235,6 +235,7 @@ private:
     QMutex _mutex;
     float _rssi;
     bool _ptt_activated;
+    int _current_voip_channel;
 
     StationList _user_list;
 

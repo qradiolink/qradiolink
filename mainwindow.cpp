@@ -168,6 +168,7 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     _realFftData = new float[1024*1024];
     _iirFftData = new float[1024*1024];
     _s_meter_bg = new QPixmap(":/res/s-meter-bg-black-small.png");
+    _current_voip_channel = -1;
 
     _rssi = 0;
     QRect xy = this->geometry();
@@ -1029,7 +1030,7 @@ void MainWindow::updateChannels(ChannelList channels)
 void MainWindow::joinedChannel(quint64 channel_id)
 {
     QList<QTreeWidgetItem*> old_channel_list = ui->voipTreeWidget->findItems(
-                QString::number(_settings->_current_voip_channel),
+                QString::number(_current_voip_channel),
                 Qt::MatchExactly | Qt::MatchRecursive,2);
     if(old_channel_list.size() > 0)
     {
@@ -1057,7 +1058,7 @@ void MainWindow::joinedChannel(quint64 channel_id)
         t->setTextColor(2,QColor("#ffffff"));
         t->setIcon(0,QIcon(":/res/call-start.png"));
     }
-    _settings->_current_voip_channel = channel_id;
+    _current_voip_channel = channel_id;
     ui->voipTreeWidget->expandAll();
 }
 

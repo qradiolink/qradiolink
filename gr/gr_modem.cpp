@@ -604,7 +604,6 @@ void gr_modem::transmit(QVector<std::vector<unsigned char>*> frames)
 {
     if(!_gr_mod_base)
     {
-        exit(EXIT_FAILURE);
         return;
     }
     std::vector<unsigned char> *all_frames = new std::vector<unsigned char>;

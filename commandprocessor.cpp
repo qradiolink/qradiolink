@@ -126,8 +126,9 @@ QString CommandProcessor::runCommand(QString message)
     return "\e[32m" + response + "\e[0m\n";
 }
 
-void CommandProcessor::processStatusCommands(int command_index, QString &response)
+bool CommandProcessor::processStatusCommands(int command_index, QString &response)
 {
+    bool success = true;
     switch (command_index) {
     case 0:
         if(_settings->_rx_inited)
@@ -210,14 +211,18 @@ void CommandProcessor::processStatusCommands(int command_index, QString &respons
         break;
 
     default:
+        success = false;
         break;
     }
+    return success;
 }
 
-void CommandProcessor::processActionCommands(int command_index, QString &response)
+bool CommandProcessor::processActionCommands(int command_index, QString &response)
 {
+    bool success = true;
     switch (command_index) {
     case 17:
+        success = false;
         break;
     case 18:
         break;
@@ -226,6 +231,7 @@ void CommandProcessor::processActionCommands(int command_index, QString &respons
     default:
         break;
     }
+    return success;
 }
 
 void CommandProcessor::buildCommandList()
