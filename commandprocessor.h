@@ -52,7 +52,6 @@ signals:
     void setTxVolume(int value);
     void setRxCTCSS(float value);
     void setTxCTCSS(float value);
-    void setSampleRate(int);
     void usePTTForVOIP(bool value);
     void setVOIPForwarding(bool value);
     void setVox(bool value);
@@ -63,6 +62,7 @@ signals:
     void calibrateRSSI(float value);
     void setAgcAttack(float value);
     void setAgcDecay(float value);
+    void setSampleRate(int);
     void newFilterWidth(int);
 
     /// Tuning the radio

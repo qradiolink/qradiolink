@@ -150,6 +150,8 @@ void TelnetServer::processData()
     }
     //qDebug() << "Message from: " << socket->peerAddress().toString();
     QByteArray response = processCommand(data, socket);
+    if(response == "EOF")
+        return;
     response.append("qradiolink> ");
     if(response.length() > 0)
     {
@@ -173,7 +175,7 @@ void TelnetServer::getCommandList(QByteArray &response)
 QByteArray TelnetServer::processCommand(QByteArray data, QTcpSocket *socket)
 {
     /// sanity checks:
-    if(data.length() > 1024) // not expecting novels
+    if(data.length() > 1080) // not expecting novels
     {
         QByteArray response("");
         std::cerr << "Received message to large (dropping) from: "
@@ -188,8 +190,20 @@ QByteArray TelnetServer::processCommand(QByteArray data, QTcpSocket *socket)
         return response;
     }
 
-    /// poked processor logic:
     QString message = QString::fromLocal8Bit(data);
+    if((message == "exit\r\n") || (message == "quit\r\n"))
+    {
+        QByteArray response("Bye!\n");
+        socket->write(response.data(),response.size());
+        socket->flush();
+        _connected_clients.remove(_connected_clients.indexOf(socket));
+        socket->close();
+        QByteArray eof("EOF");
+        return eof;
+    }
+
+    /// poked processor logic:
+
     if(!command_processor->validateCommand(message))
     {
         QByteArray response("Command not recognized\n");

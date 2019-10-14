@@ -237,8 +237,9 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
         }
         else
         {
-            response = "Turning on/off receiver";
-            emit toggleRX(set);
+            QString on = (set ==0) ? "off" : "on";
+            response = QString("Turning %1 transmitter").arg(on);
+            emit toggleRX((bool)set);
         }
         break;
     }
@@ -252,8 +253,420 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
         }
         else
         {
-            response = "Turning on/off transmitter";
-            emit toggleTX(set);
+            QString on = (set ==0) ? "off" : "on";
+            response = QString("Turning %1 transmitter").arg(on);
+            emit toggleTX((bool)set);
+        }
+        break;
+    }
+    case 20:
+    {
+        int set = param1.toInt();
+        if(set < 0 || set > 16)
+        {
+            response = "Parameter value is not supported";
+            success = false;
+        }
+        else
+        {
+            response = QString("Setting receiver mode to %1").arg(set);
+            emit toggleRxModemMode(set);
+        }
+        break;
+    }
+    case 21:
+    {
+        int set = param1.toInt();
+        if(set < 0 || set > 16)
+        {
+            response = "Parameter value is not supported";
+            success = false;
+        }
+        else
+        {
+            response = QString("Setting transmitter mode to %1").arg(set);
+            emit toggleTxModemMode(set);
+        }
+        break;
+    }
+    case 22:
+    {
+        int set = param1.toFloat();
+        if(set < 0.0 || set > 250.0)
+        {
+            response = "Parameter value is not supported";
+            success = false;
+        }
+        else
+        {
+            response = QString("Setting RX CTCSS to %1").arg(set);
+            emit setRxCTCSS(set);
+        }
+        break;
+    }
+    case 23:
+    {
+        int set = param1.toFloat();
+        if(set < 0.0 || set > 250.0)
+        {
+            response = "Parameter value is not supported";
+            success = false;
+        }
+        else
+        {
+            response = QString("Setting TX CTCSS to %1").arg(set);
+            emit setTxCTCSS(set);
+        }
+        break;
+    }
+    case 24:
+    {
+        int set = param1.toInt();
+        if(set < -150 || set > 10)
+        {
+            response = "Parameter value is not supported";
+            success = false;
+        }
+        else
+        {
+            response = QString("Setting squelch value to %1").arg(set);
+            emit setSquelch(set);
+        }
+        break;
+    }
+    case 25:
+    {
+        int set = param1.toInt();
+        if(set < 0 || set > 100)
+        {
+            response = "Parameter value is not supported";
+            success = false;
+        }
+        else
+        {
+            response = QString("Setting RX volume value to %1").arg(set);
+            emit setVolume(set);
+        }
+        break;
+    }
+    case 26:
+    {
+        int set = param1.toInt();
+        if(set < 0 || set > 100)
+        {
+            response = "Parameter value is not supported";
+            success = false;
+        }
+        else
+        {
+            response = QString("Setting TX volume value to %1").arg(set);
+            emit setTxVolume(set);
+        }
+        break;
+    }
+    case 27:
+    {
+        int set = param1.toInt();
+        if(set < 0 || set > 100)
+        {
+            response = "Parameter value is not supported";
+            success = false;
+        }
+        else
+        {
+            response = QString("Setting RX gain value to %1").arg(set);
+            emit setRxSensitivity(set);
+        }
+        break;
+    }
+    case 28:
+    {
+        int set = param1.toInt();
+        if(set < 0 || set > 100)
+        {
+            response = "Parameter value is not supported";
+            success = false;
+        }
+        else
+        {
+            response = QString("Setting TX gain value to %1").arg(set);
+            emit setTxPower(set);
+        }
+        break;
+    }
+    case 29:
+    {
+        int set = param1.toLongLong();
+        qDebug() << set;
+        if(set < 1)
+        {
+            response = "Parameter value is not supported";
+            success = false;
+        }
+        else
+        {
+            response = QString("Tuning receiver to %L1 Hz").arg(set);
+            emit tuneFreq(set);
+        }
+        break;
+    }
+    case 30:
+    {
+        break;
+    }
+    case 31:
+    {
+        int set = param1.toLongLong();
+        response = QString("Setting demodulator offset to to %L1 Hz").arg(set);
+        emit setCarrierOffset(set);
+        break;
+    }
+    case 32:
+    {
+        int set = param1.toLongLong();
+        response = QString("Setting TX shift to to %L1 Hz").arg(set);
+        emit changeTxShift(set);
+        break;
+    }
+    case 33:
+    {
+        int set = param1.toInt();
+        if(set != 0 && set !=1)
+        {
+            response = "Parameter value is not supported";
+            success = false;
+        }
+        else
+        {
+            response = QString("Setting duplex to %1").arg(set);
+            emit enableDuplex((bool)set);
+        }
+        break;
+    }
+    case 34:
+    {
+        int set = param1.toInt();
+        if(set != 0 && set !=1)
+        {
+            response = "Parameter value is not supported";
+            success = false;
+        }
+        else
+        {
+            response = QString("Setting radio forwarding to %1").arg(set);
+            emit setVOIPForwarding((bool)set);
+        }
+        break;
+    }
+    case 35:
+    {
+        int set = param1.toInt();
+        if(set != 0 && set !=1)
+        {
+            response = "Parameter value is not supported";
+            success = false;
+        }
+        else
+        {
+            response = QString("Setting repeater to %1").arg(set);
+            emit toggleRepeat((bool)set);
+        }
+        break;
+    }
+    case 36:
+    {
+        int set = param1.toInt();
+        if(set != 0 && set !=1)
+        {
+            response = "Parameter value is not supported";
+            success = false;
+        }
+        else
+        {
+            response = QString("Setting VOX to %1").arg(set);
+            emit setVox((bool)set);
+        }
+        break;
+    }
+    case 37:
+    {
+        int set = param1.toInt();
+        if(set != 0 && set !=1)
+        {
+            response = "Parameter value is not supported";
+            success = false;
+        }
+        else
+        {
+            response = QString("Setting PTT for VOIP to %1").arg(set);
+            emit usePTTForVOIP((bool)set);
+        }
+        break;
+    }
+    case 38:
+    {
+        int set = param1.toInt();
+        if(set != 0 && set !=1)
+        {
+            response = "Parameter value is not supported";
+            success = false;
+        }
+        else
+        {
+            response = QString("Setting audio compressor to %1").arg(set);
+            emit enableAudioCompressor((bool)set);
+        }
+        break;
+    }
+    case 39:
+    {
+        int set = param1.toInt();
+        if(set != 0 && set !=1)
+        {
+            response = "Parameter value is not supported";
+            success = false;
+        }
+        else
+        {
+            response = QString("Setting relay controls to %1").arg(set);
+            emit enableRelays((bool)set);
+        }
+        break;
+    }
+    case 40:
+    {
+        int set = param1.toInt();
+        if(set < -180 || set > 30)
+        {
+            response = "Parameter value is not supported";
+            success = false;
+        }
+        else
+        {
+            response = QString("Setting RSSI calibration to %1 dBm").arg(set);
+            emit calibrateRSSI((float)set);
+        }
+        break;
+    }
+    case 41:
+    {
+        int set = param1.toInt();
+        if((set < 1) || (set > 30))
+        {
+            response = "Parameter value is not supported";
+            success = false;
+        }
+        else
+        {
+            response = QString("Setting RX sample rate to %1 Msps").arg(set);
+            emit setSampleRate(set * 1000000);
+        }
+        break;
+    }
+    case 42:
+    {
+        // Not implemented
+        break;
+    }
+    case 43:
+    {
+        int set = param1.toInt();
+        if((set < 800) || (set > 100000))
+        {
+            response = "Parameter value is not supported";
+            success = false;
+        }
+        else
+        {
+            response = QString("Setting filter width to %1 Hertz").arg(set);
+            emit newFilterWidth(set);
+        }
+        break;
+    }
+    case 44:
+    {
+        response = "Starting transmission";
+        emit startTransmission();
+        break;
+    }
+    case 45:
+    {
+        response = "Stopping transmission";
+        emit endTransmission();
+        break;
+    }
+    case 46:
+    {
+        QString host = param1;
+        int port = param2.toInt();
+        if((port < 0) || (port > 65535))
+        {
+            response = "Port parameter value is not supported";
+            success = false;
+        }
+        else if(_settings->_voip_connected)
+        {
+            response = "Already connected";
+            success = false;
+        }
+        else
+        {
+            response = QString("Connecting to Mumble server %1 at port %2").arg(host).arg(port);
+            emit connectToServer(host,port);
+        }
+        break;
+    }
+    case 47:
+    {
+        if(!_settings->_voip_connected)
+        {
+            response = "Not connected";
+            success = false;
+        }
+        else
+        {
+            response = "Disconnecting from Mumble server";
+            emit disconnectFromServer();
+        }
+        break;
+    }
+    case 48:
+    {
+        int set = param1.toInt();
+        if(!_settings->_voip_connected)
+        {
+            response = "Not connected";
+            success = false;
+        }
+        if((set < 0) || (set > 65536))
+        {
+            response = "Parameter value is not supported";
+            success = false;
+        }
+        else
+        {
+            response = QString("Changing channel to %1").arg(set);
+            emit changeChannel(set);
+        }
+        break;
+    }
+    case 49:
+    {
+        if(!_settings->_voip_connected)
+        {
+            response = "Not connected";
+            success = false;
+        }
+        if(param1.size() > 1024)
+        {
+            response = "Text too long, 1024 characters at most";
+            success = false;
+        }
+        else
+        {
+            response = QString("Sending text message to channel %1").arg(
+                        _settings->_current_voip_channel);
+            emit newMumbleMessage(param1);
         }
         break;
     }
@@ -290,20 +703,33 @@ void CommandProcessor::buildCommandList()
     _command_list->append(new command("settx", 1, "Start/stop transmitter, 1 enabled, 0 disabled"));
     _command_list->append(new command("setrxmode", 1, "Set RX mode (integer number, 0-16)"));
     _command_list->append(new command("settxmode", 1, "Set TX mode (integer number, 0-16)"));
+    _command_list->append(new command("setrxctcss", 1, "Set RX CTCSS (floating point number, 0.0 to 200.0)"));
+    _command_list->append(new command("settxctcss", 1, "Set TX CTCSS (floating point number, 0.0 to 200.0)"));
     _command_list->append(new command("setsquelch", 1, "Set squelch (integer number, -150 to 10)"));
     _command_list->append(new command("setrxvolume", 1, "Set RX volume (integer number, 0 to 100)"));
     _command_list->append(new command("settxvolume", 1, "Set TX volume (integer number, 0 to 100)"));
     _command_list->append(new command("setrxgain", 1, "Set RX gain (integer number, 0 to 99)"));
     _command_list->append(new command("settxgain", 1, "Set TX gain (integer number, 0 to 99)"));
     _command_list->append(new command("tunerx", 1, "Tune RX frequency, integer value in Hertz"));
+    _command_list->append(new command("tunetx", 1, "Tune TX frequency, integer value in Hertz"));
     _command_list->append(new command("setoffset", 1, "Set demodulator offset, integer value in Hertz"));
     _command_list->append(new command("setshift", 1, "Set TX shift, integer value in Hertz"));
     _command_list->append(new command("setduplex", 1, "Set duplex mode, 1 enabled, 0 disabled"));
-    _command_list->append(new command("setautosq", 0, "Set autosquelch"));
     _command_list->append(new command("setforwarding", 1, "Set radio forwarding mode, 1 enabled, 0 disabled"));
     _command_list->append(new command("setrepeater", 1, "Set repeater mode, 1 enabled, 0 disabled"));
     _command_list->append(new command("setvox", 1, "Set vox mode, 1 enabled, 0 disabled"));
+    _command_list->append(new command("setpttvoip", 1, "Use PTT for VOIP, 1 enabled, 0 disabled"));
+    _command_list->append(new command("setcompressor", 1, "Enable audio compressor, 1 enabled, 0 disabled"));
+    _command_list->append(new command("setrelays", 1, "Enable relay control, 1 enabled, 0 disabled"));
+    _command_list->append(new command("setrssicalibration", 1, "Set RSSI calibration, integer value in dBm"));
+    _command_list->append(new command("setrxsamprate", 1, "Set RX sample rate, integer value in Msps"));
+    _command_list->append(new command("setautosq", 0, "Set autosquelch"));
+    _command_list->append(new command("setfilterwidth", 1, "Set filter width (analog only), integer value in Hz"));
     _command_list->append(new command("ptton", 0, "Transmit"));
     _command_list->append(new command("pttoff", 0, "Stop transmitting"));
-
+    _command_list->append(new command("connectserver", 2, "Connect to Mumble server, string value hostname, integer value port"));
+    _command_list->append(new command("disconnectserver", 0, "Disconnect from Mumble server"));
+    _command_list->append(new command("changechannel", 1, "Change channel to channel number (integer value)"));
+    _command_list->append(new command("mumblemsg", 1, "Send Mumble message, string value text"));
+    _command_list->append(new command("mutemumble", 1, "Mute Mumble connection, 1 enabled, 0 disabled"));
 }

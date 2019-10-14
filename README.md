@@ -163,6 +163,7 @@ $ telnet localhost 4939
 Trying ::1...
 Connected to localhost.
 Escape character is '^]'.
+Welcome! Available commands are: 
 rxstatus (0 parameters): Status of receiver (started or not)
 txstatus (0 parameters): Status of transmitter (started or not)
 txactive (0 parameters): See if the radio is on the air
@@ -185,32 +186,47 @@ setrx (1 parameters): Start/stop receiver, 1 enabled, 0 disabled
 settx (1 parameters): Start/stop transmitter, 1 enabled, 0 disabled
 setrxmode (1 parameters): Set RX mode (integer number, 0-16)
 settxmode (1 parameters): Set TX mode (integer number, 0-16)
+setrxctcss (1 parameters): Set RX CTCSS (floating point number, 0.0 to 200.0)
+settxctcss (1 parameters): Set TX CTCSS (floating point number, 0.0 to 200.0)
 setsquelch (1 parameters): Set squelch (integer number, -150 to 10)
 setrxvolume (1 parameters): Set RX volume (integer number, 0 to 100)
 settxvolume (1 parameters): Set TX volume (integer number, 0 to 100)
 setrxgain (1 parameters): Set RX gain (integer number, 0 to 99)
 settxgain (1 parameters): Set TX gain (integer number, 0 to 99)
 tunerx (1 parameters): Tune RX frequency, integer value in Hertz
+tunetx (1 parameters): Tune TX frequency, integer value in Hertz
 setoffset (1 parameters): Set demodulator offset, integer value in Hertz
 setshift (1 parameters): Set TX shift, integer value in Hertz
 setduplex (1 parameters): Set duplex mode, 1 enabled, 0 disabled
-setautosq (0 parameters): Set autosquelch
 setforwarding (1 parameters): Set radio forwarding mode, 1 enabled, 0 disabled
 setrepeater (1 parameters): Set repeater mode, 1 enabled, 0 disabled
 setvox (1 parameters): Set vox mode, 1 enabled, 0 disabled
+setpttvoip (1 parameters): Use PTT for VOIP, 1 enabled, 0 disabled
+setcompressor (1 parameters): Enable audio compressor, 1 enabled, 0 disabled
+setrelays (1 parameters): Enable relay control, 1 enabled, 0 disabled
+setrssicalibration (1 parameters): Set RSSI calibration, integer value in dBm
+setrxsamprate (1 parameters): Set RX sample rate, integer value in Msps
+setautosq (0 parameters): Set autosquelch
+setfilterwidth (1 parameters): Set filter width (analog only), integer value in Hz
 ptton (0 parameters): Transmit
 pttoff (0 parameters): Stop transmitting
+connectserver (2 parameters): Connect to Mumble server, string value hostname, integer value port
+disconnectserver (0 parameters): Disconnect from Mumble server
+changechannel (1 parameters): Change channel to channel number (integer value)
+mumblemsg (1 parameters): Send Mumble message, string value text
+mutemumble (1 parameters): Mute Mumble connection, 1 enabled, 0 disabled
 
 qradiolink> rxstatus
 RX status is inactive.
 
 qradiolink> setrx 1
-Turning on/off receiver
+Turning on transmitter
 
-qradiolink> setrx 0
-Turning on/off receiver
+qradiolink> rxstatus
+RX status is active.
 
-Server is stopping now.
+qradiolink> quit
+Bye!
 Connection closed by foreign host.
 </pre>
 
@@ -226,4 +242,5 @@ Credits and License
 blocks to implement software-defined radios and signal-processing systems.
 - [Codec2](http://rowetel.com/codec2.html) is developed by David Rowe
 - [Opus](https://xiph.org) is developed by the Xiph foundation
+- [Mumble](https://wiki.mumble.info/wiki/Main_Page) is an open source, low-latency, high quality voice chat software primarily intended for use while gaming. Various third party applications and libraries exist for varying use cases, like web interfaces for server administration, user- and channel-viewers, bots like music bots and more.
 
