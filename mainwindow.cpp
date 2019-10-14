@@ -22,17 +22,15 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    _settings = settings;
+    _radio_channels = radio_channels;
+
     QFontDatabase::addApplicationFont(":/fonts/res/LiquidCrystal-Normal.otf");
     QFontDatabase::addApplicationFont(":/fonts/res/LiquidCrystal-Bold.otf");
     QFontDatabase::addApplicationFont(":/fonts/res/LiquidCrystal-BoldItalic.otf");
     QFontDatabase::addApplicationFont(":/fonts/res/LiquidCrystal-NormalItalic.otf");
     setAnimated(true);
     ui->setupUi(this);
-    _settings = settings;
-    _radio_channels = radio_channels;
-
-    _speech_icon_timer.setSingleShot(true);
-    _secondary_text_timer.setSingleShot(true);
 
     QStringList tones;
     tones.append("CTCSS");
@@ -213,6 +211,8 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     ui->memoryControlsFrame->setGraphicsEffect(_eff_mem_display);
     ui->memoriesTableWidget->setGraphicsEffect(_eff_mem_display);
 
+    _speech_icon_timer.setSingleShot(true);
+    _secondary_text_timer.setSingleShot(true);
 
     setWindowIcon(QIcon(":/res/logo.png"));
     setWindowTitle("QRadioLink");
@@ -1378,7 +1378,6 @@ void MainWindow::autoSquelch()
     int calibration = ui->rssiCalibrateEdit->text().toInt();
     int squelch = (int)_rssi + (abs(calibration) - 80) + 50;
     setSquelchDisplay(squelch);
-    ui->rxSquelchDial->setValue(squelch);
 }
 
 void MainWindow::changeFilterWidth(int low, int up)

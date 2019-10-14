@@ -93,7 +93,7 @@ public:
     bool _voip_forwarding;
     bool _voip_ptt_enabled;
     int _current_voip_channel;
-    int _rssi;
+    float _rssi;
 
 
     /// Old stuff, not used now

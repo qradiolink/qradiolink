@@ -41,7 +41,7 @@ Settings::Settings()
     _vox_enabled = false;
     _repeater_enabled = false;
     _current_voip_channel = -1;
-    _rssi = 0;
+    _rssi = 0.0;
 
 
     demod_offset = 0;

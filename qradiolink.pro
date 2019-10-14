@@ -103,7 +103,8 @@ SOURCES += main.cpp\
     gr/gr_audio_sink.cpp \
     gr/gr_4fsk_discriminator.cpp \
     gr/gr_const_sink.cpp \
-    gr/rx_fft.cpp
+    gr/rx_fft.cpp \
+    logger.cpp
 
 
 
@@ -170,7 +171,8 @@ HEADERS  += mainwindow.h\
     gr/gr_audio_sink.h \
     gr/gr_4fsk_discriminator.h \
     gr/gr_const_sink.h \
-    gr/modem_types.h
+    gr/modem_types.h \
+    logger.h
 
 
 

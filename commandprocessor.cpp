@@ -185,7 +185,7 @@ bool CommandProcessor::processStatusCommands(int command_index, QString &respons
         response.append(QString("Current TX gain value is %1.").arg(_settings->tx_power));
         break;
     case 12:
-        response.append(QString("(Not implemented).Current RSSI value is %1.").arg(_settings->_rssi));
+        response.append(QString("Current RSSI value is %1.").arg(_settings->_rssi));
         break;
     case 13:
         if(_settings->_voip_connected)
@@ -573,7 +573,18 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
     }
     case 42:
     {
-        // Not implemented
+        if(_settings->_rssi > 99.0f)
+        {
+            response = "Could not set auto squelch";
+            success = false;
+        }
+        else
+        {
+            int squelch = (int)_settings->_rssi +
+                    (abs(_settings->rssi_calibration_value) - 80) + 50;
+            response = QString("Setting squelch automatically to %1").arg(squelch);
+            emit setSquelch(squelch);
+        }
         break;
     }
     case 43:
@@ -679,7 +690,25 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
         break;
     }
     case 50:
-        break; // not implemented
+    {
+        if(!_settings->_voip_connected)
+        {
+            response = "Not connected";
+            success = false;
+        }
+        int set = param1.toInt();
+        if((set != 1) && (set != 0))
+        {
+            response = "Parameter value is not supported";
+            success = false;
+        }
+        else
+        {
+            response = QString("Setting Mumble mute to %1").arg(set);
+            emit setMute((bool)set);
+        }
+        break;
+    }
     case 51:
     {
         response = QString(
@@ -687,7 +716,6 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
             _settings->rx_frequency).arg(_settings->rx_frequency).arg(_settings->tx_shift);
         emit enableGUIFFT(false);
         emit enableGUIConst(false);
-        emit enableRSSI(false);
         emit setWaterfallFPS(10);
         emit enableRelays((bool)_settings->enable_relays);
         emit enableDuplex((bool)_settings->enable_duplex);
@@ -728,7 +756,7 @@ void CommandProcessor::buildCommandList()
     _command_list->append(new command("squelch", 0, "Get squelch value"));
     _command_list->append(new command("rxgain", 0, "Get RX gain value"));
     _command_list->append(new command("txgain", 0, "Get TX gain value"));
-    _command_list->append(new command("rssi", 0, "Not implemented"));
+    _command_list->append(new command("rssi", 0, "Get current RSSI value"));
     _command_list->append(new command("voipstatus", 0, "Get VOIP status"));
     _command_list->append(new command("forwardingstatus", 0, "Get radio forwarding status"));
     _command_list->append(new command("voxstatus", 0, "Get VOX status"));
@@ -760,7 +788,7 @@ void CommandProcessor::buildCommandList()
     _command_list->append(new command("setrelays", 1, "Enable relay control, 1 enabled, 0 disabled"));
     _command_list->append(new command("setrssicalibration", 1, "Set RSSI calibration, integer value in dBm"));
     _command_list->append(new command("setrxsamprate", 1, "Set RX sample rate, integer value in Msps"));
-    _command_list->append(new command("setautosq", 0, "Set autosquelch"));
+    _command_list->append(new command("autosquelch", 0, "Set autosquelch"));
     _command_list->append(new command("setfilterwidth", 1, "Set filter width (analog only), integer value in Hz"));
     _command_list->append(new command("ptt_on", 0, "Transmit"));
     _command_list->append(new command("ptt_off", 0, "Stop transmitting"));

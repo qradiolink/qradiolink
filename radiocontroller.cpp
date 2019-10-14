@@ -807,8 +807,7 @@ bool RadioController::getDemodulatorData()
 
 void RadioController::getRSSI()
 {
-    if(!_settings->show_controls)
-        return;
+
 
     qint64 msec = (quint64)_rssi_read_timer->nsecsElapsed() / 1000000;
     if(msec < _fft_poll_time)
@@ -816,9 +815,13 @@ void RadioController::getRSSI()
         return;
     }
     float rssi = _modem->getRSSI();
+    _rssi_read_timer->restart();
+    _settings->_rssi = rssi;
+    if(!_settings->show_controls)
+        return;
     if(rssi < 99.0f)
         emit newRSSIValue(rssi);
-    _rssi_read_timer->restart();
+
 }
 
 void RadioController::getFFTData()

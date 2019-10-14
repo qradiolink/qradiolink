@@ -23,9 +23,7 @@
 #include <QString>
 #include <QVector>
 #include <QMetaType>
-#include <QFile>
 #include <QtGlobal>
-#include <QTextStream>
 #include <iostream>
 #include "mainwindow.h"
 #include "dtmfdecoder.h"
@@ -37,40 +35,9 @@
 #include "radiochannel.h"
 #include "radiocontroller.h"
 #include "telnetserver.h"
+#include "logger.h"
 
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-void logMessage(QtMsgType type, const QMessageLogContext &context, const QString &msg)
-{
-    Q_UNUSED(context);
-#else
-void logMessage(QtMsgType type, const char *msg)
-{
-#endif
-
-    QString txt;
-    switch (type) {
-    case QtInfoMsg:
-        txt = QString("Info: %1").arg(msg);
-        break;
-    case QtDebugMsg:
-        txt = QString("Debug: %1").arg(msg);
-        break;
-    case QtWarningMsg:
-        txt = QString("Warning: %1").arg(msg);
-    break;
-    case QtCriticalMsg:
-        txt = QString("Critical: %1").arg(msg);
-    break;
-    case QtFatalMsg:
-        txt = QString("Fatal: %1").arg(msg);
-    break;
-    }
-    QFile outFile("qradiolink.log");
-    outFile.open(QIODevice::WriteOnly | QIODevice::Append);
-    QTextStream ts(&outFile);
-    ts << txt << endl;
-}
 
 void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
                        AudioReader *audioreader, MainWindow *w, MumbleClient *mumbleclient,
@@ -81,13 +48,6 @@ void connectCommandSignals(TelnetServer *telnet_server, MumbleClient *mumbleclie
 
 int main(int argc, char *argv[])
 {
-#if 0
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-    qInstallMessageHandler(logMessage);
-#else
-    qInstallMsgHandler(logMessage);
-#endif
-#endif
 
     typedef QVector<Station*> StationList;
     qRegisterMetaType<StationList>("StationList");
