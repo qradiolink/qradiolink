@@ -133,6 +133,7 @@ public slots:
     void changeFilterWidth(int low, int up);
     void setAudioCompressor(bool value);
     void setRelays(bool value);
+    void setRemoteControl(bool value);
     void setRSSICalibration();
     void setDigitalGain(int value);
     void updateAgcAttack(int value);
@@ -192,6 +193,8 @@ signals:
     void setAgcAttack(float value);
     void setAgcDecay(float value);
     void newMumbleMessage(QString text);
+    void enableRemote();
+    void disableRemote();
 
 
 public:

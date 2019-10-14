@@ -689,9 +689,9 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
         emit enableGUIConst(false);
         emit enableRSSI(false);
         emit setWaterfallFPS(10);
-        emit enableRelays(_settings->enable_relays);
-        emit enableDuplex(_settings->enable_duplex);
-        emit enableAudioCompressor(_settings->audio_compressor);
+        emit enableRelays((bool)_settings->enable_relays);
+        emit enableDuplex((bool)_settings->enable_duplex);
+        emit enableAudioCompressor((bool)_settings->audio_compressor);
         emit setVolume(_settings->rx_volume);
         emit setTxVolume(_settings->tx_volume);
         emit toggleRxModemMode(_settings->rx_mode);

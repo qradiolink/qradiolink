@@ -36,6 +36,8 @@ TelnetServer::~TelnetServer()
 
 void TelnetServer::start()
 {
+    if(_server->isListening())
+        return;
     if(_settings->control_port != 0)
         _server->listen(_hostaddr,_settings->control_port);
     else
@@ -46,6 +48,8 @@ void TelnetServer::start()
 
 void TelnetServer::stop()
 {
+    if(!_server->isListening())
+        return;
     _stop = true;
     for(int i =0;i<_connected_clients.size();i++)
     {
@@ -53,9 +57,11 @@ void TelnetServer::stop()
         s->write("Server is stopping now.\n");
         s->flush();
         s->disconnectFromHost();
+        delete s;
     }
      _connected_clients.clear();
-    _server->close();
+     QObject::disconnect(_server,SIGNAL(newConnection()),this,SLOT(getConnection()));
+     _server->close();
 }
 
 void TelnetServer::getConnection()
@@ -184,14 +190,19 @@ QByteArray TelnetServer::processCommand(QByteArray data, QTcpSocket *socket)
         socket->close();
         return response;
     }
-    if(data.length() < 3)
+    if(data.length() < 1)
     {
         QByteArray response("\n");
         return response;
     }
 
     QString message = QString::fromLocal8Bit(data);
-    if((message == "exit\r\n") || (message == "quit\r\n"))
+    if(message == "\r\n")
+    {
+        QByteArray response("\n");
+        return response;
+    }
+    if((message == "exit\r\n") || (message == "quit\r\n") || (message == "\u0004"))
     {
         QByteArray response("Bye!\n");
         socket->write(response.data(),response.size());

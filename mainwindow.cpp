@@ -22,7 +22,10 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-
+    QFontDatabase::addApplicationFont(":/fonts/res/LiquidCrystal-Normal.otf");
+    QFontDatabase::addApplicationFont(":/fonts/res/LiquidCrystal-Bold.otf");
+    QFontDatabase::addApplicationFont(":/fonts/res/LiquidCrystal-BoldItalic.otf");
+    QFontDatabase::addApplicationFont(":/fonts/res/LiquidCrystal-NormalItalic.otf");
     setAnimated(true);
     ui->setupUi(this);
     _settings = settings;
@@ -121,6 +124,7 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     QObject::connect(ui->sampleRateBox,SIGNAL(currentIndexChanged(int)),this,SLOT(updateSampleRate()));
     QObject::connect(ui->checkBoxAudioCompressor,SIGNAL(toggled(bool)),this,SLOT(setAudioCompressor(bool)));
     QObject::connect(ui->checkBoxRelays,SIGNAL(toggled(bool)),this,SLOT(setRelays(bool)));
+    QObject::connect(ui->remoteControlCheckBox,SIGNAL(toggled(bool)),this,SLOT(setRemoteControl(bool)));
     QObject::connect(ui->rssiCalibrateButton,SIGNAL(clicked()),this,SLOT(setRSSICalibration()));
     QObject::connect(ui->saveChannelsButton,SIGNAL(clicked()),this,SLOT(saveMemoryChannes()));
     QObject::connect(ui->agcAttackSpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateAgcAttack(int)));
@@ -421,6 +425,7 @@ void MainWindow::setConfig()
     ui->duplexOpButton->setChecked((bool) _settings->enable_duplex);
     ui->checkBoxAudioCompressor->setChecked((bool)_settings->audio_compressor);
     ui->checkBoxRelays->setChecked((bool)_settings->enable_relays);
+    ui->remoteControlCheckBox->setChecked((bool)_settings->remote_control);
     ui->rssiCalibrateEdit->setText(QString::number(_settings->rssi_calibration_value));
     if(_settings->rx_ctcss > 0.0)
         ui->comboBoxRxCTCSS->setCurrentText(QString::number(_settings->rx_ctcss));
@@ -1413,6 +1418,15 @@ void MainWindow::setRelays(bool value)
 {
     _settings->enable_relays = (int) value;
     emit enableRelays(value);
+}
+
+void MainWindow::setRemoteControl(bool value)
+{
+    _settings->remote_control = (int) value;
+    if(value)
+        emit enableRemote();
+    else
+        emit disableRemote();
 }
 
 void MainWindow::setRSSICalibration()

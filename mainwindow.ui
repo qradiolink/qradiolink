@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1491</width>
+    <width>1200</width>
     <height>721</height>
    </rect>
   </property>
@@ -2128,7 +2128,7 @@ and S-meter (dBm)</string>
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
-                 <width>500</width>
+                 <width>40</width>
                  <height>20</height>
                 </size>
                </property>
@@ -2761,6 +2761,13 @@ font: 10pt &quot;Sans Serif&quot;;</string>
                  <width>100</width>
                  <height>16777215</height>
                 </size>
+               </property>
+              </widget>
+             </item>
+             <item row="17" column="5">
+              <widget class="QCheckBox" name="remoteControlCheckBox">
+               <property name="text">
+                <string>Remote control</string>
                </property>
               </widget>
              </item>
@@ -4615,7 +4622,7 @@ color: rgb(255, 255, 255);</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1491</width>
+     <width>1200</width>
      <height>30</height>
     </rect>
    </property>

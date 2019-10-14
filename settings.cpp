@@ -451,6 +451,14 @@ void Settings::readConfig()
     {
         control_port = 4939;
     }
+    try
+    {
+        remote_control = cfg.lookup("remote_control");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        remote_control = 0;
+    }
 
 }
 
@@ -500,6 +508,7 @@ void Settings::saveConfig()
     root.add("control_port",libconfig::Setting::TypeInt) = control_port;
     root.add("agc_attack",libconfig::Setting::TypeInt) = agc_attack;
     root.add("agc_decay",libconfig::Setting::TypeInt) = agc_decay;
+    root.add("remote_control",libconfig::Setting::TypeInt) = remote_control;
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());

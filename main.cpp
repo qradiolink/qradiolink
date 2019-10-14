@@ -105,13 +105,8 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     QStringList arguments = QCoreApplication::arguments();
     bool headless = false;
-    if((arguments.length() > 1) && (arguments.indexOf("-d") != -1))
+    if((arguments.length() > 1) && (arguments.indexOf("--headless") != -1))
         headless = true;
-
-    QFontDatabase::addApplicationFont(":/fonts/res/LiquidCrystal-Normal.otf");
-    QFontDatabase::addApplicationFont(":/fonts/res/LiquidCrystal-Bold.otf");
-    QFontDatabase::addApplicationFont(":/fonts/res/LiquidCrystal-BoldItalic.otf");
-    QFontDatabase::addApplicationFont(":/fonts/res/LiquidCrystal-NormalItalic.otf");
 
 
     Settings *settings = new Settings;
@@ -171,7 +166,8 @@ int main(int argc, char *argv[])
     }
 
     connectCommandSignals(telnet_server, mumbleclient, radio_op);
-    telnet_server->start();
+    if(headless)
+        telnet_server->start();
 
     /// Independent of GUI or remote interface
     QObject::connect(radio_op, SIGNAL(writePCM(short*,int,bool,int)),
@@ -298,6 +294,7 @@ void connectCommandSignals(TelnetServer *telnet_server, MumbleClient *mumbleclie
                      mumbleclient,SLOT(newMumbleMessage(QString)));
 }
 
+
 void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
                        AudioReader *audioreader, MainWindow *w, MumbleClient *mumbleclient,
                        RadioController *radio_op)
@@ -353,6 +350,8 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
     QObject::connect(w,SIGNAL(terminateConnections()),audiowriter,SLOT(stop()));
     QObject::connect(w,SIGNAL(terminateConnections()),audioreader,SLOT(stop()));
     QObject::connect(w,SIGNAL(terminateConnections()),telnet_server,SLOT(stop()));
+    QObject::connect(w,SIGNAL(disableRemote()),telnet_server,SLOT(stop()));
+    QObject::connect(w,SIGNAL(enableRemote()),telnet_server,SLOT(start()));
     QObject::connect(w,SIGNAL(setMute(bool)),mumbleclient,SLOT(setMute(bool)));
     QObject::connect(w,SIGNAL(changeChannel(int)),mumbleclient,SLOT(joinChannel(int)));
     QObject::connect(w,SIGNAL(newMumbleMessage(QString)),
