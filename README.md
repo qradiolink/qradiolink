@@ -157,7 +157,7 @@ Do note that the identifier digits are the most important: **0403:6001**
 - VOX mode requires careful setup of system microphone gain to avoid getting stuck on transmit. The voice activation system is not very robust right now and may be improved in the future.
 - Setting application internal microphone gain above the middle of the scale might cause clipping and distortion of audio, as the system volume also affects what goes to the radio.
 - The S-meter calibration feature is not complete yet, however you can enter in the Setup tab the level (integer value expressed in dBm) of a known signal (e.g. sent by a generator) to correct the reading. Do NOT apply signals with levels above -30 to 0 dBm to the receiver input as this might damage your receiver, depending on hardware. Please note that the RSSI and S-meter values displayed are relative to the current operating mode filter bandwidth, so the FM reading will be different to a SSB reading! Calibration tables support for different bands may be provided in the future.
-- The network control feature (for headless mode) is not complete yet. For testing purposes, the control port is 4939 (apologies if I stepped onto some IANA assignment). To test and use this feature, you can simply use telnet from the same computer:
+- The network remote control feature (for headless mode) is work in progress. For testing purposes, the control port is 4939 (apologies if I stepped onto some IANA assignment). To test and use this feature, you can simply use telnet from the same computer:
 <pre>
 $ telnet localhost 4939
 Trying ::1...

@@ -398,6 +398,8 @@ void MainWindow::setConfig()
     ui->rxVolumeDial->setValue(_settings->rx_volume);
     ui->micGainSlider->setValue(_settings->tx_volume);
     ui->voipServerPortEdit->setText(QString::number(_settings->voip_port));
+    ui->voipPasswordEdit->setText(_settings->voip_password);
+    ui->remoteControlEdit->setText(QString::number(_settings->control_port));
 
     ui->frequencyEdit->setText(QString::number(ceil(_settings->rx_frequency/1000)));
     ui->shiftEdit->setText(QString::number(_settings->tx_shift / 1000));
@@ -453,6 +455,8 @@ void MainWindow::saveUiConfig()
     _settings->tx_volume = (int)ui->micGainSlider->value();
     _settings->voip_server = ui->voipServerEdit->text();
     _settings->voip_port = ui->voipServerPortEdit->text().toInt();
+    _settings->voip_password = ui->voipPasswordEdit->text();
+    _settings->control_port = ui->remoteControlEdit->text().toInt();
     _settings->rx_mode = ui->rxModemTypeComboBox->currentIndex();
     _settings->tx_mode = ui->txModemTypeComboBox->currentIndex();
     _settings->ip_address = ui->lineEditIPaddress->text();
@@ -895,6 +899,9 @@ void MainWindow::displayTransmitStatus(bool status)
 
 void MainWindow::connectVOIPRequested()
 {
+    _settings->voip_server = ui->voipServerEdit->text();
+    _settings->voip_port = ui->voipServerPortEdit->text().toInt();
+    _settings->voip_password = ui->voipPasswordEdit->text();
     emit connectToServer(ui->voipServerEdit->text(), ui->voipServerPortEdit->text().toInt());
     emit setMute(false); // FIXME: ???
 }
@@ -1174,16 +1181,8 @@ void MainWindow::enterFreq()
 
 void MainWindow::enterShift()
 {
-    if(!_ptt_activated)
-    {
-        _settings->tx_shift = ui->shiftEdit->text().toLong()*1000;
-        emit changeTxShift(_settings->tx_shift);
-    }
-    else
-    {
-        // FIXME: dialog maybe
-        std::cerr << "Cannot set TX shift frequency while transmitting" << std::endl;
-    }
+    _settings->tx_shift = ui->shiftEdit->text().toLong()*1000;
+    emit changeTxShift(_settings->tx_shift);
 }
 
 void MainWindow::setTxPowerDisplay(int value)

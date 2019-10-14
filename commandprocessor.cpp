@@ -53,7 +53,7 @@ QStringList CommandProcessor::getCommand(QString message, int &command_index)
     command_index = -1;
     message = message.trimmed();
     QStringList tokens = message.split(" ");
-    if((tokens.length() > 3) || (tokens.length() < 1))
+    if((tokens.length() > 4) || (tokens.length() < 1))
     {
         QStringList none("");
         return none;
@@ -75,7 +75,7 @@ QStringList CommandProcessor::getCommand(QString message, int &command_index)
 
 bool CommandProcessor::validateCommand(QString message)
 {
-    QRegularExpression re("^[a-zA-Z0-9_]+[\\sa-zA-Z0-9_]*\\r\\n$");
+    QRegularExpression re("^[a-zA-Z0-9_]+[\\sa-zA-Z0-9_.]*\\r\\n$");
     QRegularExpressionValidator validator(re, 0);
 
     int pos = 0;
@@ -110,6 +110,10 @@ QString CommandProcessor::runCommand(QString message)
     {
         param2 = tokens.at(2);
     }
+    if(tokens.size() > 3)
+    {
+        param3 = tokens.at(3);
+    }
 
     /// Actual command processing
     ///
@@ -117,7 +121,7 @@ QString CommandProcessor::runCommand(QString message)
     success = processStatusCommands(command_index, response);
     if(!success)
         return "\e[31m" + response + "\e[0m\n";
-    success = processActionCommands(command_index, response, param1, param2);
+    success = processActionCommands(command_index, response, param1, param2, param3);
     if(!success)
         return "\e[31m" + response + "\e[0m\n";
 
@@ -223,7 +227,7 @@ bool CommandProcessor::processStatusCommands(int command_index, QString &respons
 }
 
 bool CommandProcessor::processActionCommands(int command_index, QString &response,
-                                             QString param1, QString param2)
+                                             QString param1, QString param2, QString param3)
 {
     bool success = true;
     switch (command_index) {

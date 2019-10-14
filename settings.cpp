@@ -317,6 +317,14 @@ void Settings::readConfig()
     }
     try
     {
+        voip_password = QString(cfg.lookup("voip_password"));
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        voip_password = "";
+    }
+    try
+    {
         rx_mode = cfg.lookup("rx_mode");
     }
     catch(const libconfig::SettingNotFoundException &nfex)
@@ -470,6 +478,7 @@ void Settings::saveConfig()
     root.add("tx_shift",libconfig::Setting::TypeInt64) = tx_shift;
     root.add("voip_server",libconfig::Setting::TypeString) = voip_server.toStdString();
     root.add("voip_port",libconfig::Setting::TypeInt) = voip_port;
+    root.add("voip_password",libconfig::Setting::TypeString) = voip_password.toStdString();
     root.add("rx_mode",libconfig::Setting::TypeInt) = rx_mode;
     root.add("tx_mode",libconfig::Setting::TypeInt) = tx_mode;
     root.add("rx_ctcss",libconfig::Setting::TypeFloat) = rx_ctcss;

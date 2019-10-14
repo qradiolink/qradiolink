@@ -129,7 +129,7 @@ void MumbleClient::authenticate()
     QString username = _settings->callsign;
     username += "-" + QString::fromLocal8Bit(rand);
     auth->set_username(username.toStdString());
-    auth->set_password("");
+    auth->set_password(_settings->voip_password.toStdString());
     auth->set_opus(true);
     int size = auth->ByteSize();
     unsigned char data[size];

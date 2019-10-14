@@ -23,9 +23,9 @@ TelnetServer::TelnetServer(const Settings *settings, QObject *parent) :
 {
     _settings = settings;
     command_processor = new CommandProcessor(settings);
-    _hostaddr = QHostAddress::Any;
-    _stop=false;
     _server = new QTcpServer;
+    _hostaddr = QHostAddress::Any;
+    _stop = false;
 }
 
 TelnetServer::~TelnetServer()

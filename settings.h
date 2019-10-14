@@ -55,6 +55,7 @@ public:
     QString video_device;
     QString voip_server;
     int voip_port;
+    QString voip_password;
     int rx_mode;
     int tx_mode;
     QString ip_address;
@@ -77,12 +78,12 @@ public:
     int agc_attack;
     int agc_decay;
 
-    /// Used by remote interface
+    /// Not saved to config:
 
-    int _rssi;
-     // FIXME: this should be set by radioop
 
-    /// Used by both GUI and remote interface
+    /// Used by both radio-op/mumbleclient and remote interface
+    bool _rx_inited;
+    bool _tx_inited;
     bool _tx_started;
     qint64 _tx_frequency;
     bool _voip_connected;
@@ -91,8 +92,7 @@ public:
     bool _voip_forwarding;
     bool _voip_ptt_enabled;
     int _current_voip_channel;
-    bool _rx_inited;
-    bool _tx_inited;
+    int _rssi;
 
 
     /// Old stuff, not used now

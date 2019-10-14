@@ -118,7 +118,8 @@ private:
 
     QStringList getCommand(QString message, int &command_index);
     bool processStatusCommands(int command_index, QString &response);
-    bool processActionCommands(int command_index, QString &response, QString param1, QString param2);
+    bool processActionCommands(int command_index, QString &response,
+                               QString param1, QString param2, QString param3);
 };
 
 #endif // COMMANDPROCESSOR_H
