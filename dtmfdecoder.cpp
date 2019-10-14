@@ -17,9 +17,6 @@
 #include "dtmfdecoder.h"
 
 
-
-
-
 DtmfDecoder::DtmfDecoder(Settings *settings, QObject *parent) :
     QObject(parent)
 {
