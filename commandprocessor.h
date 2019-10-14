@@ -106,8 +106,8 @@ public slots:
 private:
     struct command
     {
-        command(QString what, int n_param=0) : action(what), params(n_param),
-            help_msg("") {}
+        command(QString what, int n_param=0, QString help_msg="") : action(what), params(n_param),
+            help_msg(help_msg) {}
         QString action;
         int params;
         QString help_msg;

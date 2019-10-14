@@ -41,8 +41,9 @@ QStringList CommandProcessor::listAvailableCommands()
     for(int i=0;i<_command_list->size();i++)
     {
         list.append("\e[33m" + _command_list->at(i)->action
-                    + QString(" (%1 parameters)").arg(
-                        _command_list->at(i)->params) + "\e[0m\n");
+                    + QString(" (%1 parameters: %2)").arg(
+                        _command_list->at(i)->params).arg(_command_list->at(i)->help_msg)
+                    + "\e[0m\n");
     }
     return list;
 }
@@ -176,7 +177,7 @@ bool CommandProcessor::processStatusCommands(int command_index, QString &respons
         response.append(QString("Current TX gain value is %1.").arg(_settings->tx_power));
         break;
     case 12:
-        response.append(QString("Current RSSI value is %1.").arg(_settings->_rssi));
+        response.append(QString("(Not implemented).Current RSSI value is %1.").arg(_settings->_rssi));
         break;
     case 13:
         if(_settings->_voip_connected)
@@ -209,6 +210,12 @@ bool CommandProcessor::processStatusCommands(int command_index, QString &respons
         else
             response.append(QString("Repeater is disabled."));
         break;
+    case 17:
+        if(_settings->enable_duplex)
+            response.append(QString("Duplex is enabled."));
+        else
+            response.append(QString("Duplex is disabled."));
+        break;
 
     default:
         break;
@@ -220,9 +227,6 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
 {
     bool success = true;
     switch (command_index) {
-    case 17:
-        success = false;
-        break;
     case 18:
         break;
     case 19:
@@ -236,43 +240,44 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
 void CommandProcessor::buildCommandList()
 {
     /// status commands
-    _command_list->append(new command("rxstatus", 0));
-    _command_list->append(new command("txstatus", 0));
-    _command_list->append(new command("txactive", 0));
-    _command_list->append(new command("rxmode", 0));
-    _command_list->append(new command("txmode", 0));
-    _command_list->append(new command("rxctcss", 0));
-    _command_list->append(new command("txctcss", 0));
-    _command_list->append(new command("rxvolume", 0));
-    _command_list->append(new command("txvolume", 0));
-    _command_list->append(new command("squelch", 0));
-    _command_list->append(new command("rxgain", 0));
-    _command_list->append(new command("txgain", 0));
-    _command_list->append(new command("rssi", 0));
-    _command_list->append(new command("voipstatus", 0));
-    _command_list->append(new command("forwardingstatus", 0));
-    _command_list->append(new command("voxstatus", 0));
-    _command_list->append(new command("repeaterstatus", 0));
+    _command_list->append(new command("rxstatus", 0, "Status of receiver (started or not)"));
+    _command_list->append(new command("txstatus", 0, "Status of transmitter (started or not)"));
+    _command_list->append(new command("txactive", 0, "See if the radio is on the air"));
+    _command_list->append(new command("rxmode", 0, "Get RX operating mode"));
+    _command_list->append(new command("txmode", 0, "Get TX operating mode"));
+    _command_list->append(new command("rxctcss", 0, "Get RX CTCSS"));
+    _command_list->append(new command("txctcss", 0, "Get TX CTCSS"));
+    _command_list->append(new command("rxvolume", 0, "Get RX volume value"));
+    _command_list->append(new command("txvolume", 0, "Get TX volume value"));
+    _command_list->append(new command("squelch", 0, "Get squelch value"));
+    _command_list->append(new command("rxgain", 0, "Get RX gain value"));
+    _command_list->append(new command("txgain", 0, "Get TX gain value"));
+    _command_list->append(new command("rssi", 0, "Not implemented"));
+    _command_list->append(new command("voipstatus", 0, "Get VOIP status"));
+    _command_list->append(new command("forwardingstatus", 0, "Get radio forwarding status"));
+    _command_list->append(new command("voxstatus", 0, "Get VOX status"));
+    _command_list->append(new command("repeaterstatus", 0, "Get repeater status"));
+    _command_list->append(new command("duplexstatus", 0, "Get duplex status"));
 
     /// action commands
-    _command_list->append(new command("setrxmode", 1));
-    _command_list->append(new command("settxmode", 1));
-    _command_list->append(new command("setsquelch", 1));
-    _command_list->append(new command("setrxvolume", 1));
-    _command_list->append(new command("settxvolume", 1));
-    _command_list->append(new command("setrxgain", 1));
-    _command_list->append(new command("settxgain", 1));
-    _command_list->append(new command("tunerx", 1));
-    _command_list->append(new command("setoffset", 1));
-    _command_list->append(new command("setshift", 1));
-    _command_list->append(new command("setduplex", 1));
-    _command_list->append(new command("setautosq", 0));
-    _command_list->append(new command("setforwarding", 1));
-    _command_list->append(new command("setrepeater", 1));
-    _command_list->append(new command("setvox", 1));
-    _command_list->append(new command("setrx", 1));
-    _command_list->append(new command("settx", 1));
-    _command_list->append(new command("ptton", 0));
-    _command_list->append(new command("pttoff", 0));
+    _command_list->append(new command("setrxmode", 1, "Set RX mode (integer number, 0-16)"));
+    _command_list->append(new command("settxmode", 1, "Set TX mode (integer number, 0-16)"));
+    _command_list->append(new command("setsquelch", 1, "Set squelch (integer number, -150 to 10)"));
+    _command_list->append(new command("setrxvolume", 1, "Set RX volume (integer number, 0 to 100)"));
+    _command_list->append(new command("settxvolume", 1, "Set TX volume (integer number, 0 to 100)"));
+    _command_list->append(new command("setrxgain", 1, "Set RX gain (integer number, 0 to 99)"));
+    _command_list->append(new command("settxgain", 1, "Set TX gain (integer number, 0 to 99)"));
+    _command_list->append(new command("tunerx", 1, "Tune RX frequency, integer value in Hertz"));
+    _command_list->append(new command("setoffset", 1, "Set demodulator offset, integer value in Hertz"));
+    _command_list->append(new command("setshift", 1, "Set TX shift, integer value in Hertz"));
+    _command_list->append(new command("setduplex", 1, "Set duplex mode, 1 enabled, 0 disabled"));
+    _command_list->append(new command("setautosq", 0, "Set autosquelch"));
+    _command_list->append(new command("setforwarding", 1, "Set radio forwarding mode, 1 enabled, 0 disabled"));
+    _command_list->append(new command("setrepeater", 1, "Set repeater mode, 1 enabled, 0 disabled"));
+    _command_list->append(new command("setvox", 1, "Set vox mode, 1 enabled, 0 disabled"));
+    _command_list->append(new command("setrx", 1, "Start/stop receiver, 1 enabled, 0 disabled"));
+    _command_list->append(new command("settx", 1, "Start/stop transmitter, 1 enabled, 0 disabled"));
+    _command_list->append(new command("ptton", 0, "Transmit"));
+    _command_list->append(new command("pttoff", 0, "Stop transmitting"));
 
 }
