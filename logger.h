@@ -23,6 +23,7 @@
 #include <QDir>
 #include <QDebug>
 #include <QFileInfo>
+#include <iostream>
 
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)

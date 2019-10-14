@@ -309,9 +309,9 @@ void MainWindow::changeEvent(QEvent *event)
         }
         else
         {
-            emit enableGUIFFT(_settings->show_fft);
-            emit enableGUIConst(_settings->show_constellation);
-            emit enableRSSI(_settings->show_controls);
+            emit enableGUIFFT((bool)_settings->show_fft);
+            emit enableGUIConst((bool)_settings->show_constellation);
+            emit enableRSSI((bool)_settings->show_controls);
         }
     }
 
@@ -344,15 +344,14 @@ void MainWindow::showControls(bool value)
 
 void MainWindow::showConstellation(bool value)
 {
+    _settings->show_constellation = (int) value;
     if(value)
     {
         ui->constellationDisplay->show();
-        _settings->show_constellation = 1;
     }
     else
     {
         ui->constellationDisplay->hide();
-        _settings->show_constellation = 0;
     }
     emit enableGUIConst(value);
 }
