@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1250</width>
+    <width>1491</width>
     <height>721</height>
    </rect>
   </property>
@@ -2414,7 +2414,14 @@ font: 10pt &quot;Sans Serif&quot;;</string>
               </widget>
              </item>
              <item row="4" column="1">
-              <widget class="QComboBox" name="audioInputComboBox"/>
+              <widget class="QComboBox" name="audioInputComboBox">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
              </item>
              <item row="10" column="2">
               <widget class="QLabel" name="label_24">
@@ -2507,7 +2514,14 @@ font: 10pt &quot;Sans Serif&quot;;</string>
               </widget>
              </item>
              <item row="3" column="1">
-              <widget class="QComboBox" name="audioOutputComboBox"/>
+              <widget class="QComboBox" name="audioOutputComboBox">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
              </item>
              <item row="1" column="3">
               <widget class="QLineEdit" name="lineEditTXAntenna">
@@ -4601,7 +4615,7 @@ color: rgb(255, 255, 255);</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1250</width>
+     <width>1491</width>
      <height>30</height>
     </rect>
    </property>

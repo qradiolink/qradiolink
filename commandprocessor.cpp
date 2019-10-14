@@ -79,7 +79,7 @@ QStringList CommandProcessor::getCommand(QString message, int &command_index)
 
 bool CommandProcessor::validateCommand(QString message)
 {
-    QRegularExpression re("^[a-zA-Z0-9_]+[\\sa-zA-Z0-9_.]*\\r\\n$");
+    QRegularExpression re("^[a-zA-Z0-9_]+[\\sa-zA-Z0-9_.\\-]*\\r\\n$");
     QRegularExpressionValidator validator(re, 0);
 
     int pos = 0;
@@ -678,6 +678,35 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
         }
         break;
     }
+    case 50:
+        break; // not implemented
+    case 51:
+    {
+        response = QString(
+            "Starting transceiver with RX frequency: %1, TX frequency %2, TX shift %3").arg(
+            _settings->rx_frequency).arg(_settings->rx_frequency).arg(_settings->tx_shift);
+        emit enableGUIFFT(false);
+        emit enableGUIConst(false);
+        emit enableRSSI(false);
+        emit setWaterfallFPS(10);
+        emit enableRelays(_settings->enable_relays);
+        emit enableDuplex(_settings->enable_duplex);
+        emit enableAudioCompressor(_settings->audio_compressor);
+        emit setVolume(_settings->rx_volume);
+        emit setTxVolume(_settings->tx_volume);
+        emit toggleRxModemMode(_settings->rx_mode);
+        emit toggleTxModemMode(_settings->rx_mode);
+        emit toggleRX(true);
+        emit toggleTX(true);
+        break;
+    }
+    case 52:
+    {
+        response = QString("Stopping transceiver");
+        emit toggleRX(false);
+        emit toggleTX(false);
+        break;
+    }
     default:
         break;
     }
@@ -733,11 +762,13 @@ void CommandProcessor::buildCommandList()
     _command_list->append(new command("setrxsamprate", 1, "Set RX sample rate, integer value in Msps"));
     _command_list->append(new command("setautosq", 0, "Set autosquelch"));
     _command_list->append(new command("setfilterwidth", 1, "Set filter width (analog only), integer value in Hz"));
-    _command_list->append(new command("ptton", 0, "Transmit"));
-    _command_list->append(new command("pttoff", 0, "Stop transmitting"));
+    _command_list->append(new command("ptt_on", 0, "Transmit"));
+    _command_list->append(new command("ptt_off", 0, "Stop transmitting"));
     _command_list->append(new command("connectserver", 2, "Connect to Mumble server, string value hostname, integer value port"));
     _command_list->append(new command("disconnectserver", 0, "Disconnect from Mumble server"));
     _command_list->append(new command("changechannel", 1, "Change channel to channel number (integer value)"));
     _command_list->append(new command("mumblemsg", 1, "Send Mumble message, string value text"));
     _command_list->append(new command("mutemumble", 1, "Mute Mumble connection, 1 enabled, 0 disabled"));
+    _command_list->append(new command("start_trx", 0, "Convenience function, requires everything to be preconfigured"));
+    _command_list->append(new command("stop_trx", 0, "Convenience function, requires everything to be preconfigured"));
 }

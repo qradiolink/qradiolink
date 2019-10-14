@@ -1656,7 +1656,7 @@ void RadioController::setRxSensitivity(int value, std::string gain_stage)
 void RadioController::setTxPower(int dbm, std::string gain_stage)
 {
     _settings->tx_power = dbm;
-    _modem->setTxPower((float)dbm/100.0);
+    _modem->setTxPower((float)_settings->tx_power/100.0);
 }
 
 void RadioController::setBbGain(int value)

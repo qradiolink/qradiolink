@@ -104,6 +104,9 @@ int main(int argc, char *argv[])
 
     QApplication a(argc, argv);
     QStringList arguments = QCoreApplication::arguments();
+    bool headless = false;
+    if((arguments.length() > 1) && (arguments.indexOf("-d") != -1))
+        headless = true;
 
     QFontDatabase::addApplicationFont(":/fonts/res/LiquidCrystal-Normal.otf");
     QFontDatabase::addApplicationFont(":/fonts/res/LiquidCrystal-Bold.otf");
@@ -148,18 +151,24 @@ int main(int argc, char *argv[])
     QObject::connect(t3, SIGNAL(finished()), t3, SLOT(deleteLater()));
     t3->start();
 
-    MainWindow *w = new MainWindow(settings, radio_channels);
-    connectGuiSignals(telnet_server, audiowriter, audioreader, w, mumbleclient, radio_op);
-    /// requires the slots to be set up
-    w->initSettings();
-    w->show();
-    if(arguments.length() > 1 && arguments.at(1) == "-f")
+    MainWindow *w;
+    if(!headless)
     {
-        w->showMaximized();
-        w->setWindowFlags( Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
+        w = new MainWindow(settings, radio_channels);
+        connectGuiSignals(telnet_server, audiowriter, audioreader, w, mumbleclient, radio_op);
+        /// requires the slots to be set up
+        w->initSettings();
+        w->show();
+        /*
+        if(arguments.length() > 1 && (arguments.indexOf("-f") != -1))
+        {
+            w->showMaximized();
+            w->setWindowFlags( Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
+        }
+        */
+        w->activateWindow();
+        w->raise();
     }
-    w->activateWindow();
-    w->raise();
 
     connectCommandSignals(telnet_server, mumbleclient, radio_op);
     telnet_server->start();
@@ -186,7 +195,8 @@ int main(int argc, char *argv[])
 
     int ret = a.exec();
 
-    delete w;
+    if(!headless)
+        delete w;
     delete telnet_server;
     delete mumbleclient;
     radio_channels->saveConfig();
