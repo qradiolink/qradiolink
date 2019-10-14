@@ -87,7 +87,7 @@ RadioController::RadioController(Settings *settings, QObject *parent) :
     QObject::connect(_voice_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));
     QObject::connect(_data_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));
     QObject::connect(_data_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));
-    QObject::connect(_voip_tx_timer, SIGNAL(timeout()), this, SLOT(stopTx()));
+    QObject::connect(_voip_tx_timer, SIGNAL(timeout()), this, SLOT(stopVoipTx()));
     QObject::connect(_end_tx_timer, SIGNAL(timeout()), this, SLOT(endTx()));
 
     // FIXME: there is no reason for the modem to use the settings
@@ -278,7 +278,7 @@ void RadioController::run()
 /// this code runs only in startTx and stopTx and setVox
 void RadioController::updateInputAudioStream()
 {
-    if(!_transmitting && !_settings->_vox_enabled)
+    if(_settings->_voip_forwarding || (!_transmitting && !_settings->_vox_enabled))
     {
         emit setAudioReadMode(false, false, AudioProcessor::AUDIO_MODE_ANALOG);
         return;
@@ -349,7 +349,7 @@ void RadioController::processVoipToRadioQueue()
             if(!_voip_tx_timer->isActive())
             {
                 // FIXME: these should be called from the thread loop only
-                startTx();
+                _transmitting = true;
             }
             _voip_tx_timer->start(500);
             txAudio(pcm, 320*sizeof(short), 1, true); // don't loop back to Mumble
@@ -750,6 +750,11 @@ void RadioController::endTx()
     }
     emit displayTransmitStatus(false);
     _settings->_tx_started = false;
+}
+
+void RadioController::stopVoipTx()
+{
+    _transmitting = false;
 }
 
 
@@ -1574,12 +1579,10 @@ void RadioController::setVox(bool value)
     if(!_settings->_vox_enabled)
     {
         _transmitting = false;
-        updateInputAudioStream();
     }
     if(_settings->_vox_enabled)
     {
         _transmitting = true;
-        updateInputAudioStream();
     }
 }
 

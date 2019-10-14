@@ -150,6 +150,7 @@ public slots:
     void startTx();
     void stopTx();
     void endTx();
+    void stopVoipTx();
     void toggleRepeat(bool value);
     void setChannels(ChannelList channels);
     void setStations(StationList list);
