@@ -22,7 +22,7 @@ TelnetServer::TelnetServer(const Settings *settings, QObject *parent) :
     QObject(parent)
 {
     _settings = settings;
-    _command_processor = new CommandProcessor(settings);
+    command_processor = new CommandProcessor(settings);
     _hostaddr = QHostAddress::Any;
     _stop=false;
     _server = new QTcpServer;
@@ -31,7 +31,7 @@ TelnetServer::TelnetServer(const Settings *settings, QObject *parent) :
 TelnetServer::~TelnetServer()
 {
     delete _server;
-    delete _command_processor;
+    delete command_processor;
 }
 
 void TelnetServer::start()
@@ -161,7 +161,7 @@ void TelnetServer::processData()
 
 void TelnetServer::getCommandList(QByteArray &response)
 {
-    QStringList available_commands = _command_processor->listAvailableCommands();
+    QStringList available_commands = command_processor->listAvailableCommands();
     response.append("Available commands are: \n");
     for(int i=0;i<available_commands.length();i++)
     {
@@ -190,14 +190,14 @@ QByteArray TelnetServer::processCommand(QByteArray data, QTcpSocket *socket)
 
     /// poked processor logic:
     QString message = QString::fromLocal8Bit(data);
-    if(!_command_processor->validateCommand(message))
+    if(!command_processor->validateCommand(message))
     {
         QByteArray response("Command not recognized\n");
         getCommandList(response);
         return response;
     }
 
-    QString result = _command_processor->runCommand(message);
+    QString result = command_processor->runCommand(message);
     if(result != "")
     {
         QByteArray response;

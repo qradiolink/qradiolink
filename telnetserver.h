@@ -44,6 +44,8 @@ public:
     explicit TelnetServer(const Settings *settings, QObject *parent = 0);
     ~TelnetServer();
 
+    CommandProcessor *command_processor; // public needed for signals and slots
+
 
 signals:
     void finished();
@@ -62,7 +64,6 @@ private:
     const Settings *_settings;
     QTcpServer *_server;
     QVector<QTcpSocket*> _connected_clients;
-    CommandProcessor *_command_processor;
     QTcpSocket _socket;
     int _status;
     bool _stop;

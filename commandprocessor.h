@@ -101,7 +101,6 @@ signals:
     void setWaterfallFPS(int);
 
 
-
 public slots:
 
 private:
