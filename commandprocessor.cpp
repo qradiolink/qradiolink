@@ -41,7 +41,7 @@ QStringList CommandProcessor::listAvailableCommands()
     for(int i=0;i<_command_list->size();i++)
     {
         list.append("\e[33m" + _command_list->at(i)->action
-                    + QString(" (%1 parameters: %2)").arg(
+                    + QString(" (%1 parameters): %2").arg(
                         _command_list->at(i)->params).arg(_command_list->at(i)->help_msg)
                     + "\e[0m\n");
     }
@@ -53,7 +53,7 @@ QStringList CommandProcessor::getCommand(QString message, int &command_index)
     command_index = -1;
     message = message.trimmed();
     QStringList tokens = message.split(" ");
-    if((tokens.length() > 4) || (tokens.length() < 1))
+    if((tokens.length() > 3) || (tokens.length() < 1))
     {
         QStringList none("");
         return none;
@@ -110,16 +110,16 @@ QString CommandProcessor::runCommand(QString message)
     {
         param2 = tokens.at(2);
     }
-    if(tokens.size() > 3)
-    {
-        param3 = tokens.at(3);
-    }
-
 
     /// Actual command processing
     ///
-    processStatusCommands(command_index, response);
-    processActionCommands(command_index, response);
+    bool success;
+    success = processStatusCommands(command_index, response);
+    if(!success)
+        return "\e[31m" + response + "\e[0m\n";
+    success = processActionCommands(command_index, response, param1, param2);
+    if(!success)
+        return "\e[31m" + response + "\e[0m\n";
 
     if(response.length() < 1)
         return "\e[31mCommand not implemented\e[0m\n";
@@ -190,7 +190,6 @@ bool CommandProcessor::processStatusCommands(int command_index, QString &respons
         {
             response.append("Not connected to VOIP network");
         }
-
         break;
     case 14:
         if(_settings->_voip_forwarding)
@@ -223,14 +222,41 @@ bool CommandProcessor::processStatusCommands(int command_index, QString &respons
     return success;
 }
 
-bool CommandProcessor::processActionCommands(int command_index, QString &response)
+bool CommandProcessor::processActionCommands(int command_index, QString &response,
+                                             QString param1, QString param2)
 {
     bool success = true;
     switch (command_index) {
     case 18:
+    {
+        int set = param1.toInt();
+        if(set != 0 && set !=1)
+        {
+            response = "Parameter value is not supported";
+            success = false;
+        }
+        else
+        {
+            response = "Turning on/off receiver";
+            emit toggleRX(set);
+        }
         break;
+    }
     case 19:
+    {
+        int set = param1.toInt();
+        if(set != 0 && set !=1)
+        {
+            response = "Parameter value is not supported";
+            success = false;
+        }
+        else
+        {
+            response = "Turning on/off transmitter";
+            emit toggleTX(set);
+        }
         break;
+    }
     default:
         break;
     }
@@ -260,6 +286,8 @@ void CommandProcessor::buildCommandList()
     _command_list->append(new command("duplexstatus", 0, "Get duplex status"));
 
     /// action commands
+    _command_list->append(new command("setrx", 1, "Start/stop receiver, 1 enabled, 0 disabled"));
+    _command_list->append(new command("settx", 1, "Start/stop transmitter, 1 enabled, 0 disabled"));
     _command_list->append(new command("setrxmode", 1, "Set RX mode (integer number, 0-16)"));
     _command_list->append(new command("settxmode", 1, "Set TX mode (integer number, 0-16)"));
     _command_list->append(new command("setsquelch", 1, "Set squelch (integer number, -150 to 10)"));
@@ -275,8 +303,6 @@ void CommandProcessor::buildCommandList()
     _command_list->append(new command("setforwarding", 1, "Set radio forwarding mode, 1 enabled, 0 disabled"));
     _command_list->append(new command("setrepeater", 1, "Set repeater mode, 1 enabled, 0 disabled"));
     _command_list->append(new command("setvox", 1, "Set vox mode, 1 enabled, 0 disabled"));
-    _command_list->append(new command("setrx", 1, "Start/stop receiver, 1 enabled, 0 disabled"));
-    _command_list->append(new command("settx", 1, "Start/stop transmitter, 1 enabled, 0 disabled"));
     _command_list->append(new command("ptton", 0, "Transmit"));
     _command_list->append(new command("pttoff", 0, "Stop transmitting"));
 

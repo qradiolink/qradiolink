@@ -163,22 +163,53 @@ $ telnet localhost 4939
 Trying ::1...
 Connected to localhost.
 Escape character is '^]'.
-Welcome! Available commands are: 
-rxstatus
-txstatus
-txactive
-rxstatus
+rxstatus (0 parameters): Status of receiver (started or not)
+txstatus (0 parameters): Status of transmitter (started or not)
+txactive (0 parameters): See if the radio is on the air
+rxmode (0 parameters): Get RX operating mode
+txmode (0 parameters): Get TX operating mode
+rxctcss (0 parameters): Get RX CTCSS
+txctcss (0 parameters): Get TX CTCSS
+rxvolume (0 parameters): Get RX volume value
+txvolume (0 parameters): Get TX volume value
+squelch (0 parameters): Get squelch value
+rxgain (0 parameters): Get RX gain value
+txgain (0 parameters): Get TX gain value
+rssi (0 parameters): Not implemented
+voipstatus (0 parameters): Get VOIP status
+forwardingstatus (0 parameters): Get radio forwarding status
+voxstatus (0 parameters): Get VOX status
+repeaterstatus (0 parameters): Get repeater status
+duplexstatus (0 parameters): Get duplex status
+setrx (1 parameters): Start/stop receiver, 1 enabled, 0 disabled
+settx (1 parameters): Start/stop transmitter, 1 enabled, 0 disabled
+setrxmode (1 parameters): Set RX mode (integer number, 0-16)
+settxmode (1 parameters): Set TX mode (integer number, 0-16)
+setsquelch (1 parameters): Set squelch (integer number, -150 to 10)
+setrxvolume (1 parameters): Set RX volume (integer number, 0 to 100)
+settxvolume (1 parameters): Set TX volume (integer number, 0 to 100)
+setrxgain (1 parameters): Set RX gain (integer number, 0 to 99)
+settxgain (1 parameters): Set TX gain (integer number, 0 to 99)
+tunerx (1 parameters): Tune RX frequency, integer value in Hertz
+setoffset (1 parameters): Set demodulator offset, integer value in Hertz
+setshift (1 parameters): Set TX shift, integer value in Hertz
+setduplex (1 parameters): Set duplex mode, 1 enabled, 0 disabled
+setautosq (0 parameters): Set autosquelch
+setforwarding (1 parameters): Set radio forwarding mode, 1 enabled, 0 disabled
+setrepeater (1 parameters): Set repeater mode, 1 enabled, 0 disabled
+setvox (1 parameters): Set vox mode, 1 enabled, 0 disabled
+ptton (0 parameters): Transmit
+pttoff (0 parameters): Stop transmitting
+
+qradiolink> rxstatus
 RX status is inactive.
-rxstatus
-RX status is active.
-txstatus
-TX status is inactive.
-txstatus
-TX status is active.
-txactive
-Not transmitting.
-txactive
-Currently transmitting.
+
+qradiolink> setrx 1
+Turning on/off receiver
+
+qradiolink> setrx 0
+Turning on/off receiver
+
 Server is stopping now.
 Connection closed by foreign host.
 </pre>
