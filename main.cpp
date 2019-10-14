@@ -263,6 +263,10 @@ void connectCommandSignals(TelnetServer *telnet_server, MumbleClient *mumbleclie
                      radio_op,SLOT(textData(QString, bool)));
     QObject::connect(telnet_server->command_processor,SIGNAL(newMumbleMessage(QString)),
                      mumbleclient,SLOT(newMumbleMessage(QString)));
+    QObject::connect(telnet_server->command_processor,SIGNAL(newCommandMessage(QString,int)),
+                     mumbleclient,SLOT(newCommandMessage(QString,int)));
+    QObject::connect(mumbleclient,SIGNAL(commandMessage(QString,int)),
+                     telnet_server->command_processor,SLOT(parseMumbleMessage(QString,int)));
 }
 
 

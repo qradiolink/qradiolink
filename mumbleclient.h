@@ -60,6 +60,7 @@ signals:
     void leftStation(Station*);
     void channelReady(int chan_number);
     void textMessage(QString msg, bool html);
+    void commandMessage(QString msg, int sender_id);
     void userSound(Station* s);
     void userSpeaking(quint64 id);
     
@@ -85,6 +86,7 @@ public slots:
     void setMute(bool mute);
     void logMessage(QString log_msg);
     void newMumbleMessage(QString msg);
+    void newCommandMessage(QString msg, int to_id);
 
 private:
     void sendUDPMessage(quint8 *message, int size);

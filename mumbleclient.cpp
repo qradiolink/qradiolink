@@ -528,6 +528,18 @@ void MumbleClient::setMute(bool mute)
     sendMessage(mdata,9,msize);
 }
 
+void MumbleClient::newCommandMessage(QString msg, int to_id)
+{
+    MumbleProto::TextMessage tm;
+    tm.set_actor(_session_id);
+    tm.add_session(to_id);
+    tm.set_message(msg.toStdString());
+    int msize = tm.ByteSize();
+    quint8 mdata[msize];
+    tm.SerializeToArray(mdata,msize);
+    sendMessage(mdata,11,msize);
+}
+
 void MumbleClient::newMumbleMessage(QString text)
 {
     MumbleProto::TextMessage tm;
@@ -545,12 +557,15 @@ void MumbleClient::processTextMessage(quint8 *message, quint64 size)
     MumbleProto::TextMessage tm;
     tm.ParseFromArray(message,size);
     QString sender = "None";
+    int sender_id = -1;
+    bool channel_msg = (tm.channel_id_size() > 0);
     for(int i =0;i<_stations.size();i++)
     {
         Station *s = _stations.at(i);
         if(s->id == tm.actor())
         {
             sender = s->callsign;
+            sender_id = s->id;
             break;
         }
     }
@@ -558,6 +573,8 @@ void MumbleClient::processTextMessage(quint8 *message, quint64 size)
     QString msg("\n<br/><b>%1</b>: %2<br/>\n");
     msg = msg.arg(sender).arg(text);
     emit textMessage(msg, true);
+    if(_settings->remote_control && !channel_msg)
+        emit commandMessage(text, sender_id);
 }
 
 void MumbleClient::processPCMAudio(short *audiobuffer, int audiobuffersize)

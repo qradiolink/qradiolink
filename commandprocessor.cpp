@@ -35,6 +35,47 @@ CommandProcessor::~CommandProcessor()
 }
 
 
+void CommandProcessor::parseMumbleMessage(QString message, int sender_id)
+{
+    if(sender_id < 0)
+        return;
+    if((message == "help") || (message == "?"))
+    {
+        QString response("Available commands:\n");
+        QStringList available_commands = listAvailableCommands();
+        for(int i=0;i<available_commands.length();i++)
+        {
+            response.append(available_commands.at(i));
+        }
+        emit newCommandMessage(response,sender_id);
+        return;
+    }
+
+    if(!validateCommand(message))
+    {
+        QString response("Command not recognized\n");
+        emit newCommandMessage(response,sender_id);
+        return;
+    }
+
+    QString result = runCommand(message, true);
+    if(result != "")
+    {
+        QString response;
+        response.append(result);
+        response.append("\n");
+        emit newCommandMessage(response,sender_id);
+        return;
+    }
+    else
+    {
+        QString response("Command not processed\n");
+        emit newCommandMessage(response,sender_id);
+        return;
+    }
+}
+
+
 QStringList CommandProcessor::listAvailableCommands()
 {
     QStringList list;
@@ -79,7 +120,7 @@ QStringList CommandProcessor::getCommand(QString message, int &command_index)
 
 bool CommandProcessor::validateCommand(QString message)
 {
-    QRegularExpression re("^[a-zA-Z0-9_]+[\\sa-zA-Z0-9_.\\-]*\\r\\n$");
+    QRegularExpression re("^[a-zA-Z0-9_]+[\\sa-zA-Z0-9_.\\-]*\\r?\\n?$");
     QRegularExpressionValidator validator(re, 0);
 
     int pos = 0;
@@ -99,7 +140,7 @@ bool CommandProcessor::validateCommand(QString message)
     return true;
 }
 
-QString CommandProcessor::runCommand(QString message)
+QString CommandProcessor::runCommand(QString message, bool mumble)
 {
     int command_index;
     QString response;
@@ -124,15 +165,32 @@ QString CommandProcessor::runCommand(QString message)
     bool success;
     success = processStatusCommands(command_index, response);
     if(!success)
-        return "\e[31m" + response + "\e[0m\n";
+    {
+        if(mumble)
+            return response;
+        else
+            return "\e[31m" + response + "\e[0m\n";
+    }
     success = processActionCommands(command_index, response, param1, param2, param3);
     if(!success)
-        return "\e[31m" + response + "\e[0m\n";
+    {
+        if(mumble)
+            return response;
+        else
+            return "\e[31m" + response + "\e[0m\n";
+    }
 
     if(response.length() < 1)
-        return "\e[31mCommand not implemented\e[0m\n";
-
-    return "\e[32m" + response + "\e[0m\n";
+    {
+        if(mumble)
+            return "Command not implemented\n";
+        else
+            return "\e[31mCommand not implemented\e[0m\n";
+    }
+    if(mumble)
+        return response;
+    else
+        return "\e[32m" + response + "\e[0m\n";
 }
 
 bool CommandProcessor::processStatusCommands(int command_index, QString &response)
@@ -716,6 +774,7 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
             _settings->rx_frequency).arg(_settings->rx_frequency).arg(_settings->tx_shift);
         emit enableGUIFFT(false);
         emit enableGUIConst(false);
+        emit enableRSSI(true);
         emit setWaterfallFPS(10);
         emit toggleRX(true);
         emit toggleTX(true);

@@ -34,7 +34,7 @@ public:
     ~CommandProcessor();
     QStringList listAvailableCommands();
     bool validateCommand(QString message);
-    QString runCommand(QString message);
+    QString runCommand(QString message, bool mumble=false);
     void buildCommandList();
 
 signals:
@@ -90,6 +90,7 @@ signals:
     void changeChannel(int id);
     void setMute(bool value);
     void newMumbleMessage(QString text);
+    void newCommandMessage(QString text, int to_id);
 
     //void stopRadio();
 
@@ -102,6 +103,7 @@ signals:
 
 
 public slots:
+    void parseMumbleMessage(QString message, int sender_id);
 
 private:
     struct command
