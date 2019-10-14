@@ -731,6 +731,7 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
     case 52:
     {
         response = QString("Stopping transceiver");
+        emit endTransmission(); // just in case
         emit toggleRX(false);
         emit toggleTX(false);
         break;

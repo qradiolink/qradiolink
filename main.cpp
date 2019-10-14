@@ -38,7 +38,6 @@
 #include "logger.h"
 
 
-
 void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
                        AudioReader *audioreader, MainWindow *w, MumbleClient *mumbleclient,
                        RadioController *radio_op);
@@ -49,6 +48,10 @@ void connectCommandSignals(TelnetServer *telnet_server, MumbleClient *mumbleclie
 int main(int argc, char *argv[])
 {
 
+    std::string start_time= QDateTime::currentDateTime().toString(
+                "d/MMM/yyyy hh:mm:ss").toStdString();
+    std::cout << "Starting qradiolink instance: " << start_time << std::endl;
+
     typedef QVector<Station*> StationList;
     qRegisterMetaType<StationList>("StationList");
     typedef QVector<MumbleChannel*> ChannelList;
@@ -58,9 +61,6 @@ int main(int argc, char *argv[])
     typedef std::vector<std::string> string_vector;
     qRegisterMetaType<string_vector>("string_vector");
 
-    std::string start_time= QDateTime::currentDateTime().toString(
-                "d/MMM/yyyy hh:mm:ss").toStdString();
-    std::cout << "Starting qradiolink instance: " << start_time << std::endl;
 
     QApplication a(argc, argv);
     QStringList arguments = QCoreApplication::arguments();
@@ -69,6 +69,8 @@ int main(int argc, char *argv[])
         headless = true;
 
 
+    /// Init main logic
+    ///
     Settings *settings = new Settings;
     settings->readConfig();
     RadioChannels *radio_channels = new RadioChannels;
@@ -79,6 +81,8 @@ int main(int argc, char *argv[])
     AudioReader *audioreader = new AudioReader(settings);
     TelnetServer *telnet_server = new TelnetServer(settings);
 
+    /// Init threads
+    ///
     QThread *t1 = new QThread;
     t1->setObjectName("radioop");
     radio_op->moveToThread(t1);
@@ -109,6 +113,8 @@ int main(int argc, char *argv[])
     MainWindow *w;
     if(!headless)
     {
+        /// Init GUI
+        ///
         w = new MainWindow(settings, radio_channels);
         connectGuiSignals(telnet_server, audiowriter, audioreader, w, mumbleclient, radio_op);
         /// requires the slots to be set up
@@ -125,11 +131,11 @@ int main(int argc, char *argv[])
         w->raise();
     }
 
+    /// Connect non-GUI signals
+    ///
     connectCommandSignals(telnet_server, mumbleclient, radio_op);
-    if(headless)
-        telnet_server->start();
 
-    /// Independent of GUI or remote interface
+    /// Signals independent of GUI or remote interface
     QObject::connect(radio_op, SIGNAL(writePCM(short*,int,bool,int)),
                      audiowriter, SLOT(writePCM(short*,int,bool, int)));
     QObject::connect(radio_op, SIGNAL(setAudioReadMode(bool,bool,int)),
@@ -149,8 +155,13 @@ int main(int argc, char *argv[])
                      radio_op,SLOT(setStations(StationList)));
 
 
+    /// Start remote command listener
+    if(headless)
+        telnet_server->start();
     int ret = a.exec();
 
+    /// Cleanup on exit
+    ///
     if(!headless)
         delete w;
     delete telnet_server;
