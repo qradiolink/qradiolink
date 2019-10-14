@@ -21,6 +21,9 @@ RadioController::RadioController(Settings *settings, QObject *parent) :
     QObject(parent)
 {
     _settings = settings;
+    // FIXME: there is no reason for the modem to use the settings
+    // All control happens in the radioop or main thread
+    _modem = new gr_modem(settings);
     _codec = new AudioEncoder;
     _radio_protocol = new RadioProtocol;
     _relay_controller = new RelayController;
@@ -90,10 +93,8 @@ RadioController::RadioController(Settings *settings, QObject *parent) :
     QObject::connect(_voip_tx_timer, SIGNAL(timeout()), this, SLOT(stopVoipTx()));
     QObject::connect(_end_tx_timer, SIGNAL(timeout()), this, SLOT(endTx()));
 
-    // FIXME: there is no reason for the modem to use the settings
-    // All control happens in the radioop or main thread
-    _modem = new gr_modem(_settings);
-
+    /// Modem connections
+    ///
     QObject::connect(_modem,SIGNAL(textReceived(QString)),this,SLOT(textReceived(QString)));
     QObject::connect(_modem,SIGNAL(repeaterInfoReceived(QByteArray)),this,SLOT(repeaterInfoReceived(QByteArray)));
     QObject::connect(_modem,SIGNAL(callsignReceived(QString)),this,SLOT(callsignReceived(QString)));
@@ -348,7 +349,6 @@ void RadioController::processVoipToRadioQueue()
         {
             if(!_voip_tx_timer->isActive())
             {
-                // FIXME: these should be called from the thread loop only
                 _transmitting = true;
             }
             _voip_tx_timer->start(500);

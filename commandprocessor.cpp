@@ -717,13 +717,6 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
         emit enableGUIFFT(false);
         emit enableGUIConst(false);
         emit setWaterfallFPS(10);
-        emit enableRelays((bool)_settings->enable_relays);
-        emit enableDuplex((bool)_settings->enable_duplex);
-        emit enableAudioCompressor((bool)_settings->audio_compressor);
-        emit setVolume(_settings->rx_volume);
-        emit setTxVolume(_settings->tx_volume);
-        emit toggleRxModemMode(_settings->rx_mode);
-        emit toggleTxModemMode(_settings->rx_mode);
         emit toggleRX(true);
         emit toggleTX(true);
         break;
