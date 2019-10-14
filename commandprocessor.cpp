@@ -40,11 +40,15 @@ QStringList CommandProcessor::listAvailableCommands()
     QStringList list;
     for(int i=0;i<_command_list->size();i++)
     {
-        list.append("\e[33m" + _command_list->at(i)->action
+        list.append("\e[34m" + _command_list->at(i)->action + "\e[0m\e[32m"
                     + QString(" (%1 parameters): %2").arg(
                         _command_list->at(i)->params).arg(_command_list->at(i)->help_msg)
                     + "\e[0m\n");
     }
+    list.append("\e[34mhelp\e[0m\n");
+    list.append("\e[34m?\e[0m\n");
+    list.append("\e[34mexit\e[0m\n");
+    list.append("\e[34mquit\e[0m\n");
     return list;
 }
 

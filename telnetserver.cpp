@@ -201,13 +201,18 @@ QByteArray TelnetServer::processCommand(QByteArray data, QTcpSocket *socket)
         QByteArray eof("EOF");
         return eof;
     }
+    if((message == "help\r\n") || (message == "?\r\n"))
+    {
+        QByteArray response("Available commands:\n");
+        getCommandList(response);
+        return response;
+    }
 
     /// poked processor logic:
 
     if(!command_processor->validateCommand(message))
     {
-        QByteArray response("Command not recognized\n");
-        getCommandList(response);
+        QByteArray response("\e[31mCommand not recognized\e[0m\n");
         return response;
     }
 
