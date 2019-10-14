@@ -246,7 +246,7 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
         else
         {
             QString on = (set ==0) ? "off" : "on";
-            response = QString("Turning %1 transmitter").arg(on);
+            response = QString("Turning %1 receiver").arg(on);
             emit toggleRX((bool)set);
         }
         break;
