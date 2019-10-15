@@ -26,9 +26,10 @@ Features
 - VOIP (Radio-over-IP) connection between two or more stations operating in simplex or semi-duplex mode
 - Radio forwarding over VOIP - forward voice to the VOIP connection and viceversa
 - Direct VOIP talk-around (only requires connection to a VOIP server and no radio)
+- Wideband digital voice streaming over the Internet with the **Opus** audio codec
 - Remote control via network (requires a telnet client or similar program, can be scripted)
 - Remote control via Mumble private text messages
-- Run headless (no graphical user interface) for usage on embedded platforms like the Raspberry Pi or similar boards without any screen
+- Run headless (no graphical user interface) for terminal usage on embedded platforms like the Raspberry Pi or similar boards without any screen
 - Transmit and receive analog FM, SSB, AM, digital voice, text messages, digital video, IP protocol.
 - Mixed operation mode (receive one mode and transmit another)
 - Full duplex and simplex operation
@@ -45,7 +46,7 @@ Features
 - VOX mode
 - Analog and digital mode repeater - in full duplex mode only, same mode or mixed mode repeater (e.g. FM to Codec2 and viceversa, or FM to Opus and viceversa)
 - Repeater linking via VOIP and Mumble - a group of repeaters can be linked by sharing the same Mumble channel. This feature is still experimental and WIP.
-- USB FTDI relay support
+- USB FTDI relay control support
 - Full duplex 250 kbit/s IP radio modem with configurable TX/RX offsets
 - Automatic carrier tracking and Doppler effect correction for all digital modes except FreeDV modes. The system can track Doppler shifts of 5-10 kHz, depending on mode. It requires a CNR of at least 10-12 dB, more for FSK modes than for PSK modes.
 - Supported hardware: [**Ettus USRP bus devices**](https://ettus.com), [**RTL-SDR**](https://osmocom.org/projects/sdr/wiki/rtl-sdr), [**ADALM-Pluto (PlutoSDR)**](https://www.analog.com/en/design-center/evaluation-hardware-and-software/evaluation-boards-kits/adalm-pluto.html), (supported with SoapySDR and [**SoapyPlutoSDR**](https://github.com/pothosware/SoapyPlutoSDR)), [**LimeSDR-mini**](https://www.crowdsupply.com/lime-micro/limesdr-mini) (partly supported, through SoapySDR), BladeRF, other devices supported by [**gr-osmosdr**](https://osmocom.org/projects/sdr/wiki/GrOsmoSDR) like HackRF and RedPitaya (not tested)
@@ -101,6 +102,7 @@ Building the software from source
 <pre>
 $ git clone https://github.com/kantooon/qradiolink
 $ cd qradiolink/
+$ git checkout master
 $ sh ./build_debian.sh
 </pre>
 
@@ -114,6 +116,7 @@ Or alternatively:
 <pre>
 git clone https://github.com/kantooon/qradiolink
 cd qradiolink/
+git checkout master
 mkdir -p build
 cd ext/
 protoc --cpp_out=. Mumble.proto
@@ -136,7 +139,7 @@ Setup and running
 - High sample rates, high FPS rates and high FFT sizes all affect the CPU performance adversely. On embedded platforms with low resources, you can disable the spectrum display completely using the FFT checkbox. The FPS value also sets the rate at which the S-meter and constellation display are updated, so reduce it to minimum usable values. If the controls menu is not visible, the S-meter display will not consume CPU resources. Similar for the Constellation display.
 - You can only transmit when you have selected a sample rate of 1 Msps (1000000). Other sample rates are for receiving only (except if you are using two different devices for receive and transmit). This is a hardware limitation on most devices because the transmit sample rate is fixed at 1 Msps to save CPU resources and most hardware cannot cope with two sample rates simultaneously.
 - Filter widths for reception and transmission of the analog modes (FM, SSB, AM) are configurable. To increase or decrease them, drag the margins of the filter box on the spectrum display.
-- VOIP uses [umurmur](https://github.com/umurmur/umurmur) as a server. A version known to work with qradiolink is mirrored at [qradiolink](https://github.com/qradiolink/umurmur)  You can use QRadioLink as a pure VOIP client without using the radio by selecting "Use PTT for VOIP". For radio over IP operation, you need to toggle "Forward radio" to send the digital or analog radio voice to the VOIP server and viceversa. Any voice packets coming from the server will be transmitted directly after transcoding in this case. Currently full duplex audio from more than one VOIP client at the same time is not supported. The **Mumble** application can now receive and talk to QRadioLink normally. You should enable **Push To Talk** in Mumble and maximize the network robustness settings. Text messages from Mumble are displayed inside the application, but no action is taken on them (yet). Text messages can also be sent to the current Mumble channel.
+- VOIP uses [umurmur](https://github.com/umurmur/umurmur) as a server. A version known to work with qradiolink is mirrored at [qradiolink](https://github.com/qradiolink/umurmur)  You can use QRadioLink as a pure VOIP client without using the radio by selecting "Use PTT for VOIP". For radio over IP operation, you need to toggle "Forward radio" to send the digital or analog radio voice to the VOIP server and viceversa. Any voice packets coming from the server will be transmitted directly after transcoding in this case. Currently full duplex audio from more than one VOIP client at the same time is not supported. The **Mumble** application can now receive and talk to QRadioLink normally. You should enable **Push To Talk** in Mumble and maximize the network robustness settings. Text messages from Mumble are displayed inside the application, but no action is taken for channel-wide messages. Text messages can also be sent to the current Mumble channel. If remote control is enabled, private Mumble text messages will control the radio.
 The Mumble VOIP connection uses the Opus codec at a higher bitrate, so ensure the server can handle bitrates up to 50 kbit/s per client.
 - The VOIP username will be your callsign, plus a number of 4 random characters allowing you to use multiple clients on the same server. VOIP password is not yet supported.
 - Remote control via Mumble private text messages requires enabling remote control in settings, and using the Mumble client to send text messages to the QRadioLink username. Text messages sent to the channel will be ignored by the application. Authentication of user is not yet implemented.
