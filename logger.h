@@ -35,7 +35,7 @@ void logMessage(QtMsgType type, const char *msg);
 class Logger
 {
 public:
-    Logger();
+    explicit Logger();
 };
 
 #endif // LOGGER_H

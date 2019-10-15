@@ -29,7 +29,7 @@
 class Settings
 {
 public:
-    Settings();
+    explicit Settings();
     QFileInfo *setupConfig();
     void readConfig();
     void saveConfig();
@@ -80,7 +80,6 @@ public:
     int agc_decay;
 
     /// Not saved to config:
-
 
     /// Used by both radio-op/mumbleclient and remote interface
     bool _rx_inited;

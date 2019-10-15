@@ -748,7 +748,7 @@ void MainWindow::newFFTData(float *fft_data, int fftsize)
     {
         _realFftData[i] = fft_data[i];
         // FFT averaging
-        if(_settings->fft_averaging < 1.0f)
+        if(_settings->fft_averaging < 0.99f)
             _iirFftData[i] += _settings->fft_averaging * (_realFftData[i] - _iirFftData[i]);
         else
             _iirFftData[i] = _realFftData[i];
