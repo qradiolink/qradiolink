@@ -532,6 +532,11 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
             response = "Parameter value is not supported";
             success = false;
         }
+        else if(!_settings->enable_duplex)
+        {
+            response = "Repeater mode can only function in duplex mode";
+            success = false;
+        }
         else
         {
             response = QString("Setting repeater to %1").arg(set);
