@@ -206,10 +206,10 @@ private:
     QElapsedTimer *_const_read_timer;
     QElapsedTimer *_rssi_read_timer;
     QElapsedTimer *_scan_timer;
-    QVector<short> *_voip_to_radio_queue;
+    QVector<short> *_to_radio_queue;
     unsigned char *_rand_frame_data;
     float *_fft_data;
-    QVector<short> *_voip_encode_buffer;
+    QVector<short> *_to_voip_buffer;
     QByteArray *_data_rec_sound;
     QByteArray *_end_rec_sound;
     QList<radiochannel*> _memory_channels;

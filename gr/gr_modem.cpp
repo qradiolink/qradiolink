@@ -21,9 +21,8 @@ gr_modem::gr_modem(const Settings *settings, QObject *parent) :
 {
     _modem_type_rx = gr_modem_types::ModemTypeBPSK2000;
     _modem_type_tx = gr_modem_types::ModemTypeBPSK2000;
-    _repeater = false;
+    _direct_mode_repeater = false;
     _settings = settings;
-    _transmitting = false;
     _rx_frame_length = 7;
     _tx_frame_length = 7;
     _bit_buf_len = 8 *8;
@@ -34,8 +33,6 @@ gr_modem::gr_modem(const Settings *settings, QObject *parent) :
     _shift_reg = 0;
     _last_frame_type = FrameTypeNone;
     _current_frame_type = FrameTypeNone;
-    _frequency_found =0;
-    _requested_frequency_hz = 433500000;
     _gr_mod_base = 0;
     _gr_demod_base = 0;
 
@@ -54,7 +51,7 @@ void gr_modem::initTX(int modem_type, std::string device_args, std::string devic
 {
     _modem_type_tx = modem_type;
     _gr_mod_base = new gr_mod_base(
-                0, _requested_frequency_hz, 0.5, device_args, device_antenna, freq_corr);
+                0, 433500000, 0.5, device_args, device_antenna, freq_corr);
     toggleTxMode(modem_type);
 
 }
@@ -63,7 +60,7 @@ void gr_modem::initRX(int modem_type, std::string device_args, std::string devic
 {
     _modem_type_rx = modem_type;
     _gr_demod_base = new gr_demod_base(
-                0, _requested_frequency_hz, 0.9, device_args, device_antenna, freq_corr);
+                0, 433500000, 0.9, device_args, device_antenna, freq_corr);
     toggleRxMode(modem_type);
 
 }
@@ -404,9 +401,12 @@ void gr_modem::enableDemod(bool value)
 /// End of proxy methods (for refactor)
 ///
 
+
+/// allows audio to bypass RadioController transcoding and loop
+/// back directly to radio
 void gr_modem::setRepeater(bool value)
 {
-    _repeater = value;
+    _direct_mode_repeater = value;
 }
 
 void gr_modem::sendCallsign(QString callsign)
@@ -434,7 +434,6 @@ void gr_modem::sendCallsign(QString callsign)
 
 void gr_modem::startTransmission(QString callsign)
 {
-    _transmitting = true;
     std::vector<unsigned char> *tx_start = new std::vector<unsigned char>;
     for(int i = 0;i<_tx_frame_length*2;i++)
     {
@@ -450,7 +449,6 @@ void gr_modem::startTransmission(QString callsign)
 void gr_modem::endTransmission(QString callsign)
 {
     _frame_counter = 0;
-    _transmitting = false;
     sendCallsign(callsign);
     std::vector<unsigned char> *tx_end = new std::vector<unsigned char>;
     tx_end->push_back(0x4C);
@@ -674,7 +672,7 @@ bool gr_modem::demodulateAnalog()
     audio_data = _gr_demod_base->getAudio();
     if(audio_data->size() > 0)
     {
-        if(_repeater)
+        if(_direct_mode_repeater)
         {
             std::vector<float> *repeated_audio = new std::vector<float>(audio_data->begin(),audio_data->end());
             transmitPCMAudio(repeated_audio);
@@ -762,14 +760,10 @@ bool gr_modem::synchronize(int v_size, std::vector<unsigned char> *data)
                 _bit_buf_index = 0;
                 continue;
             }
-            if(_frequency_found > 0)
-                _frequency_found--; // substract one bit
         }
         if(_sync_found)
         {
             data_to_process = true;
-            if(_frequency_found < 255)
-                _frequency_found += 1; // 80 bits + counter
             _bit_buf[_bit_buf_index] =  (data->at(i)) & 0x1;
             _bit_buf_index++;
             int frame_length = _rx_frame_length;
@@ -891,7 +885,7 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
             }
         }
         QString text = QString::fromLocal8Bit(text_data,string_length);
-        if(_repeater)
+        if(_direct_mode_repeater)
         {
             textData(text);
         }
@@ -912,7 +906,7 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
         memcpy(text_data, received_data, 7);
 
         QString callsign = QString::fromLocal8Bit(text_data,7);
-        if(_repeater)
+        if(_direct_mode_repeater)
         {
             sendCallsign(callsign);
         }
@@ -929,7 +923,7 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
             memcpy(codec2_data, received_data, _rx_frame_length);
         else
             memcpy(codec2_data, received_data+1, _rx_frame_length);
-        if(_repeater)
+        if(_direct_mode_repeater)
         {
             unsigned char *repeated_frame = new unsigned char[_rx_frame_length];
             memcpy(repeated_frame, codec2_data, _rx_frame_length);

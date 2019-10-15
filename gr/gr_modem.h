@@ -55,8 +55,7 @@ public:
     // FIXME: there is no reason for the modem to use the settings
     explicit gr_modem(const Settings *settings, QObject *parent = 0);
     ~gr_modem();
-    long _frequency_found;
-    long _requested_frequency_hz;
+
     bool demodulateAnalog();
     void sendCallsign(QString callsign);
 
@@ -142,9 +141,7 @@ private:
 
     long _bit_buf_index;
     int _bit_buf_len;
-    quint64 _sequence_number;
-    bool _transmitting;
-    bool _repeater;
+    bool _direct_mode_repeater;
     int _modem_type_rx;
     int _modem_type_tx;
     int _tx_frame_length;

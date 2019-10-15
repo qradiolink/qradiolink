@@ -291,6 +291,7 @@ bool CommandProcessor::processStatusCommands(int command_index, QString &respons
 bool CommandProcessor::processActionCommands(int command_index, QString &response,
                                              QString param1, QString param2, QString param3)
 {
+    Q_UNUSED(param3);
     bool success = true;
     switch (command_index) {
     case 18:

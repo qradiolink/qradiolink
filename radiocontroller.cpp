@@ -30,7 +30,7 @@ RadioController::RadioController(Settings *settings, QObject *parent) :
     _video = new VideoEncoder;
     _net_device = new NetDevice(0, _settings->ip_address);
     _mutex = new QMutex;
-    _voip_to_radio_queue = new QVector<short>;
+    _to_radio_queue = new QVector<short>;
 
     _voip_tx_timer = new QTimer(this);
     _voip_tx_timer->setSingleShot(true);
@@ -82,7 +82,7 @@ RadioController::RadioController(Settings *settings, QObject *parent) :
     _data_led_timer = new QTimer(this);
     _data_led_timer->setSingleShot(true);
     _rand_frame_data = new unsigned char[5000];
-    _voip_encode_buffer = new QVector<short>;
+    _to_voip_buffer = new QVector<short>;
     _fft_data = new float[1024*1024];
 
     setCallsign();
@@ -146,10 +146,10 @@ RadioController::~RadioController()
     delete _end_tx_timer;
     delete _modem;
     delete[] _rand_frame_data;
-    _voip_encode_buffer->clear();
-    delete _voip_encode_buffer;
-    _voip_to_radio_queue->clear();
-    delete _voip_to_radio_queue;
+    _to_voip_buffer->clear();
+    delete _to_voip_buffer;
+    _to_radio_queue->clear();
+    delete _to_radio_queue;
     delete _relay_controller;
     delete _end_rec_sound;
     delete _data_rec_sound;
@@ -322,30 +322,30 @@ void RadioController::flushRadioToVoipBuffer()
 {
 
     /// Large size of frames (120 ms) helps Mumble client
-    if(_voip_encode_buffer->size() >= 960)
+    if(_to_voip_buffer->size() >= 960)
     {
 
         short *pcm = new short[960];
         for(int i =0; i< 960;i++)
         {
-            pcm[i] = _voip_encode_buffer->at(i);
+            pcm[i] = _to_voip_buffer->at(i);
         }
 
         emit voipDataPCM(pcm,960*sizeof(short));
-        _voip_encode_buffer->remove(0,960);
+        _to_voip_buffer->remove(0,960);
     }
 }
 
 void RadioController::processVoipToRadioQueue()
 {
-    if(_voip_to_radio_queue->size() >= 320)
+    if(_to_radio_queue->size() >= 320)
     {
         short *pcm = new short[320];
         for(unsigned int i = 0;i<320;i++)
         {
-            pcm[i] = (short)((float)_voip_to_radio_queue->at(i) * _rx_volume);
+            pcm[i] = (short)((float)_to_radio_queue->at(i) * _rx_volume);
         }
-        if(_settings->_voip_forwarding)
+        if(_settings->_voip_forwarding || _settings->_repeater_enabled)
         {
             if(!_voip_tx_timer->isActive())
             {
@@ -361,7 +361,7 @@ void RadioController::processVoipToRadioQueue()
             audioFrameReceived();
         }
         _last_voiced_frame_timer.restart();
-        _voip_to_radio_queue->remove(0,320);
+        _to_radio_queue->remove(0,320);
     }
 }
 
@@ -392,7 +392,7 @@ void RadioController::txAudio(short *audiobuffer, int audiobuffer_size,
 
         for(unsigned int i=0;i< (unsigned int)audiobuffer_size/sizeof(short);i++)
         {
-            _voip_encode_buffer->push_back(audiobuffer[i] * _tx_volume);
+            _to_voip_buffer->push_back(audiobuffer[i] * _tx_volume);
         }
     }
 
@@ -737,7 +737,6 @@ void RadioController::stopTx()
 
 void RadioController::endTx()
 {
-
     _modem->setTxPower(0.01);
     _modem->flushSources();
     /// On the LimeSDR mini, whenever I call setTxPower I get a brief spike of the LO
@@ -812,8 +811,6 @@ bool RadioController::getDemodulatorData()
 
 void RadioController::getRSSI()
 {
-
-
     qint64 msec = (quint64)_rssi_read_timer->nsecsElapsed() / 1000000;
     if(msec < _fft_poll_time)
     {
@@ -826,7 +823,6 @@ void RadioController::getRSSI()
         return;
     if(rssi < 99.0f)
         emit newRSSIValue(rssi);
-
 }
 
 void RadioController::getFFTData()
@@ -910,15 +906,16 @@ void RadioController::receiveDigitalAudio(unsigned char *data, int size)
         for(int i=0;i<samples;i++)
         {
             audio_out[i] = (short)((float)audio_out[i] * amplif * _rx_volume);
-        }
-        if(_settings->_voip_forwarding)
-        {
-            for(int i=0;i< samples;i++)
+            if(_settings->_voip_forwarding)
             {
-                _voip_encode_buffer->push_back(audio_out[i]);
+                _to_voip_buffer->push_back(audio_out[i]);
+            }
+            if(_settings->_repeater_enabled)
+            {
+                _to_radio_queue->push_back(audio_out[i]);
             }
         }
-        else if(!_settings->_voip_forwarding)
+        if(!_settings->_voip_forwarding)
         {
             emit writePCM(audio_out,samples*sizeof(short), (bool)_settings->audio_compressor, audio_mode);
         }
@@ -934,9 +931,14 @@ void RadioController::receivePCMAudio(std::vector<float> *audio_data)
         pcm[i] = (short)(audio_data->at(i) * _rx_volume * 32767.0f);
         if(_settings->_voip_forwarding)
         {
-            _voip_encode_buffer->push_back(pcm[i]);
+            _to_voip_buffer->push_back(pcm[i]);
+        }
+        if(_settings->_repeater_enabled)
+        {
+            _to_radio_queue->push_back(pcm[i]);
         }
     }
+
     if(_settings->_voip_forwarding)
     {
         delete[] pcm;
@@ -1075,7 +1077,7 @@ void RadioController::processVoipAudioFrame(short *pcm, int samples, quint64 sid
 
     for(int i=0;i<samples;i++)
     {
-        _voip_to_radio_queue->push_back(pcm[i]);
+        _to_radio_queue->push_back(pcm[i]);
     }
     delete[] pcm;
     /*
@@ -1112,6 +1114,10 @@ void RadioController::textData(QString text, bool repeat)
 
 void RadioController::textReceived(QString text)
 {
+    if(_settings->_repeater_enabled && _tx_radio_type == radio_type::RADIO_TYPE_DIGITAL)
+    {
+        _modem->textData(text);
+    }
     emit printText(text, false);
 }
 
@@ -1122,6 +1128,10 @@ void RadioController::repeaterInfoReceived(QByteArray data)
 
 void RadioController::callsignReceived(QString callsign)
 {
+    if(_settings->_repeater_enabled && _tx_radio_type == radio_type::RADIO_TYPE_DIGITAL)
+    {
+        _modem->sendCallsign(callsign);
+    }
     QString time= QDateTime::currentDateTime().toString("dd/MMM/yyyy hh:mm:ss");
     QString text = "\n\n<b>" + time + "</b> " + "<font color=\"#FF5555\">" + callsign + " </font><br/>\n";
     /*
@@ -1163,6 +1173,10 @@ void RadioController::receiveEnd()
 
 void RadioController::endAudioTransmission()
 {
+    if(_settings->_repeater_enabled && _tx_radio_type == radio_type::RADIO_TYPE_DIGITAL)
+    {
+        _modem->endTransmission(_callsign);
+    }
     QString time= QDateTime::currentDateTime().toString("d/MMM/yyyy hh:mm:ss");
     emit printText("<b>" + time + "</b> <font color=\"#77FF77\">Transmission end</font><br/>\n",true);
     unsigned int size = _end_rec_sound->size();
@@ -1588,8 +1602,6 @@ void RadioController::setVox(bool value)
 
 void RadioController::toggleRepeat(bool value)
 {
-    if((_rx_mode != _tx_mode) && value) // no mixed mode repeat
-        return;
     if(value && !_settings->_repeater_enabled)
     {
         if(!_settings->enable_duplex)
@@ -1598,14 +1610,14 @@ void RadioController::toggleRepeat(bool value)
             return;
         }
         _settings->_repeater_enabled = value;
-        _transmitting = true;
     }
     else if(!value && _settings->_repeater_enabled)
     {
-        _transmitting = false;
         _settings->_repeater_enabled = value;
     }
-    _modem->setRepeater(value); // ?mutex?
+    /// this enables direct repeat in same mode only
+    // if(_rx_mode == _tx_mode)
+    //_modem->setRepeater(value);
 }
 
 void RadioController::fineTuneFreq(long center_freq)
@@ -1655,12 +1667,14 @@ void RadioController::setFilterWidth(int width)
 
 void RadioController::setRxSensitivity(int value, std::string gain_stage)
 {
+    Q_UNUSED(gain_stage);
     _settings->rx_sensitivity = value;
     _modem->setRxSensitivity(((double)_settings->rx_sensitivity)/100.0);
 }
 
 void RadioController::setTxPower(int dbm, std::string gain_stage)
 {
+    Q_UNUSED(gain_stage);
     _settings->tx_power = dbm;
     _modem->setTxPower((float)_settings->tx_power/100.0);
 }
