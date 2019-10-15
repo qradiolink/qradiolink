@@ -484,8 +484,15 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
     case 31:
     {
         int set = param1.toLongLong();
-        response = QString("Setting demodulator offset to to %L1 Hz").arg(set);
-        emit setCarrierOffset(set);
+        if(set < -_settings->rx_sample_rate/2 || set > _settings->rx_sample_rate/2)
+        {
+            response = "Carrier offset must be less than rx_sample_rate/2";
+            success = false;
+        }
+        {
+            response = QString("Setting demodulator offset to to %L1 Hz").arg(set);
+            emit setCarrierOffset(set);
+        }
         break;
     }
     case 32:
