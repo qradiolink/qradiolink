@@ -41,6 +41,7 @@
 #include "radioprotocol.h"
 #include "relaycontroller.h"
 #include "station.h"
+#include "audio/audiomixer.h"
 #include "audio/audioencoder.h"
 #include "video/videoencoder.h"
 #include "gr/gr_modem.h"
@@ -184,13 +185,15 @@ private:
     void getRSSI();
     void setRelays(bool transmitting);
     void memoryScan(bool receiving, bool wait_for_timer=true);
-    void processVoipToRadioQueue();
+    bool processMixerQueue();
 
 
     // FIXME: inflation of members
     Settings *_settings;
     RelayController *_relay_controller;
     AudioEncoder *_codec;
+    AudioMixer *_audio_mixer_in;
+    AudioMixer *_audio_mixer_out;
     VideoEncoder *_video;
     NetDevice *_net_device;
     gr_modem *_modem;
