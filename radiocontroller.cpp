@@ -25,6 +25,7 @@ RadioController::RadioController(Settings *settings, QObject *parent) :
     // All control happens in the radioop or main thread
     _modem = new gr_modem(settings);
     _codec = new AudioEncoder;
+    _audio_mixer_in = new AudioMixer;
     _radio_protocol = new RadioProtocol;
     _relay_controller = new RelayController;
     _video = new VideoEncoder;
@@ -136,6 +137,7 @@ RadioController::~RadioController()
     if(_settings->_tx_inited)
         toggleTX(false);
     delete _codec;
+    delete _audio_mixer_in;
     delete _video;
     delete _net_device;
     delete _radio_protocol;
@@ -169,6 +171,7 @@ void RadioController::run()
 
     bool ptt_activated = false;
     bool data_to_process = false;
+    bool buffers_filling = false;
     bool frame_flag = true;
     int last_ping_time = 0;
     int last_channel_broadcast_time = 0;
@@ -187,7 +190,7 @@ void RadioController::run()
 
         QCoreApplication::processEvents();
         flushRadioToVoipBuffer();
-        processVoipToRadioQueue();
+        buffers_filling = processMixerQueue();
 
         // FIXME: this is the wrong place to control the Mumble client
         int time = QDateTime::currentDateTime().toTime_t();
@@ -254,7 +257,7 @@ void RadioController::run()
         // FIXME: remove these hardcoded sleeps
         if(!transmitting && !vox_enabled && !process_text)
         {
-            if(!data_to_process)
+            if(!data_to_process && !buffers_filling)
             {
                 struct timespec time_to_sleep = {0, 5000000L };
                 nanosleep(&time_to_sleep, NULL);
@@ -328,7 +331,7 @@ void RadioController::flushRadioToVoipBuffer()
         short *pcm = new short[960];
         for(int i =0; i< 960;i++)
         {
-            pcm[i] = _to_voip_buffer->at(i);
+            pcm[i] = _to_voip_buffer->at(i) * _voip_volume;
         }
 
         emit voipDataPCM(pcm,960*sizeof(short));
@@ -336,15 +339,13 @@ void RadioController::flushRadioToVoipBuffer()
     }
 }
 
-void RadioController::processVoipToRadioQueue()
+bool RadioController::processMixerQueue()
 {
-    if(_to_radio_queue->size() >= 320)
+    if(_audio_mixer_in->buffers_available())
     {
-        short *pcm = new short[320];
-        for(unsigned int i = 0;i<320;i++)
-        {
-            pcm[i] = (short)((float)_to_radio_queue->at(i) * _rx_volume);
-        }
+        short *pcm = _audio_mixer_in->mix_samples(_rx_volume);
+        if(pcm == nullptr)
+            return false;
         if(_settings->_voip_forwarding || _settings->_repeater_enabled)
         {
             if(!_voip_tx_timer->isActive())
@@ -361,8 +362,9 @@ void RadioController::processVoipToRadioQueue()
             audioFrameReceived();
         }
         _last_voiced_frame_timer.restart();
-        _to_radio_queue->remove(0,320);
+        return true;
     }
+    return false;
 }
 
 
@@ -893,31 +895,37 @@ void RadioController::receiveDigitalAudio(unsigned char *data, int size)
     delete[] data;
     if(samples > 0)
     {
-        float amplif = 1.0;
         if((_rx_mode == gr_modem_types::ModemTypeBPSK2000) ||
                 (_rx_mode == gr_modem_types::ModemType2FSK2000) ||
                 (_rx_mode == gr_modem_types::ModemType4FSK2000) ||
                 (_rx_mode == gr_modem_types::ModemTypeQPSK2000) ||
                 (_rx_mode == gr_modem_types::ModemTypeBPSK1000))
         {
-            amplif = 1.0;
             audio_mode = AudioProcessor::AUDIO_MODE_CODEC2;
         }
         for(int i=0;i<samples;i++)
         {
-            audio_out[i] = (short)((float)audio_out[i] * amplif * _rx_volume);
+            audio_out[i] = (short)((float)audio_out[i] * _rx_volume);
             if(_settings->_voip_forwarding)
             {
                 _to_voip_buffer->push_back(audio_out[i]);
             }
-            if(_settings->_repeater_enabled)
-            {
-                _to_radio_queue->push_back(audio_out[i]);
-            }
         }
-        if(!_settings->_voip_forwarding)
+        if(_settings->_voip_forwarding && !_settings->_repeater_enabled)
         {
-            emit writePCM(audio_out,samples*sizeof(short), (bool)_settings->audio_compressor, audio_mode);
+            delete[] audio_out;
+        }
+        else
+        {
+            if(_settings->_voip_connected || _settings->_repeater_enabled)
+            {
+                _audio_mixer_in->addSamples(audio_out, samples, -9999); // radio id hardcoded
+            }
+            else
+            {
+                emit writePCM(audio_out,samples*sizeof(short), (bool)_settings->audio_compressor,
+                              audio_mode);
+            }
         }
     }
 }
@@ -933,21 +941,25 @@ void RadioController::receivePCMAudio(std::vector<float> *audio_data)
         {
             _to_voip_buffer->push_back(pcm[i]);
         }
-        if(_settings->_repeater_enabled)
-        {
-            _to_radio_queue->push_back(pcm[i]);
-        }
     }
 
-    if(_settings->_voip_forwarding)
+    if(_settings->_voip_forwarding && !_settings->_repeater_enabled)
     {
         delete[] pcm;
     }
     else
     {
-        /// Noise kills the compressor, so disabled
-        emit writePCM(pcm, size*sizeof(short), false, AudioProcessor::AUDIO_MODE_ANALOG);
+        if(_settings->_voip_connected || _settings->_repeater_enabled)
+        {
+            _audio_mixer_in->addSamples(pcm, size, -9999); // radio id hardcoded
+        }
+        else
+        {
+            /// Noise kills the compressor, so disabled
+            emit writePCM(pcm, size*sizeof(short), false, AudioProcessor::AUDIO_MODE_ANALOG);
+        }
     }
+
     audio_data->clear();
     delete audio_data;
     audioFrameReceived();
@@ -1074,18 +1086,7 @@ void RadioController::receiveNetData(unsigned char *data, int size)
 
 void RadioController::processVoipAudioFrame(short *pcm, int samples, quint64 sid)
 {
-
-    for(int i=0;i<samples;i++)
-    {
-        _to_radio_queue->push_back(pcm[i]);
-    }
-    delete[] pcm;
-    /*
-    quint64 milisec = (quint64)_last_voiced_frame_timer.nsecsElapsed()/1000000;
-    if((milisec >= 120) || (sid == _last_session_id))
-    {
-    }
-    */
+    _audio_mixer_in->addSamples(pcm, samples, sid);
     _last_session_id = sid;
 }
 
@@ -1133,7 +1134,8 @@ void RadioController::callsignReceived(QString callsign)
         _modem->sendCallsign(callsign);
     }
     QString time= QDateTime::currentDateTime().toString("dd/MMM/yyyy hh:mm:ss");
-    QString text = "\n\n<b>" + time + "</b> " + "<font color=\"#FF5555\">" + callsign + " </font><br/>\n";
+    QString text = "\n\n<b>" + time + "</b> " + "<font color=\"#FF5555\">"
+            + callsign + " </font><br/>\n";
     /*
     short *samples = new short[_data_rec_sound->size()/sizeof(short)];
     short *origin = (short*) _data_rec_sound->data();
@@ -1721,6 +1723,11 @@ void RadioController::setVolume(int value)
 void RadioController::setTxVolume(int value)
 {
     _tx_volume = 1e-3*exp(((float)value/50.0)*6.908);
+}
+
+void RadioController::setVoipVolume(int value)
+{
+    _voip_volume = 1e-3*exp(((float)value/50.0)*6.908);
 }
 
 void RadioController::setRxCTCSS(float value)

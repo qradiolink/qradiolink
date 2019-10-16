@@ -22,14 +22,10 @@ Settings::Settings()
 
     _mumble_tcp = 1; // used
     _use_codec2 = 0; // used
-    _use_dtmf = 0; // used
-    _audio_treshhold = -15; // used
-    _voice_activation = 0.5; // used
-    _voice_activation_timeout = 50; // used
-    _local_udp_port = 4938;
-    _enable_vox = 0; // unused
-    _enable_agc = 0; // unused
-    _ident_time = 300; // used
+    _audio_treshhold = -15; // not used
+    _voice_activation = 0.5; // not used
+    _voice_activation_timeout = 50; // not used
+    _ident_time = 300; // not used
     _radio_id = "";
 
     _rx_inited = false;
@@ -261,6 +257,14 @@ void Settings::readConfig()
     }
     try
     {
+        voip_volume = cfg.lookup("voip_volume");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        voip_volume = 50;
+    }
+    try
+    {
         rx_ctcss = cfg.lookup("rx_ctcss");
     }
     catch(const libconfig::SettingNotFoundException &nfex)
@@ -482,6 +486,7 @@ void Settings::saveConfig()
     root.add("squelch",libconfig::Setting::TypeInt) = squelch;
     root.add("rx_volume",libconfig::Setting::TypeInt) = rx_volume;
     root.add("tx_volume",libconfig::Setting::TypeInt) = tx_volume;
+    root.add("voip_volume",libconfig::Setting::TypeInt) = voip_volume;
     root.add("rx_frequency",libconfig::Setting::TypeInt64) = rx_frequency;
     root.add("tx_shift",libconfig::Setting::TypeInt64) = tx_shift;
     root.add("voip_server",libconfig::Setting::TypeString) = voip_server.toStdString();

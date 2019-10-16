@@ -53,8 +53,8 @@ SOURCES += main.cpp\
         dtmfdecoder.cpp\
         mumbleclient.cpp\
         radioprotocol.cpp \
-        audiowriter.cpp \
-        audioreader.cpp \
+        audio/audiowriter.cpp \
+        audio/audioreader.cpp \
         mumblechannel.cpp \
         radiochannel.cpp \
         relaycontroller.cpp \
@@ -65,6 +65,8 @@ SOURCES += main.cpp\
         settings.cpp\
         sslclient.cpp\
         station.cpp\
+        logger.cpp \
+        audio/audiomixer.cpp \
         telnetclient.cpp\
         ext/Mumble.pb.cc\
         ext/QRadioLink.pb.cc\
@@ -103,8 +105,8 @@ SOURCES += main.cpp\
     gr/gr_audio_sink.cpp \
     gr/gr_4fsk_discriminator.cpp \
     gr/gr_const_sink.cpp \
-    gr/rx_fft.cpp \
-    logger.cpp
+    gr/rx_fft.cpp
+
 
 
 
@@ -114,8 +116,8 @@ HEADERS  += mainwindow.h\
         audio/audioprocessor.h \
         video/videoencoder.h \
         radioprotocol.h \
-        audiowriter.h \
-        audioreader.h \
+        audio/audiowriter.h \
+        audio/audioreader.h \
         mumblechannel.h \
         radiochannel.h \
         relaycontroller.h \
@@ -128,6 +130,8 @@ HEADERS  += mainwindow.h\
         sslclient.h\
         station.h\
         telnetclient.h\
+        logger.h \
+        audio/audiomixer.h \
         config_defines.h\
         ext/dec.h\
         ext/Goertzel.h\
@@ -171,8 +175,7 @@ HEADERS  += mainwindow.h\
     gr/gr_audio_sink.h \
     gr/gr_4fsk_discriminator.h \
     gr/gr_const_sink.h \
-    gr/modem_types.h \
-    logger.h
+    gr/modem_types.h
 
 
 

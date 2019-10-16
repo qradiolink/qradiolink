@@ -91,6 +91,8 @@ signals:
     void setMute(bool value);
     void newMumbleMessage(QString text);
     void newCommandMessage(QString text, int to_id);
+    void toggleSelfDeaf(bool deaf);
+    void toggleSelfMute(bool mute);
 
     //void stopRadio();
 

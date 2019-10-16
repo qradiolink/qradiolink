@@ -43,7 +43,7 @@ class MumbleClient : public QObject
 {
     Q_OBJECT
 public:
-    explicit MumbleClient(Settings *settings, QObject *parent = 0);
+    explicit MumbleClient(const Settings *settings, QObject *parent = 0);
     ~MumbleClient();
 
 
@@ -84,6 +84,8 @@ public slots:
     void disconnectFromCall();
     int muteStation(QString radio_id);
     void setMute(bool mute);
+    void setSelfMute(bool mute);
+    void setSelfDeaf(bool deaf);
     void logMessage(QString log_msg);
     void newMumbleMessage(QString msg);
     void newCommandMessage(QString msg, int to_id);
@@ -103,7 +105,7 @@ private:
     void processTextMessage(quint8 *message, quint64 size);
 
     AudioEncoder *_codec;
-    Settings *_settings;
+    const Settings *_settings;
     SSLClient *_socket_client;
 #ifndef NO_CRYPT
     CryptState *_crypt_state;

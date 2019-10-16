@@ -18,41 +18,47 @@
 
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-void logMessage(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+void logMessage(QtMsgType type, const QMessageLogContext &context,
+                const QString &msg)
 {
     Q_UNUSED(context);
 #else
 void logMessage(QtMsgType type, const char *msg)
 {
 #endif
-
+    QString time= QDateTime::currentDateTime().toString(
+                "d/MMM/yyyy hh:mm:ss");
     QString txt;
+    //log_file->open(QIODevice::WriteOnly | QIODevice::Append);
     switch (type) {
     case QtInfoMsg:
-        txt = QString("Info: %1").arg(msg);
+        txt = QString("[%1] Info: %2").arg(time).arg(msg);
         break;
     case QtDebugMsg:
-        txt = QString("Debug: %1").arg(msg);
+        txt = QString("[%1] Debug: %2").arg(time).arg(msg);
         break;
     case QtWarningMsg:
-        txt = QString("Warning: %1").arg(msg);
+        txt = QString("[%1] Warning: %2").arg(time).arg(msg);
     break;
     case QtCriticalMsg:
-        txt = QString("Critical: %1").arg(msg);
+        txt = QString("[%1] Critical: %2").arg(time).arg(msg);
     break;
     case QtFatalMsg:
-        txt = QString("Fatal: %1").arg(msg);
+        txt = QString("[%1] Fatal: %2").arg(time).arg(msg);
     break;
     }
+
     QFile outFile("qradiolink.log");
     outFile.open(QIODevice::WriteOnly | QIODevice::Append);
     QTextStream ts(&outFile);
     ts << txt << endl;
+    outFile.close();
 }
 
 Logger::Logger()
 {
 
+    _log_file = new QFile("/var/log/qradiolink.log");
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
     qInstallMessageHandler(logMessage);

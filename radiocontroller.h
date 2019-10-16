@@ -41,6 +41,7 @@
 #include "radioprotocol.h"
 #include "relaycontroller.h"
 #include "station.h"
+#include "audio/audiomixer.h"
 #include "audio/audioencoder.h"
 #include "video/videoencoder.h"
 #include "gr/gr_modem.h"
@@ -96,6 +97,8 @@ signals:
     void writePCM(short *pcm, int bytes, bool preprocess, int mode);
     void rxGainStages(string_vector rx_gains);
     void txGainStages(string_vector tx_gains);
+    void setSelfDeaf(bool deaf);
+    void setSelfMute(bool mute);
 
 
 public slots:
@@ -131,6 +134,7 @@ public slots:
     void setSquelch(int value);
     void setVolume(int value);
     void setTxVolume(int value);
+    void setVoipVolume(int value);
     void setRxCTCSS(float value);
     void setTxCTCSS(float value);
     void setFilterWidth(int width);
@@ -182,13 +186,15 @@ private:
     void getRSSI();
     void setRelays(bool transmitting);
     void memoryScan(bool receiving, bool wait_for_timer=true);
-    void processVoipToRadioQueue();
+    bool processMixerQueue();
 
 
     // FIXME: inflation of members
     Settings *_settings;
     RelayController *_relay_controller;
     AudioEncoder *_codec;
+    AudioMixer *_audio_mixer_in;
+    AudioMixer *_audio_mixer_out;
     VideoEncoder *_video;
     NetDevice *_net_device;
     gr_modem *_modem;
@@ -241,6 +247,7 @@ private:
     int _memory_scan_index;
     float _rx_volume;
     float _tx_volume;
+    float _voip_volume;
     int _fft_poll_time;
     quint64 _last_session_id;
 

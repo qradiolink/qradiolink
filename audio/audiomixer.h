@@ -1,4 +1,4 @@
-// Written by Adrian Musceac YO8RZZ , started March 2016.
+// Written by Adrian Musceac YO8RZZ , started October 2013.
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License as
@@ -14,34 +14,34 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#ifndef LOGGER_H
-#define LOGGER_H
+#ifndef AUDIOMIXER_H
+#define AUDIOMIXER_H
 
-#include <QString>
-#include <QFile>
-#include <QTextStream>
-#include <QDir>
+#include <QObject>
 #include <QDebug>
-#include <QFileInfo>
-#include <QDateTime>
-#include <iostream>
+#include <QVector>
+#include <QMap>
+#include <QMutex>
 
-
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-void logMessage(QtMsgType type, const QMessageLogContext &context, const QString &msg, QFile *log_file);
-#else
-void logMessage(QtMsgType type, const char *msg, QFile *log_file);
-#endif
-
-class Logger
+class AudioMixer : public QObject
 {
+    Q_OBJECT
 public:
-    explicit Logger();
-    ~Logger();
+    explicit AudioMixer(QObject *parent = nullptr);
+    ~AudioMixer();
 
+signals:
+
+public slots:
+    void addSamples(short *pcm, int samples, int sid);
+    short *mix_samples(float rx_volume);
+    bool buffers_available();
+    void empty();
 
 private:
-    QFile *_log_file;
+    QMap<int, QVector<short>*> _sample_buffers;
+    QMutex _mutex;
+
 };
 
-#endif // LOGGER_H
+#endif // AUDIOMIXER_H

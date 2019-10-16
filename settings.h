@@ -29,7 +29,7 @@
 class Settings
 {
 public:
-    Settings();
+    explicit Settings();
     QFileInfo *setupConfig();
     void readConfig();
     void saveConfig();
@@ -47,6 +47,7 @@ public:
     int squelch;
     int rx_volume;
     int tx_volume;
+    int voip_volume;
     float rx_ctcss;
     float tx_ctcss;
     long long rx_frequency;
@@ -81,32 +82,29 @@ public:
 
     /// Not saved to config:
 
-
     /// Used by both radio-op/mumbleclient and remote interface
     bool _rx_inited;
     bool _tx_inited;
     bool _tx_started;
     qint64 _tx_frequency;
+    float _rssi;
     bool _voip_connected;
     bool _vox_enabled;
     bool _repeater_enabled;
     bool _voip_forwarding;
     bool _voip_ptt_enabled;
     int _current_voip_channel;
-    float _rssi;
+    bool _voip_self_deaf;
+
 
 
     /// Old stuff, not used now
     quint32 _id;
     quint8 _mumble_tcp;
     quint8 _use_codec2;
-    quint8 _use_dtmf;
     float _audio_treshhold;
     float _voice_activation;
     quint16 _voice_activation_timeout;
-    quint16 _local_udp_port;
-    quint8 _enable_vox;
-    quint8 _enable_agc;
     quint16 _ident_time;
     QString _radio_id;
 

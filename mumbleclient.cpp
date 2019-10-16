@@ -17,7 +17,7 @@
 #include "mumbleclient.h"
 
 
-MumbleClient::MumbleClient(Settings *settings, QObject *parent) :
+MumbleClient::MumbleClient(const Settings *settings, QObject *parent) :
     QObject(parent)
 {
     _socket_client = new SSLClient;
@@ -84,8 +84,9 @@ void MumbleClient::cleanup()
     _encryption_set = false;
     _authenticated = false;
     _synchronized = false;
-    _settings->_voip_connected = false;
-    _settings->_current_voip_channel = -1;
+    Settings *settings = const_cast<Settings*>(_settings);
+    settings->_voip_connected = false;
+    settings->_current_voip_channel = -1;
     _session_id = INT64_MAX;
     _channel_id = INT64_MAX;
     for(int i=0; i < _channels.size();i++)
@@ -239,7 +240,8 @@ void MumbleClient::processServerSync(quint8 *message, quint64 size)
              + " session: " + QString::number(_session_id);
     std::cout << msg.toStdString() << std::endl;
     emit connectedToServer(msg);
-    _settings->_voip_connected = true;
+    Settings *settings = const_cast<Settings*>(_settings);
+    settings->_voip_connected = true;
 }
 
 void MumbleClient::processChannelState(quint8 *message, quint64 size)
@@ -281,7 +283,8 @@ void MumbleClient::processUserState(quint8 *message, quint64 size)
         _channel_id = us.channel_id();
         emit textMessage("Joined channel: " + QString::number(_channel_id), false);
         emit joinedChannel(_channel_id);
-        _settings->_current_voip_channel = _channel_id;
+        Settings *settings = const_cast<Settings*>(_settings);
+        settings->_current_voip_channel = _channel_id;
     }
     if(us.session() == _session_id)
     {
@@ -302,7 +305,8 @@ void MumbleClient::processUserState(quint8 *message, quint64 size)
             emit textMessage( "Joined channel: " + QString::number(_channel_id), false);
             emit joinedChannel(_channel_id);
             s->channel_id = us.channel_id();
-            _settings->_current_voip_channel = _channel_id;
+            Settings *settings = const_cast<Settings*>(_settings);
+            settings->_current_voip_channel = _channel_id;
         }
     }
 
@@ -379,7 +383,8 @@ void MumbleClient::joinChannel(int id)
     us.SerializeToArray(data,size);
     sendMessage(data,9,size);
     _channel_id = id;
-    _settings->_current_voip_channel = _channel_id;
+    Settings *settings = const_cast<Settings*>(_settings);
+    settings->_current_voip_channel = _channel_id;
 
 }
 
@@ -513,6 +518,35 @@ QString MumbleClient::createChannel(QString channel_name)
     return name;
 }
 
+void MumbleClient::setSelfMute(bool mute)
+{
+    if(!_synchronized)
+        return;
+    MumbleProto::UserState us;
+    us.set_self_mute(mute);
+    us.set_session(_session_id);
+    us.set_actor(_session_id);
+    int msize = us.ByteSize();
+    quint8 mdata[msize];
+    us.SerializeToArray(mdata,msize);
+    sendMessage(mdata,9,msize);
+}
+
+void MumbleClient::setSelfDeaf(bool deaf)
+{
+    if(!_synchronized)
+        return;
+    MumbleProto::UserState us;
+    us.set_self_mute(deaf);
+    us.set_self_deaf(deaf);
+    us.set_session(_session_id);
+    us.set_actor(_session_id);
+    int msize = us.ByteSize();
+    quint8 mdata[msize];
+    us.SerializeToArray(mdata,msize);
+    sendMessage(mdata,9,msize);
+}
+
 void MumbleClient::setMute(bool mute)
 {
     if(!_synchronized)
@@ -570,8 +604,12 @@ void MumbleClient::processTextMessage(quint8 *message, quint64 size)
         }
     }
     QString text = QString::fromStdString(tm.message());
-    QString msg("\n<br/><b>%1</b>: %2<br/>\n");
-    msg = msg.arg(sender).arg(text);
+    QString msg("\n<br/><b>%1%2</b>: %3<br/>\n");
+    if(!channel_msg)
+        msg = msg.arg("[private] ").arg(sender).arg(text);
+    else
+        msg = msg.arg("[channel] ").arg(sender).arg(text);
+
     emit textMessage(msg, true);
     if(_settings->remote_control && !channel_msg)
         emit commandMessage(text, sender_id);
