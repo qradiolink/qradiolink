@@ -1,3 +1,19 @@
+// Written by Adrian Musceac YO8RZZ , started October 2013.
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License as
+// published by the Free Software Foundation; either version 3 of the
+// License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 #include "audiomixer.h"
 
 AudioMixer::AudioMixer(QObject *parent) : QObject(parent)
@@ -8,6 +24,7 @@ AudioMixer::AudioMixer(QObject *parent) : QObject(parent)
 
 void AudioMixer::addSamples(short *pcm, int samples, int sid)
 {
+    _mutex.lock();
     if(_sample_buffers.contains(sid))
     {
         QVector<short> *samples_for_sid = _sample_buffers[sid];
@@ -25,6 +42,7 @@ void AudioMixer::addSamples(short *pcm, int samples, int sid)
         }
         _sample_buffers[sid] = samples_for_sid;
     }
+    _mutex.unlock();
 }
 
 
@@ -62,8 +80,8 @@ short* AudioMixer::mix_samples()
             while (it != sizes_map.constEnd())
             {
                 QVector<short> *samples_for_sid = _sample_buffers[it.key()];
-                if(i < samples_for_sid->size())
-                    pcm[i] += (short)((float)_sample_buffers[it.key()]->at(i) / (float)num_channels);
+                if(i < it.value())
+                    pcm[i] += (short)((float)samples_for_sid->at(i) / (float)num_channels);
                 ++it;
             }
         }
