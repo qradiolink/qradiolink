@@ -537,6 +537,7 @@ void MumbleClient::setSelfDeaf(bool deaf)
     if(!_synchronized)
         return;
     MumbleProto::UserState us;
+    us.set_self_mute(deaf);
     us.set_self_deaf(deaf);
     us.set_session(_session_id);
     us.set_actor(_session_id);
@@ -603,8 +604,12 @@ void MumbleClient::processTextMessage(quint8 *message, quint64 size)
         }
     }
     QString text = QString::fromStdString(tm.message());
-    QString msg("\n<br/><b>%1</b>: %2<br/>\n");
-    msg = msg.arg(sender).arg(text);
+    QString msg("\n<br/><b>%1%2</b>: %3<br/>\n");
+    if(!channel_msg)
+        msg = msg.arg("[private] ").arg(sender).arg(text);
+    else
+        msg = msg.arg("[channel] ").arg(sender).arg(text);
+
     emit textMessage(msg, true);
     if(_settings->remote_control && !channel_msg)
         emit commandMessage(text, sender_id);

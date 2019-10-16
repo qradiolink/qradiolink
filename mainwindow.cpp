@@ -97,6 +97,7 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     QObject::connect(ui->rxVolumeDial,SIGNAL(valueChanged(int)),this,SLOT(setVolumeDisplay(int)));
     QObject::connect(ui->micGainSlider,SIGNAL(valueChanged(int)),this,SLOT(setTxVolumeDisplay(int)));
     QObject::connect(ui->digitalGainSlider,SIGNAL(valueChanged(int)),this,SLOT(setDigitalGain(int)));
+    QObject::connect(ui->voipGainSlider,SIGNAL(valueChanged(int)),this,SLOT(changeVoipVolume(int)));
     QObject::connect(ui->rxModemTypeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(toggleRxMode(int)));
     QObject::connect(ui->txModemTypeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(toggleTxMode(int)));
     QObject::connect(ui->scanUpButton,SIGNAL(toggled(bool)),this,SLOT(startScan(bool)));
@@ -129,6 +130,10 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     QObject::connect(ui->agcDecaySpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateAgcDecay(int)));
     QObject::connect(ui->mumbleTextMessageButton,SIGNAL(clicked()),this,SLOT(sendMumbleTextMessage()));
     QObject::connect(ui->mumbleTextMessageEdit,SIGNAL(returnPressed()),this,SLOT(sendMumbleTextMessage()));
+    QObject::connect(ui->muteSelfButton,SIGNAL(toggled(bool)),this,SLOT(toggleSelfMute(bool)));
+    QObject::connect(ui->deafenSelfButton,SIGNAL(toggled(bool)),this,SLOT(toggleSelfDeaf(bool)));
+    QObject::connect(ui->voipGainSlider,SIGNAL(valueChanged(int)),this,SLOT(changeVoipVolume(int)));
+
 
     QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
     QObject::connect(ui->plotterFrame,SIGNAL(pandapterRangeChanged(float,float)),ui->plotterFrame,SLOT(setWaterfallRange(float,float)));
@@ -236,6 +241,7 @@ void MainWindow::initSettings()
     toggleRxMode(_settings->rx_mode);
     toggleTxMode(_settings->tx_mode);
     setTxVolumeDisplay(_settings->tx_volume);
+    changeVoipVolume(_settings->voip_volume);
     setRelays((bool)_settings->enable_relays);
     setRSSICalibration();
 }
@@ -811,7 +817,7 @@ void MainWindow::updateConstellation(complex_vector *constellation_data)
 void MainWindow::displayText(QString text, bool html)
 {
     ui->receivedTextEdit->moveCursor(QTextCursor::End);
-    if(ui->receivedTextEdit->toPlainText().size() > 1024*1024)
+    if(ui->receivedTextEdit->toPlainText().size() > 1024*1024*1024)
     {
         ui->receivedTextEdit->clear();
     }
@@ -825,7 +831,7 @@ void MainWindow::displayText(QString text, bool html)
 
     // text widget
     ui->secondaryTextDisplay->moveCursor(QTextCursor::End);
-    if(ui->secondaryTextDisplay->toPlainText().size() > 1024*6)
+    if(ui->secondaryTextDisplay->toPlainText().size() > 1024*1024*1024)
     {
         ui->secondaryTextDisplay->clear();
     }
@@ -843,7 +849,7 @@ void MainWindow::displayText(QString text, bool html)
 void MainWindow::displayVOIPText(QString text, bool html)
 {
     ui->voipMessagesEdit->moveCursor(QTextCursor::End);
-    if(ui->voipMessagesEdit->toPlainText().size() > 1024*1024)
+    if(ui->voipMessagesEdit->toPlainText().size() > 1024*1024*1024)
     {
         ui->voipMessagesEdit->clear();
     }
@@ -1239,6 +1245,13 @@ void MainWindow::setTxVolumeDisplay(int value)
     _settings->tx_volume = value;
     ui->micGainSlider->setSliderPosition(value);
     emit setTxVolume((int)value);
+}
+
+void MainWindow::changeVoipVolume(int value)
+{
+    _settings->voip_volume = value;
+    ui->voipGainSlider->setSliderPosition(value);
+    emit setVoipVolume((int)value);
 }
 
 void MainWindow::startScan(bool value)

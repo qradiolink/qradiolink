@@ -47,6 +47,7 @@ public:
     int squelch;
     int rx_volume;
     int tx_volume;
+    int voip_volume;
     float rx_ctcss;
     float tx_ctcss;
     long long rx_frequency;

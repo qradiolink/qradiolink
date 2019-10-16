@@ -143,6 +143,7 @@ public slots:
     void sendMumbleTextMessage();
     void toggleSelfDeaf(bool deaf);
     void toggleSelfMute(bool mute);
+    void changeVoipVolume(int value);
 
 
 signals:
@@ -164,6 +165,7 @@ signals:
     void setSquelch(int value);
     void setVolume(int value);
     void setTxVolume(int value);
+    void setVoipVolume(int value);
     void setRxCTCSS(float value);
     void setTxCTCSS(float value);
     void enableGUIConst(bool value);

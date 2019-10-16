@@ -134,6 +134,7 @@ public slots:
     void setSquelch(int value);
     void setVolume(int value);
     void setTxVolume(int value);
+    void setVoipVolume(int value);
     void setRxCTCSS(float value);
     void setTxCTCSS(float value);
     void setFilterWidth(int width);
@@ -246,6 +247,7 @@ private:
     int _memory_scan_index;
     float _rx_volume;
     float _tx_volume;
+    float _voip_volume;
     int _fft_poll_time;
     quint64 _last_session_id;
 

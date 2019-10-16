@@ -331,7 +331,7 @@ void RadioController::flushRadioToVoipBuffer()
         short *pcm = new short[960];
         for(int i =0; i< 960;i++)
         {
-            pcm[i] = _to_voip_buffer->at(i);
+            pcm[i] = _to_voip_buffer->at(i) * _voip_volume;
         }
 
         emit voipDataPCM(pcm,960*sizeof(short));
@@ -895,19 +895,17 @@ void RadioController::receiveDigitalAudio(unsigned char *data, int size)
     delete[] data;
     if(samples > 0)
     {
-        float amplif = 1.0;
         if((_rx_mode == gr_modem_types::ModemTypeBPSK2000) ||
                 (_rx_mode == gr_modem_types::ModemType2FSK2000) ||
                 (_rx_mode == gr_modem_types::ModemType4FSK2000) ||
                 (_rx_mode == gr_modem_types::ModemTypeQPSK2000) ||
                 (_rx_mode == gr_modem_types::ModemTypeBPSK1000))
         {
-            amplif = 1.0;
             audio_mode = AudioProcessor::AUDIO_MODE_CODEC2;
         }
         for(int i=0;i<samples;i++)
         {
-            audio_out[i] = (short)((float)audio_out[i] * amplif * _rx_volume);
+            audio_out[i] = (short)((float)audio_out[i] * _rx_volume);
             if(_settings->_voip_forwarding)
             {
                 _to_voip_buffer->push_back(audio_out[i]);
@@ -1136,7 +1134,8 @@ void RadioController::callsignReceived(QString callsign)
         _modem->sendCallsign(callsign);
     }
     QString time= QDateTime::currentDateTime().toString("dd/MMM/yyyy hh:mm:ss");
-    QString text = "\n\n<b>" + time + "</b> " + "<font color=\"#FF5555\">" + callsign + " </font><br/>\n";
+    QString text = "\n\n<b>" + time + "</b> " + "<font color=\"#FF5555\">"
+            + callsign + " </font><br/>\n";
     /*
     short *samples = new short[_data_rec_sound->size()/sizeof(short)];
     short *origin = (short*) _data_rec_sound->data();
@@ -1724,6 +1723,11 @@ void RadioController::setVolume(int value)
 void RadioController::setTxVolume(int value)
 {
     _tx_volume = 1e-3*exp(((float)value/50.0)*6.908);
+}
+
+void RadioController::setVoipVolume(int value)
+{
+    _voip_volume = 1e-3*exp(((float)value/50.0)*6.908);
 }
 
 void RadioController::setRxCTCSS(float value)

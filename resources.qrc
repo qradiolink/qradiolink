@@ -29,6 +29,12 @@
         <file>res/end_beep1.raw</file>
         <file>res/dialog-close.png</file>
         <file>res/document-save.png</file>
+        <file>res/audio-volume-high.png</file>
+        <file>res/audio-volume-muted.png</file>
+        <file>res/call-stop.png</file>
+        <file>res/media-record.png</file>
+        <file>res/audio-input-microphone.png</file>
+        <file>res/view-conversation-balloon.png</file>
     </qresource>
     <qresource prefix="/fonts">
         <file>res/LiquidCrystal-Normal.otf</file>

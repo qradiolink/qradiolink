@@ -299,6 +299,7 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
     QObject::connect(w,SIGNAL(setSquelch(int)),radio_op,SLOT(setSquelch(int)));
     QObject::connect(w,SIGNAL(setVolume(int)),radio_op,SLOT(setVolume(int)));
     QObject::connect(w,SIGNAL(setTxVolume(int)),radio_op,SLOT(setTxVolume(int)));
+    QObject::connect(w,SIGNAL(setVoipVolume(int)),radio_op,SLOT(setVoipVolume(int)));
     QObject::connect(w,SIGNAL(setRxCTCSS(float)),radio_op,SLOT(setRxCTCSS(float)));
     QObject::connect(w,SIGNAL(setTxCTCSS(float)),radio_op,SLOT(setTxCTCSS(float)));
     QObject::connect(w,SIGNAL(enableGUIConst(bool)),radio_op,SLOT(enableGUIConst(bool)));
@@ -331,6 +332,10 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
     QObject::connect(w,SIGNAL(changeChannel(int)),mumbleclient,SLOT(joinChannel(int)));
     QObject::connect(w,SIGNAL(newMumbleMessage(QString)),
                      mumbleclient,SLOT(newMumbleMessage(QString)));
+    QObject::connect(w,SIGNAL(setSelfDeaf(bool)),
+                     mumbleclient,SLOT(setSelfDeaf(bool)));
+    QObject::connect(w,SIGNAL(setSelfMute(bool)),
+                     mumbleclient,SLOT(setSelfMute(bool)));
 
     /// Radio to GUI
     QObject::connect(radio_op, SIGNAL(printText(QString,bool)), w, SLOT(displayText(QString,bool)));
