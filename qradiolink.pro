@@ -65,6 +65,8 @@ SOURCES += main.cpp\
         settings.cpp\
         sslclient.cpp\
         station.cpp\
+        logger.cpp \
+        audiomixer.cpp \
         telnetclient.cpp\
         ext/Mumble.pb.cc\
         ext/QRadioLink.pb.cc\
@@ -103,8 +105,8 @@ SOURCES += main.cpp\
     gr/gr_audio_sink.cpp \
     gr/gr_4fsk_discriminator.cpp \
     gr/gr_const_sink.cpp \
-    gr/rx_fft.cpp \
-    logger.cpp
+    gr/rx_fft.cpp
+
 
 
 
@@ -128,6 +130,8 @@ HEADERS  += mainwindow.h\
         sslclient.h\
         station.h\
         telnetclient.h\
+        logger.h \
+        audiomixer.h \
         config_defines.h\
         ext/dec.h\
         ext/Goertzel.h\
@@ -171,8 +175,7 @@ HEADERS  += mainwindow.h\
     gr/gr_audio_sink.h \
     gr/gr_4fsk_discriminator.h \
     gr/gr_const_sink.h \
-    gr/modem_types.h \
-    logger.h
+    gr/modem_types.h
 
 
 
