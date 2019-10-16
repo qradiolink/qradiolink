@@ -53,8 +53,8 @@ SOURCES += main.cpp\
         dtmfdecoder.cpp\
         mumbleclient.cpp\
         radioprotocol.cpp \
-        audiowriter.cpp \
-        audioreader.cpp \
+        audio/audiowriter.cpp \
+        audio/audioreader.cpp \
         mumblechannel.cpp \
         radiochannel.cpp \
         relaycontroller.cpp \
@@ -66,7 +66,7 @@ SOURCES += main.cpp\
         sslclient.cpp\
         station.cpp\
         logger.cpp \
-        audiomixer.cpp \
+        audio/audiomixer.cpp \
         telnetclient.cpp\
         ext/Mumble.pb.cc\
         ext/QRadioLink.pb.cc\
@@ -116,8 +116,8 @@ HEADERS  += mainwindow.h\
         audio/audioprocessor.h \
         video/videoencoder.h \
         radioprotocol.h \
-        audiowriter.h \
-        audioreader.h \
+        audio/audiowriter.h \
+        audio/audioreader.h \
         mumblechannel.h \
         radiochannel.h \
         relaycontroller.h \
@@ -131,7 +131,7 @@ HEADERS  += mainwindow.h\
         station.h\
         telnetclient.h\
         logger.h \
-        audiomixer.h \
+        audio/audiomixer.h \
         config_defines.h\
         ext/dec.h\
         ext/Goertzel.h\
