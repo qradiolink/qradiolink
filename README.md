@@ -66,7 +66,7 @@ $ sudo apt-get install gnuradio-dev protobuf-compiler gr-osmosdr gnuradio libvol
 - Qt >= 5.11 and Qt5 development packages (older versions of Qt5 >= 5.2 might work as well)
 - qmake
 - Pulseaudio or Alsa or Jack
-- Gnuradio >= 3.7.13 built with UHD support and FreeDV/Codec2 support
+- Gnuradio >= 3.7.13 built with UHD, SoapySDR support and FreeDV/Codec2 support. Gnuradio 3.8 is not supported yet.
 - Boost and boost-devel
 - libgnuradio-osmosdr (gr-osmosdr) built with UHD, RTL-SDR, SoapySDR, HackRF, RedPitaya or BladeRF support
 - libprotobuf, libopus, libspeexdsp, libpulse-simple, libpulse, libasound, libcodec2, libsqlite3, libjpeg, libconfig++, libvolk, libftdi, qtmultimedia5-dev, libqt5multimediawidgets5, libqt5multimedia5, libqt5multimedia5
@@ -180,6 +180,8 @@ Do note that the identifier digits are the most important: **0403:6001**
 - Repeater mode requires the radio to operate in **Duplex** mode. Prior to enabling repeater mode, make sure to configure the TX shift (positive or negative). Mixed mode repeat is  possible, so you can operate the receiver on a different mode to the transmitter (FM to Codec2/Opus/FreeDV or viceversa). If radio forwarding is enabled, audio from the repeater will be broadcast to the VOIP network as well. The repeater can now handle mixing of audio incoming from the VOIP network and coming from the radio receiver so it is possible for two or more users on different connected repeaters to speak simultaneously.
 - When operating a repeater linked to the VOIP network, you may experience small delays of voice due to transcoding operations, especially for mixed mode repeaters.
 - Setting application internal microphone gain above the middle of the scale might cause clipping and distortion of audio, as the system volume also affects what goes to the radio.
+- The VOIP volume slider controls the volume of the audio **sent** to the Mumble server.
+- It is now possible to mute self or deafen self from the UI without disconnecting from the VOIP server.
 - The S-meter calibration feature is not complete yet, however you can enter in the Setup tab the level (integer value expressed in dBm) of a known signal (e.g. sent by a generator) to correct the reading. Do NOT apply signals with levels above -30 to 0 dBm to the receiver input as this might damage your receiver, depending on hardware. Please note that the RSSI and S-meter values displayed are relative to the current operating mode filter bandwidth, so the FM reading will be different to a SSB reading! Calibration tables support for different bands may be provided in the future.
 - The network remote control feature (for headless mode) is work in progress. The network server will listen on all network interfaces and the default control port is 4939. There is no provision for authentication of the user, if you need security you can filter the remote control port in the firewall, use SSH to log in to the remote system and telnet from there to localhost port 4939. To use the network remote control feature, you can simply use the telnet program or you can create simple Python or shell scripts to automate the commands. The help command will list all the available commands as well as parameters:
 <pre>

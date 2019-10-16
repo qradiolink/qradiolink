@@ -919,7 +919,7 @@ void RadioController::receiveDigitalAudio(unsigned char *data, int size)
         {
             if(_settings->_voip_connected || _settings->_repeater_enabled)
             {
-                _audio_mixer_in->addSamples(audio_out, samples, -9999);
+                _audio_mixer_in->addSamples(audio_out, samples, -9999); // radio id hardcoded
             }
             else
             {
@@ -951,7 +951,7 @@ void RadioController::receivePCMAudio(std::vector<float> *audio_data)
     {
         if(_settings->_voip_connected || _settings->_repeater_enabled)
         {
-            _audio_mixer_in->addSamples(pcm, size, -9999);
+            _audio_mixer_in->addSamples(pcm, size, -9999); // radio id hardcoded
         }
         else
         {
