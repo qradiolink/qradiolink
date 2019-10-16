@@ -22,14 +22,10 @@ Settings::Settings()
 
     _mumble_tcp = 1; // used
     _use_codec2 = 0; // used
-    _use_dtmf = 0; // used
-    _audio_treshhold = -15; // used
-    _voice_activation = 0.5; // used
-    _voice_activation_timeout = 50; // used
-    _local_udp_port = 4938;
-    _enable_vox = 0; // unused
-    _enable_agc = 0; // unused
-    _ident_time = 300; // used
+    _audio_treshhold = -15; // not used
+    _voice_activation = 0.5; // not used
+    _voice_activation_timeout = 50; // not used
+    _ident_time = 300; // not used
     _radio_id = "";
 
     _rx_inited = false;

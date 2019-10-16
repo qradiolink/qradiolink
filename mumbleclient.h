@@ -84,6 +84,8 @@ public slots:
     void disconnectFromCall();
     int muteStation(QString radio_id);
     void setMute(bool mute);
+    void setSelfMute(bool mute);
+    void setSelfDeaf(bool deaf);
     void logMessage(QString log_msg);
     void newMumbleMessage(QString msg);
     void newCommandMessage(QString msg, int to_id);

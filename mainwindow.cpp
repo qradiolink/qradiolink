@@ -1083,6 +1083,15 @@ void MainWindow::channelState(QTreeWidgetItem *item, int k)
     emit changeChannel((int)item->data(2,0).toInt());
 }
 
+void MainWindow::toggleSelfDeaf(bool deaf)
+{
+    emit setSelfDeaf(deaf);
+}
+void MainWindow::toggleSelfMute(bool mute)
+{
+    emit setSelfMute(mute);
+}
+
 void MainWindow::toggleRXwin(bool value)
 {
     emit setSampleRate(ui->sampleRateBox->currentText().toInt());

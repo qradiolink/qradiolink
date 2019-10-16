@@ -141,6 +141,8 @@ public slots:
     void setRxGainStages(string_vector rx_gains);
     void setTxGainStages(string_vector tx_gains);
     void sendMumbleTextMessage();
+    void toggleSelfDeaf(bool deaf);
+    void toggleSelfMute(bool mute);
 
 
 signals:
@@ -177,6 +179,8 @@ signals:
     void setVox(bool value);
     void connectToServer(QString server, unsigned port);
     void disconnectFromServer();
+    void setSelfDeaf(bool deaf);
+    void setSelfMute(bool mute);
     void changeChannel(int id);
     void setMute(bool value);
     void toggleRepeat(bool value);

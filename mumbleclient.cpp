@@ -518,6 +518,34 @@ QString MumbleClient::createChannel(QString channel_name)
     return name;
 }
 
+void MumbleClient::setSelfMute(bool mute)
+{
+    if(!_synchronized)
+        return;
+    MumbleProto::UserState us;
+    us.set_self_mute(mute);
+    us.set_session(_session_id);
+    us.set_actor(_session_id);
+    int msize = us.ByteSize();
+    quint8 mdata[msize];
+    us.SerializeToArray(mdata,msize);
+    sendMessage(mdata,9,msize);
+}
+
+void MumbleClient::setSelfDeaf(bool deaf)
+{
+    if(!_synchronized)
+        return;
+    MumbleProto::UserState us;
+    us.set_self_deaf(deaf);
+    us.set_session(_session_id);
+    us.set_actor(_session_id);
+    int msize = us.ByteSize();
+    quint8 mdata[msize];
+    us.SerializeToArray(mdata,msize);
+    sendMessage(mdata,9,msize);
+}
+
 void MumbleClient::setMute(bool mute)
 {
     if(!_synchronized)

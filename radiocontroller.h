@@ -96,6 +96,8 @@ signals:
     void writePCM(short *pcm, int bytes, bool preprocess, int mode);
     void rxGainStages(string_vector rx_gains);
     void txGainStages(string_vector tx_gains);
+    void setSelfDeaf(bool deaf);
+    void setSelfMute(bool mute);
 
 
 public slots:
