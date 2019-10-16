@@ -23,19 +23,25 @@
 #include <QDir>
 #include <QDebug>
 #include <QFileInfo>
+#include <QDateTime>
 #include <iostream>
 
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-void logMessage(QtMsgType type, const QMessageLogContext &context, const QString &msg);
+void logMessage(QtMsgType type, const QMessageLogContext &context, const QString &msg, QFile *log_file);
 #else
-void logMessage(QtMsgType type, const char *msg);
+void logMessage(QtMsgType type, const char *msg, QFile *log_file);
 #endif
 
 class Logger
 {
 public:
     explicit Logger();
+    ~Logger();
+
+
+private:
+    QFile *_log_file;
 };
 
 #endif // LOGGER_H
