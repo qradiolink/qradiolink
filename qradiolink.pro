@@ -60,7 +60,6 @@ SOURCES += main.cpp\
         relaycontroller.cpp \
         radiocontroller.cpp \
         commandprocessor.cpp \
-        server.cpp\
         telnetserver.cpp \
         settings.cpp\
         sslclient.cpp\
@@ -124,7 +123,6 @@ HEADERS  += mainwindow.h\
         commandprocessor.h \
         dtmfdecoder.h\
         mumbleclient.h\
-        server.h\
         telnetserver.h \
         settings.h\
         sslclient.h\

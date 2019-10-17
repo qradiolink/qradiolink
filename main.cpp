@@ -59,9 +59,10 @@ int main(int argc, char *argv[])
 
 
     QApplication a(argc, argv);
-    Logger *logger = new Logger;
     QStringList arguments = QCoreApplication::arguments();
     bool headless = false;
+
+    Logger *logger = new Logger;
     if((arguments.length() > 1) && (arguments.indexOf("--headless") != -1))
     {
         logger->set_console_log(false);
