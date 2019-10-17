@@ -45,7 +45,7 @@
 
 
 typedef std::vector<std::complex<float>> complex_vector;
-typedef std::vector<std::string> string_vector;
+typedef QMap<std::string,QVector<int>> gain_vector;
 typedef QVector<MumbleChannel*> ChannelList;
 typedef QVector<Station*> StationList;
 
@@ -138,8 +138,8 @@ public slots:
     void setDigitalGain(int value);
     void updateAgcAttack(int value);
     void updateAgcDecay(int value);
-    void setRxGainStages(string_vector rx_gains);
-    void setTxGainStages(string_vector tx_gains);
+    void setRxGainStages(gain_vector rx_gains);
+    void setTxGainStages(gain_vector tx_gains);
     void sendMumbleTextMessage();
     void toggleSelfDeaf(bool deaf);
     void toggleSelfMute(bool mute);

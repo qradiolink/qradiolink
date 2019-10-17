@@ -531,8 +531,7 @@ void RadioController::processInputNetStream()
     }
     else
     {
-        // FIXME: modem should be able to do bursts
-        // and not waste power transmitting garbage
+        // FIXME: modem should be able to do bursts and not waste power transmitting garbage
         unsigned int fake_nread = 0;
         memcpy(&(netbuffer[0]), &fake_nread, 4);
         memcpy(&(netbuffer[4]), &fake_nread, 4);
@@ -1288,7 +1287,7 @@ void RadioController::toggleRX(bool value)
         _modem->calibrateRSSI(_settings->rssi_calibration_value);
         _modem->startRX();
         _mutex->unlock();
-        const std::vector<std::string> rx_gains = _modem->getRxGainGames();
+        const QMap<std::string,QVector<int>> rx_gains = _modem->getRxGainNames();
         emit rxGainStages(rx_gains);
 
         _settings->_rx_inited = true;
@@ -1342,7 +1341,7 @@ void RadioController::toggleTX(bool value)
         if(_settings->_rx_inited)
             _modem->startRX();
         _mutex->unlock();
-        const std::vector<std::string> tx_gains = _modem->getTxGainGames();
+        const QMap<std::string,QVector<int>> tx_gains = _modem->getTxGainNames();
         emit txGainStages(tx_gains);
 
         _settings->_tx_inited = true;
@@ -1710,16 +1709,28 @@ void RadioController::setFilterWidth(int width)
 
 void RadioController::setRxSensitivity(int value, std::string gain_stage)
 {
-    Q_UNUSED(gain_stage);
-    _settings->rx_sensitivity = value;
-    _modem->setRxSensitivity(((double)_settings->rx_sensitivity)/100.0);
+    if(gain_stage.size() > 0)
+    {
+        _modem->setRxSensitivity((float)value, gain_stage);
+    }
+    else
+    {
+        _settings->rx_sensitivity = value;
+        _modem->setRxSensitivity(((double)_settings->rx_sensitivity)/100.0);
+    }
 }
 
-void RadioController::setTxPower(int dbm, std::string gain_stage)
+void RadioController::setTxPower(int value, std::string gain_stage)
 {
-    Q_UNUSED(gain_stage);
-    _settings->tx_power = dbm;
-    _modem->setTxPower((float)_settings->tx_power/100.0);
+    if(gain_stage.size() > 0)
+    {
+        _modem->setTxPower((float)value, gain_stage);
+    }
+    else
+    {
+        _settings->tx_power = value;
+        _modem->setTxPower((float)_settings->tx_power/100.0);
+    }
 }
 
 void RadioController::setBbGain(int value)

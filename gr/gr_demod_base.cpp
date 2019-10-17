@@ -161,9 +161,20 @@ gr_demod_base::~gr_demod_base()
     _osmosdr_source.reset();
 }
 
-const std::vector<std::string> gr_demod_base::get_gain_names() const
+const QMap<std::string,QVector<int>> gr_demod_base::get_gain_names() const
 {
-    return _gain_names;
+    QMap<std::string,QVector<int>> gain_names;
+    for(unsigned int i=0;i<_gain_names.size();i++)
+    {
+        QVector<int> gains;
+        osmosdr::gain_range_t gain_range = _osmosdr_source->get_gain_range(_gain_names.at(i));
+        int gain_min = gain_range.start();
+        int gain_max = gain_range.stop();
+        gains.push_back(gain_min);
+        gains.push_back(gain_max);
+        gain_names[_gain_names.at(i)] = gains;
+    }
+    return gain_names;
 }
 
 void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
@@ -600,9 +611,9 @@ double gr_demod_base::get_freq()
     }
 }
 
-void gr_demod_base::set_rx_sensitivity(double value)
+void gr_demod_base::set_rx_sensitivity(double value, std::string gain_stage)
 {
-    if (!_gain_range.empty())
+    if (!_gain_range.empty() && (gain_stage.size() < 1))
     {
 
         double gain =  floor((double)_gain_range.start() + value*((double)_gain_range.stop()- (double)_gain_range.start()));
@@ -615,6 +626,11 @@ void gr_demod_base::set_rx_sensitivity(double value)
         {
             _osmosdr_source->set_gain(gain);
         }
+    }
+    else
+    {
+        _osmosdr_source->set_gain_mode(false);
+        _osmosdr_source->set_gain(value, gain_stage);
     }
 }
 

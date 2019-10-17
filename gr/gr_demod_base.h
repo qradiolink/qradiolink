@@ -18,6 +18,9 @@
 #define GR_DEMOD_BASE_H
 
 #include <QObject>
+#include <QMap>
+#include <QVector>
+#include <string>
 #include <gnuradio/top_block.h>
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/filter/rational_resampler_base_ccf.h>
@@ -76,7 +79,7 @@ public slots:
     void get_FFT_data(float *fft_data,  unsigned int &fftSize);
     void tune(long center_freq);
     void set_carrier_offset(long carrier_offset);
-    void set_rx_sensitivity(double value);
+    void set_rx_sensitivity(double value, std::string gain_stage="");
     void set_squelch(int value);
     void set_agc_attack(float value);
     void set_agc_decay(float value);
@@ -93,7 +96,7 @@ public slots:
     void set_samp_rate(int samp_rate);
     void set_filter_width(int filter_width, int mode);
     void calibrate_rssi(float value);
-    const std::vector<std::string> get_gain_names() const;
+    const QMap<std::string,QVector<int>> get_gain_names() const;
 
 private:
     gr::top_block_sptr _top_block;

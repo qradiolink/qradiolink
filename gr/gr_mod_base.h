@@ -18,6 +18,9 @@
 #define GR_MOD_BASE_H
 
 #include <QObject>
+#include <QMap>
+#include <QVector>
+#include <string>
 #include "modem_types.h"
 #include <gnuradio/top_block.h>
 #include <gnuradio/blocks/rotator_cc.h>
@@ -48,7 +51,7 @@ public slots:
     void stop();
     int set_data(std::vector<u_int8_t> *data);
     void tune(long center_freq);
-    void set_power(float dbm);
+    void set_power(float value, std::string gain_stage="");
     void set_filter_width(int filter_width, int mode);
     void set_ctcss(float value);
     void set_mode(int mode);
@@ -56,7 +59,7 @@ public slots:
     void set_bb_gain(float value);
     void set_carrier_offset(long carrier_offset);
     void flush_sources();
-    const std::vector<std::string> get_gain_names() const;
+    const QMap<std::string,QVector<int>> get_gain_names() const;
 
 private:
     gr::top_block_sptr _top_block;

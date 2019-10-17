@@ -1484,20 +1484,24 @@ void MainWindow::updateAgcDecay(int value)
     emit setAgcDecay(decay);
 }
 
-void MainWindow::setRxGainStages(string_vector rx_gains)
+void MainWindow::setRxGainStages(gain_vector rx_gains)
 {
-    for(unsigned int i=0;i<rx_gains.size();i++)
+    QMap<std::string, QVector<int>>::const_iterator iter = rx_gains.constBegin();
+    while (iter != rx_gains.constEnd())
     {
-        QString gain_stage_name = QString::fromStdString(rx_gains.at(i));
-
+        QString gain_stage_name = QString::fromStdString(iter.key());
+        qDebug() << gain_stage_name << " " << iter.value().at(0) << " " << iter.value().at(1);
+        ++iter;
     }
 }
 
-void MainWindow::setTxGainStages(string_vector tx_gains)
+void MainWindow::setTxGainStages(gain_vector tx_gains)
 {
-    for(unsigned int i=0;i<tx_gains.size();i++)
+    QMap<std::string, QVector<int>>::const_iterator iter = tx_gains.constBegin();
+    while (iter != tx_gains.constEnd())
     {
-        QString gain_stage_name = QString::fromStdString(tx_gains.at(i));
-
+        QString gain_stage_name = QString::fromStdString(iter.key());
+        qDebug() << gain_stage_name << " " << iter.value().at(0) << " " << iter.value().at(1);
+        ++iter;
     }
 }

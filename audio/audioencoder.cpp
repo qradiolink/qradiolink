@@ -122,7 +122,7 @@ short* AudioEncoder::decode_opus(unsigned char *audiobuffer, int audiobuffersize
 
 short* AudioEncoder::decode_opus_voip(unsigned char *audiobuffer, int audiobuffersize, int &samples)
 {
-    int fs = 960; // FIXME
+    int fs = 960; // FIXME: overflow
     short *pcm = new short[fs];
     //memset(pcm,0,(fs)*sizeof(short));
     samples = opus_decode(_dec_voip,audiobuffer,audiobuffersize, pcm, fs, 0);

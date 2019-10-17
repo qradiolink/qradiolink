@@ -205,24 +205,24 @@ void gr_modem::toggleRxMode(int modem_type)
 /// Start of proxy methods, will be refactored
 ///
 
-const std::vector<std::string> gr_modem::getRxGainGames() const
+const QMap<std::string,QVector<int>> gr_modem::getRxGainNames() const
 {
     if(_gr_demod_base)
         return _gr_demod_base->get_gain_names();
     else
     {
-        std::vector<std::string> none;
+        QMap<std::string,QVector<int>> none;
         return none;
     }
 }
 
-const std::vector<std::string> gr_modem::getTxGainGames() const
+const QMap<std::string,QVector<int>> gr_modem::getTxGainNames() const
 {
     if(_gr_mod_base)
         return _gr_mod_base->get_gain_names();
     else
     {
-        std::vector<std::string> none;
+        QMap<std::string,QVector<int>> none;
         return none;
     }
 }
@@ -311,10 +311,10 @@ void gr_modem::setFFTSize(int size)
         _gr_demod_base->set_fft_size(size);
 }
 
-void gr_modem::setTxPower(float value)
+void gr_modem::setTxPower(float value, std::string gain_stage)
 {
     if(_gr_mod_base)
-        _gr_mod_base->set_power(value);
+        _gr_mod_base->set_power(value, gain_stage);
 }
 
 void gr_modem::setBbGain(int value)
@@ -324,10 +324,10 @@ void gr_modem::setBbGain(int value)
         _gr_mod_base->set_bb_gain(bb_gain);
 }
 
-void gr_modem::setRxSensitivity(double value)
+void gr_modem::setRxSensitivity(double value, std::string gain_stage)
 {
     if(_gr_demod_base)
-        _gr_demod_base->set_rx_sensitivity(value);
+        _gr_demod_base->set_rx_sensitivity(value, gain_stage);
 }
 
 void gr_modem::setAgcAttack(float value)

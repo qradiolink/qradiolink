@@ -54,8 +54,8 @@ int main(int argc, char *argv[])
     qRegisterMetaType<ChannelList>("ChannelList");
     typedef std::vector<std::complex<float>> complex_vector;
     qRegisterMetaType<complex_vector>("complex_vector");
-    typedef std::vector<std::string> string_vector;
-    qRegisterMetaType<string_vector>("string_vector");
+    typedef QMap<std::string,QVector<int>> gain_vector;
+    qRegisterMetaType<gain_vector>("gain_vector");
 
 
     QApplication a(argc, argv);
@@ -365,10 +365,10 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
     QObject::connect(radio_op, SIGNAL(newConstellationData(complex_vector*)),
                      w, SLOT(updateConstellation(complex_vector*)));
     QObject::connect(radio_op, SIGNAL(initError(QString)), w, SLOT(initError(QString)));
-    QObject::connect(radio_op, SIGNAL(rxGainStages(string_vector)),
-                     w, SLOT(setRxGainStages(string_vector)));
-    QObject::connect(radio_op, SIGNAL(txGainStages(string_vector)),
-                     w, SLOT(setTxGainStages(string_vector)));
+    QObject::connect(radio_op, SIGNAL(rxGainStages(gain_vector)),
+                     w, SLOT(setRxGainStages(gain_vector)));
+    QObject::connect(radio_op, SIGNAL(txGainStages(gain_vector)),
+                     w, SLOT(setTxGainStages(gain_vector)));
 
     /// Mumble to GUI
     QObject::connect(mumbleclient,SIGNAL(onlineStations(StationList)),

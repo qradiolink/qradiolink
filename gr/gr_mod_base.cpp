@@ -85,9 +85,20 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
 
 }
 
-const std::vector<std::string> gr_mod_base::get_gain_names() const
+const QMap<std::string,QVector<int>> gr_mod_base::get_gain_names() const
 {
-    return _gain_names;
+    QMap<std::string,QVector<int>> gain_names;
+    for(unsigned int i=0;i<_gain_names.size();i++)
+    {
+        QVector<int> gains;
+        osmosdr::gain_range_t gain_range = _osmosdr_sink->get_gain_range(_gain_names.at(i));
+        int gain_min = gain_range.start();
+        int gain_max = gain_range.stop();
+        gains.push_back(gain_min);
+        gains.push_back(gain_max);
+        gain_names[_gain_names.at(i)] = gains;
+    }
+    return gain_names;
 }
 
 void gr_mod_base::set_mode(int mode)
@@ -442,12 +453,17 @@ void gr_mod_base::tune(long center_freq)
     set_bandwidth_specific();
 }
 
-void gr_mod_base::set_power(float dbm)
+void gr_mod_base::set_power(float value, std::string gain_stage)
 {
-    if (!_gain_range.empty())
+    if (!_gain_range.empty() && (gain_stage.size() < 1))
     {
-        double gain =  _gain_range.start() + dbm*(_gain_range.stop()-_gain_range.start());
+        double gain =  _gain_range.start() + value*(_gain_range.stop()-_gain_range.start());
         _osmosdr_sink->set_gain(gain);
+    }
+    else
+    {
+        _osmosdr_sink->set_gain_mode(false);
+        _osmosdr_sink->set_gain(value, gain_stage);
     }
 }
 

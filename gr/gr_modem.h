@@ -98,11 +98,11 @@ public slots:
     void stopRX();
     void startTX();
     void stopTX();
-    void setTxPower(float value);
+    void setTxPower(float value, std::string gain_stage="");
     void setBbGain(int value);
     void setSquelch(int value);
     void setFilterWidth(int filter_width);
-    void setRxSensitivity(double value);
+    void setRxSensitivity(double value, std::string gain_stage="");
     void setAgcAttack(float value);
     void setAgcDecay(float value);
     void setRxCTCSS(float value);
@@ -122,8 +122,8 @@ public slots:
     float getRSSI();
     void flushSources();
     std::vector<gr_complex> *getConstellation();
-    const std::vector<std::string> getRxGainGames() const;
-    const std::vector<std::string> getTxGainGames() const;
+    const QMap<std::string, QVector<int> > getRxGainNames() const;
+    const QMap<std::string, QVector<int> > getTxGainNames() const;
 
 private:
     std::vector<unsigned char>* frame(unsigned char *encoded_audio,
