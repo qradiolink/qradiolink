@@ -520,7 +520,9 @@ void RadioController::processInputNetStream()
     }
     else
     {
-        int fake_nread = -1;
+        // FIXME: modem should be able to do bursts
+        // and not waste power transmitting garbage
+        unsigned int fake_nread = 0;
         memcpy(&(netbuffer[0]), &fake_nread, 4);
         memcpy(&(netbuffer[4]), &fake_nread, 4);
         memcpy(&(netbuffer[8]), &fake_nread, 4);
@@ -1053,9 +1055,14 @@ void RadioController::receiveNetData(unsigned char *data, int size)
     Q_UNUSED(size);
     unsigned int frame_size = getFrameLength(data);
 
-    if((frame_size == 0) || (frame_size > 1500))
+    if(frame_size > 1500)
     {
         _logger->log(Logger::LogLevelWarning, "received wrong frame size, dropping frame ");
+        delete[] data;
+        return;
+    }
+    if(frame_size == 0)
+    {
         delete[] data;
         return;
     }
