@@ -100,6 +100,7 @@ signals:
     void txGainStages(string_vector tx_gains);
     void setSelfDeaf(bool deaf);
     void setSelfMute(bool mute);
+    void newMumbleMessage(QString text);
 
 
 public slots:
@@ -225,6 +226,7 @@ private:
     QString _text_out;
     QString _callsign;
     QElapsedTimer _last_voiced_frame_timer;
+    QString _incoming_text_buffer;
 
     bool _stop;
     bool _transmitting;

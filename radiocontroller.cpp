@@ -98,20 +98,30 @@ RadioController::RadioController(Settings *settings, Logger *logger, QObject *pa
     /// Modem connections
     ///
     QObject::connect(_modem,SIGNAL(textReceived(QString)),this,SLOT(textReceived(QString)));
-    QObject::connect(_modem,SIGNAL(repeaterInfoReceived(QByteArray)),this,SLOT(repeaterInfoReceived(QByteArray)));
-    QObject::connect(_modem,SIGNAL(callsignReceived(QString)),this,SLOT(callsignReceived(QString)));
+    QObject::connect(_modem,SIGNAL(repeaterInfoReceived(QByteArray)),this,
+                     SLOT(repeaterInfoReceived(QByteArray)));
+    QObject::connect(_modem,SIGNAL(callsignReceived(QString)),this,
+                     SLOT(callsignReceived(QString)));
     QObject::connect(_modem,SIGNAL(audioFrameReceived()),this,SLOT(audioFrameReceived()));
     QObject::connect(_modem,SIGNAL(dataFrameReceived()),this,SLOT(dataFrameReceived()));
     QObject::connect(_modem,SIGNAL(receiveEnd()),this,SLOT(receiveEnd()));
     QObject::connect(_modem,SIGNAL(endAudioTransmission()),this,SLOT(endAudioTransmission()));
-    QObject::connect(this,SIGNAL(audioData(unsigned char*,int)),_modem,SLOT(transmitDigitalAudio(unsigned char*,int)));
-    QObject::connect(this,SIGNAL(pcmData(std::vector<float>*)),_modem,SLOT(transmitPCMAudio(std::vector<float>*)));
-    QObject::connect(this,SIGNAL(videoData(unsigned char*,int)),_modem,SLOT(transmitVideoData(unsigned char*,int)));
-    QObject::connect(this,SIGNAL(netData(unsigned char*,int)),_modem,SLOT(transmitNetData(unsigned char*,int)));
-    QObject::connect(_modem,SIGNAL(digitalAudio(unsigned char*,int)),this,SLOT(receiveDigitalAudio(unsigned char*,int)));
-    QObject::connect(_modem,SIGNAL(pcmAudio(std::vector<float>*)),this,SLOT(receivePCMAudio(std::vector<float>*)));
-    QObject::connect(_modem,SIGNAL(videoData(unsigned char*,int)),this,SLOT(receiveVideoData(unsigned char*,int)));
-    QObject::connect(_modem,SIGNAL(netData(unsigned char*,int)),this,SLOT(receiveNetData(unsigned char*,int)));
+    QObject::connect(this,SIGNAL(audioData(unsigned char*,int)),_modem,
+                     SLOT(transmitDigitalAudio(unsigned char*,int)));
+    QObject::connect(this,SIGNAL(pcmData(std::vector<float>*)),_modem,
+                     SLOT(transmitPCMAudio(std::vector<float>*)));
+    QObject::connect(this,SIGNAL(videoData(unsigned char*,int)),_modem,
+                     SLOT(transmitVideoData(unsigned char*,int)));
+    QObject::connect(this,SIGNAL(netData(unsigned char*,int)),_modem,
+                     SLOT(transmitNetData(unsigned char*,int)));
+    QObject::connect(_modem,SIGNAL(digitalAudio(unsigned char*,int)),this,
+                     SLOT(receiveDigitalAudio(unsigned char*,int)));
+    QObject::connect(_modem,SIGNAL(pcmAudio(std::vector<float>*)),this,
+                     SLOT(receivePCMAudio(std::vector<float>*)));
+    QObject::connect(_modem,SIGNAL(videoData(unsigned char*,int)),this,
+                     SLOT(receiveVideoData(unsigned char*,int)));
+    QObject::connect(_modem,SIGNAL(netData(unsigned char*,int)),this,
+                     SLOT(receiveNetData(unsigned char*,int)));
     for (int j = 0;j<5000;j++)
         _rand_frame_data[j] = rand() % 256;
 
@@ -442,7 +452,8 @@ int RadioController::processInputVideoStream(bool &frame_flag)
     unsigned int max_video_frame_size = 3122;
     unsigned long encoded_size;
 
-    unsigned char *videobuffer = (unsigned char*)calloc(max_video_frame_size, sizeof(unsigned char));
+    unsigned char *videobuffer = (unsigned char*)calloc(max_video_frame_size,
+                                                        sizeof(unsigned char));
 
     QElapsedTimer timer;
     qint64 microsec;
@@ -612,7 +623,8 @@ void RadioController::setRelays(bool transmitting)
         res = _relay_controller->enableRelay(0);
         if(!res)
         {
-            _logger->log(Logger::LogLevelCritical,"Relay control failed, stopping to avoid damage");
+            _logger->log(Logger::LogLevelCritical,
+                         "Relay control failed, stopping to avoid damage");
             exit(EXIT_FAILURE);
         }
         time_to_sleep = {0, 10000L };
@@ -620,7 +632,8 @@ void RadioController::setRelays(bool transmitting)
         res = _relay_controller->enableRelay(1);
         if(!res)
         {
-            _logger->log(Logger::LogLevelCritical,"Relay control failed, stopping to avoid damage");
+            _logger->log(Logger::LogLevelCritical,
+                         "Relay control failed, stopping to avoid damage");
             exit(EXIT_FAILURE);
         }
         time_to_sleep = {0, 10000L };
@@ -631,7 +644,8 @@ void RadioController::setRelays(bool transmitting)
         res = _relay_controller->disableRelay(1);
         if(!res)
         {
-            _logger->log(Logger::LogLevelCritical,"Relay control failed, stopping to avoid damage");
+            _logger->log(Logger::LogLevelCritical,
+                         "Relay control failed, stopping to avoid damage");
             exit(EXIT_FAILURE);
         }
         time_to_sleep = {0, 10000L };
@@ -639,7 +653,8 @@ void RadioController::setRelays(bool transmitting)
         res = _relay_controller->disableRelay(0);
         if(!res)
         {
-            _logger->log(Logger::LogLevelCritical,"Relay control failed, stopping to avoid damage");
+            _logger->log(Logger::LogLevelCritical,
+                         "Relay control failed, stopping to avoid damage");
             exit(EXIT_FAILURE);
         }
         time_to_sleep = {0, 10000L };
@@ -675,7 +690,8 @@ void RadioController::startTx()
         _modem->setTxPower((float)_settings->tx_power/100);
 
         /**
-        if(_settings->_rx_inited && !_settings->_repeater_enabled && (_rx_mode != gr_modem_types::ModemTypeQPSK250000))
+        if(_settings->_rx_inited && !_settings->_repeater_enabled &&
+                        (_rx_mode != gr_modem_types::ModemTypeQPSK250000))
             _modem->stopRX();
 
 
@@ -697,7 +713,8 @@ void RadioController::startTx()
             _modem->startTransmission(_callsign);
         }
         if((_tx_radio_type == radio_type::RADIO_TYPE_ANALOG)
-                && ((_tx_mode == gr_modem_types::ModemTypeNBFM2500) || (_tx_mode == gr_modem_types::ModemTypeNBFM5000)))
+                && ((_tx_mode == gr_modem_types::ModemTypeNBFM2500) ||
+                    (_tx_mode == gr_modem_types::ModemTypeNBFM5000)))
         {
             sendEndBeep();
         }
@@ -718,7 +735,8 @@ void RadioController::stopTx()
             tx_tail_msec = 1500;
         }
         if((_tx_radio_type == radio_type::RADIO_TYPE_ANALOG)
-                && ((_tx_mode == gr_modem_types::ModemTypeNBFM2500) || (_tx_mode == gr_modem_types::ModemTypeNBFM5000)))
+                && ((_tx_mode == gr_modem_types::ModemTypeNBFM2500) ||
+                    (_tx_mode == gr_modem_types::ModemTypeNBFM5000)))
         {
             sendEndBeep();
             tx_tail_msec = 1000;
@@ -728,7 +746,8 @@ void RadioController::stopTx()
         _tx_modem_started = false;
 
         /**
-        if(_settings->_rx_inited && !_settings->_repeater_enabled && (_rx_mode != gr_modem_types::ModemTypeQPSK250000))
+        if(_settings->_rx_inited && !_settings->_repeater_enabled &&
+                    (_rx_mode != gr_modem_types::ModemTypeQPSK250000))
            _modem->startRX();
         */
     }
@@ -920,8 +939,8 @@ void RadioController::receiveDigitalAudio(unsigned char *data, int size)
             }
             else
             {
-                emit writePCM(audio_out,samples*sizeof(short), (bool)_settings->audio_compressor,
-                              audio_mode);
+                emit writePCM(audio_out,samples*sizeof(short),
+                              (bool)_settings->audio_compressor, audio_mode);
             }
         }
     }
@@ -1108,11 +1127,8 @@ void RadioController::endTransmission()
 void RadioController::textData(QString text, bool repeat)
 {
     _repeat_text = repeat;
-
     _text_out = text;
     _process_text = true;
-
-
 }
 
 void RadioController::textReceived(QString text)
@@ -1121,6 +1137,12 @@ void RadioController::textReceived(QString text)
     {
         _modem->textData(text);
     }
+    /// Disallow too large messages
+    /// If end TX is not received, this buffer would fill forever
+    if(_settings->_voip_forwarding && _incoming_text_buffer.size() < 32*1024)
+        _incoming_text_buffer.append(text);
+    if(_incoming_text_buffer.size() >= 32*1024)
+        _incoming_text_buffer = "";
     emit printText(text, false);
 }
 
@@ -1159,7 +1181,7 @@ void RadioController::dataFrameReceived()
     emit displayDataReceiveStatus(true);
     _data_led_timer->start(500);
     if((_rx_mode != gr_modem_types::ModemTypeQPSK250000)
-            && (_rx_mode != gr_modem_types::ModemTypeQPSKVideo))
+            && (_rx_mode != gr_modem_types::ModemTypeQPSKVideo) && !_settings->_voip_forwarding)
     {
         short *sound = (short*) _data_rec_sound->data();
         short *samples = new short[_data_rec_sound->size()/sizeof(short)];
@@ -1171,6 +1193,11 @@ void RadioController::dataFrameReceived()
 
 void RadioController::receiveEnd()
 {
+    if(_incoming_text_buffer.size() > 0)
+    {
+        emit newMumbleMessage(_incoming_text_buffer);
+        _incoming_text_buffer = "";
+    }
     emit displayReceiveStatus(false);
     emit displayDataReceiveStatus(false);
 }
@@ -1182,7 +1209,8 @@ void RadioController::endAudioTransmission()
         _modem->endTransmission(_callsign);
     }
     QString time= QDateTime::currentDateTime().toString("d/MMM/yyyy hh:mm:ss");
-    emit printText("<b>" + time + "</b> <font color=\"#77FF77\">Transmission end</font><br/>\n",true);
+    emit printText("<b>" + time +
+                   "</b> <font color=\"#77FF77\">Transmission end</font><br/>\n",true);
     unsigned int size = _end_rec_sound->size();
     short *samples = new short[size/sizeof(short)];
     short *origin = reinterpret_cast<short*>(_end_rec_sound->data());
