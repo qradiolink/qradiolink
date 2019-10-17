@@ -17,10 +17,11 @@
 
 #include "audioreader.h"
 
-AudioReader::AudioReader(const Settings *settings, QObject *parent) :
+AudioReader::AudioReader(const Settings *settings, Logger *logger, QObject *parent) :
     QObject(parent)
 {
     _settings = settings;
+    _logger = logger;
     _working = true;
     _capture_audio = false;
     _read_audio_mode = AudioProcessor::AUDIO_MODE_ANALOG;
@@ -69,7 +70,7 @@ void AudioReader::run()
         }
     }
     if (!device.isFormatSupported(format)) {
-       std::cerr << "Raw audio format not supported by backend, cannot record audio." << std::endl;
+       _logger->log(Logger::LogLevelCritical, "Raw audio format not supported by backend, cannot capture audio.");
        return;
     }
 

@@ -16,10 +16,11 @@
 
 #include "commandprocessor.h"
 
-CommandProcessor::CommandProcessor(const Settings *settings, QObject *parent)
+CommandProcessor::CommandProcessor(const Settings *settings, Logger *logger, QObject *parent)
     : QObject(parent)
 {
     _settings = settings;
+    _logger = logger;
     _command_list = new QVector<command*>;
     buildCommandList();
 }

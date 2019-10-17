@@ -17,7 +17,7 @@
 #include "mumbleclient.h"
 
 
-MumbleClient::MumbleClient(const Settings *settings, QObject *parent) :
+MumbleClient::MumbleClient(const Settings *settings, Logger *logger, QObject *parent) :
     QObject(parent)
 {
     _socket_client = new SSLClient;
@@ -26,6 +26,7 @@ MumbleClient::MumbleClient(const Settings *settings, QObject *parent) :
 #endif
     _codec = new AudioEncoder;
     _settings = settings;
+    _logger = logger;
     _encryption_set = false;
     _authenticated = false;
     _synchronized = false;
@@ -238,7 +239,7 @@ void MumbleClient::processServerSync(quint8 *message, quint64 size)
     msg = QString::fromStdString(welcome)
              + " max bandwidth: " + max_bandwidth
              + " session: " + QString::number(_session_id);
-    std::cout << msg.toStdString() << std::endl;
+    _logger->log(Logger::LogLevelInfo, msg);
     emit connectedToServer(msg);
     Settings *settings = const_cast<Settings*>(_settings);
     settings->_voip_connected = true;
@@ -697,7 +698,7 @@ void MumbleClient::processIncomingAudioPacket(quint8 *data, quint64 size, quint8
     int audio_size = pds.left();
     if(audio_size <= 0)
     {
-        std::cerr << "Received malformed audio frame" << std::endl;
+        _logger->log(Logger::LogLevelWarning, "Received malformed audio frame");
         delete[] data;
         return;
     }

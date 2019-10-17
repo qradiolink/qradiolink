@@ -25,11 +25,12 @@
 #include <QFileInfo>
 #include <libconfig.h++>
 #include <iostream>
+#include "logger.h"
 
 class Settings
 {
 public:
-    explicit Settings();
+    explicit Settings(Logger *logger);
     QFileInfo *setupConfig();
     void readConfig();
     void saveConfig();
@@ -111,6 +112,7 @@ public:
 
 private:
     QFileInfo *_config_file;
+    Logger *_logger;
 };
 
 #endif // SETTINGS_H

@@ -31,12 +31,13 @@
 #include <arpa/inet.h>
 #include <sys/ioctl.h>
 #include <fcntl.h>
+#include "logger.h"
 
 class NetDevice : public QObject
 {
     Q_OBJECT
 public:
-    explicit NetDevice(QObject *parent = 0, QString ip_address="");
+    explicit NetDevice(Logger *logger, QObject *parent = 0, QString ip_address="");
     ~NetDevice();
 signals:
 
@@ -47,6 +48,7 @@ public:
     int write_buffered(unsigned char* data, int len);
 
 private:
+    Logger *_logger;
     int tun_init(QString ip_address);
     void if_list();
     int _fd_tun;

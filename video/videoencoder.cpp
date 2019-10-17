@@ -21,8 +21,9 @@
 #include <setjmp.h>
 
 
-VideoEncoder::VideoEncoder()
+VideoEncoder::VideoEncoder(Logger *logger)
 {
+    _logger = logger;
     _init = false;
 }
 
@@ -36,7 +37,7 @@ void VideoEncoder::init(QString device_name)
     if(_init)
         return;
     dev_name = (char*)(device_name.toStdString().c_str());
-    std::cerr << "Using video device: " << dev_name << std::endl;
+    _logger->log(Logger::LogLevelInfo,"Using video device: " + device_name);
     open_device();
     init_device();
     start_capturing();

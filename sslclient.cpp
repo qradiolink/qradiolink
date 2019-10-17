@@ -252,8 +252,6 @@ void SSLClient::sendUDP(quint8 *payload, quint64 size)
     quint64 sent = _udp_socket->writeDatagram(
                 message,size,QHostAddress(_hostname),_port);
     _udp_socket->flush();
-    if(sent <= 0)
-        std::cerr << "UDP transmit error" << std::endl;
 }
 
 

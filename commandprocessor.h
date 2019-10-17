@@ -25,12 +25,13 @@
 #include <QRegularExpressionValidator>
 #include <QVector>
 #include "settings.h"
+#include "logger.h"
 
 class CommandProcessor : public QObject
 {
     Q_OBJECT
 public:
-    explicit CommandProcessor(const Settings *settings, QObject *parent = nullptr);
+    explicit CommandProcessor(const Settings *settings, Logger *logger, QObject *parent = nullptr);
     ~CommandProcessor();
     QStringList listAvailableCommands();
     bool validateCommand(QString message);
@@ -118,6 +119,7 @@ private:
     };
 
     const Settings *_settings;
+    Logger *_logger;
     QVector<command*> *_command_list;
 
     QStringList getCommand(QString message, int &command_index);

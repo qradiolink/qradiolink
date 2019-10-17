@@ -21,11 +21,12 @@
 #include <QDebug>
 #include <QDateTime>
 #include <iostream>
+#include "logger.h"
 
 class VideoEncoder
 {
 public:
-    VideoEncoder();
+    VideoEncoder(Logger *logger);
     ~VideoEncoder();
     void init(QString device_name);
     void deinit();
@@ -33,6 +34,7 @@ public:
     unsigned char *decode_jpeg(unsigned char *videobuffer, int data_length);
 
 private:
+    Logger *_logger;
     bool _init;
 
 };

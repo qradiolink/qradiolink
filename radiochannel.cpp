@@ -16,9 +16,10 @@
 
 #include "radiochannel.h"
 
-RadioChannels::RadioChannels(QObject *parent) :
+RadioChannels::RadioChannels(Logger *logger, QObject *parent) :
     QObject(parent)
 {
+    _logger = logger;
     _memories_file = setupConfig();
     _channels = new QVector<radiochannel*>;
 }
@@ -78,14 +79,14 @@ void RadioChannels::readConfig()
     }
     catch(const libconfig::FileIOException &fioex)
     {
-        std::cerr << "I/O error while reading configuration file." << std::endl;
+        _logger->log(Logger::LogLevelFatal, "I/O error while reading configuration file.");
         exit(EXIT_FAILURE);
     }
     catch(const libconfig::ParseException &pex)
     {
-        std::cerr << "Configuration parse error at "
-                  << pex.getFile() << ":" << pex.getLine()
-                  << " - " << pex.getError() << std::endl;
+        _logger->log(Logger::LogLevelFatal,
+                  QString("Configuration parse error at %1:%2 - %3").arg(
+                  pex.getFile()).arg(pex.getLine()).arg(pex.getError()));
         exit(EXIT_FAILURE);
     }
 
@@ -99,7 +100,7 @@ void RadioChannels::readConfig()
     }
     catch(const libconfig::SettingNotFoundException &nfex)
     {
-        std::cerr << "No memory channels found." << std::endl;
+        _logger->log(Logger::LogLevelInfo, "No memory channels found.");
         return;
     }
     const libconfig::Setting &channels = *channels_ptr;
@@ -175,8 +176,8 @@ void RadioChannels::saveConfig()
     }
     catch(const libconfig::FileIOException &fioex)
     {
-        std::cerr << "I/O error while writing configuration file: "
-                  << _memories_file->absoluteFilePath().toStdString() << std::endl;
+        _logger->log(Logger::LogLevelFatal, "I/O error while writing configuration file: "
+                  + _memories_file->absoluteFilePath());
         exit(EXIT_FAILURE);
     }
 }

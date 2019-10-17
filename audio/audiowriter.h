@@ -24,12 +24,13 @@
 #include <QAudioOutput>
 #include "audio/audioprocessor.h"
 #include "settings.h"
+#include "logger.h"
 
 class AudioWriter : public QObject
 {
     Q_OBJECT
 public:
-    explicit AudioWriter(const Settings *settings, QObject *parent = 0);
+    explicit AudioWriter(const Settings *settings, Logger *logger, QObject *parent = 0);
     ~AudioWriter();
 
 signals:
@@ -50,6 +51,7 @@ private:
         int audio_mode;
     };
     const Settings *_settings;
+    Logger *_logger;
     QVector<audio_samples*> *_rx_sample_queue;
     bool _working;
     QMutex _mutex;

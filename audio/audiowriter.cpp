@@ -17,10 +17,11 @@
 
 #include "audiowriter.h"
 
-AudioWriter::AudioWriter(const Settings *settings, QObject *parent) :
+AudioWriter::AudioWriter(const Settings *settings, Logger *logger, QObject *parent) :
     QObject(parent)
 {
     _settings = settings;
+    _logger = logger;
     _rx_sample_queue = new QVector<audio_samples*>;
     _working = true;
 }
@@ -74,7 +75,7 @@ void AudioWriter::run()
         }
     }
     if (!device.isFormatSupported(format)) {
-       std::cerr << "Raw audio format not supported by backend, cannot play audio." << std::endl;
+       _logger->log(Logger::LogLevelCritical, "Raw audio format not supported by backend, cannot play audio.");
        return;
     }
 

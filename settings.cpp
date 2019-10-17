@@ -16,8 +16,9 @@
 
 #include "settings.h"
 
-Settings::Settings()
+Settings::Settings(Logger *logger)
 {
+    _logger = logger;
     _id = 0;
 
     _mumble_tcp = 1; // used
@@ -100,13 +101,14 @@ void Settings::readConfig()
     }
     catch(const libconfig::FileIOException &fioex)
     {
-        std::cerr << "I/O error while reading configuration file." << std::endl;
+        _logger->log(Logger::LogLevelFatal, "I/O error while reading configuration file.");
         exit(EXIT_FAILURE); // a bit radical
     }
     catch(const libconfig::ParseException &pex)
     {
-        std::cerr << "Configuration parse error at " << pex.getFile() << ":" << pex.getLine()
-                  << " - " << pex.getError() << std::endl;
+        _logger->log(Logger::LogLevelFatal,
+                  QString("Configuration parse error at %1: %2 - %3").arg(pex.getFile()).arg(
+                         pex.getLine()).arg(pex.getError()));
         exit(EXIT_FAILURE); // a bit radical
     }
 
@@ -520,7 +522,8 @@ void Settings::saveConfig()
     }
     catch(const libconfig::FileIOException &fioex)
     {
-        std::cerr << "I/O error while writing configuration file: " << _config_file->absoluteFilePath().toStdString() << std::endl;
+        _logger->log(Logger::LogLevelFatal, "I/O error while writing configuration file: " +
+                     _config_file->absoluteFilePath());
         exit(EXIT_FAILURE);
     }
 }

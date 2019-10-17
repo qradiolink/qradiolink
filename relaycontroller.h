@@ -19,13 +19,14 @@
 
 #include <QObject>
 #include <ftdi.h>
+#include "logger.h"
 #include <iostream>
 
 class RelayController : public QObject
 {
     Q_OBJECT
 public:
-    explicit RelayController(QObject *parent = nullptr);
+    explicit RelayController(Logger *logger, QObject *parent = nullptr);
     ~RelayController();
 
 signals:
@@ -37,6 +38,7 @@ public slots:
     int disableRelay(int relay_number);
 
 private:
+    Logger *_logger;
     struct ftdi_context *_ftdi_relay;
     bool _ftdi_relay_enabled;
     unsigned char *_relay_mask;
