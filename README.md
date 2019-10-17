@@ -134,7 +134,7 @@ Known issues:
 
 Setup and running
 -------
-- It is recommended to start the application using the command line when running the first few times and look for any error messages output to the console. Some of them can be ignored safely, others are critical. Logging to a file is not yet enabled.
+- It is recommended to start the application using the command line when running the first few times and look for any error messages output to the console. Some of them can be ignored safely, others are critical. Logging to console is by default enabled.
 - When first run, go to the **Setup** tab first and configure the options, then click Save before starting TX or RX. Without the correct device arguments, the application can crash when enabling RX or TX. This is not something that the application can control and keep functioning properly.
 - GNU radio main DSP blocks are highly optimized (including on embedded ARM platforms) by using the VOLK library. To minimize the CPU resources consumed by QRadioLink it is recommended to run the **volk_profile** utility after GNU radio has been installed. This command only needs to be run when GNU radio or libvolk are upgraded.
 - High sample rates, high FPS rates and high FFT sizes all affect the CPU performance adversely. On embedded platforms with low resources, you can disable the spectrum display completely using the FFT checkbox. The FPS value also sets the rate at which the S-meter and constellation display are updated, so reduce it to minimum usable values. If the controls menu is not visible, the S-meter display will not consume CPU resources. Similar for the Constellation display.
@@ -153,12 +153,12 @@ The Mumble VOIP connection uses the Opus codec at a higher bitrate, so ensure th
 - Remote control via Mumble private text messages requires enabling remote control in settings, and using the Mumble client to send text messages to the QRadioLink username. Text messages sent to the channel will be ignored by the application. Authentication of user who is sending the commands is not yet implemented.
 - Running headless (no graphical user interface) for usage on embedded platforms like the Raspberry Pi or similar boards requires starting QRadioLink from the command line with the **--headless** option:
 <pre>
-$ qradiolink --headless
+$ qradiolink --headless  >> $HOME/.config/qradiolink/qradiolink.log 2>&1
 </pre>
-Init scripts for SysV/systemd will be provided at some point to be able to run QRadioLink as a system service. When running headless from CLI, the network command server is started by default listening on the port configured in the settings file (or 4939 if not configured). Headless and remote operation will usually require you to enable VOIP forwarding either in the configuration file or via a command, unless you want to use audio from the machine where QRadioLink is running.
+When running in headless mode, console log will be disabled by default with the above command. Init scripts for SysV/systemd will be provided at some point to be able to run QRadioLink as a system service. When running headless from CLI, the network command server is started by default listening on the port configured in the settings file (or 4939 if not configured). Headless and remote operation will usually require you to enable VOIP forwarding either in the configuration file or via a command, unless you want to use audio from the machine where QRadioLink is running.
 - The configuration file is located in $HOME/.config/qradiolink/qradiolink.cfg
 - The memory channels storage file is located in $HOME/.config/qradiolink/qradiolink_mem.cfg
-- Logging to a file is not yet enabled, however the location of the log file will probably be /var/log/qradiolink.log
+- Log messages are stored in $HOME/.config/qradiolink/qradiolink.log (this location will likely change in the future)
 - After adding a memory channel, you can edit its values by double clicking on a table cell. This may cause the radio to switch to that channel. The settings are not updated instantly, so if you make a change, after you press Enter, switch to another channel and back to get the updates. A button allows you to save channels before the window is closed.  Saving sorted channels is not possible yet. Otherwise, the channels, like the settings, will be stored on exit (if no application crash meanwhile).
 - **Before any upgrade**, please make a backup of the $HOME/.config/qradiolink/ directory in case something goes wrong, to avoid losing settings and channels.
 - Digital gain can be safely ignored on most devices. It was added as a workaround for the PlutoSDR and is no longer required. Leave it at 1 unless you know better.

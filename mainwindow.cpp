@@ -307,6 +307,7 @@ void MainWindow::changeEvent(QEvent *event)
 {
     if (event->type() == QEvent::WindowStateChange)
     {
+        /** Disabled! Due to logic changes in radioop, this breaks
         if (isMinimized())
         {
             emit enableGUIFFT(false);
@@ -315,10 +316,11 @@ void MainWindow::changeEvent(QEvent *event)
         }
         else
         {
-            emit enableGUIFFT((bool)_settings->show_fft);
-            emit enableGUIConst((bool)_settings->show_constellation);
-            emit enableRSSI((bool)_settings->show_controls);
+            emit enableGUIFFT(true);
+            emit enableGUIConst(true);
+            emit enableRSSI(true);
         }
+        */
     }
 
     event->accept();
