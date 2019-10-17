@@ -27,8 +27,8 @@ RelayController::RelayController(Logger *logger, QObject *parent) : QObject(pare
 
 RelayController::~RelayController()
 {
-    delete[] _relay_mask;
     deinit();
+    delete[] _relay_mask;
 }
 
 void RelayController::init()
@@ -59,6 +59,13 @@ void RelayController::deinit()
 {
     if(_ftdi_relay_enabled)
     {
+        _relay_mask[0] = 0x0;
+        int ret = ftdi_write_data(_ftdi_relay, _relay_mask, 1);
+        if (ret < 0)
+        {
+            _logger->log(Logger::LogLevelCritical,
+                         QString("Disable failed for relays"));
+        }
         ftdi_disable_bitbang(_ftdi_relay);
         ftdi_usb_close(_ftdi_relay);
         ftdi_free(_ftdi_relay);
