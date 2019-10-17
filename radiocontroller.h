@@ -109,6 +109,7 @@ public slots:
     void endTransmission();
     void txAudio(short *audiobuffer, int audiobuffer_size, int vad, bool radio_only);
     void textData(QString text, bool repeat = false);
+    void textMumble(QString text, bool channel = false);
     void stop();
     void textReceived(QString text);
     void repeaterInfoReceived(QByteArray data);

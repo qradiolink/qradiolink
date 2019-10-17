@@ -1131,6 +1131,16 @@ void RadioController::textData(QString text, bool repeat)
     _process_text = true;
 }
 
+void RadioController::textMumble(QString text, bool channel)
+{
+    // FIXME: This will loop endlessly if radio is on duplex on the same freq as RX
+    if(!channel || !_settings->_voip_forwarding)
+        return;
+    _repeat_text = false;
+    _text_out = text;
+    _process_text = true;
+}
+
 void RadioController::textReceived(QString text)
 {
     if(_settings->_repeater_enabled && _tx_radio_type == radio_type::RADIO_TYPE_DIGITAL)

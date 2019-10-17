@@ -158,6 +158,8 @@ int main(int argc, char *argv[])
                      radio_op,SLOT(setStations(StationList)));
     QObject::connect(radio_op, SIGNAL(newMumbleMessage(QString)),
                      mumbleclient, SLOT(newMumbleMessage(QString)));
+    QObject::connect(mumbleclient, SIGNAL(textMessage(QString,bool)),
+                     radio_op, SLOT(textMumble(QString,bool)));
 
 
     /// Start remote command listener
