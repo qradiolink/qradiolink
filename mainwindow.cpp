@@ -1146,7 +1146,7 @@ void MainWindow::toggleTxMode(int value)
 
 void MainWindow::initError(QString error)
 {
-    std::cerr << error.toStdString() << std::endl;
+    Q_UNUSED(error);
     ui->tabWidget->setCurrentIndex(3);
 }
 

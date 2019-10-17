@@ -23,12 +23,13 @@
 #include <QDebug>
 #include "audio/audioprocessor.h"
 #include "settings.h"
+#include "logger.h"
 
 class AudioReader : public QObject
 {
     Q_OBJECT
 public:
-    explicit AudioReader(const Settings *settings, QObject *parent = 0);
+    explicit AudioReader(const Settings *settings, Logger *logger, QObject *parent = 0);
 
 signals:
     void finished();
@@ -41,6 +42,7 @@ public slots:
 
 private:
     const Settings *_settings;
+    Logger *_logger;
     QByteArray *_buffer;
     bool _working;
     bool _capture_audio;

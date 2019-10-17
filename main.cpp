@@ -48,10 +48,6 @@ void connectCommandSignals(TelnetServer *telnet_server, MumbleClient *mumbleclie
 int main(int argc, char *argv[])
 {
 
-    std::string start_time= QDateTime::currentDateTime().toString(
-                "d/MMM/yyyy hh:mm:ss").toStdString();
-    std::cout << "Starting qradiolink instance: " << start_time << std::endl;
-
     typedef QVector<Station*> StationList;
     qRegisterMetaType<StationList>("StationList");
     typedef QVector<MumbleChannel*> ChannelList;
@@ -63,23 +59,29 @@ int main(int argc, char *argv[])
 
 
     QApplication a(argc, argv);
+    Logger *logger = new Logger;
     QStringList arguments = QCoreApplication::arguments();
     bool headless = false;
     if((arguments.length() > 1) && (arguments.indexOf("--headless") != -1))
+    {
+        logger->set_console_log(false);
         headless = true;
+    }
 
 
     /// Init main logic
     ///
-    Settings *settings = new Settings;
+    logger->log(Logger::LogLevelInfo, "Starting qradiolink");
+    Settings *settings = new Settings(logger);
     settings->readConfig();
-    RadioChannels *radio_channels = new RadioChannels;
+    RadioChannels *radio_channels = new RadioChannels(logger);
     radio_channels->readConfig();
-    MumbleClient *mumbleclient = new MumbleClient(settings);
-    RadioController *radio_op = new RadioController(settings);
-    AudioWriter *audiowriter = new AudioWriter(settings);
-    AudioReader *audioreader = new AudioReader(settings);
-    TelnetServer *telnet_server = new TelnetServer(settings);
+    MumbleClient *mumbleclient = new MumbleClient(settings, logger);
+    RadioController *radio_op = new RadioController(settings, logger);
+    AudioWriter *audiowriter = new AudioWriter(settings, logger);
+    AudioReader *audioreader = new AudioReader(settings, logger);
+    TelnetServer *telnet_server = new TelnetServer(settings, logger);
+
 
     /// Init threads
     ///
@@ -158,6 +160,7 @@ int main(int argc, char *argv[])
     /// Start remote command listener
     if(headless)
         telnet_server->start();
+
     int ret = a.exec();
 
     /// Cleanup on exit
@@ -170,6 +173,8 @@ int main(int argc, char *argv[])
     delete radio_channels;
     settings->saveConfig();
     delete settings;
+    logger->log(Logger::LogLevelInfo, "qradiolink stopping");
+    delete logger;
     return ret;
 }
 

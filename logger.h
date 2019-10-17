@@ -33,15 +33,27 @@ void logMessage(QtMsgType type, const QMessageLogContext &context, const QString
 void logMessage(QtMsgType type, const char *msg, QFile *log_file);
 #endif
 
+
 class Logger
 {
 public:
+    enum
+    {
+        LogLevelInfo,
+        LogLevelDebug,
+        LogLevelWarning,
+        LogLevelCritical,
+        LogLevelFatal
+    };
     explicit Logger();
     ~Logger();
-
+    void log(int type, QString msg);
+    void set_console_log(bool value);
 
 private:
     QFile *_log_file;
+    bool _console_log;
+    QTextStream *_stream;
 };
 
 #endif // LOGGER_H

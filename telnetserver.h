@@ -36,12 +36,13 @@
 #include "settings.h"
 #include "station.h"
 #include "commandprocessor.h"
+#include "logger.h"
 
 class TelnetServer : public QObject
 {
     Q_OBJECT
 public:
-    explicit TelnetServer(const Settings *settings, QObject *parent = 0);
+    explicit TelnetServer(const Settings *settings, Logger *logger, QObject *parent = 0);
     ~TelnetServer();
 
     CommandProcessor *command_processor; // public needed for signals and slots
@@ -62,6 +63,7 @@ private slots:
 
 private:
     const Settings *_settings;
+    Logger *_logger;
     QTcpServer *_server;
     QVector<QTcpSocket*> _connected_clients;
     QTcpSocket _socket;

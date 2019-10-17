@@ -16,9 +16,10 @@
 
 #include "netdevice.h"
 
-NetDevice::NetDevice(QObject *parent, QString ip_address) :
+NetDevice::NetDevice(Logger *logger, QObject *parent, QString ip_address) :
     QObject(parent)
 {
+    _logger = logger;
     _fd_tun = 0;
     _if_no = 0;
     if_list();
@@ -39,7 +40,7 @@ int NetDevice::tun_init(QString ip_address)
     char *dev = const_cast<char*>(dev_str.toStdString().c_str());
     if( (_fd_tun = open("/dev/net/tun", O_RDWR)) < 0 )
     {
-        std::cerr << "Failed to open tun device" << std::endl;
+        _logger->log(Logger::LogLevelCritical, "Failed to open tun device");
         return -1;
     }
     int flags = fcntl(_fd_tun, F_GETFL, 0);
@@ -58,7 +59,8 @@ int NetDevice::tun_init(QString ip_address)
 
     if( (err = ioctl(_fd_tun, TUNSETIFF, (void *) &ifr)) < 0 )
     {
-        std::cerr << "creating net device failed, run setcap \"cap_net_raw,cap_net_admin+eip\" qradiolink" << std::endl;
+        _logger->log(Logger::LogLevelWarning,
+            "creating net device failed, run setcap \"cap_net_raw,cap_net_admin+eip\" qradiolink");
         close(_fd_tun);
         return err;
     }
@@ -73,14 +75,14 @@ int NetDevice::tun_init(QString ip_address)
     int ret = inet_pton(AF_INET, ip, ifr.ifr_addr.sa_data + 2);
     if(ret != 1)
     {
-        std::cerr << "The IP address is not valid " << err << std::endl;
+        _logger->log(Logger::LogLevelCritical, QString("The IP address is not valid %1").arg(err));
         close(_fd_tun);
         return err;
     }
 
     if( (err = ioctl(s, SIOCSIFADDR, &ifr)) < 0)
     {
-        std::cerr << "setting address failed " << err << std::endl;
+        _logger->log(Logger::LogLevelCritical, QString("setting address failed %1").arg(err));
         close(_fd_tun);
         return err;
     }
@@ -88,14 +90,14 @@ int NetDevice::tun_init(QString ip_address)
     inet_pton(AF_INET, "255.255.255.0", ifr.ifr_addr.sa_data + 2);
     if( (err = ioctl(s, SIOCSIFNETMASK, &ifr)) < 0)
     {
-        std::cerr << "setting netmask failed " << err << std::endl;
+        _logger->log(Logger::LogLevelCritical, QString("setting netmask failed %1").arg(err));
         close(_fd_tun);
         return err;
     }
 
     if( (err = ioctl(s, SIOCGIFFLAGS, &ifr)) < 0)
     {
-        std::cerr << "getting flags failed " << err << std::endl;
+        _logger->log(Logger::LogLevelCritical, QString("getting flags failed %1").arg(err));
         close(_fd_tun);
         return err;
     }
@@ -105,13 +107,14 @@ int NetDevice::tun_init(QString ip_address)
     if( (err = ioctl(s, SIOCSIFFLAGS, &ifr)) < 0 )
     {
         int saved_errno = errno;
-        std::cerr << "could not bring tap interface up " << saved_errno << std::endl;
+        _logger->log(Logger::LogLevelCritical,
+                     QString("could not bring tap interface up %1").arg(saved_errno));
         return err;
     }
     ifr.ifr_mtu = 1480;
     if( (err = ioctl(s, SIOCSIFMTU, &ifr)) < 0)
     {
-        std::cerr << "setting MTU failed " << err << std::endl;
+        _logger->log(Logger::LogLevelCritical, QString("setting MTU failed %1").arg(err));
         close(_fd_tun);
         return err;
     }
@@ -127,7 +130,7 @@ unsigned char* NetDevice::read_buffered(int &nread)
     /*
     if(nread < 0)
     {
-      std::cerr << "error reading from tap interface" << std::endl;
+     _logger->log(Logger::LogLevelCritical, "error reading from tap interface");
     }
     */
     return buffer;
@@ -138,11 +141,11 @@ int NetDevice::write_buffered(unsigned char *data, int len)
     int nwrite = write(_fd_tun,data,len);
     if(nwrite < 0)
     {
-        std::cerr << "error writing to tap interface" << std::endl;
+        _logger->log(Logger::LogLevelCritical, "error writing to tap interface");
     }
     if(nwrite < len)
     {
-        std::cerr << "dropped N bytes: " << len - nwrite << std::endl;
+        _logger->log(Logger::LogLevelCritical, QString("dropped %1 bytes: ").arg(len - nwrite));
     }
     delete[] data;
     return nwrite;

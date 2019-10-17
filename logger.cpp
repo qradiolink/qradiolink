@@ -29,7 +29,6 @@ void logMessage(QtMsgType type, const char *msg)
     QString time= QDateTime::currentDateTime().toString(
                 "d/MMM/yyyy hh:mm:ss");
     QString txt;
-    //log_file->open(QIODevice::WriteOnly | QIODevice::Append);
     switch (type) {
     case QtInfoMsg:
         txt = QString("[%1] Info: %2").arg(time).arg(msg);
@@ -55,16 +54,89 @@ void logMessage(QtMsgType type, const char *msg)
     outFile.close();
 }
 
-Logger::Logger()
-{
-
-    _log_file = new QFile("/var/log/qradiolink.log");
-
+#if 0
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
     qInstallMessageHandler(logMessage);
 #else
     qInstallMsgHandler(logMessage);
 #endif
+#endif
 
+Logger::Logger()
+{
+    QDir files = QDir::homePath();
+    if(!QDir(files.absolutePath()+"/.config/qradiolink").exists())
+    {
+        QDir().mkdir(files.absolutePath()+"/.config/qradiolink");
+    }
+    QFileInfo log_file = files.filePath(".config/qradiolink/qradiolink.log");
+    if(!log_file.exists())
+    {
+        QString txt = "[Log start]\n";
+        QFile newfile(log_file.absoluteFilePath());
+
+        if (newfile.open(QIODevice::WriteOnly | QIODevice::Append))
+        {
+            newfile.write(txt.toStdString().c_str());
+            newfile.close();
+        }
+    }
+    _log_file = new QFile(log_file.absoluteFilePath());
+    _log_file->open(QIODevice::WriteOnly | QIODevice::Append);
+    _stream = new QTextStream(_log_file);
+    _console_log = true;
+}
+
+Logger::~Logger()
+{
+    delete _stream;
+    _log_file->close();
+    delete _log_file;
+}
+
+void Logger::set_console_log(bool value)
+{
+    _console_log = value;
+}
+
+void Logger::log(int type, QString msg)
+{
+
+    QString time= QDateTime::currentDateTime().toString(
+                "d/MMM/yyyy hh:mm:ss");
+    QString txt;
+    bool err = false;
+
+    switch (type) {
+    case LogLevelInfo:
+        txt = QString("[%1] [Info] %2").arg(time).arg(msg);
+        break;
+    case LogLevelDebug:
+        txt = QString("[%1] [Debug] %2").arg(time).arg(msg);
+        break;
+    case LogLevelWarning:
+        txt = QString("[%1] [Warning] %2").arg(time).arg(msg);
+        break;
+    case LogLevelCritical:
+        txt = QString("[%1] [Critical] %2").arg(time).arg(msg);
+        err = true;
+        break;
+    case LogLevelFatal:
+        txt = QString("[%1] [Fatal] %2").arg(time).arg(msg);
+        err = true;
+        break;
+    }
+    if(_console_log)
+    {
+        if(err)
+            std::cerr << txt.toStdString() << std::endl;
+        else
+            std::cout << txt.toStdString() << std::endl;
+
+    }
+
+    *_stream << txt << endl;
 
 }
+
+

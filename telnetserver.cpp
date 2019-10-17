@@ -18,11 +18,12 @@
 
 static QString CRLF ="\r\n";
 
-TelnetServer::TelnetServer(const Settings *settings, QObject *parent) :
+TelnetServer::TelnetServer(const Settings *settings, Logger *logger, QObject *parent) :
     QObject(parent)
 {
     _settings = settings;
-    command_processor = new CommandProcessor(settings);
+    _logger = logger;
+    command_processor = new CommandProcessor(settings, logger);
     _server = new QTcpServer;
     _hostaddr = QHostAddress::Any;
     _stop = false;
@@ -68,12 +69,12 @@ void TelnetServer::getConnection()
 {
     // ok
     QTcpSocket *socket = _server->nextPendingConnection();
-    std::cout << "Incoming connection from: "
-              << socket->peerAddress().toString().toStdString()
-              << " port: " << socket->peerPort() << std::endl;
+    _logger->log(Logger::LogLevelInfo, "Incoming connection from: "
+              + socket->peerAddress().toString()
+              + QString(" port: %1").arg(socket->peerPort()));
     if(socket->state() == QTcpSocket::ConnectedState)
     {
-        std::cout << "Connection established" << std::endl;
+        _logger->log(Logger::LogLevelInfo, "Connection established");
         QByteArray response;
         response.append("Welcome! ");
         getCommandList(response);
@@ -96,7 +97,7 @@ void TelnetServer::connectionFailed(QAbstractSocket::SocketError error)
     Q_UNUSED(error);
 
     QTcpSocket *socket = dynamic_cast<QTcpSocket*>(QObject::sender());
-    std::cout << "Connection status: " << socket->errorString().toStdString() << std::endl;
+    _logger->log(Logger::LogLevelInfo, "Connection status: " + socket->errorString());
     int i = _connected_clients.indexOf(socket);
     _connected_clients.remove(i);
 
@@ -105,9 +106,9 @@ void TelnetServer::connectionFailed(QAbstractSocket::SocketError error)
 void TelnetServer::connectionSuccess()
 {
     QTcpSocket *socket = dynamic_cast<QTcpSocket*>(QObject::sender());
-    std::cout << "Connection established with: "
-              << socket->peerAddress().toString().toStdString()
-              << ":" << socket->peerPort() << std::endl;
+    _logger->log(Logger::LogLevelInfo, "Connection established with: "
+              + socket->peerAddress().toString()
+              + QString(": %1").arg(socket->peerPort()));
 }
 
 
@@ -126,7 +127,8 @@ void TelnetServer::processData()
         msec = (quint64)timer.nsecsElapsed() / 1000000;
         if(msec > 2)
         {
-            std::cerr << "Receiving packet too large... Dropping." << std::endl;
+           _logger->log(Logger::LogLevelWarning,
+                        "Receiving packet too large... Dropping.");
             _connected_clients.remove(_connected_clients.indexOf(socket));
             socket->close(); // TODO: blacklist?
             return;
@@ -145,7 +147,7 @@ void TelnetServer::processData()
             }
             else
             {
-                std::cerr << "Server socket read error" << std::endl;
+                _logger->log(Logger::LogLevelCritical,"Telnet server socket read error");
                 break;
             }
         }
@@ -184,8 +186,9 @@ QByteArray TelnetServer::processCommand(QByteArray data, QTcpSocket *socket)
     if(data.length() > 1080) // not expecting novels
     {
         QByteArray response("");
-        std::cerr << "Received message to large (dropping) from: "
-                  << socket->peerAddress().toString().toStdString() << std::endl;
+        _logger->log(Logger::LogLevelWarning,
+               QString("Received message to large (dropping) from: %1").arg(
+                  socket->peerAddress().toString()));
         _connected_clients.remove(_connected_clients.indexOf(socket));
         socket->close();
         return response;

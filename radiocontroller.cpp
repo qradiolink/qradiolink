@@ -17,19 +17,20 @@
 #include "radiocontroller.h"
 
 
-RadioController::RadioController(Settings *settings, QObject *parent) :
+RadioController::RadioController(Settings *settings, Logger *logger, QObject *parent) :
     QObject(parent)
 {
     _settings = settings;
+    _logger = logger;
     // FIXME: there is no reason for the modem to use the settings
     // All control happens in the radioop or main thread
     _modem = new gr_modem(settings);
     _codec = new AudioEncoder;
     _audio_mixer_in = new AudioMixer;
     _radio_protocol = new RadioProtocol;
-    _relay_controller = new RelayController;
-    _video = new VideoEncoder;
-    _net_device = new NetDevice(0, _settings->ip_address);
+    _relay_controller = new RelayController(logger);
+    _video = new VideoEncoder(logger);
+    _net_device = new NetDevice(logger, 0, _settings->ip_address);
     _mutex = new QMutex;
     _to_radio_queue = new QVector<short>;
 
@@ -616,7 +617,7 @@ void RadioController::setRelays(bool transmitting)
         res = _relay_controller->enableRelay(0);
         if(!res)
         {
-            std::cerr << "Relay control failed, stopping to avoid damage" << std::endl;
+            _logger->log(Logger::LogLevelCritical,"Relay control failed, stopping to avoid damage");
             exit(EXIT_FAILURE);
         }
         time_to_sleep = {0, 10000L };
@@ -624,7 +625,7 @@ void RadioController::setRelays(bool transmitting)
         res = _relay_controller->enableRelay(1);
         if(!res)
         {
-            std::cerr << "Relay control failed, stopping to avoid damage" << std::endl;
+            _logger->log(Logger::LogLevelCritical,"Relay control failed, stopping to avoid damage");
             exit(EXIT_FAILURE);
         }
         time_to_sleep = {0, 10000L };
@@ -635,7 +636,7 @@ void RadioController::setRelays(bool transmitting)
         res = _relay_controller->disableRelay(1);
         if(!res)
         {
-            std::cerr << "Relay control failed, stopping to avoid damage" << std::endl;
+            _logger->log(Logger::LogLevelCritical,"Relay control failed, stopping to avoid damage");
             exit(EXIT_FAILURE);
         }
         time_to_sleep = {0, 10000L };
@@ -643,7 +644,7 @@ void RadioController::setRelays(bool transmitting)
         res = _relay_controller->disableRelay(0);
         if(!res)
         {
-            std::cerr << "Relay control failed, stopping to avoid damage" << std::endl;
+            _logger->log(Logger::LogLevelCritical,"Relay control failed, stopping to avoid damage");
             exit(EXIT_FAILURE);
         }
         time_to_sleep = {0, 10000L };
@@ -768,7 +769,7 @@ void RadioController::updateDataModemReset(bool transmitting, bool ptt_activated
         sec_modem_running = (quint64)_data_modem_reset_timer->nsecsElapsed()/1000000000;
         if(sec_modem_running > 300)
         {
-            std::cout << "resetting modem" << std::endl;
+            _logger->log(Logger::LogLevelInfo, "resetting modem");
             _data_modem_sleeping = true;
             _data_modem_sleep_timer->restart();
         }
@@ -785,7 +786,7 @@ void RadioController::updateDataModemReset(bool transmitting, bool ptt_activated
             _mutex->lock();
             _modem->startTransmission(_callsign);
             _mutex->unlock();
-            std::cout << "modem reset complete" << std::endl;
+            _logger->log(Logger::LogLevelInfo, "modem reset complete");
         }
     }
 }
@@ -1010,13 +1011,13 @@ void RadioController::receiveVideoData(unsigned char *data, int size)
     unsigned int crc = getFrameCRC32(data);
     if(frame_size == 0)
     {
-        std::cerr << "received wrong frame size, dropping frame " << std::endl;
+        _logger->log(Logger::LogLevelWarning, "received wrong frame size, dropping frame ");
         delete[] data;
         return;
     }
     if(frame_size > 3122 - 24)
     {
-        std::cerr << "frame size too large, dropping frame " << std::endl;
+        _logger->log(Logger::LogLevelWarning, "frame size too large, dropping frame ");
         delete[] data;
         return;
     }
@@ -1027,7 +1028,7 @@ void RadioController::receiveVideoData(unsigned char *data, int size)
     if(crc != crc_check)
     {
         /// JPEG decoder has this nasty habit of segfaulting on image errors
-        std::cerr << "CRC check failed, dropping frame" << std::endl;
+        _logger->log(Logger::LogLevelWarning, "CRC check failed, dropping frame");
         delete[] jpeg_frame;
         return;
     }
@@ -1060,7 +1061,7 @@ void RadioController::receiveNetData(unsigned char *data, int size)
 
     if((frame_size == 0) || (frame_size > 1500))
     {
-        std::cerr << "received wrong frame size, dropping frame " << std::endl;
+        _logger->log(Logger::LogLevelWarning, "received wrong frame size, dropping frame ");
         delete[] data;
         return;
     }
@@ -1074,7 +1075,7 @@ void RadioController::receiveNetData(unsigned char *data, int size)
 
     if(crc != crc_check)
     {
-        std::cerr << "CRC check failed, dropping frame " << std::endl;
+        _logger->log(Logger::LogLevelWarning, "CRC check failed, dropping frame ");
         delete[] net_frame;
         return;
     }
@@ -1228,7 +1229,7 @@ void RadioController::toggleRX(bool value)
         {
             _modem->deinitRX(_rx_mode);
             _mutex->unlock();
-
+            _logger->log(Logger::LogLevelFatal, "Could not init RX device, check settings");
             emit initError("Could not init RX device, check settings");
             return;
         }
@@ -1284,6 +1285,7 @@ void RadioController::toggleTX(bool value)
                 _modem->startRX();
             _modem->deinitTX(_tx_mode);
             _mutex->unlock();
+            _logger->log(Logger::LogLevelFatal, "Could not init TX device, check settings");
             emit initError("Could not init TX device, check settings");
             return;
         }
@@ -1608,7 +1610,7 @@ void RadioController::toggleRepeat(bool value)
     {
         if(!_settings->enable_duplex)
         {
-            std::cerr << "Repeater mode can only function in duplex mode";
+            _logger->log(Logger::LogLevelInfo, "Repeater mode can only function in duplex mode");
             return;
         }
         _settings->_repeater_enabled = value;

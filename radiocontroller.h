@@ -46,6 +46,7 @@
 #include "video/videoencoder.h"
 #include "gr/gr_modem.h"
 #include "net/netdevice.h"
+#include "logger.h"
 
 
 typedef QVector<Station*> StationList;
@@ -64,7 +65,7 @@ class RadioController : public QObject
 {
     Q_OBJECT
 public:
-    explicit RadioController(Settings *settings,
+    explicit RadioController(Settings *settings, Logger *logger,
                       QObject *parent = 0);
     ~RadioController();
 
@@ -191,6 +192,7 @@ private:
 
     // FIXME: inflation of members
     Settings *_settings;
+    Logger *_logger;
     RelayController *_relay_controller;
     AudioEncoder *_codec;
     AudioMixer *_audio_mixer_in;

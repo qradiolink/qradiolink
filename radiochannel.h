@@ -26,6 +26,7 @@
 #include <libconfig.h++>
 #include <iostream>
 #include <string>
+#include "logger.h"
 
 struct radiochannel
 {
@@ -51,7 +52,7 @@ class RadioChannels : public QObject
 {
     Q_OBJECT
 public:
-    explicit RadioChannels(QObject *parent = 0);
+    explicit RadioChannels(Logger *logger, QObject *parent = 0);
     ~RadioChannels();
     QFileInfo *setupConfig();
     void readConfig();
@@ -63,6 +64,7 @@ signals:
 public slots:
 
 private:
+    Logger *_logger;
     QFileInfo *_memories_file;
     QVector<radiochannel*> *_channels;
 

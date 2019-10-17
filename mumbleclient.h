@@ -36,6 +36,7 @@
 #include "settings.h"
 #include "station.h"
 #include "mumblechannel.h"
+#include "logger.h"
 
 typedef QVector<Station*> StationList;
 typedef QVector<MumbleChannel*> ChannelList;
@@ -43,7 +44,7 @@ class MumbleClient : public QObject
 {
     Q_OBJECT
 public:
-    explicit MumbleClient(const Settings *settings, QObject *parent = 0);
+    explicit MumbleClient(const Settings *settings, Logger *logger, QObject *parent = 0);
     ~MumbleClient();
 
 
@@ -106,6 +107,7 @@ private:
 
     AudioEncoder *_codec;
     const Settings *_settings;
+    Logger *_logger;
     SSLClient *_socket_client;
 #ifndef NO_CRYPT
     CryptState *_crypt_state;
