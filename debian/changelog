@@ -1,3 +1,12 @@
+qradiolink (0.8.2-rc4) UNRELEASED; urgency=medium
+
+  [ Adrian Musceac ]
+  * Re-enabled logging facility
+
+
+ -- Adrian Musceac <kantooon@gmail.com>  Wed, 16 Oct 2019 23:00:00 +0300
+
+
 qradiolink (0.8.2-rc3) UNRELEASED; urgency=medium
 
   [ Adrian Musceac ]
