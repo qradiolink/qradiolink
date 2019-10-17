@@ -180,7 +180,6 @@ void RadioController::run()
     {
         _mutex->lock();
         bool transmitting = _transmitting;
-        bool rx_inited = _settings->_rx_inited;
         bool process_text = _process_text;
         bool vox_enabled = _settings->_vox_enabled;
         bool voip_forwarding = _settings->_voip_forwarding;
@@ -235,12 +234,6 @@ void RadioController::run()
                 processInputVideoStream(frame_flag);
             else if(tx_mode == gr_modem_types::ModemTypeQPSK250000)
             {
-                if(rx_inited)
-                {
-                    _mutex->lock();
-                    _modem->demodulate();
-                    _mutex->unlock();
-                }
                 if(!data_modem_sleeping)
                     processInputNetStream();
             }
@@ -666,6 +659,7 @@ void RadioController::startTx()
         {
             _data_modem_reset_timer->start();
             _data_modem_sleep_timer->start();
+            _data_read_timer->start();
         }
 
         if(!_settings->enable_duplex)
