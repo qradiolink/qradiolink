@@ -30,7 +30,6 @@
 #include <QHostAddress>
 #include <QDebug>
 #include <QCoreApplication>
-#include <iostream>
 #include "config_defines.h"
 #include "ext/dec.h"
 #include "settings.h"

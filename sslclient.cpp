@@ -17,8 +17,6 @@
 #include "sslclient.h"
 
 
-static QString CRLF ="\r\n";
-
 SSLClient::SSLClient(QObject *parent) :
     QObject(parent)
 {
@@ -67,20 +65,18 @@ SSLClient::SSLClient(QObject *parent) :
 
 }
 
-
 SSLClient::~SSLClient()
 {
     _reconnect = false;
     _socket->disconnectFromHost();
     delete _socket;
+    delete _udp_socket;
 }
 
 int SSLClient::connectionStatus()
 {
     return _status;
 }
-
-
 
 void SSLClient::connectionSuccess()
 {
@@ -96,12 +92,11 @@ QSslCipher SSLClient::getCipher()
     return _socket->sessionCipher();
 }
 
-
 void SSLClient::connectionFailed(QAbstractSocket::SocketError)
 {
 
     emit connectionFailure();
-    emit logMessage("Outgoing connection failed " + _socket->errorString());
+    emit logMessage(QString("Outgoing connection failed %1").arg(_socket->errorString()));
     if(_status==1)
     {
         _socket->close();
@@ -112,7 +107,6 @@ void SSLClient::connectionFailed(QAbstractSocket::SocketError)
     {
         QMetaObject::invokeMethod(this, "tryReconnect", Qt::QueuedConnection);
     }
-
 }
 
 void SSLClient::tryReconnect()
@@ -149,9 +143,7 @@ void SSLClient::sslError(QList<QSslError> errors)
     }
     const QSslCertificate cert = _socket->peerCertificate();
     _socket->peerCertificateChain() << cert;
-
 }
-
 
 void SSLClient::connectHost(const QString &host, const unsigned &port)
 {
@@ -164,7 +156,6 @@ void SSLClient::connectHost(const QString &host, const unsigned &port)
     _socket->connectToHostEncrypted(host, port);
     _hostname = host;
     _port = port;
-
 }
 
 void SSLClient::disconnectHost()
@@ -179,10 +170,8 @@ void SSLClient::disconnectHost()
     emit disconnectedFromHost();
 }
 
-
 void SSLClient::sendBin(quint8 *payload, quint64 size)
 {
-
     char *message = reinterpret_cast<char*>(payload);
     _socket->write(message,size);
     _socket->flush();
@@ -190,15 +179,10 @@ void SSLClient::sendBin(quint8 *payload, quint64 size)
 
 void SSLClient::processData()
 {
-    //std::cout << "Received message from "
-    // << _socket->peerAddress().toString().toStdString() << std::endl;
     if (_status !=1) return;
-
     QByteArray buf;
     buf.append(_socket->readAll());
-
     bool endOfLine = false;
-
     while ((!endOfLine))
     {
         if(_status==1)
@@ -209,7 +193,6 @@ void SSLClient::processData()
                 int bytesRead = _socket->read(&ch, sizeof(ch));
                 if (bytesRead == sizeof(ch))
                 {
-                    //cnt++;
                     buf.append( ch );
                     if(_socket->bytesAvailable()==0)
                     {
@@ -252,6 +235,5 @@ void SSLClient::sendUDP(quint8 *payload, quint64 size)
     quint64 sent = _udp_socket->writeDatagram(
                 message,size,QHostAddress(_hostname),_port);
     _udp_socket->flush();
+    emit logMessage(QString("SSL socket write failed, sent %1 bytes").arg(sent));
 }
-
-

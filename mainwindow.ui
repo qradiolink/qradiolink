@@ -2756,13 +2756,6 @@ font: 10pt &quot;Sans Serif&quot;;</string>
                </property>
               </widget>
              </item>
-             <item row="1" column="5">
-              <widget class="QLabel" name="label_39">
-               <property name="text">
-                <string>Remote control port</string>
-               </property>
-              </widget>
-             </item>
              <item row="6" column="2">
               <widget class="QLabel" name="label_8">
                <property name="text">
@@ -2815,22 +2808,6 @@ font: 10pt &quot;Sans Serif&quot;;</string>
                </property>
               </widget>
              </item>
-             <item row="1" column="6">
-              <widget class="QLineEdit" name="remoteControlEdit">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>100</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-              </widget>
-             </item>
              <item row="18" column="5">
               <widget class="QCheckBox" name="remoteControlCheckBox">
                <property name="text">
@@ -2864,6 +2841,29 @@ font: 10pt &quot;Sans Serif&quot;;</string>
               <widget class="QLabel" name="label_38">
                <property name="text">
                 <string>VOIP volume</string>
+               </property>
+              </widget>
+             </item>
+             <item row="10" column="2">
+              <widget class="QLabel" name="label_39">
+               <property name="text">
+                <string>Remote control port</string>
+               </property>
+              </widget>
+             </item>
+             <item row="10" column="3">
+              <widget class="QLineEdit" name="remoteControlEdit">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>100</width>
+                 <height>16777215</height>
+                </size>
                </property>
               </widget>
              </item>

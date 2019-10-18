@@ -21,9 +21,6 @@ MumbleClient::MumbleClient(const Settings *settings, Logger *logger, QObject *pa
     QObject(parent)
 {
     _socket_client = new SSLClient;
-#ifndef NO_CRYPT
-    _crypt_state = new CryptState;
-#endif
     _codec = new AudioEncoder;
     _settings = settings;
     _logger = logger;
@@ -35,15 +32,19 @@ MumbleClient::MumbleClient(const Settings *settings, Logger *logger, QObject *pa
     _temp_channel_name = "";
     _sequence_number = 0;
     _connection_in_progress = false;
+
+#ifndef NO_CRYPT
+    _crypt_state = new CryptState;
+#endif
 }
 
 MumbleClient::~MumbleClient()
 {
     delete _socket_client;
+    delete _codec;
 #ifndef NO_CRYPT
     delete _crypt_state;
 #endif
-    delete _codec;
 }
 
 void MumbleClient::connectToServer(QString address, unsigned port)
@@ -51,7 +52,6 @@ void MumbleClient::connectToServer(QString address, unsigned port)
     if(_connection_in_progress)
         return;
     _connection_in_progress = true;
-    _socket_client->connectHost(address,port);
     QObject::connect(_socket_client,SIGNAL(connectedToHost()),
                      this,SLOT(sendVersion()));
     QObject::connect(_socket_client,SIGNAL(haveMessage(QByteArray)),
@@ -61,12 +61,12 @@ void MumbleClient::connectToServer(QString address, unsigned port)
     QObject::connect(_socket_client,SIGNAL(logMessage(QString)),
                      this,SLOT(logMessage(QString)));
     QObject::connect(_socket_client,SIGNAL(connectionFailure()),this,SLOT(cleanup()));
+    _socket_client->connectHost(address,port);
 }
 
 void MumbleClient::disconnectFromServer()
 {
     _connection_in_progress = false;
-
     _socket_client->disconnectHost();
     QObject::disconnect(_socket_client,SIGNAL(connectedToHost()),
                         this,SLOT(sendVersion()));
@@ -77,7 +77,6 @@ void MumbleClient::disconnectFromServer()
     QObject::disconnect(_socket_client,SIGNAL(logMessage(QString)),
                         this,SLOT(logMessage(QString)));
     cleanup();
-
 }
 
 void MumbleClient::cleanup()
@@ -101,30 +100,30 @@ void MumbleClient::cleanup()
     }
     _stations.clear();
     emit disconnected();
-    emit textMessage("Disconnected", false);
+    emit textMessage("Disconnected\n", false);
 }
 
 void MumbleClient::sendVersion()
 {
+    _last_ping_timer.start();
     MumbleProto::Version *v = new MumbleProto::Version;
     v->set_version(PROTOCOL_VERSION);
-    v->set_release("QRadioLink");
+    v->set_release("1.0");
     v->set_os("GNU/Linux");
     v->set_os_version("x.x");
     int size = v->ByteSize();
     quint8 data[size];
     v->SerializeToArray(data,size);
     quint16 type = 0;
-    sendMessage(data,type,size);
+    sendProtoMessage(data,type,size);
     authenticate();
     delete v;
 }
 
 void MumbleClient::authenticate()
 {
-    emit textMessage("Authenticating", false);
+    emit textMessage("Authenticating\n", false);
     MumbleProto::Authenticate *auth = new MumbleProto::Authenticate;
-
     int rand_len = 4;
     char rand[4];
     genRandomStr(rand,rand_len);
@@ -137,17 +136,15 @@ void MumbleClient::authenticate()
     unsigned char data[size];
     auth->SerializeToArray(data,size);
     quint16 type = 2;
-    sendMessage(data,type,size);
+    sendProtoMessage(data,type,size);
     delete auth;
 }
 
 void MumbleClient::pingServer()
 {
-
     if(!_authenticated)
         return;
     struct timeval now;
-
     gettimeofday(&now, NULL);
     quint64 ts=now.tv_sec*1000000+now.tv_usec;
     MumbleProto::Ping ping;
@@ -155,16 +152,14 @@ void MumbleClient::pingServer()
     int size = ping.ByteSize();
     quint8 data[size];
     ping.SerializeToArray(data,size);
-    sendMessage(data,3,size);
-    if(!_settings->_mumble_tcp)
+    sendProtoMessage(data,3,size);
+    if(!_settings->_mumble_tcp) // never
         sendUDPPing();
-
 }
 
 
 void MumbleClient::processProtoMessage(QByteArray data)
 {
-
     int total_size = data.size();
     quint8 bin_data[total_size];
     unsigned char *temp = reinterpret_cast<unsigned char*>(data.data());
@@ -186,6 +181,7 @@ void MumbleClient::processProtoMessage(QByteArray data)
         processServerSync(message,message_size);
         break;
     case 3: // ping
+        _last_ping_timer.restart();
         break;
     case 7: // ChannelState
         processChannelState(message, message_size);
@@ -269,20 +265,18 @@ void MumbleClient::processChannelState(quint8 *message, quint64 size)
         description = "";
     MumbleChannel *c = new MumbleChannel(id, parent_id, name, description);
     _channels.append(c);
-
     emit newChannels(_channels);
-
 }
 
 void MumbleClient::processUserState(quint8 *message, quint64 size)
 {
-
+    // FIXME: all this needs refactoring
     MumbleProto::UserState us;
     us.ParseFromArray(message,size);
     if((_session_id==INT64_MAX) && (us.has_channel_id()))
     {
         _channel_id = us.channel_id();
-        emit textMessage("Joined channel: " + QString::number(_channel_id), false);
+        emit textMessage(QString("Joined channel: %1\n").arg(_channel_id), false);
         emit joinedChannel(_channel_id);
         Settings *settings = const_cast<Settings*>(_settings);
         settings->_current_voip_channel = _channel_id;
@@ -303,7 +297,7 @@ void MumbleClient::processUserState(quint8 *message, quint64 size)
         if(us.has_channel_id())
         {
             _channel_id = us.channel_id();
-            emit textMessage( "Joined channel: " + QString::number(_channel_id), false);
+            emit textMessage(QString("Joined channel: %1\n").arg(_channel_id), false);
             emit joinedChannel(_channel_id);
             s->channel_id = us.channel_id();
             Settings *settings = const_cast<Settings*>(_settings);
@@ -356,7 +350,6 @@ void MumbleClient::processUserState(quint8 *message, quint64 size)
 
 void MumbleClient::processUserRemove(quint8 *message, quint64 size)
 {
-
     MumbleProto::UserRemove us;
     us.ParseFromArray(message,size);
     for(int i=0; i < _stations.size(); i++)
@@ -382,15 +375,15 @@ void MumbleClient::joinChannel(int id)
     int size = us.ByteSize();
     quint8 data[size];
     us.SerializeToArray(data,size);
-    sendMessage(data,9,size);
+    sendProtoMessage(data,9,size);
     _channel_id = id;
     Settings *settings = const_cast<Settings*>(_settings);
     settings->_current_voip_channel = _channel_id;
-
 }
 
 int MumbleClient::muteStation(QString radio_id)
 {
+    // FIXME: only server admin can do this
     int sessid = 0;
     for(int i =0;i<_stations.size();i++)
     {
@@ -418,12 +411,13 @@ int MumbleClient::muteStation(QString radio_id)
     int size = us.ByteSize();
     quint8 data[size];
     us.SerializeToArray(data,size);
-    sendMessage(data,9,size);
+    sendProtoMessage(data,9,size);
     return 0;
 }
 
 int MumbleClient::unmuteStation(QString radio_id)
 {
+    // FIXME: only server admin can do this
     int sessid = 0;
     for(int i =0;i<_stations.size();i++)
     {
@@ -449,12 +443,13 @@ int MumbleClient::unmuteStation(QString radio_id)
     int size = us.ByteSize();
     quint8 data[size];
     us.SerializeToArray(data,size);
-    sendMessage(data,9,size);
+    sendProtoMessage(data,9,size);
     return 0;
 }
 
 void MumbleClient::disconnectFromCall()
 {
+    // FIXME: ??
     if(_channel_id < 2)
     {
         return;
@@ -468,7 +463,7 @@ void MumbleClient::disconnectFromCall()
     int size = us.ByteSize();
     quint8 data[size];
     us.SerializeToArray(data,size);
-    sendMessage(data,9,size);
+    sendProtoMessage(data,9,size);
 }
 
 
@@ -498,24 +493,22 @@ QString MumbleClient::createChannel(QString channel_name)
     }
     _temp_channel_name = name;
     MumbleProto::ChannelState channel;
-    channel.set_parent(0);
+    channel.set_parent(0); // FIXME: channel parent?
     channel.set_name(name.toStdString());
     channel.set_temporary(true);
     int size = channel.ByteSize();
     quint8 data[size];
     channel.SerializeToArray(data,size);
     quint16 type = 7;
-    sendMessage(data,type,size);
-    emit channelName(_temp_channel_name);
+    sendProtoMessage(data,type,size);
+    emit channelName(_temp_channel_name); // ?
     MumbleProto::UserState us;
-    us.set_self_deaf(false);
-    us.set_self_mute(false);
     us.set_session(_session_id);
     us.set_actor(_session_id);
     int msize = us.ByteSize();
     quint8 mdata[msize];
     us.SerializeToArray(mdata,msize);
-    sendMessage(mdata,9,msize);
+    sendProtoMessage(mdata,9,msize);
     return name;
 }
 
@@ -530,22 +523,22 @@ void MumbleClient::setSelfMute(bool mute)
     int msize = us.ByteSize();
     quint8 mdata[msize];
     us.SerializeToArray(mdata,msize);
-    sendMessage(mdata,9,msize);
+    sendProtoMessage(mdata,9,msize);
 }
 
-void MumbleClient::setSelfDeaf(bool deaf)
+void MumbleClient::setSelfDeaf(bool deaf, bool mute)
 {
     if(!_synchronized)
         return;
     MumbleProto::UserState us;
-    us.set_self_mute(deaf);
+    us.set_self_mute(mute); // bug in Mumble? sets mute to true always
     us.set_self_deaf(deaf);
     us.set_session(_session_id);
     us.set_actor(_session_id);
     int msize = us.ByteSize();
     quint8 mdata[msize];
     us.SerializeToArray(mdata,msize);
-    sendMessage(mdata,9,msize);
+    sendProtoMessage(mdata,9,msize);
 }
 
 void MumbleClient::setMute(bool mute)
@@ -560,7 +553,7 @@ void MumbleClient::setMute(bool mute)
     int msize = us.ByteSize();
     quint8 mdata[msize];
     us.SerializeToArray(mdata,msize);
-    sendMessage(mdata,9,msize);
+    sendProtoMessage(mdata,9,msize);
 }
 
 void MumbleClient::newCommandMessage(QString msg, int to_id)
@@ -572,7 +565,7 @@ void MumbleClient::newCommandMessage(QString msg, int to_id)
     int msize = tm.ByteSize();
     quint8 mdata[msize];
     tm.SerializeToArray(mdata,msize);
-    sendMessage(mdata,11,msize);
+    sendProtoMessage(mdata,11,msize);
 }
 
 void MumbleClient::newMumbleMessage(QString text)
@@ -584,7 +577,7 @@ void MumbleClient::newMumbleMessage(QString text)
     int msize = tm.ByteSize();
     quint8 mdata[msize];
     tm.SerializeToArray(mdata,msize);
-    sendMessage(mdata,11,msize);
+    sendProtoMessage(mdata,11,msize);
 }
 
 void MumbleClient::processTextMessage(quint8 *message, quint64 size)
@@ -625,7 +618,7 @@ void MumbleClient::processPCMAudio(short *audiobuffer, int audiobuffersize)
     }
     int packet_size = 0;
     unsigned char *encoded_audio;
-    // encode the PCM with higher quality and bitrate
+    /// encode the PCM with higher quality and bitrate
     encoded_audio = _codec->encode_opus_voip(audiobuffer, audiobuffersize, packet_size);
     createVoicePacket(encoded_audio, packet_size);
     delete[] encoded_audio;
@@ -643,11 +636,10 @@ void MumbleClient::processOpusAudio(unsigned char *opus_packet, int packet_size)
     delete[] opus_packet;
 }
 
-
 void MumbleClient::createVoicePacket(unsigned char *encoded_audio, int packet_size)
 {
     int type = 0;
-    if(_settings->_use_codec2)
+    if(_settings->_use_codec2) // FIXME: support for Codec2 frames is only in my old fork
         type |= (5 << 5);
     else
         type |= (4 << 5);
@@ -659,7 +651,6 @@ void MumbleClient::createVoicePacket(unsigned char *encoded_audio, int packet_si
     int nr_of_frames = opus_packet_get_nb_frames(encoded_audio,packet_size);
 
     // sequence?
-
     pds << _sequence_number;
     int real_packet_size = packet_size;
     _sequence_number += nr_of_frames;
@@ -673,9 +664,9 @@ void MumbleClient::createVoicePacket(unsigned char *encoded_audio, int packet_si
     unsigned char *bin_data = reinterpret_cast<unsigned char*>(data);
     if(_settings->_mumble_tcp) // TCP tunnel
     {
-        sendMessage(bin_data,1,pds.size()+1);
+        sendProtoMessage(bin_data,1,pds.size()+1);
     }
-    else // Use UDP
+    else // Use UDP. This won't work because of encryption
     {
         sendUDPMessage(bin_data,pds.size()+1);
     }
@@ -696,7 +687,7 @@ void MumbleClient::processIncomingAudioPacket(quint8 *data, quint64 size, quint8
         type = audio_head >> 5;
     }
     int audio_size = pds.left();
-    if(audio_size <= 0)
+    if(audio_size <= 0) // FIXME: also need to protect against overflow
     {
         _logger->log(Logger::LogLevelWarning, "Received malformed audio frame");
         delete[] data;
@@ -704,9 +695,7 @@ void MumbleClient::processIncomingAudioPacket(quint8 *data, quint64 size, quint8
     }
     QByteArray qba = pds.dataBlock(pds.left());
     unsigned char *encoded_audio = reinterpret_cast<unsigned char*>(qba.data());
-
     decodeAudio(encoded_audio,audio_size, type, session);
-
 }
 
 void MumbleClient::processUDPData(QByteArray data)
@@ -732,14 +721,13 @@ void MumbleClient::processUDPData(QByteArray data)
 void MumbleClient::decodeAudio(unsigned char *audiobuffer,
                                short audiobuffersize, quint8 type, quint64 session_id)
 {
-
     int samples =0;
     short *pcm = NULL;
-    if(type == 5)
+    if(type == 5) // never
     {
         pcm = _codec->decode_codec2_1400(audiobuffer,audiobuffersize, samples);
     }
-    else
+    else // always
     {
         pcm = _codec->decode_opus_voip(audiobuffer,audiobuffersize, samples);
     }
@@ -747,20 +735,16 @@ void MumbleClient::decodeAudio(unsigned char *audiobuffer,
         return;
     emit pcmAudio(pcm, samples, session_id);
     emit userSpeaking(session_id);
-
 }
 
 
 
-void MumbleClient::sendMessage(quint8 *message, quint16 type, int size)
+void MumbleClient::sendProtoMessage(quint8 *message, quint16 type, int size)
 {
-
     int new_size = size+6;
-
     quint8 bin_data[new_size];
     //qToBigEndian<quint16>(type, & bin_data[0]);
     //qToBigEndian<quint32>(len, & bin_data[2]);
-
     memcpy(bin_data+6,message,size);
     addPreamble(bin_data,type,size);
     _socket_client->sendBin(bin_data,new_size);
@@ -806,5 +790,5 @@ void MumbleClient::sendUDPPing()
 
 void MumbleClient::logMessage(QString log_msg)
 {
-    emit textMessage(log_msg, false);
+    emit textMessage(log_msg + "\n", false);
 }

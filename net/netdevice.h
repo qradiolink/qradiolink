@@ -22,7 +22,6 @@
 #include <QRegExp>
 #include <QCoreApplication>
 #include <unistd.h>
-#include <iostream>
 #include <math.h>
 #include <sys/socket.h>
 #include <linux/if.h>

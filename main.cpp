@@ -24,7 +24,6 @@
 #include <QVector>
 #include <QMetaType>
 #include <QtGlobal>
-#include <iostream>
 #include "mainwindow.h"
 #include "dtmfdecoder.h"
 #include "mumbleclient.h"
@@ -342,8 +341,8 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
     QObject::connect(w,SIGNAL(changeChannel(int)),mumbleclient,SLOT(joinChannel(int)));
     QObject::connect(w,SIGNAL(newMumbleMessage(QString)),
                      mumbleclient,SLOT(newMumbleMessage(QString)));
-    QObject::connect(w,SIGNAL(setSelfDeaf(bool)),
-                     mumbleclient,SLOT(setSelfDeaf(bool)));
+    QObject::connect(w,SIGNAL(setSelfDeaf(bool, bool)),
+                     mumbleclient,SLOT(setSelfDeaf(bool, bool)));
     QObject::connect(w,SIGNAL(setSelfMute(bool)),
                      mumbleclient,SLOT(setSelfMute(bool)));
 

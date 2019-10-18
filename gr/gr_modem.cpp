@@ -528,8 +528,6 @@ void gr_modem::transmitPCMAudio(std::vector<float> *audio_data)
     int ret = 1;
     while(ret)
     {
-        struct timespec time_to_sleep = {0, 1000L };
-        nanosleep(&time_to_sleep, NULL);
         ret = _gr_mod_base->set_audio(audio_data);
     }
 }

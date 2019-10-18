@@ -20,7 +20,6 @@
 #include <QObject>
 #include <ftdi.h>
 #include "logger.h"
-#include <iostream>
 
 class RelayController : public QObject
 {

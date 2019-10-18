@@ -24,7 +24,6 @@
 #include <QDir>
 #include <QFileInfo>
 #include <libconfig.h++>
-#include <iostream>
 #include <string>
 #include "logger.h"
 

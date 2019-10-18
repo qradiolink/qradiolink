@@ -24,7 +24,6 @@
 #include <QDebug>
 #include <QFileInfo>
 #include <libconfig.h++>
-#include <iostream>
 #include "logger.h"
 
 class Settings

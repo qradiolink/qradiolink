@@ -23,8 +23,8 @@
 #include <QDateTime>
 #include <QtEndian>
 #include <QCoreApplication>
+#include <QElapsedTimer>
 #include <string>
-#include <iostream>
 #include <sys/time.h>
 #include <unistd.h>
 #include "ext/Mumble.pb.h"
@@ -86,14 +86,14 @@ public slots:
     int muteStation(QString radio_id);
     void setMute(bool mute);
     void setSelfMute(bool mute);
-    void setSelfDeaf(bool deaf);
+    void setSelfDeaf(bool deaf, bool mute);
     void logMessage(QString log_msg);
     void newMumbleMessage(QString msg);
     void newCommandMessage(QString msg, int to_id);
 
 private:
     void sendUDPMessage(quint8 *message, int size);
-    void sendMessage(quint8 *message, quint16 type, int size);
+    void sendProtoMessage(quint8 *message, quint16 type, int size);
     void setupEncryption(quint8 *message, quint64 size);
 
     void processServerSync(quint8 *message, quint64 size);
@@ -115,9 +115,6 @@ private:
     QVector<Station*> _stations;
     QVector<MumbleChannel*> _channels;
 
-    std::string _key;
-    std::string _client_nonce;
-    std::string _server_nonce;
     QString _temp_channel_name;
     bool _encryption_set;
     bool _synchronized;
@@ -126,7 +123,12 @@ private:
     quint64 _session_id;
     quint64 _channel_id;
     quint64 _sequence_number;
+    QElapsedTimer _last_ping_timer;
 
+    /// not used
+    std::string _key;
+    std::string _client_nonce;
+    std::string _server_nonce;
 };
 
 

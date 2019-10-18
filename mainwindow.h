@@ -33,7 +33,6 @@
 #include <QAudioDeviceInfo>
 #include <math.h>
 #include <complex>
-#include <iostream>
 #include <libconfig.h++>
 #include "ext/utils.h"
 #include "mumbleclient.h"
@@ -181,7 +180,7 @@ signals:
     void setVox(bool value);
     void connectToServer(QString server, unsigned port);
     void disconnectFromServer();
-    void setSelfDeaf(bool deaf);
+    void setSelfDeaf(bool deaf, bool mute);
     void setSelfMute(bool mute);
     void changeChannel(int id);
     void setMute(bool value);
@@ -218,7 +217,6 @@ private:
     QFileInfo *setupConfig();
     void setFilterWidth(int index);
 
-    // FIXME: inflation of members
     Ui::MainWindow *ui;
     Settings *_settings;
     RadioChannels *_radio_channels;

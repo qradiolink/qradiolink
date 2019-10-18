@@ -748,14 +748,14 @@ void MainWindow::newFFTData(float *fft_data, int fftsize)
     // don't paint anything if window is minimized
     if(isMinimized())
         return;
-    // FIXME: fftsize is a reference
+
     if (fftsize == 0)
         return;
 
     for (int i = 0; i < fftsize; i++)
     {
         _realFftData[i] = fft_data[i];
-        // FFT averaging
+        /// FFT averaging
         if(_settings->fft_averaging < 0.99f)
             _iirFftData[i] += _settings->fft_averaging * (_realFftData[i] - _iirFftData[i]);
         else
@@ -780,7 +780,6 @@ void MainWindow::setAveraging(int x)
 void MainWindow::newWaterfallFPS()
 {
     _settings->waterfall_fps = ui->fpsBox->currentText().toInt();
-    //ui->plotterFrame->setFftRate(waterfall_fps);
     emit setWaterfallFPS(_settings->waterfall_fps);
 }
 
@@ -858,7 +857,7 @@ void MainWindow::displayVOIPText(QString text, bool html)
     if(html)
         ui->voipMessagesEdit->insertHtml(text);
     else
-        ui->voipMessagesEdit->append(text);
+        ui->voipMessagesEdit->insertPlainText(text);
 
     ui->voipMessagesEdit->verticalScrollBar()->setValue(
                 ui->voipMessagesEdit->verticalScrollBar()->maximum());
@@ -889,6 +888,7 @@ void MainWindow::displayCallsign(QString callsign)
 
 void MainWindow::chooseFile()
 {
+    // FIXME: this sets repeat on and only works with text files
     QString filename = QFileDialog::getOpenFileName(this,
         tr("Open Image"), "~/", tr("All Files (*.*)"));
     QFile file(filename);
@@ -1009,12 +1009,13 @@ void MainWindow::resetSpeechIcons()
 
 void MainWindow::updateChannels(ChannelList channels)
 {
+    // FIXME: code below is unmaintainable!
     ui->voipTreeWidget->clear();
     for(int i = 0;i< channels.size();i++)
     {
         MumbleChannel *chan = channels.at(i);
 
-        // Channel we're in
+        /// Channel we're in
         if(chan->name.isEmpty())
         {
             continue;
@@ -1052,6 +1053,7 @@ void MainWindow::updateChannels(ChannelList channels)
 
 void MainWindow::joinedChannel(quint64 channel_id)
 {
+    // FIXME: code below is unmaintainable!
     QList<QTreeWidgetItem*> old_channel_list = ui->voipTreeWidget->findItems(
                 QString::number(_current_voip_channel),
                 Qt::MatchExactly | Qt::MatchRecursive,2);
@@ -1093,7 +1095,8 @@ void MainWindow::channelState(QTreeWidgetItem *item, int k)
 
 void MainWindow::toggleSelfDeaf(bool deaf)
 {
-    emit setSelfDeaf(deaf);
+    bool mute = ui->muteSelfButton->isChecked();
+    emit setSelfDeaf(deaf, mute);
 }
 void MainWindow::toggleSelfMute(bool mute)
 {
