@@ -216,7 +216,6 @@ private:
     QElapsedTimer *_const_read_timer;
     QElapsedTimer *_rssi_read_timer;
     QElapsedTimer *_scan_timer;
-    QVector<short> *_to_radio_queue;
     unsigned char *_rand_frame_data;
     float *_fft_data;
     QVector<short> *_to_voip_buffer;
@@ -226,7 +225,6 @@ private:
 
     QString _text_out;
     QString _callsign;
-    QElapsedTimer _last_voiced_frame_timer;
     QString _incoming_text_buffer;
 
     bool _stop;
@@ -236,7 +234,6 @@ private:
     bool _scan_done;
     bool _scan_stop;
     bool _memory_scan_done;
-    bool _tx_modem_started;
     bool _data_modem_sleeping;
 
     int _rx_mode;
@@ -254,7 +251,7 @@ private:
     float _tx_volume;
     float _voip_volume;
     int _fft_poll_time;
-    quint64 _last_session_id;
+    int _max_no_relays;
 
 };
 

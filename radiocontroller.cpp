@@ -20,8 +20,10 @@
 RadioController::RadioController(Settings *settings, Logger *logger, QObject *parent) :
     QObject(parent)
 {
+    /// these two pointers are owned by main()
     _settings = settings;
     _logger = logger;
+
     // FIXME: there is no reason for the modem to use the settings
     // All control happens in the radioop or main thread
     _modem = new gr_modem(settings);
@@ -32,8 +34,15 @@ RadioController::RadioController(Settings *settings, Logger *logger, QObject *pa
     _video = new VideoEncoder(logger);
     _net_device = new NetDevice(logger, 0, _settings->ip_address);
     _mutex = new QMutex;
-    _to_radio_queue = new QVector<short>;
 
+    _rand_frame_data = new unsigned char[5000];
+    _to_voip_buffer = new QVector<short>; // one way queue from radio and local voice to Mumble
+    _fft_data = new float[1024*1024]; // pre-allocated at maximum possible FFT size (make it a constant?)
+
+    _voice_led_timer = new QTimer(this);
+    _voice_led_timer->setSingleShot(true);
+    _data_led_timer = new QTimer(this);
+    _data_led_timer->setSingleShot(true);
     _voip_tx_timer = new QTimer(this);
     _voip_tx_timer->setSingleShot(true);
     _vox_timer = new QTimer(this);
@@ -52,10 +61,7 @@ RadioController::RadioController(Settings *settings, Logger *logger, QObject *pa
     _fft_read_timer->start();
     _fft_poll_time = 75;
 
-    _last_session_id = 0;
-
     _stop =false;
-    _last_voiced_frame_timer.start();
 
     _scan_stop = false;
     _scan_done = true;
@@ -72,23 +78,16 @@ RadioController::RadioController(Settings *settings, Logger *logger, QObject *pa
     _tune_limit_lower = -500000;
     _tune_limit_upper = 500000;
     _step_hz = 10;
+    _max_no_relays = 4;
 
     _rx_mode = gr_modem_types::ModemTypeBPSK2000;
     _tx_mode = gr_modem_types::ModemTypeBPSK2000;
     _rx_radio_type = radio_type::RADIO_TYPE_DIGITAL;
     _tx_radio_type = radio_type::RADIO_TYPE_DIGITAL;
 
-    _tx_modem_started = false;
-    _voice_led_timer = new QTimer(this);
-    _voice_led_timer->setSingleShot(true);
-    _data_led_timer = new QTimer(this);
-    _data_led_timer->setSingleShot(true);
-    _rand_frame_data = new unsigned char[5000];
-    _to_voip_buffer = new QVector<short>;
-    _fft_data = new float[1024*1024];
-
     setCallsign();
 
+    /// timers connections
     QObject::connect(_voice_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));
     QObject::connect(_data_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));
     QObject::connect(_data_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));
@@ -96,7 +95,6 @@ RadioController::RadioController(Settings *settings, Logger *logger, QObject *pa
     QObject::connect(_end_tx_timer, SIGNAL(timeout()), this, SLOT(endTx()));
 
     /// Modem connections
-    ///
     QObject::connect(_modem,SIGNAL(textReceived(QString)),this,SLOT(textReceived(QString)));
     QObject::connect(_modem,SIGNAL(repeaterInfoReceived(QByteArray)),this,
                      SLOT(repeaterInfoReceived(QByteArray)));
@@ -122,6 +120,8 @@ RadioController::RadioController(Settings *settings, Logger *logger, QObject *pa
                      SLOT(receiveVideoData(unsigned char*,int)));
     QObject::connect(_modem,SIGNAL(netData(unsigned char*,int)),this,
                      SLOT(receiveNetData(unsigned char*,int)));
+
+    /// Garbage to fill unused video and net frames with
     for (int j = 0;j<5000;j++)
         _rand_frame_data[j] = rand() % 256;
 
@@ -138,7 +138,6 @@ RadioController::RadioController(Settings *settings, Logger *logger, QObject *pa
 
     toggleRxMode(_settings->rx_mode);
     toggleTxMode(_settings->tx_mode);
-
 }
 
 RadioController::~RadioController()
@@ -161,8 +160,6 @@ RadioController::~RadioController()
     delete[] _rand_frame_data;
     _to_voip_buffer->clear();
     delete _to_voip_buffer;
-    _to_radio_queue->clear();
-    delete _to_radio_queue;
     delete _relay_controller;
     delete _end_rec_sound;
     delete _data_rec_sound;
@@ -179,7 +176,7 @@ void RadioController::stop()
 
 void RadioController::run()
 {
-
+    /// Radioop thread where most things happen
     bool ptt_activated = false;
     bool data_to_process = false;
     bool buffers_filling = false;
@@ -194,11 +191,10 @@ void RadioController::run()
         bool vox_enabled = _settings->_vox_enabled;
         bool voip_forwarding = _settings->_voip_forwarding;
         QString text_out = _text_out;
-        int tx_mode = _tx_mode;
         bool data_modem_sleeping = _data_modem_sleeping;
         _mutex->unlock();
 
-        QCoreApplication::processEvents();
+        QCoreApplication::processEvents(); // process signals
         flushRadioToVoipBuffer();
         buffers_filling = processMixerQueue();
 
@@ -220,7 +216,7 @@ void RadioController::run()
             }
         }
 
-        updateDataModemReset(transmitting, ptt_activated);
+        updateDataModemReset(transmitting, ptt_activated); // for IP modem latency buildup
 
         if(transmitting && !ptt_activated)
         {
@@ -233,17 +229,20 @@ void RadioController::run()
             stopTx();
         }
 
-        // FIXME: large data transfer blocking demod
+        // FIXME: large data transfer blocking voice demod
+        /// Get all available data from the demodulator
         getFFTData();
         getConstellationData();
         getRSSI();
 
         if(transmitting)
         {
-            if(tx_mode == gr_modem_types::ModemTypeQPSKVideo)
+            if(_tx_mode == gr_modem_types::ModemTypeQPSKVideo)
                 processInputVideoStream(frame_flag);
-            else if(tx_mode == gr_modem_types::ModemTypeQPSK250000)
+            else if(_tx_mode == gr_modem_types::ModemTypeQPSK250000)
             {
+                /// if not in the process of resetting the modem read interface
+                /// data will accumulate in the interface buffer...
                 if(!data_modem_sleeping)
                     processInputNetStream();
             }
@@ -259,10 +258,12 @@ void RadioController::run()
         }
 
         // FIXME: remove these hardcoded sleeps
+        /// Needed to keep the thread from using the CPU by looping too fast
         if(!transmitting && !vox_enabled && !process_text)
         {
             if(!data_to_process && !buffers_filling)
             {
+                /// nothing to output from demodulator
                 struct timespec time_to_sleep = {0, 5000000L };
                 nanosleep(&time_to_sleep, NULL);
             }
@@ -274,6 +275,7 @@ void RadioController::run()
         }
         else
         {
+            /// we are transmitting
             struct timespec time_to_sleep = {0, 2000000L };
             nanosleep(&time_to_sleep, NULL);
         }
@@ -283,9 +285,10 @@ void RadioController::run()
 }
 
 
-/// this code runs only in startTx and stopTx and setVox
+/// this code runs only in startTx and stopTx
 void RadioController::updateInputAudioStream()
 {
+    /// Cases where not using local audio
     if(_settings->_voip_forwarding || (!_transmitting && !_settings->_vox_enabled))
     {
         emit setAudioReadMode(false, false, AudioProcessor::AUDIO_MODE_ANALOG);
@@ -301,6 +304,8 @@ void RadioController::updateInputAudioStream()
         emit setAudioReadMode(false, false, AudioProcessor::AUDIO_MODE_ANALOG);
         return;
     }
+
+    /// If we got here we are using local audio input
     int audio_mode;
     if((_tx_mode == gr_modem_types::ModemTypeBPSK2000) ||
             (_tx_mode == gr_modem_types::ModemType2FSK2000) ||
@@ -327,8 +332,7 @@ void RadioController::updateInputAudioStream()
 
 void RadioController::flushRadioToVoipBuffer()
 {
-
-    /// Large size of frames (120 ms) helps Mumble client
+    /// Using large size of frames (120 ms) for Mumble client compatibility
     if(_to_voip_buffer->size() >= 960)
     {
 
@@ -357,15 +361,16 @@ bool RadioController::processMixerQueue()
                 _transmitting = true;
             }
             _voip_tx_timer->start(500);
-            txAudio(pcm, 320*sizeof(short), 1, true); // don't loop back to Mumble
+            /// Out to radio and don't loop back to Mumble
+            txAudio(pcm, 320*sizeof(short), 1, true);
         }
         else
         {
+            /// Routed to local audio output
             emit writePCM(pcm, 320*sizeof(short), (bool)_settings->audio_compressor,
                           AudioProcessor::AUDIO_MODE_OPUS);
             audioFrameReceived();
         }
-        _last_voiced_frame_timer.restart();
         return true;
     }
     return false;
@@ -386,8 +391,10 @@ void RadioController::txAudio(short *audiobuffer, int audiobuffer_size,
         }
         if(!vad && !_vox_timer->isActive())
         {
+            /// Vox timer ran out, stopping TX
             if(_settings->_tx_started && !_settings->_voip_ptt_enabled)
                 _transmitting = false;
+            /// Audio stream will be stopped at the next thread iteration
             delete[] audiobuffer;
             return;
         }
@@ -425,6 +432,8 @@ void RadioController::txAudio(short *audiobuffer, int audiobuffer_size,
         return;
     }
 
+    /// Digital voice
+    ///
     int packet_size = 0;
     unsigned char *encoded_audio;
     /// digital volume adjust
@@ -452,6 +461,7 @@ int RadioController::processInputVideoStream(bool &frame_flag)
     unsigned int max_video_frame_size = 3122;
     unsigned long encoded_size;
 
+    /// Large alloc
     unsigned char *videobuffer = (unsigned char*)calloc(max_video_frame_size,
                                                         sizeof(unsigned char));
 
@@ -459,12 +469,13 @@ int RadioController::processInputVideoStream(bool &frame_flag)
     qint64 microsec;
     timer.start();
 
+    /// This includes V4L2 capture time as well
     _video->encode_jpeg(&(videobuffer[24]), encoded_size, max_video_frame_size - 24);
 
     microsec = (quint64)timer.nsecsElapsed();
     if(microsec < 100000000)
     {
-        struct timespec time_to_sleep = {0, (100000000 - (long)microsec) - 5000000};
+        struct timespec time_to_sleep = {0, (100000000 - (long)microsec) - 5000000}; // FIXME: hardcoded value
         nanosleep(&time_to_sleep, NULL);
     }
 
@@ -481,6 +492,7 @@ int RadioController::processInputVideoStream(bool &frame_flag)
     memcpy(&(videobuffer[12]), &crc, 4);
     memcpy(&(videobuffer[16]), &crc, 4);
     memcpy(&(videobuffer[20]), &crc, 4);
+    /// Rest of video frame filled with garbage to keep the same radio frame size
     for(unsigned int k=encoded_size+24,i=0;k<max_video_frame_size;k++,i++)
     {
 
@@ -489,12 +501,12 @@ int RadioController::processInputVideoStream(bool &frame_flag)
     }
 
     emit videoData(videobuffer,max_video_frame_size);
-    return 1;
+    return 1; // ???
 }
 
 void RadioController::processInputNetStream()
 {
-    // 48400
+    // 48400 microsec per frame, during this time data enters the interface socket buffer
     qint64 time_per_frame = 48400000;
     qint64 microsec, time_left;
     microsec = (quint64)_data_read_timer->nsecsElapsed();
@@ -550,23 +562,22 @@ void RadioController::sendTextData(QString text, int frame_type)
 {
     if(_settings->_tx_inited)
     {
-        if(!_tx_modem_started)
+        if(!_settings->_tx_started)
         {
             // FIXME: these should be called from the thread loop only
-            stopTx();
             startTx();
         }
-        _tx_modem_started = true;
+        _settings->_tx_started = true;
         _modem->startTransmission(_callsign);
         _modem->textData(text, frame_type);
         _modem->endTransmission(_callsign);
+        // FIXME: calculate total length and time required to transmit for timer
     }
     if(!_repeat_text)
     {
         _mutex->lock();
         _process_text = false;
         _mutex->unlock();
-
     }
 }
 
@@ -574,15 +585,15 @@ void RadioController::sendBinData(QByteArray data, int frame_type)
 {
     if(_settings->_tx_inited)
     {
-        if(!_tx_modem_started)
+        if(!_settings->_tx_started)
         {
             // FIXME: these should be called from the thread loop only
-            stopTx();
             startTx();
         }
-        _tx_modem_started = true;
+        _settings->_tx_started = true;
         _modem->binData(data, frame_type);
         _modem->endTransmission(_callsign);
+        // FIXME: calculate total length and time required to transmit for timer
     }
     if(!_repeat_text)
     {
@@ -601,7 +612,6 @@ void RadioController::sendEndBeep()
     {
         pcm->push_back((float)samples[i] / 32767.0f * 0.5);
     }
-
     emit pcmData(pcm);
 }
 
@@ -619,45 +629,33 @@ void RadioController::setRelays(bool transmitting)
     struct timespec time_to_sleep;
     if(transmitting)
     {
-        res = _relay_controller->enableRelay(0);
-        if(!res)
+        for(int i=0;i<_max_no_relays;i++)
         {
-            _logger->log(Logger::LogLevelCritical,
-                         "Relay control failed, stopping to avoid damage");
-            exit(EXIT_FAILURE);
+            res = _relay_controller->enableRelay(i);
+            if(!res)
+            {
+                _logger->log(Logger::LogLevelCritical,
+                             "Relay control failed, stopping to avoid damage");
+                exit(EXIT_FAILURE); // bit drastic, ain't it?
+            }
+            time_to_sleep = {0, 10000L };
+            nanosleep(&time_to_sleep, NULL);
         }
-        time_to_sleep = {0, 10000L };
-        nanosleep(&time_to_sleep, NULL);
-        res = _relay_controller->enableRelay(1);
-        if(!res)
-        {
-            _logger->log(Logger::LogLevelCritical,
-                         "Relay control failed, stopping to avoid damage");
-            exit(EXIT_FAILURE);
-        }
-        time_to_sleep = {0, 10000L };
-        nanosleep(&time_to_sleep, NULL);
     }
     else
     {
-        res = _relay_controller->disableRelay(1);
-        if(!res)
+        for(int i=_max_no_relays-1;i>-1;i--)
         {
-            _logger->log(Logger::LogLevelCritical,
-                         "Relay control failed, stopping to avoid damage");
-            exit(EXIT_FAILURE);
+            res = _relay_controller->disableRelay(i);
+            if(!res)
+            {
+                _logger->log(Logger::LogLevelCritical,
+                             "Relay control failed, stopping to avoid damage");
+                exit(EXIT_FAILURE);
+            }
+            time_to_sleep = {0, 10000L };
+            nanosleep(&time_to_sleep, NULL);
         }
-        time_to_sleep = {0, 10000L };
-        nanosleep(&time_to_sleep, NULL);
-        res = _relay_controller->disableRelay(0);
-        if(!res)
-        {
-            _logger->log(Logger::LogLevelCritical,
-                         "Relay control failed, stopping to avoid damage");
-            exit(EXIT_FAILURE);
-        }
-        time_to_sleep = {0, 10000L };
-        nanosleep(&time_to_sleep, NULL);
     }
 
 }
@@ -688,24 +686,21 @@ void RadioController::startTx()
         _modem->tuneTx(_tx_frequency + _settings->tx_shift);
         _modem->setTxPower((float)_settings->tx_power/100);
 
-        /**
+        /** old code
         if(_settings->_rx_inited && !_settings->_repeater_enabled &&
                         (_rx_mode != gr_modem_types::ModemTypeQPSK250000))
             _modem->stopRX();
 
 
-        if(_tx_modem_started)
+        if(_settings->_tx_started)
             _modem->stopTX();
-        */
 
         /// LimeSDR calibration procedure happens after every tune request
-        /**
         struct timespec time_to_sleep = {0, 10000000L };
         nanosleep(&time_to_sleep, NULL);
         _modem->startTX();
         */
 
-        _tx_modem_started = false;
         _settings->_tx_started = true;
         if((_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL))
         {
@@ -726,7 +721,6 @@ void RadioController::stopTx()
     updateInputAudioStream();
     if(_settings->_tx_inited)
     {
-
         int tx_tail_msec = 100;
         if(_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL)
         {
@@ -748,9 +742,8 @@ void RadioController::stopTx()
         }
         // FIXME: end tail length should be calculated exactly
         _end_tx_timer->start(tx_tail_msec);
-        _tx_modem_started = false;
 
-        /**
+        /** old code
         if(_settings->_rx_inited && !_settings->_repeater_enabled &&
                     (_rx_mode != gr_modem_types::ModemTypeQPSK250000))
            _modem->startRX();
@@ -764,7 +757,6 @@ void RadioController::endTx()
     _modem->flushSources();
     /// On the LimeSDR mini, whenever I call setTxPower I get a brief spike of the LO
     setRelays(false);
-
     if(!_settings->enable_duplex)
     {
         _modem->enableDemod(true);
@@ -776,6 +768,7 @@ void RadioController::endTx()
 
 void RadioController::stopVoipTx()
 {
+    /// Called by voip tx timer
     _transmitting = false;
 }
 
@@ -789,7 +782,7 @@ void RadioController::updateDataModemReset(bool transmitting, bool ptt_activated
         sec_modem_running = (quint64)_data_modem_reset_timer->nsecsElapsed()/1000000000;
         if(sec_modem_running > 300)
         {
-            _logger->log(Logger::LogLevelInfo, "resetting modem");
+            _logger->log(Logger::LogLevelInfo, "Resetting modem");
             _data_modem_sleeping = true;
             _data_modem_sleep_timer->restart();
         }
@@ -803,10 +796,8 @@ void RadioController::updateDataModemReset(bool transmitting, bool ptt_activated
             _data_modem_sleep_timer->restart();
             _data_modem_sleeping = false;
             _data_modem_reset_timer->restart();
-            _mutex->lock();
             _modem->startTransmission(_callsign);
-            _mutex->unlock();
-            _logger->log(Logger::LogLevelInfo, "modem reset complete");
+            _logger->log(Logger::LogLevelInfo, "Modem reset complete");
         }
     }
 }
@@ -822,7 +813,7 @@ bool RadioController::getDemodulatorData()
         {
             data_to_process = _modem->demodulateAnalog();
         }
-
+        /// scanning
         if(!_scan_done)
             scan(data_to_process);
         if(!_memory_scan_done)
@@ -861,7 +852,7 @@ void RadioController::getFFTData()
         return;
     }
 
-    unsigned int fft_size = 0;
+    unsigned int fft_size = 0; // this is a reference
     _modem->getFFTData(_fft_data, fft_size);
     if(fft_size > 0)
     {
@@ -879,6 +870,7 @@ void RadioController::getConstellationData()
 {
     if(!_settings->show_constellation)
     {
+        _const_read_timer->restart();
         return;
     }
     qint64 msec = (quint64)_const_read_timer->nsecsElapsed() / 1000000;
@@ -894,11 +886,11 @@ void RadioController::getConstellationData()
     }
 }
 
-
+/// callback from gr_modem via signal
 void RadioController::receiveDigitalAudio(unsigned char *data, int size)
 {
     short *audio_out;
-    int samples;
+    int samples; // reference
     int audio_mode = AudioProcessor::AUDIO_MODE_OPUS;
     if((_rx_mode == gr_modem_types::ModemTypeBPSK2000) ||
             (_rx_mode == gr_modem_types::ModemType2FSK2000) ||
@@ -929,17 +921,20 @@ void RadioController::receiveDigitalAudio(unsigned char *data, int size)
             audio_out[i] = (short)((float)audio_out[i] * _rx_volume);
             if(_settings->_voip_forwarding)
             {
+                /// routing to Mumble
                 _to_voip_buffer->push_back(audio_out[i]);
             }
         }
         if(_settings->_voip_forwarding && !_settings->_repeater_enabled)
         {
+            /// no local audio
             delete[] audio_out;
         }
         else
         {
             if(_settings->_voip_connected || _settings->_repeater_enabled)
             {
+                /// need to mix several audio channels
                 _audio_mixer_in->addSamples(audio_out, samples, -9999); // radio id hardcoded
             }
             else
@@ -951,6 +946,7 @@ void RadioController::receiveDigitalAudio(unsigned char *data, int size)
     }
 }
 
+/// callback from gr_modem via signal
 void RadioController::receivePCMAudio(std::vector<float> *audio_data)
 {
     int size = audio_data->size();
@@ -960,18 +956,21 @@ void RadioController::receivePCMAudio(std::vector<float> *audio_data)
         pcm[i] = (short)(audio_data->at(i) * _rx_volume * 32767.0f);
         if(_settings->_voip_forwarding)
         {
+            /// routed to Mumble
             _to_voip_buffer->push_back(pcm[i]);
         }
     }
 
     if(_settings->_voip_forwarding && !_settings->_repeater_enabled)
     {
+        /// No local audio
         delete[] pcm;
     }
     else
     {
         if(_settings->_voip_connected || _settings->_repeater_enabled)
         {
+            /// Need to mix several audio channels
             _audio_mixer_in->addSamples(pcm, size, -9999); // radio id hardcoded
         }
         else
@@ -986,12 +985,13 @@ void RadioController::receivePCMAudio(std::vector<float> *audio_data)
     audioFrameReceived();
 }
 
+/// Used by video and IP modem
 unsigned int RadioController::getFrameLength(unsigned char *data)
 {
     unsigned int frame_size1;
     unsigned int frame_size2;
     unsigned int frame_size3;
-
+    /// do we really need this redundancy?
     memcpy(&frame_size1, &data[0], 4);
     memcpy(&frame_size2, &data[4], 4);
     memcpy(&frame_size3, &data[8], 4);
@@ -1005,6 +1005,7 @@ unsigned int RadioController::getFrameLength(unsigned char *data)
         return 0;
 }
 
+/// Used by video and IP modem
 unsigned int RadioController::getFrameCRC32(unsigned char *data)
 {
     unsigned int crc1;
@@ -1024,6 +1025,7 @@ unsigned int RadioController::getFrameCRC32(unsigned char *data)
         return 0;
 }
 
+/// callback from gr_modem via signal
 void RadioController::receiveVideoData(unsigned char *data, int size)
 {
     Q_UNUSED(size);
@@ -1031,13 +1033,13 @@ void RadioController::receiveVideoData(unsigned char *data, int size)
     unsigned int crc = getFrameCRC32(data);
     if(frame_size == 0)
     {
-        _logger->log(Logger::LogLevelWarning, "received wrong frame size, dropping frame ");
+        _logger->log(Logger::LogLevelWarning, "received wrong video frame size, dropping frame ");
         delete[] data;
         return;
     }
     if(frame_size > 3122 - 24)
     {
-        _logger->log(Logger::LogLevelWarning, "frame size too large, dropping frame ");
+        _logger->log(Logger::LogLevelWarning, "video frame size too large, dropping frame ");
         delete[] data;
         return;
     }
@@ -1048,7 +1050,7 @@ void RadioController::receiveVideoData(unsigned char *data, int size)
     if(crc != crc_check)
     {
         /// JPEG decoder has this nasty habit of segfaulting on image errors
-        _logger->log(Logger::LogLevelWarning, "CRC check failed, dropping frame");
+        _logger->log(Logger::LogLevelWarning, "Video CRC check failed, dropping frame");
         delete[] jpeg_frame;
         return;
     }
@@ -1058,7 +1060,6 @@ void RadioController::receiveVideoData(unsigned char *data, int size)
     delete[] jpeg_frame;
     if(!raw_output)
     {
-
         return;
     }
     QImage img (raw_output, 320,240, QImage::Format_RGB888);
@@ -1071,21 +1072,21 @@ void RadioController::receiveVideoData(unsigned char *data, int size)
 
     emit videoImage(image);
     delete[] raw_output;
-
 }
 
+/// callback from gr_modem via signal
 void RadioController::receiveNetData(unsigned char *data, int size)
 {
-    Q_UNUSED(size);
+    Q_UNUSED(size); // size comes from frame header
     unsigned int frame_size = getFrameLength(data);
 
-    if(frame_size > 1500)
+    if(frame_size > 1500) // FIXME: The MTU setting in netdevice
     {
-        _logger->log(Logger::LogLevelWarning, "received wrong frame size, dropping frame ");
+        _logger->log(Logger::LogLevelWarning, "received wrong IP frame size, dropping frame ");
         delete[] data;
         return;
     }
-    if(frame_size == 0)
+    if(frame_size == 0) // fill-up garbage
     {
         delete[] data;
         return;
@@ -1100,26 +1101,30 @@ void RadioController::receiveNetData(unsigned char *data, int size)
 
     if(crc != crc_check)
     {
-        _logger->log(Logger::LogLevelWarning, "CRC check failed, dropping frame ");
+        _logger->log(Logger::LogLevelWarning, "IP frame CRC check failed, dropping frame ");
         delete[] net_frame;
         return;
     }
 
     int res = _net_device->write_buffered(net_frame,frame_size);
-    Q_UNUSED(res);
+    Q_UNUSED(res); // FIXME: what if ioctl fails?
 }
 
-
+/// signal from Mumble
 void RadioController::processVoipAudioFrame(short *pcm, int samples, quint64 sid)
 {
     _audio_mixer_in->addSamples(pcm, samples, sid);
-    _last_session_id = sid;
 }
 
 void RadioController::startTransmission()
 {
     if(_settings->_rx_inited && _settings->rx_sample_rate != 1000000)
-        return;
+    {
+        /// Trying to transmit and receive at different sample rates
+        /// might work if using different devices so just log a warning
+        _logger->log(Logger::LogLevelWarning,
+                     "Trying to transmit and receive at different sample rates, works only with separate devices");
+    }
     if(_settings->_tx_inited || _settings->_voip_ptt_enabled)
         _transmitting = true;
 }
@@ -1146,6 +1151,7 @@ void RadioController::textMumble(QString text, bool channel)
     _process_text = true;
 }
 
+/// callback from gr_modem via signal
 void RadioController::textReceived(QString text)
 {
     if(_settings->_repeater_enabled && _tx_radio_type == radio_type::RADIO_TYPE_DIGITAL)
@@ -1154,10 +1160,13 @@ void RadioController::textReceived(QString text)
     }
     /// Disallow too large messages
     /// If end TX is not received, this buffer would fill forever
-    if(_settings->_voip_forwarding && _incoming_text_buffer.size() < 32*1024)
+    if(_settings->_voip_forwarding)
         _incoming_text_buffer.append(text);
     if(_incoming_text_buffer.size() >= 32*1024)
+    {
+        emit newMumbleMessage(_incoming_text_buffer);
         _incoming_text_buffer = "";
+    }
     emit printText(text, false);
 }
 
@@ -1166,6 +1175,7 @@ void RadioController::repeaterInfoReceived(QByteArray data)
     _radio_protocol->dataIn(data);
 }
 
+/// GUI only
 void RadioController::callsignReceived(QString callsign)
 {
     if(_settings->_repeater_enabled && _tx_radio_type == radio_type::RADIO_TYPE_DIGITAL)
@@ -1175,6 +1185,7 @@ void RadioController::callsignReceived(QString callsign)
     QString time= QDateTime::currentDateTime().toString("dd/MMM/yyyy hh:mm:ss");
     QString text = "\n\n<b>" + time + "</b> " + "<font color=\"#FF5555\">"
             + callsign + " </font><br/>\n";
+    // FIXME: for some reason this breaks audio
     /*
     short *samples = new short[_data_rec_sound->size()/sizeof(short)];
     short *origin = (short*) _data_rec_sound->data();
@@ -1185,12 +1196,14 @@ void RadioController::callsignReceived(QString callsign)
     emit printCallsign(callsign);
 }
 
+/// GUI only
 void RadioController::audioFrameReceived()
 {
     emit displayReceiveStatus(true);
     _voice_led_timer->start(500);
 }
 
+/// GUI only
 void RadioController::dataFrameReceived()
 {
     emit displayDataReceiveStatus(true);
@@ -1203,12 +1216,12 @@ void RadioController::dataFrameReceived()
         memcpy(samples, sound, _data_rec_sound->size());
         emit writePCM(samples, _data_rec_sound->size(), false, AudioProcessor::AUDIO_MODE_ANALOG);
     }
-
 }
 
+/// GUI leds and Mumble text signal
 void RadioController::receiveEnd()
 {
-    if(_incoming_text_buffer.size() > 0)
+    if(_incoming_text_buffer.size() > 0 && _settings->_voip_forwarding)
     {
         emit newMumbleMessage(_incoming_text_buffer);
         _incoming_text_buffer = "";
@@ -1233,6 +1246,7 @@ void RadioController::endAudioTransmission()
     emit writePCM(samples, size, false, AudioProcessor::AUDIO_MODE_ANALOG);
 }
 
+/// These two are not used currently
 void RadioController::setChannels(ChannelList channels)
 {
     _radio_protocol->setChannels(channels);
@@ -1243,6 +1257,7 @@ void RadioController::setStations(StationList list)
     _radio_protocol->setStations(list);
 }
 
+/// Needed to keep the frame size
 void RadioController::setCallsign()
 {
     _callsign = _settings->callsign;
@@ -1257,6 +1272,10 @@ void RadioController::setCallsign()
     }
 }
 
+
+/// Radio control functions start
+///
+///
 void RadioController::toggleRX(bool value)
 {
 
@@ -1663,9 +1682,11 @@ void RadioController::toggleRepeat(bool value)
     {
         _settings->_repeater_enabled = value;
     }
-    /// this enables direct repeat in same mode only
-    // if(_rx_mode == _tx_mode)
-    //_modem->setRepeater(value);
+    /// old code: this enables direct repeat in same mode only (direct loopback)
+    /**
+     if(_rx_mode == _tx_mode)
+        _modem->setRepeater(value);
+    */
 }
 
 void RadioController::fineTuneFreq(long center_freq)
@@ -1691,7 +1712,7 @@ void RadioController::tuneTxFreq(qint64 actual_freq)
 void RadioController::setCarrierOffset(qint64 offset)
 {
     _settings->demod_offset = offset;
-    /// we don't use carrier_offset for TX, fixed sample rate
+    /// we don't use carrier_offset for TX, fixed sample rate and carrier offset
     _modem->setCarrierOffset(offset);
 }
 
@@ -1741,6 +1762,7 @@ void RadioController::setTxPower(int value, std::string gain_stage)
 
 void RadioController::setBbGain(int value)
 {
+    /// Dangerous to use
     _settings->bb_gain = value;
     _modem->setBbGain(_settings->bb_gain);
 }
@@ -1841,6 +1863,10 @@ void RadioController::calibrateRSSI(float value)
     _modem->calibrateRSSI(value);
 }
 
+
+/// Start of scan functions
+///
+///
 void RadioController::scan(bool receiving, bool wait_for_timer)
 {
     bool increment_main_frequency = false;
