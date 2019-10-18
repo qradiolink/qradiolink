@@ -1118,12 +1118,14 @@ void RadioController::processVoipAudioFrame(short *pcm, int samples, quint64 sid
 
 void RadioController::startTransmission()
 {
-    if(_settings->_rx_inited && _settings->rx_sample_rate != 1000000)
+    if(_settings->_rx_inited && _settings->rx_sample_rate != 1000000 &&
+            (_settings->rx_device_args == _settings->tx_device_args))
     {
         /// Trying to transmit and receive at different sample rates
         /// might work if using different devices so just log a warning
         _logger->log(Logger::LogLevelWarning,
                      "Trying to transmit and receive at different sample rates, works only with separate devices");
+        return;
     }
     if(_settings->_tx_inited || _settings->_voip_ptt_enabled)
         _transmitting = true;
