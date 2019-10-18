@@ -783,6 +783,26 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
     }
     case 51:
     {
+        if(!_settings->_tx_inited)
+        {
+            response = "TX is not started";
+            success = false;
+        }
+        if(param1.size() > 4096)
+        {
+            response = "Text too long, 4096 characters at most";
+            success = false;
+        }
+        else
+        {
+            response = QString("Sending text message to channel %1").arg(
+                        _settings->_current_voip_channel);
+            emit sendText(param1, false);
+        }
+        break;
+    }
+    case 52:
+    {
         response = QString(
             "Starting transceiver with RX frequency: %1, TX frequency %2, TX shift %3").arg(
             _settings->rx_frequency).arg(_settings->rx_frequency).arg(_settings->tx_shift);
@@ -794,7 +814,7 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
         emit toggleTX(true);
         break;
     }
-    case 52:
+    case 53:
     {
         response = QString("Stopping transceiver");
         emit endTransmission(); // just in case
@@ -864,6 +884,7 @@ void CommandProcessor::buildCommandList()
     _command_list->append(new command("changechannel", 1, "Change channel to channel number (integer value)"));
     _command_list->append(new command("mumblemsg", 1, "Send Mumble message, string value text"));
     _command_list->append(new command("mutemumble", 1, "Mute Mumble connection, 1 enabled, 0 disabled"));
+    _command_list->append(new command("textmsg", 1, "Send radio text message, string value text"));
     _command_list->append(new command("start_trx", 0, "Convenience function, requires everything to be preconfigured"));
     _command_list->append(new command("stop_trx", 0, "Convenience function, requires everything to be preconfigured"));
 }
