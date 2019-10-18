@@ -53,6 +53,13 @@ void RelayController::init()
 
     ftdi_set_bitmode(_ftdi_relay, 0xFF, BITMODE_BITBANG);
     _ftdi_relay_enabled = true;
+    _relay_mask[0] = 0x0;
+    int ret = ftdi_write_data(_ftdi_relay, _relay_mask, 1);
+    if (ret < 0)
+    {
+        _logger->log(Logger::LogLevelCritical,
+                     QString("Disable failed for relays"));
+    }
 }
 
 void RelayController::deinit()

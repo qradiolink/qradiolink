@@ -731,14 +731,20 @@ void RadioController::stopTx()
         if(_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL)
         {
             _modem->endTransmission(_callsign);
-            tx_tail_msec = 1500;
+            if((_tx_mode == gr_modem_types::ModemTypeBPSK2000) ||
+                    (_tx_mode == gr_modem_types::ModemType2FSK2000) ||
+                    (_tx_mode == gr_modem_types::ModemType4FSK2000) ||
+                    (_tx_mode == gr_modem_types::ModemTypeQPSK2000))
+                tx_tail_msec = 800;
+            else
+                tx_tail_msec = 300;
         }
         if((_tx_radio_type == radio_type::RADIO_TYPE_ANALOG)
                 && ((_tx_mode == gr_modem_types::ModemTypeNBFM2500) ||
                     (_tx_mode == gr_modem_types::ModemTypeNBFM5000)))
         {
             sendEndBeep();
-            tx_tail_msec = 1000;
+            tx_tail_msec = 600;
         }
         // FIXME: end tail length should be calculated exactly
         _end_tx_timer->start(tx_tail_msec);
