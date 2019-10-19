@@ -205,16 +205,8 @@ $ telnet localhost 4939
 Trying ::1...
 Connected to localhost.
 Escape character is '^]'.
-
-qradiolink> rxstatus
-RX status is inactive.
-
-qradiolink> setrx 1
-Turning on receiver
-
 qradiolink> rxstatus
 RX status is active.
-
 qradiolink> quit
 Bye!
 Connection closed by foreign host.
