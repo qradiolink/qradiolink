@@ -515,7 +515,7 @@ std::vector<unsigned char>* gr_demod_base::getData(int nr)
         std::vector<unsigned char> *dummy = new std::vector<unsigned char>;
         return dummy;
     }
-    std::vector<unsigned char> *data;
+    std::vector<unsigned char> *data = nullptr;
     if(nr == 1)
     {
         switch(_mode)
