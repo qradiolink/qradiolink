@@ -46,7 +46,7 @@ Features
 - VOX mode
 - Analog and digital mode repeater - in full duplex mode only, same mode or mixed mode repeater (e.g. FM to Codec2 and viceversa, or FM to Opus and viceversa)
 - Repeater linking via VOIP and Mumble - a group of repeaters can be linked duplex by sharing the same Mumble channel. This feature is still experimental and WIP.
-- Internal audio mixing is enabled when connecting the radio to a VOIP server
+- Internal audio mixing of audio from VOIP server and audio from radio
 - USB FTDI (FT232) relay control support (for RF switches, power amplifier and filter control)
 - Full duplex 250 kbit/s IP radio modem with configurable TX/RX offsets
 - Automatic carrier tracking and Doppler effect correction for all digital modes except FreeDV modes. The system can track Doppler shifts of 5-10 kHz, depending on mode. It requires a CNR of at least 10-12 dB, more for FSK modes than for PSK modes.
@@ -174,7 +174,7 @@ When running in headless mode, console log will be disabled by default with the 
 Bus 002 Device 003: ID 0403:6001 Future Technology Devices International, Ltd FT232 Serial (UART) IC
 </pre>
 Do note that the identifier digits are the most important: **0403:6001**
-- QRadioLink can control a maximum of 8 relays, however only 2 are used at the moment. This is work in progress. Other types of relays may be supported in the future. The order in which relays are activated and deactivated during a transmission cycle is as follows: activation starting with relay 1 to relay 8, deactivation in reverse order (relay 8 to relay 1). A Python script **( ext/ftdi.py )** is included to help you determine the order of relays on the board.
+- QRadioLink can control a maximum of 8 relays, however only 4 are used at the moment. This is work in progress. Other types of relays may be supported in the future. The order in which relays are activated and deactivated during a transmission cycle is as follows: activation starting with relay 1 to relay 8, deactivation in reverse order (relay 8 to relay 1). A Python script **( ext/ftdi.py )** is included to help you determine the order of relays on the board.
 - Video will be displayed in the upper right corner. If your camera does not work, see the V4L2 guide in the docs/ directory for troubleshooting camera settings.
 - IP over radio operation mode requires net administration priviledges to be granted to the application. See the instructions in the docs/ directory. An error message will be output at startup if these priviledges are not present. You can safely ignore this message if you don't need to use the IP modem facility.
 - VOX mode requires careful setup of system microphone gain to avoid getting stuck on transmit. The voice activation system is not very robust right now and may be improved in the future.
@@ -190,64 +190,6 @@ $ telnet localhost 4939
 Trying ::1...
 Connected to localhost.
 Escape character is '^]'.
-Welcome! Available commands are: 
-rxstatus (0 parameters): Status of receiver (started or not)
-txstatus (0 parameters): Status of transmitter (started or not)
-txactive (0 parameters): See if the radio is on the air
-rxmode (0 parameters): Get RX operating mode
-txmode (0 parameters): Get TX operating mode
-rxctcss (0 parameters): Get RX CTCSS
-txctcss (0 parameters): Get TX CTCSS
-rxvolume (0 parameters): Get RX volume value
-txvolume (0 parameters): Get TX volume value
-squelch (0 parameters): Get squelch value
-rxgain (0 parameters): Get RX gain value
-txgain (0 parameters): Get TX gain value
-rssi (0 parameters): Get current RSSI value
-voipstatus (0 parameters): Get VOIP status
-forwardingstatus (0 parameters): Get radio forwarding status
-voxstatus (0 parameters): Get VOX status
-repeaterstatus (0 parameters): Get repeater status
-duplexstatus (0 parameters): Get duplex status
-setrx (1 parameters): Start/stop receiver, 1 enabled, 0 disabled
-settx (1 parameters): Start/stop transmitter, 1 enabled, 0 disabled
-setrxmode (1 parameters): Set RX mode (integer number, 0-16)
-settxmode (1 parameters): Set TX mode (integer number, 0-16)
-setrxctcss (1 parameters): Set RX CTCSS (floating point number, 0.0 to 200.0)
-settxctcss (1 parameters): Set TX CTCSS (floating point number, 0.0 to 200.0)
-setsquelch (1 parameters): Set squelch (integer number, -150 to 10)
-setrxvolume (1 parameters): Set RX volume (integer number, 0 to 100)
-settxvolume (1 parameters): Set TX volume (integer number, 0 to 100)
-setrxgain (1 parameters): Set RX gain (integer number, 0 to 99)
-settxgain (1 parameters): Set TX gain (integer number, 0 to 99)
-tunerx (1 parameters): Tune RX frequency, integer value in Hertz
-tunetx (1 parameters): Tune TX frequency, integer value in Hertz
-setoffset (1 parameters): Set demodulator offset, integer value in Hertz
-setshift (1 parameters): Set TX shift, integer value in Hertz
-setduplex (1 parameters): Set duplex mode, 1 enabled, 0 disabled
-setforwarding (1 parameters): Set radio forwarding mode, 1 enabled, 0 disabled
-setrepeater (1 parameters): Set repeater mode, 1 enabled, 0 disabled
-setvox (1 parameters): Set vox mode, 1 enabled, 0 disabled
-setpttvoip (1 parameters): Use PTT for VOIP, 1 enabled, 0 disabled
-setcompressor (1 parameters): Enable audio compressor, 1 enabled, 0 disabled
-setrelays (1 parameters): Enable relay control, 1 enabled, 0 disabled
-setrssicalibration (1 parameters): Set RSSI calibration, integer value in dBm
-setrxsamprate (1 parameters): Set RX sample rate, integer value in Msps
-autosquelch (0 parameters): Set autosquelch
-setfilterwidth (1 parameters): Set filter width (analog only), integer value in Hz
-ptt_on (0 parameters): Transmit
-ptt_off (0 parameters): Stop transmitting
-connectserver (2 parameters): Connect to Mumble server, string value hostname, integer value port
-disconnectserver (0 parameters): Disconnect from Mumble server
-changechannel (1 parameters): Change channel to channel number (integer value)
-mumblemsg (1 parameters): Send Mumble message, string value text
-mutemumble (1 parameters): Mute Mumble connection, 1 enabled, 0 disabled
-start_trx (0 parameters): Convenience function, requires everything to be preconfigured
-stop_trx (0 parameters): Convenience function, requires everything to be preconfigured
-help
-?
-exit
-quit
 
 qradiolink> rxstatus
 RX status is inactive.

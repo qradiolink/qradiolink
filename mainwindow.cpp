@@ -192,7 +192,6 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     ui->plotterFrame->setClickResolution(1);
     ui->plotterFrame->setFftRange(-120.0,-30.0);
     ui->plotterFrame->setWaterfallRange(-120.0,-30.0);
-    //setFFTRange(1);
     _range_set = false;
     //QPixmap pm = QPixmap::grabWidget(ui->frameCtrlFreq);
     //ui->frameCtrlFreq->setMask(pm.createHeuristicMask(false));
@@ -228,12 +227,9 @@ void MainWindow::initSettings()
     setConfig();
     updateMemories();
     updateRSSI(9999);
-    _range_set = false;
-    //setFFTRange(1);
     setEnabledFFT((bool)_settings->show_fft);
     setEnabledDuplex((bool) _settings->enable_duplex);
     setAudioCompressor((bool) _settings->audio_compressor);
-    _range_set = false;
     ui->showConstellationButton->setChecked(_settings->show_constellation);
     showConstellation(_settings->show_constellation);
     ui->showControlsButton->setChecked((bool)_settings->show_controls);
@@ -275,6 +271,7 @@ MainWindow::~MainWindow()
     delete _eff_const;
     delete _eff_video;
     delete _eff_text_display;
+    delete _eff_mem_display;
     delete ui;
 }
 

@@ -31,7 +31,6 @@
 #include <unistd.h>
 #include <math.h>
 #include <gnuradio/digital/crc32.h>
-#include "audio/audioprocessor.h"
 #include "settings.h"
 #include "radiochannel.h"
 #include "mumblechannel.h"

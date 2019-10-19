@@ -41,7 +41,7 @@ SSLClient::SSLClient(QObject *parent) :
     _socket->setPeerVerifyMode(QSslSocket::QueryPeer);
     _socket->ignoreSslErrors();
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-    _socket->setProtocol(QSsl::TlsV1_0);
+    _socket->setProtocol(QSsl::TlsV1_2);
 #else
     _socket->setProtocol(QSsl::TlsV1);
 #endif
