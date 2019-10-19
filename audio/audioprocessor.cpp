@@ -19,6 +19,7 @@
 AudioProcessor::AudioProcessor(QObject *parent) : QObject(parent)
 {
     _error=0;
+    /*
     _speex_preprocess = speex_preprocess_state_init(320, 8000);
 
     int i;
@@ -43,6 +44,7 @@ AudioProcessor::AudioProcessor(QObject *parent) : QObject(parent)
     speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_DEREVERB_DECAY, &f);
     f=.5;
     speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_DEREVERB_LEVEL, &f);
+    */
 
     // need to make these configurable
     sf_simplecomp(&_cm_state_read_codec2,
@@ -107,7 +109,7 @@ AudioProcessor::AudioProcessor(QObject *parent) : QObject(parent)
 
 AudioProcessor::~AudioProcessor()
 {
-    speex_preprocess_state_destroy(_speex_preprocess);
+    //speex_preprocess_state_destroy(_speex_preprocess);
     delete _audio_filter_1400;
     delete _audio_filter2_1400;
     delete _audio_filter_700;
