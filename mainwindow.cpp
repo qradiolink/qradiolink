@@ -248,7 +248,16 @@ void MainWindow::initSettings()
 
 MainWindow::~MainWindow()
 {
-    delete ui;
+    for(int i =0;i<_rx_gain_sliders.size();i++)
+    {
+        delete _rx_gain_sliders.at(i);
+    }
+    for(int i =0;i<_tx_gain_sliders.size();i++)
+    {
+        delete _tx_gain_sliders.at(i);
+    }
+    _rx_gain_sliders.clear();
+    _tx_gain_sliders.clear();
     _filter_widths->clear();
     delete _filter_widths;
     _filter_ranges->clear();
@@ -266,6 +275,7 @@ MainWindow::~MainWindow()
     delete _eff_const;
     delete _eff_video;
     delete _eff_text_display;
+    delete ui;
 }
 
 void MainWindow::closeEvent (QCloseEvent *event)
@@ -567,7 +577,7 @@ void MainWindow::addMemoryChannel()
 {
     radiochannel *chan = new radiochannel;
     chan->rx_frequency = _settings->rx_frequency + _settings->demod_offset;
-    chan->tx_frequency = _settings->_tx_frequency;
+    chan->tx_frequency = _settings->tx_frequency;
     chan->tx_shift = _settings->tx_shift;
     chan->rx_mode = _settings->rx_mode;
     chan->tx_mode = _settings->tx_mode;
@@ -1174,7 +1184,7 @@ void MainWindow::tuneMainFreq(qint64 freq)
     /// rx_frequency is the center frequency of the source
     _settings->rx_frequency = freq - _settings->demod_offset;
     /// tx_frequency is the actual frequency
-    _settings->_tx_frequency = freq;
+    _settings->tx_frequency = freq;
     ui->plotterFrame->setCenterFreq(_settings->rx_frequency);
     ui->plotterFrame->setDemodCenterFreq(_settings->rx_frequency + _settings->demod_offset);
     emit setCarrierOffset(_settings->demod_offset);
@@ -1187,7 +1197,7 @@ void MainWindow::tuneMainFreq(qint64 freq)
 void MainWindow::tuneFreqPlotter(qint64 freq)
 {
     return; // can't handle this now
-    _settings->_tx_frequency = freq;
+    _settings->tx_frequency = freq;
     tuneMainFreq(freq - _settings->demod_offset);
     ui->frameCtrlFreq->setFrequency(freq + _settings->demod_offset);
 }
@@ -1493,7 +1503,12 @@ void MainWindow::setRxGainStages(gain_vector rx_gains)
     while (iter != rx_gains.constEnd())
     {
         QString gain_stage_name = QString::fromStdString(iter.key());
-        qDebug() << gain_stage_name << " " << iter.value().at(0) << " " << iter.value().at(1);
+        QSlider *gain_slider = new QSlider(Qt::Horizontal, this);
+        gain_slider->setObjectName(gain_stage_name);
+        gain_slider->setRange(iter.value().at(0), iter.value().at(1));
+        gain_slider->setMaximumWidth(150);
+        gain_slider->setTickInterval(10);
+        _rx_gain_sliders.push_back(gain_slider);
         ++iter;
     }
 }
@@ -1504,7 +1519,12 @@ void MainWindow::setTxGainStages(gain_vector tx_gains)
     while (iter != tx_gains.constEnd())
     {
         QString gain_stage_name = QString::fromStdString(iter.key());
-        qDebug() << gain_stage_name << " " << iter.value().at(0) << " " << iter.value().at(1);
+        QSlider *gain_slider = new QSlider(Qt::Horizontal, this);
+        gain_slider->setObjectName(gain_stage_name);
+        gain_slider->setRange(iter.value().at(0), iter.value().at(1));
+        gain_slider->setMaximumWidth(150);
+        gain_slider->setTickInterval(10);
+        _tx_gain_sliders.push_back(gain_slider);
         ++iter;
     }
 }

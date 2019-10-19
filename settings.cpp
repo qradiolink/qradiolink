@@ -19,28 +19,21 @@
 Settings::Settings(Logger *logger)
 {
     _logger = logger;
-    _id = 0;
+    _config_file = setupConfig();
 
-    _mumble_tcp = 1; // used
-    _use_codec2 = 0; // used
-    _audio_treshhold = -15; // not used
-    _voice_activation = 0.5; // not used
-    _voice_activation_timeout = 50; // not used
-    _ident_time = 300; // not used
-    _radio_id = "";
+    /// not saved to config
+    rx_inited = false;
+    tx_inited = false;
+    tx_started = false;
+    voip_connected = false;
+    voip_forwarding = false;
+    voip_ptt_enabled = false;
+    vox_enabled = false;
+    repeater_enabled = false;
+    current_voip_channel = -1;
+    rssi = 0.0;
 
-    _rx_inited = false;
-    _tx_inited = false;
-    _tx_started = false;
-    _voip_connected = false;
-    _voip_forwarding = false;
-    _voip_ptt_enabled = false;
-    _vox_enabled = false;
-    _repeater_enabled = false;
-    _current_voip_channel = -1;
-    _rssi = 0.0;
-
-
+    /// saved to config
     demod_offset = 0;
     rx_mode = 0;
     tx_mode = 0;
@@ -59,7 +52,15 @@ Settings::Settings(Logger *logger)
     voip_server="127.0.0.1";
     bb_gain = 1;
 
-    _config_file = setupConfig();
+    /// old stuff, not used
+    _mumble_tcp = 1; // used
+    _use_codec2 = 0; // used
+    _audio_treshhold = -15; // not used
+    _voice_activation = 0.5; // not used
+    _voice_activation_timeout = 50; // not used
+    _ident_time = 300; // not used
+    _radio_id = "";
+    _id = 0;
 }
 
 QFileInfo *Settings::setupConfig()

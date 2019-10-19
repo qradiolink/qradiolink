@@ -83,18 +83,18 @@ public:
     /// Not saved to config:
 
     /// Used by both radio-op/mumbleclient and remote interface
-    bool _rx_inited;
-    bool _tx_inited;
-    bool _tx_started;
-    qint64 _tx_frequency;
-    float _rssi;
-    bool _voip_connected;
-    bool _vox_enabled;
-    bool _repeater_enabled;
-    bool _voip_forwarding;
-    bool _voip_ptt_enabled;
-    int _current_voip_channel;
-    bool _voip_self_deaf;
+    bool rx_inited;
+    bool tx_inited;
+    bool tx_started;
+    qint64 tx_frequency;
+    float rssi;
+    bool voip_connected;
+    bool vox_enabled;
+    bool repeater_enabled;
+    bool voip_forwarding;
+    bool voip_ptt_enabled;
+    int current_voip_channel;
+    bool voip_self_deaf;
 
 
 

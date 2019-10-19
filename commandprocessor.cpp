@@ -199,19 +199,19 @@ bool CommandProcessor::processStatusCommands(int command_index, QString &respons
     bool success = true;
     switch (command_index) {
     case 0:
-        if(_settings->_rx_inited)
+        if(_settings->rx_inited)
             response.append("RX status is active.");
         else
             response.append("RX status is inactive.");
         break;
     case 1:
-        if(_settings->_tx_inited)
+        if(_settings->tx_inited)
             response.append("TX status is active.");
         else
             response.append("TX status is inactive.");
         break;
     case 2:
-        if(_settings->_tx_started)
+        if(_settings->tx_started)
             response.append("Currently transmitting.");
         else
             response.append("Not transmitting.");
@@ -244,14 +244,14 @@ bool CommandProcessor::processStatusCommands(int command_index, QString &respons
         response.append(QString("Current TX gain value is %1.").arg(_settings->tx_power));
         break;
     case 12:
-        response.append(QString("Current RSSI value is %1.").arg(_settings->_rssi));
+        response.append(QString("Current RSSI value is %1.").arg(_settings->rssi));
         break;
     case 13:
-        if(_settings->_voip_connected)
+        if(_settings->voip_connected)
         {
             response.append(
                 QString("Connected to VOIP server: %1; Channel number: %2.").arg(
-                        _settings->voip_server).arg(_settings->_current_voip_channel));
+                        _settings->voip_server).arg(_settings->current_voip_channel));
         }
         else
         {
@@ -259,19 +259,19 @@ bool CommandProcessor::processStatusCommands(int command_index, QString &respons
         }
         break;
     case 14:
-        if(_settings->_voip_forwarding)
+        if(_settings->voip_forwarding)
             response.append(QString("Radio is forwarded to VOIP network."));
         else
             response.append(QString("Radio is not forwarded to VOIP network."));
         break;
     case 15:
-        if(_settings->_vox_enabled)
+        if(_settings->vox_enabled)
             response.append(QString("VOX is on."));
         else
             response.append(QString("VOX is off."));
         break;
     case 16:
-        if(_settings->_repeater_enabled)
+        if(_settings->repeater_enabled)
             response.append(QString("Repeater is enabled."));
         else
             response.append(QString("Repeater is disabled."));
@@ -645,14 +645,14 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
     }
     case 42:
     {
-        if(_settings->_rssi > 99.0f)
+        if(_settings->rssi > 99.0f)
         {
             response = "Could not set auto squelch";
             success = false;
         }
         else
         {
-            int squelch = (int)_settings->_rssi +
+            int squelch = (int)_settings->rssi +
                     (abs(_settings->rssi_calibration_value) - 80) + 50;
             response = QString("Setting squelch automatically to %1").arg(squelch);
             emit setSquelch(squelch);
@@ -695,7 +695,7 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
             response = "Port parameter value is not supported";
             success = false;
         }
-        else if(_settings->_voip_connected)
+        else if(_settings->voip_connected)
         {
             response = "Already connected";
             success = false;
@@ -709,7 +709,7 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
     }
     case 47:
     {
-        if(!_settings->_voip_connected)
+        if(!_settings->voip_connected)
         {
             response = "Not connected";
             success = false;
@@ -724,7 +724,7 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
     case 48:
     {
         int set = param1.toInt();
-        if(!_settings->_voip_connected)
+        if(!_settings->voip_connected)
         {
             response = "Not connected";
             success = false;
@@ -743,7 +743,7 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
     }
     case 49:
     {
-        if(!_settings->_voip_connected)
+        if(!_settings->voip_connected)
         {
             response = "Not connected";
             success = false;
@@ -756,14 +756,14 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
         else
         {
             response = QString("Sending text message to channel %1").arg(
-                        _settings->_current_voip_channel);
+                        _settings->current_voip_channel);
             emit newMumbleMessage(param1);
         }
         break;
     }
     case 50:
     {
-        if(!_settings->_voip_connected)
+        if(!_settings->voip_connected)
         {
             response = "Not connected";
             success = false;
@@ -783,7 +783,7 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
     }
     case 51:
     {
-        if(!_settings->_tx_inited)
+        if(!_settings->tx_inited)
         {
             response = "TX is not started";
             success = false;
@@ -796,7 +796,7 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
         else
         {
             response = QString("Sending text message to channel %1").arg(
-                        _settings->_current_voip_channel);
+                        _settings->current_voip_channel);
             emit sendText(param1, false);
         }
         break;

@@ -905,6 +905,7 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
         memcpy(text_data, received_data, 7);
 
         QString callsign(text_data);
+        callsign = callsign.remove(QRegExp("[^a-zA-Z/\\d\\s]"));
         if(_direct_mode_repeater)
         {
             sendCallsign(callsign);

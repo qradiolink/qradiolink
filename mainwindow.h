@@ -255,6 +255,9 @@ private:
     QList<QAudioDeviceInfo> _audio_output_devices;
     QList<QAudioDeviceInfo> _audio_input_devices;
 
+    QVector<QSlider*> _rx_gain_sliders;
+    QVector<QSlider*> _tx_gain_sliders;
+
 };
 
 #endif // MAINWINDOW_H
