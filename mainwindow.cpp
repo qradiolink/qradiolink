@@ -640,8 +640,8 @@ void MainWindow::tuneToMemoryChannel(int row, int col)
 
     ui->rxModemTypeComboBox->setCurrentIndex(chan->rx_mode);
     ui->txModemTypeComboBox->setCurrentIndex(chan->tx_mode);
-    _settings->rx_mode = chan->rx_mode;
-    _settings->tx_mode = chan->tx_mode;
+    toggleRxMode(chan->rx_mode);
+    toggleTxMode(chan->tx_mode);
 
     setSquelchDisplay(chan->squelch);
     setVolumeDisplay(chan->rx_volume);

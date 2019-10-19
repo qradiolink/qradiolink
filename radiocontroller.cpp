@@ -1299,9 +1299,7 @@ void RadioController::toggleRX(bool value)
             emit initError("Could not init RX device, check settings");
             return;
         }
-        // FIXME:
-        struct timespec time_to_sleep = {1, 30000000L };
-        nanosleep(&time_to_sleep, NULL);
+
         _mutex->lock();
         _modem->enableGUIFFT((bool)_settings->show_fft);
         _modem->enableGUIConst((bool)_settings->show_constellation);
@@ -1532,9 +1530,7 @@ void RadioController::toggleRxMode(int value)
         break;
     }
 
-    _mutex->lock();
     _modem->toggleRxMode(_rx_mode);
-    _mutex->unlock();
     if(rx_inited_before)
     {
         _settings->rx_inited = true;
@@ -1916,16 +1912,12 @@ void RadioController::scan(bool receiving, bool wait_for_timer)
     if(increment_main_frequency)
     {
         _settings->rx_frequency = _settings->rx_frequency + _settings->rx_sample_rate;
-        _mutex->lock();
         _modem->tune(_settings->rx_frequency);
-        _mutex->unlock();
     }
     if(decrement_main_frequency)
     {
         _settings->rx_frequency = _settings->rx_frequency - _settings->rx_sample_rate;
-        _mutex->lock();
         _modem->tune(_settings->rx_frequency);
-        _mutex->unlock();
     }
     _modem->setCarrierOffset(_autotune_freq);
 
