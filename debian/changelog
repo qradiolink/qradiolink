@@ -1,3 +1,13 @@
+qradiolink (0.8.2-rc5) UNRELEASED; urgency=medium
+
+  [ Adrian Musceac ]
+  * Fixed broken IP modem
+  * Fixed a number of bugs
+
+
+ -- Adrian Musceac <kantooon@gmail.com>  Sat, 19 Oct 2019 23:00:00 +0300
+
+
 qradiolink (0.8.2-rc4) UNRELEASED; urgency=medium
 
   [ Adrian Musceac ]
