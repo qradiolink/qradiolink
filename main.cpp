@@ -25,7 +25,6 @@
 #include <QMetaType>
 #include <QtGlobal>
 #include "mainwindow.h"
-#include "dtmfdecoder.h"
 #include "mumbleclient.h"
 #include "audio/audiowriter.h"
 #include "audio/audioreader.h"
