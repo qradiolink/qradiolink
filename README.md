@@ -1,7 +1,7 @@
 QRadioLink
 ==========
 
-[![Build Status](https://travis-ci.org/kantooon/qradiolink.svg?branch=master)](https://travis-ci.org/kantooon/qradiolink)
+[![Build Status](https://travis-ci.org/qradiolink/qradiolink.svg?branch=master)](https://travis-ci.org/qradiolink/qradiolink)
 
 [![Packaging status](https://repology.org/badge/vertical-allrepos/qradiolink.svg)](https://repology.org/project/qradiolink/versions)
 
@@ -84,11 +84,11 @@ On Ubuntu 18.04 LTS, replace libjpeg62-turbo and libjpeg62-turbo-dev with libjpe
 $ sudo apt install libjpeg-turbo8-dev libjpeg-dev
 </pre>
 
-[Downloads](https://github.com/kantooon/qradiolink/releases "Downloads")
+[Downloads](https://github.com/qradiolink/qradiolink/releases "Downloads")
 ----
 
 Debian Buster x86_64 packages are provided via Travis CI automated builds
-Please see the [Github releases page](https://github.com/kantooon/qradiolink/releases) for binary downloads.
+Please see the [Github releases page](https://github.com/qradiolink/qradiolink/releases) for binary downloads.
 
 Opensuse packages are available from [Opensuse build server](https://build.opensuse.org/package/show/hardware:sdr/qradiolink)
 thanks to Martin Hauke.
@@ -101,7 +101,7 @@ Building the software from source
 - Execute build_debian.sh
 
 <pre>
-$ git clone https://github.com/kantooon/qradiolink
+$ git clone https://github.com/qradiolink/qradiolink
 $ cd qradiolink/
 $ git checkout master
 $ sh ./build_debian.sh
@@ -115,7 +115,7 @@ Or alternatively:
 - Run make (with the optional -j flag)
 
 <pre>
-git clone https://github.com/kantooon/qradiolink
+git clone https://github.com/qradiolink/qradiolink
 cd qradiolink/
 git checkout master
 mkdir -p build
