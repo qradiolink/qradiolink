@@ -20,6 +20,21 @@ The application was originally inspired from the [Codec2 GMSK modem](https://git
 [![Screenshot](http://qradiolink.org/images/qradiolink49.png)](http://qradiolink.org)
 
 
+Alternatives to QRadioLink
+---
+
+Free software projects that work on Linux and have similar features to QRadioLink are listed below.
+
+- [**FreeDV**](https://freedv.org/) is a Digital Voice mode for HF radio. The application works for Windows, Linux and OSX and allows any SSB radio to be used for low bit rate digital voice. It is the original free software Codec2 implementation. It does not require a SDR and works with any analog radio.
+- [**SvxLink**](https://www.svxlink.org/) is a great project which inspired the radio linking features of QRadioLink. The Qtel component is a full-featured Echolink GUI client. It does not require using a SDR and can work with any FM radio.
+- [**SDRangel**](https://github.com/f4exb/sdrangel) is a full SDR transceiver for SSB, FM, DMR, D-Star, C4FM and DVB-S. It can use only SDR hardware but it supports a large number of them.
+- [**Mumble**](https://www.mumble.info/) is what QRadioLink uses under the hood. It is a great alternative for people who don't want to use SDR radios.
+- [**Codec2 GMSK**](https://github.com/on1arf/gmsk) is a great and free software alternative to D-Star on VHF-UHF handheld radios. It only requires a radio capable of 9600 baud packet.
+- [**OP25**](http://osmocom.org/projects/op25/wiki) is a free software implementation of D-Star, DMR and C4FM (Yaesu digital voice standard). It works with FM radios capable of 9600 baud packet as well as SDRs.
+- [**Charon**](https://github.com/tvelliott/charon) is a stand-alone OFDM transceiver with batman-adv mesh networking capabilities. The IP modem in Charon is very advanced and can be embedded on the PlutoSDR. It is the base for several amateur radio mesh networks. Only works with SDR hardware.
+- [**MMDVM**](https://github.com/g4klx/MMDVM) extremely robust free software implementation of D-Star, DMR and C4FM (Yaesu digital voice standard). Works with RaspberryPi, Arduino and any radios capable of 9600 baud packet.
+
+
 Features
 ---
 
