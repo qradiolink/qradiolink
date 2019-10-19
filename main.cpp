@@ -67,7 +67,6 @@ int main(int argc, char *argv[])
         headless = true;
     }
 
-
     /// Init main logic
     ///
     logger->log(Logger::LogLevelInfo, "Starting qradiolink");
@@ -76,7 +75,7 @@ int main(int argc, char *argv[])
     RadioChannels *radio_channels = new RadioChannels(logger);
     radio_channels->readConfig();
     MumbleClient *mumbleclient = new MumbleClient(settings, logger);
-    RadioController *radio_op = new RadioController(settings, logger);
+    RadioController *radio_op = new RadioController(settings, logger, radio_channels);
     AudioWriter *audiowriter = new AudioWriter(settings, logger);
     AudioReader *audioreader = new AudioReader(settings, logger);
     TelnetServer *telnet_server = new TelnetServer(settings, logger);
@@ -273,6 +272,8 @@ void connectCommandSignals(TelnetServer *telnet_server, MumbleClient *mumbleclie
                      mumbleclient,SLOT(newMumbleMessage(QString)));
     QObject::connect(telnet_server->command_processor,SIGNAL(newCommandMessage(QString,int)),
                      mumbleclient,SLOT(newCommandMessage(QString,int)));
+    QObject::connect(telnet_server->command_processor,SIGNAL(startMemoryTune(int)), radio_op,SLOT(startMemoryScan(int)));
+    QObject::connect(telnet_server->command_processor,SIGNAL(stopMemoryTune()),radio_op,SLOT(stopMemoryScan()));
     QObject::connect(mumbleclient,SIGNAL(commandMessage(QString,int)),
                      telnet_server->command_processor,SLOT(parseMumbleMessage(QString,int)));
 }
@@ -295,8 +296,7 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
     QObject::connect(w,SIGNAL(changeTxShift(qint64)),radio_op,SLOT(changeTxShift(qint64)));
     QObject::connect(w,SIGNAL(startAutoTuneFreq(int, int)),radio_op,SLOT(startScan(int, int)));
     QObject::connect(w,SIGNAL(stopAutoTuneFreq()),radio_op,SLOT(stopScan()));
-    QObject::connect(w,SIGNAL(startMemoryTune(RadioChannels*, int)),
-                     radio_op,SLOT(startMemoryScan(RadioChannels*, int)));
+    QObject::connect(w,SIGNAL(startMemoryTune(int)), radio_op,SLOT(startMemoryScan(int)));
     QObject::connect(w,SIGNAL(stopMemoryTune()),radio_op,SLOT(stopMemoryScan()));
     QObject::connect(w,SIGNAL(fineTuneFreq(long)),radio_op,SLOT(fineTuneFreq(long)));
     QObject::connect(w,SIGNAL(setTxPower(int)),radio_op,SLOT(setTxPower(int)));

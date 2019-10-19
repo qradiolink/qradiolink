@@ -1283,7 +1283,7 @@ void MainWindow::startMemoryScan(bool value)
     if(value)
     {
 
-        emit startMemoryTune(_radio_channels, scan_direction);
+        emit startMemoryTune(scan_direction);
     }
     else
         emit stopMemoryTune();

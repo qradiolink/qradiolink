@@ -31,13 +31,12 @@
 #include <unistd.h>
 #include <math.h>
 #include <gnuradio/digital/crc32.h>
-#include <libconfig.h++>
-#include <ftdi.h>
 #include "audio/audioprocessor.h"
 #include "settings.h"
 #include "radiochannel.h"
 #include "mumblechannel.h"
 #include "radioprotocol.h"
+#include "radiochannel.h"
 #include "relaycontroller.h"
 #include "station.h"
 #include "audio/audiomixer.h"
@@ -64,7 +63,7 @@ class RadioController : public QObject
 {
     Q_OBJECT
 public:
-    explicit RadioController(Settings *settings, Logger *logger,
+    explicit RadioController(Settings *settings, Logger *logger, RadioChannels *radio_channels,
                       QObject *parent = 0);
     ~RadioController();
 
@@ -147,7 +146,7 @@ public slots:
     void scan(bool receiving, bool wait_for_timer=true);
     void startScan(int step, int direction);
     void stopScan();
-    void startMemoryScan(RadioChannels *mem, int direction);
+    void startMemoryScan(int direction);
     void stopMemoryScan();
     void endAudioTransmission();
     void processVoipAudioFrame(short *pcm, int samples, quint64 sid);
@@ -194,6 +193,7 @@ private:
     // FIXME: inflation of members
     Settings *_settings;
     Logger *_logger;
+    RadioChannels *_radio_channels;
     RelayController *_relay_controller;
     AudioEncoder *_codec;
     AudioMixer *_audio_mixer_in;

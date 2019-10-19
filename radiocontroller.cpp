@@ -17,12 +17,13 @@
 #include "radiocontroller.h"
 
 
-RadioController::RadioController(Settings *settings, Logger *logger, QObject *parent) :
+RadioController::RadioController(Settings *settings, Logger *logger, RadioChannels *radio_channels, QObject *parent) :
     QObject(parent)
 {
     /// these two pointers are owned by main()
     _settings = settings;
     _logger = logger;
+    _radio_channels = radio_channels;
 
     // FIXME: there is no reason for the modem to use the settings
     // All control happens in the radioop or main thread
@@ -1957,9 +1958,9 @@ void RadioController::stopScan()
     emit freqToGUI(_settings->rx_frequency, _autotune_freq);
 }
 
-void RadioController::startMemoryScan(RadioChannels *channels, int direction)
+void RadioController::startMemoryScan(int direction)
 {
-    _memory_channels = channels->getChannels()->toList();
+    _memory_channels = _radio_channels->getChannels()->toList();
     if(!_settings->_rx_inited || !_scan_done || !_memory_scan_done || _memory_channels.size() < 1)
         return;
 

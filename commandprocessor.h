@@ -82,7 +82,7 @@ signals:
     /// Scannning
     void startAutoTuneFreq(int step, int scan_direction);
     void stopAutoTuneFreq();
-    //void startMemoryTune(RadioChannels* channels, int scan_direction);
+    void startMemoryTune(int scan_direction);
     void stopMemoryTune();
 
     /// VOIP

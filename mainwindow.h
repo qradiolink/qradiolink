@@ -173,7 +173,7 @@ signals:
     void enableRSSI(bool value);
     void startAutoTuneFreq(int step, int scan_direction);
     void stopAutoTuneFreq();
-    void startMemoryTune(RadioChannels* channels, int scan_direction);
+    void startMemoryTune(int scan_direction);
     void stopMemoryTune();
     void usePTTForVOIP(bool value);
     void setVOIPForwarding(bool value);
