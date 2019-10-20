@@ -29,7 +29,7 @@ gr_vector_source::gr_vector_source() :
                        gr::io_signature::make (1, 1, sizeof (unsigned char)))
 {
     _offset = 0;
-    _finished = false;
+    _finished = true;
     _data = new std::vector<unsigned char>;
 
 }
@@ -68,13 +68,14 @@ int gr_vector_source::work(int noutput_items,
        gr_vector_void_star &output_items)
 {
     (void) input_items;
-    //gr::thread::scoped_lock guard(_mutex);
+    gr::thread::scoped_lock guard(_mutex);
     //if(_finished || (_data->size()==0))
     if(_finished)
     {
-        //guard.unlock();
-        struct timespec time_to_sleep = {0, 500000L };
+        guard.unlock();
+        struct timespec time_to_sleep = {0, 35000000L };
         nanosleep(&time_to_sleep, NULL);
+        _finished = false;
         return 0;
     }
 
@@ -90,7 +91,7 @@ int gr_vector_source::work(int noutput_items,
     _offset += n;
     if(_offset == _data->size())
     {
-        gr::thread::scoped_lock guard(_mutex);
+        //gr::thread::scoped_lock guard(_mutex);
         _data->clear();
         _finished = true;
         _offset = 0;

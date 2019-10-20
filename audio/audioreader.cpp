@@ -99,7 +99,7 @@ void AudioReader::run()
                 _buffer->remove(0, audiobuffer_size);
             }
 
-            struct timespec time_to_sleep = {0, 2000000L };
+            struct timespec time_to_sleep = {0, 35000000L };
             nanosleep(&time_to_sleep, NULL);
         }
         else
