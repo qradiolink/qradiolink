@@ -143,6 +143,7 @@ public slots:
     void toggleSelfDeaf(bool deaf);
     void toggleSelfMute(bool mute);
     void changeVoipVolume(int value);
+    void setBurstIPMode(bool value);
 
 
 signals:

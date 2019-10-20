@@ -123,6 +123,7 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     QObject::connect(ui->sampleRateBox,SIGNAL(currentIndexChanged(int)),this,SLOT(updateSampleRate()));
     QObject::connect(ui->checkBoxAudioCompressor,SIGNAL(toggled(bool)),this,SLOT(setAudioCompressor(bool)));
     QObject::connect(ui->checkBoxRelays,SIGNAL(toggled(bool)),this,SLOT(setRelays(bool)));
+    QObject::connect(ui->burstIPCheckBox,SIGNAL(toggled(bool)),this,SLOT(setBurstIPMode(bool)));
     QObject::connect(ui->remoteControlCheckBox,SIGNAL(toggled(bool)),this,SLOT(setRemoteControl(bool)));
     QObject::connect(ui->rssiCalibrateButton,SIGNAL(clicked()),this,SLOT(setRSSICalibration()));
     QObject::connect(ui->saveChannelsButton,SIGNAL(clicked()),this,SLOT(saveMemoryChannes()));
@@ -439,6 +440,7 @@ void MainWindow::setConfig()
     ui->duplexOpButton->setChecked((bool) _settings->enable_duplex);
     ui->checkBoxAudioCompressor->setChecked((bool)_settings->audio_compressor);
     ui->checkBoxRelays->setChecked((bool)_settings->enable_relays);
+    ui->burstIPCheckBox->setChecked((bool)_settings->burst_ip_modem);
     ui->remoteControlCheckBox->setChecked((bool)_settings->remote_control);
     ui->rssiCalibrateEdit->setText(QString::number(_settings->rssi_calibration_value));
     if(_settings->rx_ctcss > 0.0)
@@ -1524,4 +1526,9 @@ void MainWindow::setTxGainStages(gain_vector tx_gains)
         _tx_gain_sliders.push_back(gain_slider);
         ++iter;
     }
+}
+
+void MainWindow::setBurstIPMode(bool value)
+{
+    _settings->burst_ip_modem = (int)value;
 }
