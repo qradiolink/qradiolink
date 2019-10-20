@@ -44,12 +44,11 @@ gr_mod_2fsk_sdr::gr_mod_2fsk_sdr(int sps, int samp_rate, int carrier_freq,
     _samp_rate =samp_rate;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
-    int nfilts = 128;
-    int spacing = 2;
+    int nfilts = 3;
+    int spacing = 1;
     if(_samples_per_symbol == 5)
     {
         nfilts = nfilts * 5;
-        spacing = 1;
     }
 
     _packed_to_unpacked = gr::blocks::packed_to_unpacked_bb::make(1,gr::GR_MSB_FIRST);

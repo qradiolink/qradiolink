@@ -121,7 +121,7 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
 
 
 
-    _2fsk = make_gr_demod_2fsk_sdr(125,1000000,1700,4000); // 4000 for non FM demod, 2700 for FM
+    _2fsk = make_gr_demod_2fsk_sdr(125,1000000,1700,2700, true); // 4000 for non FM demod, 2700 for FM
     _2fsk_10k = make_gr_demod_2fsk_sdr(25,1000000,1700,13500, true);
     _4fsk_2k = make_gr_demod_4fsk_sdr(125,1000000,1700,4000);
     _4fsk_10k = make_gr_demod_4fsk_sdr(25,1000000,1700,20000);
