@@ -512,8 +512,7 @@ std::vector<unsigned char>* gr_demod_base::getData(int nr)
 {
     if(!_demod_running)
     {
-        std::vector<unsigned char> *dummy = new std::vector<unsigned char>;
-        return dummy;
+        return nullptr;
     }
     std::vector<unsigned char> *data = nullptr;
     if(nr == 1)
@@ -560,8 +559,7 @@ std::vector<unsigned char>* gr_demod_base::getData()
 {
     if(!_demod_running)
     {
-        std::vector<unsigned char> *dummy = new std::vector<unsigned char>;
-        return dummy;
+        return nullptr;
     }
     std::vector<unsigned char> *data = _vector_sink->get_data();
     return data;
@@ -571,8 +569,7 @@ std::vector<float>* gr_demod_base::getAudio()
 {
     if(!_demod_running)
     {
-        std::vector<float> *dummy = new std::vector<float>;
-        return dummy;
+        return nullptr;
     }
     std::vector<float> *data = _audio_sink->get_data();
     return data;

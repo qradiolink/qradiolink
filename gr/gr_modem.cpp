@@ -668,6 +668,8 @@ bool gr_modem::demodulateAnalog()
     }
     std::vector<float> *audio_data = nullptr;
     audio_data = _gr_demod_base->getAudio();
+    if(audio_data == nullptr)
+        return false;
     if(audio_data->size() > 0)
     {
         if(_direct_mode_repeater)
@@ -703,9 +705,15 @@ bool gr_modem::demodulate()
     {
         demod_data = _gr_demod_base->getData(1);
         demod_data2 = _gr_demod_base->getData(2);
+        if((demod_data == nullptr) || (demod_data2 == nullptr))
+            return false;
     }     
     else
+    {
         demod_data = _gr_demod_base->getData();
+        if(demod_data == nullptr)
+            return false;
+    }
 
     int v_size;
     if((_modem_type_rx == gr_modem_types::ModemTypeBPSK2000)
