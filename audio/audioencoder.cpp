@@ -42,7 +42,7 @@ AudioEncoder::AudioEncoder()
         qDebug() << "audio decoder creation failed";
     }
     _codec2_1400 = codec2_create(CODEC2_MODE_1400);
-    _codec2_700 = codec2_create(CODEC2_MODE_700B);
+    _codec2_700 = codec2_create(CODEC2_MODE_700C);
     _codec2_2400 = codec2_create(CODEC2_MODE_2400);
 
 

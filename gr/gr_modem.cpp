@@ -556,7 +556,7 @@ std::vector<unsigned char>* gr_modem::frame(unsigned char *encoded_audio, int da
     if(frame_type == FrameTypeData && _burst_ip_modem)
     {
         for(int i = 0;i < 25;i++)
-            data->push_back(0xAA);
+            data->push_back(0xCC);
     }
     if(frame_type == FrameTypeVoice)
     {
