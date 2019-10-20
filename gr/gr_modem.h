@@ -151,6 +151,7 @@ private:
     bool _sync_found;
     int _current_frame_type;
     unsigned long long _shift_reg;
+    bool _burst_ip_modem;
 
 };
 

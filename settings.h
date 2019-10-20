@@ -79,6 +79,7 @@ public:
     int remote_control;
     int agc_attack;
     int agc_decay;
+    int burst_ip_modem;
 
     /// Not saved to config:
 

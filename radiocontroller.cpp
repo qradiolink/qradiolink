@@ -542,12 +542,11 @@ void RadioController::processInputNetStream()
         emit netData(netbuffer,max_frame_size);
         delete[] buffer;
     }
-    else
+    else if(_settings->burst_ip_modem)
     {
         delete[] buffer;
         delete[] netbuffer;
     }
-    /**
     else
     {
         // FIXME: modem should be able to do bursts and not waste power transmitting garbage
@@ -563,7 +562,6 @@ void RadioController::processInputNetStream()
         emit netData(netbuffer,max_frame_size);
         delete[] buffer;
     }
-    */
 }
 
 void RadioController::sendTextData(QString text, int frame_type)

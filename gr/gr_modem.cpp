@@ -35,7 +35,7 @@ gr_modem::gr_modem(const Settings *settings, QObject *parent) :
     _current_frame_type = FrameTypeNone;
     _gr_mod_base = 0;
     _gr_demod_base = 0;
-
+    _burst_ip_modem = false;
 
 }
 
@@ -553,7 +553,7 @@ void gr_modem::transmitNetData(unsigned char *data, int size)
 std::vector<unsigned char>* gr_modem::frame(unsigned char *encoded_audio, int data_size, int frame_type)
 {
     std::vector<unsigned char> *data = new std::vector<unsigned char>;
-    if(frame_type == FrameTypeData)
+    if(frame_type == FrameTypeData && _burst_ip_modem)
     {
         for(int i = 0;i< 10;i++)
             data->push_back(0xAA);

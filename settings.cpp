@@ -466,6 +466,14 @@ void Settings::readConfig()
     {
         remote_control = 0;
     }
+    try
+    {
+        burst_ip_modem = cfg.lookup("burst_ip_modem");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        burst_ip_modem = 0;
+    }
 
 }
 
@@ -517,6 +525,7 @@ void Settings::saveConfig()
     root.add("agc_attack",libconfig::Setting::TypeInt) = agc_attack;
     root.add("agc_decay",libconfig::Setting::TypeInt) = agc_decay;
     root.add("remote_control",libconfig::Setting::TypeInt) = remote_control;
+    root.add("burst_ip_modem",libconfig::Setting::TypeInt) = burst_ip_modem;
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());
