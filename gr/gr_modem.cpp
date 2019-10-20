@@ -553,6 +553,11 @@ void gr_modem::transmitNetData(unsigned char *data, int size)
 std::vector<unsigned char>* gr_modem::frame(unsigned char *encoded_audio, int data_size, int frame_type)
 {
     std::vector<unsigned char> *data = new std::vector<unsigned char>;
+    if(frame_type == FrameTypeData)
+    {
+        for(int i = 0;i< 10;i++)
+            data->push_back(0xAA);
+    }
     if(frame_type == FrameTypeVoice)
     {
         if(_modem_type_tx == gr_modem_types::ModemTypeBPSK1000)

@@ -544,6 +544,12 @@ void RadioController::processInputNetStream()
     }
     else
     {
+        delete[] buffer;
+        delete[] netbuffer;
+    }
+    /**
+    else
+    {
         // FIXME: modem should be able to do bursts and not waste power transmitting garbage
         unsigned int fake_nread = 0;
         memcpy(&(netbuffer[0]), &fake_nread, 4);
@@ -557,6 +563,7 @@ void RadioController::processInputNetStream()
         emit netData(netbuffer,max_frame_size);
         delete[] buffer;
     }
+    */
 }
 
 void RadioController::sendTextData(QString text, int frame_type)
