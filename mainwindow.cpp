@@ -243,7 +243,6 @@ void MainWindow::initSettings()
     toggleTxMode(_settings->tx_mode);
     setTxVolumeDisplay(_settings->tx_volume);
     changeVoipVolume(_settings->voip_volume);
-    setRelays((bool)_settings->enable_relays);
     setRSSICalibration();
 }
 

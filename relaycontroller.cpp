@@ -44,7 +44,7 @@ void RelayController::init()
     if (f < 0 && f != -5)
     {
         _logger->log(Logger::LogLevelCritical,
-                QString("Unable to open FTDI FT245R USB FIFO device 0x0403, 0x6001: %1 %2").arg(
+                QString("Unable to open FTDI FT232 USB FIFO device 0x0403, 0x6001: %1 %2").arg(
                   f).arg(ftdi_get_error_string(_ftdi_relay)));
         ftdi_free(_ftdi_relay);
         return;

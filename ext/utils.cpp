@@ -81,7 +81,7 @@ void buildModeList(QVector<QString> *operating_modes)
     operating_modes->push_back("FreeDV800XA LSB");
     operating_modes->push_back("AM");
     operating_modes->push_back("BPSK 2K");
-    operating_modes->push_back("BPSK 700C");
+    operating_modes->push_back("BPSK 1K");
     operating_modes->push_back("QPSK 2K");
     operating_modes->push_back("QPSK 10K");
     operating_modes->push_back("2FSK 2K");
