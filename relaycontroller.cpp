@@ -86,7 +86,7 @@ int RelayController::enableRelay(int relay_number)
     {
         return 1;
     }
-    if(relay_number > 8)
+    if(relay_number > 7)
     {
         _logger->log(Logger::LogLevelWarning,"Relay number not supported");
         return 0;
@@ -110,7 +110,7 @@ int RelayController::disableRelay(int relay_number)
     {
         return 1;
     }
-    if(relay_number > 8)
+    if(relay_number > 7)
     {
        _logger->log(Logger::LogLevelWarning,"Relay number not supported");
         return 0;
