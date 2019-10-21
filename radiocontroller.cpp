@@ -1546,6 +1546,7 @@ void RadioController::toggleRxMode(int value)
         _modem->startRX();
         _mutex->unlock();
     }
+    _settings->rx_mode = value;
 }
 
 void RadioController::toggleTxMode(int value)
@@ -1646,6 +1647,7 @@ void RadioController::toggleTxMode(int value)
     if(_settings->tx_inited)
         _modem->startTX();
     _mutex->unlock();
+    _settings->tx_mode = value;
 }
 
 void RadioController::usePTTForVOIP(bool value)

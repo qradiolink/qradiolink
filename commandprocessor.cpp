@@ -23,6 +23,8 @@ CommandProcessor::CommandProcessor(const Settings *settings, Logger *logger, QOb
     _logger = logger;
     _command_list = new QVector<command*>;
     buildCommandList();
+    _mode_list = new QVector<QString>;
+    buildModeList(_mode_list);
 }
 
 CommandProcessor::~CommandProcessor()
@@ -217,10 +219,10 @@ bool CommandProcessor::processStatusCommands(int command_index, QString &respons
             response.append("Not transmitting.");
         break;
     case 3:
-        response.append(QString("Current RX mode is %1.").arg(_settings->rx_mode));
+        response.append(QString("Current RX mode is %1.").arg(_mode_list->at(_settings->rx_mode)));
         break;
     case 4:
-        response.append(QString("Current TX mode is %1.").arg(_settings->tx_mode));
+        response.append(QString("Current TX mode is %1.").arg(_mode_list->at(_settings->tx_mode)));
         break;
     case 5:
         response.append(QString("Current RX CTCSS tone is %1.").arg(_settings->rx_ctcss));
@@ -282,6 +284,10 @@ bool CommandProcessor::processStatusCommands(int command_index, QString &respons
         else
             response.append(QString("Duplex is disabled."));
         break;
+    case 54:
+        for(int i=0;i<_mode_list->size();i++)
+            response.append(_mode_list->at(i) + "\n");
+        break;
 
     default:
         break;
@@ -329,30 +335,30 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
     }
     case 20:
     {
-        int set = param1.toInt();
-        if(set < 0 || set > 16)
+        int set = _mode_list->indexOf(param1);
+        if(set == -1)
         {
-            response = "Parameter value is not supported";
+            response = "Operating mode not found";
             success = false;
         }
         else
         {
-            response = QString("Setting receiver mode to %1").arg(set);
+            response = QString("Setting receiver mode to %1").arg(_mode_list->at(set));
             emit toggleRxModemMode(set);
         }
         break;
     }
     case 21:
     {
-        int set = param1.toInt();
-        if(set < 0 || set > 16)
+        int set = _mode_list->indexOf(param1);
+        if(set == -1)
         {
-            response = "Parameter value is not supported";
+            response = "Operating mode not found";
             success = false;
         }
         else
         {
-            response = QString("Setting transmitter mode to %1").arg(set);
+            response = QString("Setting transmitter mode to %1").arg(_mode_list->at(set));
             emit toggleTxModemMode(set);
         }
         break;
@@ -853,8 +859,8 @@ void CommandProcessor::buildCommandList()
     /// action commands
     _command_list->append(new command("setrx", 1, "Start/stop receiver, 1 enabled, 0 disabled"));
     _command_list->append(new command("settx", 1, "Start/stop transmitter, 1 enabled, 0 disabled"));
-    _command_list->append(new command("setrxmode", 1, "Set RX mode (integer number, 0-16)"));
-    _command_list->append(new command("settxmode", 1, "Set TX mode (integer number, 0-16)"));
+    _command_list->append(new command("setrxmode", 1, "Set RX mode (string mode)"));
+    _command_list->append(new command("settxmode", 1, "Set TX mode (string mode)"));
     _command_list->append(new command("setrxctcss", 1, "Set RX CTCSS (floating point number, 0.0 to 200.0)"));
     _command_list->append(new command("settxctcss", 1, "Set TX CTCSS (floating point number, 0.0 to 200.0)"));
     _command_list->append(new command("setsquelch", 1, "Set squelch (integer number, -150 to 10)"));
@@ -862,29 +868,32 @@ void CommandProcessor::buildCommandList()
     _command_list->append(new command("settxvolume", 1, "Set TX volume (integer number, 0 to 100)"));
     _command_list->append(new command("setrxgain", 1, "Set RX gain (integer number, 0 to 99)"));
     _command_list->append(new command("settxgain", 1, "Set TX gain (integer number, 0 to 99)"));
-    _command_list->append(new command("tunerx", 1, "Tune RX frequency, integer value in Hertz"));
-    _command_list->append(new command("tunetx", 1, "Tune TX frequency, integer value in Hertz"));
-    _command_list->append(new command("setoffset", 1, "Set demodulator offset, integer value in Hertz"));
-    _command_list->append(new command("setshift", 1, "Set TX shift, integer value in Hertz"));
-    _command_list->append(new command("setduplex", 1, "Set duplex mode, 1 enabled, 0 disabled"));
-    _command_list->append(new command("setforwarding", 1, "Set radio forwarding mode, 1 enabled, 0 disabled"));
-    _command_list->append(new command("setrepeater", 1, "Set repeater mode, 1 enabled, 0 disabled"));
-    _command_list->append(new command("setvox", 1, "Set vox mode, 1 enabled, 0 disabled"));
-    _command_list->append(new command("setpttvoip", 1, "Use PTT for VOIP, 1 enabled, 0 disabled"));
-    _command_list->append(new command("setcompressor", 1, "Enable audio compressor, 1 enabled, 0 disabled"));
-    _command_list->append(new command("setrelays", 1, "Enable relay control, 1 enabled, 0 disabled"));
-    _command_list->append(new command("setrssicalibration", 1, "Set RSSI calibration, integer value in dBm"));
-    _command_list->append(new command("setrxsamprate", 1, "Set RX sample rate, integer value in Msps"));
+    _command_list->append(new command("tunerx", 1, "Tune RX frequency, (integer value in Hertz)"));
+    _command_list->append(new command("tunetx", 1, "Tune TX frequency, (integer value in Hertz)"));
+    _command_list->append(new command("setoffset", 1, "Set demodulator offset, (integer value in Hertz)"));
+    _command_list->append(new command("setshift", 1, "Set TX shift, (integer value in Hertz)"));
+    _command_list->append(new command("setduplex", 1, "Set duplex mode, (1 enabled, 0 disabled)"));
+    _command_list->append(new command("setforwarding", 1, "Set radio forwarding mode, (1 enabled, 0 disabled)"));
+    _command_list->append(new command("setrepeater", 1, "Set repeater mode, (1 enabled, 0 disabled)"));
+    _command_list->append(new command("setvox", 1, "Set vox mode, (1 enabled, 0 disabled)"));
+    _command_list->append(new command("setpttvoip", 1, "Use PTT for VOIP, (1 enabled, 0 disabled)"));
+    _command_list->append(new command("setcompressor", 1, "Enable audio compressor, (1 enabled, 0 disabled)"));
+    _command_list->append(new command("setrelays", 1, "Enable relay control, (1 enabled, 0 disabled)"));
+    _command_list->append(new command("setrssicalibration", 1, "Set RSSI calibration, (integer value in dBm)"));
+    _command_list->append(new command("setrxsamprate", 1, "Set RX sample rate, (integer value in Msps)"));
     _command_list->append(new command("autosquelch", 0, "Set autosquelch"));
-    _command_list->append(new command("setfilterwidth", 1, "Set filter width (analog only), integer value in Hz"));
+    _command_list->append(new command("setfilterwidth", 1, "Set filter width (analog only), (integer value in Hz)"));
     _command_list->append(new command("ptt_on", 0, "Transmit"));
     _command_list->append(new command("ptt_off", 0, "Stop transmitting"));
-    _command_list->append(new command("connectserver", 2, "Connect to Mumble server, string value hostname, integer value port"));
+    _command_list->append(new command("connectserver", 2, "Connect to Mumble server, (string value hostname, integer value port)"));
     _command_list->append(new command("disconnectserver", 0, "Disconnect from Mumble server"));
-    _command_list->append(new command("changechannel", 1, "Change channel to channel number (integer value)"));
-    _command_list->append(new command("mumblemsg", 1, "Send Mumble message, string value text"));
-    _command_list->append(new command("mutemumble", 1, "Mute Mumble connection, 1 enabled, 0 disabled"));
-    _command_list->append(new command("textmsg", 1, "Send radio text message, string value text"));
+    _command_list->append(new command("changechannel", 1, "Change channel to channel number (integer channel number)"));
+    _command_list->append(new command("mumblemsg", 1, "Send Mumble message, (string value text)"));
+    _command_list->append(new command("mutemumble", 1, "Mute Mumble connection, (1 enabled, 0 disabled)"));
+    _command_list->append(new command("textmsg", 1, "Send radio text message, (string value text)"));
     _command_list->append(new command("start_trx", 0, "Convenience function, requires everything to be preconfigured"));
     _command_list->append(new command("stop_trx", 0, "Convenience function, requires everything to be preconfigured"));
+
+    /// I'm sorry
+    _command_list->append(new command("list_modes", 0, "List operating modes"));
 }

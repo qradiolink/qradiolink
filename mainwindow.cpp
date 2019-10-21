@@ -44,8 +44,12 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     _filter_widths = new std::vector<std::complex<int>>;
     _filter_ranges = new std::vector<std::complex<int>>;
     _filter_symmetric = new std::vector<bool>;
+    _mode_list = new QVector<QString>;
 
     buildFilterWidthList(_filter_widths, _filter_ranges, _filter_symmetric);
+    buildModeList(_mode_list);
+    ui->rxModemTypeComboBox->addItems(_mode_list->toList());
+    ui->txModemTypeComboBox->addItems(_mode_list->toList());
 
     _audio_output_devices = QAudioDeviceInfo::availableDevices(QAudio::AudioOutput);
     _audio_input_devices = QAudioDeviceInfo::availableDevices(QAudio::AudioInput);
@@ -261,6 +265,8 @@ MainWindow::~MainWindow()
     delete _filter_ranges;
     _filter_symmetric->clear();
     delete _filter_symmetric;
+    _mode_list->clear();
+    delete _mode_list;
     delete _video_img;
     if(_constellation_painter->isActive())
         _constellation_painter->end();
@@ -499,10 +505,10 @@ void MainWindow::addDisplayChannel(radiochannel *chan, int r)
     //tx_freq_display->setText(QString::number(chan->tx_frequency));
 
     QTableWidgetItem *rx_mode_display = new QTableWidgetItem;
-    rx_mode_display->setText(QString::number(chan->rx_mode));
+    rx_mode_display->setText(_mode_list->at(chan->rx_mode));
 
     QTableWidgetItem *tx_mode_display = new QTableWidgetItem;
-    tx_mode_display->setText(QString::number(chan->tx_mode));
+    tx_mode_display->setText(_mode_list->at(chan->tx_mode));
 
     QTableWidgetItem *name_display = new QTableWidgetItem;
     name_display->setText(QString::fromStdString(chan->name));
@@ -667,6 +673,7 @@ void MainWindow::tuneToMemoryChannel(int row, int col)
 
 void MainWindow::editMemoryChannel(QTableWidgetItem* item)
 {
+    int idx;
     int row = item->row();
     int col = item->column();
     QVector<radiochannel*> *channels = _radio_channels->getChannels();
@@ -683,10 +690,16 @@ void MainWindow::editMemoryChannel(QTableWidgetItem* item)
         chan->tx_shift = item->text().toInt() * 1000;
         break;
     case 3:
-        chan->rx_mode = item->text().toInt();
+        idx = _mode_list->indexOf(item->text());
+        if(idx == -1)
+            return;
+        chan->rx_mode = idx;
         break;
     case 4:
-        chan->tx_mode = item->text().toInt();
+        idx = _mode_list->indexOf(item->text());
+        if(idx == -1)
+            return;
+        chan->tx_mode = idx;
         break;
     case 5:
         chan->squelch = item->text().toInt();

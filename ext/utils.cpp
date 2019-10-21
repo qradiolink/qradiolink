@@ -66,6 +66,32 @@ void genRandomStr(char *str, const int len)
     str[len] = 0;
 }
 
+void buildModeList(QVector<QString> *operating_modes)
+{
+    operating_modes->push_back("FM");
+    operating_modes->push_back("Narrow FM");
+    operating_modes->push_back("Wide FM");
+    operating_modes->push_back("USB");
+    operating_modes->push_back("LSB");
+    operating_modes->push_back("FreeDV1600 USB");
+    operating_modes->push_back("FreeDV700C USB");
+    operating_modes->push_back("FreeDV800XA USB");
+    operating_modes->push_back("FreeDV1600 LSB");
+    operating_modes->push_back("FreeDV700C LSB");
+    operating_modes->push_back("FreeDV800XA LSB");
+    operating_modes->push_back("AM");
+    operating_modes->push_back("BPSK 2K");
+    operating_modes->push_back("BPSK 700C");
+    operating_modes->push_back("QPSK 2K");
+    operating_modes->push_back("QPSK 10K");
+    operating_modes->push_back("2FSK 2K");
+    operating_modes->push_back("2FSK 10K");
+    operating_modes->push_back("4FSK 2K");
+    operating_modes->push_back("4FSK 10K");
+    operating_modes->push_back("Video 250K");
+    operating_modes->push_back("IP modem 250K");
+}
+
 void buildFilterWidthList(std::vector<std::complex<int>>* filter_widths, std::vector<std::complex<int>>*ranges, std::vector<bool> *symmetric)
 {
     filter_widths->push_back(std::complex<int>(-6500, 6500));  // FM

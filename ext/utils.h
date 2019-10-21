@@ -3,6 +3,8 @@
 
 #include <QObject>
 #include <QString>
+#include <QMap>
+#include <QVector>
 #include <QtEndian>
 #include <string>
 #include <vector>
@@ -19,7 +21,7 @@ void addPreamble(quint8 *buffer, quint16 type, quint32 len);
 void getPreamble(quint8 *buffer, int *type, int *len);
 void buildFilterWidthList(std::vector<std::complex<int> > *filter_widths,
                           std::vector<std::complex<int> > *ranges, std::vector<bool> *symmetric);
-
+void buildModeList(QVector<QString> *operating_modes);
 void unpackBytes(unsigned char *bitbuf, const unsigned char *bytebuf, int bytecount);
 
 #endif // UTILS_H

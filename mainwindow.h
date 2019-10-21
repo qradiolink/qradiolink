@@ -234,6 +234,7 @@ private:
     std::vector<std::complex<int>> *_filter_widths;
     std::vector<std::complex<int>> *_filter_ranges;
     std::vector<bool> *_filter_symmetric;
+    QVector<QString> *_mode_list;
     float *_realFftData;
     float *_iirFftData;
 

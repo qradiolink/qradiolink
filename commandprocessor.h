@@ -26,6 +26,7 @@
 #include <QVector>
 #include "settings.h"
 #include "logger.h"
+#include "ext/utils.h"
 
 class CommandProcessor : public QObject
 {
@@ -121,6 +122,7 @@ private:
     const Settings *_settings;
     Logger *_logger;
     QVector<command*> *_command_list;
+    QVector<QString> *_mode_list;
 
     QStringList getCommand(QString message, int &command_index);
     bool processStatusCommands(int command_index, QString &response);
