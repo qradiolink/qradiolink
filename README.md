@@ -143,6 +143,11 @@ make
 ./qradiolink
 </pre>
 
+You can add custom library search paths, custom includes paths and specify a different install directory using these variables with qmake:
+<pre>
+qmake .. INSTALL_PREFIX=/usr/local/bin LIBDIR=/opt/lib INCDIR=/opt/include
+</pre>
+
 Known issues:
 - In low light, the automatic adjustment of ISO in the video camera can cause very long times to capture a frame. The solution is to use plenty of lighting for video. Otherwise the video transmission will experience very frequent interruptions.
 

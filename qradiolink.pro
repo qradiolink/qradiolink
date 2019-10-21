@@ -173,6 +173,12 @@ HEADERS  += mainwindow.h\
     gr/modem_types.h
 
 
+!isEmpty(LIBDIR) {
+    LIBS += -L$$LIBDIR
+}
+!isEmpty(INCDIR) {
+    INCLUDEPATH += $$INCDIR
+}
 
 
 #CONFIG += link_pkgconfig
@@ -188,18 +194,12 @@ LIBS += -lgnuradio-pmt -lgnuradio-analog -lgnuradio-fft -lgnuradio-vocoder \
 LIBS += -lrt  # need to include on some distros
 LIBS += -lprotobuf -lopus -lcodec2 -ljpeg -lconfig++ -lspeexdsp -lftdi
 
-!isEmpty(LIBDIR) {
-    LIBS += -L$$LIBDIR
-}
-!isEmpty(INCDIR) {
-    INCLUDEPATH += $$INCDIR
-}
 
 
 RESOURCES += resources.qrc
 
-isEmpty(PREFIX) {
-    PREFIX = /usr/local/
+isEmpty(INSTALL_PREFIX) {
+    PREFIX = /usr/local/bin
 }
-target.path = $$PREFIX
+target.path = $$INSTALL_PREFIX
 INSTALLS += target
