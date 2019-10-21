@@ -77,7 +77,8 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
     _gain_names = _osmosdr_source->get_gain_names();
     if (!_gain_range.empty())
     {
-        double gain =  (double)_gain_range.start() + rf_gain*((double)_gain_range.stop()- (double)_gain_range.start());
+        double gain =  (double)_gain_range.start() + rf_gain*(
+                    (double)_gain_range.stop()- (double)_gain_range.start());
         _osmosdr_source->set_gain_mode(false);
         if(_gain_names.size() == 1)
         {
@@ -138,22 +139,30 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
     _usb = make_gr_demod_ssb_sdr(125, 1000000,1700,2700,0);
     _lsb = make_gr_demod_ssb_sdr(125, 1000000,1700,2700,1);
     _wfm = make_gr_demod_wbfm_sdr(125, 1000000,1700,75000);
-    _freedv_rx1600_usb = make_gr_demod_freedv(125, 1000000, 1700, 2500, 200, gr::vocoder::freedv_api::MODE_1600, 0);
+    _freedv_rx1600_usb = make_gr_demod_freedv(125, 1000000, 1700, 2500, 200,
+                                              gr::vocoder::freedv_api::MODE_1600, 0);
 
     int version = atoi(gr::minor_version().c_str());
     if(version >= 13)
-        _freedv_rx700C_usb = make_gr_demod_freedv(125, 1000000, 1700, 2300, 600, gr::vocoder::freedv_api::MODE_700C, 0);
+        _freedv_rx700C_usb = make_gr_demod_freedv(125, 1000000, 1700, 2300, 600,
+                                                  gr::vocoder::freedv_api::MODE_700C, 0);
     else
-        _freedv_rx700C_usb = make_gr_demod_freedv(125, 1000000, 1700, 2300, 600, gr::vocoder::freedv_api::MODE_700, 0);
-    _freedv_rx800XA_usb = make_gr_demod_freedv(125, 1000000, 1700, 2500, 0, gr::vocoder::freedv_api::MODE_800XA, 0);
+        _freedv_rx700C_usb = make_gr_demod_freedv(125, 1000000, 1700, 2300, 600,
+                                                  gr::vocoder::freedv_api::MODE_700, 0);
+    _freedv_rx800XA_usb = make_gr_demod_freedv(125, 1000000, 1700, 2500, 0,
+                                               gr::vocoder::freedv_api::MODE_800XA, 0);
 
-    _freedv_rx1600_lsb = make_gr_demod_freedv(125, 1000000, 1700, 2500,200, gr::vocoder::freedv_api::MODE_1600, 1);
+    _freedv_rx1600_lsb = make_gr_demod_freedv(125, 1000000, 1700, 2500,200,
+                                              gr::vocoder::freedv_api::MODE_1600, 1);
 
     if(version >= 13)
-        _freedv_rx700C_lsb = make_gr_demod_freedv(125, 1000000, 1700, 2300, 600, gr::vocoder::freedv_api::MODE_700C, 1);
+        _freedv_rx700C_lsb = make_gr_demod_freedv(125, 1000000, 1700, 2300, 600,
+                                                  gr::vocoder::freedv_api::MODE_700C, 1);
     else
-        _freedv_rx700C_lsb = make_gr_demod_freedv(125, 1000000, 1700, 2300, 600, gr::vocoder::freedv_api::MODE_700, 1);
-    _freedv_rx800XA_lsb = make_gr_demod_freedv(125, 1000000, 1700, 2500, 0, gr::vocoder::freedv_api::MODE_800XA, 1);
+        _freedv_rx700C_lsb = make_gr_demod_freedv(125, 1000000, 1700, 2300, 600,
+                                                  gr::vocoder::freedv_api::MODE_700, 1);
+    _freedv_rx800XA_lsb = make_gr_demod_freedv(125, 1000000, 1700, 2500, 0,
+                                               gr::vocoder::freedv_api::MODE_800XA, 1);
 
 }
 
@@ -636,7 +645,8 @@ void gr_demod_base::set_rx_sensitivity(double value, std::string gain_stage)
     if (!_gain_range.empty() && (gain_stage.size() < 1))
     {
 
-        double gain =  floor((double)_gain_range.start() + value*((double)_gain_range.stop()- (double)_gain_range.start()));
+        double gain =  floor((double)_gain_range.start() + value*(
+                                 (double)_gain_range.stop()- (double)_gain_range.start()));
         _osmosdr_source->set_gain_mode(false); // Pluto ??!!
         if(_gain_names.size() == 1)
         {
@@ -784,7 +794,8 @@ void gr_demod_base::set_samp_rate(int samp_rate)
         _resampler.reset();
         std::vector<float> taps;
         //int tw = std::min(_samp_rate/4, 1500000);
-        taps = gr::filter::firdes::low_pass(1, _samp_rate, 480000, 100000, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+        taps = gr::filter::firdes::low_pass(1, _samp_rate, 480000, 100000,
+                                            gr::filter::firdes::WIN_BLACKMAN_HARRIS);
 
         _resampler = gr::filter::rational_resampler_base_ccf::make(1, decimation, taps);
         _resampler->set_thread_priority(75);
