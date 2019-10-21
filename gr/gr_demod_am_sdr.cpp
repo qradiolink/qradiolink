@@ -41,7 +41,7 @@ gr_demod_am_sdr::gr_demod_am_sdr(std::vector<int>signature, int sps, int samp_ra
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(50, _samp_rate, _filter_width, _filter_width,
+    std::vector<float> taps = gr::filter::firdes::low_pass(50, _samp_rate, _target_samp_rate/2, _target_samp_rate/2,
                                                            gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     std::vector<float> audio_taps = gr::filter::firdes::low_pass(2, _target_samp_rate, 4000, 1200,
                                                                  gr::filter::firdes::WIN_BLACKMAN_HARRIS);
@@ -79,12 +79,9 @@ gr_demod_am_sdr::gr_demod_am_sdr(std::vector<int>signature, int sps, int samp_ra
 void gr_demod_am_sdr::set_filter_width(int filter_width)
 {
     _filter_width = filter_width;
-    std::vector<float> taps = gr::filter::firdes::low_pass(50, _samp_rate, _filter_width, _filter_width,
-                                                           gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     std::vector<gr_complex> filter_taps = gr::filter::firdes::complex_band_pass(
                 1, _target_samp_rate, -_filter_width, _filter_width,1200,gr::filter::firdes::WIN_BLACKMAN_HARRIS);
 
-    _resampler->set_taps(taps);
     _filter->set_taps(filter_taps);
 }
 

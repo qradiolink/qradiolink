@@ -265,7 +265,7 @@ void RadioController::run()
             if(!data_to_process && !buffers_filling)
             {
                 /// nothing to output from demodulator
-                struct timespec time_to_sleep = {0, 5000000L };
+                struct timespec time_to_sleep = {0, 15000000L };
                 nanosleep(&time_to_sleep, NULL);
             }
             else
