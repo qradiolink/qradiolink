@@ -186,9 +186,20 @@ LIBS += -lgnuradio-pmt -lgnuradio-analog -lgnuradio-fft -lgnuradio-vocoder \
         -lgnuradio-blocks -lgnuradio-filter -lgnuradio-digital -lgnuradio-runtime -lgnuradio-fec \
         -lboost_system$$BOOST_SUFFIX
 LIBS += -lrt  # need to include on some distros
-
 LIBS += -lprotobuf -lopus -lcodec2 -ljpeg -lconfig++ -lspeexdsp -lftdi
-                    #-lFestival -lestbase -leststring -lestools
+
+!isEmpty(LIBDIR) {
+    LIBS += -L$$LIBDIR
+}
+!isEmpty(INCDIR) {
+    INCLUDEPATH += $$INCDIR
+}
 
 
 RESOURCES += resources.qrc
+
+isEmpty(PREFIX) {
+    PREFIX = /usr/local/
+}
+target.path = $$PREFIX
+INSTALLS += target
