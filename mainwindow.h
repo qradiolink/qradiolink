@@ -126,6 +126,7 @@ public slots:
     void addMemoryChannel();
     void removeMemoryChannel();
     void tuneToMemoryChannel(int row, int col);
+    void tuneToMemoryChannel(radiochannel *chan);
     void editMemoryChannel(QTableWidgetItem* item);
     void saveMemoryChannes();
     void startMemoryScan(bool value);

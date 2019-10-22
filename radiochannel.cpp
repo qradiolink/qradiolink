@@ -136,6 +136,14 @@ void RadioChannels::readConfig()
         {
             // FIXME: upgrade config!
         }
+        try
+        {
+            chan->skip = channels[i]["skip"];
+        }
+        catch (const libconfig::SettingNotFoundException &nfex)
+        {
+            // FIXME: upgrade config!
+        }
         _channels->push_back(chan);
     }
 
@@ -168,6 +176,7 @@ void RadioChannels::saveConfig()
         channel.add("rx_ctcss", libconfig::Setting::TypeFloat) = chan->rx_ctcss;
         channel.add("tx_ctcss", libconfig::Setting::TypeFloat) = chan->tx_ctcss;
         channel.add("name", libconfig::Setting::TypeString) = chan->name;
+        channel.add("skip", libconfig::Setting::TypeInt) = chan->skip;
     }
 
     try

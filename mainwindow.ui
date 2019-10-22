@@ -1031,7 +1031,7 @@ background-color: rgb(0, 0, 67);</string>
               <bool>true</bool>
              </property>
              <property name="columnCount">
-              <number>11</number>
+              <number>12</number>
              </property>
              <attribute name="horizontalHeaderVisible">
               <bool>false</bool>
@@ -1100,6 +1100,11 @@ background-color: rgb(0, 0, 67);</string>
              <column>
               <property name="text">
                <string>TX CTCSS</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Skip</string>
               </property>
              </column>
             </widget>
@@ -2349,24 +2354,10 @@ font: 10pt &quot;Sans Serif&quot;;</string>
                </property>
               </widget>
              </item>
-             <item row="18" column="1">
-              <widget class="QCheckBox" name="checkBoxAudioCompressor">
-               <property name="text">
-                <string>Audio compressor</string>
-               </property>
-              </widget>
-             </item>
              <item row="1" column="0">
               <widget class="QLabel" name="label_2">
                <property name="text">
                 <string>RX device args</string>
-               </property>
-              </widget>
-             </item>
-             <item row="18" column="0">
-              <widget class="QCheckBox" name="checkBoxRelays">
-               <property name="text">
-                <string>Enable relays</string>
                </property>
               </widget>
              </item>
@@ -2568,16 +2559,6 @@ font: 10pt &quot;Sans Serif&quot;;</string>
               <widget class="QLabel" name="label_4">
                <property name="text">
                 <string>Callsign</string>
-               </property>
-              </widget>
-             </item>
-             <item row="18" column="2">
-              <widget class="QCheckBox" name="checkBoxStopScan">
-               <property name="toolTip">
-                <string>Unchecked will delay for 5 seconds</string>
-               </property>
-               <property name="text">
-                <string>Stop scan on signal</string>
                </property>
               </widget>
              </item>
@@ -2860,17 +2841,31 @@ font: 10pt &quot;Sans Serif&quot;;</string>
                </property>
               </widget>
              </item>
-             <item row="18" column="3">
-              <widget class="QCheckBox" name="burstIPCheckBox">
-               <property name="text">
-                <string>IP modem burst</string>
-               </property>
-              </widget>
-             </item>
-             <item row="18" column="4">
+             <item row="1" column="4">
               <widget class="QCheckBox" name="remoteControlCheckBox">
                <property name="text">
                 <string>Remote control</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="4">
+              <widget class="QCheckBox" name="checkBoxAudioCompressor">
+               <property name="text">
+                <string>Audio compressor</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="4">
+              <widget class="QCheckBox" name="checkBoxRelays">
+               <property name="text">
+                <string>Enable relays</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="4">
+              <widget class="QCheckBox" name="burstIPCheckBox">
+               <property name="text">
+                <string>IP mode burst</string>
                </property>
               </widget>
              </item>

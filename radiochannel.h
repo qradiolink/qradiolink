@@ -31,7 +31,7 @@ struct radiochannel
 {
     radiochannel() : id(0), rx_frequency(0), tx_frequency(0),
         tx_shift(0), rx_mode(0), tx_mode(0), squelch(0), rx_volume(0),
-        tx_power(0), rx_sensitivity(0),rx_ctcss(0), tx_ctcss(0), name("") {}
+        tx_power(0), rx_sensitivity(0),rx_ctcss(0), tx_ctcss(0), name(""), skip(0) {}
     int id;
     long long rx_frequency;
     long long tx_frequency;
@@ -45,6 +45,7 @@ struct radiochannel
     float rx_ctcss;
     float tx_ctcss;
     std::string name;
+    int skip;
 };
 
 class RadioChannels : public QObject

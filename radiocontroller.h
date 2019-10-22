@@ -98,6 +98,7 @@ signals:
     void setSelfDeaf(bool deaf);
     void setSelfMute(bool mute);
     void newMumbleMessage(QString text);
+    void tuneToMemoryChannel(radiochannel *chan);
 
 
 public slots:

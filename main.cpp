@@ -272,8 +272,10 @@ void connectCommandSignals(TelnetServer *telnet_server, MumbleClient *mumbleclie
                      mumbleclient,SLOT(newMumbleMessage(QString)));
     QObject::connect(telnet_server->command_processor,SIGNAL(newCommandMessage(QString,int)),
                      mumbleclient,SLOT(newCommandMessage(QString,int)));
-    QObject::connect(telnet_server->command_processor,SIGNAL(startMemoryTune(int)), radio_op,SLOT(startMemoryScan(int)));
-    QObject::connect(telnet_server->command_processor,SIGNAL(stopMemoryTune()),radio_op,SLOT(stopMemoryScan()));
+    QObject::connect(telnet_server->command_processor,SIGNAL(startMemoryTune(int)),
+                     radio_op,SLOT(startMemoryScan(int)));
+    QObject::connect(telnet_server->command_processor,SIGNAL(stopMemoryTune()),
+                     radio_op,SLOT(stopMemoryScan()));
     QObject::connect(mumbleclient,SIGNAL(commandMessage(QString,int)),
                      telnet_server->command_processor,SLOT(parseMumbleMessage(QString,int)));
 }
@@ -367,6 +369,8 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
                      w, SLOT(setRxGainStages(gain_vector)));
     QObject::connect(radio_op, SIGNAL(txGainStages(gain_vector)),
                      w, SLOT(setTxGainStages(gain_vector)));
+    QObject::connect(radio_op, SIGNAL(tuneToMemoryChannel(radiochannel*)),
+                     w, SLOT(tuneToMemoryChannel(radiochannel*)));
 
     /// Mumble to GUI
     QObject::connect(mumbleclient,SIGNAL(onlineStations(StationList)),

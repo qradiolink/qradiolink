@@ -533,6 +533,9 @@ void MainWindow::addDisplayChannel(radiochannel *chan, int r)
     QTableWidgetItem *tx_ctcss_display = new QTableWidgetItem;
     tx_ctcss_display->setText(QString::number(chan->tx_ctcss));
 
+    QTableWidgetItem *skip_display = new QTableWidgetItem;
+    skip_display->setText(QString::number(chan->skip));
+
     //QTableWidgetItem *id_display = new QTableWidgetItem;
     //id_display->setText(QString::number(chan->id));
 
@@ -548,6 +551,7 @@ void MainWindow::addDisplayChannel(radiochannel *chan, int r)
     ui->memoriesTableWidget->setItem(r, 8, rx_sensitivity_display);
     ui->memoriesTableWidget->setItem(r, 9, rx_ctcss_display);
     ui->memoriesTableWidget->setItem(r, 10, tx_ctcss_display);
+    ui->memoriesTableWidget->setItem(r, 11, skip_display);
 
     //ui->memoriesTableWidget->setItem(r, 11, id_display);
     //ui->memoriesTableWidget->setItem(r, 12, tx_freq_display);
@@ -593,6 +597,7 @@ void MainWindow::addMemoryChannel()
     chan->tx_ctcss = _settings->tx_ctcss;
     chan->id = _new_mem_index; // FIXME:
     chan->name = "";
+    /// skip is 0
     QVector<radiochannel*> *channels = _radio_channels->getChannels();
     channels->push_back(chan);
     addDisplayChannel(chan, _new_mem_index);
@@ -667,6 +672,32 @@ void MainWindow::tuneToMemoryChannel(int row, int col)
 
 }
 
+void MainWindow::tuneToMemoryChannel(radiochannel *chan)
+{
+    ui->frameCtrlFreq->setFrequency(chan->rx_frequency);
+    tuneMainFreq(chan->rx_frequency);
+    _settings->tx_shift = chan->tx_shift;
+    ui->shiftEdit->setText(QString::number(chan->tx_shift / 1000));
+
+    ui->rxModemTypeComboBox->setCurrentIndex(chan->rx_mode);
+    ui->txModemTypeComboBox->setCurrentIndex(chan->tx_mode);
+
+    setSquelchDisplay(chan->squelch);
+    setVolumeDisplay(chan->rx_volume);
+    setTxPowerDisplay(chan->tx_power);
+    setRxSensitivityDisplay(chan->rx_sensitivity);
+    emit setRxCTCSS(chan->rx_ctcss);
+    emit setTxCTCSS(chan->tx_ctcss);
+    if(chan->rx_ctcss > 0.0)
+        ui->comboBoxRxCTCSS->setCurrentText(QString::number(chan->rx_ctcss));
+    else
+        ui->comboBoxRxCTCSS->setCurrentText("CTCSS");
+    if(chan->tx_ctcss > 0.0)
+        ui->comboBoxTxCTCSS->setCurrentText(QString::number(chan->tx_ctcss));
+    else
+        ui->comboBoxTxCTCSS->setCurrentText("CTCSS");
+}
+
 void MainWindow::editMemoryChannel(QTableWidgetItem* item)
 {
     int idx;
@@ -714,6 +745,9 @@ void MainWindow::editMemoryChannel(QTableWidgetItem* item)
         break;
     case 10:
         chan->tx_ctcss = item->text().toFloat();
+        break;
+    case 11:
+        chan->skip = item->text().toInt();
         break;
     }
 }

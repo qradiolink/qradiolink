@@ -2040,20 +2040,24 @@ void RadioController::memoryScan(bool receiving, bool wait_for_timer)
     {
         qint64 msec = (quint64)_scan_timer->nsecsElapsed() / 1000000;
         /// Buffers are at least 40 msec, so we need at least twice as much time
-        if(msec < 100) // FIXME: hardcoded
+        if(msec < 120) // FIXME: hardcoded
         {
             return;
         }
     }
     struct timespec time_to_sleep;
     radiochannel *chan = _memory_channels.at(_memory_scan_index);
+    if(chan->skip)
+    {
+        _memory_scan_index++;
+        if(_memory_scan_index >= _memory_channels.size())
+            _memory_scan_index = 0;
+        return;
+    }
     _settings->rx_frequency = chan->rx_frequency - _settings->demod_offset;
-
     tuneFreq(_settings->rx_frequency);
     time_to_sleep = {0, 1000L }; /// Give PLL time to settle
     nanosleep(&time_to_sleep, NULL);
-
-    emit freqToGUI(_settings->rx_frequency, _settings->demod_offset);
     toggleRxMode(chan->rx_mode);
 
     _settings->tx_shift = chan->tx_shift;
@@ -2061,6 +2065,9 @@ void RadioController::memoryScan(bool receiving, bool wait_for_timer)
     time_to_sleep = {0, 1000L };
     nanosleep(&time_to_sleep, NULL);
     toggleTxMode(chan->tx_mode);
+
+    emit tuneToMemoryChannel(chan);
+
     _memory_scan_index++;
     if(_memory_scan_index >= _memory_channels.size())
         _memory_scan_index = 0;
