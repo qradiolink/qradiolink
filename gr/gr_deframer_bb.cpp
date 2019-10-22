@@ -49,6 +49,7 @@ gr_deframer_bb::gr_deframer_bb(int modem_type) :
 
 gr_deframer_bb::~gr_deframer_bb()
 {
+    _data->clear();
     delete _data;
 }
 

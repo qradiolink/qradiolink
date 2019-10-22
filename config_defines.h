@@ -9,8 +9,8 @@
 
 // Old one was 1.2.8
 #define PROTVER_MAJOR 1
-#define PROTVER_MINOR 3
-#define PROTVER_PATCH 0
+#define PROTVER_MINOR 2
+#define PROTVER_PATCH 8
 #define PROTOCOL_VERSION ((PROTVER_MAJOR << 16) | (PROTVER_MINOR << 8) | (PROTVER_PATCH))
 
 #define CONTROL_PORT 4939

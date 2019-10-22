@@ -44,7 +44,7 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(std::vector<int>signature, int sps, int sam
         _samples_per_symbol = sps/25;
         decim = 50;
         interp = 1;
-        nfilts = 15;
+        nfilts = 35;
         gain_mu = 0.005;
     }
     else
@@ -53,7 +53,7 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(std::vector<int>signature, int sps, int sam
         _samples_per_symbol = sps*2/25;
         decim = 25;
         interp = 1;
-        nfilts = 35;
+        nfilts = 125;
         gain_mu = 0.001;
     }
 
