@@ -749,6 +749,7 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
     }
     case 49:
     {
+        break;
         if(!_settings->voip_connected)
         {
             response = "Not connected";
@@ -789,6 +790,7 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
     }
     case 51:
     {
+        break;
         if(!_settings->tx_inited)
         {
             response = "TX is not started";
