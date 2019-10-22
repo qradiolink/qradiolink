@@ -2026,6 +2026,8 @@ void RadioController::memoryScan(bool receiving, bool wait_for_timer)
     }
     if(_scan_stop)
     {
+        if(receiving)
+            _scan_timer->restart();
         qint64 msec = (quint64)_scan_timer->nsecsElapsed() / 1000000;
         if(msec < 5000)
         {
