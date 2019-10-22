@@ -1190,14 +1190,12 @@ void MainWindow::setFilterWidth(int index)
 
 void MainWindow::toggleRxMode(int value)
 {
-    _settings->rx_mode = value;
     emit toggleRxModemMode(value);
     setFilterWidth(value);
 }
 
 void MainWindow::toggleTxMode(int value)
 {
-    _settings->tx_mode = value;
     emit toggleTxModemMode(value);
 }
 

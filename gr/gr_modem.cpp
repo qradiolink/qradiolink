@@ -463,9 +463,9 @@ void gr_modem::endTransmission(QString callsign)
     tx_end->push_back(0x4C);
     tx_end->push_back(0x8A);
     tx_end->push_back(0x2B);
-    for(int i = 0;i<_tx_frame_length;i++)
+    for(int i = 0;i<_tx_frame_length*10;i++)
     {
-        tx_end->push_back(0x01);
+        tx_end->push_back(0xAA);
     }
     QVector<std::vector<unsigned char>*> frames;
     frames.append(tx_end);

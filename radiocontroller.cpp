@@ -737,9 +737,9 @@ void RadioController::stopTx()
                     (_tx_mode == gr_modem_types::ModemType2FSK2000) ||
                     (_tx_mode == gr_modem_types::ModemType4FSK2000) ||
                     (_tx_mode == gr_modem_types::ModemTypeQPSK2000))
-                tx_tail_msec = 800;
+                tx_tail_msec = 500;
             else
-                tx_tail_msec = 600;
+                tx_tail_msec = 300;
         }
         if((_tx_radio_type == radio_type::RADIO_TYPE_ANALOG)
                 && ((_tx_mode == gr_modem_types::ModemTypeNBFM2500) ||
