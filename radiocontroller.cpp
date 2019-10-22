@@ -739,7 +739,7 @@ void RadioController::stopTx()
                     (_tx_mode == gr_modem_types::ModemTypeQPSK2000))
                 tx_tail_msec = 800;
             else
-                tx_tail_msec = 300;
+                tx_tail_msec = 600;
         }
         if((_tx_radio_type == radio_type::RADIO_TYPE_ANALOG)
                 && ((_tx_mode == gr_modem_types::ModemTypeNBFM2500) ||
@@ -1323,6 +1323,13 @@ void RadioController::toggleRX(bool value)
         _modem->startRX();
         _mutex->unlock();
         const QMap<std::string,QVector<int>> rx_gains = _modem->getRxGainNames();
+        /// hold a local copy of stage gains
+        QMap<std::string, QVector<int>>::const_iterator iter = rx_gains.constBegin();
+        while (iter != rx_gains.constEnd())
+        {
+            _rx_stage_gains[iter.key()] = 0;
+            ++iter;
+        }
         emit rxGainStages(rx_gains);
 
         _settings->rx_inited = true;
@@ -1377,6 +1384,13 @@ void RadioController::toggleTX(bool value)
             _modem->startRX();
         _mutex->unlock();
         const QMap<std::string,QVector<int>> tx_gains = _modem->getTxGainNames();
+        /// hold a local copy of stage gains
+        QMap<std::string, QVector<int>>::const_iterator iter = tx_gains.constBegin();
+        while (iter != tx_gains.constEnd())
+        {
+            _tx_stage_gains[iter.key()] = 0;
+            ++iter;
+        }
         emit txGainStages(tx_gains);
 
         _settings->tx_inited = true;
@@ -1756,6 +1770,7 @@ void RadioController::setRxSensitivity(int value, std::string gain_stage)
 {
     if(gain_stage.size() > 0)
     {
+        _rx_stage_gains[gain_stage] = value;
         _modem->setRxSensitivity((float)value, gain_stage);
     }
     else
@@ -1769,6 +1784,7 @@ void RadioController::setTxPower(int value, std::string gain_stage)
 {
     if(gain_stage.size() > 0)
     {
+        _tx_stage_gains[gain_stage] = value;
         _modem->setTxPower((float)value, gain_stage);
     }
     else

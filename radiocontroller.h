@@ -224,6 +224,8 @@ private:
     QString _text_out;
     QString _callsign;
     QString _incoming_text_buffer;
+    QMap<std::string, int> _rx_stage_gains;
+    QMap<std::string, int> _tx_stage_gains;
 
     bool _stop;
     bool _transmitting;
