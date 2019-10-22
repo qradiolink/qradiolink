@@ -654,8 +654,6 @@ void MainWindow::tuneToMemoryChannel(int row, int col)
     setVolumeDisplay(chan->rx_volume);
     setTxPowerDisplay(chan->tx_power);
     setRxSensitivityDisplay(chan->rx_sensitivity);
-    _settings->rx_ctcss = chan->rx_ctcss;
-    _settings->tx_ctcss = chan->tx_ctcss;
     emit setRxCTCSS(chan->rx_ctcss);
     emit setTxCTCSS(chan->tx_ctcss);
     if(chan->rx_ctcss > 0.0)
@@ -666,7 +664,6 @@ void MainWindow::tuneToMemoryChannel(int row, int col)
         ui->comboBoxTxCTCSS->setCurrentText(QString::number(chan->tx_ctcss));
     else
         ui->comboBoxTxCTCSS->setCurrentText("CTCSS");
-
 
 }
 
@@ -1331,15 +1328,13 @@ void MainWindow::updateFreqGUI(long long center_freq, long carrier_offset)
 void MainWindow::updateRxCTCSS(int value)
 {
     Q_UNUSED(value);
-    _settings->rx_ctcss = ui->comboBoxRxCTCSS->currentText().toFloat();
-    emit setRxCTCSS(_settings->rx_ctcss);
+    emit setRxCTCSS(ui->comboBoxRxCTCSS->currentText().toFloat());
 }
 
 void MainWindow::updateTxCTCSS(int value)
 {
     Q_UNUSED(value);
-    _settings->tx_ctcss = ui->comboBoxTxCTCSS->currentText().toFloat();
-    emit setTxCTCSS(_settings->tx_ctcss);
+    emit setTxCTCSS(ui->comboBoxTxCTCSS->currentText().toFloat());
 }
 
 void MainWindow::togglePTTVOIP(bool value)

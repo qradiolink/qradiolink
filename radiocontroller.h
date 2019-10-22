@@ -29,7 +29,7 @@
 #include <QElapsedTimer>
 #include <QImage>
 #include <unistd.h>
-#include <math.h>
+#include <cmath>
 #include <gnuradio/digital/crc32.h>
 #include "settings.h"
 #include "radiochannel.h"

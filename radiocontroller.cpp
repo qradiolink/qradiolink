@@ -1410,6 +1410,8 @@ void RadioController::toggleTX(bool value)
 
 void RadioController::toggleRxMode(int value)
 {
+    if((_settings->rx_mode == value) && _settings->rx_inited)
+        return;
     if(_settings->rx_inited)
     {
         _mutex->lock();
@@ -1574,6 +1576,8 @@ void RadioController::toggleRxMode(int value)
 
 void RadioController::toggleTxMode(int value)
 {
+    if((_settings->tx_mode == value) && _settings->tx_inited)
+        return;
     _tx_radio_type = radio_type::RADIO_TYPE_DIGITAL;
     switch(value)
     {
@@ -1846,14 +1850,20 @@ void RadioController::setVoipVolume(int value)
 
 void RadioController::setRxCTCSS(float value)
 {
-    _settings->rx_ctcss = value;
-    _modem->setRxCTCSS(value);
+    if(std::abs(_settings->rx_ctcss - value) > 0.001f)
+    {
+        _settings->rx_ctcss = value;
+        _modem->setRxCTCSS(value);
+    }
 }
 
 void RadioController::setTxCTCSS(float value)
 {
-    _settings->tx_ctcss = value;
-    _modem->setTxCTCSS(value);
+    if(std::abs(_settings->tx_ctcss - value) > 0.001f)
+    {
+        _settings->tx_ctcss = value;
+        _modem->setTxCTCSS(value);
+    }
 }
 
 void RadioController::enableGUIConst(bool value)
@@ -2050,7 +2060,6 @@ void RadioController::memoryScan(bool receiving, bool wait_for_timer)
     tuneTxFreq(chan->rx_frequency);
     time_to_sleep = {0, 1000L };
     nanosleep(&time_to_sleep, NULL);
-
     toggleTxMode(chan->tx_mode);
     _memory_scan_index++;
     if(_memory_scan_index >= _memory_channels.size())
