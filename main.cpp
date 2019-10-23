@@ -57,7 +57,6 @@ int main(int argc, char *argv[])
 
 
     QApplication a(argc, argv);
-    QCoreApplication::setAttribute(Qt::AA_UseStyleSheetPropagationInWidgetStyles, true);
     QStringList arguments = QCoreApplication::arguments();
     bool headless = false;
 

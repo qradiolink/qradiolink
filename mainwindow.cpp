@@ -268,7 +268,10 @@ void MainWindow::setTheme(bool value)
     _settings->night_mode = (int) value;
     if(value)
     {
-        this->setStyleSheet(
+        setStyleSheet(
+                "QWidget#memoryControlsFrame {background: none}"
+                "QWidget#memoriesFrame {background: none}"
+                "QWidget#memoriesTableWidget {background: none}"
                 "QWidget {background-color:#2a2a2a; color:#ffffd3}"
                 "QPushButton {background-color:#555555; color:#ffffd3}"
                 "QPushButton:hover {background-color:#005a84; color:#ffffd3}"
@@ -286,7 +289,7 @@ void MainWindow::setTheme(bool value)
     }
     else
     {
-        this->setStyleSheet(
+        setStyleSheet(
                 "QPushButton:hover {background-color:#005a84; color:#ffffd3}"
                 "QCheckBox:hover {background-color:#fcfcfc; color:#0e0e00}"
                 "QCheckBox:checked {color:#585800}"
