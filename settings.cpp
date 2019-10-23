@@ -475,6 +475,14 @@ void Settings::readConfig()
     {
         burst_ip_modem = 0;
     }
+    try
+    {
+        night_mode = cfg.lookup("night_mode");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        night_mode = 0;
+    }
 
 }
 
@@ -527,6 +535,7 @@ void Settings::saveConfig()
     root.add("agc_decay",libconfig::Setting::TypeInt) = agc_decay;
     root.add("remote_control",libconfig::Setting::TypeInt) = remote_control;
     root.add("burst_ip_modem",libconfig::Setting::TypeInt) = burst_ip_modem;
+    root.add("night_mode",libconfig::Setting::TypeInt) = night_mode;
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());

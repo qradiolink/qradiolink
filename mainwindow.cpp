@@ -250,6 +250,7 @@ void MainWindow::initSettings()
 
 void MainWindow::setTheme(bool value)
 {
+    _settings->night_mode = (int) value;
     if(value)
     {
         this->setStyleSheet(
@@ -490,6 +491,7 @@ void MainWindow::setConfig()
     ui->checkBoxRelays->setChecked((bool)_settings->enable_relays);
     ui->burstIPCheckBox->setChecked((bool)_settings->burst_ip_modem);
     ui->remoteControlCheckBox->setChecked((bool)_settings->remote_control);
+    ui->nightModeCheckBox->setChecked((bool)_settings->night_mode);
     ui->rssiCalibrateEdit->setText(QString::number(_settings->rssi_calibration_value));
     if(_settings->rx_ctcss > 0.0)
         ui->comboBoxRxCTCSS->setCurrentText(QString::number(_settings->rx_ctcss));
