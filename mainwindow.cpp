@@ -274,7 +274,7 @@ void MainWindow::setTheme(bool value)
         this->setStyleSheet(
                 "QPushButton {background-color:#ccc7c4; color:#000000}"
                 "QPushButton:hover {background-color:#005a84; color:#ffffd3}"
-                "QPushButton:checked {background-color:#01194c; color:#ffffd3}"
+                "QPushButton:checked {background-color:#004362; color:#ffffd3}"
                 "QCheckBox:hover {background-color:#fcfcfc; color:#0e0e00}"
                 "QCheckBox:checked {color:#585800}"
                 "QSlider:hover {background-color: rgb(0, 67, 98); color:#ffffd3}"
