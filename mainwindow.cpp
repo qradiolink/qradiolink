@@ -95,8 +95,10 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     QObject::connect(ui->micGainSlider,SIGNAL(valueChanged(int)),this,SLOT(setTxVolumeDisplay(int)));
     QObject::connect(ui->digitalGainSlider,SIGNAL(valueChanged(int)),this,SLOT(setDigitalGain(int)));
     QObject::connect(ui->voipGainSlider,SIGNAL(valueChanged(int)),this,SLOT(changeVoipVolume(int)));
-    QObject::connect(ui->rxModemTypeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(toggleRxMode(int)));
-    QObject::connect(ui->txModemTypeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(toggleTxMode(int)));
+    QObject::connect(ui->rxModemTypeComboBox,SIGNAL(currentIndexChanged(int)),
+                     this,SLOT(toggleRxMode(int)));
+    QObject::connect(ui->txModemTypeComboBox,SIGNAL(currentIndexChanged(int)),
+                     this,SLOT(toggleTxMode(int)));
     QObject::connect(ui->scanUpButton,SIGNAL(toggled(bool)),this,SLOT(startScan(bool)));
     QObject::connect(ui->scanDownButton,SIGNAL(toggled(bool)),this,SLOT(startScan(bool)));
     QObject::connect(ui->memoryScanUpButton,SIGNAL(toggled(bool)),this,SLOT(startMemoryScan(bool)));
@@ -106,33 +108,40 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     QObject::connect(ui->comboBoxRxCTCSS,SIGNAL(currentIndexChanged(int)),this,SLOT(updateRxCTCSS(int)));
     QObject::connect(ui->comboBoxTxCTCSS,SIGNAL(currentIndexChanged(int)),this,SLOT(updateTxCTCSS(int)));
     QObject::connect(ui->pttVoipButton,SIGNAL(toggled(bool)),this,SLOT(togglePTTVOIP(bool)));
-    QObject::connect(ui->voipForwardButton,SIGNAL(toggled(bool)),this,SLOT(toggleVOIPForwarding(bool)));
+    QObject::connect(ui->voipForwardButton,SIGNAL(toggled(bool)),
+                     this,SLOT(toggleVOIPForwarding(bool)));
     QObject::connect(ui->toggleRepeaterButton,SIGNAL(toggled(bool)),this,SLOT(toggleRepeater(bool)));
     QObject::connect(ui->toggleVoxButton,SIGNAL(toggled(bool)),this,SLOT(toggleVox(bool)));
     QObject::connect(ui->fftSizeBox,SIGNAL(currentIndexChanged(int)),this,SLOT(setFFTSize(int)));
-    QObject::connect(ui->peakHoldCheckBox,SIGNAL(toggled(bool)),ui->plotterFrame,SLOT(setPeakHold(bool)));
+    QObject::connect(ui->peakHoldCheckBox,SIGNAL(toggled(bool)),
+                     ui->plotterFrame,SLOT(setPeakHold(bool)));
     QObject::connect(ui->showControlsButton,SIGNAL(toggled(bool)),this,SLOT(showControls(bool)));
-    QObject::connect(ui->showConstellationButton,SIGNAL(toggled(bool)),this,SLOT(showConstellation(bool)));
+    QObject::connect(ui->showConstellationButton,SIGNAL(toggled(bool)),
+                     this,SLOT(showConstellation(bool)));
     QObject::connect(ui->duplexOpButton,SIGNAL(toggled(bool)),this,SLOT(setEnabledDuplex(bool)));
     QObject::connect(ui->fftEnableCheckBox,SIGNAL(toggled(bool)),this,SLOT(setEnabledFFT(bool)));
     QObject::connect(ui->peakDetectCheckBox,SIGNAL(toggled(bool)),this,SLOT(setPeakDetect(bool)));
     QObject::connect(ui->fpsBox,SIGNAL(currentIndexChanged(int)),this,SLOT(newWaterfallFPS()));
     QObject::connect(ui->sampleRateBox,SIGNAL(currentIndexChanged(int)),this,SLOT(updateSampleRate()));
-    QObject::connect(ui->checkBoxAudioCompressor,SIGNAL(toggled(bool)),this,SLOT(setAudioCompressor(bool)));
+    QObject::connect(ui->checkBoxAudioCompressor,SIGNAL(toggled(bool)),
+                     this,SLOT(setAudioCompressor(bool)));
     QObject::connect(ui->checkBoxRelays,SIGNAL(toggled(bool)),this,SLOT(setRelays(bool)));
     QObject::connect(ui->burstIPCheckBox,SIGNAL(toggled(bool)),this,SLOT(setBurstIPMode(bool)));
     QObject::connect(ui->nightModeCheckBox,SIGNAL(toggled(bool)),this,SLOT(setTheme(bool)));
-    QObject::connect(ui->remoteControlCheckBox,SIGNAL(toggled(bool)),this,SLOT(setRemoteControl(bool)));
+    QObject::connect(ui->remoteControlCheckBox,SIGNAL(toggled(bool)),
+                     this,SLOT(setRemoteControl(bool)));
     QObject::connect(ui->rssiCalibrateButton,SIGNAL(clicked()),this,SLOT(setRSSICalibration()));
     QObject::connect(ui->saveChannelsButton,SIGNAL(clicked()),this,SLOT(saveMemoryChannes()));
     QObject::connect(ui->agcAttackSpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateAgcAttack(int)));
     QObject::connect(ui->agcDecaySpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateAgcDecay(int)));
     QObject::connect(ui->mumbleTextMessageButton,SIGNAL(clicked()),this,SLOT(sendMumbleTextMessage()));
-    QObject::connect(ui->mumbleTextMessageEdit,SIGNAL(returnPressed()),this,SLOT(sendMumbleTextMessage()));
+    QObject::connect(ui->mumbleTextMessageEdit,SIGNAL(returnPressed()),
+                     this,SLOT(sendMumbleTextMessage()));
     QObject::connect(ui->muteSelfButton,SIGNAL(toggled(bool)),this,SLOT(toggleSelfMute(bool)));
     QObject::connect(ui->deafenSelfButton,SIGNAL(toggled(bool)),this,SLOT(toggleSelfDeaf(bool)));
     QObject::connect(ui->voipGainSlider,SIGNAL(valueChanged(int)),this,SLOT(changeVoipVolume(int)));
-    QObject::connect(ui->scanTimerSpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateScanResumeTime(int)));
+    QObject::connect(ui->scanTimerSpinBox,SIGNAL(valueChanged(int)),
+                     this,SLOT(updateScanResumeTime(int)));
     QObject::connect(ui->audioOutputComboBox,SIGNAL(currentIndexChanged(int)),
                      this,SLOT(updateAudioOutput(int)));
     QObject::connect(ui->audioInputComboBox,SIGNAL(currentIndexChanged(int)),
@@ -141,8 +150,10 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
     QObject::connect(ui->plotterFrame,SIGNAL(pandapterRangeChanged(float,float)),
                      ui->plotterFrame,SLOT(setWaterfallRange(float,float)));
-    QObject::connect(ui->plotterFrame,SIGNAL(newCenterFreq(qint64)),this,SLOT(tuneFreqPlotter(qint64)));
-    QObject::connect(ui->plotterFrame,SIGNAL(newFilterFreq(int, int)),this,SLOT(changeFilterWidth(int, int)));
+    QObject::connect(ui->plotterFrame,SIGNAL(newCenterFreq(qint64)),
+                     this,SLOT(tuneFreqPlotter(qint64)));
+    QObject::connect(ui->plotterFrame,SIGNAL(newFilterFreq(int, int)),
+                     this,SLOT(changeFilterWidth(int, int)));
     QObject::connect(ui->panadapterSlider,SIGNAL(valueChanged(int)),
                      ui->plotterFrame,SLOT(setPercent2DScreen(int)));
     QObject::connect(ui->averagingSlider,SIGNAL(valueChanged(int)),this,SLOT(setAveraging(int)));
@@ -482,7 +493,8 @@ void MainWindow::setConfig()
     ui->frameCtrlFreq->setFrequency(_settings->rx_frequency + _settings->demod_offset);
     ui->plotterFrame->setSampleRate(_settings->rx_sample_rate);
     ui->plotterFrame->setSpanFreq((quint32)_settings->rx_sample_rate);
-    ui->sampleRateBox->setCurrentIndex(ui->sampleRateBox->findText(QString::number(_settings->rx_sample_rate)));
+    ui->sampleRateBox->setCurrentIndex(ui->sampleRateBox->findText
+                                       (QString::number(_settings->rx_sample_rate)));
     ui->averagingSlider->setValue((int)(1.0f/_settings->fft_averaging));
     ui->fftSizeBox->setCurrentIndex(ui->fftSizeBox->findText(QString::number(_settings->fft_size)));
     ui->fpsBox->setCurrentIndex(ui->fpsBox->findText(QString::number(_settings->waterfall_fps)));
@@ -604,11 +616,11 @@ void MainWindow::addDisplayChannel(radiochannel *chan, int r)
     //ui->memoriesTableWidget->setItem(r, 12, tx_freq_display);
     ui->memoriesTableWidget->horizontalHeader()->setHidden(false);
     ui->memoriesTableWidget->setStyleSheet(
-        "color: rgb(240, 240, 119);background-color: rgb(0, 40, 102);font: 9pt \"Sans Serif\"; "\
-        "QTableWidget {color: rgb(240, 240, 119);background-color: rgb(0, 40, 102);font: 9pt \"Sans Serif\";} "\
-        "QTableWidget::item {color: rgb(240, 240, 119);background-color: rgb(0, 40, 102);font: 9pt \"Sans Serif\";} " \
-        "QTableWidget::item:selected{ color: rgb(240, 240, 119);background-color: rgba(99, 0, 0, 125);"\
-        "font: 9pt \"Sans Serif\"; }");
+    "color: rgb(240, 240, 119);background-color: rgb(0, 40, 102);font: 9pt \"Sans Serif\"; "
+    "QTableWidget {color: rgb(240, 240, 119);background-color: rgb(0, 40, 102);font: 9pt \"Sans Serif\";}"
+    "QTableWidget::item {color: rgb(240, 240, 119);background-color: rgb(0, 40, 102);font: 9pt \"Sans Serif\";}"
+    "QTableWidget::item:selected{ color: rgb(240, 240, 119);background-color: rgba(99, 0, 0, 125);"
+    "font: 9pt \"Sans Serif\"; }");
 
 }
 
@@ -815,7 +827,8 @@ void MainWindow::startTx()
     if(!_ptt_activated)
     {
         emit startTransmission();
-        ui->frameCtrlFreq->setFrequency(_settings->rx_frequency + _settings->demod_offset + _settings->tx_shift, false);
+        ui->frameCtrlFreq->setFrequency(
+                    _settings->rx_frequency + _settings->demod_offset + _settings->tx_shift, false);
         _ptt_activated=true;
     }
     else
@@ -1231,7 +1244,8 @@ void MainWindow::setFilterWidth(int index)
     std::complex<int> widths = _filter_widths->at(index);
     std::complex<int> ranges = _filter_ranges->at(index);
     bool symmetric = _filter_symmetric->at(index);
-    ui->plotterFrame->setDemodRanges(ranges.real(),ranges.imag(),ranges.real(),ranges.imag(),symmetric);
+    ui->plotterFrame->setDemodRanges(
+                ranges.real(),ranges.imag(),ranges.real(),ranges.imag(),symmetric);
     ui->plotterFrame->setHiLowCutFrequencies(widths.real(), widths.imag());
     _filter_low_cut = ranges.real();
     _filter_high_cut = ranges.imag();

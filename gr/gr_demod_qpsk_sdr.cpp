@@ -84,14 +84,14 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
                 constellation->points(),pre_diff_code,4,2,2,1,1,const_map);
     */
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _target_samp_rate/2, _target_samp_rate/2,
-                                                           gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _target_samp_rate/2,
+                            _target_samp_rate/2, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
 
     _resampler = gr::filter::rational_resampler_base_ccf::make(interpolation, decimation, taps);
     _resampler->set_thread_priority(99);
     _agc = gr::analog::agc2_cc::make(1e-1, 1e-1, 1, 10);
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
-                                1, _target_samp_rate, _filter_width, filter_slope,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
+            1, _target_samp_rate, _filter_width, filter_slope,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     float gain_mu, omega_rel_limit;
     int filt_length, fll_bw;
     fll_bw = 24;
@@ -118,11 +118,14 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
 
     _fll = gr::digital::fll_band_edge_cc::make(_samples_per_symbol, 0.35, 32, fll_bw*M_PI/100);
     _shaping_filter = gr::filter::fft_filter_ccf::make(
-                1, gr::filter::firdes::root_raised_cosine(1,_target_samp_rate,_target_samp_rate/_samples_per_symbol,0.35,filt_length * _samples_per_symbol));
-    _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0, gain_mu,
-                                                              omega_rel_limit);
-    std::vector<float> pfb_taps = gr::filter::firdes::root_raised_cosine(_samples_per_symbol,_samples_per_symbol, 1, 0.35, 11 * _samples_per_symbol);
-    _clock_sync = gr::digital::pfb_clock_sync_ccf::make(_samples_per_symbol,2*M_PI/100,pfb_taps,flt_size, 0, 1.01, 8);
+                1, gr::filter::firdes::root_raised_cosine(1,_target_samp_rate,
+                    _target_samp_rate/_samples_per_symbol,0.35,filt_length * _samples_per_symbol));
+    _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol,
+                0.025*gain_mu*gain_mu, 0, gain_mu, omega_rel_limit);
+    std::vector<float> pfb_taps = gr::filter::firdes::root_raised_cosine(_samples_per_symbol,
+                                        _samples_per_symbol, 1, 0.35, 11 * _samples_per_symbol);
+    _clock_sync = gr::digital::pfb_clock_sync_ccf::make(_samples_per_symbol,
+                                                    2*M_PI/100,pfb_taps,flt_size, 0, 1.01, 8);
     _costas_loop = gr::digital::costas_loop_cc::make(2*M_PI/200,4,true);
     _equalizer = gr::digital::cma_equalizer_cc::make(8,2,0.0005,1);
 

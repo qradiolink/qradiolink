@@ -71,18 +71,19 @@ gr_mod_qpsk_sdr::gr_mod_qpsk_sdr(int sps, int samp_rate, int carrier_freq,
     else
         nfilts = 15;
     std::vector<float> rrc_taps = gr::filter::firdes::root_raised_cosine(nfilts, nfilts,
-                                                        1, 0.35, nfilts * 11 * _samples_per_symbol);
+                                                    1, 0.35, nfilts * 11 * _samples_per_symbol);
     //_shaping_filter = gr::filter::pfb_arb_resampler_ccf::make(_samples_per_symbol, rrc_taps, nfilts);
     _resampler = gr::filter::rational_resampler_base_ccf::make(_samples_per_symbol, 1,
-                                  gr::filter::firdes::root_raised_cosine(_samples_per_symbol,_samples_per_symbol,1,0.35,nfilts * _samples_per_symbol));
+            gr::filter::firdes::root_raised_cosine(_samples_per_symbol,
+                                    _samples_per_symbol,1,0.35,nfilts * _samples_per_symbol));
     _shaping_filter = gr::filter::fft_filter_ccf::make(
-                1, gr::filter::firdes::root_raised_cosine(1,_samp_rate,_samp_rate/_samples_per_symbol,0.35,nfilts * _samples_per_symbol));
+                1, gr::filter::firdes::root_raised_cosine(1,_samp_rate,
+                                _samp_rate/_samples_per_symbol,0.35,nfilts * _samples_per_symbol));
     _repeat = gr::blocks::repeat::make(8, _samples_per_symbol);
     _amplify = gr::blocks::multiply_const_cc::make(0.6,1);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
-    _filter = gr::filter::fft_filter_ccf::make(
-                1,gr::filter::firdes::low_pass(
-                    1, _samp_rate, _filter_width, filter_slope,gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+    _filter = gr::filter::fft_filter_ccf::make(1,gr::filter::firdes::low_pass(
+                1, _samp_rate, _filter_width, filter_slope,gr::filter::firdes::WIN_BLACKMAN_HARRIS));
 
     connect(self(),0,_packed_to_unpacked,0);
     connect(_packed_to_unpacked,0,_scrambler,0);

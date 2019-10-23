@@ -52,9 +52,8 @@ gr_mod_am_sdr::gr_mod_am_sdr(int sps, int samp_rate, int carrier_freq,
     _resampler = gr::filter::rational_resampler_base_ccf::make(_sps, 1, interp_taps);
     _amplify = gr::blocks::multiply_const_cc::make(0.5,1);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
-    _filter = gr::filter::fft_filter_ccc::make(
-                1,gr::filter::firdes::complex_band_pass_2(
-                    1, _samp_rate, -_filter_width, _filter_width, 1200, 120, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+    _filter = gr::filter::fft_filter_ccc::make(1,gr::filter::firdes::complex_band_pass_2(
+            1, _samp_rate, -_filter_width, _filter_width, 1200, 120, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
 
 
 
@@ -77,7 +76,7 @@ void gr_mod_am_sdr::set_filter_width(int filter_width)
     std::vector<float> interp_taps = gr::filter::firdes::low_pass(_sps, _samp_rate,
                                                         _filter_width, _filter_width);
     std::vector<gr_complex> filter_taps = gr::filter::firdes::complex_band_pass_2(
-                1, _samp_rate, -_filter_width, _filter_width, 1200, 120, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+            1, _samp_rate, -_filter_width, _filter_width, 1200, 120, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
 
     _resampler->set_taps(interp_taps);
     _filter->set_taps(filter_taps);

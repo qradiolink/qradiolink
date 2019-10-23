@@ -62,14 +62,14 @@ gr_mod_2fsk_sdr::gr_mod_2fsk_sdr(int sps, int samp_rate, int carrier_freq,
     _freq_modulator = gr::analog::frequency_modulator_fc::make((spacing * M_PI/2)/(_samples_per_symbol));
     _repeat = gr::blocks::repeat::make(4, _samples_per_symbol);
     _resampler = gr::filter::rational_resampler_base_fff::make(_samples_per_symbol, 1,
-                    gr::filter::firdes::root_raised_cosine(_samples_per_symbol,_samples_per_symbol,1,0.35,nfilts * _samples_per_symbol));
+                    gr::filter::firdes::root_raised_cosine(_samples_per_symbol,
+                                _samples_per_symbol,1,0.35,nfilts * _samples_per_symbol));
     _amplify = gr::blocks::multiply_const_cc::make(0.9,1);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
-    _filter = gr::filter::fft_filter_ccf::make(
-                1,gr::filter::firdes::low_pass(
-                    1, _samp_rate, _filter_width, _filter_width/2,gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+    _filter = gr::filter::fft_filter_ccf::make(1,gr::filter::firdes::low_pass(
+            1, _samp_rate, _filter_width, _filter_width/2,gr::filter::firdes::WIN_BLACKMAN_HARRIS));
     _resampler2 = gr::filter::rational_resampler_base_ccf::make(second_interp, 1,
-                    gr::filter::firdes::low_pass(second_interp,_samp_rate,_filter_width,_filter_width*5));
+                gr::filter::firdes::low_pass(second_interp,_samp_rate,_filter_width,_filter_width*5));
 
     connect(self(),0,_packed_to_unpacked,0);
     connect(_packed_to_unpacked,0,_scrambler,0);

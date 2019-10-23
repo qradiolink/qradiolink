@@ -39,18 +39,18 @@ gr_demod_freedv::gr_demod_freedv(std::vector<int>signature, int sps, int samp_ra
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(sps, _samp_rate, _target_samp_rate/2, _target_samp_rate/2,
-                                                           gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+    std::vector<float> taps = gr::filter::firdes::low_pass(sps, _samp_rate, _target_samp_rate/2,
+                        _target_samp_rate/2, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1,sps,taps);
     if(sb ==0)
     {
         _filter = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
-                                1, _target_samp_rate, low_cutoff, _filter_width,600,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
+            1, _target_samp_rate, low_cutoff, _filter_width,600,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     }
     else
     {
         _filter = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
-                                1, _target_samp_rate, -_filter_width, -low_cutoff,600,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
+            1, _target_samp_rate, -_filter_width, -low_cutoff,600,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     }
 
     _feed_forward_agc = gr::analog::feedforward_agc_cc::make(512,1);

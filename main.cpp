@@ -38,7 +38,7 @@
 
 void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
                        AudioReader *audioreader, MainWindow *w, MumbleClient *mumbleclient,
-                       RadioController *radio_op, QThread *t2, QThread *t3);
+                       RadioController *radio_op);
 void connectCommandSignals(TelnetServer *telnet_server, MumbleClient *mumbleclient,
                        RadioController *radio_op);
 
@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
         /// Init GUI
         ///
         w = new MainWindow(settings, radio_channels);
-        connectGuiSignals(telnet_server, audiowriter, audioreader, w, mumbleclient, radio_op, t2, t3);
+        connectGuiSignals(telnet_server, audiowriter, audioreader, w, mumbleclient, radio_op);
         /// requires the slots to be set up
         w->initSettings();
         w->show();
@@ -176,7 +176,7 @@ int main(int argc, char *argv[])
     delete radio_channels;
     settings->saveConfig();
     delete settings;
-    logger->log(Logger::LogLevelInfo, "qradiolink stopping");
+    logger->log(Logger::LogLevelInfo, "Stopping qradiolink");
     delete logger;
     return ret;
 }
@@ -284,7 +284,7 @@ void connectCommandSignals(TelnetServer *telnet_server, MumbleClient *mumbleclie
 
 void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
                        AudioReader *audioreader, MainWindow *w, MumbleClient *mumbleclient,
-                       RadioController *radio_op, QThread *t2, QThread *t3)
+                       RadioController *radio_op)
 {
     /// GUI to radio and Mumble
     QObject::connect(w,SIGNAL(startTransmission()),radio_op,SLOT(startTransmission()));

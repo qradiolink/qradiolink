@@ -17,7 +17,8 @@
 #include "radiocontroller.h"
 
 
-RadioController::RadioController(Settings *settings, Logger *logger, RadioChannels *radio_channels, QObject *parent) :
+RadioController::RadioController(Settings *settings, Logger *logger,
+                                 RadioChannels *radio_channels, QObject *parent) :
     QObject(parent)
 {
     /// these two pointers are owned by main()
@@ -37,8 +38,10 @@ RadioController::RadioController(Settings *settings, Logger *logger, RadioChanne
     _mutex = new QMutex;
 
     _rand_frame_data = new unsigned char[5000];
-    _to_voip_buffer = new QVector<short>; // one way queue from radio and local voice to Mumble
-    _fft_data = new float[1024*1024]; // pre-allocated at maximum possible FFT size (make it a constant?)
+    /// one way queue from radio and local voice to Mumble
+    _to_voip_buffer = new QVector<short>;
+    /// pre-allocated at maximum possible FFT size (make it a constant?)
+    _fft_data = new float[1024*1024];
 
     _voice_led_timer = new QTimer(this);
     _voice_led_timer->setSingleShot(true);
@@ -478,7 +481,8 @@ int RadioController::processInputVideoStream(bool &frame_flag)
     microsec = (quint64)timer.nsecsElapsed();
     if(microsec < 100000000)
     {
-        struct timespec time_to_sleep = {0, (100000000 - (long)microsec) - 5000000}; // FIXME: hardcoded value
+        // FIXME: hardcoded value
+        struct timespec time_to_sleep = {0, (100000000 - (long)microsec) - 5000000};
         nanosleep(&time_to_sleep, NULL);
     }
 
@@ -1134,7 +1138,8 @@ void RadioController::startTransmission()
         /// Trying to transmit and receive at different sample rates
         /// might work if using different devices so just log a warning
         _logger->log(Logger::LogLevelWarning,
-                     "Trying to transmit and receive at different sample rates, works only with separate devices");
+            "Trying to transmit and receive at different sample rates,"
+                     "works only with separate devices");
         return;
     }
     if(_settings->tx_inited || _settings->voip_ptt_enabled)
@@ -1304,7 +1309,8 @@ void RadioController::toggleRX(bool value)
         {
             _modem->deinitRX(_rx_mode);
             _mutex->unlock();
-            _logger->log(Logger::LogLevelFatal, "Could not init RX device, check settings");
+            _logger->log(Logger::LogLevelFatal,
+                         "Could not init RX device, check settings and restart");
             emit initError("Could not init RX device, check settings");
             return;
         }
@@ -1365,7 +1371,8 @@ void RadioController::toggleTX(bool value)
                 _modem->startRX();
             _modem->deinitTX(_tx_mode);
             _mutex->unlock();
-            _logger->log(Logger::LogLevelFatal, "Could not init TX device, check settings");
+            _logger->log(Logger::LogLevelFatal,
+                         "Could not init TX device, check settings and restart");
             emit initError("Could not init TX device, check settings");
             return;
         }

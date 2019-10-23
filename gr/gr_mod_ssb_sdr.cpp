@@ -48,18 +48,16 @@ gr_mod_ssb_sdr::gr_mod_ssb_sdr(int sps, int samp_rate, int carrier_freq,
     _emphasis_filter = gr::filter::fft_filter_fff::make(1,emph_taps);
     _float_to_complex = gr::blocks::float_to_complex::make();
     std::vector<float> interp_taps = gr::filter::firdes::low_pass_2(_sps, _samp_rate,
-                            _filter_width, _filter_width, 120, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+                        _filter_width, _filter_width, 120, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
 
     _resampler = gr::filter::rational_resampler_base_ccf::make(_sps,1, interp_taps);
     _feed_forward_agc = gr::analog::feedforward_agc_cc::make(512,0.95);
     _amplify = gr::blocks::multiply_const_cc::make(3.8,1);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
-    _filter_usb = gr::filter::fft_filter_ccc::make(
-                1,gr::filter::firdes::complex_band_pass_2(
-                    1, target_samp_rate, 150, _filter_width, 150, 120, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
-    _filter_lsb = gr::filter::fft_filter_ccc::make(
-                1,gr::filter::firdes::complex_band_pass_2(
-                    1, target_samp_rate, -_filter_width, -150, 150, 120, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+    _filter_usb = gr::filter::fft_filter_ccc::make(1,gr::filter::firdes::complex_band_pass_2(
+            1, target_samp_rate, 150, _filter_width, 150, 120, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+    _filter_lsb = gr::filter::fft_filter_ccc::make(1,gr::filter::firdes::complex_band_pass_2(
+            1, target_samp_rate, -_filter_width, -150, 150, 120, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
 
 
 
@@ -89,12 +87,12 @@ void gr_mod_ssb_sdr::set_filter_width(int filter_width)
     _filter_width = filter_width;
     float target_samp_rate = 8000.0;
     std::vector<float> interp_taps = gr::filter::firdes::low_pass_2(_sps, _samp_rate,
-                                _filter_width, _filter_width,120, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+                    _filter_width, _filter_width,120, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
 
     std::vector<gr_complex> filter_usb_taps = gr::filter::firdes::complex_band_pass_2(
-                1, target_samp_rate, 150, _filter_width, 150, 120, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+            1, target_samp_rate, 150, _filter_width, 150, 120, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     std::vector<gr_complex> filter_lsb_taps = gr::filter::firdes::complex_band_pass_2(
-                1, target_samp_rate, -_filter_width, -150, 150, 120, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+            1, target_samp_rate, -_filter_width, -150, 150, 120, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
 
     _resampler->set_taps(interp_taps);
     _filter_usb->set_taps(filter_usb_taps);

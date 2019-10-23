@@ -690,7 +690,8 @@ bool gr_modem::demodulateAnalog()
     {
         if(_direct_mode_repeater)
         {
-            std::vector<float> *repeated_audio = new std::vector<float>(audio_data->begin(),audio_data->end());
+            std::vector<float> *repeated_audio = new std::vector<float>(
+                        audio_data->begin(),audio_data->end());
             transmitPCMAudio(repeated_audio);
         }
         emit pcmAudio(audio_data);

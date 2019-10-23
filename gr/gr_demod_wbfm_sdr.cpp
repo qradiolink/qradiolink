@@ -46,15 +46,15 @@ gr_demod_wbfm_sdr::gr_demod_wbfm_sdr(std::vector<int>signature, int sps, int sam
     std::vector<float> deemph_taps(coeff, coeff + sizeof(coeff) / sizeof(coeff[0]) );
     _deemphasis_filter = gr::filter::fft_filter_fff::make(1,deemph_taps);
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _target_samp_rate/2, _target_samp_rate/2,
-                                                           gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _target_samp_rate/2,
+                                    _target_samp_rate/2, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     std::vector<float> audio_taps = gr::filter::firdes::low_pass(1, _target_samp_rate, 4000, 2000,
-                                                                 gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+                                                        gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1,5,taps);
     _audio_resampler = gr::filter::rational_resampler_base_fff::make(1,25, audio_taps);
 
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
-                            1, _target_samp_rate, _filter_width,600,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
+            1, _target_samp_rate, _filter_width,600,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
 
     _fm_demod = gr::analog::quadrature_demod_cf::make(_target_samp_rate/(2*M_PI* _filter_width));
     _squelch = gr::analog::pwr_squelch_cc::make(-140,0.01,0,true);
@@ -78,7 +78,7 @@ void gr_demod_wbfm_sdr::set_filter_width(int filter_width)
 {
     _filter_width = filter_width;
     std::vector<float> filter_taps = gr::filter::firdes::low_pass(
-                                1, _target_samp_rate, _filter_width,1200,gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+            1, _target_samp_rate, _filter_width,1200,gr::filter::firdes::WIN_BLACKMAN_HARRIS);
 
     _filter->set_taps(filter_taps);
     _fm_demod->set_gain(_target_samp_rate/(2*M_PI* _filter_width));
