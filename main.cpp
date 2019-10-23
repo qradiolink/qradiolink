@@ -38,7 +38,7 @@
 
 void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
                        AudioReader *audioreader, MainWindow *w, MumbleClient *mumbleclient,
-                       RadioController *radio_op);
+                       RadioController *radio_op, QThread *t2, QThread *t3);
 void connectCommandSignals(TelnetServer *telnet_server, MumbleClient *mumbleclient,
                        RadioController *radio_op);
 
@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
         /// Init GUI
         ///
         w = new MainWindow(settings, radio_channels);
-        connectGuiSignals(telnet_server, audiowriter, audioreader, w, mumbleclient, radio_op);
+        connectGuiSignals(telnet_server, audiowriter, audioreader, w, mumbleclient, radio_op, t2, t3);
         /// requires the slots to be set up
         w->initSettings();
         w->show();
@@ -284,7 +284,7 @@ void connectCommandSignals(TelnetServer *telnet_server, MumbleClient *mumbleclie
 
 void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
                        AudioReader *audioreader, MainWindow *w, MumbleClient *mumbleclient,
-                       RadioController *radio_op)
+                       RadioController *radio_op, QThread *t2, QThread *t3)
 {
     /// GUI to radio and Mumble
     QObject::connect(w,SIGNAL(startTransmission()),radio_op,SLOT(startTransmission()));
@@ -349,6 +349,10 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
                      mumbleclient,SLOT(setSelfDeaf(bool, bool)));
     QObject::connect(w,SIGNAL(setSelfMute(bool)),
                      mumbleclient,SLOT(setSelfMute(bool)));
+    QObject::connect(w,SIGNAL(restartAudioOutputThread()),
+                     audiowriter,SLOT(restart()));
+    QObject::connect(w,SIGNAL(restartAudioInputThread()),
+                     audiowriter,SLOT(restart()));
 
     /// Radio to GUI
     QObject::connect(radio_op, SIGNAL(printText(QString,bool)), w, SLOT(displayText(QString,bool)));

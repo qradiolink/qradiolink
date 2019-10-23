@@ -24,6 +24,7 @@ AudioWriter::AudioWriter(const Settings *settings, Logger *logger, QObject *pare
     _logger = logger;
     _rx_sample_queue = new QVector<audio_samples*>;
     _working = true;
+    _restart = false;
 }
 
 AudioWriter::~AudioWriter()
@@ -38,6 +39,11 @@ void AudioWriter::stop()
     _working = false;
 }
 
+void AudioWriter::restart()
+{
+    _working = false;
+    _restart = true;
+}
 
 void AudioWriter::writePCM(short *pcm, int bytes, bool preprocess, int audio_mode)
 {
@@ -54,6 +60,8 @@ void AudioWriter::writePCM(short *pcm, int bytes, bool preprocess, int audio_mod
 
 void AudioWriter::run()
 {
+    start:
+    _working = true;
     // FIXME: support different frame durations
     AudioProcessor *processor = new AudioProcessor;
     QAudioFormat format;
@@ -76,9 +84,8 @@ void AudioWriter::run()
     }
     if (!device.isFormatSupported(format)) {
        _logger->log(Logger::LogLevelCritical, "Raw audio format not supported by backend, cannot play audio.");
-       return;
     }
-
+    _logger->log(Logger::LogLevelInfo, QString("Using audio output device %1").arg(device.deviceName()));
     QAudioOutput *audio_writer = new QAudioOutput(device, format, this);
     audio_writer->setBufferSize(4096);
     QIODevice *audio_dev = audio_writer->start();
@@ -115,7 +122,15 @@ void AudioWriter::run()
             nanosleep(&time_to_sleep, NULL);
         }
     }
+    _rx_sample_queue->clear();
+    audio_dev->close();
     audio_writer->stop();
     delete audio_writer;
     delete processor;
+    if(_restart)
+    {
+        _restart = false;
+        goto start;
+    }
+    emit finished();
 }

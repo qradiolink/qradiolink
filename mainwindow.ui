@@ -2171,6 +2171,12 @@ color: rgb(0, 0, 71);</string>
              </property>
              <item row="12" column="2">
               <widget class="QLabel" name="label_34">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="text">
                 <string>Calibrate RSSI
 and S-meter (dBm)</string>
@@ -2199,6 +2205,12 @@ and S-meter (dBm)</string>
              </item>
              <item row="9" column="0">
               <widget class="QLabel" name="label_30">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="text">
                 <string>Microphone gain</string>
                </property>
@@ -2338,6 +2350,12 @@ and S-meter (dBm)</string>
              </item>
              <item row="1" column="0">
               <widget class="QLabel" name="label_2">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="text">
                 <string>RX device args</string>
                </property>
@@ -2346,7 +2364,7 @@ and S-meter (dBm)</string>
              <item row="11" column="0">
               <widget class="QLabel" name="label_18">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
@@ -2359,9 +2377,14 @@ and S-meter (dBm)</string>
              </item>
              <item row="3" column="0">
               <widget class="QLabel" name="label_33">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="text">
-                <string>Output audio device
-Requires restart</string>
+                <string>Output audio device</string>
                </property>
               </widget>
              </item>
@@ -2462,6 +2485,12 @@ Requires restart</string>
              </item>
              <item row="11" column="2">
               <widget class="QLabel" name="label_24">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="text">
                 <string>Scan step (Hz)</string>
                </property>
@@ -2521,6 +2550,12 @@ Requires restart</string>
              </item>
              <item row="8" column="0">
               <widget class="QLabel" name="label_36">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="text">
                 <string>Digital gain (TX)</string>
                </property>
@@ -2528,6 +2563,12 @@ Requires restart</string>
              </item>
              <item row="2" column="0">
               <widget class="QLabel" name="label_3">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="text">
                 <string>TX device args</string>
                </property>
@@ -2535,6 +2576,12 @@ Requires restart</string>
              </item>
              <item row="3" column="2">
               <widget class="QLabel" name="label_4">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="text">
                 <string>Callsign</string>
                </property>
@@ -2577,6 +2624,12 @@ Requires restart</string>
              </item>
              <item row="2" column="2">
               <widget class="QLabel" name="label_6">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="text">
                 <string>RX antenna</string>
                </property>
@@ -2603,6 +2656,12 @@ Requires restart</string>
              </item>
              <item row="1" column="2">
               <widget class="QLabel" name="label_5">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="text">
                 <string>TX antenna</string>
                </property>
@@ -2666,14 +2725,25 @@ Requires restart</string>
              </item>
              <item row="4" column="0">
               <widget class="QLabel" name="label_32">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="text">
-                <string>Input audio device
-Requires restart</string>
+                <string>Input audio device</string>
                </property>
               </widget>
              </item>
              <item row="8" column="2">
               <widget class="QLabel" name="label_19">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="text">
                 <string>Agc attack rate
 (lower is faster)</string>
@@ -2704,6 +2774,12 @@ Requires restart</string>
              </item>
              <item row="6" column="0">
               <widget class="QLabel" name="label_10">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="text">
                 <string>Video Device</string>
                </property>
@@ -2711,6 +2787,12 @@ Requires restart</string>
              </item>
              <item row="6" column="2">
               <widget class="QLabel" name="label_8">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="text">
                 <string>TX Freq Correction (ppm)</string>
                </property>
@@ -2718,6 +2800,12 @@ Requires restart</string>
              </item>
              <item row="12" column="0">
               <widget class="QLabel" name="label_21">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="text">
                 <string>Manual frequency
  entry (kHz)</string>
@@ -2748,6 +2836,12 @@ Requires restart</string>
              </item>
              <item row="4" column="2">
               <widget class="QLabel" name="label_7">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="text">
                 <string>RX Freq Correction (ppm)</string>
                </property>
@@ -2755,6 +2849,12 @@ Requires restart</string>
              </item>
              <item row="9" column="2">
               <widget class="QLabel" name="label_37">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="text">
                 <string>Agc decay rate
 (higher is slower)</string>
@@ -2785,6 +2885,12 @@ Requires restart</string>
              </item>
              <item row="10" column="0">
               <widget class="QLabel" name="label_38">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="text">
                 <string>VOIP volume</string>
                </property>
@@ -2792,6 +2898,12 @@ Requires restart</string>
              </item>
              <item row="10" column="2">
               <widget class="QLabel" name="label_39">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="text">
                 <string>Remote control port</string>
                </property>
@@ -2863,6 +2975,12 @@ Requires restart</string>
              </item>
              <item row="13" column="2">
               <widget class="QLabel" name="label_40">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="text">
                 <string>Scan resume time (sec)</string>
                </property>
@@ -4291,8 +4409,8 @@ font: 9pt &quot;Sans Serif&quot;;</string>
              <bool>false</bool>
             </property>
             <property name="styleSheet">
-             <string notr="true">font: 10pt &quot;Sans Serif&quot;;
-color: #009900;
+             <string notr="true">color: #009900;
+font: 14pt &quot;Sans Serif&quot;;
 border-width: 4px;
 
 </string>
@@ -4339,7 +4457,7 @@ border-width: 4px;
             <property name="font">
              <font>
               <family>Sans Serif</family>
-              <pointsize>10</pointsize>
+              <pointsize>14</pointsize>
               <weight>50</weight>
               <italic>false</italic>
               <bold>false</bold>
@@ -4361,7 +4479,7 @@ border-width: 4px;
              <bool>false</bool>
             </property>
             <property name="styleSheet">
-             <string notr="true">font: 10pt &quot;Sans Serif&quot;;
+             <string notr="true">font: 14pt &quot;Sans Serif&quot;;
 border-width: 4px;
 color: #cc0000</string>
             </property>

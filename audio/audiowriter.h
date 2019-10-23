@@ -40,6 +40,7 @@ public slots:
     void run();
     void writePCM(short *pcm, int bytes, bool preprocess, int audio_mode);
     void stop();
+    void restart();
 
 private:
     struct audio_samples
@@ -54,6 +55,7 @@ private:
     Logger *_logger;
     QVector<audio_samples*> *_rx_sample_queue;
     bool _working;
+    bool _restart;
     QMutex _mutex;
 
 };

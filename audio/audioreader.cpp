@@ -23,16 +23,22 @@ AudioReader::AudioReader(const Settings *settings, Logger *logger, QObject *pare
     _settings = settings;
     _logger = logger;
     _working = true;
+    _restart = false;
     _capture_audio = false;
     _read_audio_mode = AudioProcessor::AUDIO_MODE_ANALOG;
     _read_preprocess = false;
-
 }
 
 
 void AudioReader::stop()
 {
     _working = false;
+}
+
+void AudioReader::restart()
+{
+    _working = false;
+    _restart = true;
 }
 
 void AudioReader::setReadMode(bool capture, bool preprocess, int audio_mode)
@@ -44,10 +50,10 @@ void AudioReader::setReadMode(bool capture, bool preprocess, int audio_mode)
     _mutex.unlock();
 }
 
-
-
 void AudioReader::run()
 {
+    start:
+    _working = true;
     AudioProcessor *processor = new AudioProcessor;
     _buffer = new QByteArray;
     // FIXME: support different frame durations
@@ -71,9 +77,8 @@ void AudioReader::run()
     }
     if (!device.isFormatSupported(format)) {
        _logger->log(Logger::LogLevelCritical, "Raw audio format not supported by backend, cannot capture audio.");
-       return;
     }
-
+    _logger->log(Logger::LogLevelInfo, QString("Using audio input device %1").arg(device.deviceName()));
     QAudioInput *audio_reader = new QAudioInput(device,format, this);
     audio_reader->setBufferSize(4096);
     QIODevice *audio_dev = audio_reader->start();
@@ -109,8 +114,16 @@ void AudioReader::run()
         }
 
     }
+    audio_dev->close();
     audio_reader->stop();
+    _buffer->clear();
     delete audio_reader;
     delete processor;
     delete _buffer;
+    if(_restart)
+    {
+        _restart = false;
+        goto start;
+    }
+    emit finished();
 }

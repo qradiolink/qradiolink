@@ -39,12 +39,14 @@ public slots:
     void run();
     void setReadMode(bool capture, bool preprocess, int audio_mode);
     void stop();
+    void restart();
 
 private:
     const Settings *_settings;
     Logger *_logger;
     QByteArray *_buffer;
     bool _working;
+    bool _restart;
     bool _capture_audio;
     bool _read_preprocess;
     int _read_audio_mode;

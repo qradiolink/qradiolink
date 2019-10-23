@@ -133,6 +133,10 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     QObject::connect(ui->deafenSelfButton,SIGNAL(toggled(bool)),this,SLOT(toggleSelfDeaf(bool)));
     QObject::connect(ui->voipGainSlider,SIGNAL(valueChanged(int)),this,SLOT(changeVoipVolume(int)));
     QObject::connect(ui->scanTimerSpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateScanResumeTime(int)));
+    QObject::connect(ui->audioOutputComboBox,SIGNAL(currentIndexChanged(int)),
+                     this,SLOT(updateAudioOutput(int)));
+    QObject::connect(ui->audioInputComboBox,SIGNAL(currentIndexChanged(int)),
+                     this,SLOT(updateAudioInput(int)));
 
     QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
     QObject::connect(ui->plotterFrame,SIGNAL(pandapterRangeChanged(float,float)),
@@ -1621,4 +1625,17 @@ void MainWindow::setBurstIPMode(bool value)
 void MainWindow::updateScanResumeTime(int value)
 {
     emit setScanResumeTime(value);
+}
+
+void MainWindow::updateAudioOutput(int value)
+{
+    Q_UNUSED(value);
+    _settings->audio_output_device = ui->audioOutputComboBox->currentText();
+    emit restartAudioOutputThread();
+}
+void MainWindow::updateAudioInput(int value)
+{
+    Q_UNUSED(value);
+    _settings->audio_input_device = ui->audioInputComboBox->currentText();
+    emit restartAudioInputThread();
 }

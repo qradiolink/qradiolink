@@ -147,6 +147,8 @@ public slots:
     void setBurstIPMode(bool value);
     void setTheme(bool value);
     void updateScanResumeTime(int value);
+    void updateAudioOutput(int value);
+    void updateAudioInput(int value);
 
 signals:
     void terminateConnections();
@@ -204,7 +206,8 @@ signals:
     void enableRemote();
     void disableRemote();
     void setScanResumeTime(int value);
-
+    void restartAudioOutputThread();
+    void restartAudioInputThread();
 
 public:
     explicit MainWindow(Settings *settings, RadioChannels *radio_channels, QWidget *parent = 0);

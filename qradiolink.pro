@@ -106,9 +106,6 @@ SOURCES += main.cpp\
     gr/rx_fft.cpp
 
 
-
-
-
 HEADERS  += mainwindow.h\
         audio/audioencoder.h\
         audio/audioprocessor.h \
@@ -193,7 +190,6 @@ LIBS += -lgnuradio-pmt -lgnuradio-analog -lgnuradio-fft -lgnuradio-vocoder \
         -lboost_system$$BOOST_SUFFIX
 LIBS += -lrt  # need to include on some distros
 LIBS += -lprotobuf -lopus -lcodec2 -ljpeg -lconfig++ -lspeexdsp -lftdi
-
 
 
 RESOURCES += resources.qrc
