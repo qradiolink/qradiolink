@@ -1,3 +1,25 @@
+qradiolink (0.8.2-1) RELEASED; urgency=medium
+
+  [ Adrian Musceac ]
+  * Fixed CTCSS not being transmitted
+  * Fixed broken IP modem
+  * Fixed issues in relay controller
+  * Faster memory scan by not changing modes and CTCSS if unnecessary
+  * Skip memory channel scan setting
+  * Update GUI when changing channels during scan
+  * Added 2FSK mode with Codec2 700C, all 2FSK modes now have RRC filtering
+  * Added IP modem burst mode setting to GUI
+  * Increased resilience of DQPSK modes
+  * Re-enabled logging facility
+  * Audio mixing
+  * Remote control via network
+  * Remote control via Mumble private text messages
+  * Run headless (no graphical user interface) for terminal usage on
+  embedded platforms like the Raspberry Pi or similar boards without any screen
+  * Mixed mode repeater (e.g. FM to Codec2 and viceversa, or FM to Opus
+  and viceversa or any combination of voice modes)
+
+
 qradiolink (0.8.2-rc6) UNRELEASED; urgency=medium
 
   [ Adrian Musceac ]
