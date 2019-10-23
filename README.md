@@ -45,6 +45,7 @@ Features
 - Remote control via network (requires a telnet client or similar program, can be scripted)
 - Remote control via Mumble private text messages
 - Run headless (no graphical user interface) for terminal usage on embedded platforms like the Raspberry Pi or similar boards without any screen
+- Night mode theme
 - Transmit and receive analog FM, SSB, AM, digital voice, text messages, digital video, IP protocol.
 - Mixed operation mode (receive one mode and transmit another)
 - Full duplex and simplex operation
