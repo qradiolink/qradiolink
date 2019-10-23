@@ -1,3 +1,19 @@
+qradiolink (0.8.2-rc6) UNRELEASED; urgency=medium
+
+  [ Adrian Musceac ]
+  * Fixed CTCSS not being transmitted
+  * Faster scanning by not changing modes and CTCSS if unnecessary
+  * Skip channel scan setting
+  * Update GUI when changing channels during scan
+  * Added 2FSK mode with Codec2 700C, all 2FSK modes now have RRC filtering
+  * Fixed issues in relay controller
+  * Added IP modem burst mode setting to GUI
+  * Increased resilience of DQPSK modes
+
+
+ -- Adrian Musceac <kantooon@gmail.com>  Sat, 19 Oct 2019 23:00:00 +0300
+
+
 qradiolink (0.8.2-rc5) UNRELEASED; urgency=medium
 
   [ Adrian Musceac ]
