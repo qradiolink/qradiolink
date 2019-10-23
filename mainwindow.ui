@@ -96,7 +96,7 @@
 </string>
         </property>
         <property name="currentIndex">
-         <number>3</number>
+         <number>2</number>
         </property>
         <property name="iconSize">
          <size>
@@ -1521,7 +1521,7 @@ font: 10pt &quot;Sans Serif&quot;;
                   <item row="0" column="0">
                    <widget class="QLabel" name="label_27">
                     <property name="sizePolicy">
-                     <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                       <horstretch>0</horstretch>
                       <verstretch>0</verstretch>
                      </sizepolicy>
@@ -1533,7 +1533,7 @@ font: 10pt &quot;Sans Serif&quot;;
                      </size>
                     </property>
                     <property name="styleSheet">
-                     <string notr="true">font: 12pt &quot;Sans Serif&quot;;</string>
+                     <string notr="true">font: 10pt &quot;Sans Serif&quot;;</string>
                     </property>
                     <property name="frameShape">
                      <enum>QFrame::NoFrame</enum>
@@ -1630,8 +1630,14 @@ color: rgb(0, 67, 98);</string>
                   </item>
                   <item row="0" column="2">
                    <widget class="QLabel" name="label_29">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <property name="styleSheet">
-                     <string notr="true">font: 12pt &quot;Sans Serif&quot;;</string>
+                     <string notr="true">font: 10pt &quot;Sans Serif&quot;;</string>
                     </property>
                     <property name="text">
                      <string>Server log</string>
@@ -1719,8 +1725,8 @@ color: rgb(0, 67, 98);</string>
                     </size>
                    </property>
                    <property name="styleSheet">
-                    <string notr="true">font: 10pt &quot;Sans Serif&quot;;
-color: rgb(0, 0, 71);</string>
+                    <string notr="true">font: 9pt &quot;Sans Serif&quot;;
+</string>
                    </property>
                    <property name="text">
                     <string>Password</string>
@@ -1745,8 +1751,8 @@ color: rgb(0, 0, 71);</string>
                     </size>
                    </property>
                    <property name="styleSheet">
-                    <string notr="true">font: 10pt &quot;Sans Serif&quot;;
-color: rgb(0, 0, 71);</string>
+                    <string notr="true">font: 9pt &quot;Sans Serif&quot;;
+</string>
                    </property>
                    <property name="text">
                     <string>Hostname or IP address of VOIP server</string>
@@ -1997,8 +2003,8 @@ border-width: 4px;
                  <item row="0" column="1">
                   <widget class="QLabel" name="label_31">
                    <property name="styleSheet">
-                    <string notr="true">font: 10pt &quot;Sans Serif&quot;;
-color: rgb(0, 0, 71);</string>
+                    <string notr="true">font: 9pt &quot;Sans Serif&quot;;
+</string>
                    </property>
                    <property name="text">
                     <string>Port number</string>
