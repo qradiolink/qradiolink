@@ -73,14 +73,7 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     ui->frameCtrlFreq->setDigitColor(QColor(0,205,0,0xFF));
     ui->frameCtrlFreq->setUnitsColor(QColor(254,254,254,0xFF));
 
-
-    ui->txGainDial->setStyleSheet("background-color: rgb(150, 150, 150);");
-    ui->rxGainDial->setStyleSheet("background-color: rgb(150, 150, 150);");
-    ui->rxSquelchDial->setStyleSheet("background-color:rgb(150, 150, 150);");
-    ui->rxVolumeDial->setStyleSheet("background-color: rgb(150, 150, 150);");
-    ui->tuneDial->setStyleSheet("background-color: rgb(150, 150, 150);");
     ui->txGainDial->setNotchesVisible(true);
-
 
     QObject::connect(ui->buttonTransmit,SIGNAL(toggled(bool)),this,SLOT(startTx()));
     QObject::connect(ui->sendTextButton,SIGNAL(clicked()),this,SLOT(sendTextRequested()));
@@ -128,6 +121,7 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     QObject::connect(ui->checkBoxAudioCompressor,SIGNAL(toggled(bool)),this,SLOT(setAudioCompressor(bool)));
     QObject::connect(ui->checkBoxRelays,SIGNAL(toggled(bool)),this,SLOT(setRelays(bool)));
     QObject::connect(ui->burstIPCheckBox,SIGNAL(toggled(bool)),this,SLOT(setBurstIPMode(bool)));
+    QObject::connect(ui->nightModeCheckBox,SIGNAL(toggled(bool)),this,SLOT(setTheme(bool)));
     QObject::connect(ui->remoteControlCheckBox,SIGNAL(toggled(bool)),this,SLOT(setRemoteControl(bool)));
     QObject::connect(ui->rssiCalibrateButton,SIGNAL(clicked()),this,SLOT(setRSSICalibration()));
     QObject::connect(ui->saveChannelsButton,SIGNAL(clicked()),this,SLOT(saveMemoryChannes()));
@@ -141,19 +135,25 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
 
 
     QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
-    QObject::connect(ui->plotterFrame,SIGNAL(pandapterRangeChanged(float,float)),ui->plotterFrame,SLOT(setWaterfallRange(float,float)));
+    QObject::connect(ui->plotterFrame,SIGNAL(pandapterRangeChanged(float,float)),
+                     ui->plotterFrame,SLOT(setWaterfallRange(float,float)));
     QObject::connect(ui->plotterFrame,SIGNAL(newCenterFreq(qint64)),this,SLOT(tuneFreqPlotter(qint64)));
     QObject::connect(ui->plotterFrame,SIGNAL(newFilterFreq(int, int)),this,SLOT(changeFilterWidth(int, int)));
-    QObject::connect(ui->panadapterSlider,SIGNAL(valueChanged(int)),ui->plotterFrame,SLOT(setPercent2DScreen(int)));
+    QObject::connect(ui->panadapterSlider,SIGNAL(valueChanged(int)),
+                     ui->plotterFrame,SLOT(setPercent2DScreen(int)));
     QObject::connect(ui->averagingSlider,SIGNAL(valueChanged(int)),this,SLOT(setAveraging(int)));
     QObject::connect(ui->rangeSlider,SIGNAL(valueChanged(int)),this,SLOT(setFFTRange(int)));
-    QObject::connect(ui->plotterFrame,SIGNAL(newDemodFreq(qint64,qint64)),this,SLOT(carrierOffsetChanged(qint64,qint64)));
+    QObject::connect(ui->plotterFrame,SIGNAL(newDemodFreq(qint64,qint64)),
+                     this,SLOT(carrierOffsetChanged(qint64,qint64)));
 
-    QObject::connect(ui->voipTreeWidget,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this,SLOT(channelState(QTreeWidgetItem *,int)));
-    QObject::connect(ui->memoriesTableWidget,SIGNAL(cellClicked(int, int)),this,SLOT(tuneToMemoryChannel(int, int)));
+    QObject::connect(ui->voipTreeWidget,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),
+                     this,SLOT(channelState(QTreeWidgetItem *,int)));
+    QObject::connect(ui->memoriesTableWidget,SIGNAL(cellClicked(int, int)),
+                     this,SLOT(tuneToMemoryChannel(int, int)));
     QObject::connect(ui->addChannelButton,SIGNAL(clicked()), this, SLOT(addMemoryChannel()));
     QObject::connect(ui->removeChannelButton,SIGNAL(clicked()), this, SLOT(removeMemoryChannel()));
-    QObject::connect(ui->memoriesTableWidget,SIGNAL(itemChanged(QTableWidgetItem*)),this,SLOT(editMemoryChannel(QTableWidgetItem*)));
+    QObject::connect(ui->memoriesTableWidget,SIGNAL(itemChanged(QTableWidgetItem*)),
+                     this,SLOT(editMemoryChannel(QTableWidgetItem*)));
 
     QObject::connect(&_secondary_text_timer,SIGNAL(timeout()),ui->secondaryTextDisplay,SLOT(hide()));
     QObject::connect(&_video_timer,SIGNAL(timeout()),ui->videoFrame,SLOT(hide()));
@@ -225,6 +225,7 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
 
     setWindowIcon(QIcon(":/res/logo.png"));
     setWindowTitle("QRadioLink");
+
 }
 
 void MainWindow::initSettings()
@@ -244,6 +245,48 @@ void MainWindow::initSettings()
     setTxVolumeDisplay(_settings->tx_volume);
     changeVoipVolume(_settings->voip_volume);
     setRSSICalibration();
+    setTheme((bool)_settings->night_mode);
+}
+
+void MainWindow::setTheme(bool value)
+{
+    if(value)
+    {
+        this->setStyleSheet(
+                "QWidget {background-color:#2a2a2a; color:#ffffd3}"
+                "QPushButton {background-color:#555555; color:#ffffd3}"
+                "QPushButton:hover {background-color:#005a84; color:#ffffd3}"
+                "QPushButton:checked {background-color:#01194c; color:#ffffd3}"
+                "QCheckBox:hover {background-color:#555555; color:#ffffd3}"
+                "QCheckBox:checked {color:#fffb6f}"
+                "QSlider:hover {background-color: rgb(0, 67, 98); color:#ffffd3}"
+                "QDial {background-color:#5a5a5a; color:#ffffd3}"
+                "QDial:hover {background-color:#002c86; color:#ffffd3}"
+                "QComboBox:hover {color: rgb(240, 240, 119); background-color: rgb(0, 0, 67)}"
+                "QTreeWidgetItem {background-color:#001e5a; color:#ffffd3}"
+                "QTreeWidgetItem:hover {background-color:#002c86; color:#ffffd3}"
+                "QLineEdit {background-color:#a3a3a3; color:#000000}"
+                "QTextEdit {background-color:#a3a3a3; color:#000000}");
+    }
+    else
+    {
+        this->setStyleSheet(
+                "QPushButton {background-color:#ccc7c4; color:#000000}"
+                "QPushButton:hover {background-color:#005a84; color:#ffffd3}"
+                "QPushButton:checked {background-color:#01194c; color:#ffffd3}"
+                "QCheckBox:hover {background-color:#fcfcfc; color:#0e0e00}"
+                "QCheckBox:checked {color:#585800}"
+                "QSlider:hover {background-color: rgb(0, 67, 98); color:#ffffd3}"
+                "QDial {background-color:#9a9a9a; color:#ffffd3}"
+                "QDial:hover {background-color:#002c86; color:#ffffd3}"
+                "QComboBox {color: rgb(240, 240, 119); background-color: rgb(0, 0, 67);}"
+                "QComboBox:hover {color: rgb(240, 240, 119); background-color: rgb(0, 0, 67);}"
+                "QTreeWidgetItem {background-color:#2a2a2a; color:#ffffd3}"
+                "QTreeWidget {background-color:#2a2a2a; color:#ffffd3}"
+                "QTreeWidgetItem:hover {background-color:#002c86; color:#ffffd3}"
+                "QLineEdit {background-color:#ffffff; color:#000000}"
+                "QTextEdit {background-color:#ffffff; color:#000000}");
+    }
 }
 
 MainWindow::~MainWindow()
@@ -1021,12 +1064,15 @@ void MainWindow::updateOnlineStations(StationList stations)
             st_item->setText(0,stations.at(i)->callsign);
             st_item->setText(3,QString::number(stations.at(i)->id));
             st_item->setIcon(0,QIcon(":/res/im-user.png"));
-            st_item->setBackgroundColor(0,QColor("#ffffff"));
-            st_item->setBackgroundColor(1,QColor("#ffffff"));
-            st_item->setBackgroundColor(2,QColor("#ffffff"));
-            st_item->setBackgroundColor(3,QColor("#ffffff"));
+            st_item->setBackgroundColor(0,QColor("#2a2a2a"));
+            st_item->setBackgroundColor(1,QColor("#2a2a2a"));
+            st_item->setBackgroundColor(2,QColor("#2a2a2a"));
+            st_item->setBackgroundColor(3,QColor("#2a2a2a"));
             if(stations.at(i)->is_user)
-                st_item->setTextColor(0,QColor("#cc0000"));
+                st_item->setTextColor(0,QColor("#ff0000"));
+            else {
+                st_item->setTextColor(0,QColor("#dfdf6f"));
+            }
             item->addChild(st_item);
         }
     }
@@ -1077,12 +1123,12 @@ void MainWindow::updateChannels(ChannelList channels)
         t->setText(2,QString::number(chan->id));
         t->setText(0,chan->name);
         t->setText(1,chan->description);
-        t->setBackgroundColor(0,QColor("#ffffff"));
-        t->setBackgroundColor(1,QColor("#ffffff"));
-        t->setBackgroundColor(2,QColor("#ffffff"));
-        t->setTextColor(0,QColor("#000000"));
-        t->setTextColor(1,QColor("#000000"));
-        t->setTextColor(2,QColor("#000000"));
+        t->setBackgroundColor(0,QColor("#2a2a2a"));
+        t->setBackgroundColor(1,QColor("#2a2a2a"));
+        t->setBackgroundColor(2,QColor("#2a2a2a"));
+        t->setTextColor(0,QColor("#dfdf6f"));
+        t->setTextColor(1,QColor("#dfdf6f"));
+        t->setTextColor(2,QColor("#dfdf6f"));
         t->setIcon(0,QIcon(":/res/call-start.png"));
 
         if(chan->parent_id <= 0)
@@ -1112,12 +1158,12 @@ void MainWindow::joinedChannel(quint64 channel_id)
     if(old_channel_list.size() > 0)
     {
         QTreeWidgetItem *t = old_channel_list.at(0);
-        t->setBackgroundColor(0,QColor("#ffffff"));
-        t->setBackgroundColor(1,QColor("#ffffff"));
-        t->setBackgroundColor(2,QColor("#ffffff"));
-        t->setTextColor(0,QColor("#000000"));
-        t->setTextColor(1,QColor("#000000"));
-        t->setTextColor(2,QColor("#000000"));
+        t->setBackgroundColor(0,QColor("#2a2a2a"));
+        t->setBackgroundColor(1,QColor("#2a2a2a"));
+        t->setBackgroundColor(2,QColor("#2a2a2a"));
+        t->setTextColor(0,QColor("#dfdf6f"));
+        t->setTextColor(1,QColor("#dfdf6f"));
+        t->setTextColor(2,QColor("#dfdf6f"));
         t->setIcon(0,QIcon(":/res/call-start.png"));
     }
 
@@ -1127,9 +1173,9 @@ void MainWindow::joinedChannel(quint64 channel_id)
     if(channel_list.size() > 0)
     {
         QTreeWidgetItem *t = channel_list.at(0);
-        t->setBackgroundColor(0,QColor("#cc0000"));
-        t->setBackgroundColor(1,QColor("#cc0000"));
-        t->setBackgroundColor(2,QColor("#cc0000"));
+        t->setBackgroundColor(0,QColor("#ff0000"));
+        t->setBackgroundColor(1,QColor("#2a2a2a"));
+        t->setBackgroundColor(2,QColor("#2a2a2a"));
         t->setTextColor(0,QColor("#ffffff"));
         t->setTextColor(1,QColor("#ffffff"));
         t->setTextColor(2,QColor("#ffffff"));

@@ -80,6 +80,7 @@ public:
     int agc_attack;
     int agc_decay;
     int burst_ip_modem;
+    int night_mode;
 
     /// Not saved to config:
 

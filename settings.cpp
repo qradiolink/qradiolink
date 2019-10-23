@@ -51,6 +51,7 @@ Settings::Settings(Logger *logger)
     control_port = 4939;
     voip_server="127.0.0.1";
     bb_gain = 1;
+    night_mode = 0;
 
     /// old stuff, not used
     _mumble_tcp = 1; // used

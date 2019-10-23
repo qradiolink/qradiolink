@@ -145,6 +145,7 @@ public slots:
     void toggleSelfMute(bool mute);
     void changeVoipVolume(int value);
     void setBurstIPMode(bool value);
+    void setTheme(bool value);
 
 
 signals:
