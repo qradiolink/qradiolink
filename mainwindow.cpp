@@ -132,7 +132,7 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     QObject::connect(ui->muteSelfButton,SIGNAL(toggled(bool)),this,SLOT(toggleSelfMute(bool)));
     QObject::connect(ui->deafenSelfButton,SIGNAL(toggled(bool)),this,SLOT(toggleSelfDeaf(bool)));
     QObject::connect(ui->voipGainSlider,SIGNAL(valueChanged(int)),this,SLOT(changeVoipVolume(int)));
-
+    QObject::connect(ui->scanTimerSpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateScanResumeTime(int)));
 
     QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
     QObject::connect(ui->plotterFrame,SIGNAL(pandapterRangeChanged(float,float)),
@@ -272,9 +272,7 @@ void MainWindow::setTheme(bool value)
     else
     {
         this->setStyleSheet(
-                "QPushButton {background-color:#ccc7c4; color:#000000}"
                 "QPushButton:hover {background-color:#005a84; color:#ffffd3}"
-                "QPushButton:checked {background-color:#004362; color:#ffffd3}"
                 "QCheckBox:hover {background-color:#fcfcfc; color:#0e0e00}"
                 "QCheckBox:checked {color:#585800}"
                 "QSlider:hover {background-color: rgb(0, 67, 98); color:#ffffd3}"
@@ -503,7 +501,7 @@ void MainWindow::setConfig()
         ui->comboBoxTxCTCSS->setCurrentText("CTCSS");
     ui->agcAttackSpinBox->setValue(_settings->agc_attack);
     ui->agcDecaySpinBox->setValue(_settings->agc_decay);
-
+    ui->scanTimerSpinBox->setValue(_settings->scan_resume_time);
 }
 
 void MainWindow::saveUiConfig()
@@ -1618,4 +1616,9 @@ void MainWindow::setTxGainStages(gain_vector tx_gains)
 void MainWindow::setBurstIPMode(bool value)
 {
     _settings->burst_ip_modem = (int)value;
+}
+
+void MainWindow::updateScanResumeTime(int value)
+{
+    emit setScanResumeTime(value);
 }

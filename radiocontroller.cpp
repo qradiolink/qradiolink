@@ -1907,6 +1907,11 @@ void RadioController::calibrateRSSI(float value)
     _modem->calibrateRSSI(value);
 }
 
+void RadioController::setScanResumeTime(int value)
+{
+    _settings->scan_resume_time = value;
+}
+
 
 /// Start of scan functions
 ///
@@ -1921,8 +1926,10 @@ void RadioController::scan(bool receiving, bool wait_for_timer)
     }
     if(_scan_stop)
     {
+        if(receiving)
+            _scan_timer->restart();
         qint64 msec = (quint64)_scan_timer->nsecsElapsed() / 1000000;
-        if(msec < 5000)
+        if(msec < _settings->scan_resume_time * 1000)
         {
             return;
         }
@@ -1935,7 +1942,7 @@ void RadioController::scan(bool receiving, bool wait_for_timer)
     {
         qint64 msec = (quint64)_scan_timer->nsecsElapsed() / 1000000;
         // Buffers are at least 40 msec, so we need at least twice as much time
-        if(msec < 100)
+        if(msec < 120)
         {
             return;
         }
@@ -2029,7 +2036,7 @@ void RadioController::memoryScan(bool receiving, bool wait_for_timer)
         if(receiving)
             _scan_timer->restart();
         qint64 msec = (quint64)_scan_timer->nsecsElapsed() / 1000000;
-        if(msec < 5000)
+        if(msec < _settings->scan_resume_time * 1000)
         {
             return;
         }

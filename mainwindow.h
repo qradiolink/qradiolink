@@ -146,7 +146,7 @@ public slots:
     void changeVoipVolume(int value);
     void setBurstIPMode(bool value);
     void setTheme(bool value);
-
+    void updateScanResumeTime(int value);
 
 signals:
     void terminateConnections();
@@ -203,6 +203,7 @@ signals:
     void newMumbleMessage(QString text);
     void enableRemote();
     void disableRemote();
+    void setScanResumeTime(int value);
 
 
 public:

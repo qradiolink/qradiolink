@@ -96,7 +96,7 @@
 </string>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>3</number>
         </property>
         <property name="iconSize">
          <size>
@@ -2845,6 +2845,26 @@ Requires restart</string>
               <widget class="QCheckBox" name="nightModeCheckBox">
                <property name="text">
                 <string>Night mode</string>
+               </property>
+              </widget>
+             </item>
+             <item row="13" column="3">
+              <widget class="QSpinBox" name="scanTimerSpinBox">
+               <property name="minimum">
+                <number>1</number>
+               </property>
+               <property name="maximum">
+                <number>30</number>
+               </property>
+               <property name="value">
+                <number>5</number>
+               </property>
+              </widget>
+             </item>
+             <item row="13" column="2">
+              <widget class="QLabel" name="label_40">
+               <property name="text">
+                <string>Scan resume time (sec)</string>
                </property>
               </widget>
              </item>

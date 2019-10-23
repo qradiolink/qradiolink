@@ -198,8 +198,8 @@ LIBS += -lprotobuf -lopus -lcodec2 -ljpeg -lconfig++ -lspeexdsp -lftdi
 
 RESOURCES += resources.qrc
 
-isEmpty(INSTALL_PREFIX) {
-    INSTALL_PREFIX = /usr/local/bin
+!isEmpty(INSTALL_PREFIX) {
+    target.path = $$INSTALL_PREFIX
+    INSTALLS += target
 }
-target.path = $$INSTALL_PREFIX
-INSTALLS += target
+

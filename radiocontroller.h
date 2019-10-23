@@ -168,6 +168,7 @@ public slots:
     void enableRelays(bool value);
     void calibrateRSSI(float value);
     void setCallsign();
+    void setScanResumeTime(int value);
 
 private:
     unsigned int getFrameLength(unsigned char *data);

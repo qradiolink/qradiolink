@@ -483,6 +483,14 @@ void Settings::readConfig()
     {
         night_mode = 0;
     }
+    try
+    {
+        scan_resume_time = cfg.lookup("scan_resume_time");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        scan_resume_time = 5;
+    }
 
 }
 
@@ -536,6 +544,7 @@ void Settings::saveConfig()
     root.add("remote_control",libconfig::Setting::TypeInt) = remote_control;
     root.add("burst_ip_modem",libconfig::Setting::TypeInt) = burst_ip_modem;
     root.add("night_mode",libconfig::Setting::TypeInt) = night_mode;
+    root.add("scan_resume_time",libconfig::Setting::TypeInt) = scan_resume_time;
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());

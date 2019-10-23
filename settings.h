@@ -81,6 +81,7 @@ public:
     int agc_decay;
     int burst_ip_modem;
     int night_mode;
+    int scan_resume_time;
 
     /// Not saved to config:
 
