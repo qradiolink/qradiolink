@@ -172,7 +172,7 @@ void MumbleClient::processProtoMessage(QByteArray data)
     switch(type)
     {
     case 0: // Version
-        // processVersion(message,message_size);
+        processVersion(message,message_size);
         break;
     case 15:
         setupEncryption(message,message_size);
@@ -199,8 +199,29 @@ void MumbleClient::processProtoMessage(QByteArray data)
         processTextMessage(message, message_size);
         break;
     default:
+        _logger->log(Logger::LogLevelDebug, QString("Mumble message type %1 not implemented").arg(
+                                                        type));
         break;
     }
+}
+
+void MumbleClient::processVersion(quint8 *message, quint64 size)
+{
+    QString proto_version, release;
+    MumbleProto::Version v;
+    v.ParseFromArray(message,size);
+    if(v.has_version())
+    {
+        int version = v.version();
+        quint8 major = version >> 16;
+        quint8 minor = 0xFF & (version >> 8);
+        quint8 patch = 0xFF & version;
+        proto_version = QString("%1.%2.%3").arg(major).arg(minor).arg(patch);
+    }
+    if(v.has_release())
+        release = QString::fromStdString(v.release());
+    emit textMessage("Protocol version: " + proto_version + "\n", false);
+    emit textMessage("Release: " + release + "\n", false);
 }
 
 void MumbleClient::setupEncryption(quint8 *message, quint64 size)
