@@ -352,7 +352,7 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
     QObject::connect(w,SIGNAL(restartAudioOutputThread()),
                      audiowriter,SLOT(restart()));
     QObject::connect(w,SIGNAL(restartAudioInputThread()),
-                     audiowriter,SLOT(restart()));
+                     audioreader,SLOT(restart()));
 
     /// Radio to GUI
     QObject::connect(radio_op, SIGNAL(printText(QString,bool)), w, SLOT(displayText(QString,bool)));
