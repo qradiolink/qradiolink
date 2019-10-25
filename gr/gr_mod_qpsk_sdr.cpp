@@ -82,8 +82,8 @@ gr_mod_qpsk_sdr::gr_mod_qpsk_sdr(int sps, int samp_rate, int carrier_freq,
     _repeat = gr::blocks::repeat::make(8, _samples_per_symbol);
     _amplify = gr::blocks::multiply_const_cc::make(0.6,1);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
-    _filter = gr::filter::fft_filter_ccf::make(1,gr::filter::firdes::low_pass(
-                1, _samp_rate, _filter_width, filter_slope,gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+    _filter = gr::filter::fft_filter_ccf::make(1,gr::filter::firdes::low_pass_2(
+                1, _samp_rate, _filter_width, filter_slope, 120, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
 
     connect(self(),0,_packed_to_unpacked,0);
     connect(_packed_to_unpacked,0,_scrambler,0);
@@ -94,11 +94,10 @@ gr_mod_qpsk_sdr::gr_mod_qpsk_sdr(int sps, int samp_rate, int carrier_freq,
     connect(_diff_encoder,0,_chunks_to_symbols,0);
     connect(_chunks_to_symbols,0,_resampler,0);
     //connect(_repeat,0,_shaping_filter,0);
-    connect(_resampler,0,_amplify,0);
+    connect(_resampler,0,_filter,0);
+    connect(_filter,0,_amplify,0);
     connect(_amplify,0,_bb_gain,0);
     connect(_bb_gain,0,self(),0);
-    //connect(_filter,0,self(),0);
-
 }
 
 void gr_mod_qpsk_sdr::set_bb_gain(float value)

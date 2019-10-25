@@ -72,10 +72,10 @@ gr_mod_nbfm_sdr::gr_mod_nbfm_sdr(int sps, int samp_rate, int carrier_freq,
     connect(_emphasis_filter,0,_if_resampler,0);
     connect(_if_resampler,0,_fm_modulator,0);
     connect(_fm_modulator,0,_filter,0);
-    connect(_filter,0,_resampler,0);
-    connect(_resampler,0,_amplify,0);
+    connect(_filter,0,_amplify,0);
     connect(_amplify,0,_bb_gain,0);
-    connect(_bb_gain,0,self(),0);
+    connect(_bb_gain,0,_resampler,0);
+    connect(_resampler,0,self(),0);
 }
 
 void gr_mod_nbfm_sdr::set_filter_width(int filter_width)
@@ -83,11 +83,11 @@ void gr_mod_nbfm_sdr::set_filter_width(int filter_width)
     _filter_width = filter_width;
     float if_samp_rate = 50000;
     std::vector<float> if_taps = gr::filter::firdes::low_pass_2(25, if_samp_rate * 4,
-                    _filter_width, _filter_width, 1200, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+                    _filter_width, _filter_width, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     std::vector<float> filter_taps = gr::filter::firdes::low_pass_2(
                 1, if_samp_rate, _filter_width, 1200, 120, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     std::vector<float> interp_taps = gr::filter::firdes::low_pass_2(_sps, _samp_rate,
-                    _filter_width, if_samp_rate, 120, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+                    _filter_width, if_samp_rate, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
 
     _if_resampler->set_taps(if_taps);
     _filter->set_taps(filter_taps);

@@ -68,17 +68,17 @@ gr_mod_ssb_sdr::gr_mod_ssb_sdr(int sps, int samp_rate, int carrier_freq,
     if(!sb)
     {
         connect(_float_to_complex,0,_filter_usb,0);
-        connect(_filter_usb,0,_resampler,0);
+        connect(_filter_usb,0,_amplify,0);
     }
     else
     {
         connect(_float_to_complex,0,_filter_lsb,0);
-        connect(_filter_lsb,0,_resampler,0);
+        connect(_filter_lsb,0,_amplify,0);
     }
     //connect(_feed_forward_agc,0,_resampler,0);
-    connect(_resampler,0,_amplify,0);
     connect(_amplify,0,_bb_gain,0);
-    connect(_bb_gain,0,self(),0);
+    connect(_bb_gain,0,_resampler,0);
+    connect(_resampler,0,self(),0);
 
 }
 
