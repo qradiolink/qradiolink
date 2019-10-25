@@ -31,7 +31,8 @@ gr_audio_source::gr_audio_source() :
     _offset = 0;
     _finished = true;
     _data = new std::vector<float>;
-
+    /// Audio samples come in packets of 40 msec;
+    set_output_multiple(320);
 }
 
 gr_audio_source::~gr_audio_source()
@@ -68,7 +69,6 @@ int gr_audio_source::work(int noutput_items,
 {
     (void) input_items;
     gr::thread::scoped_lock guard(_mutex);
-    //if(_finished || (_data->size()==0))
     if(_finished)
     {
         guard.unlock();
@@ -90,7 +90,6 @@ int gr_audio_source::work(int noutput_items,
     _offset += n;
     if(_offset == _data->size())
     {
-        //gr::thread::scoped_lock guard(_mutex);
         _data->clear();
         _finished = true;
         _offset = 0;

@@ -31,7 +31,6 @@ gr_vector_source::gr_vector_source() :
     _offset = 0;
     _finished = true;
     _data = new std::vector<unsigned char>;
-
 }
 
 gr_vector_source::~gr_vector_source()
@@ -52,6 +51,7 @@ int gr_vector_source::set_data(std::vector<unsigned char> *data)
     if(_offset == 0)
     {
         gr::thread::scoped_lock guard(_mutex);
+        _data->reserve(data->size());
         _data->insert(_data->end(),data->begin(),data->end());
         delete data;
         _finished = false;
@@ -69,7 +69,6 @@ int gr_vector_source::work(int noutput_items,
 {
     (void) input_items;
     gr::thread::scoped_lock guard(_mutex);
-    //if(_finished || (_data->size()==0))
     if(_finished)
     {
         guard.unlock();
@@ -91,7 +90,6 @@ int gr_vector_source::work(int noutput_items,
     _offset += n;
     if(_offset == _data->size())
     {
-        //gr::thread::scoped_lock guard(_mutex);
         _data->clear();
         _finished = true;
         _offset = 0;
