@@ -67,6 +67,12 @@ then
 	exit 2
 fi
 
+# download linuxdeploy and its Qt plugin
+wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+wget https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
+chmod +x linuxdeploy*.AppImage
+
+
 Info "Starting build of ${SOURCE} using travis.debian.net"
 
 TAG="travis.debian.net/${SOURCE}"
@@ -494,10 +500,6 @@ then
 fi
 rm -f "${DEBC}"
 
-# download linuxdeploy and its Qt plugin
-docker exec "$(cat "${CIDFILE}")" wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
-docker exec "$(cat "${CIDFILE}")" wget https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
-docker exec "$(cat "${CIDFILE}")" chmod +x linuxdeploy*.AppImage
 docker exec "$(cat "${CIDFILE}")" ./linuxdeploy-x86_64.AppImage --appdir AppDir -e ${TRAVIS_DEBIAN_BUILD_DIR}/qradiolink -i res/icon.png -d qradiolink.desktop --plugin qt --output appimage
 
 Info "Removing container"
