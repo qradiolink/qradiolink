@@ -388,14 +388,10 @@ void MainWindow::changeEvent(QEvent *event)
         if (isMinimized())
         {
             emit enableGUIFFT(false);
-            emit enableGUIConst(false);
-            emit enableRSSI(false);
         }
         else
         {
             emit enableGUIFFT(true);
-            emit enableGUIConst(true);
-            emit enableRSSI(true);
         }
         */
     }
@@ -1468,7 +1464,7 @@ void MainWindow::updateRSSI(float value)
         //setFFTRange(1);
         _range_set = true;
     }
-    if(!_settings->show_controls && value > 90.0)
+    if(isMinimized() || !_settings->show_controls)
         return;
 
     //float S9 = 80.0; // degrees
