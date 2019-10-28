@@ -4,3 +4,4 @@
 .directory
 build/*
 .travis.yml-ubuntu
+*.AppImage
