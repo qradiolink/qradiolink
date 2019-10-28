@@ -624,6 +624,8 @@ void RadioController::sendEndBeep()
     {
         pcm->push_back((float)samples[i] / 32767.0f * 0.5);
     }
+    for(unsigned int i=0;i<320*4;i++)
+        pcm->push_back(0.0);
     emit pcmData(pcm);
 }
 
