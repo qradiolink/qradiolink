@@ -495,10 +495,10 @@ fi
 rm -f "${DEBC}"
 
 # download linuxdeploy and its Qt plugin
-docker exec wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
-docker exec wget https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
-docker exec chmod +x linuxdeploy*.AppImage
-docker exec ./linuxdeploy-x86_64.AppImage --appdir AppDir -e ${TRAVIS_DEBIAN_BUILD_DIR}/qradiolink -i res/icon.png -d qradiolink.desktop --plugin qt --output appimag
+docker exec "$(cat "${CIDFILE}")" wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+docker exec "$(cat "${CIDFILE}")" wget https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
+docker exec "$(cat "${CIDFILE}")" chmod +x linuxdeploy*.AppImage
+docker exec "$(cat "${CIDFILE}")" ./linuxdeploy-x86_64.AppImage --appdir AppDir -e ${TRAVIS_DEBIAN_BUILD_DIR}/qradiolink -i res/icon.png -d qradiolink.desktop --plugin qt --output appimage
 
 Info "Removing container"
 docker rm -f "$(cat "${CIDFILE}")" >/dev/null
