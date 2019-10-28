@@ -82,8 +82,6 @@ std::vector<unsigned char> * gr_deframer_bb::get_data()
 
 int gr_deframer_bb::findSync(unsigned char bit)
 {
-
-
     _shift_reg = (_shift_reg << 1) | (bit & 0x1);
     u_int32_t temp;
     if(_modem_type != 2)
@@ -161,9 +159,9 @@ int gr_deframer_bb::work(int noutput_items, gr_vector_const_void_star &input_ite
                 {
                     bits = 8;
                 }
+                gr::thread::scoped_lock guard(_mutex);
                 for(int k =0;k<bits;k++)
                 {
-                    gr::thread::scoped_lock guard(_mutex);
                     _data->push_back((unsigned char)((current_frame_type >> (bits-1-k)) & 0x1));
                 }
                 _bit_buf_index = 0;
