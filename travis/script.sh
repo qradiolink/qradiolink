@@ -513,6 +513,7 @@ rm -f "${CIDFILE}"
 
 #rm -f ./linuxdeploy-x86_64.AppImage
 #rm -f ./linuxdeploy-plugin-qt-x86_64.AppImage
+echo $(pwd)
 ls -al
 ls -al "${TRAVIS_DEBIAN_TARGET_DIR}"
 
