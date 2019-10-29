@@ -265,6 +265,8 @@ private:
 
     QVector<QSlider*> _rx_gain_sliders;
     QVector<QSlider*> _tx_gain_sliders;
+    QMap<std::string, int> _rx_stage_gains;
+    QMap<std::string, int> _tx_stage_gains;
 
 };
 

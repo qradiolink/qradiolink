@@ -501,7 +501,7 @@ then
 fi
 rm -f "${DEBC}"
 
-docker exec "$(cat "${CIDFILE}")" ./linuxdeploy-x86_64.AppImage --appdir AppDir -e ${BUILD_PATH/qradiolink -i res/icon.png -d qradiolink.desktop --plugin qt --output appimage
+docker exec "$(cat "${CIDFILE}")" ./linuxdeploy-x86_64.AppImage --appdir AppDir -e ${BUILD_PATH}/qradiolink -i res/icon.png -d qradiolink.desktop --plugin qt --output appimage
 
 Info "Removing container"
 docker rm -f "$(cat "${CIDFILE}")" >/dev/null
