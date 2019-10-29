@@ -504,7 +504,8 @@ rm -f "${DEBC}"
 docker exec "$(cat "${CIDFILE}")" ls -al ${TRAVIS_DEBIAN_BUILD_DIR}
 docker exec "$(cat "${CIDFILE}")" ls -al ${TRAVIS_DEBIAN_TARGET_DIR}
 docker exec "$(cat "${CIDFILE}")" ls -al ${BUILD_PATH}
-docker exec "$(cat "${CIDFILE}")" ./linuxdeploy-x86_64.AppImage --appdir AppDir -e ${BUILD_PATH}/qradiolink -i res/icon.png -d qradiolink.desktop --plugin qt --output appimage
+docker exec "$(cat "${CIDFILE}")" dpkg-deb -x ${TRAVIS_DEBIAN_BUILD_DIR}/*amd64.deb ${TRAVIS_DEBIAN_BUILD_DIR}
+docker exec "$(cat "${CIDFILE}")" ./linuxdeploy-x86_64.AppImage --appdir AppDir -e ${TRAVIS_DEBIAN_BUILD_DIR}/usr/bin/qradiolink -i ${BUILD_PATH}/res/icon.png -d ${BUILD_PATH}/qradiolink.desktop --plugin qt --output appimage
 
 Info "Removing container"
 docker rm -f "$(cat "${CIDFILE}")" >/dev/null
