@@ -338,7 +338,7 @@ RUN echo "deb-src ${TRAVIS_DEBIAN_MIRROR} experimental ${TRAVIS_DEBIAN_COMPONENT
 EOF
 fi
 
-TRAVIS_DEBIAN_EXTRA_PACKAGES="wget gnupg libfuse3-3"
+TRAVIS_DEBIAN_EXTRA_PACKAGES="wget gnupg libfuse2"
 
 case "${TRAVIS_DEBIAN_EXTRA_REPOSITORY:-}" in
 	https:*)
