@@ -489,7 +489,7 @@ if ls "${TRAVIS_DEBIAN_TARGET_DIR}"/*.buildinfo >/dev/null 2>&1
 then
 	Info "$(basename "${TRAVIS_DEBIAN_TARGET_DIR}"/*.buildinfo)"
 	Indent "${TRAVIS_DEBIAN_TARGET_DIR}"/*.buildinfo
-	BUILD_PATH=$(grep "Build-Path:" "${TRAVIS_DEBIAN_TARGET_DIR}"/*.buildinfo | awk -F' ' {print $2})
+	BUILD_PATH=$(grep "Build-Path:" "${TRAVIS_DEBIAN_TARGET_DIR}"/*.buildinfo | awk -F' ' {'print $2'})
 fi
 
 DEBC="$(mktemp)"
