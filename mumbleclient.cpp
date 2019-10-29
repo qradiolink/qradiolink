@@ -198,6 +198,9 @@ void MumbleClient::processProtoMessage(QByteArray data)
     case 11: // TextMessage
         processTextMessage(message, message_size);
         break;
+    case 24: // ServerConfig
+        processServerConfig(message, message_size);
+        break;
     default:
         _logger->log(Logger::LogLevelDebug, QString("Mumble message type %1 not implemented").arg(
                                                         type));
@@ -255,11 +258,23 @@ void MumbleClient::processServerSync(quint8 *message, quint64 size)
     QString msg;
     msg = QString::fromStdString(welcome)
              + " max bandwidth: " + max_bandwidth
-             + " session: " + QString::number(_session_id);
+             + " session: " + QString::number(_session_id) + "\n";
     _logger->log(Logger::LogLevelInfo, msg);
     emit connectedToServer(msg);
     Settings *settings = const_cast<Settings*>(_settings);
     settings->voip_connected = true;
+}
+
+void MumbleClient::processServerConfig(quint8 *message, quint64 size)
+{
+    MumbleProto::ServerConfig sc;
+    sc.ParseFromArray(message,size);
+    QString msg = "Maximum bandwidth: " + QString::number(sc.max_bandwidth())
+            + "\nMaximum message length: " + QString::number(sc.message_length())
+            + "\nMaximum image length: " + QString::number(sc.image_message_length())
+            + "\nHTML allowed: " + QString::number(sc.allow_html())
+            + "\n" + QString::fromStdString(sc.welcome_text());
+    logMessage(msg);
 }
 
 void MumbleClient::processChannelState(quint8 *message, quint64 size)

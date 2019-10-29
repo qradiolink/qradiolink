@@ -489,6 +489,7 @@ if ls "${TRAVIS_DEBIAN_TARGET_DIR}"/*.buildinfo >/dev/null 2>&1
 then
 	Info "$(basename "${TRAVIS_DEBIAN_TARGET_DIR}"/*.buildinfo)"
 	Indent "${TRAVIS_DEBIAN_TARGET_DIR}"/*.buildinfo
+	BUILD_PATH=$(grep "Build-Path:" "${TRAVIS_DEBIAN_TARGET_DIR}"/*.buildinfo | awk -F' ' {print $2})
 fi
 
 DEBC="$(mktemp)"
@@ -500,7 +501,7 @@ then
 fi
 rm -f "${DEBC}"
 
-docker exec "$(cat "${CIDFILE}")" ./linuxdeploy-x86_64.AppImage --appdir AppDir -e ${TRAVIS_DEBIAN_BUILD_DIR}/qradiolink -i res/icon.png -d qradiolink.desktop --plugin qt --output appimage
+docker exec "$(cat "${CIDFILE}")" ./linuxdeploy-x86_64.AppImage --appdir AppDir -e ${BUILD_PATH/qradiolink -i res/icon.png -d qradiolink.desktop --plugin qt --output appimage
 
 Info "Removing container"
 docker rm -f "$(cat "${CIDFILE}")" >/dev/null
