@@ -1,4 +1,4 @@
-notifications:
+inotifications:
   email: false
 sudo: required
 language: generic
@@ -18,7 +18,9 @@ deploy:
   api_key: "${GH_OAUTH_TOKEN}"
   skip_cleanup: true
   file_glob: true
-  file: "*.deb"
+  file:
+    - "*.deb"
+    - "*.AppImage"
   overwrite: true
   on:
     tags: true
