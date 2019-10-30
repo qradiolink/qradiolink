@@ -505,7 +505,6 @@ VER_INFO=$(grep "upstream-tag" "${TRAVIS_DEBIAN_TARGET_DIR}"/debian/gbp.conf | a
 
 docker exec "$(cat "${CIDFILE}")" dpkg-deb -x "${TRAVIS_DEBIAN_BUILD_DIR}/qradiolink_${VER_INFO}_amd64.deb" ${TRAVIS_DEBIAN_BUILD_DIR}
 docker exec --env VERSION=${VER_INFO} "$(cat "${CIDFILE}")" ./linuxdeploy-x86_64.AppImage --appdir AppDir -e ${TRAVIS_DEBIAN_BUILD_DIR}/usr/bin/qradiolink -i ${BUILD_PATH}/res/icon.png -d ${BUILD_PATH}/qradiolink.desktop --plugin qt --output appimage
-docker exec "$(cat "${CIDFILE}")" echo $(pwd)
 docker cp "$(cat "${CIDFILE}")":"${TRAVIS_DEBIAN_TARGET_DIR}"/QRadioLink-${VER_INFO}-x86_64.AppImage "${TRAVIS_DEBIAN_TARGET_DIR}"
 
 Info "Removing container"
@@ -514,7 +513,6 @@ rm -f "${CIDFILE}"
 
 rm -f ./linuxdeploy-x86_64.AppImage
 rm -f ./linuxdeploy-plugin-qt-x86_64.AppImage
-ls -la
 
 
 #  _                   _          _      _     _                          _

@@ -103,7 +103,7 @@ $ sudo apt install libjpeg-turbo8-dev libjpeg-dev
 [Downloads](https://github.com/qradiolink/qradiolink/releases "Downloads")
 ----
 
-Debian Buster x86_64 packages are provided via Travis CI automated builds
+Debian Buster x86_64 packages are provided via Travis CI automated builds. An AppImage for running the application on any Linux distribution without installing it is also provided. The AppImage is based on Debian Buster packages.
 Please see the [Github releases page](https://github.com/qradiolink/qradiolink/releases) for binary downloads.
 
 Opensuse packages are available from [Opensuse build server](https://build.opensuse.org/package/show/hardware:sdr/qradiolink)

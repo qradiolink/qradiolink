@@ -100,7 +100,7 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(std::vector<int>signature, int sps, int sam
     _shaping_filter = gr::filter::fft_filter_ccf::make(
                 1, gr::filter::firdes::root_raised_cosine(1,_target_samp_rate,
                                     _target_samp_rate/_samples_per_symbol,0.35,nfilts * _samples_per_symbol));
-    _multiply_const_fec = gr::blocks::multiply_const_ff::make(64);
+    _multiply_const_fec = gr::blocks::multiply_const_ff::make(128);
     _float_to_uchar = gr::blocks::float_to_uchar::make();
     _add_const_fec = gr::blocks::add_const_ff::make(128.0);
 
