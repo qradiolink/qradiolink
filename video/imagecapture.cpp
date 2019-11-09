@@ -37,7 +37,7 @@ void ImageCapture::init()
     _camera->exposure()->setExposureMode(QCameraExposure::ExposureAuto);
     _camera->exposure()->setManualShutterSpeed(0.01);
     _capture = new QCameraImageCapture(_camera);
-    _capture->setBufferFormat(QVideoFrame::Format_YUV420P);
+    _capture->setBufferFormat(QVideoFrame::Format_Jpeg);
     _capture->setCaptureDestination(QCameraImageCapture::CaptureToBuffer);
     QImageEncoderSettings encoding_settings;
     encoding_settings.setResolution(320, 240);

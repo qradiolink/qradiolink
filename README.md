@@ -205,18 +205,7 @@ Do note that the identifier digits are the most important: **0403:6001**
 - The VOIP volume slider controls the volume of the audio **sent** to the Mumble server.
 - It is now possible to mute self or deafen self from the UI without disconnecting from the VOIP server.
 - The S-meter calibration feature is not complete yet, however you can enter in the Setup tab the level (integer value expressed in dBm) of a known signal (e.g. sent by a generator) to correct the reading. Do NOT apply signals with levels above -30 to 0 dBm to the receiver input as this might damage your receiver, depending on hardware. Please note that the RSSI and S-meter values displayed are relative to the current operating mode filter bandwidth, so the FM reading will be different to a SSB reading! Calibration tables support for different bands may be provided in the future.
-- The network remote control feature (for headless mode) is work in progress. The network server will listen on all network interfaces and the default control port is 4939. There is no provision for authentication of the user, if you need security you can filter the remote control port in the firewall, use SSH to log in to the remote system and telnet from there to localhost port 4939. To use the network remote control feature, you can simply use the telnet program or you can create simple Python or shell scripts to automate the commands. The help command will list all the available commands as well as parameters:
-<pre>
-$ telnet localhost 4939
-Trying ::1...
-Connected to localhost.
-Escape character is '^]'.
-qradiolink> rxstatus
-RX status is active.
-qradiolink> quit
-Bye!
-Connection closed by foreign host.
-</pre>
+- The network remote control feature (for headless mode) is work in progress. The network server will listen on all network interfaces and the default control port is 4939. There is no provision for authentication of the user, if you need security you can filter the remote control port in the firewall, use SSH to log in to the remote system and telnet from there to localhost port 4939. To use the network remote control feature, you can simply use the telnet program or you can create simple Python or shell scripts to automate the commands. The help command will list all the available commands as well as parameters.
 
 
 

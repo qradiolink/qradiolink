@@ -53,7 +53,7 @@ public:
         FrameTypeEnd
     };
     // FIXME: there is no reason for the modem to use the settings
-    explicit gr_modem(const Settings *settings, QObject *parent = 0);
+    explicit gr_modem(QObject *parent = 0);
     ~gr_modem();
 
     bool demodulateAnalog();
@@ -134,7 +134,6 @@ private:
     void transmit(QVector<std::vector<unsigned char>*> frames);
     bool synchronize(int v_size, std::vector<unsigned char> *data);
 
-    const Settings *_settings;
     gr_mod_base *_gr_mod_base;
     gr_demod_base *_gr_demod_base;
     unsigned char *_bit_buf;
@@ -152,6 +151,7 @@ private:
     int _current_frame_type;
     unsigned long long _shift_reg;
     bool _burst_ip_modem;
+    int _modem_sync;
 
 };
 

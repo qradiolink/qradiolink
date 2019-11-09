@@ -16,17 +16,16 @@
 
 #include "gr_modem.h"
 
-gr_modem::gr_modem(const Settings *settings, QObject *parent) :
+gr_modem::gr_modem(QObject *parent) :
     QObject(parent)
 {
+    _bit_buf_len = 8 *8;
+    _bit_buf = new unsigned char[_bit_buf_len];
     _modem_type_rx = gr_modem_types::ModemTypeBPSK2000;
     _modem_type_tx = gr_modem_types::ModemTypeBPSK2000;
     _direct_mode_repeater = false;
-    _settings = settings;
     _rx_frame_length = 7;
     _tx_frame_length = 7;
-    _bit_buf_len = 8 *8;
-    _bit_buf = new unsigned char[_bit_buf_len];
     _bit_buf_index = 0;
     _sync_found = false;
     _frame_counter = 0;
@@ -36,7 +35,7 @@ gr_modem::gr_modem(const Settings *settings, QObject *parent) :
     _gr_mod_base = 0;
     _gr_demod_base = 0;
     _burst_ip_modem = false;
-
+    _modem_sync = 0;
 }
 
 gr_modem::~gr_modem()
@@ -45,6 +44,7 @@ gr_modem::~gr_modem()
         deinitRX(_modem_type_rx);
     if(_gr_mod_base)
         deinitTX(_modem_type_tx);
+    delete[] _bit_buf;
 }
 
 void gr_modem::initTX(int modem_type, std::string device_args, std::string device_antenna, int freq_corr)
@@ -784,7 +784,14 @@ bool gr_modem::synchronize(int v_size, std::vector<unsigned char> *data)
             if(_sync_found)
             {
                 _bit_buf_index = 0;
+                if(_modem_sync < 32)
+                    _modem_sync += 8;
                 continue;
+            }
+            else
+            {
+                if(_modem_sync > 0)
+                    _modem_sync -= 1;
             }
         }
         if(_sync_found)
@@ -944,24 +951,34 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
         emit callsignReceived(callsign);
         delete[] text_data;
     }
-    else if (current_frame_type == FrameTypeVoice )
-    {
-        emit audioFrameReceived();
+    else if (current_frame_type == FrameTypeVoice)
+    {            
         _last_frame_type = FrameTypeVoice;
         unsigned char *codec2_data = new unsigned char[_rx_frame_length];
         memset(codec2_data,0,_rx_frame_length);
-        if((_modem_type_rx == gr_modem_types::ModemTypeBPSK1000) ||
+        if(((_modem_type_rx == gr_modem_types::ModemTypeBPSK1000) ||
                 (_modem_type_rx == gr_modem_types::ModemType2FSK1000))
+                 && (_modem_sync >= 16))
+        {
             memcpy(codec2_data, received_data, _rx_frame_length);
-        else
+            emit digitalAudio(codec2_data,_rx_frame_length);
+            emit audioFrameReceived();
+        }
+        else if((_modem_type_rx != gr_modem_types::ModemTypeBPSK1000) &&
+                (_modem_type_rx != gr_modem_types::ModemType2FSK1000))
+        {
             memcpy(codec2_data, received_data+1, _rx_frame_length);
+            emit digitalAudio(codec2_data,_rx_frame_length);
+            emit audioFrameReceived();
+        }
         if(_direct_mode_repeater)
         {
             unsigned char *repeated_frame = new unsigned char[_rx_frame_length];
             memcpy(repeated_frame, codec2_data, _rx_frame_length);
             transmitDigitalAudio(repeated_frame, _rx_frame_length);
+            emit audioFrameReceived();
         }
-        emit digitalAudio(codec2_data,_rx_frame_length);
+
     }
     else if (current_frame_type == FrameTypeVideo )
     {

@@ -101,7 +101,7 @@ void Logger::set_console_log(bool value)
 
 void Logger::log(int type, QString msg)
 {
-
+    _mutex.lock();
     QString time= QDateTime::currentDateTime().toString(
                 "d/MMM/yyyy hh:mm:ss");
     QString txt;
@@ -136,6 +136,7 @@ void Logger::log(int type, QString msg)
     }
 
     *_stream << txt << endl;
+    _mutex.unlock();
 
 }
 

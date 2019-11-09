@@ -22,6 +22,7 @@
 #include <QTextStream>
 #include <QDir>
 #include <QDebug>
+#include <QMutex>
 #include <QFileInfo>
 #include <QDateTime>
 #include <iostream>
@@ -54,6 +55,7 @@ private:
     QFile *_log_file;
     bool _console_log;
     QTextStream *_stream;
+    QMutex _mutex;
 };
 
 #endif // LOGGER_H

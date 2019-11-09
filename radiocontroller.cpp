@@ -28,7 +28,7 @@ RadioController::RadioController(Settings *settings, Logger *logger,
 
     // FIXME: there is no reason for the modem to use the settings
     // All control happens in the radioop or main thread
-    _modem = new gr_modem(settings);
+    _modem = new gr_modem;
     _codec = new AudioEncoder;
     _audio_mixer_in = new AudioMixer;
     _radio_protocol = new RadioProtocol;
