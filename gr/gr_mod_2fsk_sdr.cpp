@@ -45,7 +45,9 @@ gr_mod_2fsk_sdr::gr_mod_2fsk_sdr(int sps, int samp_rate, int carrier_freq,
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
     int nfilts = 15;
-    int spacing = 1;
+    int spacing = 2;
+    if(fm)
+        spacing = 1;
     int second_interp = 10;
     int if_samp_rate = 100000;
     if(_samples_per_symbol == 5)

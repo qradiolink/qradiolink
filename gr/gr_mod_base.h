@@ -68,6 +68,8 @@ private:
     osmosdr::sink::sptr _osmosdr_sink;
     gr::blocks::rotator_cc::sptr _rotator;
 
+    gr_mod_2fsk_sdr_sptr _2fsk_2k_fm;
+    gr_mod_2fsk_sdr_sptr _2fsk_1k_fm;
     gr_mod_2fsk_sdr_sptr _2fsk_2k;
     gr_mod_2fsk_sdr_sptr _2fsk_1k;
     gr_mod_2fsk_sdr_sptr _2fsk_10k;

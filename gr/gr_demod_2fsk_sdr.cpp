@@ -56,6 +56,9 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(std::vector<int>signature, int sps, int sam
         nfilts = 125;
         gain_mu = 0.001;
     }
+    int spacing = 2;
+    if(fm)
+        spacing = 1;
 
     _samp_rate =samp_rate;
     _carrier_freq = carrier_freq;
@@ -73,7 +76,7 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(std::vector<int>signature, int sps, int sam
                                                            gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     std::vector<float> symbol_filter_taps = gr::filter::firdes::low_pass(1.0,
                                  _target_samp_rate, _target_samp_rate/_samples_per_symbol,
-                                                                         _target_samp_rate/_samples_per_symbol/20,
+                                                                         _target_samp_rate/_samples_per_symbol/4,
                                                                          gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     _resampler = gr::filter::rational_resampler_base_ccf::make(interp, decim, taps);
     _resampler->set_thread_priority(99);
@@ -96,7 +99,7 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(std::vector<int>signature, int sps, int sam
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0, gain_mu,
                                                               0.001);
 
-    _freq_demod = gr::analog::quadrature_demod_cf::make(_samples_per_symbol/(M_PI/2));
+    _freq_demod = gr::analog::quadrature_demod_cf::make(_samples_per_symbol/(spacing * M_PI/2));
     _shaping_filter = gr::filter::fft_filter_ccf::make(
                 1, gr::filter::firdes::root_raised_cosine(1,_target_samp_rate,
                                     _target_samp_rate/_samples_per_symbol,0.35,nfilts * _samples_per_symbol));

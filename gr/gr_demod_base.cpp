@@ -122,8 +122,10 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
 
 
 
-    _2fsk_2k = make_gr_demod_2fsk_sdr(125,1000000,1700,2700, true); // 4000 for non FM, 2700 for FM
-    _2fsk_1k = make_gr_demod_2fsk_sdr(250,1000000,1700,1350, true);
+    _2fsk_2k_fm = make_gr_demod_2fsk_sdr(125,1000000,1700,2700, true); // 4000 for non FM, 2700 for FM
+    _2fsk_1k_fm = make_gr_demod_2fsk_sdr(250,1000000,1700,1350, true);
+    _2fsk_2k = make_gr_demod_2fsk_sdr(125,1000000,1700,4000, false);
+    _2fsk_1k = make_gr_demod_2fsk_sdr(250,1000000,1700,2000, false);
     _2fsk_10k = make_gr_demod_2fsk_sdr(25,1000000,1700,13500, true);
     _4fsk_2k = make_gr_demod_4fsk_sdr(125,1000000,1700,4000);
     _4fsk_10k = make_gr_demod_4fsk_sdr(25,1000000,1700,20000);
@@ -203,6 +205,22 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
     {
         switch(_mode)
         {
+        case gr_modem_types::ModemType2FSK2000FM:
+            _top_block->disconnect(_demod_valve,0,_2fsk_2k_fm,0);
+            _top_block->disconnect(_2fsk_2k_fm,0,_rssi_valve,0);
+            _top_block->disconnect(_2fsk_2k_fm,1,_const_valve,0);
+            _top_block->disconnect(_const_valve,0,_constellation,0);
+            _top_block->disconnect(_2fsk_2k_fm,2,_deframer1,0);
+            _top_block->disconnect(_2fsk_2k_fm,3,_deframer2,0);
+            break;
+        case gr_modem_types::ModemType2FSK1000FM:
+            _top_block->disconnect(_demod_valve,0,_2fsk_1k_fm,0);
+            _top_block->disconnect(_2fsk_1k_fm,0,_rssi_valve,0);
+            _top_block->disconnect(_2fsk_1k_fm,1,_const_valve,0);
+            _top_block->disconnect(_const_valve,0,_constellation,0);
+            _top_block->disconnect(_2fsk_1k_fm,2,_deframer_700_1,0);
+            _top_block->disconnect(_2fsk_1k_fm,3,_deframer_700_2,0);
+            break;
         case gr_modem_types::ModemType2FSK2000:
             _top_block->disconnect(_demod_valve,0,_2fsk_2k,0);
             _top_block->disconnect(_2fsk_2k,0,_rssi_valve,0);
@@ -360,6 +378,22 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
     {
         switch(mode)
         {
+        case gr_modem_types::ModemType2FSK2000FM:
+            _top_block->connect(_demod_valve,0,_2fsk_2k_fm,0);
+            _top_block->connect(_2fsk_2k_fm,0,_rssi_valve,0);
+            _top_block->connect(_2fsk_2k_fm,1,_const_valve,0);
+            _top_block->connect(_const_valve,0,_constellation,0);
+            _top_block->connect(_2fsk_2k_fm,2,_deframer1,0);
+            _top_block->connect(_2fsk_2k_fm,3,_deframer2,0);
+            break;
+        case gr_modem_types::ModemType2FSK1000FM:
+            _top_block->connect(_demod_valve,0,_2fsk_1k_fm,0);
+            _top_block->connect(_2fsk_1k_fm,0,_rssi_valve,0);
+            _top_block->connect(_2fsk_1k_fm,1,_const_valve,0);
+            _top_block->connect(_const_valve,0,_constellation,0);
+            _top_block->connect(_2fsk_1k_fm,2,_deframer_700_1,0);
+            _top_block->connect(_2fsk_1k_fm,3,_deframer_700_2,0);
+            break;
         case gr_modem_types::ModemType2FSK2000:
             _top_block->connect(_demod_valve,0,_2fsk_2k,0);
             _top_block->connect(_2fsk_2k,0,_rssi_valve,0);
@@ -545,6 +579,12 @@ std::vector<unsigned char>* gr_demod_base::getData(int nr)
     {
         switch(_mode)
         {
+        case gr_modem_types::ModemType2FSK2000FM:
+            data = _deframer1->get_data();
+            break;
+        case gr_modem_types::ModemType2FSK1000FM:
+            data = _deframer_700_1->get_data();
+            break;
         case gr_modem_types::ModemType2FSK2000:
             data = _deframer1->get_data();
             break;
@@ -566,6 +606,12 @@ std::vector<unsigned char>* gr_demod_base::getData(int nr)
     {
         switch(_mode)
         {
+        case gr_modem_types::ModemType2FSK2000FM:
+            data = _deframer2->get_data();
+            break;
+        case gr_modem_types::ModemType2FSK1000FM:
+            data = _deframer_700_2->get_data();
+            break;
         case gr_modem_types::ModemType2FSK2000:
             data = _deframer2->get_data();
             break;

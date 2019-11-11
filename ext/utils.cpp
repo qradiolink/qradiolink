@@ -84,6 +84,8 @@ void buildModeList(QVector<QString> *operating_modes)
     operating_modes->push_back("BPSK 1K");
     operating_modes->push_back("QPSK 2K");
     operating_modes->push_back("QPSK 10K");
+    operating_modes->push_back("2FSK 2K FM");
+    operating_modes->push_back("2FSK 1K FM");
     operating_modes->push_back("2FSK 2K");
     operating_modes->push_back("2FSK 1K");
     operating_modes->push_back("2FSK 10K");
@@ -111,8 +113,10 @@ void buildFilterWidthList(std::vector<std::complex<int>>* filter_widths, std::ve
     filter_widths->push_back(std::complex<int>(-1400, 1400)); // BPSK 700
     filter_widths->push_back(std::complex<int>(-1500, 1500));  // QPSK 2K
     filter_widths->push_back(std::complex<int>(-7000, 7000));    // QPSK 10K
-    filter_widths->push_back(std::complex<int>(-2700, 2700));  // 2FSK 2K
-    filter_widths->push_back(std::complex<int>(-1350, 1350));  // 2FSK 1K
+    filter_widths->push_back(std::complex<int>(-2700, 2700));  // 2FSK 2K FM
+    filter_widths->push_back(std::complex<int>(-1350, 1350));  // 2FSK 1K FM
+    filter_widths->push_back(std::complex<int>(-4000, 4000));  // 2FSK 2K
+    filter_widths->push_back(std::complex<int>(-2000, 2000));  // 2FSK 1K
     filter_widths->push_back(std::complex<int>(-15000, 15000));  // 2FSK 10K
     filter_widths->push_back(std::complex<int>(-4600, 4600));  // 4FSK 2K
     filter_widths->push_back(std::complex<int>(-25000, 25000));    // 4FSK 10K
@@ -136,8 +140,10 @@ void buildFilterWidthList(std::vector<std::complex<int>>* filter_widths, std::ve
     ranges->push_back(std::complex<int>(-1400, 1400)); // BPSK 700
     ranges->push_back(std::complex<int>(-1500, 1500));  // QPSK 2K
     ranges->push_back(std::complex<int>(-7000, 7000));    // QPSK 10K
-    ranges->push_back(std::complex<int>(-2700, 2700));  // 2FSK 2K
-    ranges->push_back(std::complex<int>(-1350, 1350));  // 2FSK 1K
+    ranges->push_back(std::complex<int>(-2700, 2700));  // 2FSK 2K FM
+    ranges->push_back(std::complex<int>(-1350, 1350));  // 2FSK 1K FM
+    ranges->push_back(std::complex<int>(-4000, 4000));  // 2FSK 2K
+    ranges->push_back(std::complex<int>(-2000, 2000));  // 2FSK 1K
     ranges->push_back(std::complex<int>(-15000, 15000));  // 2FSK 10K
     ranges->push_back(std::complex<int>(-4600, 4600));  // 4FSK 2K
     ranges->push_back(std::complex<int>(-25000, 25000));    // 4FSK 10K
@@ -162,6 +168,8 @@ void buildFilterWidthList(std::vector<std::complex<int>>* filter_widths, std::ve
     symmetric->push_back(true);    // QPSK 10K
     symmetric->push_back(true);  // 2FSK 2K
     symmetric->push_back(true);  // 2FSK 1K
+    symmetric->push_back(true);  // 2FSK 2K FM
+    symmetric->push_back(true);  // 2FSK 1K FM
     symmetric->push_back(true);  // 2FSK 10K
     symmetric->push_back(true);  // 4FSK 2K
     symmetric->push_back(true);    // 4FSK 10K

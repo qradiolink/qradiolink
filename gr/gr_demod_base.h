@@ -125,6 +125,8 @@ private:
     gr_deframer_bb_sptr _deframer1_10k;
     gr_deframer_bb_sptr _deframer2_10k;
 
+    gr_demod_2fsk_sdr_sptr _2fsk_2k_fm;
+    gr_demod_2fsk_sdr_sptr _2fsk_1k_fm;
     gr_demod_2fsk_sdr_sptr _2fsk_2k;
     gr_demod_2fsk_sdr_sptr _2fsk_1k;
     gr_demod_2fsk_sdr_sptr _2fsk_10k;
