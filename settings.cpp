@@ -491,6 +491,14 @@ void Settings::readConfig()
     {
         scan_resume_time = 5;
     }
+    try
+    {
+        audio_record_path = QString(cfg.lookup("audio_record_path"));
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        audio_record_path = QDir::homePath();
+    }
 
 }
 
@@ -545,6 +553,7 @@ void Settings::saveConfig()
     root.add("burst_ip_modem",libconfig::Setting::TypeInt) = burst_ip_modem;
     root.add("night_mode",libconfig::Setting::TypeInt) = night_mode;
     root.add("scan_resume_time",libconfig::Setting::TypeInt) = scan_resume_time;
+    root.add("audio_record_path",libconfig::Setting::TypeString) = audio_record_path.toStdString();
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());

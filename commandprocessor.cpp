@@ -288,6 +288,12 @@ bool CommandProcessor::processStatusCommands(int command_index, QString &respons
         for(int i=0;i<_mode_list->size();i++)
             response.append(_mode_list->at(i) + "\n");
         break;
+    case 55:
+        if(_settings->recording_audio)
+            response.append(QString("Audio recording is enabled."));
+        else
+            response.append(QString("Audio recording is disabled."));
+        break;
 
     default:
         break;
@@ -830,6 +836,22 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
         emit toggleTX(false);
         break;
     }
+    case 56:
+    {
+        int set = param1.toInt();
+        if((set != 1) && (set != 0))
+        {
+            response = "Parameter value is not supported";
+            success = false;
+        }
+        else
+        {
+            response = QString("Setting Audio recording to %1").arg(set);
+            emit toggleAudioRecord((bool)set);
+        }
+        break;
+    }
+
     default:
         break;
     }
@@ -898,4 +920,6 @@ void CommandProcessor::buildCommandList()
 
     /// I'm sorry
     _command_list->append(new command("list_modes", 0, "List operating modes"));
+    _command_list->append(new command("recordstatus", 0, "Status of audio recorder"));
+    _command_list->append(new command("setaudiorecorder", 1, "Toggle audio recording, (1 enabled, 0 disabled)"));
 }

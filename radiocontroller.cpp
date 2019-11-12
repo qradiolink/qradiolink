@@ -791,6 +791,12 @@ void RadioController::stopVoipTx()
     _transmitting = false;
 }
 
+void RadioController::setAudioRecord(bool value)
+{
+    _settings->recording_audio = value;
+    emit recordAudio(value);
+}
+
 
 void RadioController::updateDataModemReset(bool transmitting, bool ptt_activated)
 {

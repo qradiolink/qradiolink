@@ -103,7 +103,8 @@ SOURCES += main.cpp\
     gr/gr_audio_sink.cpp \
     gr/gr_4fsk_discriminator.cpp \
     gr/gr_const_sink.cpp \
-    gr/rx_fft.cpp
+    gr/rx_fft.cpp \
+    audio/audiorecorder.cpp
 
 
 HEADERS  += mainwindow.h\
@@ -167,7 +168,8 @@ HEADERS  += mainwindow.h\
     gr/gr_audio_sink.h \
     gr/gr_4fsk_discriminator.h \
     gr/gr_const_sink.h \
-    gr/modem_types.h
+    gr/modem_types.h \
+    audio/audiorecorder.h
 
 
 !isEmpty(LIBDIR) {
@@ -189,7 +191,7 @@ LIBS += -lgnuradio-pmt -lgnuradio-analog -lgnuradio-fft -lgnuradio-vocoder \
         -lgnuradio-blocks -lgnuradio-filter -lgnuradio-digital -lgnuradio-runtime -lgnuradio-fec \
         -lboost_system$$BOOST_SUFFIX
 LIBS += -lrt  # need to include on some distros
-LIBS += -lprotobuf -lopus -lcodec2 -ljpeg -lconfig++ -lspeexdsp -lftdi
+LIBS += -lprotobuf -lopus -lcodec2 -ljpeg -lconfig++ -lspeexdsp -lftdi -lsndfile
 
 
 RESOURCES += resources.qrc

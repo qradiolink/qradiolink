@@ -23,8 +23,10 @@ AudioWriter::AudioWriter(const Settings *settings, Logger *logger, QObject *pare
     _settings = settings;
     _logger = logger;
     _rx_sample_queue = new QVector<audio_samples*>;
+    _recorder = new AudioRecorder(settings, logger);
     _working = true;
     _restart = false;
+    _record_audio = false;
 }
 
 AudioWriter::~AudioWriter()
@@ -32,6 +34,7 @@ AudioWriter::~AudioWriter()
 
     _rx_sample_queue->clear();
     delete _rx_sample_queue;
+    delete _recorder;
 }
 
 void AudioWriter::stop()
@@ -43,6 +46,13 @@ void AudioWriter::restart()
 {
     _working = false;
     _restart = true;
+}
+
+void AudioWriter::recordAudio(bool value)
+{
+    _mutex.lock();
+    _record_audio = value;
+    _mutex.unlock();
 }
 
 void AudioWriter::writePCM(short *pcm, int bytes, bool preprocess, int audio_mode)
@@ -62,6 +72,7 @@ void AudioWriter::run()
 {
     start:
     _working = true;
+    bool recording = false;
     // FIXME: support different frame durations
     AudioProcessor *processor = new AudioProcessor;
     QAudioFormat format;
@@ -95,6 +106,16 @@ void AudioWriter::run()
         QCoreApplication::processEvents();
         _mutex.lock();
         int size = _rx_sample_queue->size();
+        if(_record_audio && !recording)
+        {
+            _recorder->startRecording();
+            recording = true;
+        }
+        if(recording && !_record_audio)
+        {
+            _recorder->stopRecording();
+            recording = false;
+        }
         _mutex.unlock();
         if(size > 0)
         {
@@ -110,6 +131,10 @@ void AudioWriter::run()
                 delete samp;
                 processor->write_preprocess(pcm, bytes, preprocess, audio_mode);
                 audio_dev->write((char*)pcm, bytes);
+                if(recording)
+                {
+                    _recorder->writeSamples(pcm, bytes/sizeof(short));
+                }
             }
             _mutex.lock();
             _rx_sample_queue->remove(0, size);

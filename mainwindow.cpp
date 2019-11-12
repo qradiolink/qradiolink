@@ -110,6 +110,7 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     QObject::connect(ui->pttVoipButton,SIGNAL(toggled(bool)),this,SLOT(togglePTTVOIP(bool)));
     QObject::connect(ui->voipForwardButton,SIGNAL(toggled(bool)),
                      this,SLOT(toggleVOIPForwarding(bool)));
+    QObject::connect(ui->recordButton,SIGNAL(toggled(bool)),this,SLOT(toggleAudioRecord(bool)));
     QObject::connect(ui->toggleRepeaterButton,SIGNAL(toggled(bool)),this,SLOT(toggleRepeater(bool)));
     QObject::connect(ui->toggleVoxButton,SIGNAL(toggled(bool)),this,SLOT(toggleVox(bool)));
     QObject::connect(ui->fftSizeBox,SIGNAL(currentIndexChanged(int)),this,SLOT(setFFTSize(int)));
@@ -521,6 +522,7 @@ void MainWindow::setConfig()
     ui->agcAttackSpinBox->setValue(_settings->agc_attack);
     ui->agcDecaySpinBox->setValue(_settings->agc_decay);
     ui->scanTimerSpinBox->setValue(_settings->scan_resume_time);
+    ui->lineEditRecordPath->setText(_settings->audio_record_path);
 }
 
 void MainWindow::saveUiConfig()
@@ -552,6 +554,7 @@ void MainWindow::saveUiConfig()
     _settings->fft_size = (ui->fftSizeBox->currentText().toInt());
     _settings->scan_step = (int)ui->lineEditScanStep->text().toInt();
     _settings->waterfall_fps = (int)ui->fpsBox->currentText().toInt();
+    _settings->audio_record_path = ui->lineEditRecordPath->text();
     _settings->saveConfig();
 }
 
@@ -1655,4 +1658,9 @@ void MainWindow::updateAudioInput(int value)
     Q_UNUSED(value);
     _settings->audio_input_device = ui->audioInputComboBox->currentText();
     emit restartAudioInputThread();
+}
+
+void MainWindow::toggleAudioRecord(bool value)
+{
+    emit setAudioRecord(value);
 }

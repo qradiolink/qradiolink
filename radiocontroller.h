@@ -99,6 +99,7 @@ signals:
     void setSelfMute(bool mute);
     void newMumbleMessage(QString text);
     void tuneToMemoryChannel(radiochannel *chan);
+    void recordAudio(bool value);
 
 
 public slots:
@@ -169,6 +170,7 @@ public slots:
     void calibrateRSSI(float value);
     void setCallsign();
     void setScanResumeTime(int value);
+    void setAudioRecord(bool value);
 
 private:
     unsigned int getFrameLength(unsigned char *data);

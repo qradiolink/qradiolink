@@ -14,54 +14,33 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#ifndef AUDIOWRITER_H
-#define AUDIOWRITER_H
+#ifndef AUDIORECORDER_H
+#define AUDIORECORDER_H
 
 #include <QObject>
-#include <QVector>
-#include <QCoreApplication>
-#include <QMutex>
-#include <QAudioOutput>
-#include "audio/audioprocessor.h"
+#include <sndfile.h>
 #include "settings.h"
 #include "logger.h"
-#include "audio/audiorecorder.h"
 
-class AudioWriter : public QObject
+class AudioRecorder : public QObject
 {
     Q_OBJECT
 public:
-    explicit AudioWriter(const Settings *settings, Logger *logger, QObject *parent = 0);
-    ~AudioWriter();
-
+    explicit AudioRecorder(const Settings *settings, Logger *logger, QObject *parent = nullptr);
+    ~AudioRecorder();
 signals:
-    void finished();
 
 public slots:
-    void run();
-    void writePCM(short *pcm, int bytes, bool preprocess, int audio_mode);
-    void stop();
-    void restart();
-    void recordAudio(bool value);
+    void startRecording();
+    void stopRecording();
+    void writeSamples(short *samples, int bufsize);
 
 private:
-    struct audio_samples
-    {
-        audio_samples() : pcm(0), bytes(0), preprocess(false), audio_mode(0) {}
-        short *pcm;
-        int bytes;
-        bool preprocess;
-        int audio_mode;
-    };
     const Settings *_settings;
     Logger *_logger;
-    AudioRecorder *_recorder;
-    QVector<audio_samples*> *_rx_sample_queue;
-    bool _working;
-    bool _restart;
-    bool _record_audio;
-    QMutex _mutex;
-
+    bool _recording;
+    SNDFILE *_snd_out_file;
+    SF_INFO _sfinfo ;
 };
 
-#endif // AUDIOWRITER_H
+#endif // AUDIORECORDER_H

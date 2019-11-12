@@ -138,6 +138,8 @@ int main(int argc, char *argv[])
     /// Signals independent of GUI or remote interface
     QObject::connect(radio_op, SIGNAL(writePCM(short*,int,bool,int)),
                      audiowriter, SLOT(writePCM(short*,int,bool, int)));
+    QObject::connect(radio_op, SIGNAL(recordAudio(bool)),
+                     audiowriter, SLOT(recordAudio(bool)));
     QObject::connect(radio_op, SIGNAL(setAudioReadMode(bool,bool,int)),
                      audioreader, SLOT(setReadMode(bool,bool,int)));
     QObject::connect(audioreader, SIGNAL(audioPCM(short*,int,int, bool)),
@@ -352,6 +354,7 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
                      audiowriter,SLOT(restart()));
     QObject::connect(w,SIGNAL(restartAudioInputThread()),
                      audioreader,SLOT(restart()));
+    QObject::connect(w,SIGNAL(setAudioRecord(bool)),radio_op,SLOT(setAudioRecord(bool)));
 
     /// Radio to GUI
     QObject::connect(radio_op, SIGNAL(printText(QString,bool)), w, SLOT(displayText(QString,bool)));

@@ -95,6 +95,7 @@ signals:
     void newCommandMessage(QString text, int to_id);
     void toggleSelfDeaf(bool deaf);
     void toggleSelfMute(bool mute);
+    void toggleAudioRecord(bool value);
 
     //void stopRadio();
 

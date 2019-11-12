@@ -149,6 +149,7 @@ public slots:
     void updateScanResumeTime(int value);
     void updateAudioOutput(int value);
     void updateAudioInput(int value);
+    void toggleAudioRecord(bool value);
 
 signals:
     void terminateConnections();
@@ -208,6 +209,7 @@ signals:
     void setScanResumeTime(int value);
     void restartAudioOutputThread();
     void restartAudioInputThread();
+    void setAudioRecord(bool value);
 
 public:
     explicit MainWindow(Settings *settings, RadioChannels *radio_channels, QWidget *parent = 0);

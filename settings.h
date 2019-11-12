@@ -82,6 +82,7 @@ public:
     int burst_ip_modem;
     int night_mode;
     int scan_resume_time;
+    QString audio_record_path;
 
     /// Not saved to config:
 
@@ -98,6 +99,7 @@ public:
     bool voip_ptt_enabled;
     int current_voip_channel;
     bool voip_self_deaf;
+    bool recording_audio;
 
 
 
