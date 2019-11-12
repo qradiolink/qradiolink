@@ -857,7 +857,7 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
     case 58:
     {
         int set = param1.toInt();
-        if(set < 0 || set > 10)
+        if(set < 0 || set > 100)
         {
             response = "Parameter value is not supported";
             success = false;
@@ -941,5 +941,5 @@ void CommandProcessor::buildCommandList()
     _command_list->append(new command("recordstatus", 0, "Status of audio recorder"));
     _command_list->append(new command("setaudiorecorder", 1, "Toggle audio recording, (1 enabled, 0 disabled)"));
     _command_list->append(new command("voxlevel", 0, "Get VOX level"));
-    _command_list->append(new command("setvoxlevel", 1, "Set VOX level (integer value level between 0 and 10)"));
+    _command_list->append(new command("setvoxlevel", 1, "Set VOX level (integer value level between 0 and 100)"));
 }

@@ -3012,13 +3012,13 @@ and S-meter (dBm)</string>
              <item row="12" column="1">
               <widget class="QSlider" name="voxLevelSlider">
                <property name="maximum">
-                <number>10</number>
+                <number>100</number>
                </property>
                <property name="pageStep">
-                <number>1</number>
+                <number>10</number>
                </property>
                <property name="value">
-                <number>2</number>
+                <number>20</number>
                </property>
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>

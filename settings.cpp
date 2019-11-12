@@ -505,7 +505,7 @@ void Settings::readConfig()
     }
     catch(const libconfig::SettingNotFoundException &nfex)
     {
-        vox_level = 2;
+        vox_level = 20;
     }
 
 }

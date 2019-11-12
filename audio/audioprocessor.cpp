@@ -138,7 +138,7 @@ int AudioProcessor::read_preprocess(short *buf, int bufsize, bool preprocess, in
     }
 
     float power = calc_audio_power(buf, bufsize/sizeof(short));
-    return (power >= (float)_settings->vox_level);
+    return (power >= (float)_settings->vox_level * 100.0f);
 }
 
 float AudioProcessor::calc_audio_power(short *buf, short samples)
@@ -149,7 +149,8 @@ float AudioProcessor::calc_audio_power(short *buf, short samples)
         float a = abs(((float)buf[i]) / 32768.0f);
         power += a * a;
     }
-    return 32768.0f * power / ((float) samples);
+    float rms = 32768.0f * sqrt(power / ((float) samples));
+    return rms;
 }
 
 void AudioProcessor::compress_audio(short *buf, short bufsize, int direction, int audio_mode)
