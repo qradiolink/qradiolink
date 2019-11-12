@@ -16,8 +16,9 @@
 
 #include "audioprocessor.h"
 
-AudioProcessor::AudioProcessor(QObject *parent) : QObject(parent)
+AudioProcessor::AudioProcessor(const Settings *settings, QObject *parent) : QObject(parent)
 {
+    _settings = settings;
     _error=0;
     /*
     _speex_preprocess = speex_preprocess_state_init(320, 8000);
@@ -137,7 +138,7 @@ int AudioProcessor::read_preprocess(short *buf, int bufsize, bool preprocess, in
     }
 
     float power = calc_audio_power(buf, bufsize/sizeof(short));
-    return (power > 2.0);
+    return (power >= (float)_settings->vox_level);
 }
 
 float AudioProcessor::calc_audio_power(short *buf, short samples)

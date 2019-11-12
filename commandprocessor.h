@@ -66,6 +66,7 @@ signals:
     void setAgcDecay(float value);
     void setSampleRate(int);
     void newFilterWidth(int);
+    void setVoxLevel(int);
 
     /// Tuning the radio
     void setCarrierOffset(qint64 offset);

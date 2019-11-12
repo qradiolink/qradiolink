@@ -499,6 +499,14 @@ void Settings::readConfig()
     {
         audio_record_path = QDir::homePath();
     }
+    try
+    {
+        vox_level = cfg.lookup("vox_level");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        vox_level = 2;
+    }
 
 }
 
@@ -554,6 +562,7 @@ void Settings::saveConfig()
     root.add("night_mode",libconfig::Setting::TypeInt) = night_mode;
     root.add("scan_resume_time",libconfig::Setting::TypeInt) = scan_resume_time;
     root.add("audio_record_path",libconfig::Setting::TypeString) = audio_record_path.toStdString();
+    root.add("vox_level",libconfig::Setting::TypeInt) = vox_level;
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());

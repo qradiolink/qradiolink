@@ -74,7 +74,7 @@ void AudioWriter::run()
     _working = true;
     bool recording = false;
     // FIXME: support different frame durations
-    AudioProcessor *processor = new AudioProcessor;
+    AudioProcessor *processor = new AudioProcessor(_settings);
     QAudioFormat format;
     format.setSampleRate(8000);
     format.setChannelCount(1);

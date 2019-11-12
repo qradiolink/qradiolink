@@ -54,7 +54,7 @@ void AudioReader::run()
 {
     start:
     _working = true;
-    AudioProcessor *processor = new AudioProcessor;
+    AudioProcessor *processor = new AudioProcessor(_settings);
     _buffer = new QByteArray;
     // FIXME: support different frame durations
     int audiobuffer_size = 640; //40 ms @ 8k

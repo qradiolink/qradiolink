@@ -83,6 +83,7 @@ public:
     int night_mode;
     int scan_resume_time;
     QString audio_record_path;
+    int vox_level;
 
     /// Not saved to config:
 

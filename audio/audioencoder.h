@@ -21,13 +21,14 @@
 #include <opus/opus.h>
 #include <codec2/codec2.h>
 #include "audio/audioprocessor.h"
+#include "settings.h"
 
 
 
 class AudioEncoder
 {
 public:
-    AudioEncoder();
+    AudioEncoder(const Settings *settings);
     ~AudioEncoder();
     unsigned char *encode_opus(short *audiobuffer, int audiobuffersize, int &encoded_size);
     short *decode_opus(unsigned char *audiobuffer, int data_length, int &samples);
@@ -42,6 +43,7 @@ public:
 
 
 private:
+    const Settings *_settings;
     OpusEncoder *_enc;
     OpusDecoder *_dec;
     OpusEncoder *_enc_voip;

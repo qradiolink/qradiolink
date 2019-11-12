@@ -19,7 +19,7 @@
 AudioInterface::AudioInterface(QObject *parent, unsigned sample_rate, unsigned channels, int normal) :
     QObject(parent)
 {
-    _processor = new AudioProcessor;
+    _processor = new AudioProcessor(nullptr);
     _s_rec = NULL;
     _s_play = NULL;
     _s_short_play = NULL;

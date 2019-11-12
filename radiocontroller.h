@@ -171,6 +171,7 @@ public slots:
     void setCallsign();
     void setScanResumeTime(int value);
     void setAudioRecord(bool value);
+    void setVoxLevel(int value);
 
 private:
     unsigned int getFrameLength(unsigned char *data);

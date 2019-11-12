@@ -141,6 +141,7 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     QObject::connect(ui->muteSelfButton,SIGNAL(toggled(bool)),this,SLOT(toggleSelfMute(bool)));
     QObject::connect(ui->deafenSelfButton,SIGNAL(toggled(bool)),this,SLOT(toggleSelfDeaf(bool)));
     QObject::connect(ui->voipGainSlider,SIGNAL(valueChanged(int)),this,SLOT(changeVoipVolume(int)));
+    QObject::connect(ui->voxLevelSlider,SIGNAL(valueChanged(int)),this,SLOT(changeVoxLevel(int)));
     QObject::connect(ui->scanTimerSpinBox,SIGNAL(valueChanged(int)),
                      this,SLOT(updateScanResumeTime(int)));
     QObject::connect(ui->audioOutputComboBox,SIGNAL(currentIndexChanged(int)),
@@ -523,6 +524,7 @@ void MainWindow::setConfig()
     ui->agcDecaySpinBox->setValue(_settings->agc_decay);
     ui->scanTimerSpinBox->setValue(_settings->scan_resume_time);
     ui->lineEditRecordPath->setText(_settings->audio_record_path);
+    ui->voxLevelSlider->setSliderPosition(_settings->vox_level);
 }
 
 void MainWindow::saveUiConfig()
@@ -1377,6 +1379,11 @@ void MainWindow::changeVoipVolume(int value)
     _settings->voip_volume = value;
     ui->voipGainSlider->setSliderPosition(value);
     emit setVoipVolume((int)value);
+}
+
+void MainWindow::changeVoxLevel(int value)
+{
+    _settings->vox_level = value;
 }
 
 void MainWindow::startScan(bool value)

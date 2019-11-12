@@ -294,6 +294,9 @@ bool CommandProcessor::processStatusCommands(int command_index, QString &respons
         else
             response.append(QString("Audio recording is disabled."));
         break;
+    case 57:
+        response.append(QString("Current VOX level is %1.").arg(_settings->vox_level));
+        break;
 
     default:
         break;
@@ -851,6 +854,21 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
         }
         break;
     }
+    case 58:
+    {
+        int set = param1.toInt();
+        if(set < 0 || set > 10)
+        {
+            response = "Parameter value is not supported";
+            success = false;
+        }
+        else
+        {
+            response = QString("Setting VOX level to %1").arg(set);
+            emit setVoxLevel(set);
+        }
+        break;
+    }
 
     default:
         break;
@@ -922,4 +940,6 @@ void CommandProcessor::buildCommandList()
     _command_list->append(new command("list_modes", 0, "List operating modes"));
     _command_list->append(new command("recordstatus", 0, "Status of audio recorder"));
     _command_list->append(new command("setaudiorecorder", 1, "Toggle audio recording, (1 enabled, 0 disabled)"));
+    _command_list->append(new command("voxlevel", 0, "Get VOX level"));
+    _command_list->append(new command("setvoxlevel", 1, "Set VOX level (integer value level between 0 and 10)"));
 }

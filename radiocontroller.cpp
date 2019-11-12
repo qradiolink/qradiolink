@@ -21,7 +21,7 @@ RadioController::RadioController(Settings *settings, Logger *logger,
                                  RadioChannels *radio_channels, QObject *parent) :
     QObject(parent)
 {
-    /// these two pointers are owned by main()
+    /// these pointers are owned by main()
     _settings = settings;
     _logger = logger;
     _radio_channels = radio_channels;
@@ -29,7 +29,7 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     // FIXME: there is no reason for the modem to use the settings
     // All control happens in the radioop or main thread
     _modem = new gr_modem;
-    _codec = new AudioEncoder;
+    _codec = new AudioEncoder(settings);
     _audio_mixer_in = new AudioMixer;
     _radio_protocol = new RadioProtocol;
     _relay_controller = new RelayController(logger);
@@ -1886,6 +1886,11 @@ void RadioController::setTxVolume(int value)
 void RadioController::setVoipVolume(int value)
 {
     _voip_volume = 1e-3*exp(((float)value/50.0)*6.908);
+}
+
+void RadioController::setVoxLevel(int value)
+{
+    _settings->vox_level = value;
 }
 
 void RadioController::setRxCTCSS(float value)

@@ -17,9 +17,10 @@
 #include "audioencoder.h"
 
 
-AudioEncoder::AudioEncoder()
+AudioEncoder::AudioEncoder(const Settings *settings)
 {
-    _processor = new AudioProcessor;
+    _settings = settings;
+    _processor = new AudioProcessor(settings);
     int error, error1;
     _enc = opus_encoder_create(8000,1,OPUS_APPLICATION_VOIP,&error);
     if(error != OPUS_OK)

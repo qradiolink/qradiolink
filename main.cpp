@@ -278,6 +278,8 @@ void connectCommandSignals(TelnetServer *telnet_server, MumbleClient *mumbleclie
                      radio_op,SLOT(startMemoryScan(int)));
     QObject::connect(telnet_server->command_processor,SIGNAL(stopMemoryTune()),
                      radio_op,SLOT(stopMemoryScan()));
+    QObject::connect(telnet_server->command_processor,SIGNAL(setVoxLevel(int)),
+                     radio_op,SLOT(setVoxLevel(int)));
     QObject::connect(mumbleclient,SIGNAL(commandMessage(QString,int)),
                      telnet_server->command_processor,SLOT(parseMumbleMessage(QString,int)));
 }

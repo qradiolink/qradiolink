@@ -31,12 +31,14 @@ extern "C"
 }
 #include <speex/speex_preprocess.h>
 #include "unistd.h"
+#include "settings.h"
+
 
 class AudioProcessor : public QObject
 {
     Q_OBJECT
 public:
-    explicit AudioProcessor(QObject *parent = nullptr);
+    explicit AudioProcessor(const Settings *settings, QObject *parent = nullptr);
     ~AudioProcessor();
     enum
     {
@@ -56,6 +58,7 @@ signals:
 public slots:
 
 private:
+    const Settings *_settings;
     SpeexPreprocessState *_speex_preprocess;
     sf_compressor_state_st _cm_state_read;
     sf_compressor_state_st _cm_state_read_codec2;

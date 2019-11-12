@@ -41,6 +41,8 @@ void AudioRecorder::startRecording()
         _logger->log(Logger::LogLevelCritical, QString("Could not open audio file %1 for recording").arg(
                          filename));
     }
+    _logger->log(Logger::LogLevelInfo, QString("Starting audio recording to file %1").arg(
+                     filename));
     _recording = true;
 }
 
@@ -56,6 +58,7 @@ void AudioRecorder::stopRecording()
 {
     if(!_recording)
         return;
+    _logger->log(Logger::LogLevelInfo, QString("Stopping audio recording"));
     sf_write_sync(_snd_out_file) ;
     sf_close(_snd_out_file);
     _recording = false;

@@ -21,7 +21,7 @@ MumbleClient::MumbleClient(const Settings *settings, Logger *logger, QObject *pa
     QObject(parent)
 {
     _socket_client = new SSLClient;
-    _codec = new AudioEncoder;
+    _codec = new AudioEncoder(settings);
     _settings = settings;
     _logger = logger;
     _encryption_set = false;

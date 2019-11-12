@@ -150,6 +150,7 @@ public slots:
     void updateAudioOutput(int value);
     void updateAudioInput(int value);
     void toggleAudioRecord(bool value);
+    void changeVoxLevel(int value);
 
 signals:
     void terminateConnections();
