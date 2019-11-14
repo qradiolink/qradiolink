@@ -120,6 +120,7 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     QObject::connect(ui->showConstellationButton,SIGNAL(toggled(bool)),
                      this,SLOT(showConstellation(bool)));
     QObject::connect(ui->duplexOpButton,SIGNAL(toggled(bool)),this,SLOT(setEnabledDuplex(bool)));
+    QObject::connect(ui->reverseShiftButton,SIGNAL(toggled(bool)),this,SLOT(toggleReverseShift(bool)));
     QObject::connect(ui->fftEnableCheckBox,SIGNAL(toggled(bool)),this,SLOT(setEnabledFFT(bool)));
     QObject::connect(ui->peakDetectCheckBox,SIGNAL(toggled(bool)),this,SLOT(setPeakDetect(bool)));
     QObject::connect(ui->fpsBox,SIGNAL(currentIndexChanged(int)),this,SLOT(newWaterfallFPS()));
@@ -1280,6 +1281,16 @@ void MainWindow::initError(QString error)
 void MainWindow::toggleRepeater(bool value)
 {
     emit toggleRepeat(value);
+}
+
+void MainWindow::toggleReverseShift(bool value)
+{
+    long long freq = _settings->rx_frequency + _settings->demod_offset + _settings->tx_shift;
+    ui->frameCtrlFreq->setFrequency(freq, false);
+    ui->plotterFrame->setCenterFreq(_settings->rx_frequency + _settings->tx_shift);
+    ui->plotterFrame->setDemodCenterFreq(freq);
+    ui->shiftEdit->setText(QString::number(-_settings->tx_shift / 1000));
+    emit enableReverseShift(value);
 }
 
 void MainWindow::clarifierTuneFreq(int value)

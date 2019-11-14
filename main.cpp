@@ -324,6 +324,7 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
     QObject::connect(w,SIGNAL(setVOIPForwarding(bool)),radio_op,SLOT(setVOIPForwarding(bool)));
     QObject::connect(w,SIGNAL(setVox(bool)),radio_op,SLOT(setVox(bool)));
     QObject::connect(w,SIGNAL(toggleRepeat(bool)),radio_op,SLOT(toggleRepeat(bool)));
+    QObject::connect(w,SIGNAL(enableReverseShift(bool)),radio_op,SLOT(enableReverseShift(bool)));
     QObject::connect(w,SIGNAL(stopRadio()),radio_op,SLOT(stop()));
     QObject::connect(w,SIGNAL(setCarrierOffset(qint64)),radio_op,SLOT(setCarrierOffset(qint64)));
     QObject::connect(w,SIGNAL(newFFTSize(int)),radio_op,SLOT(setFFTSize(int)));

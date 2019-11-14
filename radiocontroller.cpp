@@ -1934,6 +1934,13 @@ void RadioController::enableDuplex(bool value)
     _settings->enable_duplex = (int)value;
 }
 
+void RadioController::enableReverseShift(bool value)
+{
+    tuneFreq(_settings->rx_frequency + _settings->tx_shift);
+    _settings->tx_shift = -_settings->tx_shift;
+    tuneTxFreq(_settings->rx_frequency + _settings->demod_offset);
+}
+
 void RadioController::enableRelays(bool value)
 {
     _settings->enable_relays = (int)value;
