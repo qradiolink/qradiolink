@@ -81,6 +81,7 @@ signals:
     void pcmData(std::vector<float> *pcm);
     void videoData(unsigned char *buf, int size);
     void netData(unsigned char *buf, int size);
+    void voipVideoData(unsigned char *buf, int size);
     void videoImage(QImage img);
     void endAudio(int secs);
     void startAudio();
@@ -151,6 +152,7 @@ public slots:
     void stopMemoryScan();
     void endAudioTransmission();
     void processVoipAudioFrame(short *pcm, int samples, quint64 sid);
+    void processVoipVideoFrame(unsigned char *video_frame, int size, quint64 sid);
     void usePTTForVOIP(bool value);
     void setVOIPForwarding(bool value);
     void startTx();

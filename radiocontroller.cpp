@@ -482,6 +482,14 @@ int RadioController::processInputVideoStream(bool &frame_flag)
     /// This includes V4L2 capture time as well
     _video->encode_jpeg(&(videobuffer[24]), encoded_size, max_video_frame_size - 24);
 
+    if(_settings->voip_ptt_enabled && _transmitting && (encoded_size > 0))
+    {
+        unsigned char *video_frame = (unsigned char*)calloc(encoded_size,
+                                                            sizeof(unsigned char));
+        memcpy(video_frame, &(videobuffer[24]), encoded_size);
+        emit voipVideoData(video_frame, encoded_size);
+    }
+
     microsec = (quint64)timer.nsecsElapsed();
     if(microsec < 100000000)
     {
@@ -1145,6 +1153,27 @@ void RadioController::receiveNetData(unsigned char *data, int size)
 void RadioController::processVoipAudioFrame(short *pcm, int samples, quint64 sid)
 {
     _audio_mixer_in->addSamples(pcm, samples, sid);
+}
+
+void RadioController::processVoipVideoFrame(unsigned char *video_frame, int size, quint64 sid)
+{
+    unsigned char *raw_output = _video->decode_jpeg(video_frame, size);
+
+    delete[] video_frame;
+    if(!raw_output)
+    {
+        return;
+    }
+    QImage img (raw_output, 320,240, QImage::Format_RGB888);
+    if(img.isNull())
+    {
+        delete[] raw_output;
+        return;
+    }
+    QImage image = img.convertToFormat(QImage::Format_RGB32);
+
+    emit videoImage(image);
+    delete[] raw_output;
 }
 
 void RadioController::startTransmission()
@@ -1936,6 +1965,7 @@ void RadioController::enableDuplex(bool value)
 
 void RadioController::enableReverseShift(bool value)
 {
+    Q_UNUSED(value);
     tuneFreq(_settings->rx_frequency + _settings->tx_shift);
     _settings->tx_shift = -_settings->tx_shift;
     tuneTxFreq(_settings->rx_frequency + _settings->demod_offset);

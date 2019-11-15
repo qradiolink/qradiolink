@@ -64,6 +64,7 @@ signals:
     void commandMessage(QString msg, int sender_id);
     void userSound(Station* s);
     void userSpeaking(quint64 id);
+    void videoFrame(unsigned char *video_frame, int size, quint64 session_id);
     
 public slots:
     void connectToServer(QString address, unsigned port);
@@ -77,6 +78,7 @@ public slots:
     void sendUDPPing();
     void processPCMAudio(short *audiobuffer, int audiobuffersize);
     void processOpusAudio(unsigned char *opus_packet, int packet_size);
+    void processVideoFrame(unsigned char *video_frame, int frame_size);
     QString getChannelName();
     int getChannelId();
     QString createChannel(QString channel_name="");
@@ -101,6 +103,7 @@ private:
     void processUserState(quint8 *message, quint64 size);
     void processUserRemove(quint8 *message, quint64 size);
     void createVoicePacket(unsigned char *encoded_audio, int packet_size);
+    void createVideoPacket(unsigned char *video_frame, int frame_size);
     void processIncomingAudioPacket(quint8 *data, quint64 size, quint8 type);
     void decodeAudio(unsigned char *audiobuffer, short audiobuffersize, quint8 type, quint64 session_id);
     void processTextMessage(quint8 *message, quint64 size);

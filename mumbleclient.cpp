@@ -161,14 +161,17 @@ void MumbleClient::pingServer()
 void MumbleClient::processProtoMessage(QByteArray data)
 {
     int total_size = data.size();
-    quint8 bin_data[total_size];
+    if(total_size > 4000)
+        return;
+    quint8 *bin_data = new quint8[total_size];
     unsigned char *temp = reinterpret_cast<unsigned char*>(data.data());
     memcpy(bin_data,temp,total_size);
     int type, len;
     getPreamble(bin_data,&type,&len);
     int message_size = total_size-6;
-    quint8 message[message_size];
+    quint8 *message = new quint8[message_size];
     memcpy(message,bin_data+6,message_size);
+    delete[] bin_data;
     switch(type)
     {
     case 0: // Version
@@ -206,6 +209,7 @@ void MumbleClient::processProtoMessage(QByteArray data)
                                                         type));
         break;
     }
+    delete[] message;
 }
 
 void MumbleClient::processVersion(quint8 *message, quint64 size)
@@ -672,6 +676,17 @@ void MumbleClient::processOpusAudio(unsigned char *opus_packet, int packet_size)
     delete[] opus_packet;
 }
 
+void MumbleClient::processVideoFrame(unsigned char *video_frame, int frame_size)
+{
+    if(!_synchronized)
+    {
+        delete[] video_frame;
+        return;
+    }
+    createVideoPacket(video_frame, frame_size);
+    delete[] video_frame;
+}
+
 void MumbleClient::createVoicePacket(unsigned char *encoded_audio, int packet_size)
 {
     int type = 0;
@@ -708,6 +723,38 @@ void MumbleClient::createVoicePacket(unsigned char *encoded_audio, int packet_si
     }
 }
 
+void MumbleClient::createVideoPacket(unsigned char *video_frame, int frame_size)
+{
+    int type = 0;
+    if(_settings->_use_codec2) // FIXME: support for Codec2 frames is only in my old fork
+        type |= (5 << 5);
+    else
+        type |= (4 << 5);
+
+    int data_size = 1024*1024;
+    char data[data_size];
+    data[0] = static_cast<unsigned char>(type);
+    PacketDataStream pds(data + 1, data_size-1);
+
+    pds << 1;
+    int real_packet_size = frame_size;
+    pds << frame_size;
+
+    char *video_packet = reinterpret_cast<char*>(video_frame);
+
+    pds.append(video_packet,real_packet_size);
+
+    unsigned char *bin_data = reinterpret_cast<unsigned char*>(data);
+    if(_settings->_mumble_tcp) // TCP tunnel
+    {
+        sendProtoMessage(bin_data,1,pds.size()+1);
+    }
+    else // Use UDP. This won't work because of encryption
+    {
+        sendUDPMessage(bin_data,pds.size()+1);
+    }
+}
+
 void MumbleClient::processIncomingAudioPacket(quint8 *data, quint64 size, quint8 type)
 {
     PacketDataStream pds(data+1, size-1);
@@ -722,16 +769,31 @@ void MumbleClient::processIncomingAudioPacket(quint8 *data, quint64 size, quint8
     {
         type = audio_head >> 5;
     }
-    int audio_size = pds.left();
-    if(audio_size <= 0) // FIXME: also need to protect against overflow
+    int frame_size = pds.left();
+    if(frame_size <= 0)
     {
         _logger->log(Logger::LogLevelWarning, "Received malformed audio frame");
-        delete[] data;
         return;
     }
-    QByteArray qba = pds.dataBlock(pds.left());
-    unsigned char *encoded_audio = reinterpret_cast<unsigned char*>(qba.data());
-    decodeAudio(encoded_audio,audio_size, type, session);
+    if(frame_size > 4000)
+    {
+        _logger->log(Logger::LogLevelWarning, "Dropping frame too large");
+        return;
+    }
+    if(frame_size > 1000)
+    {
+        QByteArray qba = pds.dataBlock(frame_size);
+        unsigned char *encoded_video = reinterpret_cast<unsigned char*>(qba.data());
+        unsigned char *video_frame = new unsigned char[frame_size];
+        memcpy(video_frame, encoded_video, frame_size);
+        emit videoFrame(video_frame, frame_size, session);
+    }
+    else
+    {
+        QByteArray qba = pds.dataBlock(pds.left());
+        unsigned char *encoded_audio = reinterpret_cast<unsigned char*>(qba.data());
+        decodeAudio(encoded_audio,frame_size, type, session);
+    }
 }
 
 void MumbleClient::processUDPData(QByteArray data)

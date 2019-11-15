@@ -146,11 +146,15 @@ int main(int argc, char *argv[])
                      radio_op, SLOT(txAudio(short*,int,int, bool)));
     QObject::connect(radio_op, SIGNAL(voipDataOpus(unsigned char*,int)),
                      mumbleclient, SLOT(processOpusAudio(unsigned char*, int)));
+    QObject::connect(radio_op, SIGNAL(voipVideoData(unsigned char*,int)),
+                     mumbleclient, SLOT(processVideoFrame(unsigned char*, int)));
     QObject::connect(radio_op, SIGNAL(pingServer()), mumbleclient, SLOT(pingServer()));
     QObject::connect(radio_op, SIGNAL(voipDataPCM(short*,int)),
                      mumbleclient, SLOT(processPCMAudio(short*,int)));
     QObject::connect(mumbleclient, SIGNAL(pcmAudio(short*,int,quint64)),
                      radio_op, SLOT(processVoipAudioFrame(short*, int, quint64)));
+    QObject::connect(mumbleclient, SIGNAL(videoFrame(unsigned char*,int,quint64)),
+                     radio_op, SLOT(processVoipVideoFrame(unsigned char*,int,quint64)));
     QObject::connect(mumbleclient,SIGNAL(newChannels(ChannelList)),
                      radio_op,SLOT(setChannels(ChannelList)));
     QObject::connect(mumbleclient,SIGNAL(onlineStations(StationList)),
