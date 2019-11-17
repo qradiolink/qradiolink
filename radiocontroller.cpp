@@ -139,6 +139,21 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     {
         _end_rec_sound = new QByteArray(resfile_end_tx.readAll());
     }
+    QFile resfile_end_tx1(":/res/end_beep2.raw");
+    if(resfile_end_tx1.open(QIODevice::ReadOnly))
+    {
+        _end_rec_sound2 = new QByteArray(resfile_end_tx1.readAll());
+    }
+    QFile resfile_end_tx2(":/res/MDC1200.raw");
+    if(resfile_end_tx2.open(QIODevice::ReadOnly))
+    {
+        _mdc_rec_sound = new QByteArray(resfile_end_tx2.readAll());
+    }
+    QFile resfile_end_tx3(":/res/MODAT.raw");
+    if(resfile_end_tx3.open(QIODevice::ReadOnly))
+    {
+        _mod_rec_sound = new QByteArray(resfile_end_tx3.readAll());
+    }
 
     toggleRxMode(_settings->rx_mode);
     toggleTxMode(_settings->tx_mode);
@@ -348,8 +363,11 @@ void RadioController::flushRadioToVoipBuffer()
         {
             pcm[i] = _to_voip_buffer->at(i) * _voip_volume;
         }
-
-        emit voipDataPCM(pcm,960*sizeof(short));
+        int packet_size = 0;
+        unsigned char *encoded_audio;
+        /// encode the PCM with higher quality and bitrate
+        encoded_audio = _codec->encode_opus_voip(pcm, 960*sizeof(short), packet_size);
+        emit voipDataOpus(encoded_audio,packet_size);
         _to_voip_buffer->remove(0,960);
     }
 }
@@ -627,14 +645,35 @@ void RadioController::sendBinData(QByteArray data, int frame_type)
     }
 }
 
-void RadioController::sendEndBeep()
+void RadioController::sendTxBeep(int sound)
 {
-    short *samples = (short*) _end_rec_sound->data();
+    short *samples;
+    int size;
+    switch(sound)
+    {
+    case 0:
+        samples = (short*) _mdc_rec_sound->data();
+        size = _mdc_rec_sound->size();
+        break;
+    case 1:
+        samples = (short*) _mod_rec_sound->data();
+        size = _mod_rec_sound->size();
+        break;
+    case 2:
+        samples = (short*) _end_rec_sound->data();
+        size = _end_rec_sound->size();
+        break;
+    case 3:
+        samples = (short*) _end_rec_sound2->data();
+        size = _end_rec_sound2->size();
+        break;
+    }
+
     std::vector<float> *pcm = new std::vector<float>;
 
-    for(unsigned int i=0;i<_end_rec_sound->size()/sizeof(short);i++)
+    for(unsigned int i=0;i<size/sizeof(short);i++)
     {
-        pcm->push_back((float)samples[i] / 32767.0f * 0.5);
+        pcm->push_back((float)samples[i] / 32767.0f * 0.4);
     }
     for(unsigned int i=0;i<320*4;i++)
         pcm->push_back(0.0);
@@ -736,7 +775,7 @@ void RadioController::startTx()
                 && ((_tx_mode == gr_modem_types::ModemTypeNBFM2500) ||
                     (_tx_mode == gr_modem_types::ModemTypeNBFM5000)))
         {
-            sendEndBeep();
+            sendTxBeep();
         }
         emit displayTransmitStatus(true);
     }
@@ -764,8 +803,8 @@ void RadioController::stopTx()
                 && ((_tx_mode == gr_modem_types::ModemTypeNBFM2500) ||
                     (_tx_mode == gr_modem_types::ModemTypeNBFM5000)))
         {
-            sendEndBeep();
-            tx_tail_msec = 600;
+            sendTxBeep();
+            tx_tail_msec = 800;
         }
         // FIXME: end tail length should be calculated exactly
         _end_tx_timer->start(tx_tail_msec);
@@ -1606,7 +1645,7 @@ void RadioController::toggleRxMode(int value)
         _rx_mode = gr_modem_types::ModemType4FSK20000;
         _step_hz = 500;
         _scan_step_hz = 50000;
-        break; 
+        break;
     case 23:
         _rx_mode = gr_modem_types::ModemTypeQPSKVideo;
         _step_hz = 1000;

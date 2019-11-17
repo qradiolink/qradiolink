@@ -184,7 +184,7 @@ private:
     void updateInputAudioStream();
     int processInputVideoStream(bool &frame_flag);
     void processInputNetStream();
-    void sendEndBeep();
+    void sendTxBeep(int sound=0);
     void sendChannels();
     void sendTextData(QString text, int frame_type);
     void sendBinData(QByteArray data, int frame_type);
@@ -227,6 +227,9 @@ private:
     QVector<short> *_to_voip_buffer;
     QByteArray *_data_rec_sound;
     QByteArray *_end_rec_sound;
+    QByteArray *_end_rec_sound2;
+    QByteArray *_mdc_rec_sound;
+    QByteArray *_mod_rec_sound;
     QList<radiochannel*> _memory_channels;
 
     QString _text_out;

@@ -102,8 +102,8 @@ unsigned char* AudioEncoder::encode_opus(short *audiobuffer, int audiobuffersize
 
 unsigned char* AudioEncoder::encode_opus_voip(short *audiobuffer, int audiobuffersize, int &encoded_size)
 {
-    unsigned char *encoded_audio = new unsigned char[1024];
-    encoded_size = opus_encode(_enc_voip, audiobuffer, audiobuffersize/sizeof(short), encoded_audio, 1024);
+    unsigned char *encoded_audio = new unsigned char[4096];
+    encoded_size = opus_encode(_enc_voip, audiobuffer, audiobuffersize/sizeof(short), encoded_audio, 4096);
     return encoded_audio;
 }
 

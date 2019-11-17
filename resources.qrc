@@ -35,6 +35,9 @@
         <file>res/media-record.png</file>
         <file>res/audio-input-microphone.png</file>
         <file>res/view-conversation-balloon.png</file>
+        <file>res/end_beep2.raw</file>
+        <file>res/MDC1200.raw</file>
+        <file>res/MODAT.raw</file>
     </qresource>
     <qresource prefix="/fonts">
         <file>res/LiquidCrystal-Normal.otf</file>
