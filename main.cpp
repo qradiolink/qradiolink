@@ -35,7 +35,8 @@
 #include "telnetserver.h"
 #include "logger.h"
 
-
+void connectIndependentSignals(AudioWriter *audiowriter, AudioReader *audioreader,
+                               RadioController *radio_op, MumbleClient *mumbleclient);
 void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
                        AudioReader *audioreader, MainWindow *w, MumbleClient *mumbleclient,
                        RadioController *radio_op);
@@ -136,6 +137,33 @@ int main(int argc, char *argv[])
     connectCommandSignals(telnet_server, mumbleclient, radio_op);
 
     /// Signals independent of GUI or remote interface
+    connectIndependentSignals(audiowriter, audioreader, radio_op, mumbleclient);
+
+
+    /// Start remote command listener
+    if(headless)
+        telnet_server->start();
+
+    int ret = a.exec();
+
+    /// Cleanup on exit
+    ///
+    if(!headless)
+        delete w;
+    delete telnet_server;
+    delete mumbleclient;
+    radio_channels->saveConfig();
+    delete radio_channels;
+    settings->saveConfig();
+    delete settings;
+    logger->log(Logger::LogLevelInfo, "Stopping qradiolink");
+    delete logger;
+    return ret;
+}
+
+void connectIndependentSignals(AudioWriter *audiowriter, AudioReader *audioreader,
+                               RadioController *radio_op, MumbleClient *mumbleclient)
+{
     QObject::connect(radio_op, SIGNAL(writePCM(short*,int,bool,int)),
                      audiowriter, SLOT(writePCM(short*,int,bool, int)));
     QObject::connect(radio_op, SIGNAL(recordAudio(bool)),
@@ -163,27 +191,6 @@ int main(int argc, char *argv[])
                      mumbleclient, SLOT(newMumbleMessage(QString)));
     QObject::connect(mumbleclient, SIGNAL(textMessage(QString,bool)),
                      radio_op, SLOT(textMumble(QString,bool)));
-
-
-    /// Start remote command listener
-    if(headless)
-        telnet_server->start();
-
-    int ret = a.exec();
-
-    /// Cleanup on exit
-    ///
-    if(!headless)
-        delete w;
-    delete telnet_server;
-    delete mumbleclient;
-    radio_channels->saveConfig();
-    delete radio_channels;
-    settings->saveConfig();
-    delete settings;
-    logger->log(Logger::LogLevelInfo, "Stopping qradiolink");
-    delete logger;
-    return ret;
 }
 
 
