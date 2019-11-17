@@ -66,7 +66,7 @@ AudioEncoder::AudioEncoder(const Settings *settings)
     // VOIP
     int opus_bandwidth_voip;
     opus_encoder_ctl(_enc_voip, OPUS_SET_VBR(0));
-    opus_encoder_ctl(_enc_voip, OPUS_SET_BITRATE(44000));
+    opus_encoder_ctl(_enc_voip, OPUS_SET_BITRATE(_settings->voip_bitrate));
     opus_encoder_ctl(_enc_voip, OPUS_SET_COMPLEXITY(10));
     //opus_encoder_ctl(_enc, OPUS_SET_DTX(0));
     opus_encoder_ctl(_enc_voip, OPUS_SET_LSB_DEPTH(16));
@@ -91,6 +91,11 @@ AudioEncoder::~AudioEncoder()
     codec2_destroy(_codec2_1400);
     codec2_destroy(_codec2_700);
     delete _processor;
+}
+
+void AudioEncoder::set_voip_bitrate(int bitrate)
+{
+    opus_encoder_ctl(_enc_voip, OPUS_SET_BITRATE(bitrate));
 }
 
 unsigned char* AudioEncoder::encode_opus(short *audiobuffer, int audiobuffersize, int &encoded_size)

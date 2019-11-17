@@ -152,6 +152,7 @@ public slots:
     void toggleAudioRecord(bool value);
     void changeVoxLevel(int value);
     void toggleReverseShift(bool value);
+    void updateVoipBitrate(int value);
 
 signals:
     void terminateConnections();
@@ -213,6 +214,7 @@ signals:
     void restartAudioInputThread();
     void setAudioRecord(bool value);
     void enableReverseShift(bool value);
+    void setVoipBitrate(int value);
 
 public:
     explicit MainWindow(Settings *settings, RadioChannels *radio_channels, QWidget *parent = 0);

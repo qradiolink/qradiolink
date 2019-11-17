@@ -84,6 +84,7 @@ public:
     int scan_resume_time;
     QString audio_record_path;
     int vox_level;
+    int voip_bitrate;
 
     /// Not saved to config:
 

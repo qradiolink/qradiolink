@@ -149,6 +149,8 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
                      this,SLOT(updateAudioOutput(int)));
     QObject::connect(ui->audioInputComboBox,SIGNAL(currentIndexChanged(int)),
                      this,SLOT(updateAudioInput(int)));
+    QObject::connect(ui->voipBitrateComboBox,SIGNAL(currentIndexChanged(int)),
+                     this,SLOT(updateVoipBitrate(int)));
 
     QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
     QObject::connect(ui->plotterFrame,SIGNAL(pandapterRangeChanged(float,float)),
@@ -526,6 +528,7 @@ void MainWindow::setConfig()
     ui->scanTimerSpinBox->setValue(_settings->scan_resume_time);
     ui->lineEditRecordPath->setText(_settings->audio_record_path);
     ui->voxLevelSlider->setSliderPosition(_settings->vox_level);
+    ui->voipBitrateComboBox->setCurrentText(QString::number(_settings->voip_bitrate));
 }
 
 void MainWindow::saveUiConfig()
@@ -1676,6 +1679,12 @@ void MainWindow::updateAudioInput(int value)
     Q_UNUSED(value);
     _settings->audio_input_device = ui->audioInputComboBox->currentText();
     emit restartAudioInputThread();
+}
+
+void MainWindow::updateVoipBitrate(int value)
+{
+    Q_UNUSED(value);
+    emit setVoipBitrate(ui->voipBitrateComboBox->currentText().toInt());
 }
 
 void MainWindow::toggleAudioRecord(bool value)

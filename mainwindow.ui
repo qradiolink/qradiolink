@@ -96,7 +96,7 @@
 </string>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>3</number>
         </property>
         <property name="iconSize">
          <size>
@@ -3023,6 +3023,42 @@ and S-meter (dBm)</string>
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
                </property>
+              </widget>
+             </item>
+             <item row="12" column="2">
+              <widget class="QLabel" name="label_43">
+               <property name="text">
+                <string>VOIP bitrate</string>
+               </property>
+              </widget>
+             </item>
+             <item row="12" column="3">
+              <widget class="QComboBox" name="voipBitrateComboBox">
+               <item>
+                <property name="text">
+                 <string>9600</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>19200</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>24600</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>38400</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>48000</string>
+                </property>
+               </item>
               </widget>
              </item>
             </layout>

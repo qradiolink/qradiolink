@@ -1961,6 +1961,13 @@ void RadioController::setVoxLevel(int value)
     _settings->vox_level = value;
 }
 
+void RadioController::setVoipBitrate(int value)
+{
+    _settings->voip_bitrate = value;
+    _logger->log(Logger::LogLevelInfo,QString("Setting VOIP bitrate to %1").arg(value));
+    _codec->set_voip_bitrate(value);
+}
+
 void RadioController::setRxCTCSS(float value)
 {
     if(std::abs(_settings->rx_ctcss - value) > 0.001f)

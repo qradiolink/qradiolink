@@ -30,6 +30,7 @@ class AudioEncoder
 public:
     AudioEncoder(const Settings *settings);
     ~AudioEncoder();
+    void set_voip_bitrate(int bitrate);
     unsigned char *encode_opus(short *audiobuffer, int audiobuffersize, int &encoded_size);
     short *decode_opus(unsigned char *audiobuffer, int data_length, int &samples);
     unsigned char *encode_opus_voip(short *audiobuffer, int audiobuffersize, int &encoded_size);

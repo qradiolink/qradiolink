@@ -507,6 +507,14 @@ void Settings::readConfig()
     {
         vox_level = 20;
     }
+    try
+    {
+        voip_bitrate = cfg.lookup("voip_bitrate");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        voip_bitrate = 19200;
+    }
 
 }
 
@@ -563,6 +571,7 @@ void Settings::saveConfig()
     root.add("scan_resume_time",libconfig::Setting::TypeInt) = scan_resume_time;
     root.add("audio_record_path",libconfig::Setting::TypeString) = audio_record_path.toStdString();
     root.add("vox_level",libconfig::Setting::TypeInt) = vox_level;
+    root.add("voip_bitrate",libconfig::Setting::TypeInt) = voip_bitrate;
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());

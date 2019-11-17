@@ -67,6 +67,7 @@ signals:
     void setSampleRate(int);
     void newFilterWidth(int);
     void setVoxLevel(int);
+    void setVoipBitrate(int);
 
     /// Tuning the radio
     void setCarrierOffset(qint64 offset);

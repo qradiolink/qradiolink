@@ -297,6 +297,9 @@ bool CommandProcessor::processStatusCommands(int command_index, QString &respons
     case 57:
         response.append(QString("Current VOX level is %1.").arg(_settings->vox_level));
         break;
+    case 59:
+        response.append(QString("Current VOIP bitrate is %1.").arg(_settings->voip_bitrate));
+        break;
 
     default:
         break;
@@ -869,6 +872,21 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
         }
         break;
     }
+    case 60:
+    {
+        int set = param1.toInt();
+        if(set < 9400 || set > 50000)
+        {
+            response = "Parameter value is not supported";
+            success = false;
+        }
+        else
+        {
+            response = QString("Setting VOIP bitrate to %1").arg(set);
+            emit setVoipBitrate(set);
+        }
+        break;
+    }
 
     default:
         break;
@@ -942,4 +960,6 @@ void CommandProcessor::buildCommandList()
     _command_list->append(new command("setaudiorecorder", 1, "Toggle audio recording, (1 enabled, 0 disabled)"));
     _command_list->append(new command("voxlevel", 0, "Get VOX level"));
     _command_list->append(new command("setvoxlevel", 1, "Set VOX level (integer value level between 0 and 100)"));
+    _command_list->append(new command("voipbitrate", 0, "Get VOIP bitrate"));
+    _command_list->append(new command("setvoipbitrate", 1, "Set VOIP bitrate (bits/sec"));
 }
