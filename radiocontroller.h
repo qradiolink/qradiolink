@@ -41,6 +41,7 @@
 #include "audio/audiomixer.h"
 #include "audio/audioencoder.h"
 #include "video/videoencoder.h"
+#include "video/imagecapture.h"
 #include "gr/gr_modem.h"
 #include "net/netdevice.h"
 #include "logger.h"
@@ -108,6 +109,7 @@ public slots:
     void startTransmission();
     void endTransmission();
     void txAudio(short *audiobuffer, int audiobuffer_size, int vad, bool radio_only);
+    int processVideoFrame(bool &frame_flag);
     void textData(QString text, bool repeat = false);
     void textMumble(QString text, bool channel = false);
     void stop();
@@ -183,7 +185,7 @@ private:
 
 
     void updateInputAudioStream();
-    int processInputVideoStream(bool &frame_flag);
+    void triggerImageCapture();
     void processInputNetStream();
     void sendTxBeep(int sound=0);
     void sendChannels();
@@ -207,6 +209,7 @@ private:
     AudioMixer *_audio_mixer_in;
     AudioMixer *_audio_mixer_out;
     VideoEncoder *_video;
+    ImageCapture *_camera;
     NetDevice *_net_device;
     gr_modem *_modem;
     RadioProtocol *_radio_protocol;

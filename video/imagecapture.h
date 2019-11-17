@@ -22,27 +22,33 @@
 #include <QCameraInfo>
 #include <QCameraImageCapture>
 #include "settings.h"
+#include "logger.h"
 
 class ImageCapture : public QObject
 {
     Q_OBJECT
 public:
-    explicit ImageCapture(Settings *settings, QObject *parent = nullptr);
+    explicit ImageCapture(Settings *settings, Logger *logger, QObject *parent = nullptr);
     ~ImageCapture();
 
     void init();
     void deinit();
-    void capture_image(unsigned char *frame, int &len);
+    void capture_image();
 
 signals:
+    void imageCaptured(unsigned char *image, int size);
 
 public slots:
-    void process_image();
+    void process_image(int id, QImage img);
 
 private:
     Settings *_settings;
+    Logger *_logger;
+    unsigned char *_videobuffer;
     QCamera *_camera;
     QCameraImageCapture *_capture;
+    unsigned int _max_video_frame_size;
+    bool _inited;
 };
 
 #endif // IMAGECAPTURE_H

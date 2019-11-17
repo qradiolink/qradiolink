@@ -16,19 +16,29 @@
 
 #include "imagecapture.h"
 
-ImageCapture::ImageCapture(Settings *settings, QObject *parent) : QObject(parent)
+ImageCapture::ImageCapture(Settings *settings, Logger *logger, QObject *parent) : QObject(parent)
 {
     _settings = settings;
+    _logger = logger;
+    _max_video_frame_size = 3122;
+    _inited = false;
 
+    /// Large alloc
+    _videobuffer = (unsigned char*)calloc(_max_video_frame_size,
+                                                        sizeof(unsigned char));
 }
 
 ImageCapture::~ImageCapture()
 {
-
+    delete[] _videobuffer;
 }
 
 void ImageCapture::init()
 {
+    if(_inited)
+    {
+        deinit();
+    }
     QCameraInfo camera_info = QCameraInfo::defaultCamera();
     _camera = new QCamera(camera_info);
     _camera->setCaptureMode(QCamera::CaptureStillImage);
@@ -39,28 +49,33 @@ void ImageCapture::init()
     _capture = new QCameraImageCapture(_camera);
     _capture->setBufferFormat(QVideoFrame::Format_Jpeg);
     _capture->setCaptureDestination(QCameraImageCapture::CaptureToBuffer);
+    QObject::connect(_capture, SIGNAL(imageCaptured(int,QImage)), this, SLOT(process_image(int,QImage)));
     QImageEncoderSettings encoding_settings;
     encoding_settings.setResolution(320, 240);
     encoding_settings.setCodec("image/jpeg");
     encoding_settings.setQuality(QMultimedia::VeryLowQuality);
     _capture->setEncodingSettings(encoding_settings);
     _camera->start();
+    _inited = true;
 }
 
 void ImageCapture::deinit()
 {
+    if(!_inited)
+        return;
+    QObject::disconnect(_capture, SIGNAL(imageCaptured(int,QImage)), this, SLOT(process_image()));
     delete _capture;
     delete _camera;
 }
 
-void ImageCapture::capture_image(unsigned char *frame, int &len)
+void ImageCapture::capture_image()
 {
     _camera->searchAndLock();
     _capture->capture();
     _camera->unlock();
 }
 
-void ImageCapture::process_image()
+void ImageCapture::process_image(int id, QImage img)
 {
-
+    qDebug() << img.size();
 }

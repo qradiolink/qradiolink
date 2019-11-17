@@ -34,6 +34,7 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     _radio_protocol = new RadioProtocol;
     _relay_controller = new RelayController(logger);
     _video = new VideoEncoder(logger);
+    //_camera = new ImageCapture(settings, logger);
     _net_device = new NetDevice(logger, 0, _settings->ip_address);
     _mutex = new QMutex;
 
@@ -124,6 +125,8 @@ RadioController::RadioController(Settings *settings, Logger *logger,
                      SLOT(receiveVideoData(unsigned char*,int)));
     QObject::connect(_modem,SIGNAL(netData(unsigned char*,int)),this,
                      SLOT(receiveNetData(unsigned char*,int)));
+    //QObject::connect(_camera,SIGNAL(imageCaptured(unsigned char*,int)),this,
+    //                 SLOT(processVideoFrame(unsigned char*,int)));
 
     /// Garbage to fill unused video and net frames with
     for (int j = 0;j<5000;j++)
@@ -257,7 +260,8 @@ void RadioController::run()
         if(transmitting)
         {
             if(_tx_mode == gr_modem_types::ModemTypeQPSKVideo)
-                processInputVideoStream(frame_flag);
+                processVideoFrame(frame_flag);
+                //triggerImageCapture();
             else if(_tx_mode == gr_modem_types::ModemTypeQPSK250000)
             {
                 /// if not in the process of resetting the modem read interface
@@ -483,7 +487,13 @@ void RadioController::txAudio(short *audiobuffer, int audiobuffer_size,
     delete[] audiobuffer;
 }
 
-int RadioController::processInputVideoStream(bool &frame_flag)
+void RadioController::triggerImageCapture()
+{
+
+    //_camera->capture_image();
+}
+
+int RadioController::processVideoFrame(bool &frame_flag)
 {
     Q_UNUSED(frame_flag);
     unsigned int max_video_frame_size = 3122;
@@ -1463,6 +1473,7 @@ void RadioController::toggleTX(bool value)
         }
         if(_tx_mode == gr_modem_types::ModemTypeQPSKVideo)
             _video->init(_settings->video_device);
+            //_camera->init();
         else
             _video->deinit();
 
@@ -1776,6 +1787,7 @@ void RadioController::toggleTxMode(int value)
     }
     if(_tx_mode == gr_modem_types::ModemTypeQPSKVideo)
         _video->init(_settings->video_device);
+        //_camera->init();
     else
         _video->deinit();
     _mutex->lock();

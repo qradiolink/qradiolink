@@ -513,7 +513,7 @@ void Settings::readConfig()
     }
     catch(const libconfig::SettingNotFoundException &nfex)
     {
-        voip_bitrate = 19200;
+        voip_bitrate = 24600;
     }
 
 }
