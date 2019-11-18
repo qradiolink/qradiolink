@@ -85,6 +85,7 @@ public:
     QString audio_record_path;
     int vox_level;
     int voip_bitrate;
+    int end_beep;
 
     /// Not saved to config:
 

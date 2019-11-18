@@ -515,6 +515,14 @@ void Settings::readConfig()
     {
         voip_bitrate = 24600;
     }
+    try
+    {
+        end_beep = cfg.lookup("end_beep");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        end_beep = 0;
+    }
 
 }
 
@@ -572,6 +580,7 @@ void Settings::saveConfig()
     root.add("audio_record_path",libconfig::Setting::TypeString) = audio_record_path.toStdString();
     root.add("vox_level",libconfig::Setting::TypeInt) = vox_level;
     root.add("voip_bitrate",libconfig::Setting::TypeInt) = voip_bitrate;
+    root.add("end_beep",libconfig::Setting::TypeInt) = end_beep;
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());

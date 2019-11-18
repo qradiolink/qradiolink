@@ -177,6 +177,7 @@ public slots:
     void setAudioRecord(bool value);
     void setVoxLevel(int value);
     void setVoipBitrate(int value);
+    void setEndBeep(int value);
     void enableReverseShift(bool value);
 
 private:

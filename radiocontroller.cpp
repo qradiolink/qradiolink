@@ -662,20 +662,26 @@ void RadioController::sendTxBeep(int sound)
     switch(sound)
     {
     case 0:
-        samples = (short*) _mdc_rec_sound->data();
-        size = _mdc_rec_sound->size();
+        return;
         break;
     case 1:
-        samples = (short*) _mod_rec_sound->data();
-        size = _mod_rec_sound->size();
-        break;
-    case 2:
         samples = (short*) _end_rec_sound->data();
         size = _end_rec_sound->size();
         break;
-    case 3:
+    case 2:
         samples = (short*) _end_rec_sound2->data();
         size = _end_rec_sound2->size();
+        break;
+    case 3:
+        samples = (short*) _mdc_rec_sound->data();
+        size = _mdc_rec_sound->size();
+        break;
+    case 4:
+        samples = (short*) _mod_rec_sound->data();
+        size = _mod_rec_sound->size();
+        break;
+    default:
+        return;
         break;
     }
 
@@ -785,7 +791,7 @@ void RadioController::startTx()
                 && ((_tx_mode == gr_modem_types::ModemTypeNBFM2500) ||
                     (_tx_mode == gr_modem_types::ModemTypeNBFM5000)))
         {
-            sendTxBeep();
+            sendTxBeep(_settings->end_beep);
         }
         emit displayTransmitStatus(true);
     }
@@ -813,7 +819,7 @@ void RadioController::stopTx()
                 && ((_tx_mode == gr_modem_types::ModemTypeNBFM2500) ||
                     (_tx_mode == gr_modem_types::ModemTypeNBFM5000)))
         {
-            sendTxBeep();
+            sendTxBeep(_settings->end_beep);
             tx_tail_msec = 800;
         }
         // FIXME: end tail length should be calculated exactly
@@ -1351,10 +1357,38 @@ void RadioController::endAudioTransmission()
     QString time= QDateTime::currentDateTime().toString("d/MMM/yyyy hh:mm:ss");
     emit printText("<b>" + time +
                    "</b> <font color=\"#77FF77\">Transmission end</font><br/>\n",true);
-    unsigned int size = _end_rec_sound->size();
+    unsigned int size;
+    short *origin;
+    switch(_settings->end_beep)
+    {
+    case 0:
+        return;
+        break;
+    case 1:
+        origin = (short*) _end_rec_sound->data();
+        size = _end_rec_sound->size();
+        break;
+    case 2:
+        origin = (short*) _end_rec_sound2->data();
+        size = _end_rec_sound2->size();
+        break;
+    case 3:
+        origin = (short*) _mdc_rec_sound->data();
+        size = _mdc_rec_sound->size();
+        break;
+    case 4:
+        origin = (short*) _mod_rec_sound->data();
+        size = _mod_rec_sound->size();
+        break;
+    default:
+        return;
+        break;
+    }
     short *samples = new short[size/sizeof(short)];
-    short *origin = reinterpret_cast<short*>(_end_rec_sound->data());
-    memcpy(samples, origin, size);
+    for(unsigned int i=0;i<size/sizeof(short);i++)
+    {
+        samples[i] = short(origin[i] / 2);
+    }
     emit writePCM(samples, size, false, AudioProcessor::AUDIO_MODE_ANALOG);
 }
 
@@ -1978,6 +2012,11 @@ void RadioController::setVoipBitrate(int value)
     _settings->voip_bitrate = value;
     _logger->log(Logger::LogLevelInfo,QString("Setting VOIP bitrate to %1").arg(value));
     _codec->set_voip_bitrate(value);
+}
+
+void RadioController::setEndBeep(int value)
+{
+    _settings->end_beep = value;
 }
 
 void RadioController::setRxCTCSS(float value)

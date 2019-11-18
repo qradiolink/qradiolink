@@ -352,6 +352,8 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
                      radio_op,SLOT(setScanResumeTime(int)));
     QObject::connect(w,SIGNAL(setVoipBitrate(int)),
                      radio_op,SLOT(setVoipBitrate(int)));
+    QObject::connect(w,SIGNAL(setEndBeep(int)),
+                     radio_op,SLOT(setEndBeep(int)));
     QObject::connect(w,SIGNAL(connectToServer(QString, unsigned)),
                      mumbleclient,SLOT(connectToServer(QString, unsigned)));
     QObject::connect(w,SIGNAL(disconnectFromServer()),mumbleclient,SLOT(disconnectFromServer()));
