@@ -516,6 +516,8 @@ int RadioController::processVideoFrame(bool &frame_flag)
                                                             sizeof(unsigned char));
         memcpy(video_frame, &(videobuffer[24]), encoded_size);
         emit voipVideoData(video_frame, encoded_size);
+        delete[] videobuffer;
+        return 0;
     }
 
     microsec = (quint64)timer.nsecsElapsed();
