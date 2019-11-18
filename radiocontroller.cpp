@@ -73,6 +73,7 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     _memory_scan_done = true;
 
     _data_modem_sleeping = false;
+    _radio_to_voip_on = false;
     _transmitting = false;
     _process_text = false;
     _repeat_text = false;
@@ -217,7 +218,7 @@ void RadioController::run()
         _mutex->unlock();
 
         QCoreApplication::processEvents(); // process signals
-        flushRadioToVoipBuffer();
+        QtConcurrent::run(this, &RadioController::flushRadioToVoipBuffer);
         buffers_filling = processMixerQueue();
 
         // FIXME: this is the wrong place to control the Mumble client
@@ -253,9 +254,9 @@ void RadioController::run()
 
         // FIXME: large data transfer blocking voice demod
         /// Get all available data from the demodulator
-        getFFTData();
-        getConstellationData();
-        getRSSI();
+        QtConcurrent::run(this, &RadioController::getFFTData);
+        QtConcurrent::run(this, &RadioController::getConstellationData);
+        QtConcurrent::run(this, &RadioController::getRSSI);
 
         if(transmitting)
         {
@@ -358,6 +359,9 @@ void RadioController::updateInputAudioStream()
 
 void RadioController::flushRadioToVoipBuffer()
 {
+    if(_radio_to_voip_on)
+        return;
+    _radio_to_voip_on = true;
     /// Using large size of frames (120 ms) for Mumble client compatibility
     if(_to_voip_buffer->size() >= 960)
     {
@@ -374,6 +378,7 @@ void RadioController::flushRadioToVoipBuffer()
         emit voipDataOpus(encoded_audio,packet_size);
         _to_voip_buffer->remove(0,960);
     }
+    _radio_to_voip_on = false;
 }
 
 bool RadioController::processMixerQueue()

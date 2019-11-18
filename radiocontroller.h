@@ -28,6 +28,7 @@
 #include <QCoreApplication>
 #include <QElapsedTimer>
 #include <QImage>
+#include <QtConcurrent/QtConcurrent>
 #include <unistd.h>
 #include <cmath>
 #include <gnuradio/digital/crc32.h>
@@ -251,6 +252,7 @@ private:
     bool _scan_stop;
     bool _memory_scan_done;
     bool _data_modem_sleeping;
+    bool _radio_to_voip_on;
 
     int _rx_mode;
     int _tx_mode;
