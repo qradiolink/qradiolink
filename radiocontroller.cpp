@@ -497,9 +497,7 @@ void RadioController::triggerImageCapture()
 
 void RadioController::processVideoFrame()
 {
-    if(_tx_mode != gr_modem_types::ModemTypeQPSKVideo)
-        return;
-    if(_video_on)
+    if((_tx_mode != gr_modem_types::ModemTypeQPSKVideo) || _video_on)
         return;
     _video_on = true;
     unsigned int max_video_frame_size = 3122;
