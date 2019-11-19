@@ -74,6 +74,7 @@ RadioController::RadioController(Settings *settings, Logger *logger,
 
     _data_modem_sleeping = false;
     _radio_to_voip_on = false;
+    _video_on = false;
     _transmitting = false;
     _process_text = false;
     _repeat_text = false;
@@ -203,7 +204,6 @@ void RadioController::run()
     bool ptt_activated = false;
     bool data_to_process = false;
     bool buffers_filling = false;
-    bool frame_flag = true;
     int last_ping_time = 0;
     int last_channel_broadcast_time = 0;
     while(!_stop)
@@ -252,7 +252,6 @@ void RadioController::run()
             stopTx();
         }
 
-        // FIXME: large data transfer blocking voice demod
         /// Get all available data from the demodulator
         QtConcurrent::run(this, &RadioController::getFFTData);
         QtConcurrent::run(this, &RadioController::getConstellationData);
@@ -260,16 +259,14 @@ void RadioController::run()
 
         if(transmitting)
         {
-            if(_tx_mode == gr_modem_types::ModemTypeQPSKVideo)
-                processVideoFrame(frame_flag);
-                //triggerImageCapture();
-            else if(_tx_mode == gr_modem_types::ModemTypeQPSK250000)
-            {
-                /// if not in the process of resetting the modem read interface
-                /// data will accumulate in the interface buffer...
-                if(!data_modem_sleeping)
-                    processInputNetStream();
-            }
+            QtConcurrent::run(this, &RadioController::processVideoFrame);
+            //triggerImageCapture();
+
+            /// if not in the process of resetting the modem read interface
+            /// data will accumulate in the interface buffer...
+            if(!data_modem_sleeping)
+                processInputNetStream();
+
         }
 
         data_to_process = getDemodulatorData();
@@ -498,9 +495,13 @@ void RadioController::triggerImageCapture()
     //_camera->capture_image();
 }
 
-int RadioController::processVideoFrame(bool &frame_flag)
+void RadioController::processVideoFrame()
 {
-    Q_UNUSED(frame_flag);
+    if(_tx_mode != gr_modem_types::ModemTypeQPSKVideo)
+        return;
+    if(_video_on)
+        return;
+    _video_on = true;
     unsigned int max_video_frame_size = 3122;
     unsigned long encoded_size;
 
@@ -522,14 +523,20 @@ int RadioController::processVideoFrame(bool &frame_flag)
         memcpy(video_frame, &(videobuffer[24]), encoded_size);
         emit voipVideoData(video_frame, encoded_size);
         delete[] videobuffer;
-        return 0;
+        microsec = (quint64)timer.nsecsElapsed();
+        if(microsec < 100000000)
+        {
+            struct timespec time_to_sleep = {0, (100000000 - (long)microsec)};
+            nanosleep(&time_to_sleep, NULL);
+        }
+        _video_on = false;
+        return;
     }
 
     microsec = (quint64)timer.nsecsElapsed();
     if(microsec < 100000000)
     {
-        // FIXME: hardcoded value
-        struct timespec time_to_sleep = {0, (100000000 - (long)microsec) - 5000000};
+        struct timespec time_to_sleep = {0, (100000000 - (long)microsec)};
         nanosleep(&time_to_sleep, NULL);
     }
 
@@ -555,11 +562,13 @@ int RadioController::processVideoFrame(bool &frame_flag)
     }
 
     emit videoData(videobuffer,max_video_frame_size);
-    return 1; // ???
+    _video_on = false;
 }
 
 void RadioController::processInputNetStream()
 {
+    if(_tx_mode != gr_modem_types::ModemTypeQPSK250000)
+        return;
     // 48400 microsec per frame, during this time data enters the interface socket buffer
     qint64 time_per_frame = 48400000;
     qint64 microsec, time_left;

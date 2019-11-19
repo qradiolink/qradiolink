@@ -177,6 +177,9 @@ void MumbleClient::processProtoMessage(QByteArray data)
     case 0: // Version
         processVersion(message,message_size);
         break;
+    case 4: // Reject
+        processReject(message,message_size);
+        break;
     case 15:
         setupEncryption(message,message_size);
         break;
@@ -229,6 +232,15 @@ void MumbleClient::processVersion(quint8 *message, quint64 size)
         release = QString::fromStdString(v.release());
     emit textMessage("Protocol version: " + proto_version + "\n", false);
     emit textMessage("Release: " + release + "\n", false);
+}
+
+void MumbleClient::processReject(quint8 *message, quint64 size)
+{
+    MumbleProto::Reject r;
+    r.ParseFromArray(message,size);
+    // Ignore r.type();
+    QString reason = QString::fromStdString(r.reason());
+    emit textMessage("Rejected: " + reason + "\n", false);
 }
 
 void MumbleClient::setupEncryption(quint8 *message, quint64 size)

@@ -98,6 +98,7 @@ private:
     void sendProtoMessage(quint8 *message, quint16 type, int size);
     void setupEncryption(quint8 *message, quint64 size);
     void processVersion(quint8 *message, quint64 size);
+    void processReject(quint8 *message, quint64 size);
     void processServerSync(quint8 *message, quint64 size);
     void processChannelState(quint8 *message, quint64 size);
     void processUserState(quint8 *message, quint64 size);

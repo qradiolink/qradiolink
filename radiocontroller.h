@@ -110,7 +110,7 @@ public slots:
     void startTransmission();
     void endTransmission();
     void txAudio(short *audiobuffer, int audiobuffer_size, int vad, bool radio_only);
-    int processVideoFrame(bool &frame_flag);
+    void processVideoFrame();
     void textData(QString text, bool repeat = false);
     void textMumble(QString text, bool channel = false);
     void stop();
@@ -253,6 +253,7 @@ private:
     bool _memory_scan_done;
     bool _data_modem_sleeping;
     bool _radio_to_voip_on;
+    bool _video_on;
 
     int _rx_mode;
     int _tx_mode;
