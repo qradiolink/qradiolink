@@ -285,7 +285,7 @@ void RadioController::run()
             if(!data_to_process && !buffers_filling)
             {
                 /// nothing to output from demodulator
-                struct timespec time_to_sleep = {0, 15000000L };
+                struct timespec time_to_sleep = {0, 10000000L };
                 nanosleep(&time_to_sleep, NULL);
             }
             else
@@ -297,7 +297,7 @@ void RadioController::run()
         else
         {
             /// we are transmitting
-            struct timespec time_to_sleep = {0, 2000000L };
+            struct timespec time_to_sleep = {0, 10000000L };
             nanosleep(&time_to_sleep, NULL);
         }
     }
