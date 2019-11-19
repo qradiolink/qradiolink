@@ -280,26 +280,19 @@ void RadioController::run()
 
         // FIXME: remove these hardcoded sleeps
         /// Needed to keep the thread from using the CPU by looping too fast
-        if(!transmitting && !vox_enabled && !process_text)
+
+        if(!data_to_process && !buffers_filling)
         {
-            if(!data_to_process && !buffers_filling)
-            {
-                /// nothing to output from demodulator
-                struct timespec time_to_sleep = {0, 10000000L };
-                nanosleep(&time_to_sleep, NULL);
-            }
-            else
-            {
-                struct timespec time_to_sleep = {0, 1000L };
-                nanosleep(&time_to_sleep, NULL);
-            }
-        }
-        else
-        {
-            /// we are transmitting
+            /// nothing to output from demodulator
             struct timespec time_to_sleep = {0, 10000000L };
             nanosleep(&time_to_sleep, NULL);
         }
+        else
+        {
+            struct timespec time_to_sleep = {0, 1000L };
+            nanosleep(&time_to_sleep, NULL);
+        }
+
     }
 
     emit finished();
