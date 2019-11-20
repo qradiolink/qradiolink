@@ -132,6 +132,8 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     QObject::connect(ui->nightModeCheckBox,SIGNAL(toggled(bool)),this,SLOT(setTheme(bool)));
     QObject::connect(ui->remoteControlCheckBox,SIGNAL(toggled(bool)),
                      this,SLOT(setRemoteControl(bool)));
+    QObject::connect(ui->muteForwardedAudioCheckBox,SIGNAL(toggled(bool)),
+                     this,SLOT(updateMuteForwardedAudio(bool)));
     QObject::connect(ui->rssiCalibrateButton,SIGNAL(clicked()),this,SLOT(setRSSICalibration()));
     QObject::connect(ui->saveChannelsButton,SIGNAL(clicked()),this,SLOT(saveMemoryChannes()));
     QObject::connect(ui->agcAttackSpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateAgcAttack(int)));
@@ -516,6 +518,7 @@ void MainWindow::setConfig()
     ui->burstIPCheckBox->setChecked((bool)_settings->burst_ip_modem);
     ui->remoteControlCheckBox->setChecked((bool)_settings->remote_control);
     ui->nightModeCheckBox->setChecked((bool)_settings->night_mode);
+    ui->muteForwardedAudioCheckBox->setChecked((bool)_settings->mute_forwarded_audio);
     ui->rssiCalibrateEdit->setText(QString::number(_settings->rssi_calibration_value));
     if(_settings->rx_ctcss > 0.0)
         ui->comboBoxRxCTCSS->setCurrentText(QString::number(_settings->rx_ctcss));
@@ -1698,4 +1701,9 @@ void MainWindow::updateEndBeep(int value)
 void MainWindow::toggleAudioRecord(bool value)
 {
     emit setAudioRecord(value);
+}
+
+void MainWindow::updateMuteForwardedAudio(bool value)
+{
+    emit setMuteForwardedAudio(value);
 }

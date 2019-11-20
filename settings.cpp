@@ -523,6 +523,14 @@ void Settings::readConfig()
     {
         end_beep = 0;
     }
+    try
+    {
+        mute_forwarded_audio = cfg.lookup("mute_forwarded_audio");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        mute_forwarded_audio = 1;
+    }
 
 }
 
@@ -581,6 +589,7 @@ void Settings::saveConfig()
     root.add("vox_level",libconfig::Setting::TypeInt) = vox_level;
     root.add("voip_bitrate",libconfig::Setting::TypeInt) = voip_bitrate;
     root.add("end_beep",libconfig::Setting::TypeInt) = end_beep;
+    root.add("mute_forwarded_audio",libconfig::Setting::TypeInt) = mute_forwarded_audio;
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());

@@ -36,6 +36,7 @@ gr_audio_sink::gr_audio_sink() :
 
 gr_audio_sink::~gr_audio_sink()
 {
+    _data->clear();
     delete _data;
 }
 
@@ -48,13 +49,12 @@ void gr_audio_sink::flush()
 std::vector<float> *gr_audio_sink::get_data()
 {
     gr::thread::scoped_lock guard(_mutex);
-
-    std::vector<float>* data = new std::vector<float>;
     // Have at least 40 ms of audio buffered
     if(_data->size() < 320)
     {
-        return data;
+        return nullptr;
     }
+    std::vector<float>* data = new std::vector<float>;
     data->reserve(_data->size());
     data->insert(data->end(),_data->begin(),_data->end());
     _data->clear();

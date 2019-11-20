@@ -154,6 +154,7 @@ public slots:
     void toggleReverseShift(bool value);
     void updateVoipBitrate(int value);
     void updateEndBeep(int value);
+    void updateMuteForwardedAudio(bool value);
 
 signals:
     void terminateConnections();
@@ -217,6 +218,7 @@ signals:
     void enableReverseShift(bool value);
     void setVoipBitrate(int value);
     void setEndBeep(int value);
+    void setMuteForwardedAudio(bool value);
 
 public:
     explicit MainWindow(Settings *settings, RadioChannels *radio_channels, QWidget *parent = 0);

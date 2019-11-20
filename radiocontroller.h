@@ -180,6 +180,7 @@ public slots:
     void setVoipBitrate(int value);
     void setEndBeep(int value);
     void enableReverseShift(bool value);
+    void setMuteForwardedAudio(bool value);
 
 private:
     unsigned int getFrameLength(unsigned char *data);

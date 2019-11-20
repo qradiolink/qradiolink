@@ -300,6 +300,12 @@ bool CommandProcessor::processStatusCommands(int command_index, QString &respons
     case 59:
         response.append(QString("Current VOIP bitrate is %1.").arg(_settings->voip_bitrate));
         break;
+    case 61:
+        if(_settings->mute_forwarded_audio)
+            response.append(QString("Local audio muting while forwarding is enabled."));
+        else
+            response.append(QString("Local audio muting while forwarding is disabled."));
+        break;
 
     default:
         break;
@@ -887,6 +893,21 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
         }
         break;
     }
+    case 62:
+    {
+        int set = param1.toInt();
+        if(set != 0 && set !=1)
+        {
+            response = "Parameter value is not supported";
+            success = false;
+        }
+        else
+        {
+            response = QString("Setting local audio mute while forwarding to %1").arg(set);
+            emit setMuteForwardedAudio((bool)set);
+        }
+        break;
+    }
 
     default:
         break;
@@ -962,4 +983,6 @@ void CommandProcessor::buildCommandList()
     _command_list->append(new command("setvoxlevel", 1, "Set VOX level (integer value level between 0 and 100)"));
     _command_list->append(new command("voipbitrate", 0, "Get VOIP bitrate"));
     _command_list->append(new command("setvoipbitrate", 1, "Set VOIP bitrate (bits/sec"));
+    _command_list->append(new command("muteforwarding", 0, "Get local mute status of VOIP forwarded radio"));
+    _command_list->append(new command("setmuteforwarding", 1, "Toggle local mute status of VOIP forwarded radio, (1 enabled, 0 disabled)"));
 }

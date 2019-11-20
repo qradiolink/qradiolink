@@ -72,6 +72,7 @@ public:
     int show_fft;
     int audio_compressor;
     int enable_relays;
+    int mute_forwarded_audio;
     int rssi_calibration_value;
     QString audio_output_device;
     QString audio_input_device;

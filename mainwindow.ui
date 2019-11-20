@@ -3113,6 +3113,13 @@ and S-meter (dBm)</string>
                </property>
               </widget>
              </item>
+             <item row="7" column="4">
+              <widget class="QCheckBox" name="muteForwardedAudioCheckBox">
+               <property name="text">
+                <string>Mute forwarded audio</string>
+               </property>
+              </widget>
+             </item>
             </layout>
            </widget>
           </item>

@@ -360,6 +360,9 @@ bool RadioController::processMixerQueue()
         short *pcm = _audio_mixer_in->mix_samples(_rx_volume);
         if(pcm == nullptr)
             return false;
+        short *local_pcm = new short[320];
+        memcpy(local_pcm, pcm, 320*sizeof(short));
+
         if(_settings->voip_forwarding || _settings->repeater_enabled)
         {
             if(!_voip_tx_timer->isActive())
@@ -372,8 +375,17 @@ bool RadioController::processMixerQueue()
         }
         else
         {
+            /// nothing towards radio or VOIP
+            delete[] pcm;
+        }
+        if(_settings->voip_forwarding && _settings->mute_forwarded_audio)
+        {
+            delete[] local_pcm;
+        }
+        else
+        {
             /// Routed to local audio output
-            emit writePCM(pcm, 320*sizeof(short), (bool)_settings->audio_compressor,
+            emit writePCM(local_pcm, 320*sizeof(short), (bool)_settings->audio_compressor,
                           AudioProcessor::AUDIO_MODE_OPUS);
             audioFrameReceived();
         }
@@ -993,7 +1005,8 @@ void RadioController::receiveDigitalAudio(unsigned char *data, int size)
                 _to_voip_buffer->push_back(audio_out[i]);
             }
         }
-        if(_settings->voip_forwarding && !_settings->repeater_enabled)
+        if(_settings->voip_forwarding && _settings->mute_forwarded_audio
+                && !_settings->repeater_enabled)
         {
             /// no local audio
             delete[] audio_out;
@@ -1029,7 +1042,8 @@ void RadioController::receivePCMAudio(std::vector<float> *audio_data)
         }
     }
 
-    if(_settings->voip_forwarding && !_settings->repeater_enabled)
+    if(_settings->voip_forwarding && !_settings->repeater_enabled
+            && _settings->mute_forwarded_audio)
     {
         /// No local audio
         delete[] pcm;
@@ -2082,6 +2096,11 @@ void RadioController::calibrateRSSI(float value)
 void RadioController::setScanResumeTime(int value)
 {
     _settings->scan_resume_time = value;
+}
+
+void RadioController::setMuteForwardedAudio(bool value)
+{
+    _settings->mute_forwarded_audio = (int)value;
 }
 
 

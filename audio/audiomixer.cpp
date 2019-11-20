@@ -66,6 +66,7 @@ void AudioMixer::addSamples(short *pcm, int samples, int sid)
         samples_for_sid->push_back(pcm[i]);
     }
     _mutex.unlock();
+    delete[] pcm;
 }
 
 

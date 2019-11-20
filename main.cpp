@@ -293,6 +293,8 @@ void connectCommandSignals(TelnetServer *telnet_server, MumbleClient *mumbleclie
                      radio_op,SLOT(setVoxLevel(int)));
     QObject::connect(telnet_server->command_processor,SIGNAL(setVoipBitrate(int)),
                      radio_op,SLOT(setVoipBitrate(int)));
+    QObject::connect(telnet_server->command_processor,SIGNAL(setMuteForwardedAudio(bool)),
+                     radio_op,SLOT(setMuteForwardedAudio(bool)));
     QObject::connect(mumbleclient,SIGNAL(commandMessage(QString,int)),
                      telnet_server->command_processor,SLOT(parseMumbleMessage(QString,int)));
 }
@@ -354,6 +356,8 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
                      radio_op,SLOT(setVoipBitrate(int)));
     QObject::connect(w,SIGNAL(setEndBeep(int)),
                      radio_op,SLOT(setEndBeep(int)));
+    QObject::connect(w,SIGNAL(setMuteForwardedAudio(bool)),
+                     radio_op,SLOT(setMuteForwardedAudio(bool)));
     QObject::connect(w,SIGNAL(connectToServer(QString, unsigned)),
                      mumbleclient,SLOT(connectToServer(QString, unsigned)));
     QObject::connect(w,SIGNAL(disconnectFromServer()),mumbleclient,SLOT(disconnectFromServer()));
