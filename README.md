@@ -161,7 +161,11 @@ Setup and running
 - When first run, go to the **Setup** tab first and configure the options, then click Save before starting TX or RX. Without the correct device arguments, the application can crash when enabling RX or TX. This is not something that the application can control and keep functioning properly.
 - GNU radio main DSP blocks are highly optimized (including on embedded ARM platforms) by using the VOLK library. To minimize the CPU resources consumed by QRadioLink it is recommended to run the **volk_profile** utility after GNU radio has been installed. This command only needs to be run when GNU radio or libvolk are upgraded.
 - High sample rates, high FPS rates and high FFT sizes all affect the CPU performance adversely. On embedded platforms with low resources, you can disable the spectrum display completely using the FFT checkbox. The FPS value also sets the rate at which the S-meter and constellation display are updated, so reduce it to minimum usable values. If the controls menu is not visible, the S-meter display will not consume CPU resources. Similar for the Constellation display.
-- Pulseaudio can be configured for low latency audio by changing settings in /etc/pulse. Alsa may require you to place an **.asoundrc** file in the home directory with contents similar to this:
+- Pulseaudio can be configured for low latency audio by changing settings in /etc/pulse. If you experience interruptions or audio glitches with Pulseaudio, you can try the following workaround: add **tsched=0** to this line in /etc/pulse/default.pa and restart Pulseaudio
+<pre>
+load-module module-udev-detect tsched=0
+</pre>
+Alsa may require you to place an **.asoundrc** file in the home directory with contents similar to this:
 <pre>
 period_time 0
 period_size 1024
