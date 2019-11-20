@@ -41,7 +41,8 @@ Features
 - VOIP (Radio-over-IP) connection between two or more stations operating in simplex or semi-duplex mode
 - Radio forwarding over VOIP - forward voice to the VOIP connection and viceversa
 - Direct VOIP talk-around (only requires connection to a VOIP server and no radio)
-- Wideband digital voice streaming over the Internet with the **Opus** audio codec
+- Wideband audio streaming over the Internet with the **Opus** audio codec
+- Configurable VOIP bitrate
 - Audio recording for local audio output in FLAC format
 - Remote control via network (requires a telnet client or similar program, can be scripted)
 - Remote control via Mumble private text messages
@@ -50,6 +51,7 @@ Features
 - Transmit and receive analog FM, SSB, AM, digital voice, text messages, digital video, IP protocol.
 - Mixed operation mode (receive one mode and transmit another)
 - Full duplex and simplex operation
+- Fast tune reverse repeater shift using dedicated button
 - Memory channels (store frequency, name, TX shift, operating mode, squelch value, volume, TX power, RX gain, TX and RX CTCSS) and memory channel scan 
 - Split operation (transmit on other frequency than the receive frequency with no shift limitation, used mostly for repeater operation)
 - Digital voice codecs: Codec2 700 bit/s, Codec2 1400 bit/s, Opus 9600 bit/s
@@ -199,7 +201,7 @@ When running in headless mode, console log will be disabled by default with the 
 <pre>
 Bus 002 Device 003: ID 0403:6001 Future Technology Devices International, Ltd FT232 Serial (UART) IC
 </pre>
-Do note that the identifier digits are the most important: **0403:6001**
+Do note that the identifier digits are the most important: **0403:6001**. 
 At the moment, such USB relays can be sourced on Amazon and Ebay and can be identified by the light silver-blue colour of the board.
 - QRadioLink can control a maximum of 8 relays, however only 4 are used at the moment. This is work in progress. Other types of relays may be supported in the future. The order in which relays are activated and deactivated during a transmission cycle is as follows: activation starting with relay 1 to relay 8, deactivation in reverse order (relay 8 to relay 1). A Python script **( ext/ftdi.py )** is included to help you determine the order of relays on the board.
 - Video will be displayed in the upper right corner. If your camera does not work, see the V4L2 guide in the docs/ directory for troubleshooting camera settings.
