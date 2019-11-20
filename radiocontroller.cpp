@@ -348,6 +348,7 @@ void RadioController::flushRadioToVoipBuffer()
         /// encode the PCM with higher quality and bitrate
         encoded_audio = _codec->encode_opus_voip(pcm, 960*sizeof(short), packet_size);
         emit voipDataOpus(encoded_audio,packet_size);
+        delete[] pcm;
         _to_voip_buffer->remove(0,960);
     }
     _radio_to_voip_on = false;
@@ -378,7 +379,8 @@ bool RadioController::processMixerQueue()
             /// nothing towards radio or VOIP
             delete[] pcm;
         }
-        if(_settings->voip_forwarding && _settings->mute_forwarded_audio)
+        if((_settings->voip_forwarding || _settings->repeater_enabled) &&
+                _settings->mute_forwarded_audio)
         {
             delete[] local_pcm;
         }
