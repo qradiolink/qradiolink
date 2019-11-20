@@ -38,6 +38,8 @@
         <file>res/end_beep2.raw</file>
         <file>res/MDC1200.raw</file>
         <file>res/MODAT.raw</file>
+        <file>res/talk_permit.raw</file>
+        <file>res/MDC1200_preamble.raw</file>
     </qresource>
     <qresource prefix="/fonts">
         <file>res/LiquidCrystal-Normal.otf</file>

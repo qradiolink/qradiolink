@@ -43,6 +43,7 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     _to_voip_buffer = new QVector<short>;
     /// pre-allocated at maximum possible FFT size (make it a constant?)
     _fft_data = new float[1024*1024];
+    _end_rec_sound = nullptr;
 
     _voice_led_timer = new QTimer(this);
     _voice_led_timer->setSingleShot(true);
@@ -139,26 +140,8 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     {
         _data_rec_sound = new QByteArray(resfile.readAll());
     }
-    QFile resfile_end_tx(":/res/end_beep1.raw");
-    if(resfile_end_tx.open(QIODevice::ReadOnly))
-    {
-        _end_rec_sound = new QByteArray(resfile_end_tx.readAll());
-    }
-    QFile resfile_end_tx1(":/res/end_beep2.raw");
-    if(resfile_end_tx1.open(QIODevice::ReadOnly))
-    {
-        _end_rec_sound2 = new QByteArray(resfile_end_tx1.readAll());
-    }
-    QFile resfile_end_tx2(":/res/MDC1200.raw");
-    if(resfile_end_tx2.open(QIODevice::ReadOnly))
-    {
-        _mdc_rec_sound = new QByteArray(resfile_end_tx2.readAll());
-    }
-    QFile resfile_end_tx3(":/res/MODAT.raw");
-    if(resfile_end_tx3.open(QIODevice::ReadOnly))
-    {
-        _mod_rec_sound = new QByteArray(resfile_end_tx3.readAll());
-    }
+
+    setEndBeep(_settings->end_beep);
 
     toggleRxMode(_settings->rx_mode);
     toggleTxMode(_settings->tx_mode);
@@ -211,7 +194,6 @@ void RadioController::run()
         _mutex->lock();
         bool transmitting = _transmitting;
         bool process_text = _process_text;
-        bool vox_enabled = _settings->vox_enabled;
         bool voip_forwarding = _settings->voip_forwarding;
         QString text_out = _text_out;
         bool data_modem_sleeping = _data_modem_sleeping;
@@ -671,24 +653,9 @@ void RadioController::sendTxBeep(int sound)
     case 0:
         return;
         break;
-    case 1:
+    default:
         samples = (short*) _end_rec_sound->data();
         size = _end_rec_sound->size();
-        break;
-    case 2:
-        samples = (short*) _end_rec_sound2->data();
-        size = _end_rec_sound2->size();
-        break;
-    case 3:
-        samples = (short*) _mdc_rec_sound->data();
-        size = _mdc_rec_sound->size();
-        break;
-    case 4:
-        samples = (short*) _mod_rec_sound->data();
-        size = _mod_rec_sound->size();
-        break;
-    default:
-        return;
         break;
     }
 
@@ -1371,24 +1338,9 @@ void RadioController::endAudioTransmission()
     case 0:
         return;
         break;
-    case 1:
+    default:
         origin = (short*) _end_rec_sound->data();
         size = _end_rec_sound->size();
-        break;
-    case 2:
-        origin = (short*) _end_rec_sound2->data();
-        size = _end_rec_sound2->size();
-        break;
-    case 3:
-        origin = (short*) _mdc_rec_sound->data();
-        size = _mdc_rec_sound->size();
-        break;
-    case 4:
-        origin = (short*) _mod_rec_sound->data();
-        size = _mod_rec_sound->size();
-        break;
-    default:
-        return;
         break;
     }
     short *samples = new short[size/sizeof(short)];
@@ -2024,6 +1976,40 @@ void RadioController::setVoipBitrate(int value)
 void RadioController::setEndBeep(int value)
 {
     _settings->end_beep = value;
+    QString filename = ":/res/end_beep1.raw";
+    switch(_settings->end_beep)
+    {
+    case 0:
+        break;
+    case 1:
+        filename = ":/res/end_beep1.raw";
+        break;
+    case 2:
+        filename = ":/res/end_beep2.raw";
+        break;
+    case 3:
+        filename = ":/res/MDC1200.raw";
+        break;
+    case 4:
+        filename = ":/res/MODAT.raw";
+        break;
+    case 5:
+        filename = ":/res/talk_permit.raw";
+        break;
+    case 6:
+        filename = ":/res/MDC1200_preamble.raw";
+        break;
+    default:
+        break;
+    }
+
+    QFile resfile(filename);
+    if(resfile.open(QIODevice::ReadOnly))
+    {
+        if(_end_rec_sound != nullptr)
+            delete _end_rec_sound;
+        _end_rec_sound = new QByteArray(resfile.readAll());
+    }
 }
 
 void RadioController::setRxCTCSS(float value)
