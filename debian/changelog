@@ -1,3 +1,17 @@
+qradiolink (0.8.2-3) RELEASED; urgency=medium
+
+  [ Adrian Musceac ]
+  * Minor bug fixes
+  * Audio recording
+  * Tune reverse repeater shift
+  * Configurable VOIP bitrate
+  * Configurable VOX level
+  * Configurable end beep
+
+
+ -- Adrian Musceac <kantooon@gmail.com>  Wed, 20 Nov 2019 23:00:00 +0300
+
+
 qradiolink (0.8.2-2) RELEASED; urgency=medium
 
   [ Adrian Musceac ]
