@@ -473,11 +473,11 @@ void gr_mod_base::set_mode(int mode)
     _top_block->unlock();
 }
 
-void gr_mod_base::start()
+void gr_mod_base::start(int buffer_size)
 {
     _audio_source->flush();
     _vector_source->flush();
-    _top_block->start();
+    _top_block->start(buffer_size);
 }
 
 void gr_mod_base::stop()

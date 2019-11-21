@@ -200,7 +200,8 @@ void RadioController::run()
         _mutex->unlock();
 
         QCoreApplication::processEvents(); // process signals
-        QtConcurrent::run(this, &RadioController::flushRadioToVoipBuffer);
+        if(!_radio_to_voip_on)
+            QtConcurrent::run(this, &RadioController::flushRadioToVoipBuffer);
         buffers_filling = processMixerQueue();
 
         // FIXME: this is the wrong place to control the Mumble client
@@ -241,7 +242,8 @@ void RadioController::run()
 
         if(transmitting)
         {
-            QtConcurrent::run(this, &RadioController::processVideoFrame);
+            if(!_video_on)
+                QtConcurrent::run(this, &RadioController::processVideoFrame);
             //triggerImageCapture();
 
             /// if not in the process of resetting the modem read interface
@@ -266,7 +268,7 @@ void RadioController::run()
         if(!data_to_process && !buffers_filling)
         {
             /// nothing to output from demodulator
-            struct timespec time_to_sleep = {0, 10000000L };
+            struct timespec time_to_sleep = {0, 20000000L };
             nanosleep(&time_to_sleep, NULL);
         }
         else
@@ -767,7 +769,7 @@ void RadioController::startTx()
         /// LimeSDR calibration procedure happens after every tune request
         struct timespec time_to_sleep = {0, 10000000L };
         nanosleep(&time_to_sleep, NULL);
-        _modem->startTX();
+        _modem->startTX(_settings->block_buffer_size);
         */
 
         _settings->tx_started = true;
@@ -816,7 +818,7 @@ void RadioController::stopTx()
         /** old code
         if(_settings->_rx_inited && !_settings->_repeater_enabled &&
                     (_rx_mode != gr_modem_types::ModemTypeQPSK250000))
-           _modem->startRX();
+           _modem->startRX(_settings->block_buffer_size);
         */
     }
 }
@@ -1430,7 +1432,7 @@ void RadioController::toggleRX(bool value)
         _modem->setSampRate(_settings->rx_sample_rate);
         _modem->tune(_settings->rx_frequency);
         _modem->calibrateRSSI(_settings->rssi_calibration_value);
-        _modem->startRX();
+        _modem->startRX(_settings->block_buffer_size);
         _mutex->unlock();
         const QMap<std::string,QVector<int>> rx_gains = _modem->getRxGainNames();
         /// hold a local copy of stage gains
@@ -1472,7 +1474,7 @@ void RadioController::toggleTX(bool value)
         catch(std::runtime_error &e)
         {
             if(_settings->rx_inited)
-                _modem->startRX();
+                _modem->startRX(_settings->block_buffer_size);
             _modem->deinitTX(_tx_mode);
             _mutex->unlock();
             _logger->log(Logger::LogLevelFatal,
@@ -1491,9 +1493,9 @@ void RadioController::toggleTX(bool value)
         _modem->setBbGain(_settings->bb_gain);
         _modem->tuneTx(430000000);
         _modem->setTxCTCSS(_settings->tx_ctcss);
-        _modem->startTX();
+        _modem->startTX(_settings->block_buffer_size);
         if(_settings->rx_inited)
-            _modem->startRX();
+            _modem->startRX(_settings->block_buffer_size);
         _mutex->unlock();
         const QMap<std::string,QVector<int>> tx_gains = _modem->getTxGainNames();
         /// hold a local copy of stage gains
@@ -1690,7 +1692,7 @@ void RadioController::toggleRxMode(int value)
     if(_settings->rx_inited)
     {
         _mutex->lock();
-        _modem->startRX();
+        _modem->startRX(_settings->block_buffer_size);
         _mutex->unlock();
     }
     _settings->rx_mode = value;
@@ -1804,7 +1806,7 @@ void RadioController::toggleTxMode(int value)
         _modem->stopTX();
     _modem->toggleTxMode(_tx_mode);
     if(_settings->tx_inited)
-        _modem->startTX();
+        _modem->startTX(_settings->block_buffer_size);
     _mutex->unlock();
     _settings->tx_mode = value;
 }
@@ -2103,6 +2105,11 @@ void RadioController::setScanResumeTime(int value)
 void RadioController::setMuteForwardedAudio(bool value)
 {
     _settings->mute_forwarded_audio = (int)value;
+}
+
+void RadioController::setBlockBufferSize(int value)
+{
+    _settings->block_buffer_size = value;
 }
 
 

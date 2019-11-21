@@ -87,6 +87,7 @@ public:
     int vox_level;
     int voip_bitrate;
     int end_beep;
+    int block_buffer_size;
 
     /// Not saved to config:
 

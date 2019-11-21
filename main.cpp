@@ -352,12 +352,15 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
     QObject::connect(w,SIGNAL(calibrateRSSI(float)), radio_op,SLOT(calibrateRSSI(float)));
     QObject::connect(w,SIGNAL(setScanResumeTime(int)),
                      radio_op,SLOT(setScanResumeTime(int)));
+    QObject::connect(w,SIGNAL(setAudioRecord(bool)),radio_op,SLOT(setAudioRecord(bool)));
     QObject::connect(w,SIGNAL(setVoipBitrate(int)),
                      radio_op,SLOT(setVoipBitrate(int)));
     QObject::connect(w,SIGNAL(setEndBeep(int)),
                      radio_op,SLOT(setEndBeep(int)));
     QObject::connect(w,SIGNAL(setMuteForwardedAudio(bool)),
                      radio_op,SLOT(setMuteForwardedAudio(bool)));
+    QObject::connect(w,SIGNAL(setBlockBufferSize(int)),
+                     radio_op,SLOT(setBlockBufferSize(int)));
     QObject::connect(w,SIGNAL(connectToServer(QString, unsigned)),
                      mumbleclient,SLOT(connectToServer(QString, unsigned)));
     QObject::connect(w,SIGNAL(disconnectFromServer()),mumbleclient,SLOT(disconnectFromServer()));
@@ -378,7 +381,6 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
                      audiowriter,SLOT(restart()));
     QObject::connect(w,SIGNAL(restartAudioInputThread()),
                      audioreader,SLOT(restart()));
-    QObject::connect(w,SIGNAL(setAudioRecord(bool)),radio_op,SLOT(setAudioRecord(bool)));
 
     /// Radio to GUI
     QObject::connect(radio_op, SIGNAL(printText(QString,bool)), w, SLOT(displayText(QString,bool)));

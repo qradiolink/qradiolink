@@ -254,11 +254,11 @@ const QMap<std::string,QVector<int>> gr_modem::getTxGainNames() const
     }
 }
 
-void gr_modem::startRX()
+void gr_modem::startRX(int buffer_size)
 {
     if(_gr_demod_base)
     {
-        _gr_demod_base->start();
+        _gr_demod_base->start(buffer_size);
     }
 }
 
@@ -270,11 +270,11 @@ void gr_modem::stopRX()
     }
 }
 
-void gr_modem::startTX()
+void gr_modem::startTX(int buffer_size)
 {
     if(_gr_mod_base)
     {
-        _gr_mod_base->start();
+        _gr_mod_base->start(buffer_size);
     }
 }
 

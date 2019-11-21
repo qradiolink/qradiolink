@@ -181,6 +181,7 @@ public slots:
     void setEndBeep(int value);
     void enableReverseShift(bool value);
     void setMuteForwardedAudio(bool value);
+    void setBlockBufferSize(int value);
 
 private:
     unsigned int getFrameLength(unsigned char *data);

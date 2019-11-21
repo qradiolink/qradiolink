@@ -47,7 +47,7 @@ public:
                 float rf_gain=0.5, std::string device_args="uhd", std::string device_antenna="TX/RX", int freq_corr=0);
 
 public slots:
-    void start();
+    void start(int buffer_size=8192);
     void stop();
     int set_data(std::vector<u_int8_t> *data);
     void tune(long center_freq);

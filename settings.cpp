@@ -531,6 +531,14 @@ void Settings::readConfig()
     {
         mute_forwarded_audio = 1;
     }
+    try
+    {
+        block_buffer_size = cfg.lookup("block_buffer_size");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        block_buffer_size = 8192;
+    }
 
 }
 
@@ -590,6 +598,7 @@ void Settings::saveConfig()
     root.add("voip_bitrate",libconfig::Setting::TypeInt) = voip_bitrate;
     root.add("end_beep",libconfig::Setting::TypeInt) = end_beep;
     root.add("mute_forwarded_audio",libconfig::Setting::TypeInt) = mute_forwarded_audio;
+    root.add("block_buffer_size",libconfig::Setting::TypeInt) = block_buffer_size;
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());

@@ -2973,9 +2973,6 @@ and S-meter (dBm)</string>
                  <height>0</height>
                 </size>
                </property>
-               <property name="styleSheet">
-                <string notr="true"/>
-               </property>
               </widget>
              </item>
              <item row="9" column="2">
@@ -3086,9 +3083,8 @@ and S-meter (dBm)</string>
                <property name="toolTip">
                 <string>Save settings</string>
                </property>
-               <property name="styleSheet">
-                <string notr="true">font: 12pt &quot;Sans Serif&quot;;
-</string>
+               <property name="autoFillBackground">
+                <bool>true</bool>
                </property>
                <property name="text">
                 <string>Save</string>
@@ -3104,6 +3100,15 @@ and S-meter (dBm)</string>
                  <height>24</height>
                 </size>
                </property>
+               <property name="autoDefault">
+                <bool>false</bool>
+               </property>
+               <property name="default">
+                <bool>false</bool>
+               </property>
+               <property name="flat">
+                <bool>false</bool>
+               </property>
               </widget>
              </item>
              <item row="15" column="2">
@@ -3118,6 +3123,63 @@ and S-meter (dBm)</string>
                <property name="text">
                 <string>Mute forwarded audio</string>
                </property>
+              </widget>
+             </item>
+             <item row="15" column="0">
+              <widget class="QLabel" name="label_45">
+               <property name="text">
+                <string>Block buffer size</string>
+               </property>
+              </widget>
+             </item>
+             <item row="15" column="1">
+              <widget class="QComboBox" name="blockBufferSizeComboBox">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <item>
+                <property name="text">
+                 <string>512</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>1024</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>2048</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>4096</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>8192</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>16384</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>32768</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>65536</string>
+                </property>
+               </item>
               </widget>
              </item>
             </layout>

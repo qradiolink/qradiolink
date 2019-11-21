@@ -155,6 +155,7 @@ public slots:
     void updateVoipBitrate(int value);
     void updateEndBeep(int value);
     void updateMuteForwardedAudio(bool value);
+    void updateBlockBufferSize(int value);
 
 signals:
     void terminateConnections();
@@ -219,6 +220,7 @@ signals:
     void setVoipBitrate(int value);
     void setEndBeep(int value);
     void setMuteForwardedAudio(bool value);
+    void setBlockBufferSize(int value);
 
 public:
     explicit MainWindow(Settings *settings, RadioChannels *radio_channels, QWidget *parent = 0);

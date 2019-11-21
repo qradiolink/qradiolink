@@ -553,11 +553,11 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
     _demod_running = true;
 }
 
-void gr_demod_base::start()
+void gr_demod_base::start(int buffer_size)
 {
     _audio_sink->flush();
     _vector_sink->flush();
-    _top_block->start();
+    _top_block->start(buffer_size);
 }
 
 void gr_demod_base::stop()

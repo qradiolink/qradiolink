@@ -155,6 +155,8 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
                      this,SLOT(updateVoipBitrate(int)));
     QObject::connect(ui->endBeepComboBox,SIGNAL(currentIndexChanged(int)),
                      this,SLOT(updateEndBeep(int)));
+    QObject::connect(ui->blockBufferSizeComboBox,SIGNAL(currentIndexChanged(int)),
+                     this,SLOT(updateBlockBufferSize(int)));
 
     QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
     QObject::connect(ui->plotterFrame,SIGNAL(pandapterRangeChanged(float,float)),
@@ -535,6 +537,7 @@ void MainWindow::setConfig()
     ui->voxLevelSlider->setSliderPosition(_settings->vox_level);
     ui->voipBitrateComboBox->setCurrentText(QString::number(_settings->voip_bitrate));
     ui->endBeepComboBox->setCurrentIndex(_settings->end_beep);
+    ui->blockBufferSizeComboBox->setCurrentText(QString::number(_settings->block_buffer_size));
 }
 
 void MainWindow::saveUiConfig()
@@ -1706,4 +1709,10 @@ void MainWindow::toggleAudioRecord(bool value)
 void MainWindow::updateMuteForwardedAudio(bool value)
 {
     emit setMuteForwardedAudio(value);
+}
+
+void MainWindow::updateBlockBufferSize(int value)
+{
+    Q_UNUSED(value);
+    emit setBlockBufferSize(ui->blockBufferSizeComboBox->currentText().toInt());
 }
