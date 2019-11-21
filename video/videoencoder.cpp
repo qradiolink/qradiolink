@@ -75,7 +75,7 @@ void VideoEncoder::encode_jpeg(unsigned char *videobuffer, unsigned long &encode
 
     encoded_size = 0;
 
-    unsigned char *outbuf = NULL;
+    unsigned char *outbuf = nullptr;
 
     cinfo.err = jpeg_std_error(&jerr);
     jpeg_create_compress(&cinfo);
@@ -182,7 +182,7 @@ unsigned char* VideoEncoder::decode_jpeg(unsigned char *videobuffer, int data_le
         jpeg_destroy_decompress(&cinfo);
         delete[] out_decompress;
         std::cerr << cinfo.err->output_message << std::endl;
-        return NULL;
+        return nullptr;
     }
     /* Now we can initialize the JPEG decompression object. */
     jpeg_create_decompress(&cinfo);

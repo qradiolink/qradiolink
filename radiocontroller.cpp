@@ -26,8 +26,6 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     _logger = logger;
     _radio_channels = radio_channels;
 
-    // FIXME: there is no reason for the modem to use the settings
-    // All control happens in the radioop or main thread
     _modem = new gr_modem;
     _codec = new AudioEncoder(settings);
     _audio_mixer_in = new AudioMixer;
@@ -600,7 +598,6 @@ void RadioController::processInputNetStream()
     }
     else
     {
-        // FIXME: modem should be able to do bursts and not waste power transmitting garbage
         unsigned int fake_nread = 0;
         memcpy(&(netbuffer[0]), &fake_nread, 4);
         memcpy(&(netbuffer[4]), &fake_nread, 4);

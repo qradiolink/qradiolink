@@ -114,6 +114,12 @@ unsigned char* AudioEncoder::encode_opus_voip(short *audiobuffer, int audiobuffe
 
 short* AudioEncoder::decode_opus(unsigned char *audiobuffer, int audiobuffersize, int &samples)
 {
+    if(audiobuffersize > 47)
+    {
+        samples = 0;
+        delete[] audiobuffer;
+        return nullptr;
+    }
     int fs = 320;
     short *pcm = new short[fs];
     //memset(pcm,0,(fs)*sizeof(short));
@@ -121,21 +127,27 @@ short* AudioEncoder::decode_opus(unsigned char *audiobuffer, int audiobuffersize
     if(samples <= 0)
     {
         delete[] pcm;
-        return NULL;
+        return nullptr;
     }
     return pcm;
 }
 
 short* AudioEncoder::decode_opus_voip(unsigned char *audiobuffer, int audiobuffersize, int &samples)
 {
-    int fs = 960; // FIXME: overflow
+    if(audiobuffersize > 512)
+    {
+        samples = 0;
+        delete[] audiobuffer;
+        return nullptr;
+    }
+    int fs = 4096;
     short *pcm = new short[fs];
     //memset(pcm,0,(fs)*sizeof(short));
     samples = opus_decode(_dec_voip,audiobuffer,audiobuffersize, pcm, fs, 0);
     if(samples <= 0)
     {
         delete[] pcm;
-        return NULL;
+        return nullptr;
     }
     return pcm;
 }

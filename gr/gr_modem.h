@@ -52,7 +52,6 @@ public:
         FrameTypeRepeaterInfo,
         FrameTypeEnd
     };
-    // FIXME: there is no reason for the modem to use the settings
     explicit gr_modem(QObject *parent = 0);
     ~gr_modem();
 

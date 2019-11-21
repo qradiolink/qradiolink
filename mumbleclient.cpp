@@ -832,7 +832,7 @@ void MumbleClient::decodeAudio(unsigned char *audiobuffer,
                                short audiobuffersize, quint8 type, quint64 session_id)
 {
     int samples =0;
-    short *pcm = NULL;
+    short *pcm = nullptr;
     if(type == 5) // never
     {
         pcm = _codec->decode_codec2_1400(audiobuffer,audiobuffersize, samples);
@@ -841,7 +841,7 @@ void MumbleClient::decodeAudio(unsigned char *audiobuffer,
     {
         pcm = _codec->decode_opus_voip(audiobuffer,audiobuffersize, samples);
     }
-    if(pcm == NULL)
+    if(pcm == nullptr)
         return;
     emit pcmAudio(pcm, samples, session_id);
     emit userSpeaking(session_id);

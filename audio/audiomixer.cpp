@@ -74,9 +74,8 @@ short* AudioMixer::mix_samples(float rx_volume)
 {
     const int frame_size = 320; // to radio is always 40 msec
     const int max_frame_size = 960; // to voip is always 120 msec
-    short *pcm;
+    short *pcm = nullptr;
     int max_samples = 0;
-    bool samples_ready = false;
     QMap<int, int> sizes_map;
 
     _mutex.lock();
@@ -96,7 +95,6 @@ short* AudioMixer::mix_samples(float rx_volume)
     }
     if(max_samples >= max_frame_size)
     {
-        samples_ready = true;
         int num_channels = sizes_map.size();
         pcm = new short[frame_size];
         memset(pcm, 0, frame_size*sizeof(short));
@@ -138,8 +136,5 @@ short* AudioMixer::mix_samples(float rx_volume)
         }
     }
     _mutex.unlock();
-    if(samples_ready)
-        return pcm;
-    else
-        return nullptr;
+    return pcm;
 }
