@@ -694,7 +694,6 @@ void RadioController::setRelays(bool transmitting)
     if(!_settings->enable_relays)
         return;
     int res;
-    struct timespec time_to_sleep;
     if(transmitting)
     {
         for(int i=0;i<_max_no_relays;i++)
@@ -706,8 +705,6 @@ void RadioController::setRelays(bool transmitting)
                              "Relay control failed, stopping to avoid damage");
                 exit(EXIT_FAILURE); // bit drastic, ain't it?
             }
-            time_to_sleep = {0, 10000L };
-            nanosleep(&time_to_sleep, NULL);
         }
     }
     else
@@ -721,8 +718,6 @@ void RadioController::setRelays(bool transmitting)
                              "Relay control failed, stopping to avoid damage");
                 exit(EXIT_FAILURE);
             }
-            time_to_sleep = {0, 10000L };
-            nanosleep(&time_to_sleep, NULL);
         }
     }
 
