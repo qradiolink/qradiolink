@@ -85,12 +85,9 @@ void AudioReader::run()
     while(_working)
     {
         QCoreApplication::processEvents();
-
-        _mutex.lock();
         bool capture = _capture_audio;
         bool preprocess = _read_preprocess;
         int audio_mode = _read_audio_mode;
-        _mutex.unlock();
         QByteArray data = audio_dev->readAll();
         if(capture)
         {
@@ -102,14 +99,13 @@ void AudioReader::run()
                 int vad = processor->read_preprocess(audiobuffer, audiobuffer_size, preprocess, audio_mode);
                 emit audioPCM(audiobuffer, audiobuffer_size, vad, false);
                 _buffer->remove(0, audiobuffer_size);
+                struct timespec time_to_sleep = {0, 4000000L };
+                nanosleep(&time_to_sleep, NULL);
             }
-
-            struct timespec time_to_sleep = {0, 35000000L };
-            nanosleep(&time_to_sleep, NULL);
         }
         else
         {
-            struct timespec time_to_sleep = {0, 50000000L };
+            struct timespec time_to_sleep = {0, 40000000L };
             nanosleep(&time_to_sleep, NULL);
         }
 
