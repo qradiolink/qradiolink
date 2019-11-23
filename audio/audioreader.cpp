@@ -99,7 +99,7 @@ void AudioReader::run()
                 int vad = processor->read_preprocess(audiobuffer, audiobuffer_size, preprocess, audio_mode);
                 emit audioPCM(audiobuffer, audiobuffer_size, vad, false);
                 _buffer->remove(0, audiobuffer_size);
-                struct timespec time_to_sleep = {0, 4000000L };
+                struct timespec time_to_sleep = {0, 39000000L };
                 nanosleep(&time_to_sleep, NULL);
             }
         }
