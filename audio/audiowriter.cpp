@@ -135,6 +135,7 @@ void AudioWriter::run()
                 {
                     _recorder->writeSamples(pcm, bytes/sizeof(short));
                 }
+                // FIXME: this risks overflowing!
             }
             _mutex.lock();
             _rx_sample_queue->remove(0, size);
