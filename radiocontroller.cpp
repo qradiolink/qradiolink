@@ -2061,6 +2061,8 @@ void RadioController::enableGUIFFT(bool value)
 
 void RadioController::enableDuplex(bool value)
 {
+    if(_settings->tx_started || _settings->voip_forwarding)
+        return;
     _settings->enable_duplex = (int)value;
 }
 

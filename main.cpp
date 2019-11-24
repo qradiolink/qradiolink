@@ -295,6 +295,8 @@ void connectCommandSignals(TelnetServer *telnet_server, MumbleClient *mumbleclie
                      radio_op,SLOT(setVoipBitrate(int)));
     QObject::connect(telnet_server->command_processor,SIGNAL(setMuteForwardedAudio(bool)),
                      radio_op,SLOT(setMuteForwardedAudio(bool)));
+    QObject::connect(telnet_server->command_processor,SIGNAL(setAudioRecord(bool)),
+                     radio_op,SLOT(setAudioRecord(bool)));
     QObject::connect(mumbleclient,SIGNAL(commandMessage(QString,int)),
                      telnet_server->command_processor,SLOT(parseMumbleMessage(QString,int)));
 }

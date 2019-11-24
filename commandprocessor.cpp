@@ -45,7 +45,7 @@ void CommandProcessor::parseMumbleMessage(QString message, int sender_id)
     if((message == "help") || (message == "?"))
     {
         QString response("Available commands:\n");
-        QStringList available_commands = listAvailableCommands();
+        QStringList available_commands = listAvailableCommands(true);
         for(int i=0;i<available_commands.length();i++)
         {
             response.append(available_commands.at(i));
@@ -79,20 +79,37 @@ void CommandProcessor::parseMumbleMessage(QString message, int sender_id)
 }
 
 
-QStringList CommandProcessor::listAvailableCommands()
+QStringList CommandProcessor::listAvailableCommands(bool mumble_text)
 {
     QStringList list;
-    for(int i=0;i<_command_list->size();i++)
+    if(!mumble_text)
     {
-        list.append("\e[34m" + _command_list->at(i)->action + "\e[0m\e[32m"
-                    + QString(" (%1 parameters): %2").arg(
-                        _command_list->at(i)->params).arg(_command_list->at(i)->help_msg)
-                    + "\e[0m\n");
+        for(int i=0;i<_command_list->size();i++)
+        {
+            list.append("\e[34m" + _command_list->at(i)->action + "\e[0m\e[32m"
+                        + QString(" (%1 parameters): %2").arg(
+                            _command_list->at(i)->params).arg(_command_list->at(i)->help_msg)
+                        + "\e[0m\n");
+        }
+        list.append("\e[34mhelp\e[0m\n");
+        list.append("\e[34m?\e[0m\n");
+        list.append("\e[34mexit\e[0m\n");
+        list.append("\e[34mquit\e[0m\n");
     }
-    list.append("\e[34mhelp\e[0m\n");
-    list.append("\e[34m?\e[0m\n");
-    list.append("\e[34mexit\e[0m\n");
-    list.append("\e[34mquit\e[0m\n");
+    else
+    {
+        for(int i=0;i<_command_list->size();i++)
+        {
+            list.append(_command_list->at(i)->action
+                        + QString(" (%1 parameters): %2").arg(
+                            _command_list->at(i)->params).arg(_command_list->at(i)->help_msg)
+                        + "<br/>\n");
+        }
+        list.append("help<br/>\n");
+        list.append("?<br/>\n");
+        list.append("exit<br/>\n");
+        list.append("quit<br/>\n");
+    }
     return list;
 }
 
@@ -859,7 +876,7 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
         else
         {
             response = QString("Setting Audio recording to %1").arg(set);
-            emit toggleAudioRecord((bool)set);
+            emit setAudioRecord((bool)set);
         }
         break;
     }
