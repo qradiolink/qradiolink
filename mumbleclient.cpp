@@ -713,10 +713,12 @@ void MumbleClient::createVoicePacket(unsigned char *encoded_audio, int packet_si
     PacketDataStream pds(data + 1, data_size-1);
     int nr_of_frames = opus_packet_get_nb_frames(encoded_audio,packet_size);
 
-    // sequence?
     pds << _sequence_number;
     int real_packet_size = packet_size;
-    _sequence_number += nr_of_frames;
+    /// Not documented anywhere by Mumble:
+    /// by incrementing the sequence by more frames than needed, we can force the client
+    /// to wait more time before playing the audio and thus eliminate interruptions on slow networks
+    _sequence_number += nr_of_frames * 4;
     //packet_size |= 1 << 13;
     pds << packet_size;
 

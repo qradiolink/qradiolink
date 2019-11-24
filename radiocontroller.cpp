@@ -198,7 +198,7 @@ void RadioController::run()
         _mutex->unlock();
 
         QCoreApplication::processEvents(); // process signals
-        if(!_radio_to_voip_on)
+        if(_settings->voip_connected)
             QtConcurrent::run(this, &RadioController::flushRadioToVoipBuffer);
         buffers_filling = processMixerQueue();
 
@@ -331,25 +331,26 @@ void RadioController::updateInputAudioStream()
 
 void RadioController::flushRadioToVoipBuffer()
 {
-    if(_radio_to_voip_on)
+    if(!_settings->voip_connected || _radio_to_voip_on)
         return;
     _radio_to_voip_on = true;
     /// Using large size of frames (120 ms) for Mumble client compatibility
-    if(_to_voip_buffer->size() >= 960)
+    int samples_in_buffer = _to_voip_buffer->size();
+    if(samples_in_buffer >= 320)
     {
 
-        short *pcm = new short[960];
-        for(int i =0; i< 960;i++)
+        short *pcm = new short[320];
+        for(int i =0; i< 320;i++)
         {
             pcm[i] = _to_voip_buffer->at(i) * _voip_volume;
         }
         int packet_size = 0;
         unsigned char *encoded_audio;
         /// encode the PCM with higher quality and bitrate
-        encoded_audio = _codec->encode_opus_voip(pcm, 960*sizeof(short), packet_size);
+        encoded_audio = _codec->encode_opus_voip(pcm, 320*sizeof(short), packet_size);
         emit voipDataOpus(encoded_audio,packet_size);
         delete[] pcm;
-        _to_voip_buffer->remove(0,960);
+        _to_voip_buffer->remove(0,320);
     }
     _radio_to_voip_on = false;
 }
