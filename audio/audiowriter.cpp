@@ -73,6 +73,7 @@ void AudioWriter::run()
     start:
     _working = true;
     bool recording = false;
+    int frame_counter = 0;
     // FIXME: support different frame durations
     AudioProcessor *processor = new AudioProcessor(_settings);
     QAudioFormat format;
@@ -119,23 +120,58 @@ void AudioWriter::run()
         _mutex.unlock();
         if(size > 0)
         {
+            frame_counter += 5;
             for(int i=0;i< size;i++)
             {
                 audio_samples *samp = _rx_sample_queue->at(i);
                 int bytes = samp->bytes;
                 bool preprocess = samp->preprocess;
                 int audio_mode = samp->audio_mode;
-                short *pcm = new short[bytes/sizeof(short)];
-                memcpy(pcm, samp->pcm, samp->bytes);
+                if(bytes <= 640)
+                {
+                    short *pcm = new short[bytes/sizeof(short)];
+                    memcpy(pcm, samp->pcm, bytes);
+                    processor->write_preprocess(pcm, bytes, preprocess, audio_mode);
+                    audio_dev->write((char*)pcm, bytes);
+                    if(recording)
+                    {
+                        _recorder->writeSamples(pcm, bytes/sizeof(short));
+                    }
+                    long time = 1000/(8000/(bytes/sizeof(short))) * 1000000L;
+                    struct timespec time_to_sleep = {0, time - 5000000L };
+                    nanosleep(&time_to_sleep, NULL);
+                }
+                else
+                {
+                    int frames = bytes / 640;
+                    int leftover = bytes % 640;
+                    for(int i=0;i<frames;i++)
+                    {
+                        short *pcm = new short[320];
+                        memcpy(pcm, samp->pcm+(320*i), 640);
+                        processor->write_preprocess(pcm, 640, preprocess, audio_mode);
+                        audio_dev->write((char*)pcm, 640);
+                        if(recording)
+                        {
+                            _recorder->writeSamples(pcm, 640/sizeof(short));
+                        }
+                        struct timespec time_to_sleep = {0, 35000000L };
+                        nanosleep(&time_to_sleep, NULL);
+                    }
+                    short *pcm = new short[leftover/sizeof(short)];
+                    memcpy(pcm, samp->pcm+(320*frames), leftover);
+                    processor->write_preprocess(pcm, leftover, preprocess, audio_mode);
+                    audio_dev->write((char*)pcm, leftover);
+                    if(recording)
+                    {
+                        _recorder->writeSamples(pcm, leftover/sizeof(short));
+                    }
+                    long time = 1000/(8000/(leftover/sizeof(short))) * 1000000L;
+                    struct timespec time_to_sleep = {0, time };
+                    nanosleep(&time_to_sleep, NULL);
+                }
                 delete[] samp->pcm;
                 delete samp;
-                processor->write_preprocess(pcm, bytes, preprocess, audio_mode);
-                audio_dev->write((char*)pcm, bytes);
-                if(recording)
-                {
-                    _recorder->writeSamples(pcm, bytes/sizeof(short));
-                }
-                // FIXME: this risks overflowing!
             }
             _mutex.lock();
             _rx_sample_queue->remove(0, size);
@@ -144,8 +180,13 @@ void AudioWriter::run()
         }
         else
         {
-            struct timespec time_to_sleep = {0, 10000000L };
-            nanosleep(&time_to_sleep, NULL);
+            if(frame_counter == 0)
+            {
+                struct timespec time_to_sleep = {0, 10000000L };
+                nanosleep(&time_to_sleep, NULL);
+            }
+            if(frame_counter > 0)
+                frame_counter--;
         }
     }
     _rx_sample_queue->clear();
