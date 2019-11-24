@@ -365,7 +365,7 @@ bool RadioController::processMixerQueue()
         short *local_pcm = new short[320];
         memcpy(local_pcm, pcm, 320*sizeof(short));
 
-        if((_settings->voip_forwarding || _settings->repeater_enabled) && _settings->tx_started)
+        if(_settings->voip_forwarding || _settings->repeater_enabled)
         {
             if(!_voip_tx_timer->isActive())
             {
@@ -2061,6 +2061,8 @@ void RadioController::enableGUIFFT(bool value)
 
 void RadioController::enableDuplex(bool value)
 {
+    if(_settings->tx_started)
+        return;
     _settings->enable_duplex = (int)value;
 }
 

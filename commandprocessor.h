@@ -34,7 +34,7 @@ class CommandProcessor : public QObject
 public:
     explicit CommandProcessor(const Settings *settings, Logger *logger, QObject *parent = nullptr);
     ~CommandProcessor();
-    QStringList listAvailableCommands();
+    QStringList listAvailableCommands(bool mumble_text=false);
     bool validateCommand(QString message);
     QString runCommand(QString message, bool mumble=false);
     void buildCommandList();
@@ -98,7 +98,7 @@ signals:
     void newCommandMessage(QString text, int to_id);
     void toggleSelfDeaf(bool deaf);
     void toggleSelfMute(bool mute);
-    void toggleAudioRecord(bool value);
+    void setAudioRecord(bool value);
 
     //void stopRadio();
 
