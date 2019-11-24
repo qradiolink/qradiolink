@@ -36,7 +36,7 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     _net_device = new NetDevice(logger, 0, _settings->ip_address);
     _mutex = new QMutex;
 
-    _rand_frame_data = new unsigned char[5000];
+    _rand_frame_data = new unsigned char[4000];
     /// one way queue from radio and local voice to Mumble
     _to_voip_buffer = new QVector<short>;
     /// pre-allocated at maximum possible FFT size (make it a constant?)
@@ -130,7 +130,7 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     //                 SLOT(processVideoFrame(unsigned char*,int)));
 
     /// Garbage to fill unused video and net frames with
-    for (int j = 0;j<5000;j++)
+    for (int j = 0;j<4000;j++)
         _rand_frame_data[j] = rand() % 256;
 
     QFile resfile(":/res/data_rec.raw");
@@ -365,7 +365,7 @@ bool RadioController::processMixerQueue()
         short *local_pcm = new short[320];
         memcpy(local_pcm, pcm, 320*sizeof(short));
 
-        if(_settings->voip_forwarding || _settings->repeater_enabled)
+        if((_settings->voip_forwarding || _settings->repeater_enabled) && _settings->tx_started)
         {
             if(!_voip_tx_timer->isActive())
             {

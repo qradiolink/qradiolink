@@ -73,7 +73,7 @@ void AudioMixer::addSamples(short *pcm, int samples, int sid)
 short* AudioMixer::mix_samples(float rx_volume)
 {
     const int frame_size = 320; // to radio is always 40 msec
-    const int max_frame_size = 960; // to voip is always 120 msec
+    const int max_frame_size = 320; // to voip is also 40 msec
     short *pcm = nullptr;
     int max_samples = 0;
     QMap<int, int> sizes_map;
