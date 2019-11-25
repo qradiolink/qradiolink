@@ -99,6 +99,11 @@ void AudioWriter::run()
     }
     _logger->log(Logger::LogLevelInfo, QString("Using audio output device %1").arg(device.deviceName()));
     QAudioOutput *audio_writer = new QAudioOutput(device, format, this);
+    // FIXME: bad hack, not needed
+    /*
+    QObject::connect(audio_writer, SIGNAL(stateChanged(QAudio::State)),
+                     this, SLOT(processStateChange(QAudio::State)), Qt::DirectConnection);
+    */
     audio_writer->setBufferSize(4096);
     QIODevice *audio_dev = audio_writer->start();
 
@@ -120,7 +125,7 @@ void AudioWriter::run()
         _mutex.unlock();
         if(size > 0)
         {
-            frame_counter = 5;
+            frame_counter = 40000;
             for(int i=0;i< size;i++)
             {
                 audio_samples *samp = _rx_sample_queue->at(i);
@@ -139,7 +144,7 @@ void AudioWriter::run()
                     }
                     /// time it takes for the packet to be played without overflow
                     long time = 1000/(8000/(bytes/sizeof(short))) * 1000000L;
-                    struct timespec time_to_sleep = {0, time - 1000000L };
+                    struct timespec time_to_sleep = {0, time };
                     nanosleep(&time_to_sleep, NULL);
                 }
                 else
@@ -157,21 +162,24 @@ void AudioWriter::run()
                             _recorder->writeSamples(pcm, 640/sizeof(short));
                         }
                         /// time it takes for the packet to be played without overflow
-                        struct timespec time_to_sleep = {0, 39000000L };
+                        struct timespec time_to_sleep = {0, 40000000L };
                         nanosleep(&time_to_sleep, NULL);
                     }
-                    short *pcm = new short[leftover/sizeof(short)];
-                    memcpy(pcm, samp->pcm+(320*frames), leftover);
-                    processor->write_preprocess(pcm, leftover, preprocess, audio_mode);
-                    audio_dev->write((char*)pcm, leftover);
-                    if(recording)
+                    if(leftover > 0)
                     {
-                        _recorder->writeSamples(pcm, leftover/sizeof(short));
+                        short *pcm = new short[leftover/sizeof(short)];
+                        memcpy(pcm, samp->pcm+(320*frames), leftover);
+                        processor->write_preprocess(pcm, leftover, preprocess, audio_mode);
+                        audio_dev->write((char*)pcm, leftover);
+                        if(recording)
+                        {
+                            _recorder->writeSamples(pcm, leftover/sizeof(short));
+                        }
+                        /// time it takes for the packet to be played without overflow
+                        long time = 1000/(8000/(leftover/sizeof(short))) * 10000L;
+                        struct timespec time_to_sleep = {0, time };
+                        nanosleep(&time_to_sleep, NULL);
                     }
-                    /// time it takes for the packet to be played without overflow
-                    long time = 1000/(8000/(leftover/sizeof(short))) * 1000000L;
-                    struct timespec time_to_sleep = {0, time };
-                    nanosleep(&time_to_sleep, NULL);
                 }
                 delete[] samp->pcm;
                 delete samp;
@@ -183,17 +191,29 @@ void AudioWriter::run()
         }
         else
         {
-            if(frame_counter == 0)
+            /* This is a can of worms!
+            if((frame_counter < 25) && (frame_counter > 0))
             {
-                /// Idle time
-                struct timespec time_to_sleep = {0, 10000000L };
+                /// flush samples (1 second)
+                short *silence = new short[320];
+                memset(silence, 0, 640);
+                audio_dev->write((char*)silence, 640);
+                frame_counter--;
+                struct timespec time_to_sleep = {0, 40000000L };
                 nanosleep(&time_to_sleep, NULL);
             }
+            */
             if(frame_counter > 0)
             {
                 /// recent audio packet
                 frame_counter--;
-                struct timespec time_to_sleep = {0, 500000L };
+                struct timespec time_to_sleep = {0, 1000L };
+                nanosleep(&time_to_sleep, NULL);
+            }
+            else if(frame_counter == 0)
+            {
+                /// Idle time
+                struct timespec time_to_sleep = {0, 10000000L };
                 nanosleep(&time_to_sleep, NULL);
             }
         }
@@ -209,4 +229,14 @@ void AudioWriter::run()
         goto start;
     }
     emit finished();
+}
+
+void AudioWriter::processStateChange(QAudio::State state)
+{
+    /// Not needed...
+    if((state == QAudio::IdleState))
+    {
+        QAudioOutput *audio_writer = reinterpret_cast<QAudioOutput*>(this->sender());
+        audio_writer->resume();
+    }
 }

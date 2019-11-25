@@ -1294,13 +1294,12 @@ void RadioController::callsignReceived(QString callsign)
     QString time= QDateTime::currentDateTime().toString("dd/MMM/yyyy hh:mm:ss");
     QString text = "\n\n<b>" + time + "</b> " + "<font color=\"#FF5555\">"
             + callsign + " </font><br/>\n";
-    // FIXME: for some reason this breaks audio
-    /*
+
     short *samples = new short[_data_rec_sound->size()/sizeof(short)];
     short *origin = (short*) _data_rec_sound->data();
     memcpy(samples, origin, _data_rec_sound->size());
     emit writePCM(samples, _data_rec_sound->size(), false, AudioProcessor::AUDIO_MODE_ANALOG);
-    */
+
     emit printText(text,true);
     emit printCallsign(callsign);
 }
@@ -1366,6 +1365,9 @@ void RadioController::endAudioTransmission()
         samples[i] = short(origin[i] / 2);
     }
     emit writePCM(samples, size, false, AudioProcessor::AUDIO_MODE_ANALOG);
+    short *silence = new short[4096/sizeof(short)];
+    memset(silence, 0, 4096);
+    emit writePCM(silence, size, false, AudioProcessor::AUDIO_MODE_ANALOG);
 }
 
 /// These two are not used currently
