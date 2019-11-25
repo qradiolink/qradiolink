@@ -120,7 +120,7 @@ void AudioWriter::run()
         _mutex.unlock();
         if(size > 0)
         {
-            frame_counter += 5;
+            frame_counter = 5;
             for(int i=0;i< size;i++)
             {
                 audio_samples *samp = _rx_sample_queue->at(i);
@@ -137,8 +137,9 @@ void AudioWriter::run()
                     {
                         _recorder->writeSamples(pcm, bytes/sizeof(short));
                     }
+                    /// time it takes for the packet to be played without overflow
                     long time = 1000/(8000/(bytes/sizeof(short))) * 1000000L;
-                    struct timespec time_to_sleep = {0, time - 5000000L };
+                    struct timespec time_to_sleep = {0, time - 1000000L };
                     nanosleep(&time_to_sleep, NULL);
                 }
                 else
@@ -155,7 +156,8 @@ void AudioWriter::run()
                         {
                             _recorder->writeSamples(pcm, 640/sizeof(short));
                         }
-                        struct timespec time_to_sleep = {0, 35000000L };
+                        /// time it takes for the packet to be played without overflow
+                        struct timespec time_to_sleep = {0, 39000000L };
                         nanosleep(&time_to_sleep, NULL);
                     }
                     short *pcm = new short[leftover/sizeof(short)];
@@ -166,6 +168,7 @@ void AudioWriter::run()
                     {
                         _recorder->writeSamples(pcm, leftover/sizeof(short));
                     }
+                    /// time it takes for the packet to be played without overflow
                     long time = 1000/(8000/(leftover/sizeof(short))) * 1000000L;
                     struct timespec time_to_sleep = {0, time };
                     nanosleep(&time_to_sleep, NULL);
@@ -182,11 +185,17 @@ void AudioWriter::run()
         {
             if(frame_counter == 0)
             {
+                /// Idle time
                 struct timespec time_to_sleep = {0, 10000000L };
                 nanosleep(&time_to_sleep, NULL);
             }
             if(frame_counter > 0)
+            {
+                /// recent audio packet
                 frame_counter--;
+                struct timespec time_to_sleep = {0, 500000L };
+                nanosleep(&time_to_sleep, NULL);
+            }
         }
     }
     _rx_sample_queue->clear();
