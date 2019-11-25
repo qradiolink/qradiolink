@@ -47,7 +47,7 @@ public:
                 float rf_gain=0.5, std::string device_args="uhd", std::string device_antenna="TX/RX", int freq_corr=0);
 
 public slots:
-    void start(int buffer_size=8192);
+    void start(int buffer_size=0);
     void stop();
     int set_data(std::vector<u_int8_t> *data);
     void tune(long center_freq);
@@ -75,6 +75,8 @@ private:
     gr_mod_2fsk_sdr_sptr _2fsk_10k;
     gr_mod_4fsk_sdr_sptr _4fsk_2k;
     gr_mod_4fsk_sdr_sptr _4fsk_10k;
+    gr_mod_4fsk_sdr_sptr _4fsk_2k_fm;
+    gr_mod_4fsk_sdr_sptr _4fsk_10k_fm;
     gr_mod_am_sdr_sptr _am;
     gr_mod_bpsk_sdr_sptr _bpsk_1k;
     gr_mod_bpsk_sdr_sptr _bpsk_2k;

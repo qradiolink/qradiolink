@@ -71,7 +71,7 @@ public:
 signals:
 
 public slots:
-    void start(int buffer_size=8192);
+    void start(int buffer_size=0);
     void stop();
     std::vector<unsigned char> *getData();
     std::vector<unsigned char> *getData(int nr);
@@ -132,6 +132,8 @@ private:
     gr_demod_2fsk_sdr_sptr _2fsk_10k;
     gr_demod_4fsk_sdr_sptr _4fsk_2k;
     gr_demod_4fsk_sdr_sptr _4fsk_10k;
+    gr_demod_4fsk_sdr_sptr _4fsk_2k_fm;
+    gr_demod_4fsk_sdr_sptr _4fsk_10k_fm;
     gr_demod_am_sdr_sptr _am;
     gr_demod_bpsk_sdr_sptr _bpsk_1k;
     gr_demod_bpsk_sdr_sptr _bpsk_2k;

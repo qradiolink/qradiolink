@@ -123,11 +123,19 @@ void gr_modem::toggleTxMode(int modem_type)
         {
             _tx_frame_length = 47;
         }
+        else if(modem_type == gr_modem_types::ModemType4FSK20000FM)
+        {
+            _tx_frame_length = 47;
+        }
         else if(modem_type == gr_modem_types::ModemType2FSK20000)
         {
             _tx_frame_length = 47;
         }
         else if(modem_type == gr_modem_types::ModemType4FSK2000)
+        {
+            _tx_frame_length = 7;
+        }
+        else if(modem_type == gr_modem_types::ModemType4FSK2000FM)
         {
             _tx_frame_length = 7;
         }
@@ -192,12 +200,22 @@ void gr_modem::toggleRxMode(int modem_type)
             _bit_buf_len = 48 *8;
             _rx_frame_length = 47;
         }
+        else if (modem_type == gr_modem_types::ModemType4FSK20000FM)
+        {
+            _bit_buf_len = 48 *8;
+            _rx_frame_length = 47;
+        }
         else if (modem_type == gr_modem_types::ModemType2FSK20000)
         {
             _bit_buf_len = 48 *8;
             _rx_frame_length = 47;
         }
         else if (modem_type == gr_modem_types::ModemType4FSK2000)
+        {
+            _bit_buf_len = 8 *8;
+            _rx_frame_length = 7;
+        }
+        else if (modem_type == gr_modem_types::ModemType4FSK2000FM)
         {
             _bit_buf_len = 8 *8;
             _rx_frame_length = 7;

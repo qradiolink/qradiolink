@@ -93,9 +93,9 @@ public slots:
     void toggleTxMode(int modem_type);
     void tune(long center_freq);
     void tuneTx(long center_freq);
-    void startRX(int buffer_size=8192);
+    void startRX(int buffer_size=0);
     void stopRX();
-    void startTX(int buffer_size=8192);
+    void startTX(int buffer_size=0);
     void stopTX();
     void setTxPower(float value, std::string gain_stage="");
     void setBbGain(int value);
