@@ -21,6 +21,7 @@
 #include <gnuradio/endianness.h>
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/digital/clock_recovery_mm_cc.h>
+#include <gnuradio/digital/clock_recovery_mm_ff.h>
 #include <gnuradio/blocks/unpack_k_bits_bb.h>
 #include <gnuradio/blocks/float_to_complex.h>
 #include <gnuradio/analog/quadrature_demod_cf.h>
@@ -35,6 +36,7 @@
 #include <gnuradio/filter/fft_filter_fff.h>
 #include <gnuradio/digital/descrambler_bb.h>
 #include <gnuradio/blocks/complex_to_mag_squared.h>
+#include <gnuradio/analog/phase_modulator_fc.h>
 #include <gnuradio/blocks/float_to_uchar.h>
 #include <gnuradio/blocks/add_const_ff.h>
 #include <gnuradio/analog/rail_ff.h>
@@ -49,13 +51,13 @@ class gr_demod_4fsk_sdr;
 
 typedef boost::shared_ptr<gr_demod_4fsk_sdr> gr_demod_4fsk_sdr_sptr;
 gr_demod_4fsk_sdr_sptr make_gr_demod_4fsk_sdr(int sps=125, int samp_rate=250000, int carrier_freq=1700,
-                                          int filter_width=8000);
+                                          int filter_width=8000, bool fm=true);
 
 class gr_demod_4fsk_sdr : public gr::hier_block2
 {
 public:
     explicit gr_demod_4fsk_sdr(std::vector<int> signature, int sps=4, int samp_rate=8000, int carrier_freq=1600,
-                               int filter_width=1800);
+                               int filter_width=1800, bool fm=true);
 
 
 private:
@@ -77,6 +79,7 @@ private:
     gr::filter::fft_filter_ccf::sptr _symbol_filter;
     gr::digital::fll_band_edge_cc::sptr _fll;
     gr::digital::clock_recovery_mm_cc::sptr _clock_recovery;
+    gr::digital::clock_recovery_mm_ff::sptr _clock_recovery_f;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
     gr::digital::constellation_decoder_cb::sptr _constellation_receiver;
     gr::filter::fft_filter_ccf::sptr _filter;
@@ -87,6 +90,9 @@ private:
     gr::blocks::float_to_uchar::sptr _float_to_uchar;
     gr::blocks::add_const_ff::sptr _add_const_fec;
     gr::fec::decoder::sptr _decode_ccsds;
+    gr::filter::fft_filter_fff::sptr _shaping_filter;
+    gr::analog::phase_modulator_fc::sptr _phase_mod;
+    gr::analog::rail_ff::sptr _rail;
 
     int _samples_per_symbol;
     int _samp_rate;

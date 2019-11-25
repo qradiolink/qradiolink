@@ -17,20 +17,20 @@
 #include "gr_demod_4fsk_sdr.h"
 
 gr_demod_4fsk_sdr_sptr make_gr_demod_4fsk_sdr(int sps, int samp_rate, int carrier_freq,
-                                          int filter_width)
+                                          int filter_width, bool fm)
 {
     std::vector<int> signature;
     signature.push_back(sizeof (gr_complex));
     signature.push_back(sizeof (gr_complex));
     signature.push_back(sizeof (char));
     return gnuradio::get_initial_sptr(new gr_demod_4fsk_sdr(signature, sps, samp_rate, carrier_freq,
-                                                      filter_width));
+                                                      filter_width, fm));
 }
 
 
 
 gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int samp_rate, int carrier_freq,
-                                 int filter_width) :
+                                 int filter_width, bool fm) :
     gr::hier_block2 ("gr_demod_4fsk_sdr",
                       gr::io_signature::make (1, 1, sizeof (gr_complex)),
                       gr::io_signature::makev (3, 3, signature))
@@ -40,7 +40,7 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
 
-    int rs,bw,decimation,interpolation;
+    int rs, bw, decimation, interpolation, nfilts;
     float gain_mu, omega_rel_limit;
     if(sps == 25)
     {
@@ -52,6 +52,7 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
         bw = 4000;
         gain_mu = 0.025;
         omega_rel_limit = 0.001;
+        nfilts = 35;
     }
     if(sps == 125)
     {
@@ -62,7 +63,8 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
         rs = 2000;
         bw = 4000;
         gain_mu = 0.025;
-        omega_rel_limit = 0.005;
+        omega_rel_limit = 0.001;
+        nfilts = 375;
     }
 
     std::vector<unsigned int> const_map;
@@ -83,6 +85,10 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
     polys.push_back(109);
     polys.push_back(79);
 
+    int spacing = 2;
+    if(fm)
+        spacing = 1;
+
     gr::digital::constellation_expl_rect::sptr constellation = gr::digital::constellation_expl_rect::make(
                 constellation_points,pre_diff_code,4,2,2,1,1,const_map);
 
@@ -96,30 +102,38 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
     _fll = gr::digital::fll_band_edge_cc::make(_samples_per_symbol/4, 0.01, 16, 48*M_PI/100);
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
                                 1, _target_samp_rate, _filter_width,_filter_width/2,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
-    //_freq_demod = gr::analog::quadrature_demod_cf::make(sps/(4*M_PI/2));
+    if(!fm)
+    {
+        _filter1 = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
+                                    1, _target_samp_rate, -_filter_width,-_filter_width+rs,bw,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
+        _filter2 = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
+                                    1, _target_samp_rate, -_filter_width+rs,0,bw,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
+        _filter3 = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
+                                    1, _target_samp_rate, 0,_filter_width-rs,bw,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
+        _filter4 = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
+                                    1, _target_samp_rate, _filter_width-rs,_filter_width, bw,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
+        _mag1 = gr::blocks::complex_to_mag::make();
+        _mag2 = gr::blocks::complex_to_mag::make();
+        _mag3 = gr::blocks::complex_to_mag::make();
+        _mag4 = gr::blocks::complex_to_mag::make();
+        _discriminator = make_gr_4fsk_discriminator();
+    }
 
-    _filter1 = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
-                                1, _target_samp_rate, -_filter_width,-_filter_width+rs,bw,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
-    _filter2 = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
-                                1, _target_samp_rate, -_filter_width+rs,0,bw,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
-    _filter3 = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
-                                1, _target_samp_rate, 0,_filter_width-rs,bw,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
-    _filter4 = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
-                                1, _target_samp_rate, _filter_width-rs,_filter_width, bw,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
-    _mag1 = gr::blocks::complex_to_mag::make();
-    _mag2 = gr::blocks::complex_to_mag::make();
-    _mag3 = gr::blocks::complex_to_mag::make();
-    _mag4 = gr::blocks::complex_to_mag::make();
-    _discriminator = make_gr_4fsk_discriminator();
-
-
+    _phase_mod = gr::analog::phase_modulator_fc::make(2 * M_PI / 4);
+    _rail = gr::analog::rail_ff::make(-2, 2);
     _symbol_filter = gr::filter::fft_filter_ccf::make(1,symbol_filter_taps);
+
+    _freq_demod = gr::analog::quadrature_demod_cf::make(_samples_per_symbol/(spacing * M_PI/2));
+    _shaping_filter = gr::filter::fft_filter_fff::make(
+                1, gr::filter::firdes::root_raised_cosine(1,_target_samp_rate,
+                                    _target_samp_rate/_samples_per_symbol,0.25,nfilts));
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
+                                                              omega_rel_limit);
+    _clock_recovery_f = gr::digital::clock_recovery_mm_ff::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.0, gain_mu,
                                                               omega_rel_limit);
     _float_to_complex = gr::blocks::float_to_complex::make();
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
     _constellation_receiver = gr::digital::constellation_decoder_cb::make(constellation);
-
     _complex_to_float = gr::blocks::complex_to_float::make();
     _interleave = gr::blocks::interleave::make(4);
     _multiply_const_fec = gr::blocks::multiply_const_ff::make(180);
@@ -133,27 +147,45 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
     connect(_resampler,0,_fll,0);
     connect(_fll,0,_filter,0);
     connect(_filter,0,self(),0);
-    connect(_filter,0,_filter1,0);
-    connect(_filter,0,_filter2,0);
-    connect(_filter,0,_filter3,0);
-    connect(_filter,0,_filter4,0);
-    connect(_filter1,0,_mag1,0);
-    connect(_filter2,0,_mag2,0);
-    connect(_filter3,0,_mag3,0);
-    connect(_filter4,0,_mag4,0);
-    connect(_mag1,0,_discriminator,0);
-    connect(_mag2,0,_discriminator,1);
-    connect(_mag3,0,_discriminator,2);
-    connect(_mag4,0,_discriminator,3);
-    connect(_discriminator,0,_symbol_filter,0);
-
-    //connect(_filter,0,_freq_demod,0);
-    //connect(_freq_demod,0,_float_to_complex,0);
-    connect(_symbol_filter,0,_clock_recovery,0);
-    connect(_clock_recovery,0,self(),1);
-    connect(_clock_recovery,0,_complex_to_float,0);
-    connect(_complex_to_float,0,_interleave,0);
-    connect(_complex_to_float,1,_interleave,1);
+    if(fm)
+    {
+        connect(_filter,0,_freq_demod,0);
+        connect(_freq_demod,0,_shaping_filter,0);
+        //connect(_rail,0,_shaping_filter,0);
+        connect(_shaping_filter,0,_clock_recovery_f,0);
+        connect(_clock_recovery_f,0,_phase_mod,0);
+        connect(_phase_mod,0,self(),1);
+        connect(_phase_mod,0,_complex_to_float,0);
+    }
+    else
+    {
+        connect(_filter,0,_filter1,0);
+        connect(_filter,0,_filter2,0);
+        connect(_filter,0,_filter3,0);
+        connect(_filter,0,_filter4,0);
+        connect(_filter1,0,_mag1,0);
+        connect(_filter2,0,_mag2,0);
+        connect(_filter3,0,_mag3,0);
+        connect(_filter4,0,_mag4,0);
+        connect(_mag1,0,_discriminator,0);
+        connect(_mag2,0,_discriminator,1);
+        connect(_mag3,0,_discriminator,2);
+        connect(_mag4,0,_discriminator,3);
+        connect(_discriminator,0,_symbol_filter,0);
+        connect(_symbol_filter,0,_clock_recovery,0);
+        connect(_clock_recovery,0,self(),1);
+        connect(_clock_recovery,0,_complex_to_float,0);
+    }
+    if(fm)
+    {
+        connect(_complex_to_float,0,_interleave,1);
+        connect(_complex_to_float,1,_interleave,0);
+    }
+    else
+    {
+        connect(_complex_to_float,0,_interleave,0);
+        connect(_complex_to_float,1,_interleave,1);
+    }
     connect(_interleave,0,_multiply_const_fec,0);
     connect(_multiply_const_fec,0,_add_const_fec,0);
     connect(_add_const_fec,0,_float_to_uchar,0);

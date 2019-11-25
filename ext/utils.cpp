@@ -54,6 +54,17 @@ void getPreamble(quint8 *buffer, int *type, int *len)
     *len = (int)msgLen;
 }
 
+void unpackBytes(unsigned char *bitbuf, const unsigned char *bytebuf, int bytecount)
+{
+    for(int i=0; i<bytecount; i++)
+    {
+        for(int j=0; j<8; j++)
+        {
+            bitbuf[i*8+j] = (bytebuf[i] & (128 >> j)) != 0;
+        }
+    }
+}
+
 void genRandomStr(char *str, const int len)
 {
     static const char letters[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -91,6 +102,8 @@ void buildModeList(QVector<QString> *operating_modes)
     operating_modes->push_back("2FSK 10K");
     operating_modes->push_back("4FSK 2K");
     operating_modes->push_back("4FSK 10K");
+    operating_modes->push_back("4FSK 2K FM");
+    operating_modes->push_back("4FSK 10K FM");
     operating_modes->push_back("Video 250K");
     operating_modes->push_back("IP modem 250K");
 }
@@ -118,8 +131,10 @@ void buildFilterWidthList(std::vector<std::complex<int>>* filter_widths, std::ve
     filter_widths->push_back(std::complex<int>(-4000, 4000));  // 2FSK 2K
     filter_widths->push_back(std::complex<int>(-2000, 2000));  // 2FSK 1K
     filter_widths->push_back(std::complex<int>(-15000, 15000));  // 2FSK 10K
-    filter_widths->push_back(std::complex<int>(-4600, 4600));  // 4FSK 2K
+    filter_widths->push_back(std::complex<int>(-4400, 4400));  // 4FSK 2K
     filter_widths->push_back(std::complex<int>(-25000, 25000));    // 4FSK 10K
+    filter_widths->push_back(std::complex<int>(-2000, 2000));  // 4FSK 2K FM
+    filter_widths->push_back(std::complex<int>(-10000, 10000));    // 4FSK 10K FM
     filter_widths->push_back(std::complex<int>(-150000, 150000)); // QPSK250000 VIDEO
     filter_widths->push_back(std::complex<int>(-150000, 150000)); // QPSK250000 DATA
 
@@ -145,8 +160,10 @@ void buildFilterWidthList(std::vector<std::complex<int>>* filter_widths, std::ve
     ranges->push_back(std::complex<int>(-4000, 4000));  // 2FSK 2K
     ranges->push_back(std::complex<int>(-2000, 2000));  // 2FSK 1K
     ranges->push_back(std::complex<int>(-15000, 15000));  // 2FSK 10K
-    ranges->push_back(std::complex<int>(-4600, 4600));  // 4FSK 2K
+    ranges->push_back(std::complex<int>(-4400, 4400));  // 4FSK 2K
     ranges->push_back(std::complex<int>(-25000, 25000));    // 4FSK 10K
+    ranges->push_back(std::complex<int>(-2000, 2000));  // 4FSK 2K FM
+    ranges->push_back(std::complex<int>(-10000, 10000));    // 4FSK 10K FM
     ranges->push_back(std::complex<int>(-150000, 150000)); // QPSK250000 VIDEO
     ranges->push_back(std::complex<int>(-150000, 150000)); // QPSK250000 DATA
 
@@ -173,19 +190,10 @@ void buildFilterWidthList(std::vector<std::complex<int>>* filter_widths, std::ve
     symmetric->push_back(true);  // 2FSK 10K
     symmetric->push_back(true);  // 4FSK 2K
     symmetric->push_back(true);    // 4FSK 10K
+    symmetric->push_back(true);  // 4FSK 2K FM
+    symmetric->push_back(true);    // 4FSK 10K FM
     symmetric->push_back(true); // QPSK250000 VIDEO
     symmetric->push_back(true); // QPSK250000 DATA
 
 }
 
-
-void unpackBytes(unsigned char *bitbuf, const unsigned char *bytebuf, int bytecount)
-{
-    for(int i=0; i<bytecount; i++)
-    {
-        for(int j=0; j<8; j++)
-        {
-            bitbuf[i*8+j] = (bytebuf[i] & (128 >> j)) != 0;
-        }
-    }
-}

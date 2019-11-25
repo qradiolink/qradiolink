@@ -29,7 +29,6 @@
 #include <gnuradio/blocks/multiply_cc.h>
 #include <gnuradio/blocks/multiply_const_cc.h>
 #include <gnuradio/blocks/complex_to_real.h>
-#include <gnuradio/digital/diff_encoder_bb.h>
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/digital/map_bb.h>
 #include <gnuradio/digital/scrambler_bb.h>
@@ -37,6 +36,7 @@
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/analog/frequency_modulator_fc.h>
 #include <gnuradio/filter/rational_resampler_base_ccf.h>
+#include <gnuradio/filter/rational_resampler_base_fff.h>
 #include <gnuradio/fec/cc_encoder.h>
 #include <gnuradio/fec/encoder.h>
 
@@ -45,14 +45,14 @@ class gr_mod_4fsk_sdr;
 
 typedef boost::shared_ptr<gr_mod_4fsk_sdr> gr_mod_4fsk_sdr_sptr;
 gr_mod_4fsk_sdr_sptr make_gr_mod_4fsk_sdr(int sps=125, int samp_rate=250000, int carrier_freq=1700,
-                                          int filter_width=8000);
+                                          int filter_width=8000, bool fm=true);
 
 class gr_mod_4fsk_sdr : public gr::hier_block2
 {
 
 public:
     explicit gr_mod_4fsk_sdr(int sps=125, int samp_rate=250000, int carrier_freq=1700,
-                             int filter_width=8000);
+                             int filter_width=8000, bool fm=true);
     void set_bb_gain(float value);
 
 private:
@@ -63,12 +63,12 @@ private:
     gr::digital::scrambler_bb::sptr _scrambler;
     gr::blocks::repeat::sptr _repeat;
     gr::filter::fft_filter_ccf::sptr _filter;
-    gr::digital::diff_encoder_bb::sptr _diff_encoder;
     gr::blocks::pack_k_bits_bb::sptr _packer;
     gr::digital::map_bb::sptr _map;
     gr::analog::frequency_modulator_fc::sptr _freq_modulator;
     gr::fec::encoder::sptr _encode_ccsds;
     gr::filter::rational_resampler_base_ccf::sptr _resampler2;
+    gr::filter::rational_resampler_base_fff::sptr _resampler;
 
 
 
