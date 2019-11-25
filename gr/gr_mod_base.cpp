@@ -507,7 +507,10 @@ void gr_mod_base::start(int buffer_size)
 {
     _audio_source->flush();
     _vector_source->flush();
-    _top_block->start(buffer_size);
+    if(buffer_size)
+        _top_block->start(buffer_size);
+    else // automatic
+        _top_block->start();
 }
 
 void gr_mod_base::stop()

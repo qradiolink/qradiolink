@@ -537,7 +537,7 @@ void Settings::readConfig()
     }
     catch(const libconfig::SettingNotFoundException &nfex)
     {
-        block_buffer_size = 8192;
+        block_buffer_size = 0;
     }
 
 }

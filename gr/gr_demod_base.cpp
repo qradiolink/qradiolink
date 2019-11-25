@@ -587,7 +587,10 @@ void gr_demod_base::start(int buffer_size)
 {
     _audio_sink->flush();
     _vector_sink->flush();
-    _top_block->start(buffer_size);
+    if(buffer_size)
+        _top_block->start(buffer_size);
+    else // automatic
+        _top_block->start();
 }
 
 void gr_demod_base::stop()

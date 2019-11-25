@@ -537,7 +537,10 @@ void MainWindow::setConfig()
     ui->voxLevelSlider->setSliderPosition(_settings->vox_level);
     ui->voipBitrateComboBox->setCurrentText(QString::number(_settings->voip_bitrate));
     ui->endBeepComboBox->setCurrentIndex(_settings->end_beep);
-    ui->blockBufferSizeComboBox->setCurrentText(QString::number(_settings->block_buffer_size));
+    if(_settings->block_buffer_size != 0)
+        ui->blockBufferSizeComboBox->setCurrentText(QString::number(_settings->block_buffer_size));
+    else
+        ui->blockBufferSizeComboBox->setCurrentText("Auto");
 }
 
 void MainWindow::saveUiConfig()

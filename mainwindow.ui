@@ -3142,6 +3142,11 @@ and S-meter (dBm)</string>
                </property>
                <item>
                 <property name="text">
+                 <string>Auto</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
                  <string>512</string>
                 </property>
                </item>

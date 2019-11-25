@@ -71,7 +71,7 @@ public:
 signals:
 
 public slots:
-    void start(int buffer_size=8192);
+    void start(int buffer_size=0);
     void stop();
     std::vector<unsigned char> *getData();
     std::vector<unsigned char> *getData(int nr);
