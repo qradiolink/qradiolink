@@ -38,7 +38,7 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(std::vector<int>signature, int sps, int sam
 {
 
     _target_samp_rate = 20000;
-    _samples_per_symbol = sps/25;
+    _samples_per_symbol = sps;
     _samp_rate =samp_rate;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;

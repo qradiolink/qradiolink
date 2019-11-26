@@ -58,8 +58,8 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
     _2fsk_10k = make_gr_mod_2fsk_sdr(5, 1000000, 1700, 13500, true);
     _4fsk_2k = make_gr_mod_4fsk_sdr(25, 1000000, 1700, 4000, false);
     _4fsk_10k = make_gr_mod_4fsk_sdr(5, 1000000, 1700, 20000, false);
-    _4fsk_2k_fm = make_gr_mod_4fsk_sdr(25, 1000000, 1700, 2000, true);
-    _4fsk_10k_fm = make_gr_mod_4fsk_sdr(5, 1000000, 1700, 10000, true);
+    _4fsk_2k_fm = make_gr_mod_4fsk_sdr(25, 1000000, 1700, 2500, true);
+    _4fsk_10k_fm = make_gr_mod_4fsk_sdr(5, 1000000, 1700, 12500, true);
     _am = make_gr_mod_am_sdr(125,1000000, 1700, 5000);
     _bpsk_1k = make_gr_mod_bpsk_sdr(50, 1000000, 1700, 1500);
     _bpsk_2k = make_gr_mod_bpsk_sdr(25, 1000000, 1700, 2800);
@@ -315,7 +315,7 @@ void gr_mod_base::set_mode(int mode)
         _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemType4FSK20000:
-        _carrier_offset = 100000;
+        _carrier_offset = 50000;
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
         _osmosdr_sink->set_sample_rate(1000000);
@@ -333,7 +333,7 @@ void gr_mod_base::set_mode(int mode)
         _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemType4FSK20000FM:
-        _carrier_offset = 100000;
+        _carrier_offset = 50000;
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
         _osmosdr_sink->set_sample_rate(1000000);
