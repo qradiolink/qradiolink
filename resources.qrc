@@ -42,6 +42,7 @@
         <file>res/MDC1200_preamble.raw</file>
         <file>res/StatusChange.raw</file>
         <file>res/BeepBeep.raw</file>
+        <file>res/Caution.raw</file>
     </qresource>
     <qresource prefix="/fonts">
         <file>res/LiquidCrystal-Normal.otf</file>

@@ -2500,7 +2500,7 @@ border-width: 4px;
                    </item>
                    <item>
                     <property name="text">
-                     <string>9</string>
+                     <string>Caution</string>
                     </property>
                    </item>
                   </widget>

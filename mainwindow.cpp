@@ -211,6 +211,7 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     _s_meter_bg = new QPixmap(":/res/s-meter-bg-black-small.png");
     _current_voip_channel = -1;
     _fft_active = _settings->show_fft;
+    _controls_active = _settings->show_controls;
 
     _rssi = 0;
     QRect xy = this->geometry();
@@ -402,11 +403,14 @@ void MainWindow::changeEvent(QEvent *event)
         if (isMinimized())
         {
             _fft_active = (bool)_settings->show_fft;
+            _controls_active = (bool)_settings->show_controls;
             emit enableGUIFFT(false);
+            emit enableRSSI(false);
         }
         else if (!isMinimized())
         {
             emit enableGUIFFT(_fft_active);
+            emit enableRSSI(_controls_active);
         }
     }
 
@@ -577,6 +581,8 @@ void MainWindow::saveUiConfig()
     _settings->scan_step = (int)ui->lineEditScanStep->text().toInt();
     _settings->waterfall_fps = (int)ui->fpsBox->currentText().toInt();
     _settings->audio_record_path = ui->lineEditRecordPath->text();
+    _settings->show_controls = (int)_controls_active;
+    _settings->show_fft = (int)_fft_active;
     _settings->saveConfig();
 }
 

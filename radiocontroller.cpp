@@ -2074,6 +2074,9 @@ void RadioController::setEndBeep(int value)
     case 8:
         filename = ":/res/BeepBeep.raw";
         break;
+    case 9:
+        filename = ":/res/Caution.raw";
+        break;
     default:
         break;
     }

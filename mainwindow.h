@@ -268,6 +268,7 @@ private:
     float _rssi;
     bool _ptt_activated;
     bool _fft_active;
+    bool _controls_active;
     int _current_voip_channel;
 
     StationList _user_list;
