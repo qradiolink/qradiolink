@@ -42,30 +42,32 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
 
     int rs, bw, decimation, interpolation, nfilts;
     float gain_mu, omega_rel_limit;
-    if(sps == 25)
+    if(sps == 1)
     {
         _target_samp_rate = 80000;
-        _samples_per_symbol = sps*8/25;
+        _samples_per_symbol = sps*8;
         decimation = 25;
         interpolation = 2;
         rs = 10000;
         bw = 4000;
         gain_mu = 0.025;
         omega_rel_limit = 0.001;
-        nfilts = 35;
+        nfilts = 33 * _samples_per_symbol;
     }
-    if(sps == 125)
+    if(sps == 5)
     {
         _target_samp_rate = 20000;
-        _samples_per_symbol = sps*2/25;
+        _samples_per_symbol = sps*2;
         decimation = 50;
         interpolation = 1;
         rs = 2000;
         bw = 4000;
         gain_mu = 0.025;
         omega_rel_limit = 0.001;
-        nfilts = 375;
+        nfilts = 25 * _samples_per_symbol;
     }
+    if((nfilts % 2) == 0)
+        nfilts += 1;
 
     std::vector<unsigned int> const_map;
     const_map.push_back(0);
@@ -85,9 +87,7 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
     polys.push_back(109);
     polys.push_back(79);
 
-    int spacing = 2;
-    if(fm)
-        spacing = 1;
+    int spacing = 1;
 
     gr::digital::constellation_expl_rect::sptr constellation = gr::digital::constellation_expl_rect::make(
                 constellation_points,pre_diff_code,4,2,2,1,1,const_map);
@@ -129,7 +129,7 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
                                     _target_samp_rate/_samples_per_symbol,0.25,nfilts));
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
                                                               omega_rel_limit);
-    _clock_recovery_f = gr::digital::clock_recovery_mm_ff::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.0, gain_mu,
+    _clock_recovery_f = gr::digital::clock_recovery_mm_ff::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
                                                               omega_rel_limit);
     _float_to_complex = gr::blocks::float_to_complex::make();
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
@@ -151,8 +151,8 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
     {
         connect(_filter,0,_freq_demod,0);
         connect(_freq_demod,0,_shaping_filter,0);
-        //connect(_rail,0,_shaping_filter,0);
         connect(_shaping_filter,0,_clock_recovery_f,0);
+        //connect(_rail,0,_shaping_filter,0);
         connect(_clock_recovery_f,0,_phase_mod,0);
         connect(_phase_mod,0,self(),1);
         connect(_phase_mod,0,_complex_to_float,0);
