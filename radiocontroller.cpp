@@ -54,7 +54,6 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     _end_tx_timer = new QTimer(this);
     _end_tx_timer->setSingleShot(true);
     _radio_time_out_timer = new QTimer(this);
-    _radio_time_out_timer->setSingleShot(true);
     _data_read_timer = new QElapsedTimer();
     _data_modem_reset_timer = new QElapsedTimer();
     _data_modem_sleep_timer = new QElapsedTimer();
@@ -821,6 +820,7 @@ void RadioController::stopTx()
         }
         // FIXME: end tail length should be calculated exactly
         _end_tx_timer->start(tx_tail_msec);
+        _radio_time_out_timer->stop();
 
         /** old code
         if(_settings->_rx_inited && !_settings->_repeater_enabled &&
@@ -865,6 +865,8 @@ void RadioController::radioTimeout()
 
     //_audio_mixer_in->addSamples(samples, size, -1000);
     emit writePCM(samples, size, false, AudioProcessor::AUDIO_MODE_ANALOG);
+    if(_settings->tot_tx_end)
+        _transmitting = false;
 }
 
 void RadioController::stopVoipTx()
@@ -1262,7 +1264,7 @@ void RadioController::startTransmission()
         /// Trying to transmit and receive at different sample rates
         /// might work if using different devices so just log a warning
         _logger->log(Logger::LogLevelWarning,
-            "Trying to transmit and receive at different sample rates,"
+            "Trying to transmit and receive at different sample rates "
                      "works only with separate devices");
         return;
     }
@@ -2172,6 +2174,11 @@ void RadioController::setBlockBufferSize(int value)
 void RadioController::setRadioToT(int value)
 {
     _settings->radio_tot = value;
+}
+
+void RadioController::setTotTxEnd(bool value)
+{
+    _settings->tot_tx_end = (int)value;
 }
 
 

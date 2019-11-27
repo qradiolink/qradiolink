@@ -89,6 +89,7 @@ public:
     int end_beep;
     int block_buffer_size;
     int radio_tot; // seconds
+    int tot_tx_end;
 
     /// Not saved to config:
 

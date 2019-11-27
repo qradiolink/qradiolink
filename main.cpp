@@ -363,6 +363,10 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
                      radio_op,SLOT(setMuteForwardedAudio(bool)));
     QObject::connect(w,SIGNAL(setBlockBufferSize(int)),
                      radio_op,SLOT(setBlockBufferSize(int)));
+    QObject::connect(w,SIGNAL(setRadioToT(int)),
+                     radio_op,SLOT(setRadioToT(int)));
+    QObject::connect(w,SIGNAL(setTotTxEnd(bool)),
+                     radio_op,SLOT(setTotTxEnd(bool)));
     QObject::connect(w,SIGNAL(connectToServer(QString, unsigned)),
                      mumbleclient,SLOT(connectToServer(QString, unsigned)));
     QObject::connect(w,SIGNAL(disconnectFromServer()),mumbleclient,SLOT(disconnectFromServer()));

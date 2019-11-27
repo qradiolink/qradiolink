@@ -547,6 +547,14 @@ void Settings::readConfig()
     {
         radio_tot = 60;
     }
+    try
+    {
+        tot_tx_end = cfg.lookup("tot_tx_end");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        tot_tx_end = 0;
+    }
 
 }
 
@@ -608,6 +616,7 @@ void Settings::saveConfig()
     root.add("mute_forwarded_audio",libconfig::Setting::TypeInt) = mute_forwarded_audio;
     root.add("block_buffer_size",libconfig::Setting::TypeInt) = block_buffer_size;
     root.add("radio_tot",libconfig::Setting::TypeInt) = radio_tot;
+    root.add("tot_tx_end",libconfig::Setting::TypeInt) = tot_tx_end;
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());

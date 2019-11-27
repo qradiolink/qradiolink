@@ -134,10 +134,13 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
                      this,SLOT(setRemoteControl(bool)));
     QObject::connect(ui->muteForwardedAudioCheckBox,SIGNAL(toggled(bool)),
                      this,SLOT(updateMuteForwardedAudio(bool)));
+    QObject::connect(ui->totStopTxCheckBox,SIGNAL(toggled(bool)),
+                     this,SLOT(updateTotTxEnd(bool)));
     QObject::connect(ui->rssiCalibrateButton,SIGNAL(clicked()),this,SLOT(setRSSICalibration()));
     QObject::connect(ui->saveChannelsButton,SIGNAL(clicked()),this,SLOT(saveMemoryChannes()));
     QObject::connect(ui->agcAttackSpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateAgcAttack(int)));
     QObject::connect(ui->agcDecaySpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateAgcDecay(int)));
+    QObject::connect(ui->timeoutTimerSpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateTotTimer(int)));
     QObject::connect(ui->mumbleTextMessageButton,SIGNAL(clicked()),this,SLOT(sendMumbleTextMessage()));
     QObject::connect(ui->mumbleTextMessageEdit,SIGNAL(returnPressed()),
                      this,SLOT(sendMumbleTextMessage()));
@@ -533,6 +536,7 @@ void MainWindow::setConfig()
     ui->agcAttackSpinBox->setValue(_settings->agc_attack);
     ui->agcDecaySpinBox->setValue(_settings->agc_decay);
     ui->scanTimerSpinBox->setValue(_settings->scan_resume_time);
+    ui->timeoutTimerSpinBox->setValue(_settings->radio_tot);
     ui->lineEditRecordPath->setText(_settings->audio_record_path);
     ui->voxLevelSlider->setSliderPosition(_settings->vox_level);
     ui->voipBitrateComboBox->setCurrentText(QString::number(_settings->voip_bitrate));
@@ -1702,6 +1706,16 @@ void MainWindow::updateVoipBitrate(int value)
 void MainWindow::updateEndBeep(int value)
 {
     emit setEndBeep(value);
+}
+
+void MainWindow::updateTotTimer(int value)
+{
+    emit setRadioToT(value);
+}
+
+void MainWindow::updateTotTxEnd(bool value)
+{
+    emit setTotTxEnd(value);
 }
 
 void MainWindow::toggleAudioRecord(bool value)
