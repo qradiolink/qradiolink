@@ -125,6 +125,8 @@ void AudioProcessor::write_preprocess(short *buf, int bufsize, bool preprocess, 
         //speex_preprocess_ctl(_speex_preprocess, SPEEX_PREPROCESS_SET_NOISE_SUPPRESS, &i);
         //speex_preprocess_run(_speex_preprocess, buf);
         compress_audio(buf, bufsize, 1, audio_mode);
+        if(audio_mode == AudioProcessor::AUDIO_MODE_CODEC2)
+            filter_audio(buf, bufsize, false, true, 0);
     }
 }
 
@@ -220,13 +222,13 @@ void AudioProcessor::filter_audio(short *audiobuffer, int audiobuffersize, bool 
             // FIXME:
             if(mode == 0)
             {
-                output = _audio_filter2_1400->do_sample(sample) + 0.1 * (rand() % 1000);// + 0.6375f * _emph_last_input ; // 0.9
+                output = _audio_filter2_1400->do_sample(sample) + (boundedRand(1));// + 0.6375f * _emph_last_input ; // 0.9
                 _emph_last_input = output;
                 audiobuffer[i] = (short) (output);
             }
             else
             {
-                output = _audio_filter2_700->do_sample(sample) + 0.1 * (rand() % 1000);// + 0.9375f * _emph_last_input;  // 0.9
+                output = _audio_filter2_700->do_sample(sample) + (boundedRand(1));// + 0.9375f * _emph_last_input;  // 0.9
                 _emph_last_input = output;
                 audiobuffer[i] = (short) (output);
             }
@@ -250,4 +252,5 @@ void AudioProcessor::filter_audio(short *audiobuffer, int audiobuffersize, bool 
         }
     }
 }
+
 

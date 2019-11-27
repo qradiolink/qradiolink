@@ -22,6 +22,7 @@
 #include <QCoreApplication>
 #include <QMutex>
 #include <QAudioOutput>
+#include <QAudio>
 #include "audio/audioprocessor.h"
 #include "settings.h"
 #include "logger.h"
@@ -43,6 +44,7 @@ public slots:
     void stop();
     void restart();
     void recordAudio(bool value);
+    void processStateChange(QAudio::State state);
 
 private:
     struct audio_samples

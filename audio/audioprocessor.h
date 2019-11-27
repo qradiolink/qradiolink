@@ -58,6 +58,8 @@ signals:
 public slots:
 
 private:
+    float calc_audio_power(short *buf, short samples);
+
     const Settings *_settings;
     SpeexPreprocessState *_speex_preprocess;
     sf_compressor_state_st _cm_state_read;
@@ -70,8 +72,6 @@ private:
     Filter *_audio_filter2_700;
     double _emph_last_input;
     int _error;
-    float calc_audio_power(short *buf, short samples);
-
 };
 
 #endif // AUDIOPROCESSOR_H
