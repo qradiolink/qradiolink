@@ -49,7 +49,7 @@ void gr_audio_sink::flush()
 std::vector<float> *gr_audio_sink::get_data()
 {
     gr::thread::scoped_lock guard(_mutex);
-    // Have at least 40 ms of audio buffered
+    /// Have at least 40 ms of audio buffered
     if(_data->size() < 320)
     {
         return nullptr;
@@ -73,10 +73,10 @@ int gr_audio_sink::work(int noutput_items,
     }
     gr::thread::scoped_lock guard(_mutex);
     float *in = (float*)(input_items[0]);
-    if(_data->size() > 320 * 10)
+    if(_data->size() > 320 * 25)
     {
-        // not reading data fast enough, anything more than 400 msec
-        // of data in the buffer is a problem downstream so dropping buffer
+        /// not reading data fast enough, anything more than 1 sec
+        /// of data in the buffer is a problem downstream so dropping buffer
         return noutput_items;
     }
     for(int i=0;i < noutput_items;i++)

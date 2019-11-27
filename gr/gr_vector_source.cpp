@@ -51,7 +51,7 @@ int gr_vector_source::set_data(std::vector<unsigned char> *data)
     if(_offset == 0)
     {
         gr::thread::scoped_lock guard(_mutex);
-        _data->reserve(data->size());
+        _data->reserve(_data->size() + data->size());
         _data->insert(_data->end(),data->begin(),data->end());
         delete data;
         _finished = false;
