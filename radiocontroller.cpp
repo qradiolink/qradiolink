@@ -2032,6 +2032,9 @@ void RadioController::setEndBeep(int value)
     case 6:
         filename = ":/res/MDC1200_preamble.raw";
         break;
+    case 7:
+        filename = ":/res/StatusChange.raw";
+        break;
     default:
         break;
     }
