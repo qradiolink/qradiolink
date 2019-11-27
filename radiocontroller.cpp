@@ -53,6 +53,8 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     _vox_timer->setSingleShot(true);
     _end_tx_timer = new QTimer(this);
     _end_tx_timer->setSingleShot(true);
+    _radio_time_out_timer = new QTimer(this);
+    _radio_time_out_timer->setSingleShot(true);
     _data_read_timer = new QElapsedTimer();
     _data_modem_reset_timer = new QElapsedTimer();
     _data_modem_sleep_timer = new QElapsedTimer();
@@ -99,6 +101,7 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     QObject::connect(_data_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));
     QObject::connect(_voip_tx_timer, SIGNAL(timeout()), this, SLOT(stopVoipTx()));
     QObject::connect(_end_tx_timer, SIGNAL(timeout()), this, SLOT(endTx()));
+    QObject::connect(_radio_time_out_timer, SIGNAL(timeout()), this, SLOT(radioTimeout()));
 
     /// Modem connections
     QObject::connect(_modem,SIGNAL(textReceived(QString)),this,SLOT(textReceived(QString)));
@@ -137,6 +140,12 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     if(resfile.open(QIODevice::ReadOnly))
     {
         _data_rec_sound = new QByteArray(resfile.readAll());
+    }
+
+    QFile resfile1(":/res/BeepBeep.raw");
+    if(resfile1.open(QIODevice::ReadOnly))
+    {
+        _timeout_sound = new QByteArray(resfile1.readAll());
     }
 
     setEndBeep(_settings->end_beep);
@@ -779,6 +788,7 @@ void RadioController::startTx()
         {
             sendTxBeep(_settings->end_beep);
         }
+        _radio_time_out_timer->start(1000 * _settings->radio_tot);
         emit displayTransmitStatus(true);
     }
 }
@@ -833,6 +843,28 @@ void RadioController::endTx()
     }
     emit displayTransmitStatus(false);
     _settings->tx_started = false;
+}
+
+void RadioController::radioTimeout()
+{
+    QString time= QDateTime::currentDateTime().toString("d/MMM/yyyy hh:mm:ss");
+    emit printText("<b>" + time +
+                   "</b> <font color=\"#77FF77\">Radio timeout</font><br/>\n",true);
+    short *origin = (short*) _timeout_sound->data();
+    int size = _timeout_sound->size();
+    short *samples = new short[size/sizeof(short)];
+    for(unsigned int i=0;i<size/sizeof(short);i++)
+    {
+        samples[i] = short(origin[i] / 2);
+        if(_settings->voip_forwarding)
+        {
+            /// routed to Mumble
+            _to_voip_buffer->push_back(samples[i]);
+        }
+    }
+
+    //_audio_mixer_in->addSamples(samples, size, -1000);
+    emit writePCM(samples, size, false, AudioProcessor::AUDIO_MODE_ANALOG);
 }
 
 void RadioController::stopVoipTx()
@@ -2135,6 +2167,11 @@ void RadioController::setMuteForwardedAudio(bool value)
 void RadioController::setBlockBufferSize(int value)
 {
     _settings->block_buffer_size = value;
+}
+
+void RadioController::setRadioToT(int value)
+{
+    _settings->radio_tot = value;
 }
 
 

@@ -109,6 +109,7 @@ public slots:
     void run();
     void startTransmission();
     void endTransmission();
+    void radioTimeout();
     void txAudio(short *audiobuffer, int audiobuffer_size, int vad, bool radio_only);
     void processVideoFrame();
     void textData(QString text, bool repeat = false);
@@ -182,6 +183,7 @@ public slots:
     void enableReverseShift(bool value);
     void setMuteForwardedAudio(bool value);
     void setBlockBufferSize(int value);
+    void setRadioToT(int value);
 
 private:
     unsigned int getFrameLength(unsigned char *data);
@@ -223,6 +225,7 @@ private:
     QTimer *_vox_timer;
     QTimer *_voip_tx_timer;
     QTimer *_end_tx_timer;
+    QTimer *_radio_time_out_timer;
     QElapsedTimer *_data_read_timer;
     QElapsedTimer *_data_modem_reset_timer;
     QElapsedTimer *_data_modem_sleep_timer;
@@ -235,9 +238,7 @@ private:
     QVector<short> *_to_voip_buffer;
     QByteArray *_data_rec_sound;
     QByteArray *_end_rec_sound;
-    QByteArray *_end_rec_sound2;
-    QByteArray *_mdc_rec_sound;
-    QByteArray *_mod_rec_sound;
+    QByteArray * _timeout_sound;
     QList<radiochannel*> _memory_channels;
 
     QString _text_out;

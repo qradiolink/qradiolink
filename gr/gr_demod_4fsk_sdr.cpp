@@ -120,7 +120,7 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
     }
 
     _phase_mod = gr::analog::phase_modulator_fc::make(2 * M_PI / 4);
-    _rail = gr::analog::rail_ff::make(-2, 2);
+    _rail = gr::analog::rail_ff::make(-1.98, 1.98);
     _symbol_filter = gr::filter::fft_filter_ccf::make(1,symbol_filter_taps);
 
     _freq_demod = gr::analog::quadrature_demod_cf::make(_samples_per_symbol/(spacing * M_PI/2));
@@ -151,8 +151,8 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
     {
         connect(_filter,0,_freq_demod,0);
         connect(_freq_demod,0,_shaping_filter,0);
-        connect(_shaping_filter,0,_clock_recovery_f,0);
-        //connect(_rail,0,_shaping_filter,0);
+        connect(_shaping_filter,0,_rail,0);
+        connect(_rail,0,_clock_recovery_f,0);
         connect(_clock_recovery_f,0,_phase_mod,0);
         connect(_phase_mod,0,self(),1);
         connect(_phase_mod,0,_complex_to_float,0);

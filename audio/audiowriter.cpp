@@ -164,7 +164,7 @@ void AudioWriter::run()
                             _recorder->writeSamples(pcm, 640/sizeof(short));
                         }
                         /// time it takes for the packet to be played without overflow
-                        struct timespec time_to_sleep = {0, 40000000L };
+                        struct timespec time_to_sleep = {0, 39000000L };
                         nanosleep(&time_to_sleep, NULL);
                     }
                     if(leftover > 1)

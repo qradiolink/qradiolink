@@ -539,6 +539,14 @@ void Settings::readConfig()
     {
         block_buffer_size = 0;
     }
+    try
+    {
+        radio_tot = cfg.lookup("radio_tot");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        radio_tot = 60;
+    }
 
 }
 
@@ -599,6 +607,7 @@ void Settings::saveConfig()
     root.add("end_beep",libconfig::Setting::TypeInt) = end_beep;
     root.add("mute_forwarded_audio",libconfig::Setting::TypeInt) = mute_forwarded_audio;
     root.add("block_buffer_size",libconfig::Setting::TypeInt) = block_buffer_size;
+    root.add("radio_tot",libconfig::Setting::TypeInt) = radio_tot;
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());

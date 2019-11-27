@@ -82,12 +82,13 @@ public:
     int agc_decay;
     int burst_ip_modem;
     int night_mode;
-    int scan_resume_time;
+    int scan_resume_time;   // seconds
     QString audio_record_path;
     int vox_level;
     int voip_bitrate;
     int end_beep;
     int block_buffer_size;
+    int radio_tot; // seconds
 
     /// Not saved to config:
 
