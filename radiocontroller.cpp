@@ -1367,7 +1367,7 @@ void RadioController::endAudioTransmission()
     emit writePCM(samples, size, false, AudioProcessor::AUDIO_MODE_ANALOG);
     short *silence = new short[4096/sizeof(short)];
     memset(silence, 0, 4096);
-    emit writePCM(silence, size, false, AudioProcessor::AUDIO_MODE_ANALOG);
+    emit writePCM(silence, 4096, false, AudioProcessor::AUDIO_MODE_ANALOG);
 }
 
 /// These two are not used currently
@@ -2036,6 +2036,9 @@ void RadioController::setEndBeep(int value)
         break;
     case 7:
         filename = ":/res/StatusChange.raw";
+        break;
+    case 8:
+        filename = ":/res/BeepBeep.raw";
         break;
     default:
         break;

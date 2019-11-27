@@ -41,6 +41,7 @@
         <file>res/talk_permit.raw</file>
         <file>res/MDC1200_preamble.raw</file>
         <file>res/StatusChange.raw</file>
+        <file>res/BeepBeep.raw</file>
     </qresource>
     <qresource prefix="/fonts">
         <file>res/LiquidCrystal-Normal.otf</file>
