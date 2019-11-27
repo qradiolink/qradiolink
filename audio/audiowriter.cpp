@@ -125,7 +125,7 @@ void AudioWriter::run()
         _mutex.unlock();
         if(size > 0)
         {
-            frame_counter = 40;
+            frame_counter = 50;
             for(int i=0;i< size;i++)
             {
                 audio_samples *samp = _rx_sample_queue->at(i);
@@ -203,7 +203,7 @@ void AudioWriter::run()
             else if(frame_counter == 0)
             {
                 /// Idle time
-                struct timespec time_to_sleep = {0, 10000000L };
+                struct timespec time_to_sleep = {0, 40000000L };
                 nanosleep(&time_to_sleep, NULL);
             }
         }

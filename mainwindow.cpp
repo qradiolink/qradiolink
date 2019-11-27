@@ -210,6 +210,7 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     _iirFftData = new float[1024*1024];
     _s_meter_bg = new QPixmap(":/res/s-meter-bg-black-small.png");
     _current_voip_channel = -1;
+    _fft_active = _settings->show_fft;
 
     _rssi = 0;
     QRect xy = this->geometry();
@@ -398,16 +399,15 @@ void MainWindow::changeEvent(QEvent *event)
 {
     if (event->type() == QEvent::WindowStateChange)
     {
-        /** Disabled! Due to logic changes in radioop, this breaks
         if (isMinimized())
         {
+            _fft_active = (bool)_settings->show_fft;
             emit enableGUIFFT(false);
         }
-        else
+        else if (!isMinimized())
         {
-            emit enableGUIFFT(true);
+            emit enableGUIFFT(_fft_active);
         }
-        */
     }
 
     event->accept();
