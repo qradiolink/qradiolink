@@ -77,6 +77,13 @@ void genRandomStr(char *str, const int len)
     str[len] = 0;
 }
 
+float boundedRand(int range)
+{
+    int x = rand();
+    long m = long(x) * long(range);
+    return 0.002 * float(m >> 32) / 32768.0f;
+}
+
 void buildModeList(QVector<QString> *operating_modes)
 {
     operating_modes->push_back("FM");

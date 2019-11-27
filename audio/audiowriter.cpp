@@ -125,7 +125,7 @@ void AudioWriter::run()
         _mutex.unlock();
         if(size > 0)
         {
-            frame_counter = 40000;
+            frame_counter = 40;
             for(int i=0;i< size;i++)
             {
                 audio_samples *samp = _rx_sample_queue->at(i);
@@ -143,8 +143,10 @@ void AudioWriter::run()
                         _recorder->writeSamples(pcm, bytes/sizeof(short));
                     }
                     /// time it takes for the packet to be played without overflow
-                    long time = 1000/(8000/(bytes/sizeof(short))) * 1000000L;
-                    struct timespec time_to_sleep = {0, time };
+                    long play_time = 1000/(8000/(bytes/sizeof(short))) * 1000000L;
+                    if(play_time > 2000000L)
+                        play_time -= 2000000L;
+                    struct timespec time_to_sleep = {0, play_time };
                     nanosleep(&time_to_sleep, NULL);
                 }
                 else
@@ -162,7 +164,7 @@ void AudioWriter::run()
                             _recorder->writeSamples(pcm, 640/sizeof(short));
                         }
                         /// time it takes for the packet to be played without overflow
-                        struct timespec time_to_sleep = {0, 40000000L };
+                        struct timespec time_to_sleep = {0, 39000000L };
                         nanosleep(&time_to_sleep, NULL);
                     }
                     if(leftover > 0)
@@ -176,8 +178,10 @@ void AudioWriter::run()
                             _recorder->writeSamples(pcm, leftover/sizeof(short));
                         }
                         /// time it takes for the packet to be played without overflow
-                        long time = 1000/(8000/(leftover/sizeof(short))) * 10000L;
-                        struct timespec time_to_sleep = {0, time };
+                        long play_time = 1000/(8000/(leftover/sizeof(short))) * 1000000L;
+                        if(play_time > 1000000L)
+                            play_time -= 1000000L;
+                        struct timespec time_to_sleep = {0, play_time };
                         nanosleep(&time_to_sleep, NULL);
                     }
                 }
@@ -191,23 +195,11 @@ void AudioWriter::run()
         }
         else
         {
-            /* This is a can of worms!
-            if((frame_counter < 25) && (frame_counter > 0))
-            {
-                /// flush samples (1 second)
-                short *silence = new short[320];
-                memset(silence, 0, 640);
-                audio_dev->write((char*)silence, 640);
-                frame_counter--;
-                struct timespec time_to_sleep = {0, 40000000L };
-                nanosleep(&time_to_sleep, NULL);
-            }
-            */
             if(frame_counter > 0)
             {
                 /// recent audio packet
                 frame_counter--;
-                struct timespec time_to_sleep = {0, 1000L };
+                struct timespec time_to_sleep = {0, 1000000L };
                 nanosleep(&time_to_sleep, NULL);
             }
             else if(frame_counter == 0)
