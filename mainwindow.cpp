@@ -210,8 +210,8 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     _iirFftData = new float[1024*1024];
     _s_meter_bg = new QPixmap(":/res/s-meter-bg-black-small.png");
     _current_voip_channel = -1;
-    _fft_active = _settings->show_fft;
-    _controls_active = _settings->show_controls;
+    _fft_active = (bool)_settings->show_fft;
+    _controls_active = (bool)_settings->show_controls;
 
     _rssi = 0;
     QRect xy = this->geometry();
@@ -402,6 +402,7 @@ void MainWindow::changeEvent(QEvent *event)
     {
         if (isMinimized())
         {
+            qDebug() << _settings->show_fft;
             _fft_active = (bool)_settings->show_fft;
             _controls_active = (bool)_settings->show_controls;
             emit enableGUIFFT(false);
@@ -428,6 +429,7 @@ void MainWindow::showControls(bool value)
         ui->secondaryTextDisplay->move(xy.left(), xy.bottom() - 150);
         ui->memoriesFrame->move(xy.right() - 30 - 900, xy.bottom() - 285);
         _settings->show_controls = 1;
+        _controls_active = true;
     }
     else
     {
@@ -437,6 +439,7 @@ void MainWindow::showControls(bool value)
         ui->secondaryTextDisplay->move(xy.left(), xy.bottom() - 150);
         ui->memoriesFrame->move(xy.right() - 30 - 900, xy.bottom() - 285);
         _settings->show_controls = 0;
+        _controls_active = false;
     }
     emit enableRSSI(value);
 }
@@ -472,6 +475,7 @@ void MainWindow::showMemoriesPanel(bool value)
 void MainWindow::setEnabledFFT(bool value)
 {
     _settings->show_fft = (int) value;
+    _fft_active = value;
     emit enableGUIFFT(value);
 }
 
