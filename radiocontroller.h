@@ -205,6 +205,7 @@ private:
     void setRelays(bool transmitting);
     void memoryScan(bool receiving, bool wait_for_timer=true);
     bool processMixerQueue();
+    void updateCWK();
 
 
     // FIXME: inflation of members
@@ -234,6 +235,7 @@ private:
     QElapsedTimer *_const_read_timer;
     QElapsedTimer *_rssi_read_timer;
     QElapsedTimer *_scan_timer;
+    QElapsedTimer *_cw_timer;
     unsigned char *_rand_frame_data;
     float *_fft_data;
     QVector<short> *_to_voip_buffer;
@@ -258,6 +260,7 @@ private:
     bool _data_modem_sleeping;
     bool _radio_to_voip_on;
     bool _video_on;
+    bool _cw_tone;
 
     int _rx_mode;
     int _tx_mode;

@@ -369,6 +369,12 @@ void gr_modem::setBbGain(int value)
         _gr_mod_base->set_bb_gain(bb_gain);
 }
 
+void gr_modem::setK(bool value)
+{
+    if(_gr_mod_base)
+        _gr_mod_base->set_cw_k(value);
+}
+
 void gr_modem::setRxSensitivity(double value, std::string gain_stage)
 {
     if(_gr_demod_base)

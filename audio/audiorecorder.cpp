@@ -40,6 +40,7 @@ void AudioRecorder::startRecording()
     {
         _logger->log(Logger::LogLevelCritical, QString("Could not open audio file %1 for recording").arg(
                          filename));
+        return;
     }
     _logger->log(Logger::LogLevelInfo, QString("Starting audio recording to file %1").arg(
                      filename));

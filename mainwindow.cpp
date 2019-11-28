@@ -277,6 +277,7 @@ void MainWindow::initSettings()
     changeVoipVolume(_settings->voip_volume);
     setRSSICalibration();
     setTheme((bool)_settings->night_mode);
+    this->resize(_settings->window_width, _settings->window_height);
 }
 
 void MainWindow::setTheme(bool value)
@@ -586,6 +587,8 @@ void MainWindow::saveUiConfig()
     _settings->audio_record_path = ui->lineEditRecordPath->text();
     _settings->show_controls = (int)_controls_active;
     _settings->show_fft = (int)_fft_active;
+    _settings->window_width = this->width();
+    _settings->window_height = this->height();
     _settings->saveConfig();
 }
 

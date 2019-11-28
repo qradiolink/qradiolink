@@ -555,6 +555,22 @@ void Settings::readConfig()
     {
         tot_tx_end = 0;
     }
+    try
+    {
+        window_width = cfg.lookup("window_width");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        window_width = 1200;
+    }
+    try
+    {
+        window_height = cfg.lookup("window_height");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        window_height = 700;
+    }
 
 }
 
@@ -617,6 +633,8 @@ void Settings::saveConfig()
     root.add("block_buffer_size",libconfig::Setting::TypeInt) = block_buffer_size;
     root.add("radio_tot",libconfig::Setting::TypeInt) = radio_tot;
     root.add("tot_tx_end",libconfig::Setting::TypeInt) = tot_tx_end;
+    root.add("window_width",libconfig::Setting::TypeInt) = window_width;
+    root.add("window_height",libconfig::Setting::TypeInt) = window_height;
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());

@@ -51,6 +51,10 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
         _osmosdr_sink->set_gain(gain);
     }
 
+    _signal_source = gr::analog::sig_source_f::make(8000, gr::analog::GR_COS_WAVE, 600, 0.3);
+    _cw_k = gr::blocks::copy::make(4);
+    _cw_k->set_enabled(false);
+
     _2fsk_2k_fm = make_gr_mod_2fsk_sdr(25, 1000000, 1700, 2700, true); // 4000 for non FM, 2700 for FM
     _2fsk_1k_fm = make_gr_mod_2fsk_sdr(50, 1000000, 1700, 1350, true);
     _2fsk_2k = make_gr_mod_2fsk_sdr(25, 1000000, 1700, 4000, false);
@@ -222,6 +226,12 @@ void gr_mod_base::set_mode(int mode)
     case gr_modem_types::ModemTypeLSB2500:
         _top_block->disconnect(_audio_source,0,_lsb,0);
         _top_block->disconnect(_lsb,0,_rotator,0);
+        _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
+        break;
+    case gr_modem_types::ModemTypeCW600USB:
+        _top_block->disconnect(_signal_source,0,_cw_k,0);
+        _top_block->disconnect(_cw_k,0,_usb,0);
+        _top_block->disconnect(_usb,0,_rotator,0);
         _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeFREEDV1600USB:
@@ -440,6 +450,16 @@ void gr_mod_base::set_mode(int mode)
         _top_block->connect(_lsb,0,_rotator,0);
         _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
+    case gr_modem_types::ModemTypeCW600USB:
+        _carrier_offset = 50000;
+        _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
+        _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
+        _osmosdr_sink->set_sample_rate(1000000);
+        _top_block->connect(_signal_source,0,_cw_k,0);
+        _top_block->connect(_cw_k,0,_usb,0);
+        _top_block->connect(_usb,0,_rotator,0);
+        _top_block->connect(_rotator,0,_osmosdr_sink,0);
+        break;
     case gr_modem_types::ModemTypeFREEDV1600USB:
         _carrier_offset = 50000;
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
@@ -614,6 +634,11 @@ void gr_mod_base::set_bb_gain(float value)
     _freedv_tx700C_lsb->set_bb_gain(value);
     _freedv_tx800XA_usb->set_bb_gain(value);
     _freedv_tx800XA_lsb->set_bb_gain(value);
+}
+
+void gr_mod_base::set_cw_k(bool value)
+{
+    _cw_k->set_enabled(value);
 }
 
 // unused because of fixed sample rate

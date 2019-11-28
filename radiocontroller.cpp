@@ -65,6 +65,8 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     _fft_read_timer = new QElapsedTimer();
     _fft_read_timer->start();
     _fft_poll_time = 75;
+    _cw_timer = new QElapsedTimer();
+    _cw_timer->start();
 
     _stop =false;
 
@@ -75,6 +77,7 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     _data_modem_sleeping = false;
     _radio_to_voip_on = false;
     _video_on = false;
+    _cw_tone = false;
     _transmitting = false;
     _process_text = false;
     _repeat_text = false;
@@ -248,6 +251,9 @@ void RadioController::run()
 
         if(transmitting)
         {
+            if(_tx_mode == gr_modem_types::ModemTypeCW600USB)
+                updateCWK();
+                //QtConcurrent::run(this, &RadioController::updateCWK);
             if(!_video_on)
                 QtConcurrent::run(this, &RadioController::processVideoFrame);
             //triggerImageCapture();
@@ -303,6 +309,11 @@ void RadioController::updateInputAudioStream()
         emit setAudioReadMode(false, false, AudioProcessor::AUDIO_MODE_ANALOG);
         return;
     }
+    if(_tx_mode == gr_modem_types::ModemTypeCW600USB)
+    {
+        emit setAudioReadMode(false, false, AudioProcessor::AUDIO_MODE_ANALOG);
+        return;
+    }
     if(_settings->repeater_enabled)
     {
         emit setAudioReadMode(false, false, AudioProcessor::AUDIO_MODE_ANALOG);
@@ -339,12 +350,36 @@ void RadioController::updateInputAudioStream()
     }
 }
 
+/// Test tone
+void RadioController::updateCWK()
+{
+    if(!_settings->tx_inited || _tx_mode != gr_modem_types::ModemTypeCW600USB)
+    {
+        return;
+    }
+    quint64 msec = (quint64)_cw_timer->nsecsElapsed() / 1000000;
+    if(msec < 1500)
+        return;
+
+    if(!_cw_tone)
+    {
+        _cw_tone = true;
+    }
+    else
+    {
+        _cw_tone = false;
+    }
+    _modem->setK(_cw_tone);
+    _cw_timer->restart();
+}
+
 void RadioController::flushRadioToVoipBuffer()
 {
     if(!_settings->voip_connected || _radio_to_voip_on)
         return;
     _radio_to_voip_on = true;
-    /// Using large size of frames (120 ms) for Mumble client compatibility
+    /// large size of frames (120 ms) for Mumble client compatibility, but...
+    /// Now using 40 ms frames again
     int samples_in_buffer = _to_voip_buffer->size();
     if(samples_in_buffer >= 320)
     {
@@ -555,9 +590,7 @@ void RadioController::processVideoFrame()
     /// Rest of video frame filled with garbage to keep the same radio frame size
     for(unsigned int k=encoded_size+24,i=0;k<max_video_frame_size;k++,i++)
     {
-
         videobuffer[k] = _rand_frame_data[i];
-
     }
 
     emit videoData(videobuffer,max_video_frame_size);
@@ -1722,10 +1755,17 @@ void RadioController::toggleRxMode(int value)
         _step_hz = 1000;
         _scan_step_hz = 500000;
         break;
+    case 27:
+        _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
+        _rx_mode = gr_modem_types::ModemTypeUSB2500;
+        _step_hz = 10;
+        _scan_step_hz = 2500;
+        break;
     default:
-        _rx_mode = gr_modem_types::ModemTypeBPSK2000;
-        _step_hz = 5;
-        _scan_step_hz = 12500;
+        _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
+        _rx_mode = gr_modem_types::ModemTypeUSB2500;
+        _step_hz = 10;
+        _scan_step_hz = 2500;
         break;
     }
 
@@ -1842,6 +1882,10 @@ void RadioController::toggleTxMode(int value)
         break;
     case 26:
         _tx_mode = gr_modem_types::ModemTypeQPSK250000;
+        break;
+    case 27:
+        _tx_radio_type = radio_type::RADIO_TYPE_ANALOG;
+        _tx_mode = gr_modem_types::ModemTypeCW600USB;
         break;
     default:
         _tx_mode = gr_modem_types::ModemTypeBPSK2000;

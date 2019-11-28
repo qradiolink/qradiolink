@@ -26,6 +26,8 @@
 #include <gnuradio/blocks/rotator_cc.h>
 #include <gnuradio/vocoder/freedv_api.h>
 #include <gnuradio/constants.h>
+#include <gnuradio/analog/sig_source_f.h>
+#include <gnuradio/blocks/copy.h>
 #include <osmosdr/sink.h>
 #include <vector>
 #include "gr_vector_source.h"
@@ -57,6 +59,7 @@ public slots:
     void set_mode(int mode);
     int set_audio(std::vector<float> *data);
     void set_bb_gain(float value);
+    void set_cw_k(bool value);
     void set_carrier_offset(long carrier_offset);
     void flush_sources();
     const QMap<std::string,QVector<int>> get_gain_names() const;
@@ -67,6 +70,8 @@ private:
     gr_audio_source_sptr _audio_source;
     osmosdr::sink::sptr _osmosdr_sink;
     gr::blocks::rotator_cc::sptr _rotator;
+    gr::analog::sig_source_f::sptr _signal_source;
+    gr::blocks::copy::sptr _cw_k;
 
     gr_mod_2fsk_sdr_sptr _2fsk_2k_fm;
     gr_mod_2fsk_sdr_sptr _2fsk_1k_fm;

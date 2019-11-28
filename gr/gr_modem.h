@@ -99,6 +99,7 @@ public slots:
     void stopTX();
     void setTxPower(float value, std::string gain_stage="");
     void setBbGain(int value);
+    void setK(bool value);
     void setSquelch(int value);
     void setFilterWidth(int filter_width);
     void setRxSensitivity(double value, std::string gain_stage="");

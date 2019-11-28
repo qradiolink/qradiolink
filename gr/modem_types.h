@@ -17,6 +17,7 @@ namespace gr_modem_types {
         ModemTypeWBFM,
         ModemTypeUSB2500,
         ModemTypeLSB2500,
+        ModemTypeCW600USB,
         ModemTypeAM5000,
         ModemType2FSK2000FM,
         ModemType2FSK1000FM,
