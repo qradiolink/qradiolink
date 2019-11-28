@@ -38,10 +38,10 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(std::vector<int>signature, int sps, int sam
 {
     int decim, interp, nfilts;
     float gain_mu;
-    if(sps > 50)
+    if(sps >= 5)
     {
         _target_samp_rate = 20000;
-        _samples_per_symbol = sps/25;
+        _samples_per_symbol = sps;
         decim = 50;
         interp = 1;
         nfilts = 35;
@@ -50,7 +50,7 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(std::vector<int>signature, int sps, int sam
     else
     {
         _target_samp_rate = 40000;
-        _samples_per_symbol = sps*2/25;
+        _samples_per_symbol = sps*2;
         decim = 25;
         interp = 1;
         nfilts = 125;

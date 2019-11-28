@@ -56,7 +56,7 @@ gr_mod_4fsk_sdr::gr_mod_4fsk_sdr(int sps, int samp_rate, int carrier_freq,
     if(sps == 5)
         nfilts = 55 * _samples_per_symbol;
     else
-        nfilts = 11 * _samples_per_symbol;
+        nfilts = 6 * _samples_per_symbol;
     if((nfilts % 2) == 0)
         nfilts += 1;
     int spacing = 4;
@@ -75,7 +75,7 @@ gr_mod_4fsk_sdr::gr_mod_4fsk_sdr(int sps, int samp_rate, int carrier_freq,
     _chunks_to_symbols = gr::digital::chunks_to_symbols_bf::make(constellation);
     _resampler = gr::filter::rational_resampler_base_fff::make(_samples_per_symbol, 1,
                     gr::filter::firdes::root_raised_cosine(_samples_per_symbol,
-                                _samples_per_symbol,1,0.25,nfilts));
+                                _samples_per_symbol,1,0.7,nfilts));
     _freq_modulator = gr::analog::frequency_modulator_fc::make((spacing*M_PI/2)/(_samples_per_symbol));
     _repeat = gr::blocks::repeat::make(4, _samples_per_symbol);
     _amplify = gr::blocks::multiply_const_cc::make(0.8,1);
