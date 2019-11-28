@@ -402,7 +402,6 @@ void MainWindow::changeEvent(QEvent *event)
     {
         if (isMinimized())
         {
-            qDebug() << _settings->show_fft;
             _fft_active = (bool)_settings->show_fft;
             _controls_active = (bool)_settings->show_controls;
             emit enableGUIFFT(false);
