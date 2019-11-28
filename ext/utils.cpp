@@ -145,7 +145,7 @@ void buildFilterWidthList(std::vector<std::complex<int>>* filter_widths, std::ve
     filter_widths->push_back(std::complex<int>(-10000, 10000));    // 4FSK 10K FM
     filter_widths->push_back(std::complex<int>(-150000, 150000)); // QPSK250000 VIDEO
     filter_widths->push_back(std::complex<int>(-150000, 150000)); // QPSK250000 DATA
-    filter_widths->push_back(std::complex<int>(100, 800)); // CW K USB
+    filter_widths->push_back(std::complex<int>(100, 1000)); // CW K USB
 
 
     ranges->push_back(std::complex<int>(-10000, 10000));  // FM
@@ -175,7 +175,7 @@ void buildFilterWidthList(std::vector<std::complex<int>>* filter_widths, std::ve
     ranges->push_back(std::complex<int>(-10000, 10000));    // 4FSK 10K FM
     ranges->push_back(std::complex<int>(-150000, 150000)); // QPSK250000 VIDEO
     ranges->push_back(std::complex<int>(-150000, 150000)); // QPSK250000 DATA
-    ranges->push_back(std::complex<int>(100, 800)); // CW K USB
+    ranges->push_back(std::complex<int>(100, 1000)); // CW K USB
 
     symmetric->push_back(true);  // FM
     symmetric->push_back(true);  // NBFM

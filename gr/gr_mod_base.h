@@ -20,6 +20,7 @@
 #include <QObject>
 #include <QMap>
 #include <QVector>
+#include <QDebug>
 #include <string>
 #include "modem_types.h"
 #include <gnuradio/top_block.h>
@@ -71,7 +72,6 @@ private:
     osmosdr::sink::sptr _osmosdr_sink;
     gr::blocks::rotator_cc::sptr _rotator;
     gr::analog::sig_source_f::sptr _signal_source;
-    gr::blocks::copy::sptr _cw_k;
 
     gr_mod_2fsk_sdr_sptr _2fsk_2k_fm;
     gr_mod_2fsk_sdr_sptr _2fsk_1k_fm;
@@ -93,6 +93,7 @@ private:
     gr_mod_qpsk_sdr_sptr _qpsk_video;
     gr_mod_ssb_sdr_sptr _usb;
     gr_mod_ssb_sdr_sptr _lsb;
+    gr_mod_ssb_sdr_sptr _usb_cw;
     gr_mod_freedv_sdr_sptr _freedv_tx1600_usb;
     gr_mod_freedv_sdr_sptr _freedv_tx700C_usb;
     gr_mod_freedv_sdr_sptr _freedv_tx1600_lsb;

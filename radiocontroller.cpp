@@ -358,7 +358,7 @@ void RadioController::updateCWK()
         return;
     }
     quint64 msec = (quint64)_cw_timer->nsecsElapsed() / 1000000;
-    if(msec < 1500)
+    if(msec < 250)
         return;
 
     if(!_cw_tone)

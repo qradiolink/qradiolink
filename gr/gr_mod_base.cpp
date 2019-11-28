@@ -51,9 +51,7 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
         _osmosdr_sink->set_gain(gain);
     }
 
-    _signal_source = gr::analog::sig_source_f::make(8000, gr::analog::GR_COS_WAVE, 600, 0.3);
-    _cw_k = gr::blocks::copy::make(4);
-    _cw_k->set_enabled(false);
+    _signal_source = gr::analog::sig_source_f::make(8000, gr::analog::GR_SIN_WAVE, 600, 0.001, 1);
 
     _2fsk_2k_fm = make_gr_mod_2fsk_sdr(25, 1000000, 1700, 2700, true); // 4000 for non FM, 2700 for FM
     _2fsk_1k_fm = make_gr_mod_2fsk_sdr(50, 1000000, 1700, 1350, true);
@@ -75,6 +73,7 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
     _qpsk_video = make_gr_mod_qpsk_sdr(4, 1000000, 1700, 160000);
     _usb = make_gr_mod_ssb_sdr(125, 1000000, 1700, 2700, 0);
     _lsb = make_gr_mod_ssb_sdr(125, 1000000, 1700, 2700, 1);
+    _usb_cw = make_gr_mod_ssb_sdr(125, 1000000, 1700, 1000, 0);
     _freedv_tx1600_usb = make_gr_mod_freedv_sdr(125, 1000000, 1700, 2500, 200,
                                                 gr::vocoder::freedv_api::MODE_1600, 0);
 
@@ -229,9 +228,8 @@ void gr_mod_base::set_mode(int mode)
         _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeCW600USB:
-        _top_block->disconnect(_signal_source,0,_cw_k,0);
-        _top_block->disconnect(_cw_k,0,_usb,0);
-        _top_block->disconnect(_usb,0,_rotator,0);
+        _top_block->disconnect(_signal_source,0,_usb_cw,0);
+        _top_block->disconnect(_usb_cw,0,_rotator,0);
         _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeFREEDV1600USB:
@@ -455,9 +453,8 @@ void gr_mod_base::set_mode(int mode)
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
         _osmosdr_sink->set_sample_rate(1000000);
-        _top_block->connect(_signal_source,0,_cw_k,0);
-        _top_block->connect(_cw_k,0,_usb,0);
-        _top_block->connect(_usb,0,_rotator,0);
+        _top_block->connect(_signal_source,0,_usb_cw,0);
+        _top_block->connect(_usb_cw,0,_rotator,0);
         _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeFREEDV1600USB:
@@ -601,6 +598,9 @@ void gr_mod_base::set_filter_width(int filter_width, int mode)
     case gr_modem_types::ModemTypeLSB2500:
         _lsb->set_filter_width(filter_width);
         break;
+    case gr_modem_types::ModemTypeCW600USB:
+        _usb_cw->set_filter_width(filter_width);
+        break;
     default:
         break;
     }
@@ -628,6 +628,7 @@ void gr_mod_base::set_bb_gain(float value)
     _qpsk_video->set_bb_gain(value);
     _usb->set_bb_gain(value);
     _lsb->set_bb_gain(value);
+    _usb_cw->set_bb_gain(value);
     _freedv_tx1600_usb->set_bb_gain(value);
     _freedv_tx1600_lsb->set_bb_gain(value);
     _freedv_tx700C_usb->set_bb_gain(value);
@@ -638,10 +639,15 @@ void gr_mod_base::set_bb_gain(float value)
 
 void gr_mod_base::set_cw_k(bool value)
 {
-    _cw_k->set_enabled(value);
+    double a;
+    if(value)
+        a = 0.98;
+    else
+        a = 0.001;
+    _signal_source->set_amplitude(a);
 }
 
-// unused because of fixed sample rate
+/// unused because of fixed sample rate
 void gr_mod_base::set_carrier_offset(long carrier_offset)
 {
     _carrier_offset = carrier_offset;

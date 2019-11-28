@@ -38,7 +38,7 @@ gr_mod_ssb_sdr::gr_mod_ssb_sdr(int sps, int samp_rate, int carrier_freq,
     _filter_width = filter_width;
 
     _agc = gr::analog::agc2_ff::make(1e-2, 1e-3, 0.95, 2);
-    _rail = gr::analog::rail_ff::make(-0.95, 0.95);
+    _rail = gr::analog::rail_ff::make(-0.99, 0.99);
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::band_pass_2(
                     1, target_samp_rate, 150, 3800, 150, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
@@ -52,7 +52,7 @@ gr_mod_ssb_sdr::gr_mod_ssb_sdr(int sps, int samp_rate, int carrier_freq,
 
     _resampler = gr::filter::rational_resampler_base_ccf::make(_sps,1, interp_taps);
     _feed_forward_agc = gr::analog::feedforward_agc_cc::make(512,0.95);
-    _amplify = gr::blocks::multiply_const_cc::make(3.8,1);
+    _amplify = gr::blocks::multiply_const_cc::make(0.99,1);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
     _filter_usb = gr::filter::fft_filter_ccc::make(1,gr::filter::firdes::complex_band_pass_2(
             1, target_samp_rate, 150, _filter_width, 150, 120, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
