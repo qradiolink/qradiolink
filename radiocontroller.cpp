@@ -404,7 +404,7 @@ bool RadioController::processMixerQueue()
 {
     if(_audio_mixer_in->buffers_available())
     {
-        short *pcm = _audio_mixer_in->mix_samples(1);
+        short *pcm = _audio_mixer_in->mix_samples(_rx_volume);
         if(pcm == nullptr)
             return false;
         short *local_pcm = new short[320];
