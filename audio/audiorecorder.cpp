@@ -51,7 +51,9 @@ void AudioRecorder::writeSamples(short *samples, int bufsize)
 {
     if(!_recording)
         return;
+    _mutex.lock();
     sf_write_short(_snd_out_file, samples, (sf_count_t)bufsize);
+    _mutex.unlock();
 
 }
 

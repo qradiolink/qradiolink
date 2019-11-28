@@ -50,9 +50,9 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
         interpolation = 2;
         rs = 10000;
         bw = 4000;
-        gain_mu = 0.025;
+        gain_mu = 0.005;
         omega_rel_limit = 0.001;
-        nfilts = 33 * _samples_per_symbol;
+        nfilts = 32 * _samples_per_symbol;
     }
     if(sps == 5)
     {
@@ -64,33 +64,34 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
         bw = 4000;
         gain_mu = 0.025;
         omega_rel_limit = 0.001;
-        nfilts = 15 * _samples_per_symbol;
+        nfilts = 25 * _samples_per_symbol;
     }
     if((nfilts % 2) == 0)
         nfilts += 1;
 
+
+    /** unused
     std::vector<unsigned int> const_map;
     const_map.push_back(0);
     const_map.push_back(1);
     const_map.push_back(3);
     const_map.push_back(2);
-
     std::vector<int> pre_diff_code;
-
     std::vector<gr_complex> constellation_points;
     constellation_points.push_back(-0.707107 - 0.707107j);
     constellation_points.push_back(-0.707107 + 0.707107j);
     constellation_points.push_back(0.707107 + 0.707107j);
     constellation_points.push_back(0.707107 - 0.707107j);
+    gr::digital::constellation_expl_rect::sptr constellation = gr::digital::constellation_expl_rect::make(
+                constellation_points,pre_diff_code,4,2,2,1,1,const_map);
+    _constellation_receiver = gr::digital::constellation_decoder_cb::make(constellation);
+    */
 
     std::vector<int> polys;
     polys.push_back(109);
     polys.push_back(79);
 
     int spacing = 1;
-
-    gr::digital::constellation_expl_rect::sptr constellation = gr::digital::constellation_expl_rect::make(
-                constellation_points,pre_diff_code,4,2,2,1,1,const_map);
 
     std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _target_samp_rate/2, _target_samp_rate/2,
                                                            gr::filter::firdes::WIN_BLACKMAN_HARRIS);
@@ -126,14 +127,14 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
     _freq_demod = gr::analog::quadrature_demod_cf::make(_samples_per_symbol/(spacing * M_PI/2));
     _shaping_filter = gr::filter::fft_filter_fff::make(
                 1, gr::filter::firdes::root_raised_cosine(1.1,_target_samp_rate,
-                                    _target_samp_rate/_samples_per_symbol,0.7,nfilts));
+                                    _target_samp_rate/_samples_per_symbol,0.2,nfilts));
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
                                                               omega_rel_limit);
     _clock_recovery_f = gr::digital::clock_recovery_mm_ff::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
                                                               omega_rel_limit);
     _float_to_complex = gr::blocks::float_to_complex::make();
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
-    _constellation_receiver = gr::digital::constellation_decoder_cb::make(constellation);
+
     _complex_to_float = gr::blocks::complex_to_float::make();
     _interleave = gr::blocks::interleave::make(4);
     _multiply_const_fec = gr::blocks::multiply_const_ff::make(128);

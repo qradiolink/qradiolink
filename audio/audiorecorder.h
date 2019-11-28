@@ -18,6 +18,7 @@
 #define AUDIORECORDER_H
 
 #include <QObject>
+#include <QMutex>
 #include <sndfile.h>
 #include "settings.h"
 #include "logger.h"
@@ -41,6 +42,7 @@ private:
     bool _recording;
     SNDFILE *_snd_out_file;
     SF_INFO _sfinfo ;
+    QMutex _mutex;
 };
 
 #endif // AUDIORECORDER_H

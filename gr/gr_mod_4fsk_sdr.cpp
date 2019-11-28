@@ -54,14 +54,18 @@ gr_mod_4fsk_sdr::gr_mod_4fsk_sdr(int sps, int samp_rate, int carrier_freq,
 
     int nfilts;
     if(sps == 5)
-        nfilts = 55 * _samples_per_symbol;
+        nfilts = 50 * _samples_per_symbol;
     else
-        nfilts = 6 * _samples_per_symbol;
+        nfilts = 10 * _samples_per_symbol;
     if((nfilts % 2) == 0)
         nfilts += 1;
     int spacing = 4;
+    float amplif = 0.8;
     if(fm)
+    {
+        amplif = 0.9;
         spacing = 1;
+    }
 
     _packed_to_unpacked = gr::blocks::packed_to_unpacked_bb::make(1,gr::GR_MSB_FIRST);
     _packer = gr::blocks::pack_k_bits_bb::make(2);
@@ -75,10 +79,10 @@ gr_mod_4fsk_sdr::gr_mod_4fsk_sdr(int sps, int samp_rate, int carrier_freq,
     _chunks_to_symbols = gr::digital::chunks_to_symbols_bf::make(constellation);
     _resampler = gr::filter::rational_resampler_base_fff::make(_samples_per_symbol, 1,
                     gr::filter::firdes::root_raised_cosine(_samples_per_symbol,
-                                _samples_per_symbol,1,0.7,nfilts));
+                                _samples_per_symbol,1,0.2,nfilts));
     _freq_modulator = gr::analog::frequency_modulator_fc::make((spacing*M_PI/2)/(_samples_per_symbol));
     _repeat = gr::blocks::repeat::make(4, _samples_per_symbol);
-    _amplify = gr::blocks::multiply_const_cc::make(0.8,1);
+    _amplify = gr::blocks::multiply_const_cc::make(amplif, 1);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
     _filter = gr::filter::fft_filter_ccf::make(1,gr::filter::firdes::low_pass(
                 1, _samp_rate, _filter_width, _filter_width/2,gr::filter::firdes::WIN_BLACKMAN_HARRIS));
