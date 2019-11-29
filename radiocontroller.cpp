@@ -663,7 +663,7 @@ void RadioController::transmitTextData(QString text_data, int frame_type)
         _text_transmit_on = true;
         _transmitting = true;
         /// callsign frame
-        struct timespec time_to_sleep = {0, 40000000L };
+        struct timespec time_to_sleep = {0, 39800000L };
         nanosleep(&time_to_sleep, NULL);
 
         start_text_tx:
@@ -706,7 +706,7 @@ void RadioController::transmitTextData(QString text_data, int frame_type)
             }
             _modem->transmitTextData(text_frame, frame_type);
             /// frame should last 40 msec average...
-            struct timespec time_to_sleep = {0, 40000000L };
+            struct timespec time_to_sleep = {0, 39800000L };
             nanosleep(&time_to_sleep, NULL);
 
             /// Stop when PTT is triggered by user
@@ -1385,7 +1385,7 @@ void RadioController::textReceived(QString text)
     /// If end TX is not received, this buffer would fill forever
     if(_settings->voip_forwarding)
         _incoming_text_buffer.append(text);
-    if(_incoming_text_buffer.size() >= 32*1024)
+    if(_incoming_text_buffer.size() >= 1024)
     {
         emit newMumbleMessage(_incoming_text_buffer);
         _incoming_text_buffer = "";
@@ -1430,6 +1430,7 @@ void RadioController::dataFrameReceived()
 {
     emit displayDataReceiveStatus(true);
     _data_led_timer->start(500);
+    /*
     if((_rx_mode != gr_modem_types::ModemTypeQPSK250000)
             && (_rx_mode != gr_modem_types::ModemTypeQPSKVideo) && !_settings->voip_forwarding)
     {
@@ -1438,6 +1439,7 @@ void RadioController::dataFrameReceived()
         memcpy(samples, sound, _data_rec_sound->size());
         emit writePCM(samples, _data_rec_sound->size(), false, AudioProcessor::AUDIO_MODE_ANALOG);
     }
+    */
 }
 
 /// GUI leds and Mumble text signal
