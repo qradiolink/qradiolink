@@ -169,7 +169,8 @@ HEADERS  += mainwindow.h\
     gr/gr_4fsk_discriminator.h \
     gr/gr_const_sink.h \
     gr/modem_types.h \
-    audio/audiorecorder.h
+    audio/audiorecorder.h \
+    framing.h
 
 
 !isEmpty(LIBDIR) {

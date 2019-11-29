@@ -663,6 +663,8 @@ void RadioController::transmitTextData(QString text_data, int frame_type)
         _text_transmit_on = true;
         _transmitting = true;
         /// callsign frame
+        // FIXME: this doesn't seem to work, callsign is actually sent
+        // after the first text frame most of the time
         struct timespec time_to_sleep = {0, 39800000L };
         nanosleep(&time_to_sleep, NULL);
 
@@ -705,7 +707,8 @@ void RadioController::transmitTextData(QString text_data, int frame_type)
                 text_frame = text_data.mid(i * frame_size, frame_size);
             }
             _modem->transmitTextData(text_frame, frame_type);
-            /// frame should last 40 msec average...
+            // FIXME: frame should last about 40 msec average, however in practice the clock
+            // is not very precise so the last bytes may be truncated because TX is switched off
             struct timespec time_to_sleep = {0, 39800000L };
             nanosleep(&time_to_sleep, NULL);
 

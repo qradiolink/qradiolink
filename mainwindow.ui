@@ -96,7 +96,7 @@
 </string>
         </property>
         <property name="currentIndex">
-         <number>3</number>
+         <number>0</number>
         </property>
         <property name="iconSize">
          <size>
@@ -1315,14 +1315,24 @@ font: 10pt &quot;Sans Serif&quot;;
                 <height>40</height>
                </size>
               </property>
-              <property name="styleSheet">
-               <string notr="true">font: 12pt &quot;Sans Serif&quot;;
-
-
-</string>
-              </property>
               <property name="text">
                <string>Send Text</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">background-color: rgb(27, 27, 27);</string>
+              </property>
+              <property name="text">
+               <string>Send file</string>
               </property>
              </widget>
             </item>
@@ -1340,13 +1350,8 @@ font: 10pt &quot;Sans Serif&quot;;
                 <height>40</height>
                </size>
               </property>
-              <property name="styleSheet">
-               <string notr="true">font: 12pt &quot;Sans Serif&quot;;
-
-</string>
-              </property>
               <property name="text">
-               <string>Send File</string>
+               <string>Text file beacon</string>
               </property>
              </widget>
             </item>
@@ -1775,59 +1780,6 @@ color: rgb(0, 67, 98);</string>
                    </property>
                   </spacer>
                  </item>
-                 <item row="3" column="2">
-                  <widget class="QLabel" name="labelDisplayCallsign">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>70</width>
-                     <height>30</height>
-                    </size>
-                   </property>
-                   <property name="font">
-                    <font>
-                     <family>Sans Serif</family>
-                     <pointsize>9</pointsize>
-                     <weight>50</weight>
-                     <italic>false</italic>
-                     <bold>false</bold>
-                    </font>
-                   </property>
-                   <property name="toolTip">
-                    <string>Incoming transmission callsign</string>
-                   </property>
-                   <property name="styleSheet">
-                    <string notr="true">color: rgb(255, 255, 255);
-font: 9pt &quot;Monospace&quot;;
-background-color: rgb(150, 150, 150);
-font: 9pt &quot;Sans Serif&quot;;
-</string>
-                   </property>
-                   <property name="frameShape">
-                    <enum>QFrame::StyledPanel</enum>
-                   </property>
-                   <property name="frameShadow">
-                    <enum>QFrame::Sunken</enum>
-                   </property>
-                   <property name="lineWidth">
-                    <number>1</number>
-                   </property>
-                   <property name="text">
-                    <string/>
-                   </property>
-                   <property name="alignment">
-                    <set>Qt::AlignCenter</set>
-                   </property>
-                   <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-                   </property>
-                  </widget>
-                 </item>
                  <item row="1" column="2">
                   <widget class="QLineEdit" name="voipPasswordEdit">
                    <property name="sizePolicy">
@@ -1886,16 +1838,6 @@ font: 9pt &quot;Sans Serif&quot;;
                      <width>24</width>
                      <height>24</height>
                     </size>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="2">
-                  <widget class="QLabel" name="label_22">
-                   <property name="text">
-                    <string>Last Callsign received</string>
-                   </property>
-                   <property name="alignment">
-                    <set>Qt::AlignCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -2110,6 +2052,68 @@ border-width: 4px;
                    </property>
                    <property name="flat">
                     <bool>false</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="0">
+                  <widget class="QLabel" name="label_22">
+                   <property name="text">
+                    <string>Last Callsign received</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="1">
+                  <widget class="QLabel" name="labelDisplayCallsign">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>70</width>
+                     <height>25</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <family>Monospace</family>
+                     <pointsize>9</pointsize>
+                     <weight>50</weight>
+                     <italic>false</italic>
+                     <bold>false</bold>
+                    </font>
+                   </property>
+                   <property name="toolTip">
+                    <string>Incoming transmission callsign</string>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">color: rgb(255, 255, 255);
+font: 9pt &quot;Monospace&quot;;
+background-color: rgb(0, 0, 67);
+</string>
+                   </property>
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Sunken</enum>
+                   </property>
+                   <property name="lineWidth">
+                    <number>1</number>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                   <property name="textInteractionFlags">
+                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
