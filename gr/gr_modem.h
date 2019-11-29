@@ -81,8 +81,8 @@ public slots:
     bool demodulate();
     void startTransmission(QString callsign);
     void endTransmission(QString callsign);
-    void textData(QString text, int frame_type = FrameTypeText);
-    void binData(QByteArray bin_data, int frame_type = FrameTypeRepeaterInfo);
+    void transmitTextData(QString text, int frame_type = FrameTypeText);
+    void transmitBinData(QByteArray bin_data, int frame_type = FrameTypeRepeaterInfo);
     void initTX(int modem_type, std::string device_args,
                 std::string device_antenna, int freq_corr);
     void initRX(int modem_type, std::string device_args,

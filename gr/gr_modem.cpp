@@ -515,7 +515,7 @@ void gr_modem::endTransmission(QString callsign)
 }
 
 
-void gr_modem::textData(QString text, int frame_type)
+void gr_modem::transmitTextData(QString text, int frame_type)
 {
     QStringList list;
     QVector<std::vector<unsigned char>*> frames;
@@ -537,7 +537,7 @@ void gr_modem::textData(QString text, int frame_type)
     transmit(frames);
 }
 
-void gr_modem::binData(QByteArray bin_data, int frame_type)
+void gr_modem::transmitBinData(QByteArray bin_data, int frame_type)
 {
     QVector<std::vector<unsigned char>*> frames;
     for( int k=0;k<bin_data.length();k+=_tx_frame_length)
@@ -976,7 +976,7 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
         QString text = QString::fromLocal8Bit(text_data,string_length);
         if(_direct_mode_repeater)
         {
-            textData(text);
+            transmitTextData(text);
         }
         emit textReceived(text);
         delete[] text_data;

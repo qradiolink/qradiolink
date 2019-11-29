@@ -195,7 +195,7 @@ private:
     void processInputNetStream();
     void sendTxBeep(int sound=0);
     void sendChannels();
-    void sendTextData(QString text, int frame_type);
+    void transmitTextData(QString text, int frame_type);
     void sendBinData(QByteArray data, int frame_type);
     bool getDemodulatorData();
     void getFFTData();
@@ -259,6 +259,7 @@ private:
     bool _data_modem_sleeping;
     bool _radio_to_voip_on;
     bool _video_on;
+    bool _text_transmit_on;
     bool _cw_tone;
 
     int _rx_mode;

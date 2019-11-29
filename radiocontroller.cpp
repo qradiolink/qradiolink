@@ -40,7 +40,7 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     /// one way queue from radio and local voice to Mumble
     _to_voip_buffer = new QVector<short>;
     /// pre-allocated at maximum possible FFT size (make it a constant?)
-    _fft_data = new float[1024*1024];
+    _fft_data = new float[1048576];
     _end_rec_sound = nullptr;
 
     _voice_led_timer = new QTimer(this);
@@ -77,6 +77,7 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     _data_modem_sleeping = false;
     _radio_to_voip_on = false;
     _video_on = false;
+    _text_transmit_on = false;
     _cw_tone = false;
     _transmitting = false;
     _process_text = false;
@@ -261,11 +262,10 @@ void RadioController::run()
 
         data_to_process = getDemodulatorData();
 
-        if(process_text && (_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL))
+        if(process_text && !_text_transmit_on && (_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL))
         {
-            sendTextData(text_out, gr_modem::FrameTypeText);
-            // FIXME: how do I know when transmit is done?
-            emit displayTransmitStatus(false);
+            //sendTextData(text_out, gr_modem::FrameTypeText);
+            QtConcurrent::run(this, &RadioController::transmitTextData, text_out, gr_modem::FrameTypeText);
         }
 
         // FIXME: remove these hardcoded sleeps
@@ -299,6 +299,11 @@ void RadioController::updateInputAudioStream()
         return;
     }
     if(_tx_mode == gr_modem_types::ModemTypeQPSK250000)
+    {
+        emit setAudioReadMode(false, false, AudioProcessor::AUDIO_MODE_ANALOG);
+        return;
+    }
+    if(_process_text)
     {
         emit setAudioReadMode(false, false, AudioProcessor::AUDIO_MODE_ANALOG);
         return;
@@ -651,26 +656,74 @@ void RadioController::processInputNetStream()
     }
 }
 
-void RadioController::sendTextData(QString text, int frame_type)
+void RadioController::transmitTextData(QString text_data, int frame_type)
 {
-    if(_settings->tx_inited)
+    if(_settings->tx_inited && !_text_transmit_on)
     {
-        if(!_settings->tx_started)
+        _text_transmit_on = true;
+        _transmitting = true;
+        /// callsign frame
+        struct timespec time_to_sleep = {0, 40000000L };
+        nanosleep(&time_to_sleep, NULL);
+
+        start_text_tx:
+        int frame_size;
+        if((_tx_mode == gr_modem_types::ModemTypeBPSK2000) ||
+                (_tx_mode == gr_modem_types::ModemType2FSK2000FM) ||
+                (_tx_mode == gr_modem_types::ModemType2FSK2000) ||
+                (_tx_mode == gr_modem_types::ModemType4FSK2000) ||
+                (_tx_mode == gr_modem_types::ModemType4FSK2000FM) ||
+                (_tx_mode == gr_modem_types::ModemTypeQPSK2000))
+            frame_size = 7;
+        else if((_tx_mode == gr_modem_types::ModemTypeBPSK1000) ||
+                (_tx_mode == gr_modem_types::ModemType2FSK1000FM) ||
+                (_tx_mode == gr_modem_types::ModemType2FSK1000))
+            frame_size = 4;
+        else
+            frame_size = 47;
+        int no_frames = text_data.size() / frame_size;
+        int leftover = text_data.size() % frame_size;
+        if(leftover > 0)
         {
-            // FIXME: these should be called from the thread loop only
-            startTx();
+            no_frames += 1;
         }
-        _settings->tx_started = true;
-        _modem->startTransmission(_callsign);
-        _modem->textData(text, frame_type);
-        _modem->endTransmission(_callsign);
-        // FIXME: calculate total length and time required to transmit for timer
-    }
-    if(!_repeat_text)
-    {
-        _mutex->lock();
+        if(text_data.size() < frame_size)
+        {
+            frame_size = text_data.size();
+            no_frames = 1;
+        }
+        for(int i=0; i < no_frames; i++)
+        {
+            QString text_frame;
+            if((i == (no_frames - 1)) && leftover > 0)
+            {
+                /// last frame
+                text_frame = text_data.mid(i * frame_size, leftover);
+            }
+            else
+            {
+                text_frame = text_data.mid(i * frame_size, frame_size);
+            }
+            _modem->transmitTextData(text_frame, frame_type);
+            /// frame should last 40 msec average...
+            struct timespec time_to_sleep = {0, 40000000L };
+            nanosleep(&time_to_sleep, NULL);
+
+            /// Stop when PTT is triggered by user
+            if(!_transmitting)
+            {
+                _text_transmit_on = false;
+                _process_text = false;
+                return;
+            }
+        }
+        if(_repeat_text)
+        {
+            goto start_text_tx;
+        }
+        _transmitting = false;
+        _text_transmit_on = false;
         _process_text = false;
-        _mutex->unlock();
     }
 }
 
@@ -684,7 +737,7 @@ void RadioController::sendBinData(QByteArray data, int frame_type)
             startTx();
         }
         _settings->tx_started = true;
-        _modem->binData(data, frame_type);
+        _modem->transmitBinData(data, frame_type);
         _modem->endTransmission(_callsign);
         // FIXME: calculate total length and time required to transmit for timer
     }
@@ -875,7 +928,7 @@ void RadioController::endTx()
 void RadioController::radioTimeout()
 {
     QString time= QDateTime::currentDateTime().toString("d/MMM/yyyy hh:mm:ss");
-    emit printText("<b>" + time +
+    emit printText("<br/><b>" + time +
                    "</b> <font color=\"#77FF77\">Radio timeout</font><br/>\n",true);
     short *origin = (short*) _timeout_sound->data();
     int size = _timeout_sound->size();
@@ -1326,7 +1379,7 @@ void RadioController::textReceived(QString text)
 {
     if(_settings->repeater_enabled && _tx_radio_type == radio_type::RADIO_TYPE_DIGITAL)
     {
-        _modem->textData(text);
+        _modem->transmitTextData(text);
     }
     /// Disallow too large messages
     /// If end TX is not received, this buffer would fill forever
@@ -1353,7 +1406,7 @@ void RadioController::callsignReceived(QString callsign)
         _modem->sendCallsign(callsign);
     }
     QString time= QDateTime::currentDateTime().toString("dd/MMM/yyyy hh:mm:ss");
-    QString text = "\n\n<b>" + time + "</b> " + "<font color=\"#FF5555\">"
+    QString text = "\n\n<br/><b>" + time + "</b> " + "<font color=\"#FF5555\">"
             + callsign + " </font><br/>\n";
 
     short *samples = new short[_data_rec_sound->size()/sizeof(short)];
