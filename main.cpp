@@ -110,13 +110,13 @@ int main(int argc, char *argv[])
     QObject::connect(audioreader, SIGNAL(finished()), audioreader, SLOT(deleteLater()));
     QObject::connect(t3, SIGNAL(finished()), t3, SLOT(deleteLater()));
     t3->start();
-
     MainWindow *w;
     if(!headless)
     {
         /// Init GUI
         ///
-        w = new MainWindow(settings, radio_channels);
+        w = new MainWindow(settings, logger, radio_channels);
+
         connectGuiSignals(telnet_server, audiowriter, audioreader, w, mumbleclient, radio_op);
         /// requires the slots to be set up
         w->initSettings();

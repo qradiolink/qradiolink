@@ -40,6 +40,7 @@
 #include "qtgui/freqctrl.h"
 #include "qtgui/plotter.h"
 #include "settings.h"
+#include "logger.h"
 #include "mumblechannel.h"
 
 
@@ -227,7 +228,7 @@ signals:
     void setTotTxEnd(bool value);
 
 public:
-    explicit MainWindow(Settings *settings, RadioChannels *radio_channels, QWidget *parent = 0);
+    explicit MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_channels, QWidget *parent = 0);
     ~MainWindow();
 
     void setConfig();
@@ -243,6 +244,7 @@ private:
 
     Ui::MainWindow *ui;
     Settings *_settings;
+    Logger *_logger;
     RadioChannels *_radio_channels;
     QPixmap *_video_img;
     QPixmap *_constellation_img;

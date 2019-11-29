@@ -18,11 +18,12 @@
 #include "ui_mainwindow.h"
 
 
-MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidget *parent) :
+MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_channels, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     _settings = settings;
+    _logger = logger;
     _radio_channels = radio_channels;
 
     QFontDatabase::addApplicationFont(":/fonts/res/LiquidCrystal-Normal.otf");
@@ -50,7 +51,7 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
     buildModeList(_mode_list);
     ui->rxModemTypeComboBox->addItems(_mode_list->toList());
     ui->txModemTypeComboBox->addItems(_mode_list->toList());
-
+    _logger->log(Logger::LogLevelDebug, "Looking up available audio devices");
     _audio_output_devices = QAudioDeviceInfo::availableDevices(QAudio::AudioOutput);
     _audio_input_devices = QAudioDeviceInfo::availableDevices(QAudio::AudioInput);
     for(int i = 0;i<_audio_input_devices.size();i++)
@@ -206,8 +207,8 @@ MainWindow::MainWindow(Settings *settings, RadioChannels *radio_channels, QWidge
 
     _video_img = new QPixmap;
     _constellation_img = new QPixmap(300,300);
-    _realFftData = new float[1024*1024];
-    _iirFftData = new float[1024*1024];
+    _realFftData = new float[1048576];
+    _iirFftData = new float[1048576];
     _s_meter_bg = new QPixmap(":/res/s-meter-bg-black-small.png");
     _current_voip_channel = -1;
     _fft_active = (bool)_settings->show_fft;
