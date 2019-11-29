@@ -24,6 +24,7 @@
 #include <QtEndian>
 #include <QCoreApplication>
 #include <QElapsedTimer>
+#include <QTimer>
 #include <string>
 #include <sys/time.h>
 #include <unistd.h>
@@ -119,6 +120,7 @@ private:
 #endif
     QVector<Station*> _stations;
     QVector<MumbleChannel*> _channels;
+    QTimer *_ping_timer;
 
     QString _temp_channel_name;
     bool _encryption_set;
@@ -128,7 +130,6 @@ private:
     quint64 _session_id;
     quint64 _channel_id;
     quint64 _sequence_number;
-    QElapsedTimer _last_ping_timer;
 
     /// not used
     std::string _key;

@@ -88,7 +88,6 @@ signals:
     void endAudio(int secs);
     void startAudio();
     void freqToGUI(long long center_freq,long carrier_offset);
-    void pingServer();
     void voipDataPCM(short *pcm, int samples);
     void voipDataOpus(unsigned char *pcm, int packet_size);
     void newFFTData(float*, int);

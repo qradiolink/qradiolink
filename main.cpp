@@ -176,7 +176,6 @@ void connectIndependentSignals(AudioWriter *audiowriter, AudioReader *audioreade
                      mumbleclient, SLOT(processOpusAudio(unsigned char*, int)));
     QObject::connect(radio_op, SIGNAL(voipVideoData(unsigned char*,int)),
                      mumbleclient, SLOT(processVideoFrame(unsigned char*, int)));
-    QObject::connect(radio_op, SIGNAL(pingServer()), mumbleclient, SLOT(pingServer()));
     QObject::connect(radio_op, SIGNAL(voipDataPCM(short*,int)),
                      mumbleclient, SLOT(processPCMAudio(short*,int)));
     QObject::connect(mumbleclient, SIGNAL(pcmAudio(short*,int,quint64)),

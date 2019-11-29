@@ -22,6 +22,7 @@ MumbleClient::MumbleClient(const Settings *settings, Logger *logger, QObject *pa
 {
     _socket_client = new SSLClient;
     _codec = new AudioEncoder(settings);
+    _ping_timer = new QTimer;
     _settings = settings;
     _logger = logger;
     _encryption_set = false;
@@ -42,6 +43,7 @@ MumbleClient::~MumbleClient()
 {
     delete _socket_client;
     delete _codec;
+    delete _ping_timer;
 #ifndef NO_CRYPT
     delete _crypt_state;
 #endif
@@ -62,6 +64,7 @@ void MumbleClient::connectToServer(QString address, unsigned port)
                      this,SLOT(logMessage(QString)));
     QObject::connect(_socket_client,SIGNAL(connectionFailure()),this,SLOT(cleanup()));
     _socket_client->connectHost(address,port);
+    QObject::connect(_ping_timer,SIGNAL(timeout()), this,SLOT(pingServer()));
 }
 
 void MumbleClient::disconnectFromServer()
@@ -76,6 +79,7 @@ void MumbleClient::disconnectFromServer()
                         this,SLOT(processUDPData(QByteArray)));
     QObject::disconnect(_socket_client,SIGNAL(logMessage(QString)),
                         this,SLOT(logMessage(QString)));
+    QObject::disconnect(_ping_timer,SIGNAL(timeout()), this,SLOT(pingServer()));
     cleanup();
 }
 
@@ -84,6 +88,7 @@ void MumbleClient::cleanup()
     _encryption_set = false;
     _authenticated = false;
     _synchronized = false;
+    _ping_timer->stop();
     Settings *settings = const_cast<Settings*>(_settings);
     settings->voip_connected = false;
     settings->current_voip_channel = -1;
@@ -105,7 +110,6 @@ void MumbleClient::cleanup()
 
 void MumbleClient::sendVersion()
 {
-    _last_ping_timer.start();
     MumbleProto::Version *v = new MumbleProto::Version;
     v->set_version(PROTOCOL_VERSION);
     v->set_release("1.0");
@@ -187,7 +191,6 @@ void MumbleClient::processProtoMessage(QByteArray data)
         processServerSync(message,message_size);
         break;
     case 3: // ping
-        _last_ping_timer.restart();
         break;
     case 7: // ChannelState
         processChannelState(message, message_size);
@@ -277,6 +280,7 @@ void MumbleClient::processServerSync(quint8 *message, quint64 size)
              + " session: " + QString::number(_session_id) + "\n";
     _logger->log(Logger::LogLevelInfo, msg);
     emit connectedToServer(msg);
+    _ping_timer->start(10000);
     Settings *settings = const_cast<Settings*>(_settings);
     settings->voip_connected = true;
 }

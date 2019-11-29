@@ -196,7 +196,6 @@ void RadioController::run()
     bool ptt_activated = false;
     bool data_to_process = false;
     bool buffers_filling = false;
-    int last_ping_time = 0;
     int last_channel_broadcast_time = 0;
     while(!_stop)
     {
@@ -214,13 +213,8 @@ void RadioController::run()
         buffers_filling = processMixerQueue();
 
         // FIXME: this is the wrong place to control the Mumble client
-        int time = QDateTime::currentDateTime().toTime_t();
-        if((time - last_ping_time) > 10)
-        {
-            emit pingServer();
-            last_ping_time = time;
-        }
 
+        int time = QDateTime::currentDateTime().toTime_t();
         if((time - last_channel_broadcast_time) > 10)
         {
             last_channel_broadcast_time = time;
