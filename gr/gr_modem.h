@@ -28,9 +28,9 @@
 #include <QCoreApplication>
 #include <string>
 #include "ext/utils.h"
-#include "settings.h"
-#include "framing.h"
-#include "modem_types.h"
+#include "src/settings.h"
+#include "src/framing.h"
+#include "gr/modem_types.h"
 #include "gr/gr_mod_base.h"
 #include "gr/gr_demod_base.h"
 

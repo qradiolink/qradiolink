@@ -24,8 +24,8 @@
 #include <QAudioOutput>
 #include <QAudio>
 #include "audio/audioprocessor.h"
-#include "settings.h"
-#include "logger.h"
+#include "src/settings.h"
+#include "src/logger.h"
 #include "audio/audiorecorder.h"
 
 class AudioWriter : public QObject

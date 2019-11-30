@@ -21,8 +21,8 @@
 #include <QCamera>
 #include <QCameraInfo>
 #include <QCameraImageCapture>
-#include "settings.h"
-#include "logger.h"
+#include "src/settings.h"
+#include "src/logger.h"
 
 class ImageCapture : public QObject
 {

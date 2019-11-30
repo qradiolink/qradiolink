@@ -25,15 +25,15 @@
 #include <QMetaType>
 #include <QtGlobal>
 #include "mainwindow.h"
-#include "mumbleclient.h"
+#include "src/mumbleclient.h"
 #include "audio/audiowriter.h"
 #include "audio/audioreader.h"
-#include "station.h"
-#include "mumblechannel.h"
-#include "radiochannel.h"
-#include "radiocontroller.h"
-#include "telnetserver.h"
-#include "logger.h"
+#include "src/station.h"
+#include "src/mumblechannel.h"
+#include "src/radiochannel.h"
+#include "src/radiocontroller.h"
+#include "src/telnetserver.h"
+#include "src/logger.h"
 
 void connectIndependentSignals(AudioWriter *audiowriter, AudioReader *audioreader,
                                RadioController *radio_op, MumbleClient *mumbleclient);

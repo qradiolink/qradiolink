@@ -21,7 +21,7 @@
 #include <QDebug>
 #include <QDateTime>
 #include <iostream>
-#include "logger.h"
+#include "src/logger.h"
 
 class VideoEncoder
 {

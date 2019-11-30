@@ -22,8 +22,8 @@
 #include <QAudioInput>
 #include <QDebug>
 #include "audio/audioprocessor.h"
-#include "settings.h"
-#include "logger.h"
+#include "src/settings.h"
+#include "src/logger.h"
 
 class AudioReader : public QObject
 {

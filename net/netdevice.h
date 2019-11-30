@@ -30,7 +30,7 @@
 #include <arpa/inet.h>
 #include <sys/ioctl.h>
 #include <fcntl.h>
-#include "logger.h"
+#include "src/logger.h"
 
 class NetDevice : public QObject
 {

@@ -35,13 +35,13 @@
 #include <complex>
 #include <libconfig.h++>
 #include "ext/utils.h"
-#include "mumbleclient.h"
-#include "radiochannel.h"
+#include "src/mumbleclient.h"
+#include "src/radiochannel.h"
 #include "qtgui/freqctrl.h"
 #include "qtgui/plotter.h"
-#include "settings.h"
-#include "logger.h"
-#include "mumblechannel.h"
+#include "src/settings.h"
+#include "src/logger.h"
+#include "src/mumblechannel.h"
 
 
 typedef std::vector<std::complex<float>> complex_vector;

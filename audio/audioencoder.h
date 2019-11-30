@@ -21,7 +21,7 @@
 #include <opus/opus.h>
 #include <codec2/codec2.h>
 #include "audio/audioprocessor.h"
-#include "settings.h"
+#include "src/settings.h"
 
 
 

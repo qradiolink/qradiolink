@@ -50,22 +50,22 @@ SOURCES += main.cpp\
         audio/audioprocessor.cpp \
         video/videoencoder.cpp \
         video/videocapture.cpp \
-        mumbleclient.cpp\
-        radioprotocol.cpp \
+        src/mumbleclient.cpp\
+        src/radioprotocol.cpp \
         audio/audiowriter.cpp \
         audio/audioreader.cpp \
-        mumblechannel.cpp \
-        radiochannel.cpp \
-        relaycontroller.cpp \
-        radiocontroller.cpp \
-        commandprocessor.cpp \
-        telnetserver.cpp \
-        settings.cpp\
-        sslclient.cpp\
-        station.cpp\
-        logger.cpp \
+        src/mumblechannel.cpp \
+        src/radiochannel.cpp \
+        src/relaycontroller.cpp \
+        src/radiocontroller.cpp \
+        src/commandprocessor.cpp \
+        src/telnetserver.cpp \
+        src/settings.cpp\
+        src/sslclient.cpp\
+        src/station.cpp\
+        src/logger.cpp \
         audio/audiomixer.cpp \
-        telnetclient.cpp\
+        src/telnetclient.cpp\
         ext/Mumble.pb.cc\
         ext/QRadioLink.pb.cc\
         ext/utils.cpp\
@@ -111,22 +111,22 @@ HEADERS  += mainwindow.h\
         audio/audioencoder.h\
         audio/audioprocessor.h \
         video/videoencoder.h \
-        radioprotocol.h \
+        src/radioprotocol.h \
         audio/audiowriter.h \
         audio/audioreader.h \
-        mumblechannel.h \
-        radiochannel.h \
-        relaycontroller.h \
-        commandprocessor.h \
-        mumbleclient.h\
-        telnetserver.h \
-        settings.h\
-        sslclient.h\
-        station.h\
-        telnetclient.h\
-        logger.h \
+        src/mumblechannel.h \
+        src/radiochannel.h \
+        src/relaycontroller.h \
+        src/commandprocessor.h \
+        src/mumbleclient.h\
+        src/telnetserver.h \
+        src/settings.h\
+        src/sslclient.h\
+        src/station.h\
+        src/telnetclient.h\
+        src/logger.h \
         audio/audiomixer.h \
-        config_defines.h\
+        src/config_defines.h\
         ext/dec.h\
         ext/Mumble.pb.h\
         ext/PacketDataStream.h\
@@ -137,7 +137,7 @@ HEADERS  += mainwindow.h\
         ext/mem.h \
         ext/compressor.h \
         net/netdevice.h \
-        radiocontroller.h \
+        src/radiocontroller.h \
     qtgui/freqctrl.h \
     qtgui/plotter.h \
     gr/gr_modem.h \
@@ -170,7 +170,7 @@ HEADERS  += mainwindow.h\
     gr/gr_const_sink.h \
     gr/modem_types.h \
     audio/audiorecorder.h \
-    framing.h
+    src/framing.h
 
 
 !isEmpty(LIBDIR) {

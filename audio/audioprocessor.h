@@ -31,7 +31,7 @@ extern "C"
 }
 #include <speex/speex_preprocess.h>
 #include "unistd.h"
-#include "settings.h"
+#include "src/settings.h"
 
 
 class AudioProcessor : public QObject

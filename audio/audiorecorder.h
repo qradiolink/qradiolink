@@ -20,8 +20,8 @@
 #include <QObject>
 #include <QMutex>
 #include <sndfile.h>
-#include "settings.h"
-#include "logger.h"
+#include "src/settings.h"
+#include "src/logger.h"
 
 class AudioRecorder : public QObject
 {
