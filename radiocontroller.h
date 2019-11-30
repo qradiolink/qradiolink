@@ -117,6 +117,7 @@ public slots:
     void textReceived(QString text);
     void repeaterInfoReceived(QByteArray data);
     void callsignReceived(QString callsign);
+    void protoReceived(QByteArray data);
     void audioFrameReceived();
     void dataFrameReceived();
     void receiveEnd();
@@ -194,9 +195,9 @@ private:
     void triggerImageCapture();
     void processInputNetStream();
     void sendTxBeep(int sound=0);
-    void sendChannels();
+    void transmitServerInfoBeacon();
     void transmitTextData();
-    void sendBinData(QByteArray data, int frame_type);
+    void transmitBinData();
     bool getDemodulatorData();
     void getFFTData();
     void getConstellationData();
@@ -244,14 +245,17 @@ private:
     QList<radiochannel*> _memory_channels;
 
     QString _text_out;
+    QString _data_out;
     QString _callsign;
     QString _incoming_text_buffer;
+    QByteArray _incoming_data_buffer;
     QMap<std::string, int> _rx_stage_gains;
     QMap<std::string, int> _tx_stage_gains;
 
     bool _stop_thread;
     bool _transmitting;
     bool _process_text;
+    bool _process_data;
     bool _repeat_text;
     bool _scan_done;
     bool _scan_stop;
@@ -260,6 +264,7 @@ private:
     bool _radio_to_voip_on;
     bool _video_on;
     bool _text_transmit_on;
+    bool _data_transmit_on;
     bool _cw_tone;
 
     int _rx_mode;

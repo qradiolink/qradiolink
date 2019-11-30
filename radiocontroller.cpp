@@ -29,7 +29,7 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     _modem = new gr_modem;
     _codec = new AudioEncoder(settings);
     _audio_mixer_in = new AudioMixer;
-    _radio_protocol = new RadioProtocol;
+    _radio_protocol = new RadioProtocol(logger);
     _relay_controller = new RelayController(logger);
     _video = new VideoEncoder(logger);
     //_camera = new ImageCapture(settings, logger);
@@ -78,10 +78,13 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     _radio_to_voip_on = false;
     _video_on = false;
     _text_transmit_on = false;
+    _data_transmit_on = false;
     _cw_tone = false;
     _transmitting = false;
     _process_text = false;
+    _process_data = false;
     _repeat_text = false;
+
     _rx_volume = 1e-3*exp(((float)_settings->rx_volume/100.0)*6.908);
     _tx_volume = 1e-3*exp(((float)_settings->tx_volume/50.0)*6.908);;
     _tx_frequency = _settings->rx_frequency + _settings->demod_offset;
@@ -107,6 +110,8 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     QObject::connect(_radio_time_out_timer, SIGNAL(timeout()), this, SLOT(radioTimeout()));
 
     /// Modem connections
+    QObject::connect(_modem,SIGNAL(protoReceived(QByteArray)),this,
+                     SLOT(protoReceived(QByteArray)));
     QObject::connect(_modem,SIGNAL(textReceived(QString)),this,SLOT(textReceived(QString)));
     QObject::connect(_modem,SIGNAL(repeaterInfoReceived(QByteArray)),this,
                      SLOT(repeaterInfoReceived(QByteArray)));
@@ -132,6 +137,7 @@ RadioController::RadioController(Settings *settings, Logger *logger,
                      SLOT(receiveVideoData(unsigned char*,int)));
     QObject::connect(_modem,SIGNAL(netData(unsigned char*,int)),this,
                      SLOT(receiveNetData(unsigned char*,int)));
+
     //QObject::connect(_camera,SIGNAL(imageCaptured(unsigned char*,int)),this,
     //                 SLOT(processVideoFrame(unsigned char*,int)));
 
@@ -212,13 +218,14 @@ void RadioController::run()
         // FIXME: this is the wrong place to control the Mumble client
 
         int time = QDateTime::currentDateTime().toTime_t();
-        if((time - last_channel_broadcast_time) > 10)
+        if((time - last_channel_broadcast_time) > 30)
         {
             last_channel_broadcast_time = time;
-            if(voip_forwarding && !transmitting && !ptt_activated)
+            if(voip_forwarding && !transmitting && !ptt_activated &&
+                    (_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL))
             {
                 // FIXME: poke repeater to VOIP logic here
-                //sendChannels();
+                transmitServerInfoBeacon();
             }
         }
 
@@ -237,6 +244,8 @@ void RadioController::run()
 
         if(_text_transmit_on)
             _process_text = false;
+        if(_data_transmit_on)
+            _process_data = false;
 
         /// Get all available data from the demodulator
         QtConcurrent::run(this, &RadioController::getFFTData);
@@ -265,11 +274,15 @@ void RadioController::run()
         {
             QtConcurrent::run(this, &RadioController::transmitTextData);
         }
+        if(_process_data && !_data_transmit_on && (_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL))
+        {
+            QtConcurrent::run(this, &RadioController::transmitBinData);
+        }
 
         // FIXME: remove these hardcoded sleeps
         /// Needed to keep the thread from using the CPU by looping too fast
 
-        if(!data_to_process && !buffers_filling && !_process_text)
+        if(!data_to_process && !buffers_filling && !_process_text && !_process_data)
         {
             /// nothing to output from demodulator
             struct timespec time_to_sleep = {0, 20000000L };
@@ -726,26 +739,77 @@ void RadioController::transmitTextData()
     _text_transmit_on = false;
 }
 
-void RadioController::sendBinData(QByteArray data, int frame_type)
+void RadioController::transmitBinData()
 {
-    if(_settings->tx_inited)
+    if(!_settings->tx_inited)
     {
-        if(!_settings->tx_started)
+        _process_data = false;
+        return;
+    }
+    if(_data_transmit_on)
+        return;
+
+    _data_transmit_on = true;
+    _transmitting = true;
+    /// callsign frame
+    // FIXME: this doesn't seem to work, callsign is actually sent
+    // after the first text frame most of the time
+    struct timespec time_to_sleep = {0, 39800000L };
+    nanosleep(&time_to_sleep, NULL);
+
+    start_data_tx:
+    int frame_size;
+    if((_tx_mode == gr_modem_types::ModemTypeBPSK2000) ||
+            (_tx_mode == gr_modem_types::ModemType2FSK2000FM) ||
+            (_tx_mode == gr_modem_types::ModemType2FSK2000) ||
+            (_tx_mode == gr_modem_types::ModemType4FSK2000) ||
+            (_tx_mode == gr_modem_types::ModemType4FSK2000FM) ||
+            (_tx_mode == gr_modem_types::ModemTypeQPSK2000))
+        frame_size = 7;
+    else if((_tx_mode == gr_modem_types::ModemTypeBPSK1000) ||
+            (_tx_mode == gr_modem_types::ModemType2FSK1000FM) ||
+            (_tx_mode == gr_modem_types::ModemType2FSK1000))
+        frame_size = 4;
+    else
+        frame_size = 47;
+    QByteArray msg = _radio_protocol->buildPageMessage(_callsign, _data_out, false, _callsign);
+    int no_frames = msg.size() / frame_size;
+    int leftover = msg.size() % frame_size;
+    if(leftover > 0)
+    {
+        no_frames += 1;
+    }
+    for(int i=0; i < no_frames; i++)
+    {
+        QByteArray data_frame;
+        if((i == (no_frames - 1)) && leftover > 0)
         {
-            // FIXME: these should be called from the thread loop only
-            startTx();
+            /// last frame
+            data_frame = msg.mid(i * frame_size, leftover);
         }
-        _settings->tx_started = true;
-        _modem->transmitBinData(data, frame_type);
-        _modem->endTransmission(_callsign);
-        // FIXME: calculate total length and time required to transmit for timer
+        else
+        {
+            data_frame = msg.mid(i * frame_size, frame_size);
+        }
+        _modem->transmitBinData(data_frame, modem_framing::FrameTypeProto);
+        // FIXME: frame should last about 40 msec average, however in practice the clock
+        // is not very precise so the last bytes may be truncated because TX is switched off
+        struct timespec time_to_sleep = {0, 39800000L };
+        nanosleep(&time_to_sleep, NULL);
+
+        /// Stop when PTT is triggered by user
+        if(!_transmitting)
+        {
+            _data_transmit_on = false;
+            return;
+        }
     }
-    if(!_repeat_text)
+    if(_repeat_text)
     {
-
-        _process_text = false;
-
+        goto start_data_tx;
     }
+    _transmitting = false;
+    _data_transmit_on = false;
 }
 
 void RadioController::sendTxBeep(int sound)
@@ -774,10 +838,10 @@ void RadioController::sendTxBeep(int sound)
     emit pcmData(pcm);
 }
 
-void RadioController::sendChannels()
+void RadioController::transmitServerInfoBeacon()
 {
-    QByteArray data = _radio_protocol->buildRepeaterInfo();
-    sendBinData(data,FrameTypeRepeaterInfo);
+    _data_out = _radio_protocol->buildRepeaterInfo();
+    _process_data = true;
 }
 
 void RadioController::setRelays(bool transmitting)
@@ -1308,6 +1372,11 @@ void RadioController::receiveNetData(unsigned char *data, int size)
     Q_UNUSED(res); // FIXME: what if ioctl fails?
 }
 
+void RadioController::protoReceived(QByteArray data)
+{
+    _incoming_data_buffer.append(data);
+}
+
 /// signal from Mumble
 void RadioController::processVoipAudioFrame(short *pcm, int samples, quint64 sid)
 {
@@ -1448,6 +1517,11 @@ void RadioController::receiveEnd()
     {
         emit newMumbleMessage(_incoming_text_buffer);
         _incoming_text_buffer = "";
+    }
+    if(_incoming_data_buffer.size() > 0)
+    {
+        _radio_protocol->processRadioMessage(_incoming_data_buffer);
+        _incoming_data_buffer.clear();
     }
     emit displayReceiveStatus(false);
     emit displayDataReceiveStatus(false);

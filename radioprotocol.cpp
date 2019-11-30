@@ -16,12 +16,70 @@
 
 #include "radioprotocol.h"
 
-RadioProtocol::RadioProtocol(QObject *parent) :
+RadioProtocol::RadioProtocol(Logger *logger, QObject *parent) :
     QObject(parent)
 {
+    _logger = logger;
     _buffer = new QByteArray;
 }
 
+void RadioProtocol::processRadioMessage(QByteArray data)
+{
+    QByteArray message;
+    int msg_type;
+    unsigned int data_len;
+    unsigned int crc;
+    QDataStream stream(&data, QIODevice::ReadOnly);
+    stream.setByteOrder(QDataStream::BigEndian);
+    stream >> msg_type;
+    stream >> data_len;
+    stream >> message;
+    stream >> crc;
+    if(crc != gr::digital::crc32(message.toStdString()))
+    {
+        _logger->log(Logger::LogLevelCritical, "Radio packet CRC32 failed, dropping packet");
+        return;
+    }
+
+    switch(msg_type)
+    {
+    case MsgTypePageMessage:
+        processPageMessage(message);
+        break;
+    default:
+        _logger->log(Logger::LogLevelDebug, QString("Radio message type %1 not implemented").arg(msg_type));
+        break;
+    }
+}
+
+QByteArray RadioProtocol::buildRadioMessage(QByteArray data, int msg_type)
+{
+    QByteArray message;
+    QDataStream stream(&message, QIODevice::WriteOnly);
+    stream.setByteOrder(QDataStream::BigEndian);
+    stream << msg_type;
+    stream << data.length();
+    stream << data;
+    unsigned int crc = gr::digital::crc32(data.toStdString());
+    stream << crc;
+    return message;
+}
+
+QByteArray RadioProtocol::buildPageMessage(QString calling_callsign, QString called_callsign,
+                                           bool retransmit, QString via_node)
+{
+
+    QRadioLink::PageMessage p;
+    p.set_calling_user(calling_callsign.toStdString());
+    p.set_called_user(called_callsign.toStdString());
+    p.set_retransmit(retransmit);
+    p.set_via_node(via_node.toStdString());
+    int size = p.ByteSize();
+    unsigned char data[size];
+    p.SerializeToArray(data,size);
+    QByteArray msg(reinterpret_cast<const char*>(data));
+    return buildRadioMessage(msg, MsgTypePageMessage);
+}
 
 QByteArray RadioProtocol::buildRepeaterInfo()
 {
@@ -154,6 +212,16 @@ void RadioProtocol::processPayload(QByteArray data)
         break;
     }
     }
+}
+
+void RadioProtocol::processPageMessage(QByteArray message)
+{
+    QRadioLink::PageMessage page;
+    page.ParseFromArray(message.data(), message.size());
+    _logger->log(Logger::LogLevelDebug, QString("Paging message from %1 to %2 via %3").arg(
+                     QString::fromStdString(page.calling_user())).arg(
+                     QString::fromStdString(page.called_user())).arg(
+                     QString::fromStdString(page.via_node())));
 }
 
 

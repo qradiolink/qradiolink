@@ -640,7 +640,7 @@ std::vector<unsigned char>* gr_modem::frame(unsigned char *encoded_audio, int da
         data->push_back(0xDE);
         data->push_back(0x98);
     }
-    else if(frame_type == FrameTypeRepeaterInfo)
+    else if(frame_type == FrameTypeProto)
     {
         data->push_back(0xED);
         data->push_back(0x77);
@@ -912,10 +912,10 @@ int gr_modem::findSync(unsigned char bit)
             _sync_found = true;
             return FrameTypeText;
         }
-        if(temp == FrameTypeRepeaterInfo)
+        if(temp == FrameTypeProto)
         {
             _sync_found = true;
-            return FrameTypeRepeaterInfo;
+            return FrameTypeProto;
         }
 
         if(temp == FrameTypeVideo)
@@ -955,7 +955,7 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
     {
         handleStreamEnd();
     }
-    if (current_frame_type == FrameTypeText)
+    else if (current_frame_type == FrameTypeText)
     {
         emit dataFrameReceived();
         _last_frame_type = FrameTypeText;
@@ -983,12 +983,12 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
         emit textReceived(text);
         delete[] text_data;
     }
-    if (current_frame_type == FrameTypeRepeaterInfo)
+    else if (current_frame_type == FrameTypeProto)
     {
         emit dataFrameReceived();
-        _last_frame_type = FrameTypeRepeaterInfo;
+        _last_frame_type = FrameTypeProto;
         QByteArray data((const char*)received_data, _rx_frame_length);
-        emit repeaterInfoReceived(data);
+        emit protoReceived(data);
     }
     else if (current_frame_type == FrameTypeCallsign)
     {

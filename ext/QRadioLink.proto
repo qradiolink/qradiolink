@@ -4,6 +4,13 @@ package QRadioLink;
 
 option optimize_for = SPEED;
 
+message PageMessage {
+    required string calling_user = 1;
+    required string called_user = 2;
+    optional bool retransmit = 3;
+    optional string via_node = 4;
+}
+
 message Channel {
     optional uint32 channel_id = 1;
     optional uint32 parent_id = 2;

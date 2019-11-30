@@ -17,7 +17,7 @@ namespace modem_framing {
         FrameTypeVideo = 0x98DEAA,
         FrameTypeSync = 0xCC,
         FrameTypeCallsign = 0x8CC8DD,
-        FrameTypeRepeaterInfo = 0xED77AA,
+        FrameTypeProto = 0xED77AA,
         FrameTypeEnd = 0x4C8A2B,
     };
 

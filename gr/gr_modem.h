@@ -56,6 +56,7 @@ signals:
     void netData(unsigned char *net_data, int size);
     void demodulated_audio(short *pcm, short size);
     void textReceived(QString text);
+    void protoReceived(QByteArray data);
     void repeaterInfoReceived(QByteArray data);
     void callsignReceived(QString text);
     void audioFrameReceived();
@@ -73,7 +74,7 @@ public slots:
     void startTransmission(QString callsign);
     void endTransmission(QString callsign);
     void transmitTextData(QString text, int frame_type = FrameTypeText);
-    void transmitBinData(QByteArray bin_data, int frame_type = FrameTypeRepeaterInfo);
+    void transmitBinData(QByteArray bin_data, int frame_type = FrameTypeProto);
     void initTX(int modem_type, std::string device_args,
                 std::string device_antenna, int freq_corr);
     void initRX(int modem_type, std::string device_args,
