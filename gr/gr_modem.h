@@ -29,29 +29,20 @@
 #include <string>
 #include "ext/utils.h"
 #include "settings.h"
+#include "framing.h"
 #include "modem_types.h"
 #include "gr/gr_mod_base.h"
 #include "gr/gr_demod_base.h"
 
 #include <math.h>
 
+using namespace modem_framing;
 
 class gr_modem : public QObject
 {
     Q_OBJECT
 public:
-    enum
-    {
-        FrameTypeNone,
-        FrameTypeVoice,
-        FrameTypeText,
-        FrameTypeData,
-        FrameTypeVideo,
-        FrameTypeStart,
-        FrameTypeCallsign,
-        FrameTypeRepeaterInfo,
-        FrameTypeEnd
-    };
+
     explicit gr_modem(QObject *parent = 0);
     ~gr_modem();
 
@@ -146,7 +137,7 @@ private:
     int _tx_frame_length;
     int _rx_frame_length;
     quint64 _frame_counter;
-    quint8 _last_frame_type;
+    int _last_frame_type;
     bool _sync_found;
     int _current_frame_type;
     unsigned long long _shift_reg;

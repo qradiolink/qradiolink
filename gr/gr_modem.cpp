@@ -16,6 +16,8 @@
 
 #include "gr_modem.h"
 
+using namespace modem_framing;
+
 gr_modem::gr_modem(QObject *parent) :
     QObject(parent)
 {
@@ -889,7 +891,7 @@ int gr_modem::findSync(unsigned char bit)
             (_modem_type_rx == gr_modem_types::ModemType2FSK1000))
     {
         temp = _shift_reg & 0xFF;
-        if (temp == 0xB5)
+        if (temp == FrameTypeVoice1)
         {
             _sync_found = true;
             return FrameTypeVoice;
@@ -899,7 +901,7 @@ int gr_modem::findSync(unsigned char bit)
             _modem_type_rx != gr_modem_types::ModemTypeQPSKVideo)
     {
         temp = _shift_reg & 0xFFFF;
-        if(temp == 0xED89)
+        if(temp == FrameTypeVoice2)
         {
             _sync_found = true;
             return FrameTypeVoice;
@@ -910,35 +912,35 @@ int gr_modem::findSync(unsigned char bit)
             _sync_found = true;
             return FrameTypeText;
         }
-        if(temp == 0xED77AA)
+        if(temp == FrameTypeRepeaterInfo)
         {
             _sync_found = true;
             return FrameTypeRepeaterInfo;
         }
 
-        if(temp == 0x98DEAA)
+        if(temp == FrameTypeVideo)
         {
             _sync_found = true;
             return FrameTypeVideo;
         }
-        if(temp == 0x8CC8DD)
+        if(temp == FrameTypeCallsign)
         {
             _sync_found = true;
             return FrameTypeCallsign;
         }
     }
     temp = _shift_reg & 0xFFFFFF;
-    if(temp == 0xDE98AA)
+    if(temp == FrameTypeData)
     {
         _sync_found = true;
         return FrameTypeData;
     }
-    if(temp == 0x98DEAA)
+    if(temp == FrameTypeVideo)
     {
         _sync_found = true;
         return FrameTypeVideo;
     }
-    if(temp == 0x4C8A2B)
+    if(temp == FrameTypeEnd)
     {
         _sync_found = true;
         return FrameTypeEnd;

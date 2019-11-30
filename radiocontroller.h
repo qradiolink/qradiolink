@@ -195,7 +195,7 @@ private:
     void processInputNetStream();
     void sendTxBeep(int sound=0);
     void sendChannels();
-    void transmitTextData(QString text, int frame_type);
+    void transmitTextData();
     void sendBinData(QByteArray data, int frame_type);
     bool getDemodulatorData();
     void getFFTData();
@@ -249,7 +249,7 @@ private:
     QMap<std::string, int> _rx_stage_gains;
     QMap<std::string, int> _tx_stage_gains;
 
-    bool _stop;
+    bool _stop_thread;
     bool _transmitting;
     bool _process_text;
     bool _repeat_text;

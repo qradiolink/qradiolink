@@ -68,7 +68,7 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     _cw_timer = new QElapsedTimer();
     _cw_timer->start();
 
-    _stop =false;
+    _stop_thread =false;
 
     _scan_stop = false;
     _scan_done = true;
@@ -188,7 +188,7 @@ void RadioController::stop()
         toggleRX(false);
     if(_settings->tx_inited)
         toggleTX(false);
-    _stop=true;
+    _stop_thread=true;
 }
 
 void RadioController::run()
@@ -198,15 +198,11 @@ void RadioController::run()
     bool data_to_process = false;
     bool buffers_filling = false;
     int last_channel_broadcast_time = 0;
-    while(!_stop)
+    while(!_stop_thread)
     {
-        _mutex->lock();
         bool transmitting = _transmitting;
-        bool process_text = _process_text;
         bool voip_forwarding = _settings->voip_forwarding;
-        QString text_out = _text_out;
         bool data_modem_sleeping = _data_modem_sleeping;
-        _mutex->unlock();
 
         QCoreApplication::processEvents(); // process signals
         if(_settings->voip_connected)
@@ -239,6 +235,9 @@ void RadioController::run()
             stopTx();
         }
 
+        if(_text_transmit_on)
+            _process_text = false;
+
         /// Get all available data from the demodulator
         QtConcurrent::run(this, &RadioController::getFFTData);
         QtConcurrent::run(this, &RadioController::getConstellationData);
@@ -262,16 +261,15 @@ void RadioController::run()
 
         data_to_process = getDemodulatorData();
 
-        if(process_text && !_text_transmit_on && (_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL))
+        if(_process_text && !_text_transmit_on && (_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL))
         {
-            //sendTextData(text_out, gr_modem::FrameTypeText);
-            QtConcurrent::run(this, &RadioController::transmitTextData, text_out, gr_modem::FrameTypeText);
+            QtConcurrent::run(this, &RadioController::transmitTextData);
         }
 
         // FIXME: remove these hardcoded sleeps
         /// Needed to keep the thread from using the CPU by looping too fast
 
-        if(!data_to_process && !buffers_filling)
+        if(!data_to_process && !buffers_filling && !_process_text)
         {
             /// nothing to output from demodulator
             struct timespec time_to_sleep = {0, 20000000L };
@@ -656,78 +654,76 @@ void RadioController::processInputNetStream()
     }
 }
 
-void RadioController::transmitTextData(QString text_data, int frame_type)
+void RadioController::transmitTextData()
 {
-    if(_settings->tx_inited && !_text_transmit_on)
+    if(!_settings->tx_inited)
     {
-        _text_transmit_on = true;
-        _transmitting = true;
-        /// callsign frame
-        // FIXME: this doesn't seem to work, callsign is actually sent
-        // after the first text frame most of the time
+        _process_text = false;
+        return;
+    }
+    if(_text_transmit_on)
+        return;
+
+    _text_transmit_on = true;
+    _transmitting = true;
+    /// callsign frame
+    // FIXME: this doesn't seem to work, callsign is actually sent
+    // after the first text frame most of the time
+    struct timespec time_to_sleep = {0, 39800000L };
+    nanosleep(&time_to_sleep, NULL);
+
+    start_text_tx:
+    int frame_size;
+    if((_tx_mode == gr_modem_types::ModemTypeBPSK2000) ||
+            (_tx_mode == gr_modem_types::ModemType2FSK2000FM) ||
+            (_tx_mode == gr_modem_types::ModemType2FSK2000) ||
+            (_tx_mode == gr_modem_types::ModemType4FSK2000) ||
+            (_tx_mode == gr_modem_types::ModemType4FSK2000FM) ||
+            (_tx_mode == gr_modem_types::ModemTypeQPSK2000))
+        frame_size = 7;
+    else if((_tx_mode == gr_modem_types::ModemTypeBPSK1000) ||
+            (_tx_mode == gr_modem_types::ModemType2FSK1000FM) ||
+            (_tx_mode == gr_modem_types::ModemType2FSK1000))
+        frame_size = 4;
+    else
+        frame_size = 47;
+    int no_frames = _text_out.size() / frame_size;
+    int leftover = _text_out.size() % frame_size;
+    if(leftover > 0)
+    {
+        no_frames += 1;
+    }
+    for(int i=0; i < no_frames; i++)
+    {
+        QString text_frame;
+        if((i == (no_frames - 1)) && leftover > 0)
+        {
+            /// last frame
+            text_frame = _text_out.mid(i * frame_size, leftover);
+        }
+        else
+        {
+            text_frame = _text_out.mid(i * frame_size, frame_size);
+        }
+        _modem->transmitTextData(text_frame, modem_framing::FrameTypeText);
+        // FIXME: frame should last about 40 msec average, however in practice the clock
+        // is not very precise so the last bytes may be truncated because TX is switched off
         struct timespec time_to_sleep = {0, 39800000L };
         nanosleep(&time_to_sleep, NULL);
 
-        start_text_tx:
-        int frame_size;
-        if((_tx_mode == gr_modem_types::ModemTypeBPSK2000) ||
-                (_tx_mode == gr_modem_types::ModemType2FSK2000FM) ||
-                (_tx_mode == gr_modem_types::ModemType2FSK2000) ||
-                (_tx_mode == gr_modem_types::ModemType4FSK2000) ||
-                (_tx_mode == gr_modem_types::ModemType4FSK2000FM) ||
-                (_tx_mode == gr_modem_types::ModemTypeQPSK2000))
-            frame_size = 7;
-        else if((_tx_mode == gr_modem_types::ModemTypeBPSK1000) ||
-                (_tx_mode == gr_modem_types::ModemType2FSK1000FM) ||
-                (_tx_mode == gr_modem_types::ModemType2FSK1000))
-            frame_size = 4;
-        else
-            frame_size = 47;
-        int no_frames = text_data.size() / frame_size;
-        int leftover = text_data.size() % frame_size;
-        if(leftover > 0)
+        /// Stop when PTT is triggered by user
+        if(!_transmitting)
         {
-            no_frames += 1;
+            _text_transmit_on = false;
+            return;
         }
-        if(text_data.size() < frame_size)
-        {
-            frame_size = text_data.size();
-            no_frames = 1;
-        }
-        for(int i=0; i < no_frames; i++)
-        {
-            QString text_frame;
-            if((i == (no_frames - 1)) && leftover > 0)
-            {
-                /// last frame
-                text_frame = text_data.mid(i * frame_size, leftover);
-            }
-            else
-            {
-                text_frame = text_data.mid(i * frame_size, frame_size);
-            }
-            _modem->transmitTextData(text_frame, frame_type);
-            // FIXME: frame should last about 40 msec average, however in practice the clock
-            // is not very precise so the last bytes may be truncated because TX is switched off
-            struct timespec time_to_sleep = {0, 39800000L };
-            nanosleep(&time_to_sleep, NULL);
-
-            /// Stop when PTT is triggered by user
-            if(!_transmitting)
-            {
-                _text_transmit_on = false;
-                _process_text = false;
-                return;
-            }
-        }
-        if(_repeat_text)
-        {
-            goto start_text_tx;
-        }
-        _transmitting = false;
-        _text_transmit_on = false;
-        _process_text = false;
     }
+    if(_repeat_text)
+    {
+        goto start_text_tx;
+    }
+    _transmitting = false;
+    _text_transmit_on = false;
 }
 
 void RadioController::sendBinData(QByteArray data, int frame_type)
@@ -781,7 +777,7 @@ void RadioController::sendTxBeep(int sound)
 void RadioController::sendChannels()
 {
     QByteArray data = _radio_protocol->buildRepeaterInfo();
-    sendBinData(data,gr_modem::FrameTypeRepeaterInfo);
+    sendBinData(data,FrameTypeRepeaterInfo);
 }
 
 void RadioController::setRelays(bool transmitting)
