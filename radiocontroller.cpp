@@ -78,7 +78,7 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     _radio_to_voip_on = false;
     _video_on = false;
     _text_transmit_on = false;
-    _data_transmit_on = false;
+    _proto_transmit_on = false;
     _cw_tone = false;
     _transmitting = false;
     _process_text = false;
@@ -244,7 +244,7 @@ void RadioController::run()
 
         if(_text_transmit_on)
             _process_text = false;
-        if(_data_transmit_on)
+        if(_proto_transmit_on)
             _process_data = false;
 
         /// Get all available data from the demodulator
@@ -274,7 +274,7 @@ void RadioController::run()
         {
             QtConcurrent::run(this, &RadioController::transmitTextData);
         }
-        if(_process_data && !_data_transmit_on && (_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL))
+        if(_process_data && !_proto_transmit_on && (_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL))
         {
             QtConcurrent::run(this, &RadioController::transmitBinData);
         }
@@ -746,10 +746,10 @@ void RadioController::transmitBinData()
         _process_data = false;
         return;
     }
-    if(_data_transmit_on)
+    if(_proto_transmit_on)
         return;
 
-    _data_transmit_on = true;
+    _proto_transmit_on = true;
     _transmitting = true;
     /// callsign frame
     // FIXME: this doesn't seem to work, callsign is actually sent
@@ -772,7 +772,7 @@ void RadioController::transmitBinData()
         frame_size = 4;
     else
         frame_size = 47;
-    QByteArray msg = _radio_protocol->buildPageMessage(_callsign, _data_out, false, _callsign);
+    QByteArray msg = _radio_protocol->buildPageMessage(_callsign, _proto_out, false, _callsign);
     int no_frames = msg.size() / frame_size;
     int leftover = msg.size() % frame_size;
     if(leftover > 0)
@@ -800,7 +800,7 @@ void RadioController::transmitBinData()
         /// Stop when PTT is triggered by user
         if(!_transmitting)
         {
-            _data_transmit_on = false;
+            _proto_transmit_on = false;
             return;
         }
     }
@@ -809,7 +809,7 @@ void RadioController::transmitBinData()
         goto start_data_tx;
     }
     _transmitting = false;
-    _data_transmit_on = false;
+    _proto_transmit_on = false;
 }
 
 void RadioController::sendTxBeep(int sound)
@@ -840,7 +840,7 @@ void RadioController::sendTxBeep(int sound)
 
 void RadioController::transmitServerInfoBeacon()
 {
-    _data_out = _radio_protocol->buildRepeaterInfo();
+    _proto_out = _radio_protocol->buildRepeaterInfo();
     _process_data = true;
 }
 
@@ -1374,7 +1374,7 @@ void RadioController::receiveNetData(unsigned char *data, int size)
 
 void RadioController::protoReceived(QByteArray data)
 {
-    _incoming_data_buffer.append(data);
+    _incoming_proto_buffer.append(data);
 }
 
 /// signal from Mumble
@@ -1518,10 +1518,10 @@ void RadioController::receiveEnd()
         emit newMumbleMessage(_incoming_text_buffer);
         _incoming_text_buffer = "";
     }
-    if(_incoming_data_buffer.size() > 0)
+    if(_incoming_proto_buffer.size() > 0)
     {
-        _radio_protocol->processRadioMessage(_incoming_data_buffer);
-        _incoming_data_buffer.clear();
+        _radio_protocol->processRadioMessage(_incoming_proto_buffer);
+        _incoming_proto_buffer.clear();
     }
     emit displayReceiveStatus(false);
     emit displayDataReceiveStatus(false);

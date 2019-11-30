@@ -245,10 +245,10 @@ private:
     QList<radiochannel*> _memory_channels;
 
     QString _text_out;
-    QString _data_out;
+    QByteArray _proto_out;
     QString _callsign;
     QString _incoming_text_buffer;
-    QByteArray _incoming_data_buffer;
+    QByteArray _incoming_proto_buffer;
     QMap<std::string, int> _rx_stage_gains;
     QMap<std::string, int> _tx_stage_gains;
 
@@ -264,7 +264,7 @@ private:
     bool _radio_to_voip_on;
     bool _video_on;
     bool _text_transmit_on;
-    bool _data_transmit_on;
+    bool _proto_transmit_on;
     bool _cw_tone;
 
     int _rx_mode;

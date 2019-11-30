@@ -46,8 +46,12 @@ void RadioProtocol::processRadioMessage(QByteArray data)
     case MsgTypePageMessage:
         processPageMessage(message);
         break;
+    case MsgTypeVoipInfo:
+        dataIn(message);
+        break;
     default:
-        _logger->log(Logger::LogLevelDebug, QString("Radio message type %1 not implemented").arg(msg_type));
+        _logger->log(Logger::LogLevelDebug,
+                     QString("Radio message type %1 not implemented").arg(msg_type));
         break;
     }
 }
@@ -124,7 +128,7 @@ QByteArray RadioProtocol::buildRepeaterInfo()
         data.append(0x77);
         data.append(0xCF);
     }
-    return data;
+    return buildRadioMessage(data, MsgTypeVoipInfo);
 }
 
 

@@ -36,9 +36,10 @@ class RadioProtocol : public QObject
 public:
     enum
     {
-        MsgTypeChannel = 0,
-        MsgTypeUser = 1,
-        MsgTypePageMessage = 2,
+        MsgTypeChannel,
+        MsgTypeUser,
+        MsgTypePageMessage,
+        MsgTypeVoipInfo,
     };
     explicit RadioProtocol(Logger *logger, QObject *parent = 0);
 
