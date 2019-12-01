@@ -19,7 +19,6 @@ The application was originally inspired from the [Codec2 GMSK modem](https://git
 
 [![Screenshot](http://qradiolink.org/images/qradiolink53.png)](http://qradiolink.org)
 
-As
 
 
 Alternatives to QRadioLink

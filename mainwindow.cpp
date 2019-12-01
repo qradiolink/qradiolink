@@ -247,7 +247,7 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     _eff_text_display->setOpacity(0.5);
     ui->secondaryTextDisplay->setGraphicsEffect(_eff_text_display);
     _eff_mem_display = new QGraphicsOpacityEffect(ui->memoriesFrame);
-    _eff_mem_display->setOpacity(0.8);
+    _eff_mem_display->setOpacity(0.99);
     ui->memoriesFrame->setGraphicsEffect(_eff_mem_display);
     ui->memoryControlsFrame->setGraphicsEffect(_eff_mem_display);
     ui->memoriesTableWidget->setGraphicsEffect(_eff_mem_display);
@@ -656,11 +656,14 @@ void MainWindow::addDisplayChannel(radiochannel *chan, int r)
     //ui->memoriesTableWidget->setItem(r, 11, id_display);
     //ui->memoriesTableWidget->setItem(r, 12, tx_freq_display);
     ui->memoriesTableWidget->horizontalHeader()->setHidden(false);
+    ui->memoriesTableWidget->horizontalHeader()->setStyleSheet(
+    "color: rgb(255, 105, 105);background-color: rgba(0, 40, 102, 155);font-weight: bold;"
+    "font: 9pt \"Sans Serif\"; ");
     ui->memoriesTableWidget->setStyleSheet(
-    "color: rgb(240, 240, 119);background-color: rgb(0, 40, 102);font: 9pt \"Sans Serif\"; "
-    "QTableWidget {color: rgb(240, 240, 119);background-color: rgb(0, 40, 102);font: 9pt \"Sans Serif\";}"
-    "QTableWidget::item {color: rgb(240, 240, 119);background-color: rgb(0, 40, 102);font: 9pt \"Sans Serif\";}"
-    "QTableWidget::item:selected{ color: rgb(240, 240, 119);background-color: rgba(99, 0, 0, 125);"
+    "color: rgb(255, 255, 255);background-color: rgba(0, 40, 102, 0);font: 9pt \"Sans Serif\"; "
+    "QTableWidget {color: rgb(255, 255, 255);background-color: rgba(0, 40, 102, 0);font: 9pt \"Sans Serif\";}"
+    "QTableWidget::item {color: rgb(255, 255, 255);background-color: rgba(0, 40, 102, 0);font: 9pt \"Sans Serif\";}"
+    "QTableWidget::item:selected{ color: rgb(255, 255, 255);background-color: rgba(99, 0, 0, 125);"
     "font: 9pt \"Sans Serif\"; }");
 
 }
