@@ -96,7 +96,7 @@
 </string>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <property name="iconSize">
          <size>
@@ -1942,7 +1942,7 @@ border-width: 4px;
                <property name="sizeConstraint">
                 <enum>QLayout::SetDefaultConstraint</enum>
                </property>
-               <item row="1" column="0">
+               <item row="0" column="0">
                 <spacer name="verticalSpacer_3">
                  <property name="orientation">
                   <enum>Qt::Vertical</enum>
@@ -1953,12 +1953,12 @@ border-width: 4px;
                  <property name="sizeHint" stdset="0">
                   <size>
                    <width>10</width>
-                   <height>20</height>
+                   <height>10</height>
                   </size>
                  </property>
                 </spacer>
                </item>
-               <item row="2" column="0">
+               <item row="1" column="0">
                 <widget class="QFrame" name="frame_3">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
@@ -2156,22 +2156,6 @@ color: rgb(0, 67, 98);</string>
                  </layout>
                 </widget>
                </item>
-               <item row="0" column="0">
-                <layout class="QGridLayout" name="gridLayout">
-                 <property name="topMargin">
-                  <number>2</number>
-                 </property>
-                 <property name="bottomMargin">
-                  <number>2</number>
-                 </property>
-                 <property name="horizontalSpacing">
-                  <number>10</number>
-                 </property>
-                 <property name="verticalSpacing">
-                  <number>5</number>
-                 </property>
-                </layout>
-               </item>
               </layout>
              </item>
             </layout>
@@ -2205,7 +2189,7 @@ color: rgb(0, 67, 98);</string>
              </font>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>1</number>
             </property>
             <widget class="QWidget" name="tab">
              <attribute name="title">
@@ -2908,8 +2892,8 @@ and S-meter (dBm)</string>
              <attribute name="title">
               <string>General Settings</string>
              </attribute>
-             <layout class="QVBoxLayout" name="verticalLayout_7">
-              <item>
+             <layout class="QGridLayout" name="gridLayout">
+              <item row="0" column="0">
                <widget class="QFrame" name="frame_5">
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>
@@ -3330,90 +3314,90 @@ and S-meter (dBm)</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="8" column="0">
-                  <widget class="QGroupBox" name="groupBox">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
+                </layout>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QGroupBox" name="groupBox">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>200</width>
+                  <height>150</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>180</height>
+                 </size>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">font: 8pt &quot;Noto Sans&quot;;</string>
+                </property>
+                <property name="title">
+                 <string>Relay activation sequence</string>
+                </property>
+                <layout class="QGridLayout" name="gridLayout_11">
+                 <item row="0" column="0">
+                  <widget class="QCheckBox" name="relay1CheckBox">
+                   <property name="text">
+                    <string>Relay 1</string>
                    </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>0</width>
-                     <height>50</height>
-                    </size>
+                  </widget>
+                 </item>
+                 <item row="3" column="1">
+                  <widget class="QCheckBox" name="relay8CheckBox">
+                   <property name="text">
+                    <string>Relay 8</string>
                    </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>16777215</width>
-                     <height>150</height>
-                    </size>
+                  </widget>
+                 </item>
+                 <item row="3" column="0">
+                  <widget class="QCheckBox" name="relay4CheckBox">
+                   <property name="text">
+                    <string>Relay 4</string>
                    </property>
-                   <property name="styleSheet">
-                    <string notr="true">font: 8pt &quot;Noto Sans&quot;;</string>
+                  </widget>
+                 </item>
+                 <item row="2" column="0">
+                  <widget class="QCheckBox" name="relay3CheckBox">
+                   <property name="text">
+                    <string>Relay 3</string>
                    </property>
-                   <property name="title">
-                    <string>Relay activation sequence</string>
+                  </widget>
+                 </item>
+                 <item row="2" column="1">
+                  <widget class="QCheckBox" name="relay7CheckBox">
+                   <property name="text">
+                    <string>Relay 7</string>
                    </property>
-                   <layout class="QGridLayout" name="gridLayout_11">
-                    <item row="3" column="0">
-                     <widget class="QCheckBox" name="relay4CheckBox">
-                      <property name="text">
-                       <string>Relay 4</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="0" column="0">
-                     <widget class="QCheckBox" name="relay1CheckBox">
-                      <property name="text">
-                       <string>Relay 1</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="1" column="0">
-                     <widget class="QCheckBox" name="relay2checkBox">
-                      <property name="text">
-                       <string>Relay 2</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="2" column="0">
-                     <widget class="QCheckBox" name="relay3CheckBox">
-                      <property name="text">
-                       <string>Relay 3</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="0" column="1">
-                     <widget class="QCheckBox" name="relay5CheckBox">
-                      <property name="text">
-                       <string>Relay 5</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="1" column="1">
-                     <widget class="QCheckBox" name="relay6CheckBox">
-                      <property name="text">
-                       <string>Relay 6</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="2" column="1">
-                     <widget class="QCheckBox" name="relay7CheckBox">
-                      <property name="text">
-                       <string>Relay 7</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="3" column="1">
-                     <widget class="QCheckBox" name="relay8CheckBox">
-                      <property name="text">
-                       <string>Relay 8</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QCheckBox" name="relay5CheckBox">
+                   <property name="text">
+                    <string>Relay 5</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1">
+                  <widget class="QCheckBox" name="relay6CheckBox">
+                   <property name="text">
+                    <string>Relay 6</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QCheckBox" name="relay2checkBox">
+                   <property name="text">
+                    <string>Relay 2</string>
+                   </property>
                   </widget>
                  </item>
                 </layout>
@@ -3581,7 +3565,7 @@ and S-meter (dBm)</string>
           <string notr="true"/>
          </property>
          <property name="text">
-          <string>S&amp;quelch</string>
+          <string>Squelch</string>
          </property>
         </widget>
         <widget class="QLCDNumber" name="rxSquelchDisplay">
@@ -4044,7 +4028,7 @@ color: rgb(182, 182, 182);</string>
           <enum>QFrame::Plain</enum>
          </property>
          <property name="text">
-          <string>Split (&amp;kHz)</string>
+          <string>Split (kHz)</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -5154,7 +5138,7 @@ border-width: 4px;
              <string notr="true">font: 8pt &quot;Sans Serif&quot;;</string>
             </property>
             <property name="text">
-             <string>AutoSq</string>
+             <string>Auto Sq</string>
             </property>
            </widget>
           </item>
