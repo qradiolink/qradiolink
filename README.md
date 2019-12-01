@@ -1,7 +1,7 @@
 QRadioLink
 ==========
 
-[![Build Status](https://travis-ci.org/qradiolink/qradiolink.svg?branch=master)](https://travis-ci.org/qradiolink/qradiolink)
+[![Build Status](https://travis-ci.org/qradiolink/qradiolink.svg)](https://travis-ci.org/qradiolink/qradiolink)
 
 [![Packaging status](https://repology.org/badge/vertical-allrepos/qradiolink.svg)](https://repology.org/project/qradiolink/versions)
 
@@ -17,7 +17,9 @@ It can also be used as a low power amateur radio SDR transceiver for demonstrati
 
 The application was originally inspired from the [Codec2 GMSK modem](https://github.com/on1arf/gmsk) project by Kristoff Bonne.
 
-[![Screenshot](http://qradiolink.org/images/qradiolink52.png)](http://qradiolink.org)
+[![Screenshot](http://qradiolink.org/images/qradiolink53.png)](http://qradiolink.org)
+
+As
 
 
 Alternatives to QRadioLink
@@ -27,6 +29,7 @@ Free software projects that work on Linux and have similar features to QRadioLin
 
 - [**FreeDV**](https://freedv.org/) is a Digital Voice mode for HF radio. The application works for Windows, Linux and OSX and allows any SSB radio to be used for low bit rate digital voice. It is the original free software Codec2 implementation. It does not require a SDR and works with any analog radio.
 - [**SvxLink**](https://www.svxlink.org/) is a great project which inspired the radio linking features of QRadioLink. The Qtel component is a full-featured Echolink GUI client. It does not require using a SDR and can work with any FM radio.
+- [**Gqrx**](https://gqrx.dk/) is an open source software defined radio receiver (SDR) powered by the GNU Radio SDK and the Qt graphical toolkit. Gqrx inspired the use of GNU radio in QRadioLink and some features, code and architecture were copied verbatim from Gqrx as the best alternative available. Despite the graphical resemblance to it, Gqrx is much more suitable for the purpose of general SDR receiver. There are several trade-offs made in QRadioLink to emphasize CPU performance to the detriment of signal quality. One such tradeoff is the use of an audio sample rate of 8000 Hz in QRadioLink compared to the more faithful 48000 Hz in Gqrx. Other major differences are lack of Wide FM stereo, RDS decoding, lack of waterfall persistence, lack of I/Q samples recording and lower SSB / AM performance in QRadioLink. Gqrx is also more user friendly and has a wide support community.
 - [**SDRangel**](https://github.com/f4exb/sdrangel) is a full SDR transceiver for SSB, FM, DMR, D-Star, C4FM and DVB-S. It can use only SDR hardware but it supports a large number of them.
 - [**Mumble**](https://www.mumble.info/) is what QRadioLink uses under the hood. It is a great alternative for people who don't want to use SDR radios.
 - [**Codec2 GMSK**](https://github.com/on1arf/gmsk) is a great and free software alternative to D-Star on VHF-UHF handheld radios. It only requires a radio capable of 9600 baud packet.
@@ -92,7 +95,7 @@ $ sudo apt-get install gnuradio-dev protobuf-compiler gr-osmosdr gnuradio libvol
 - protoc compiler (libprotoc 2.6.1 or greater)
 - optionally SoapySDR and SoapyPlutoSDR, SoapyLMS7
 
-In order to build on Ubuntu 17.10 you have to install the following packages, assuming a full GNU Radio development environment is already installed.
+In order to build on Ubuntu 17.10 you have to install the following packages, assuming a full GNU Radio development environment is already installed. Please note these instructions are for a very old version of QRadioLink and are not guaranteed to work with newer versions. It is recommended to follow the Debian install guide and adjust for Ubuntu differences.
 
 <pre>
 $ sudo apt install libconfig++-dev libprotobuf-dev libopus-dev libpulse-dev libasound2-dev libcodec2-dev libsqlite3-dev libjpeg-dev libprotoc-dev libsndfile1 libftdi protobuf-compiler
