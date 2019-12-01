@@ -950,7 +950,7 @@ color: rgb(255, 255, 255);</string>
            <rect>
             <x>150</x>
             <y>10</y>
-            <width>900</width>
+            <width>1150</width>
             <height>250</height>
            </rect>
           </property>
@@ -962,13 +962,13 @@ color: rgb(255, 255, 255);</string>
           </property>
           <property name="minimumSize">
            <size>
-            <width>900</width>
+            <width>1150</width>
             <height>250</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>900</width>
+            <width>1150</width>
             <height>250</height>
            </size>
           </property>

@@ -384,14 +384,14 @@ void MainWindow::resizeEvent(QResizeEvent *event)
         ui->plotterContainer->resize(xy.right() -xy.left()-20,xy.bottom()-xy.top()-210);
         xy = ui->plotterContainer->geometry();
         ui->secondaryTextDisplay->move(xy.left(), xy.bottom() - 150);
-        ui->memoriesFrame->move(xy.right() - 30 - 900, xy.bottom() - 285);
+        ui->memoriesFrame->move(xy.right() - 30 - 1150, xy.bottom() - 285);
     }
     else
     {
         ui->plotterContainer->resize(xy.right() -xy.left()-20,xy.bottom()-xy.top()-120);
         xy = ui->plotterContainer->geometry();
         ui->secondaryTextDisplay->move(xy.left(), xy.bottom() - 150);
-        ui->memoriesFrame->move(xy.right() - 30 - 900, xy.bottom() - 285);
+        ui->memoriesFrame->move(xy.right() - 30 - 1150, xy.bottom() - 285);
     }
     xy = ui->plotterContainer->geometry();
     ui->videoFrame->move(xy.right() - 360, xy.top());
@@ -428,7 +428,7 @@ void MainWindow::showControls(bool value)
         ui->controlsFrame->show();
         xy = ui->plotterContainer->geometry();
         ui->secondaryTextDisplay->move(xy.left(), xy.bottom() - 150);
-        ui->memoriesFrame->move(xy.right() - 30 - 900, xy.bottom() - 285);
+        ui->memoriesFrame->move(xy.right() - 30 - 1150, xy.bottom() - 285);
         _settings->show_controls = 1;
         _controls_active = true;
     }
@@ -438,7 +438,7 @@ void MainWindow::showControls(bool value)
         ui->controlsFrame->hide();
         xy = ui->plotterContainer->geometry();
         ui->secondaryTextDisplay->move(xy.left(), xy.bottom() - 150);
-        ui->memoriesFrame->move(xy.right() - 30 - 900, xy.bottom() - 285);
+        ui->memoriesFrame->move(xy.right() - 30 - 1150, xy.bottom() - 285);
         _settings->show_controls = 0;
         _controls_active = false;
     }
