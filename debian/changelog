@@ -1,3 +1,16 @@
+qradiolink (0.8.3-alpha1) UNRELEASED; urgency=medium
+
+  [ Adrian Musceac ]
+  * Changes to text messages transmission
+  * Improvements to audio playback
+  * Inprovements to VOIP packet transmission for large latency network
+  * RRC filtered 4FSK modes with rate 1/2 FEC (WIP)
+  * The usual bugfixes
+
+
+ -- Adrian Musceac <kantooon@gmail.com>  Sun, 1 Dec 2019 23:00:00 +0300
+
+
 qradiolink (0.8.2-3) RELEASED; urgency=medium
 
   [ Adrian Musceac ]
