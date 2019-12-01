@@ -102,15 +102,15 @@ void buildModeList(QVector<QString> *operating_modes)
     operating_modes->push_back("BPSK 1K");
     operating_modes->push_back("QPSK 2K");
     operating_modes->push_back("QPSK 10K");
-    operating_modes->push_back("2FSK 2K FM");
-    operating_modes->push_back("2FSK 1K FM");
+    operating_modes->push_back("2FSK RRC 2K");
+    operating_modes->push_back("2FSK RRC 1K");
     operating_modes->push_back("2FSK 2K");
     operating_modes->push_back("2FSK 1K");
-    operating_modes->push_back("2FSK 10K");
+    operating_modes->push_back("2FSK RRC 10K");
     operating_modes->push_back("4FSK 2K");
     operating_modes->push_back("4FSK 10K");
-    operating_modes->push_back("4FSK 2K FM");
-    operating_modes->push_back("4FSK 10K FM");
+    operating_modes->push_back("4FSK RRC 2K");
+    operating_modes->push_back("4FSK RRC 10K");
     operating_modes->push_back("Video 250K");
     operating_modes->push_back("IP modem 250K");
     operating_modes->push_back("Test tone");
@@ -134,15 +134,15 @@ void buildFilterWidthList(std::vector<std::complex<int>>* filter_widths, std::ve
     filter_widths->push_back(std::complex<int>(-1400, 1400)); // BPSK 700
     filter_widths->push_back(std::complex<int>(-1500, 1500));  // QPSK 2K
     filter_widths->push_back(std::complex<int>(-7000, 7000));    // QPSK 10K
-    filter_widths->push_back(std::complex<int>(-2700, 2700));  // 2FSK 2K FM
-    filter_widths->push_back(std::complex<int>(-1350, 1350));  // 2FSK 1K FM
+    filter_widths->push_back(std::complex<int>(-2700, 2700));  // 2FSK 2K RRC
+    filter_widths->push_back(std::complex<int>(-1350, 1350));  // 2FSK 1K RRC
     filter_widths->push_back(std::complex<int>(-4000, 4000));  // 2FSK 2K
     filter_widths->push_back(std::complex<int>(-2000, 2000));  // 2FSK 1K
-    filter_widths->push_back(std::complex<int>(-15000, 15000));  // 2FSK 10K
+    filter_widths->push_back(std::complex<int>(-15000, 15000));  // 2FSK 10K RRC
     filter_widths->push_back(std::complex<int>(-4400, 4400));  // 4FSK 2K
     filter_widths->push_back(std::complex<int>(-25000, 25000));    // 4FSK 10K
-    filter_widths->push_back(std::complex<int>(-2000, 2000));  // 4FSK 2K FM
-    filter_widths->push_back(std::complex<int>(-10000, 10000));    // 4FSK 10K FM
+    filter_widths->push_back(std::complex<int>(-2000, 2000));  // 4FSK 2K RRC
+    filter_widths->push_back(std::complex<int>(-10000, 10000));    // 4FSK 10K RRC
     filter_widths->push_back(std::complex<int>(-150000, 150000)); // QPSK250000 VIDEO
     filter_widths->push_back(std::complex<int>(-150000, 150000)); // QPSK250000 DATA
     filter_widths->push_back(std::complex<int>(100, 1000)); // CW K USB
@@ -164,15 +164,15 @@ void buildFilterWidthList(std::vector<std::complex<int>>* filter_widths, std::ve
     ranges->push_back(std::complex<int>(-1400, 1400)); // BPSK 700
     ranges->push_back(std::complex<int>(-1500, 1500));  // QPSK 2K
     ranges->push_back(std::complex<int>(-7000, 7000));    // QPSK 10K
-    ranges->push_back(std::complex<int>(-2700, 2700));  // 2FSK 2K FM
-    ranges->push_back(std::complex<int>(-1350, 1350));  // 2FSK 1K FM
+    ranges->push_back(std::complex<int>(-2700, 2700));  // 2FSK 2K RRC
+    ranges->push_back(std::complex<int>(-1350, 1350));  // 2FSK 1K RRC
     ranges->push_back(std::complex<int>(-4000, 4000));  // 2FSK 2K
     ranges->push_back(std::complex<int>(-2000, 2000));  // 2FSK 1K
     ranges->push_back(std::complex<int>(-15000, 15000));  // 2FSK 10K
     ranges->push_back(std::complex<int>(-4400, 4400));  // 4FSK 2K
     ranges->push_back(std::complex<int>(-25000, 25000));    // 4FSK 10K
-    ranges->push_back(std::complex<int>(-2000, 2000));  // 4FSK 2K FM
-    ranges->push_back(std::complex<int>(-10000, 10000));    // 4FSK 10K FM
+    ranges->push_back(std::complex<int>(-2000, 2000));  // 4FSK 2K RRC
+    ranges->push_back(std::complex<int>(-10000, 10000));    // 4FSK 10K RRC
     ranges->push_back(std::complex<int>(-150000, 150000)); // QPSK250000 VIDEO
     ranges->push_back(std::complex<int>(-150000, 150000)); // QPSK250000 DATA
     ranges->push_back(std::complex<int>(100, 1000)); // CW K USB
