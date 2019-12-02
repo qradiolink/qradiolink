@@ -28,6 +28,7 @@
 #include <gnuradio/blocks/multiply_const_cc.h>
 #include <gnuradio/blocks/complex_to_mag.h>
 #include <gnuradio/digital/fll_band_edge_cc.h>
+#include <gnuradio/digital/cma_equalizer_cc.h>
 #include <gnuradio/filter/rational_resampler_base_ccf.h>
 #include <gnuradio/digital/constellation.h>
 #include <gnuradio/digital/constellation_decoder_cb.h>
@@ -82,6 +83,7 @@ private:
     gr::digital::clock_recovery_mm_ff::sptr _clock_recovery_f;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
     gr::digital::constellation_decoder_cb::sptr _constellation_receiver;
+    gr::digital::cma_equalizer_cc::sptr _cma_equalizer;
     gr::filter::fft_filter_ccf::sptr _filter;
     gr::digital::descrambler_bb::sptr _descrambler;
     gr::blocks::multiply_const_ff::sptr _multiply_const_fec;

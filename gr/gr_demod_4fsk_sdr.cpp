@@ -66,26 +66,20 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
         omega_rel_limit = 0.001;
         nfilts = 25 * _samples_per_symbol;
     }
+    if(sps == 10)
+    {
+        _target_samp_rate = 10000;
+        _samples_per_symbol = sps;
+        decimation = 100;
+        interpolation = 1;
+        rs = 1000;
+        bw = 2000;
+        gain_mu = 0.025;
+        omega_rel_limit = 0.001;
+        nfilts = 12 * _samples_per_symbol;
+    }
     if((nfilts % 2) == 0)
         nfilts += 1;
-
-
-    /** unused
-    std::vector<unsigned int> const_map;
-    const_map.push_back(0);
-    const_map.push_back(1);
-    const_map.push_back(3);
-    const_map.push_back(2);
-    std::vector<int> pre_diff_code;
-    std::vector<gr_complex> constellation_points;
-    constellation_points.push_back(-0.707107 - 0.707107j);
-    constellation_points.push_back(-0.707107 + 0.707107j);
-    constellation_points.push_back(0.707107 + 0.707107j);
-    constellation_points.push_back(0.707107 - 0.707107j);
-    gr::digital::constellation_expl_rect::sptr constellation = gr::digital::constellation_expl_rect::make(
-                constellation_points,pre_diff_code,4,2,2,1,1,const_map);
-    _constellation_receiver = gr::digital::constellation_decoder_cb::make(constellation);
-    */
 
     std::vector<int> polys;
     polys.push_back(109);
@@ -126,12 +120,13 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
 
     _freq_demod = gr::analog::quadrature_demod_cf::make(_samples_per_symbol/(spacing * M_PI/2));
     _shaping_filter = gr::filter::fft_filter_fff::make(
-                1, gr::filter::firdes::root_raised_cosine(1.1,_target_samp_rate,
-                                    _target_samp_rate/_samples_per_symbol,0.2,nfilts));
+                1, gr::filter::firdes::root_raised_cosine(1.05,_target_samp_rate,
+                                    _target_samp_rate/_samples_per_symbol,0.5,nfilts));
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
                                                               omega_rel_limit);
     _clock_recovery_f = gr::digital::clock_recovery_mm_ff::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
                                                               omega_rel_limit);
+    _cma_equalizer = gr::digital::cma_equalizer_cc::make(8,1,0.0005,1);
     _float_to_complex = gr::blocks::float_to_complex::make();
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
 
@@ -155,8 +150,9 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
         connect(_rail,0,_shaping_filter,0);
         connect(_shaping_filter,0,_clock_recovery_f,0);
         connect(_clock_recovery_f,0,_phase_mod,0);
-        connect(_phase_mod,0,self(),1);
-        connect(_phase_mod,0,_complex_to_float,0);
+        connect(_phase_mod,0,_cma_equalizer,0);
+        connect(_cma_equalizer,0,self(),1);
+        connect(_cma_equalizer,0,_complex_to_float,0);
     }
     else
     {
@@ -193,6 +189,25 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
     connect(_float_to_uchar,0,_decode_ccsds,0);
     connect(_decode_ccsds,0,_descrambler,0);
     connect(_descrambler,0,self(),2);
+
+
+    /** unused
+    std::vector<unsigned int> const_map;
+    const_map.push_back(0);
+    const_map.push_back(1);
+    const_map.push_back(3);
+    const_map.push_back(2);
+    std::vector<int> pre_diff_code;
+    std::vector<gr_complex> constellation_points;
+    constellation_points.push_back(-0.707107 - 0.707107j);
+    constellation_points.push_back(-0.707107 + 0.707107j);
+    constellation_points.push_back(0.707107 + 0.707107j);
+    constellation_points.push_back(0.707107 - 0.707107j);
+    gr::digital::constellation_expl_rect::sptr constellation = gr::digital::constellation_expl_rect::make(
+                constellation_points,pre_diff_code,4,2,2,1,1,const_map);
+    _constellation_receiver = gr::digital::constellation_decoder_cb::make(constellation);
+    */
+
 
 }
 

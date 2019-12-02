@@ -28,7 +28,7 @@ namespace modem_framing {
         FrameTypeVoice2 = 0xED89,
         FrameTypeVoice1 = 0xB5,
         FrameTypeText = 0x89EDAA,
-        FrameTypeData = 0xDE98AA,
+        FrameTypeIP = 0xDE98AA,
         FrameTypeVideo = 0x98DEAA,
         FrameTypeSync = 0xCC,
         FrameTypeCallsign = 0x8CC8DD,

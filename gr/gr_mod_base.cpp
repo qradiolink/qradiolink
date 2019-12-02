@@ -61,6 +61,7 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
     _4fsk_2k = make_gr_mod_4fsk_sdr(25, 1000000, 1700, 4000, false);
     _4fsk_10k = make_gr_mod_4fsk_sdr(5, 1000000, 1700, 20000, false);
     _4fsk_2k_fm = make_gr_mod_4fsk_sdr(25, 1000000, 1700, 1800, true);
+    _4fsk_1k_fm = make_gr_mod_4fsk_sdr(50, 1000000, 1700, 900, true);
     _4fsk_10k_fm = make_gr_mod_4fsk_sdr(5, 1000000, 1700, 8500, true);
     _am = make_gr_mod_am_sdr(125,1000000, 1700, 5000);
     _bpsk_1k = make_gr_mod_bpsk_sdr(50, 1000000, 1700, 1500);
@@ -163,6 +164,11 @@ void gr_mod_base::set_mode(int mode)
     case gr_modem_types::ModemType4FSK2000FM:
         _top_block->disconnect(_vector_source,0,_4fsk_2k_fm,0);
         _top_block->disconnect(_4fsk_2k_fm,0,_rotator,0);
+        _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
+        break;
+    case gr_modem_types::ModemType4FSK1000FM:
+        _top_block->disconnect(_vector_source,0,_4fsk_1k_fm,0);
+        _top_block->disconnect(_4fsk_1k_fm,0,_rotator,0);
         _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemType4FSK20000FM:
@@ -338,6 +344,15 @@ void gr_mod_base::set_mode(int mode)
         _osmosdr_sink->set_sample_rate(1000000);
         _top_block->connect(_vector_source,0,_4fsk_2k_fm,0);
         _top_block->connect(_4fsk_2k_fm,0,_rotator,0);
+        _top_block->connect(_rotator,0,_osmosdr_sink,0);
+        break;
+    case gr_modem_types::ModemType4FSK1000FM:
+        _carrier_offset = 50000;
+        _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
+        _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
+        _osmosdr_sink->set_sample_rate(1000000);
+        _top_block->connect(_vector_source,0,_4fsk_1k_fm,0);
+        _top_block->connect(_4fsk_1k_fm,0,_rotator,0);
         _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemType4FSK20000FM:
@@ -616,6 +631,7 @@ void gr_mod_base::set_bb_gain(float value)
     _4fsk_2k->set_bb_gain(value);
     _4fsk_10k->set_bb_gain(value);
     _4fsk_2k_fm->set_bb_gain(value);
+    _4fsk_1k_fm->set_bb_gain(value);
     _4fsk_10k_fm->set_bb_gain(value);
     _am->set_bb_gain(value);
     _bpsk_1k->set_bb_gain(value);

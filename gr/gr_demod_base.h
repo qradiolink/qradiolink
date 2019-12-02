@@ -133,6 +133,7 @@ private:
     gr_demod_4fsk_sdr_sptr _4fsk_2k;
     gr_demod_4fsk_sdr_sptr _4fsk_10k;
     gr_demod_4fsk_sdr_sptr _4fsk_2k_fm;
+    gr_demod_4fsk_sdr_sptr _4fsk_1k_fm;
     gr_demod_4fsk_sdr_sptr _4fsk_10k_fm;
     gr_demod_am_sdr_sptr _am;
     gr_demod_bpsk_sdr_sptr _bpsk_1k;

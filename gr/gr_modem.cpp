@@ -141,6 +141,10 @@ void gr_modem::toggleTxMode(int modem_type)
         {
             _tx_frame_length = 7;
         }
+        else if(modem_type == gr_modem_types::ModemType4FSK1000FM)
+        {
+            _tx_frame_length = 4;
+        }
         else if(modem_type == gr_modem_types::ModemTypeQPSKVideo)
         {
             _tx_frame_length = 3122;
@@ -221,6 +225,11 @@ void gr_modem::toggleRxMode(int modem_type)
         {
             _bit_buf_len = 8 *8;
             _rx_frame_length = 7;
+        }
+        else if (modem_type == gr_modem_types::ModemType4FSK1000FM)
+        {
+            _bit_buf_len = 4 *8;
+            _rx_frame_length = 4;
         }
         else if (modem_type == gr_modem_types::ModemTypeQPSKVideo)
         {
@@ -597,7 +606,7 @@ void gr_modem::transmitVideoData(unsigned char *data, int size)
 void gr_modem::transmitNetData(unsigned char *data, int size)
 {
     QVector<std::vector<unsigned char>*> frames;
-    std::vector<unsigned char> *one_frame = frame(data, size, FrameTypeData);
+    std::vector<unsigned char> *one_frame = frame(data, size, FrameTypeIP);
     frames.append(one_frame);
     transmit(frames);
     delete[] data;
@@ -606,7 +615,7 @@ void gr_modem::transmitNetData(unsigned char *data, int size)
 std::vector<unsigned char>* gr_modem::frame(unsigned char *encoded_audio, int data_size, int frame_type)
 {
     std::vector<unsigned char> *data = new std::vector<unsigned char>;
-    if(frame_type == FrameTypeData && _burst_ip_modem)
+    if(frame_type == FrameTypeIP && _burst_ip_modem)
     {
         for(int i = 0;i < 25;i++)
             data->push_back(0xCC);
@@ -615,7 +624,8 @@ std::vector<unsigned char>* gr_modem::frame(unsigned char *encoded_audio, int da
     {
         if((_modem_type_tx == gr_modem_types::ModemTypeBPSK1000)
                 || (_modem_type_tx == gr_modem_types::ModemType2FSK1000FM)
-                || (_modem_type_tx == gr_modem_types::ModemType2FSK1000))
+                || (_modem_type_tx == gr_modem_types::ModemType2FSK1000)
+                || (_modem_type_tx == gr_modem_types::ModemType4FSK1000FM))
         {
             data->push_back(0xB5);
         }
@@ -635,7 +645,7 @@ std::vector<unsigned char>* gr_modem::frame(unsigned char *encoded_audio, int da
         data->push_back(0x98);
         data->push_back(0xDE);
     }
-    else if(frame_type == FrameTypeData)
+    else if(frame_type == FrameTypeIP)
     {
         data->push_back(0xDE);
         data->push_back(0x98);
@@ -648,7 +658,8 @@ std::vector<unsigned char>* gr_modem::frame(unsigned char *encoded_audio, int da
 
     if((_modem_type_tx != gr_modem_types::ModemTypeBPSK1000) &&
             (_modem_type_tx != gr_modem_types::ModemType2FSK1000FM) &&
-            (_modem_type_tx != gr_modem_types::ModemType2FSK1000))
+            (_modem_type_tx != gr_modem_types::ModemType2FSK1000) &&
+            (_modem_type_tx != gr_modem_types::ModemType4FSK1000FM))
         data->push_back(0xAA); // frame start
     for(int i=0;i< data_size;i++)
     {
@@ -856,12 +867,14 @@ bool gr_modem::synchronize(int v_size, std::vector<unsigned char> *data)
             if((_modem_type_rx != gr_modem_types::ModemTypeBPSK1000)
                     && (_modem_type_rx != gr_modem_types::ModemType2FSK1000FM)
                     && (_modem_type_rx != gr_modem_types::ModemType2FSK1000)
+                    && (_modem_type_rx != gr_modem_types::ModemType4FSK1000FM)
                     && (_current_frame_type == FrameTypeVoice))
             {
                 frame_length++; // reserved data
             }
             else if((_modem_type_rx != gr_modem_types::ModemTypeBPSK1000)
                     && (_modem_type_rx != gr_modem_types::ModemType2FSK1000FM)
+                    && (_modem_type_rx != gr_modem_types::ModemType4FSK1000FM)
                     && (_modem_type_rx != gr_modem_types::ModemType2FSK1000)
                     && (_current_frame_type != FrameTypeVoice))
             {
@@ -888,7 +901,8 @@ int gr_modem::findSync(unsigned char bit)
     u_int32_t temp;
     if((_modem_type_rx == gr_modem_types::ModemTypeBPSK1000) ||
             (_modem_type_rx == gr_modem_types::ModemType2FSK1000FM) ||
-            (_modem_type_rx == gr_modem_types::ModemType2FSK1000))
+            (_modem_type_rx == gr_modem_types::ModemType2FSK1000) ||
+            (_modem_type_rx == gr_modem_types::ModemType4FSK1000FM))
     {
         temp = _shift_reg & 0xFF;
         if (temp == FrameTypeVoice1)
@@ -930,10 +944,10 @@ int gr_modem::findSync(unsigned char bit)
         }
     }
     temp = _shift_reg & 0xFFFFFF;
-    if(temp == FrameTypeData)
+    if(temp == FrameTypeIP)
     {
         _sync_found = true;
-        return FrameTypeData;
+        return FrameTypeIP;
     }
     if(temp == FrameTypeVideo)
     {
@@ -1013,7 +1027,8 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
         memset(codec2_data,0,_rx_frame_length);
         if(((_modem_type_rx == gr_modem_types::ModemTypeBPSK1000) ||
             (_modem_type_rx == gr_modem_types::ModemType2FSK1000FM) ||
-            (_modem_type_rx == gr_modem_types::ModemType2FSK1000))
+            (_modem_type_rx == gr_modem_types::ModemType2FSK1000) ||
+            (_modem_type_rx == gr_modem_types::ModemType4FSK1000FM))
                  && (_modem_sync >= 16))
         {
             memcpy(codec2_data, received_data, _rx_frame_length);
@@ -1022,7 +1037,8 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
         }
         else if((_modem_type_rx != gr_modem_types::ModemTypeBPSK1000) &&
                 (_modem_type_rx != gr_modem_types::ModemType2FSK1000FM) &&
-                (_modem_type_rx != gr_modem_types::ModemType2FSK1000))
+                (_modem_type_rx != gr_modem_types::ModemType2FSK1000) &&
+                (_modem_type_rx != gr_modem_types::ModemType4FSK1000FM))
         {
             memcpy(codec2_data, received_data+1, _rx_frame_length);
             emit digitalAudio(codec2_data,_rx_frame_length);
@@ -1045,9 +1061,9 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
         memcpy(video_data, received_data, _rx_frame_length);
         emit videoData(video_data,_rx_frame_length);
     }
-    else if (current_frame_type == FrameTypeData )
+    else if (current_frame_type == FrameTypeIP )
     {
-        _last_frame_type = FrameTypeData;
+        _last_frame_type = FrameTypeIP;
         unsigned char *net_data = new unsigned char[_rx_frame_length];
         memcpy(net_data, received_data, _rx_frame_length);
         emit netData(net_data,_rx_frame_length);
