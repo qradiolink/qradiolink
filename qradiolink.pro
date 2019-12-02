@@ -54,6 +54,7 @@ SOURCES += main.cpp\
         src/radioprotocol.cpp \
         audio/audiowriter.cpp \
         audio/audioreader.cpp \
+        audio/audiorecorder.cpp \
         src/mumblechannel.cpp \
         src/radiochannel.cpp \
         src/relaycontroller.cpp \
@@ -64,6 +65,7 @@ SOURCES += main.cpp\
         src/sslclient.cpp\
         src/station.cpp\
         src/logger.cpp \
+        src/gr_modem.cpp \
         audio/audiomixer.cpp \
         src/telnetclient.cpp\
         ext/Mumble.pb.cc\
@@ -76,7 +78,6 @@ SOURCES += main.cpp\
         net/netdevice.cpp \
     qtgui/freqctrl.cpp \
     qtgui/plotter.cpp \
-    gr/gr_modem.cpp \
     gr/gr_vector_source.cpp \
     gr/gr_vector_sink.cpp \
     gr/gr_demod_bpsk_sdr.cpp \
@@ -104,7 +105,8 @@ SOURCES += main.cpp\
     gr/gr_4fsk_discriminator.cpp \
     gr/gr_const_sink.cpp \
     gr/rx_fft.cpp \
-    audio/audiorecorder.cpp
+    src/layer1framing.cpp
+
 
 
 HEADERS  += mainwindow.h\
@@ -114,6 +116,7 @@ HEADERS  += mainwindow.h\
         src/radioprotocol.h \
         audio/audiowriter.h \
         audio/audioreader.h \
+        audio/audiorecorder.h \
         src/mumblechannel.h \
         src/radiochannel.h \
         src/relaycontroller.h \
@@ -125,6 +128,9 @@ HEADERS  += mainwindow.h\
         src/station.h\
         src/telnetclient.h\
         src/logger.h \
+        src/modem_types.h \
+        src/gr_modem.h \
+        src/framing.h \
         audio/audiomixer.h \
         src/config_defines.h\
         ext/dec.h\
@@ -140,7 +146,6 @@ HEADERS  += mainwindow.h\
         src/radiocontroller.h \
     qtgui/freqctrl.h \
     qtgui/plotter.h \
-    gr/gr_modem.h \
     gr/gr_vector_source.h \
     gr/gr_vector_sink.h \
     gr/gr_demod_bpsk_sdr.h \
@@ -168,9 +173,8 @@ HEADERS  += mainwindow.h\
     gr/gr_audio_sink.h \
     gr/gr_4fsk_discriminator.h \
     gr/gr_const_sink.h \
-    gr/modem_types.h \
-    audio/audiorecorder.h \
-    src/framing.h
+    src/layer1framing.h
+
 
 
 !isEmpty(LIBDIR) {

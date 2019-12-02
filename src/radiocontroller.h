@@ -43,7 +43,7 @@
 #include "audio/audioencoder.h"
 #include "video/videoencoder.h"
 #include "video/imagecapture.h"
-#include "gr/gr_modem.h"
+#include "src/gr_modem.h"
 #include "net/netdevice.h"
 #include "logger.h"
 
