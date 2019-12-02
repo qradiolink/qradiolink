@@ -70,7 +70,7 @@ gr_mod_2fsk_sdr::gr_mod_2fsk_sdr(int sps, int samp_rate, int carrier_freq,
     _amplify = gr::blocks::multiply_const_cc::make(0.9,1);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
     _filter = gr::filter::fft_filter_ccf::make(1,gr::filter::firdes::low_pass_2(
-            1, if_samp_rate, _filter_width, 1200, 120, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+            1, if_samp_rate, _filter_width, 1200, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
     _resampler2 = gr::filter::rational_resampler_base_ccf::make(second_interp, 1,
                 gr::filter::firdes::low_pass(second_interp,_samp_rate,_filter_width,_filter_width*5));
 

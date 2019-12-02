@@ -55,7 +55,7 @@
 #include "gr_demod_ssb_sdr.h"
 #include "gr_demod_wbfm_sdr.h"
 #include "gr_demod_freedv.h"
-#include "modem_types.h"
+#include "src/modem_types.h"
 
 class gr_demod_base : public QObject
 {

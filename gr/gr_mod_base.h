@@ -22,7 +22,7 @@
 #include <QVector>
 #include <QDebug>
 #include <string>
-#include "modem_types.h"
+#include "src/modem_types.h"
 #include <gnuradio/top_block.h>
 #include <gnuradio/blocks/rotator_cc.h>
 #include <gnuradio/vocoder/freedv_api.h>

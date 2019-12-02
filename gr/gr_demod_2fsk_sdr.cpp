@@ -45,7 +45,7 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(std::vector<int>signature, int sps, int sam
         decim = 50;
         interp = 1;
         nfilts = 35;
-        gain_mu = 0.005;
+        gain_mu = 0.025;
     }
     else
     {
@@ -54,7 +54,7 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(std::vector<int>signature, int sps, int sam
         decim = 25;
         interp = 1;
         nfilts = 125;
-        gain_mu = 0.001;
+        gain_mu = 0.025;
     }
     int spacing = 2;
     if(fm)
