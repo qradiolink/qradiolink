@@ -65,6 +65,7 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
 
 
     ui->tabWidget->setCurrentIndex(0);
+    ui->settingsTab->setCurrentIndex(0);
 
     ui->frameCtrlFreq->setup(10, 10U, 9000000000U, 1, UNITS_MHZ );
     //ui->frameCtrlFreq->setBkColor(QColor(202, 194, 197,0xFF));

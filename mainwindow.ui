@@ -96,7 +96,7 @@
 </string>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>3</number>
         </property>
         <property name="iconSize">
          <size>
@@ -2178,7 +2178,7 @@ color: rgb(0, 67, 98);</string>
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout_8">
           <item>
-           <widget class="QTabWidget" name="tabWidget_2">
+           <widget class="QTabWidget" name="settingsTab">
             <property name="font">
              <font>
               <family>Sans Serif</family>
@@ -2189,7 +2189,7 @@ color: rgb(0, 67, 98);</string>
              </font>
             </property>
             <property name="currentIndex">
-             <number>1</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="tab">
              <attribute name="title">
