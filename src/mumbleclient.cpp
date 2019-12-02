@@ -449,10 +449,6 @@ int MumbleClient::muteStation(QString radio_id)
             sessid = s->id;
             if(s->channel_id != _channel_id)
                 return -2;
-            if(s->called_by != _session_id)
-                return -3;
-            s->called_by = 0;
-            s->in_call = 0;
             s->channel_id = -1;
         }
     }
@@ -483,8 +479,6 @@ int MumbleClient::unmuteStation(QString radio_id)
             sessid = s->id;
             if(s->channel_id > 1)
                 return s->channel_id;
-            s->called_by = _session_id;
-            s->in_call = 1;
             s->channel_id = _channel_id;
         }
     }

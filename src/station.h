@@ -32,16 +32,10 @@ public:
     quint64 id;
     QString callsign;
     QString radio_id;
-    QString ip;
-    QString hostname;
-    int in_call;
     quint64 channel_id;
-    quint64 called_by;     // calling station id
-    int call_time;     // time of call
     int repeater;
     int local;
     int active;
-    int waiting;
     bool mute;
     bool deaf;
     bool is_user;

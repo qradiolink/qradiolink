@@ -80,7 +80,7 @@ gr_mod_qpsk_sdr::gr_mod_qpsk_sdr(int sps, int samp_rate, int carrier_freq,
                 1, gr::filter::firdes::root_raised_cosine(1,_samp_rate,
                                 _samp_rate/_samples_per_symbol,0.35,nfilts * _samples_per_symbol));
     _repeat = gr::blocks::repeat::make(8, _samples_per_symbol);
-    _amplify = gr::blocks::multiply_const_cc::make(0.5,1);
+    _amplify = gr::blocks::multiply_const_cc::make(0.6,1);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
     _filter = gr::filter::fft_filter_ccf::make(1,gr::filter::firdes::low_pass_2(
                 1, _samp_rate, _filter_width, filter_slope, 120, gr::filter::firdes::WIN_BLACKMAN_HARRIS));

@@ -21,16 +21,10 @@ Station::Station()
     id = 0;
     callsign="";
     radio_id = "";
-    ip="127.0.0.1";
-    hostname="localhost";
-    in_call=0;
     channel_id=-1;
-    called_by=0;
-    call_time=0;
     repeater=0;
     local=0;
     active=1;
-    waiting = 0;
     is_user = false;
 
 }
