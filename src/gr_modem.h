@@ -57,7 +57,6 @@ signals:
     void demodulated_audio(short *pcm, short size);
     void textReceived(QString text);
     void protoReceived(QByteArray data);
-    void repeaterInfoReceived(QByteArray data);
     void callsignReceived(QString text);
     void audioFrameReceived();
     void dataFrameReceived();

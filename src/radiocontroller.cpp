@@ -113,8 +113,6 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     QObject::connect(_modem,SIGNAL(protoReceived(QByteArray)),this,
                      SLOT(protoReceived(QByteArray)));
     QObject::connect(_modem,SIGNAL(textReceived(QString)),this,SLOT(textReceived(QString)));
-    QObject::connect(_modem,SIGNAL(repeaterInfoReceived(QByteArray)),this,
-                     SLOT(repeaterInfoReceived(QByteArray)));
     QObject::connect(_modem,SIGNAL(callsignReceived(QString)),this,
                      SLOT(callsignReceived(QString)));
     QObject::connect(_modem,SIGNAL(audioFrameReceived()),this,SLOT(audioFrameReceived()));
@@ -776,9 +774,9 @@ void RadioController::transmitBinData()
         frame_size = 4;
     else
         frame_size = 47;
-    QByteArray msg = _radio_protocol->buildPageMessage(_callsign, _proto_out, false, _callsign);
-    int no_frames = msg.size() / frame_size;
-    int leftover = msg.size() % frame_size;
+
+    int no_frames = _proto_out.size() / frame_size;
+    int leftover = _proto_out.size() % frame_size;
     if(leftover > 0)
     {
         no_frames += 1;
@@ -789,11 +787,11 @@ void RadioController::transmitBinData()
         if((i == (no_frames - 1)) && leftover > 0)
         {
             /// last frame
-            data_frame = msg.mid(i * frame_size, leftover);
+            data_frame = _proto_out.mid(i * frame_size, leftover);
         }
         else
         {
-            data_frame = msg.mid(i * frame_size, frame_size);
+            data_frame = _proto_out.mid(i * frame_size, frame_size);
         }
         _modem->transmitBinData(data_frame, modem_framing::FrameTypeProto);
         // FIXME: frame should last about 40 msec average, however in practice the clock
@@ -805,6 +803,7 @@ void RadioController::transmitBinData()
         if(!_transmitting)
         {
             _proto_transmit_on = false;
+            _proto_out.clear();
             return;
         }
     }
@@ -814,6 +813,7 @@ void RadioController::transmitBinData()
     }
     _transmitting = false;
     _proto_transmit_on = false;
+    _proto_out.clear();
 }
 
 void RadioController::sendTxBeep(int sound)
@@ -1436,6 +1436,8 @@ void RadioController::textData(QString text, bool repeat)
     _repeat_text = repeat;
     _text_out = text;
     _process_text = true;
+    //_proto_out = _radio_protocol->buildPageMessage(_callsign, text, false, _callsign);
+    //_process_data = true;
 }
 
 void RadioController::textMumble(QString text, bool channel)
@@ -1465,11 +1467,6 @@ void RadioController::textReceived(QString text)
         _incoming_text_buffer = "";
     }
     emit printText(text, false);
-}
-
-void RadioController::repeaterInfoReceived(QByteArray data)
-{
-    _radio_protocol->dataIn(data);
 }
 
 /// GUI only

@@ -39,7 +39,7 @@ public:
         MsgTypeChannel,
         MsgTypeUser,
         MsgTypePageMessage,
-        MsgTypeVoipInfo,
+        MsgTypeRepeaterInfo,
     };
     explicit RadioProtocol(Logger *logger, QObject *parent = 0);
 
@@ -64,6 +64,7 @@ private:
     QByteArray *_buffer;
     void processPayload(QByteArray data);
     void processPageMessage(QByteArray message);
+    void processRepeaterInfo(QByteArray message);
 
 };
 

@@ -115,7 +115,6 @@ public slots:
     void textMumble(QString text, bool channel = false);
     void stop();
     void textReceived(QString text);
-    void repeaterInfoReceived(QByteArray data);
     void callsignReceived(QString callsign);
     void protoReceived(QByteArray data);
     void audioFrameReceived();

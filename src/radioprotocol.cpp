@@ -25,7 +25,6 @@ RadioProtocol::RadioProtocol(Logger *logger, QObject *parent) :
 
 void RadioProtocol::processRadioMessage(QByteArray data)
 {
-    QByteArray message;
     int msg_type;
     unsigned int data_len;
     unsigned int crc;
@@ -33,8 +32,14 @@ void RadioProtocol::processRadioMessage(QByteArray data)
     stream.setByteOrder(QDataStream::BigEndian);
     stream >> msg_type;
     stream >> data_len;
-    stream >> message;
+    if(data_len > 1024*1024)
+        return;
+    char *tmp = new char[data_len];
     stream >> crc;
+    stream.readBytes(tmp, data_len);
+    QByteArray message(tmp, data_len);
+    delete tmp;
+
     if(crc != gr::digital::crc32(message.toStdString()))
     {
         _logger->log(Logger::LogLevelCritical, "Radio packet CRC32 failed, dropping packet");
@@ -46,26 +51,27 @@ void RadioProtocol::processRadioMessage(QByteArray data)
     case MsgTypePageMessage:
         processPageMessage(message);
         break;
-    case MsgTypeVoipInfo:
-        dataIn(message);
+    case MsgTypeRepeaterInfo:
+        processRepeaterInfo(message);
         break;
     default:
         _logger->log(Logger::LogLevelDebug,
                      QString("Radio message type %1 not implemented").arg(msg_type));
         break;
     }
+
 }
 
 QByteArray RadioProtocol::buildRadioMessage(QByteArray data, int msg_type)
 {
+    unsigned int crc = gr::digital::crc32(data.toStdString());
     QByteArray message;
     QDataStream stream(&message, QIODevice::WriteOnly);
     stream.setByteOrder(QDataStream::BigEndian);
     stream << msg_type;
     stream << data.length();
-    stream << data;
-    unsigned int crc = gr::digital::crc32(data.toStdString());
     stream << crc;
+    stream << data;
     return message;
 }
 
@@ -73,62 +79,42 @@ QByteArray RadioProtocol::buildPageMessage(QString calling_callsign, QString cal
                                            bool retransmit, QString via_node)
 {
 
-    QRadioLink::PageMessage p;
-    p.set_calling_user(calling_callsign.toStdString());
-    p.set_called_user(called_callsign.toStdString());
-    p.set_retransmit(retransmit);
-    p.set_via_node(via_node.toStdString());
-    int size = p.ByteSize();
+    QRadioLink::PageMessage *p = new QRadioLink::PageMessage;
+    p->set_calling_user(calling_callsign.toStdString());
+    p->set_called_user(called_callsign.toStdString());
+    p->set_retransmit(retransmit);
+    p->set_via_node(via_node.toStdString());
+    int size = p->ByteSize();
     unsigned char data[size];
-    p.SerializeToArray(data,size);
+    p->SerializeToArray(data,size);
     QByteArray msg(reinterpret_cast<const char*>(data));
+    delete p;
     return buildRadioMessage(msg, MsgTypePageMessage);
 }
 
 QByteArray RadioProtocol::buildRepeaterInfo()
 {
     QByteArray data;
-
+    QRadioLink::RepeaterInfo repeater_info;
     for(int i=0;i <_voip_channels.size();i++)
     {
-        data.append(0xCF);
-        data.append(0x77);
-        data.append(0x07);
-        data.append(0xAB);
-        data.append(0x1); // TODO: msg type channel
-        QRadioLink::Channel ch;
-        ch.set_channel_id(_voip_channels.at(i)->id);
-        ch.set_parent_id(_voip_channels.at(i)->parent_id);
-        ch.set_name(_voip_channels.at(i)->name.toStdString().c_str());
-        ch.set_description(_voip_channels.at(i)->description.toStdString().c_str());
-        char bin[ch.ByteSize()];
-        ch.SerializeToArray(bin,ch.ByteSize());
-        data.append(bin, ch.ByteSize());
-        data.append(0xAB);
-        data.append(0x07);
-        data.append(0x77);
-        data.append(0xCF);
+        QRadioLink::RepeaterInfo::Channel *ch = repeater_info.add_channels();
+        ch->set_channel_id(_voip_channels.at(i)->id);
+        ch->set_parent_id(_voip_channels.at(i)->parent_id);
+        ch->set_name(_voip_channels.at(i)->name.toStdString().c_str());
+        ch->set_description(_voip_channels.at(i)->description.toStdString().c_str());
     }
     for(int i=0;i <_voip_users.size();i++)
     {
-        data.append(0xCF);
-        data.append(0x77);
-        data.append(0x07);
-        data.append(0xAB);
-        data.append(0x2); // TODO: msg type user
-        QRadioLink::User u;
-        u.set_user_id(_voip_users.at(i)->id);
-        u.set_channel_id(_voip_users.at(i)->channel_id);
-        u.set_name(_voip_users.at(i)->callsign.toStdString().c_str());
-        char bin[u.ByteSize()];
-        u.SerializeToArray(bin,u.ByteSize());
-        data.append(bin, u.ByteSize());
-        data.append(0xAB);
-        data.append(0x07);
-        data.append(0x77);
-        data.append(0xCF);
+        QRadioLink::RepeaterInfo::User *u = repeater_info.add_users();;
+        u->set_user_id(_voip_users.at(i)->id);
+        u->set_channel_id(_voip_users.at(i)->channel_id);
+        u->set_name(_voip_users.at(i)->callsign.toStdString().c_str());
     }
-    return buildRadioMessage(data, MsgTypeVoipInfo);
+    char bin[repeater_info.ByteSize()];
+    repeater_info.SerializeToArray(bin,repeater_info.ByteSize());
+    data.append(bin, repeater_info.ByteSize());
+    return buildRadioMessage(data, MsgTypeRepeaterInfo);
 }
 
 
@@ -143,50 +129,18 @@ void RadioProtocol::setChannels(QVector<MumbleChannel *> list)
     _voip_channels = list;
 }
 
-void RadioProtocol::dataIn(QByteArray data)
+void RadioProtocol::processRepeaterInfo(QByteArray message)
 {
-    _buffer->append(data);
-    QByteArray tail;
-    tail.append(0xAB);
-    tail.append(0x07);
-    tail.append(0x77);
-    tail.append(0xCF);
-    QByteArray head;
-    head.append(0xCF);
-    head.append(0x77);
-    head.append(0x07);
-    head.append(0xAB);
-    int t = _buffer->indexOf(tail);
-    int h = _buffer->indexOf(head);
-    if((t != -1) && (h != -1) && (t < h))
+    QRadioLink::RepeaterInfo info;
+    info.ParseFromArray(message.data(), message.size());
+    for(int i=0; i<info.channels_size();i++)
     {
-        QByteArray payload = _buffer->left(t);
-        QByteArray rest = _buffer->mid(t+4);
-        processPayload(payload);
-        _buffer->clear();
-        dataIn(rest);
+        qDebug() << QString::fromStdString(info.channels(i).name());
     }
-    else if((t != -1) && (h == -1))
+    for(int i=0; i<info.users_size();i++)
     {
-        QByteArray payload = _buffer->left(t);
-        processPayload(payload);
-        QByteArray rest = _buffer->mid(t+4);
-        _buffer->clear();
-        _buffer->append(rest);
+        qDebug() << QString::fromStdString(info.users(i).name());
     }
-    else if((t != -1) && (h != -1) && (t > h))
-    {
-        QByteArray rest = _buffer->mid(h+4);
-        _buffer->clear();
-        dataIn(rest);
-    }
-    else if((t == -1) && (h != -1))
-    {
-        QByteArray rest = _buffer->mid(h+4);
-        _buffer->clear();
-        _buffer->append(rest);
-    }
-
 }
 
 void RadioProtocol::processPayload(QByteArray data)
@@ -200,6 +154,7 @@ void RadioProtocol::processPayload(QByteArray data)
     {
         QRadioLink::Channel ch;
         ch.ParseFromArray(data,data.size());
+        qDebug() << QString::fromStdString(ch.name());
         /*
         MumbleChannel *chan = new MumbleChannel(
                     ch.channel_id(),ch.parent_id(),QString::fromStdString(ch.name()),

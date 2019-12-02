@@ -26,6 +26,24 @@ message User {
     optional string comment = 5;
 }
 
+message RepeaterInfo {
+    message Channel {
+        optional uint32 channel_id = 1;
+        optional uint32 parent_id = 2;
+        optional string name = 3;
+        optional string description = 4;
+    }
+    message User {
+        optional uint32 session = 1;
+        optional string name = 2;
+        optional uint32 user_id = 3;
+        optional uint32 channel_id = 4;
+        optional string comment = 5;
+    }
+    repeated Channel channels = 1;
+    repeated User users = 2;
+}
+
 message Parameters {
     required uint32 station_id = 1;
     optional uint32 in_call = 2;
