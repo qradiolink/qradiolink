@@ -51,7 +51,7 @@ SOURCES += main.cpp\
         video/videoencoder.cpp \
         video/videocapture.cpp \
         src/mumbleclient.cpp\
-        src/radioprotocol.cpp \
+        src/layer2.cpp \
         audio/audiowriter.cpp \
         audio/audioreader.cpp \
         audio/audiorecorder.cpp \
@@ -113,7 +113,7 @@ HEADERS  += mainwindow.h\
         audio/audioencoder.h\
         audio/audioprocessor.h \
         video/videoencoder.h \
-        src/radioprotocol.h \
+        src/layer2.h \
         audio/audiowriter.h \
         audio/audioreader.h \
         audio/audiorecorder.h \

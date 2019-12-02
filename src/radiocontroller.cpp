@@ -29,7 +29,7 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     _modem = new gr_modem;
     _codec = new AudioEncoder(settings);
     _audio_mixer_in = new AudioMixer;
-    _radio_protocol = new RadioProtocol(logger);
+    _radio_protocol = new Layer2Protocol(logger);
     _relay_controller = new RelayController(logger);
     _video = new VideoEncoder(logger);
     //_camera = new ImageCapture(settings, logger);

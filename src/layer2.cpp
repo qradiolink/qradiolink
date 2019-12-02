@@ -14,16 +14,16 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#include "radioprotocol.h"
+#include "layer2.h"
 
-RadioProtocol::RadioProtocol(Logger *logger, QObject *parent) :
+Layer2Protocol::Layer2Protocol(Logger *logger, QObject *parent) :
     QObject(parent)
 {
     _logger = logger;
     _buffer = new QByteArray;
 }
 
-void RadioProtocol::processRadioMessage(QByteArray data)
+void Layer2Protocol::processRadioMessage(QByteArray data)
 {
     int msg_type;
     unsigned int data_len;
@@ -62,7 +62,7 @@ void RadioProtocol::processRadioMessage(QByteArray data)
 
 }
 
-QByteArray RadioProtocol::buildRadioMessage(QByteArray data, int msg_type)
+QByteArray Layer2Protocol::buildRadioMessage(QByteArray data, int msg_type)
 {
     unsigned int crc = gr::digital::crc32(data.toStdString());
     QByteArray message;
@@ -75,7 +75,7 @@ QByteArray RadioProtocol::buildRadioMessage(QByteArray data, int msg_type)
     return message;
 }
 
-QByteArray RadioProtocol::buildPageMessage(QString calling_callsign, QString called_callsign,
+QByteArray Layer2Protocol::buildPageMessage(QString calling_callsign, QString called_callsign,
                                            bool retransmit, QString via_node)
 {
 
@@ -92,7 +92,7 @@ QByteArray RadioProtocol::buildPageMessage(QString calling_callsign, QString cal
     return buildRadioMessage(msg, MsgTypePageMessage);
 }
 
-QByteArray RadioProtocol::buildRepeaterInfo()
+QByteArray Layer2Protocol::buildRepeaterInfo()
 {
     QByteArray data;
     QRadioLink::RepeaterInfo repeater_info;
@@ -118,18 +118,18 @@ QByteArray RadioProtocol::buildRepeaterInfo()
 }
 
 
-void RadioProtocol::setStations(QVector<Station *> list)
+void Layer2Protocol::setStations(QVector<Station *> list)
 {
 
     _voip_users = list;
 }
 
-void RadioProtocol::setChannels(QVector<MumbleChannel *> list)
+void Layer2Protocol::setChannels(QVector<MumbleChannel *> list)
 {
     _voip_channels = list;
 }
 
-void RadioProtocol::processRepeaterInfo(QByteArray message)
+void Layer2Protocol::processRepeaterInfo(QByteArray message)
 {
     QRadioLink::RepeaterInfo info;
     info.ParseFromArray(message.data(), message.size());
@@ -143,7 +143,7 @@ void RadioProtocol::processRepeaterInfo(QByteArray message)
     }
 }
 
-void RadioProtocol::processPayload(QByteArray data)
+void Layer2Protocol::processPayload(QByteArray data)
 {
 
     int msg_type = data.at(0);
@@ -173,7 +173,7 @@ void RadioProtocol::processPayload(QByteArray data)
     }
 }
 
-void RadioProtocol::processPageMessage(QByteArray message)
+void Layer2Protocol::processPageMessage(QByteArray message)
 {
     QRadioLink::PageMessage page;
     page.ParseFromArray(message.data(), message.size());

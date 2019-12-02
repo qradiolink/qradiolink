@@ -35,7 +35,7 @@
 #include "settings.h"
 #include "radiochannel.h"
 #include "mumblechannel.h"
-#include "radioprotocol.h"
+#include "layer2.h"
 #include "radiochannel.h"
 #include "relaycontroller.h"
 #include "station.h"
@@ -219,7 +219,7 @@ private:
     ImageCapture *_camera;
     NetDevice *_net_device;
     gr_modem *_modem;
-    RadioProtocol *_radio_protocol;
+    Layer2Protocol *_radio_protocol;
     QMutex *_mutex;
     QTimer *_voice_led_timer;
     QTimer *_data_led_timer;

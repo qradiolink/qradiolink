@@ -14,8 +14,8 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#ifndef RADIOPROTOCOL_H
-#define RADIOPROTOCOL_H
+#ifndef LAYER2_H
+#define LAYER2_H
 
 #include <QObject>
 #include <QVector>
@@ -30,7 +30,7 @@
 #include "ext/QRadioLink.pb.h"
 
 typedef QVector<MumbleChannel*> ChannelList;
-class RadioProtocol : public QObject
+class Layer2Protocol : public QObject
 {
     Q_OBJECT
 public:
@@ -41,7 +41,7 @@ public:
         MsgTypePageMessage,
         MsgTypeRepeaterInfo,
     };
-    explicit RadioProtocol(Logger *logger, QObject *parent = 0);
+    explicit Layer2Protocol(Logger *logger, QObject *parent = 0);
 
     QByteArray buildRepeaterInfo();
     void addChannel(MumbleChannel *chan);
@@ -68,4 +68,4 @@ private:
 
 };
 
-#endif // RADIOPROTOCOL_H
+#endif // LAYER2_H
