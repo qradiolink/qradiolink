@@ -130,7 +130,6 @@ HEADERS  += mainwindow.h\
         src/logger.h \
         src/modem_types.h \
         src/gr_modem.h \
-        src/framing.h \
         audio/audiomixer.h \
         src/config_defines.h\
         ext/dec.h\

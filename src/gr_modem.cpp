@@ -16,8 +16,6 @@
 
 #include "gr_modem.h"
 
-using namespace modem_framing;
-
 gr_modem::gr_modem(QObject *parent) :
     QObject(parent)
 {

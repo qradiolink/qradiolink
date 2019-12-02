@@ -29,14 +29,12 @@
 #include <string>
 #include "ext/utils.h"
 #include "src/settings.h"
-#include "src/framing.h"
+#include "src/layer1framing.h"
 #include "src/modem_types.h"
 #include "gr/gr_mod_base.h"
 #include "gr/gr_demod_base.h"
 
 #include <math.h>
-
-using namespace modem_framing;
 
 class gr_modem : public QObject
 {

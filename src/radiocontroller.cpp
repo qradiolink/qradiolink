@@ -719,7 +719,7 @@ void RadioController::transmitTextData()
         {
             text_frame = _text_out.mid(i * frame_size, frame_size);
         }
-        _modem->transmitTextData(text_frame, modem_framing::FrameTypeText);
+        _modem->transmitTextData(text_frame, FrameTypeText);
         // FIXME: frame should last about 40 msec average, however in practice the clock
         // is not very precise so the last bytes may be truncated because TX is switched off
         struct timespec time_to_sleep = {0, 39800000L };
@@ -793,7 +793,7 @@ void RadioController::transmitBinData()
         {
             data_frame = _proto_out.mid(i * frame_size, frame_size);
         }
-        _modem->transmitBinData(data_frame, modem_framing::FrameTypeProto);
+        _modem->transmitBinData(data_frame, FrameTypeProto);
         // FIXME: frame should last about 40 msec average, however in practice the clock
         // is not very precise so the last bytes may be truncated because TX is switched off
         struct timespec time_to_sleep = {0, 39800000L };
