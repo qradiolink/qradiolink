@@ -37,22 +37,18 @@ gr_mod_ssb_sdr::gr_mod_ssb_sdr(int sps, int samp_rate, int carrier_freq,
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
 
-    _agc = gr::analog::agc2_ff::make(1e-2, 1e-3, 0.95, 2);
-    _rail = gr::analog::rail_ff::make(-0.99, 0.99);
+    _agc = gr::analog::agc2_ff::make(1e-3, 1e-5, 1, 10);
+    _rail = gr::analog::rail_ff::make(-1, 1);
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::band_pass_2(
-                    1, target_samp_rate, 150, 3800, 150, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
-    static const float coeff[] =  {-0.026316914707422256, -0.2512197494506836, 1.5501943826675415,
-                                   -0.2512197494506836, -0.026316914707422256};
-    std::vector<float> emph_taps(coeff, coeff + sizeof(coeff) / sizeof(coeff[0]) );
-    _emphasis_filter = gr::filter::fft_filter_fff::make(1,emph_taps);
+                    1, target_samp_rate, 150, 3600, 150, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
     _float_to_complex = gr::blocks::float_to_complex::make();
     std::vector<float> interp_taps = gr::filter::firdes::low_pass_2(_sps, _samp_rate,
                         _filter_width, _filter_width, 120, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
 
     _resampler = gr::filter::rational_resampler_base_ccf::make(_sps,1, interp_taps);
-    _feed_forward_agc = gr::analog::feedforward_agc_cc::make(512,0.95);
-    _amplify = gr::blocks::multiply_const_cc::make(0.99,1);
+    _feed_forward_agc = gr::analog::feedforward_agc_cc::make(640,0.5);
+    _amplify = gr::blocks::multiply_const_cc::make(0.5,1);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
     _filter_usb = gr::filter::fft_filter_ccc::make(1,gr::filter::firdes::complex_band_pass_2(
             1, target_samp_rate, 150, _filter_width, 150, 120, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
@@ -61,10 +57,10 @@ gr_mod_ssb_sdr::gr_mod_ssb_sdr(int sps, int samp_rate, int carrier_freq,
 
 
 
-    connect(self(),0,_rail,0);
+    connect(self(),0,_agc,0);
+    connect(_agc,0,_rail,0);
     connect(_rail,0,_audio_filter,0);
-    connect(_audio_filter,0,_emphasis_filter,0);
-    connect(_emphasis_filter,0,_float_to_complex,0);
+    connect(_audio_filter,0,_float_to_complex,0);
     if(!sb)
     {
         connect(_float_to_complex,0,_filter_usb,0);
@@ -75,8 +71,9 @@ gr_mod_ssb_sdr::gr_mod_ssb_sdr(int sps, int samp_rate, int carrier_freq,
         connect(_float_to_complex,0,_filter_lsb,0);
         connect(_filter_lsb,0,_amplify,0);
     }
-    //connect(_feed_forward_agc,0,_resampler,0);
+
     connect(_amplify,0,_bb_gain,0);
+    //connect(_feed_forward_agc,0,_bb_gain,0);
     connect(_bb_gain,0,_resampler,0);
     connect(_resampler,0,self(),0);
 
