@@ -506,7 +506,6 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
     case 29:
     {
         int set = param1.toLongLong();
-        qDebug() << set;
         if(set < 1)
         {
             response = "Parameter value is not supported";

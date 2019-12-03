@@ -161,7 +161,8 @@ void TelnetServer::processData()
             break;
         }
     }
-    //qDebug() << "Message from: " << socket->peerAddress().toString();
+    _logger->log(Logger::LogLevelDebug, QString("Command message from %1 - %2").arg(
+                     socket->peerAddress().toString()).arg(QString(data)));
     QByteArray response = processCommand(data, socket);
     if(response == "EOF")
         return;

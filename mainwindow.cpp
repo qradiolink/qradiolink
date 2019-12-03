@@ -753,7 +753,6 @@ void MainWindow::tuneToMemoryChannel(int row, int col)
     tuneMainFreq(chan->rx_frequency);
     _settings->tx_shift = chan->tx_shift;
     emit changeTxShift(_settings->tx_shift);
-    qDebug() << chan->tx_shift;
     ui->shiftEdit->setText(QString::number(chan->tx_shift / 1000));
 
     ui->rxModemTypeComboBox->setCurrentIndex(chan->rx_mode);
