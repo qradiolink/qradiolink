@@ -19,7 +19,6 @@
 #include <QThread>
 #include <QDebug>
 #include <QObject>
-#include <QDateTime>
 #include <QString>
 #include <QVector>
 #include <QMetaType>
@@ -28,7 +27,6 @@
 #include "src/mumbleclient.h"
 #include "audio/audiowriter.h"
 #include "audio/audioreader.h"
-#include "src/station.h"
 #include "src/mumblechannel.h"
 #include "src/radiochannel.h"
 #include "src/radiocontroller.h"
@@ -42,7 +40,7 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
                        RadioController *radio_op, Logger *logger);
 void connectCommandSignals(TelnetServer *telnet_server, MumbleClient *mumbleclient,
                        RadioController *radio_op);
-
+class Station;
 
 int main(int argc, char *argv[])
 {

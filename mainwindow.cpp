@@ -510,7 +510,7 @@ void MainWindow::setConfig()
     ui->voipPasswordEdit->setText(_settings->voip_password);
     ui->remoteControlEdit->setText(QString::number(_settings->control_port));
 
-    ui->frequencyEdit->setText(QString::number(ceil(_settings->rx_frequency/1000)));
+    ui->frequencyEdit->setText(QString::number(_settings->rx_frequency/1000));
     ui->shiftEdit->setText(QString::number(_settings->tx_shift / 1000));
     ui->voipServerEdit->setText(_settings->voip_server);
     ui->rxModemTypeComboBox->setCurrentIndex(_settings->rx_mode);
@@ -583,7 +583,7 @@ void MainWindow::saveUiConfig()
     _settings->rx_mode = ui->rxModemTypeComboBox->currentIndex();
     _settings->tx_mode = ui->txModemTypeComboBox->currentIndex();
     _settings->ip_address = ui->lineEditIPaddress->text();
-    _settings->rx_sample_rate = (long long)(ui->sampleRateBox->currentText().toInt());
+    _settings->rx_sample_rate = (long long)(ui->sampleRateBox->currentText().toLongLong());
     _settings->fft_size = (ui->fftSizeBox->currentText().toInt());
     _settings->scan_step = (int)ui->lineEditScanStep->text().toInt();
     _settings->waterfall_fps = (int)ui->fpsBox->currentText().toInt();
@@ -753,6 +753,7 @@ void MainWindow::tuneToMemoryChannel(int row, int col)
     tuneMainFreq(chan->rx_frequency);
     _settings->tx_shift = chan->tx_shift;
     emit changeTxShift(_settings->tx_shift);
+    qDebug() << chan->tx_shift;
     ui->shiftEdit->setText(QString::number(chan->tx_shift / 1000));
 
     ui->rxModemTypeComboBox->setCurrentIndex(chan->rx_mode);
@@ -813,13 +814,13 @@ void MainWindow::editMemoryChannel(QTableWidgetItem* item)
     switch(col)
     {
     case 0:
-        chan->rx_frequency = (long)(item->text().replace(",", "").toInt());
+        chan->rx_frequency = (long long)(item->text().replace(",", "").toLongLong());
         break;
     case 1:
         chan->name = item->text().toStdString();
         break;
     case 2:
-        chan->tx_shift = item->text().toInt() * 1000;
+        chan->tx_shift = item->text().toLongLong() * 1000;
         break;
     case 3:
         idx = _mode_list->indexOf(item->text());
@@ -1351,7 +1352,7 @@ void MainWindow::clarifierTuneFreq(int value)
 void MainWindow::tuneMainFreq(qint64 freq)
 {
 
-    ui->frequencyEdit->setText(QString::number(ceil(freq/1000)));
+    ui->frequencyEdit->setText(QString::number(freq/1000));
     ui->tuneDial->setValue(0);
     /// rx_frequency is the center frequency of the source
     _settings->rx_frequency = freq - _settings->demod_offset;
@@ -1384,14 +1385,15 @@ void MainWindow::carrierOffsetChanged(qint64 freq, qint64 offset)
 
 void MainWindow::enterFreq()
 {
-    ui->frameCtrlFreq->setFrequency(ui->frequencyEdit->text().toLong()*1000);
-    _settings->rx_frequency = ui->frequencyEdit->text().toLong()*1000 - _settings->demod_offset;
+    long long new_freq = ui->frequencyEdit->text().toLongLong();
+    ui->frameCtrlFreq->setFrequency(new_freq * 1000);
+    _settings->rx_frequency = new_freq * 1000 - _settings->demod_offset;
     emit tuneFreq(_settings->rx_frequency);
 }
 
 void MainWindow::enterShift()
 {
-    _settings->tx_shift = ui->shiftEdit->text().toLong()*1000;
+    _settings->tx_shift = ui->shiftEdit->text().toLongLong()*1000;
     emit changeTxShift(_settings->tx_shift);
 }
 
@@ -1490,8 +1492,7 @@ void MainWindow::updateFreqGUI(long long center_freq, long carrier_offset)
     ui->frameCtrlFreq->setFrequency(_settings->rx_frequency + _settings->demod_offset, false);
     ui->plotterFrame->setFilterOffset((qint64)_settings->demod_offset);
     ui->plotterFrame->setCenterFreq(_settings->rx_frequency);
-    ui->frequencyEdit->setText(QString::number(
-                    ceil((_settings->rx_frequency + _settings->demod_offset)/1000)));
+    ui->frequencyEdit->setText(QString::number((_settings->rx_frequency + _settings->demod_offset)/1000));
 }
 
 void MainWindow::updateRxCTCSS(int value)
@@ -1549,9 +1550,11 @@ void MainWindow::updateRSSI(float value)
     {
         abs_rssi = arc_max;
     }
+    /*
     int deviation = (int) ((arc_min - arc_max) / 2*M_PI*abs_rssi);
     if(abs_rssi > 90.0)
         deviation = -deviation;
+    */
 
     ui->labelRSSI->setText(QString::number(value));
     QLineF needle;
