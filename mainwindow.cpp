@@ -88,6 +88,7 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     QObject::connect(ui->tuneDial,SIGNAL(valueChanged(int)),this,SLOT(clarifierTuneFreq(int)));
     QObject::connect(ui->frequencyEdit,SIGNAL(returnPressed()),this,SLOT(enterFreq()));
     QObject::connect(ui->shiftEdit,SIGNAL(returnPressed()),this,SLOT(enterShift()));
+    QObject::connect(ui->shiftEdit,SIGNAL(editingFinished()),this,SLOT(enterShift()));
     QObject::connect(ui->txGainDial,SIGNAL(valueChanged(int)),this,SLOT(setTxPowerDisplay(int)));
     QObject::connect(ui->rxGainDial,SIGNAL(valueChanged(int)),this,SLOT(setRxSensitivityDisplay(int)));
     QObject::connect(ui->rxSquelchDial,SIGNAL(valueChanged(int)),this,SLOT(setSquelchDisplay(int)));
@@ -1685,8 +1686,11 @@ void MainWindow::setRxGainStages(gain_vector rx_gains)
         gain_slider->setRange(iter.value().at(0), iter.value().at(1));
         gain_slider->setMaximumWidth(150);
         gain_slider->setTickInterval(10);
+        //gain_slider->setVisible(true);
+        gain_slider->setToolTip(gain_stage_name);
         _rx_gain_sliders.push_back(gain_slider);
         ++iter;
+        //ui->gainsFrame->layout()->addWidget(gain_slider);
     }
 }
 
@@ -1701,7 +1705,9 @@ void MainWindow::setTxGainStages(gain_vector tx_gains)
         gain_slider->setRange(iter.value().at(0), iter.value().at(1));
         gain_slider->setMaximumWidth(150);
         gain_slider->setTickInterval(10);
+        gain_slider->setToolTip(gain_stage_name);
         _tx_gain_sliders.push_back(gain_slider);
+        //ui->gainsFrame->layout()->addWidget(gain_slider);
         ++iter;
     }
 }
