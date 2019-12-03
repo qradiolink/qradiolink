@@ -39,10 +39,15 @@ void TelnetServer::start()
 {
     if(_server->isListening())
         return;
+    bool status;
     if(_settings->control_port != 0)
-        _server->listen(_hostaddr,_settings->control_port);
+        status = _server->listen(_hostaddr,_settings->control_port);
     else
-        _server->listen(_hostaddr,CONTROL_PORT);
+        status = _server->listen(_hostaddr,CONTROL_PORT);
+    if(!status)
+        _logger->log(Logger::LogLevelWarning, QString(
+            "Server could not bind to port %1, another instance is probably listening already"
+            ).arg(_settings->control_port));
     QObject::connect(_server,SIGNAL(newConnection()),this,SLOT(getConnection()));
 }
 

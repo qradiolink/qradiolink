@@ -39,7 +39,7 @@ void connectIndependentSignals(AudioWriter *audiowriter, AudioReader *audioreade
                                RadioController *radio_op, MumbleClient *mumbleclient);
 void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
                        AudioReader *audioreader, MainWindow *w, MumbleClient *mumbleclient,
-                       RadioController *radio_op);
+                       RadioController *radio_op, Logger *logger);
 void connectCommandSignals(TelnetServer *telnet_server, MumbleClient *mumbleclient,
                        RadioController *radio_op);
 
@@ -117,7 +117,8 @@ int main(int argc, char *argv[])
         /// Init GUI
         ///
         w = new MainWindow(settings, logger, radio_channels);
-        connectGuiSignals(telnet_server, audiowriter, audioreader, w, mumbleclient, radio_op);
+        connectGuiSignals(telnet_server, audiowriter, audioreader, w,
+                          mumbleclient, radio_op, logger);
         /// requires the slots to be set up
         w->initSettings();
         w->show();
@@ -303,7 +304,7 @@ void connectCommandSignals(TelnetServer *telnet_server, MumbleClient *mumbleclie
 
 void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
                        AudioReader *audioreader, MainWindow *w, MumbleClient *mumbleclient,
-                       RadioController *radio_op)
+                       RadioController *radio_op, Logger *logger)
 {
     /// GUI to radio and Mumble
     QObject::connect(w,SIGNAL(startTransmission()),radio_op,SLOT(startTransmission()));
@@ -424,4 +425,5 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
                      w,SLOT(updateChannels(ChannelList)));
     QObject::connect(mumbleclient,SIGNAL(joinedChannel(quint64)),w,SLOT(joinedChannel(quint64)));
     QObject::connect(mumbleclient,SIGNAL(disconnected()),w,SLOT(disconnectedFromServer()));
+    QObject::connect(logger,SIGNAL(applicationLog(QString)),w,SLOT(applicationLog(QString)));
 }

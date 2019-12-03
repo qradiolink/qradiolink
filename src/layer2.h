@@ -45,7 +45,6 @@ public:
 
     QByteArray buildRepeaterInfo();
     void addChannel(MumbleChannel *chan);
-    void dataIn(QByteArray data);
     void setStations(QVector<Station*> list);
     void setChannels(ChannelList channels);
     QByteArray buildRadioMessage(QByteArray data, int msg_type);
@@ -62,7 +61,6 @@ private:
     QVector<MumbleChannel*> _voip_channels;
     QVector<Station*> _voip_users;
     QByteArray *_buffer;
-    void processPayload(QByteArray data);
     void processPageMessage(QByteArray message);
     void processRepeaterInfo(QByteArray message);
 

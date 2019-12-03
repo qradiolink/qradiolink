@@ -241,7 +241,10 @@ void MumbleClient::processReject(quint8 *message, quint64 size)
 {
     MumbleProto::Reject r;
     r.ParseFromArray(message,size);
-    // Ignore r.type();
+    if(r.type() == MumbleProto::Reject::UsernameInUse)
+    {
+
+    }
     QString reason = QString::fromStdString(r.reason());
     emit textMessage("Rejected: " + reason + "\n", false);
 }

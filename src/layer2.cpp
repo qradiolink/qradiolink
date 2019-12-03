@@ -143,36 +143,6 @@ void Layer2Protocol::processRepeaterInfo(QByteArray message)
     }
 }
 
-void Layer2Protocol::processPayload(QByteArray data)
-{
-
-    int msg_type = data.at(0);
-    data = data.mid(1);
-    switch(msg_type)
-    {
-    case 1:
-    {
-        QRadioLink::Channel ch;
-        ch.ParseFromArray(data,data.size());
-        qDebug() << QString::fromStdString(ch.name());
-        /*
-        MumbleChannel *chan = new MumbleChannel(
-                    ch.channel_id(),ch.parent_id(),QString::fromStdString(ch.name()),
-                    QString::fromStdString(ch.description()));
-        emit newChannel(chan);
-        */
-        break;
-    }
-    case 2:
-    {
-        QRadioLink::User u;
-        u.ParseFromArray(data,data.size());
-        qDebug() << QString::fromStdString(u.name());
-        break;
-    }
-    }
-}
-
 void Layer2Protocol::processPageMessage(QByteArray message)
 {
     QRadioLink::PageMessage page;

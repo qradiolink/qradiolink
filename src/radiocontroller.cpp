@@ -29,7 +29,7 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     _modem = new gr_modem;
     _codec = new AudioEncoder(settings);
     _audio_mixer_in = new AudioMixer;
-    _radio_protocol = new Layer2Protocol(logger);
+    _layer2 = new Layer2Protocol(logger);
     _relay_controller = new RelayController(logger);
     _video = new VideoEncoder(logger);
     //_camera = new ImageCapture(settings, logger);
@@ -171,7 +171,7 @@ RadioController::~RadioController()
     delete _audio_mixer_in;
     delete _video;
     delete _net_device;
-    delete _radio_protocol;
+    delete _layer2;
     delete _voice_led_timer;
     delete _data_led_timer;
     delete _voip_tx_timer;
@@ -844,7 +844,7 @@ void RadioController::sendTxBeep(int sound)
 
 void RadioController::transmitServerInfoBeacon()
 {
-    _proto_out = _radio_protocol->buildRepeaterInfo();
+    _proto_out = _layer2->buildRepeaterInfo();
     _process_data = true;
 }
 
@@ -1523,7 +1523,7 @@ void RadioController::receiveEnd()
     }
     if(_incoming_proto_buffer.size() > 0)
     {
-        _radio_protocol->processRadioMessage(_incoming_proto_buffer);
+        _layer2->processRadioMessage(_incoming_proto_buffer);
         _incoming_proto_buffer.clear();
     }
     emit displayReceiveStatus(false);
@@ -1565,12 +1565,12 @@ void RadioController::endAudioTransmission()
 /// These two are not used currently
 void RadioController::setChannels(ChannelList channels)
 {
-    _radio_protocol->setChannels(channels);
+    _layer2->setChannels(channels);
 }
 
 void RadioController::setStations(StationList list)
 {
-    _radio_protocol->setStations(list);
+    _layer2->setStations(list);
 }
 
 /// Needed to keep the frame size

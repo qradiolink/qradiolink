@@ -173,7 +173,8 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     QObject::connect(ui->panadapterSlider,SIGNAL(valueChanged(int)),
                      ui->plotterFrame,SLOT(setPercent2DScreen(int)));
     QObject::connect(ui->averagingSlider,SIGNAL(valueChanged(int)),this,SLOT(setAveraging(int)));
-    QObject::connect(ui->rangeSlider,SIGNAL(valueChanged(int)),this,SLOT(setFFTRange(int)));
+    // removed. never found it useful
+    //QObject::connect(ui->rangeSlider,SIGNAL(valueChanged(int)),this,SLOT(setFFTRange(int)));
     QObject::connect(ui->plotterFrame,SIGNAL(newDemodFreq(qint64,qint64)),
                      this,SLOT(carrierOffsetChanged(qint64,qint64)));
 
@@ -1026,6 +1027,18 @@ void MainWindow::clearTextArea()
     ui->receivedTextEdit->moveCursor(QTextCursor::End);
     ui->receivedTextEdit->verticalScrollBar()->setValue(
                 ui->receivedTextEdit->verticalScrollBar()->maximum());
+}
+
+void MainWindow::applicationLog(QString msg)
+{
+    ui->appLogTextEdit->moveCursor(QTextCursor::End);
+    if(ui->appLogTextEdit->toPlainText().size() > 1024*1024*1024)
+    {
+        ui->appLogTextEdit->clear();
+    }
+    ui->appLogTextEdit->insertPlainText(msg + "\n");
+    ui->appLogTextEdit->verticalScrollBar()->setValue(
+                ui->appLogTextEdit->verticalScrollBar()->maximum());
 }
 
 void MainWindow::displayImage(QImage img)

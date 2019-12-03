@@ -62,7 +62,7 @@ void logMessage(QtMsgType type, const char *msg)
 #endif
 #endif
 
-Logger::Logger()
+Logger::Logger(QObject *parent)
 {
     QDir files = QDir::homePath();
     if(!QDir(files.absolutePath()+"/.config/qradiolink").exists())
@@ -132,7 +132,7 @@ void Logger::log(int type, QString msg)
             std::cerr << txt.toStdString() << std::endl;
         else
             std::cout << txt.toStdString() << std::endl;
-
+        emit applicationLog(txt);
     }
 
     *_stream << txt << endl;

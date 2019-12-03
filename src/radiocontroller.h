@@ -219,7 +219,7 @@ private:
     ImageCapture *_camera;
     NetDevice *_net_device;
     gr_modem *_modem;
-    Layer2Protocol *_radio_protocol;
+    Layer2Protocol *_layer2;
     QMutex *_mutex;
     QTimer *_voice_led_timer;
     QTimer *_data_led_timer;

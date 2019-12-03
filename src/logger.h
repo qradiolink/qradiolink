@@ -35,8 +35,9 @@ void logMessage(QtMsgType type, const char *msg, QFile *log_file);
 #endif
 
 
-class Logger
+class Logger  : public QObject
 {
+    Q_OBJECT
 public:
     enum
     {
@@ -46,10 +47,13 @@ public:
         LogLevelCritical,
         LogLevelFatal
     };
-    explicit Logger();
+    explicit Logger(QObject *parent = 0);
     ~Logger();
     void log(int type, QString msg);
     void set_console_log(bool value);
+
+signals:
+    void applicationLog(QString msg);
 
 private:
     QFile *_log_file;
