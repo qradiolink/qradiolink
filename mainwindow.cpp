@@ -1484,7 +1484,7 @@ void MainWindow::mainTabChanged(int value)
     Q_UNUSED(value);
 }
 
-void MainWindow::updateFreqGUI(long long center_freq, long carrier_offset)
+void MainWindow::updateFreqGUI(long long center_freq, long long carrier_offset)
 {
     // Lots of signals flowing around
     _settings->demod_offset = carrier_offset;

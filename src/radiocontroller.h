@@ -87,7 +87,7 @@ signals:
     void videoImage(QImage img);
     void endAudio(int secs);
     void startAudio();
-    void freqToGUI(long long center_freq,long carrier_offset);
+    void freqToGUI(long long center_freq,long long carrier_offset);
     void voipDataPCM(short *pcm, int samples);
     void voipDataOpus(unsigned char *pcm, int packet_size);
     void newFFTData(float*, int);
@@ -128,7 +128,7 @@ public slots:
     void toggleTX(bool value);
     void toggleRxMode(int value);
     void toggleTxMode(int value);
-    void fineTuneFreq(long center_freq);
+    void fineTuneFreq(long long center_freq);
     void tuneFreq(qint64 center_freq);
     void tuneTxFreq(qint64 actual_freq);
     void changeTxShift(qint64 shift_freq);

@@ -712,7 +712,7 @@ void gr_demod_base::get_FFT_data(float *fft_data,  unsigned int &fftSize)
 }
 
 
-void gr_demod_base::tune(long center_freq)
+void gr_demod_base::tune(long long center_freq)
 {
     _device_frequency = center_freq;
     _osmosdr_source->set_center_freq(_device_frequency);
@@ -827,7 +827,7 @@ void gr_demod_base::set_ctcss(float value)
     _top_block->unlock();
 }
 
-void gr_demod_base::set_carrier_offset(long carrier_offset)
+void gr_demod_base::set_carrier_offset(long long carrier_offset)
 {
     _carrier_offset = carrier_offset;
     _rotator->set_phase_inc(2*M_PI*-_carrier_offset/_samp_rate);

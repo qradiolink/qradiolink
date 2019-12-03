@@ -328,26 +328,26 @@ double gr_modem::getFreqGUI()
     return 0;
 }
 
-void gr_modem::tune(long center_freq)
+void gr_modem::tune(long long center_freq)
 {
     if(_gr_demod_base)
         _gr_demod_base->tune(center_freq);
 }
 
-void gr_modem::tuneTx(long center_freq)
+void gr_modem::tuneTx(long long center_freq)
 {
 
     if(_gr_mod_base)
         _gr_mod_base->tune(center_freq);
 }
 
-void gr_modem::setCarrierOffset(long offset)
+void gr_modem::setCarrierOffset(long long offset)
 {
     if(_gr_demod_base)
         _gr_demod_base->set_carrier_offset(offset);
 }
 
-void gr_modem::setTxCarrierOffset(long offset)
+void gr_modem::setTxCarrierOffset(long long offset)
 {
     // we don't use carrier_offset for TX, fixed sample rate
     Q_UNUSED(offset);
