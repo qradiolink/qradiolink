@@ -295,10 +295,10 @@ void MainWindow::setTheme(bool value)
                 "QWidget#memoriesTableWidget {background: none}"
                 "QWidget {background-color:#2a2a2a; color:#ffffd3}"
                 "QPushButton {background-color:#555555; color:#ffffd3;"
-                    "border-style: outset;border-width: 1px;"
-                    "border-radius: 4px;border-color: #444444;}"
+                    "border:1px solid #444444;border-style:outset;"
+                    "border-radius: 3px;}"
                 "QPushButton:hover {background-color:#005a84; color:#ffffd3}"
-                "QPushButton:checked {background-color:#01194c; color:#ffffd3}"
+                "QPushButton:checked {background-color:#7a7a84; color:#ffffd3}"
                 "QCheckBox:hover {background-color:#555555; color:#ffffd3}"
                 "QCheckBox:checked {color:#fffb6f}"
                 "QSlider:hover {background-color: rgb(0, 67, 98); color:#ffffd3}"
@@ -663,10 +663,10 @@ void MainWindow::addDisplayChannel(radiochannel *chan, int r)
     "color: rgb(255, 105, 105);background-color: rgba(0, 40, 102, 155);font-weight: bold;"
     "font: 9pt \"Sans Serif\"; ");
     ui->memoriesTableWidget->setStyleSheet(
-    "color: rgb(255, 255, 255);background-color: rgba(0, 40, 102, 0);font: 9pt \"Sans Serif\"; "
-    "QTableWidget {color: rgb(255, 255, 255);background-color: rgba(0, 40, 102, 0);font: 9pt \"Sans Serif\";}"
-    "QTableWidget::item {color: rgb(255, 255, 255);background-color: rgba(0, 40, 102, 0);font: 9pt \"Sans Serif\";}"
-    "QTableWidget::item:selected{ color: rgb(255, 255, 255);background-color: rgba(99, 0, 0, 125);"
+    "color: rgb(255, 255, 255);background-color: rgba(0, 40, 102, 75);font: 9pt \"Sans Serif\"; font-weight: bold;"
+    "QTableWidget {color: rgb(255, 255, 255);background-color: rgba(0, 40, 102, 75);font: 9pt \"Sans Serif\";}"
+    "QTableWidget::item {color: rgb(255, 255, 255);background-color: rgba(0, 40, 102, 75);font: 9pt \"Sans Serif\";}"
+    "QTableWidget::item:selected{ color: rgb(255, 255, 255);background-color: rgba(99, 0, 0, 75); font-weight: bold;"
     "font: 9pt \"Sans Serif\"; }");
 
 }
@@ -1539,6 +1539,7 @@ void MainWindow::updateRSSI(float value)
         return;
 
     //float S9 = 80.0; // degrees
+    /// Scale is 6 dB per S-unit
     float arc_min = 135.0;
     float arc_max = 45.0;
     float abs_rssi = fabs(_rssi);
