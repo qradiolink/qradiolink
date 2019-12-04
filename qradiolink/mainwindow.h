@@ -33,6 +33,12 @@
 #include <QAudioDeviceInfo>
 #include <math.h>
 #include <complex>
+#include <MapGraphicsScene.h>
+#include <MapGraphicsView.h>
+#include <guts/CompositeTileSourceConfigurationWidget.h>
+#include <tileSources/OSMTileSource.h>
+#include <tileSources/GridTileSource.h>
+#include <tileSources/CompositeTileSource.h>
 #include <libconfig.h++>
 #include "ext/utils.h"
 #include "src/mumbleclient.h"
@@ -263,6 +269,9 @@ private:
     QVector<QString> *_mode_list;
     float *_realFftData;
     float *_iirFftData;
+
+    MapGraphicsScene * _map_scene;
+    MapGraphicsView * _map_view;
 
     QTimer _secondary_text_timer;
     QTimer _video_timer;

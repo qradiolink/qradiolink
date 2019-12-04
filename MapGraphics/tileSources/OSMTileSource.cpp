@@ -73,6 +73,14 @@ QString OSMTileSource::name() const
         return "OpenStreetMap Tiles";
         break;
 
+    case GoogleSatTiles:
+        return "Google sattelite";
+        break;
+
+    case GoogleMapTiles:
+        return "Google map";
+        break;
+
     default:
         return "Unknown Tiles";
         break;
@@ -81,7 +89,7 @@ QString OSMTileSource::name() const
 
 QString OSMTileSource::tileFileExtension() const
 {
-    if (_tileType == OSMTiles)
+    if (_tileType == OSMTiles || _tileType == GoogleSatTiles || _tileType == GoogleMapTiles)
         return "png";
     else
         return "jpg";
@@ -101,6 +109,19 @@ void OSMTileSource::fetchTile(quint32 x, quint32 y, quint8 z)
         host = "https://b.tile.openstreetmap.org";
         url = "/%1/%2/%3.png";
     }
+    else if (_tileType == GoogleSatTiles)
+    {
+        host = "http://mts1.google.com";
+        url = "/vt/lyrs=s@186112443&hl=x-local&src=app&x=%1&y=%2&z=%3&s=Galileo";
+        //host = "http://maps.google.com";
+        //url = "/maps/api/staticmap?center=%1,%2&zoom=%3&size=256x256&maptype=satellite&sensor=false";
+    }
+    else if (_tileType == GoogleMapTiles)
+    {
+        host = "http://mts1.google.com";
+        url = "/vt/lyrs=m@186112443&hl=x-local&src=app&x=%1&y=%2&z=%3&s=Galileo";
+
+    }
 
     //Use the unique cacheID to see if this tile has already been requested
     const QString cacheID = this->createCacheID(x,y,z);
@@ -109,9 +130,25 @@ void OSMTileSource::fetchTile(quint32 x, quint32 y, quint8 z)
     _pendingRequests.insert(cacheID);
 
     //Build the request
+    /**
     const QString fetchURL = url.arg(QString::number(z),
                                      QString::number(x),
                                      QString::number(y));
+    */
+    QString fetchURL;
+    if(_tileType == GoogleSatTiles || _tileType == GoogleMapTiles)
+    {
+
+        fetchURL = url.arg(QString::number(x),
+                                         QString::number(y),
+                                         QString::number(z));
+    }
+    else
+    {
+        fetchURL = url.arg(QString::number(z),
+                                     QString::number(x),
+                                     QString::number(y));
+    }
     QNetworkRequest request(QUrl(host + fetchURL));
 
     //Send the request and setupd a signal to ensure we're notified when it finishes
