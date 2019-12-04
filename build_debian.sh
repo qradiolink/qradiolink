@@ -10,6 +10,4 @@ protoc --cpp_out=. QRadioLink.proto
 cd ../../build/
 qmake "CONFIG+=debug" ..
 make -j3
-cp -p ./qradiolink ../
-cd ..
 ./qradiolink

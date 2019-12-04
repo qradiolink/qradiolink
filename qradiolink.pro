@@ -1,7 +1,7 @@
 TEMPLATE = subdirs
 
 SUBDIRS += MapGraphics \
-    qradiolink
+    application
 
-qradiolink.depends += MapGraphics
+application.depends += MapGraphics
 
