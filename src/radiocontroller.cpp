@@ -177,6 +177,7 @@ RadioController::~RadioController()
     delete _voip_tx_timer;
     delete _vox_timer;
     delete _end_tx_timer;
+    delete _cw_timer;
     delete _modem;
     delete[] _rand_frame_data;
     _to_voip_buffer->clear();
@@ -212,8 +213,6 @@ void RadioController::run()
         if(_settings->voip_connected)
             QtConcurrent::run(this, &RadioController::flushRadioToVoipBuffer);
         buffers_filling = processMixerQueue();
-
-        // FIXME: this is the wrong place to control the Mumble client
 
         int time = QDateTime::currentDateTime().toTime_t();
         if((time - last_channel_broadcast_time) > 30)
@@ -257,7 +256,7 @@ void RadioController::run()
                 //QtConcurrent::run(this, &RadioController::updateCWK);
             if(!_video_on)
                 QtConcurrent::run(this, &RadioController::processVideoFrame);
-            //triggerImageCapture();
+            //triggerImageCapture(); // only partly implemented
 
             /// if not in the process of resetting the modem read interface
             /// data will accumulate in the interface buffer...
@@ -277,9 +276,7 @@ void RadioController::run()
             QtConcurrent::run(this, &RadioController::transmitBinData);
         }
 
-        // FIXME: remove these hardcoded sleeps
-        /// Needed to keep the thread from using the CPU by looping too fast
-
+        /// Needed to keep the thread from using the CPU
         if(!data_to_process && !buffers_filling && !_process_text && !_process_data)
         {
             /// nothing to output from demodulator
@@ -291,9 +288,7 @@ void RadioController::run()
             struct timespec time_to_sleep = {0, 1000L };
             nanosleep(&time_to_sleep, NULL);
         }
-
     }
-
     emit finished();
 }
 
@@ -302,27 +297,12 @@ void RadioController::run()
 void RadioController::updateInputAudioStream()
 {
     /// Cases where not using local audio
-    if(_settings->voip_forwarding || (!_transmitting && !_settings->vox_enabled))
-    {
-        emit setAudioReadMode(false, false, AudioProcessor::AUDIO_MODE_ANALOG);
-        return;
-    }
-    if(_tx_mode == gr_modem_types::ModemTypeQPSK250000)
-    {
-        emit setAudioReadMode(false, false, AudioProcessor::AUDIO_MODE_ANALOG);
-        return;
-    }
-    if(_process_text)
-    {
-        emit setAudioReadMode(false, false, AudioProcessor::AUDIO_MODE_ANALOG);
-        return;
-    }
-    if(_tx_mode == gr_modem_types::ModemTypeCW600USB)
-    {
-        emit setAudioReadMode(false, false, AudioProcessor::AUDIO_MODE_ANALOG);
-        return;
-    }
-    if(_settings->repeater_enabled)
+    if(_settings->voip_forwarding
+            || (_settings->repeater_enabled)
+            || (!_transmitting && !_settings->vox_enabled)
+            || (_tx_mode == gr_modem_types::ModemTypeQPSK250000)
+            || (_tx_mode == gr_modem_types::ModemTypeCW600USB)
+            || (_text_transmit_on || _proto_transmit_on))
     {
         emit setAudioReadMode(false, false, AudioProcessor::AUDIO_MODE_ANALOG);
         return;
@@ -387,8 +367,7 @@ void RadioController::flushRadioToVoipBuffer()
     if(!_settings->voip_connected || _radio_to_voip_on)
         return;
     _radio_to_voip_on = true;
-    /// large size of frames (120 ms) for Mumble client compatibility, but...
-    /// Now using 40 ms frames again
+    /// large size of frames (120 ms) are better for Mumble client compatibility, but...
     int samples_in_buffer = _to_voip_buffer->size();
     if(samples_in_buffer >= 320)
     {
@@ -469,7 +448,7 @@ void RadioController::txAudio(short *audiobuffer, int audiobuffer_size,
             /// Vox timer ran out, stopping TX
             if(_settings->tx_started && !_settings->voip_ptt_enabled)
                 _transmitting = false;
-            /// Audio stream will be stopped at the next thread iteration
+            /// Audio input stream will be stopped at the next thread iteration
             delete[] audiobuffer;
             return;
         }
@@ -537,7 +516,7 @@ void RadioController::txAudio(short *audiobuffer, int audiobuffer_size,
 
 void RadioController::triggerImageCapture()
 {
-
+    // requires gstreamer-plugins-bad, only partly implemented
     //_camera->capture_image();
 }
 
@@ -1391,6 +1370,7 @@ void RadioController::processVoipAudioFrame(short *pcm, int samples, quint64 sid
 
 void RadioController::processVoipVideoFrame(unsigned char *video_frame, int size, quint64 sid)
 {
+    Q_UNUSED(sid); // multiple video users not implemented yet
     unsigned char *raw_output = _video->decode_jpeg(video_frame, size);
 
     delete[] video_frame;
@@ -1479,12 +1459,12 @@ void RadioController::callsignReceived(QString callsign)
     QString time= QDateTime::currentDateTime().toString("dd/MMM/yyyy hh:mm:ss");
     QString text = "\n\n<br/><b>" + time + "</b> " + "<font color=\"#FF5555\">"
             + callsign + " </font><br/>\n";
-
+    /** disabled because of unwanted interaction
     short *samples = new short[_data_rec_sound->size()/sizeof(short)];
     short *origin = (short*) _data_rec_sound->data();
     memcpy(samples, origin, _data_rec_sound->size());
     emit writePCM(samples, _data_rec_sound->size(), false, AudioProcessor::AUDIO_MODE_ANALOG);
-
+    */
     emit printText(text,true);
     emit printCallsign(callsign);
 }

@@ -49,7 +49,7 @@ void RelayController::init()
         ftdi_free(_ftdi_relay);
         return;
     }
-    _logger->log(Logger::LogLevelInfo, "Succesfully opened relay");
+    _logger->log(Logger::LogLevelInfo, "Enabling relays...Succesfully opened relays");
 
     ftdi_set_bitmode(_ftdi_relay, 0xFF, BITMODE_BITBANG);
     _ftdi_relay_enabled = true;
@@ -77,6 +77,7 @@ void RelayController::deinit()
         ftdi_usb_close(_ftdi_relay);
         ftdi_free(_ftdi_relay);
         _ftdi_relay_enabled = false;
+        _logger->log(Logger::LogLevelInfo, "Disabled relay operation");
     }
 }
 

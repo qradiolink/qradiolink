@@ -8,7 +8,7 @@
 enum frame_type
 {
     FrameTypeNone = 0x00,
-    FrameTypeVoice = 0xED89,
+    FrameTypeVoice = 0xED89, // legacy
     FrameTypeVoice2 = 0xED89,
     FrameTypeVoice1 = 0xB5,
     FrameTypeText = 0x89EDAA,

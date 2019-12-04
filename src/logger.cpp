@@ -64,6 +64,7 @@ void logMessage(QtMsgType type, const char *msg)
 
 Logger::Logger(QObject *parent)
 {
+    Q_UNUSED(parent);
     QDir files = QDir::homePath();
     if(!QDir(files.absolutePath()+"/.config/qradiolink").exists())
     {
