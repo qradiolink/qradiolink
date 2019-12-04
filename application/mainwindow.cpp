@@ -280,10 +280,6 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     CompositeTileSourceConfigurationWidget * tileConfigWidget = new CompositeTileSourceConfigurationWidget(composite.toWeakRef(),
                                                                                          ui->dockFrame);
     ui->dockFrame->layout()->addWidget(tileConfigWidget);
-    //this->ui->dockWidget->setVisible(false);
-    //delete this->ui->dockWidgetContents;
-
-
 
 
     //this->ui->menuWindow->addAction(this->ui->dockWidget->toggleViewAction());
