@@ -159,3 +159,6 @@ Liquid Crystal font by Chase Babb https://www.dafont.com/liquid-crystal.font
 
 // biquad filtering based on WebAudio specification:
 //   https://webaudio.github.io/web-audio-api/#the-biquadfilternode-interface
+
+MapGraphics library: https://github.com/raptorswing/MapGraphics FreeBSD license
+
