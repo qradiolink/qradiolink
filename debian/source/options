@@ -5,4 +5,5 @@ extend-diff-ignore = "^qradiolink/ext/*"
 extend-diff-ignore = "^qradiolink/res/*"
 extend-diff-ignore = "^docs/*"
 extend-diff-ignore = "^travis/*"
+extend-diff-ignore = "^MapGraphics/images/*"
 auto-commit
