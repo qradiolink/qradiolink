@@ -2573,19 +2573,6 @@ font: 10pt &quot;Sans Serif&quot;;
                 <property name="bottomMargin">
                  <number>1</number>
                 </property>
-                <item>
-                 <widget class="QCheckBox" name="checkBox">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>Map</string>
-                  </property>
-                 </widget>
-                </item>
                </layout>
               </widget>
              </item>
