@@ -4,7 +4,7 @@ set -e
 set -x
 
 mkdir -p build
-cd qradiolink/ext/
+cd application/ext/
 protoc --cpp_out=. Mumble.proto
 protoc --cpp_out=. QRadioLink.proto
 cd ../../build/
