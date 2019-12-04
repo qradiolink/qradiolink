@@ -1557,7 +1557,7 @@ void MainWindow::updateRSSI(float value)
         deviation = -deviation;
     */
 
-    ui->labelRSSI->setText(QString::number(value));
+    ui->labelRSSI->setText(QString::number(value, 'f', 1));
     QLineF needle;
     needle.setP1(QPointF(77,105));
     needle.setAngle(abs_rssi);

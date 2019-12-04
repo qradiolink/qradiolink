@@ -96,7 +96,7 @@
 </string>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <property name="iconSize">
          <size>
@@ -1570,10 +1570,22 @@ color: rgb(255, 255, 255);</string>
              <item>
               <widget class="QPushButton" name="muteSelfButton">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>35</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>35</height>
+                </size>
                </property>
                <property name="text">
                 <string>Mute</string>
@@ -1592,10 +1604,22 @@ color: rgb(255, 255, 255);</string>
              <item>
               <widget class="QPushButton" name="deafenSelfButton">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>35</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>35</height>
+                </size>
                </property>
                <property name="text">
                 <string>Deafen</string>
@@ -1614,10 +1638,22 @@ color: rgb(255, 255, 255);</string>
              <item>
               <widget class="QPushButton" name="recordButton">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>35</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>35</height>
+                </size>
                </property>
                <property name="text">
                 <string>Record</string>
@@ -1635,7 +1671,7 @@ color: rgb(255, 255, 255);</string>
              <item>
               <widget class="QPushButton" name="toggleRepeaterButton">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
@@ -1688,7 +1724,7 @@ border-width: 4px;
              <item>
               <widget class="QPushButton" name="toggleVoxButton">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
@@ -1696,7 +1732,7 @@ border-width: 4px;
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>16</height>
+                 <height>35</height>
                 </size>
                </property>
                <property name="maximumSize">
@@ -1749,7 +1785,13 @@ border-width: 4px;
                <property name="minimumSize">
                 <size>
                  <width>120</width>
-                 <height>20</height>
+                 <height>35</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>35</height>
                 </size>
                </property>
                <property name="toolTip">
@@ -1787,7 +1829,13 @@ border-width: 4px;
                <property name="minimumSize">
                 <size>
                  <width>120</width>
-                 <height>20</height>
+                 <height>35</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>35</height>
                 </size>
                </property>
                <property name="toolTip">
@@ -4382,17 +4430,17 @@ color: rgb(182, 182, 182);</string>
         <widget class="QLabel" name="labelRSSI">
          <property name="geometry">
           <rect>
-           <x>764</x>
-           <y>42</y>
-           <width>71</width>
-           <height>31</height>
+           <x>655</x>
+           <y>47</y>
+           <width>51</width>
+           <height>25</height>
           </rect>
          </property>
          <property name="styleSheet">
-          <string notr="true">background-color: rgb(0, 0, 0);
+          <string notr="true">background-color: rgba(0, 0, 0, 125);
 color: rgb(85, 255, 0);
-border: 1px solid white;
-font: 9pt &quot;Sans Serif&quot;;</string>
+border: 0px solid white;
+font: 11px &quot;Sans Serif&quot;;</string>
          </property>
          <property name="frameShape">
           <enum>QFrame::Panel</enum>
@@ -4408,19 +4456,6 @@ font: 9pt &quot;Sans Serif&quot;;</string>
          </property>
          <property name="textInteractionFlags">
           <set>Qt::TextSelectableByMouse</set>
-         </property>
-        </widget>
-        <widget class="QLabel" name="label_23">
-         <property name="geometry">
-          <rect>
-           <x>784</x>
-           <y>23</y>
-           <width>31</width>
-           <height>16</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>RSSI</string>
          </property>
         </widget>
         <widget class="QLabel" name="labelSMeter">
@@ -4620,6 +4655,28 @@ background-color: rgb(0, 0, 67);
           </item>
          </layout>
         </widget>
+        <zorder>label</zorder>
+        <zorder>label_14</zorder>
+        <zorder>label_11</zorder>
+        <zorder>rxSquelchDisplay</zorder>
+        <zorder>rxSensitivityDisplay</zorder>
+        <zorder>txPowerDisplay</zorder>
+        <zorder>rxVolumeDisplay</zorder>
+        <zorder>label_9</zorder>
+        <zorder>rxSquelchDial</zorder>
+        <zorder>rxVolumeDial</zorder>
+        <zorder>txGainDial</zorder>
+        <zorder>rxGainDial</zorder>
+        <zorder>tuneDial</zorder>
+        <zorder>label_20</zorder>
+        <zorder>scanUpButton</zorder>
+        <zorder>labelSMeter</zorder>
+        <zorder>label_25</zorder>
+        <zorder>scanDownButton</zorder>
+        <zorder>labelDisplayCallsign</zorder>
+        <zorder>label_22</zorder>
+        <zorder>gainsFrame</zorder>
+        <zorder>labelRSSI</zorder>
        </widget>
       </item>
       <item>
@@ -5023,7 +5080,7 @@ background-color: rgb(150, 150, 150);
             <property name="maximumSize">
              <size>
               <width>75</width>
-              <height>30</height>
+              <height>32</height>
              </size>
             </property>
             <property name="toolTip">
@@ -5037,21 +5094,21 @@ background-color: rgb(150, 150, 150);
           <item row="3" column="7">
            <widget class="QPushButton" name="txStatusButton">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
             <property name="minimumSize">
              <size>
-              <width>60</width>
-              <height>16</height>
+              <width>90</width>
+              <height>32</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
-              <width>100</width>
-              <height>35</height>
+              <width>90</width>
+              <height>32</height>
              </size>
             </property>
             <property name="font">
@@ -5105,21 +5162,21 @@ color: #cc0000</string>
           <item row="3" column="2">
            <widget class="QPushButton" name="duplexOpButton">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
             <property name="minimumSize">
              <size>
-              <width>0</width>
-              <height>25</height>
+              <width>80</width>
+              <height>32</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
-              <width>16777215</width>
-              <height>35</height>
+              <width>80</width>
+              <height>32</height>
              </size>
             </property>
             <property name="toolTip">
@@ -5153,21 +5210,21 @@ color: #cc0000</string>
           <item row="1" column="7">
            <widget class="QPushButton" name="rxStatusButton">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
             <property name="minimumSize">
              <size>
-              <width>50</width>
-              <height>25</height>
+              <width>90</width>
+              <height>32</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
-              <width>100</width>
-              <height>35</height>
+              <width>80</width>
+              <height>32</height>
              </size>
             </property>
             <property name="cursor">
@@ -5256,21 +5313,21 @@ font: 9pt &quot;Sans Serif&quot;;</string>
           <item row="1" column="2">
            <widget class="QPushButton" name="reverseShiftButton">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
             <property name="minimumSize">
              <size>
-              <width>0</width>
-              <height>25</height>
+              <width>80</width>
+              <height>32</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
-              <width>16777215</width>
-              <height>35</height>
+              <width>80</width>
+              <height>32</height>
              </size>
             </property>
             <property name="toolTip">
@@ -5348,7 +5405,7 @@ font: 9pt &quot;Sans Serif&quot;;</string>
             <property name="maximumSize">
              <size>
               <width>75</width>
-              <height>30</height>
+              <height>32</height>
              </size>
             </property>
             <property name="toolTip">
