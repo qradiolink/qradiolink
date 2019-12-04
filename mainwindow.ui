@@ -96,7 +96,7 @@
 </string>
         </property>
         <property name="currentIndex">
-         <number>3</number>
+         <number>2</number>
         </property>
         <property name="iconSize">
          <size>
@@ -2175,7 +2175,7 @@ background-color: rgba(255, 255, 255, 180);</string>
           </sizepolicy>
          </property>
          <attribute name="title">
-          <string>Services</string>
+          <string>Link services</string>
          </attribute>
          <attribute name="toolTip">
           <string>Send and receive text</string>
@@ -2478,6 +2478,28 @@ font: 10pt &quot;Sans Serif&quot;;
               </item>
              </layout>
             </widget>
+            <widget class="QWidget" name="tab_6">
+             <attribute name="title">
+              <string>Satellite</string>
+             </attribute>
+            </widget>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="geoTab">
+         <attribute name="title">
+          <string>Geo services</string>
+         </attribute>
+         <layout class="QGridLayout" name="gridLayout_16">
+          <item row="0" column="0">
+           <widget class="QFrame" name="mapFrame">
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
            </widget>
           </item>
          </layout>
