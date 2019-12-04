@@ -77,6 +77,10 @@ SOURCES += main.cpp\
         ext/snd.c \
         ext/mem.c \
         net/netdevice.cpp \
+        aprs/aprs.cpp \
+        aprs/aprsicon.cpp \
+        aprs/aprspixmapitem.cpp \
+        aprs/aprsstation.cpp \
     qtgui/freqctrl.cpp \
     qtgui/plotter.cpp \
     gr/gr_vector_source.cpp \
@@ -144,6 +148,10 @@ HEADERS  += mainwindow.h\
         ext/compressor.h \
         net/netdevice.h \
         src/radiocontroller.h \
+        aprs/aprs.h \
+        aprs/aprsicon.h \
+        aprs/aprspixmapitem.h \
+        aprs/aprsstation.h \
     qtgui/freqctrl.h \
     qtgui/plotter.h \
     gr/gr_vector_source.h \
