@@ -53,7 +53,7 @@ public slots:
     void start(int buffer_size=0);
     void stop();
     int set_data(std::vector<u_int8_t> *data);
-    void tune(long center_freq);
+    void tune(long long center_freq);
     void set_power(float value, std::string gain_stage="");
     void set_filter_width(int filter_width, int mode);
     void set_ctcss(float value);
@@ -108,6 +108,7 @@ private:
     int _carrier_freq;
     int _filter_width;
     float _device_frequency;
+    int _freq_correction;
     int _carrier_offset;
     int _mode;
     bool _lime_specific; // FIXME: ugly hack
