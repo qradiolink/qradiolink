@@ -1222,7 +1222,8 @@ void RadioController::receivePCMAudio(std::vector<float> *audio_data)
         }
         else
         {
-            /// Noise kills the compressor, so disabled
+            // FIXME: compressor expects 40 ms frames, and if we give it shorter frames
+            // it will introduce gaps in audio
             emit writePCM(pcm, size*sizeof(short), false, AudioProcessor::AUDIO_MODE_ANALOG);
         }
     }
