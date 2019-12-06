@@ -22,6 +22,7 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
 {
     _device_frequency = device_frequency;
     _top_block = gr::make_top_block("modulator");
+    _freq_correction = freq_corr;
     _mode = 9999;
     _vector_source = make_gr_vector_source();
     _audio_source = make_gr_audio_source();
@@ -42,7 +43,7 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
     _osmosdr_sink->set_sample_rate(1000000);
     _osmosdr_sink->set_antenna(device_antenna);
     _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
-    _osmosdr_sink->set_freq_corr(freq_corr);
+    //_osmosdr_sink->set_freq_corr(freq_corr);
     _gain_range = _osmosdr_sink->get_gain_range();
     _gain_names = _osmosdr_sink->get_gain_names();
     if (!_gain_range.empty())
@@ -564,9 +565,10 @@ int gr_mod_base::set_audio(std::vector<float> *data)
 
 }
 
-void gr_mod_base::tune(long center_freq)
+void gr_mod_base::tune(long long center_freq)
 {
-    _device_frequency = center_freq;
+    long long steps = center_freq / 1000000;
+    _device_frequency = center_freq + steps * _freq_correction;
     _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
     set_bandwidth_specific();
 }

@@ -46,7 +46,7 @@ public:
         AUDIO_MODE_ANALOG,
         AUDIO_MODE_OPUS
     };
-    void compress_audio(short *buf, short bufsize, int direction, int audio_mode);
+    void compress_audio(short *buf, int bufsize, int direction, int audio_mode);
     void write_preprocess(short *buf, int bufsize, bool preprocess, int audio_mode);
     int read_preprocess(short *buf, int bufsize, bool preprocess, int audio_mode);
 
@@ -62,10 +62,12 @@ private:
 
     const Settings *_settings;
     SpeexPreprocessState *_speex_preprocess;
-    sf_compressor_state_st _cm_state_read;
+    sf_compressor_state_st _cm_state_read_opus;
+    sf_compressor_state_st _cm_state_write_opus;
     sf_compressor_state_st _cm_state_read_codec2;
-    sf_compressor_state_st _cm_state_write;
     sf_compressor_state_st _cm_state_write_codec2;
+    sf_compressor_state_st _cm_state_read_analog;
+    sf_compressor_state_st _cm_state_write_analog;
     Filter *_audio_filter_1400;
     Filter *_audio_filter2_1400;
     Filter *_audio_filter_700;

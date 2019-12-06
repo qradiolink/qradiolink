@@ -8,7 +8,7 @@ QRadioLink
 About
 -----
 
-*QRadioLink* is a VOIP (radio over IP) GNU/Linux software defined radio transceiver application using Internet protocols for communication, 
+*QRadioLink* is a VOIP (radio over IP) GNU/Linux SDR (software defined radio) transceiver application using Internet protocols for communication,
 built on top of [GNU radio](https://www.gnuradio.org/), 
 which allows experimenting with software defined radio hardware using different digital and analog radio signals and a Qt5 user interface.
 
@@ -17,7 +17,7 @@ It can also be used as a low power amateur radio SDR transceiver for demonstrati
 
 The application was originally inspired from the [Codec2 GMSK modem](https://github.com/on1arf/gmsk) project by Kristoff Bonne.
 
-[![Screenshot](http://qradiolink.org/images/qradiolink54.png)](http://qradiolink.org)
+[![Screenshot](http://qradiolink.org/images/qradiolink56.png)](http://qradiolink.org)
 
 
 

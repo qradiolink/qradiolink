@@ -222,7 +222,7 @@ void RadioController::run()
                     (_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL))
             {
                 // FIXME: poke repeater to VOIP logic here
-                transmitServerInfoBeacon();
+                //transmitServerInfoBeacon();
             }
         }
 
@@ -802,7 +802,9 @@ void RadioController::sendTxBeep(int sound)
     switch(sound)
     {
     case 0:
-        return;
+        size = 8192 * sizeof(short);
+        samples = new short[size];
+        memset(samples, 0, size);
         break;
     default:
         samples = (short*) _end_rec_sound->data();
@@ -911,7 +913,8 @@ void RadioController::startTx()
                 && ((_tx_mode == gr_modem_types::ModemTypeNBFM2500) ||
                     (_tx_mode == gr_modem_types::ModemTypeNBFM5000)))
         {
-            sendTxBeep(_settings->end_beep);
+            // disabled. breaks things
+            //sendTxBeep(_settings->end_beep);
         }
         _radio_time_out_timer->start(1000 * _settings->radio_tot);
         emit displayTransmitStatus(true);
@@ -1222,7 +1225,8 @@ void RadioController::receivePCMAudio(std::vector<float> *audio_data)
         }
         else
         {
-            /// Noise kills the compressor, so disabled
+            // FIXME: compressor expects 40 ms frames, and if we give it shorter frames
+            // it will introduce gaps in audio
             emit writePCM(pcm, size*sizeof(short), false, AudioProcessor::AUDIO_MODE_ANALOG);
         }
     }

@@ -57,24 +57,6 @@ AudioProcessor::AudioProcessor(const Settings *settings, QObject *parent) : QObj
                   0.001f,   // attack
                   0.15f    // release
                   );
-    sf_simplecomp(&_cm_state_read,
-                  8000, // audio rate
-                  0,   // audio boost
-                  -35,  // kick in (dB)
-                  20,   // knee
-                  20,   // inverse scale
-                  0.009f,   // attack
-                  0.125f    // release
-                  );
-    sf_simplecomp(&_cm_state_write,
-                  8000, // audio rate
-                  0,   // audio boost
-                  -35,  // kick in (dB)
-                  20,   // knee
-                  20,   // inverse scale
-                  0.001f,   // attack
-                  0.125f    // release
-                  );
     sf_simplecomp(&_cm_state_write_codec2,
                   8000, // audio rate
                   3,   // audio boost
@@ -84,6 +66,43 @@ AudioProcessor::AudioProcessor(const Settings *settings, QObject *parent) : QObj
                   0.001f,   // attack
                   0.125f    // release
                   );
+    sf_simplecomp(&_cm_state_read_opus,
+                  8000, // audio rate
+                  0,   // audio boost
+                  -35,  // kick in (dB)
+                  20,   // knee
+                  20,   // inverse scale
+                  0.009f,   // attack
+                  0.125f    // release
+                  );
+    sf_simplecomp(&_cm_state_write_opus,
+                  8000, // audio rate
+                  0,   // audio boost
+                  -35,  // kick in (dB)
+                  20,   // knee
+                  20,   // inverse scale
+                  0.001f,   // attack
+                  0.125f    // release
+                  );
+    sf_simplecomp(&_cm_state_read_analog,
+                  8000, // audio rate
+                  0,   // audio boost
+                  -35,  // kick in (dB)
+                  20,   // knee
+                  20,   // inverse scale
+                  0.009f,   // attack
+                  0.125f    // release
+                  );
+    sf_simplecomp(&_cm_state_write_analog,
+                  8000, // audio rate
+                  -6,   // audio boost
+                  -30,  // kick in (dB)
+                  20,   // knee
+                  20,   // inverse scale
+                  0.001f,   // attack
+                  0.125f    // release
+                  );
+
 
     _audio_filter_1400 = new Filter(BPF,256,8,0.2,3.8); // 16,8,0.12,3.8
     if( _audio_filter_1400->get_error_flag() != 0 )
@@ -155,7 +174,7 @@ float AudioProcessor::calc_audio_power(short *buf, short samples)
     return rms;
 }
 
-void AudioProcessor::compress_audio(short *buf, short bufsize, int direction, int audio_mode)
+void AudioProcessor::compress_audio(short *buf, int bufsize, int direction, int audio_mode)
 {
     sf_snd output_snd = sf_snd_new(bufsize/sizeof(short), 8000, true);
     sf_snd input_snd = sf_snd_new(bufsize/sizeof(short), 8000, true);
@@ -168,8 +187,10 @@ void AudioProcessor::compress_audio(short *buf, short bufsize, int direction, in
         switch(audio_mode)
         {
         case AUDIO_MODE_ANALOG:
+            sf_compressor_process(&_cm_state_read_analog, bufsize/sizeof(short), input_snd->samples, output_snd->samples);
+            break;
         case AUDIO_MODE_OPUS:
-            sf_compressor_process(&_cm_state_read, bufsize/sizeof(short), input_snd->samples, output_snd->samples);
+            sf_compressor_process(&_cm_state_read_opus, bufsize/sizeof(short), input_snd->samples, output_snd->samples);
             break;
         case AUDIO_MODE_CODEC2:
             sf_compressor_process(&_cm_state_read_codec2, bufsize/sizeof(short), input_snd->samples, output_snd->samples);
@@ -181,8 +202,10 @@ void AudioProcessor::compress_audio(short *buf, short bufsize, int direction, in
         switch(audio_mode)
         {
         case AUDIO_MODE_ANALOG:
+            sf_compressor_process(&_cm_state_write_analog, bufsize/sizeof(short), input_snd->samples, output_snd->samples);
+            break;
         case AUDIO_MODE_OPUS:
-            sf_compressor_process(&_cm_state_write, bufsize/sizeof(short), input_snd->samples, output_snd->samples);
+            sf_compressor_process(&_cm_state_write_opus, bufsize/sizeof(short), input_snd->samples, output_snd->samples);
             break;
         case AUDIO_MODE_CODEC2:
             sf_compressor_process(&_cm_state_write_codec2, bufsize/sizeof(short), input_snd->samples, output_snd->samples);

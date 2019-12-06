@@ -31,6 +31,7 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
     _mode = 9999;
     _carrier_offset = 0;
     _samp_rate = 1000000;
+    _freq_correction = freq_corr;
 
     _audio_sink = make_gr_audio_sink();
     _vector_sink = make_gr_vector_sink();
@@ -68,7 +69,7 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
     _osmosdr_source->set_center_freq(_device_frequency);
     set_bandwidth_specific();
     _osmosdr_source->set_sample_rate(1000000);
-    _osmosdr_source->set_freq_corr(freq_corr);
+    //_osmosdr_source->set_freq_corr(freq_corr);
     _osmosdr_source->set_gain_mode(true);
     _osmosdr_source->set_dc_offset_mode(2);
     _osmosdr_source->set_iq_balance_mode(0);
@@ -714,7 +715,8 @@ void gr_demod_base::get_FFT_data(float *fft_data,  unsigned int &fftSize)
 
 void gr_demod_base::tune(long long center_freq)
 {
-    _device_frequency = center_freq;
+    long long steps = center_freq / 1000000;
+    _device_frequency = center_freq + steps * _freq_correction;
     _osmosdr_source->set_center_freq(_device_frequency);
     set_bandwidth_specific();
 }

@@ -157,6 +157,7 @@ private:
     osmosdr::source::sptr _osmosdr_source;
 
     float _device_frequency;
+    int _freq_correction;
     int _msg_nr;
     int _mode;
     int _carrier_offset;
