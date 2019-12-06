@@ -1,9 +1,8 @@
 extend-diff-ignore = "^\.travis*"
 extend-diff-ignore = "^build/*"
 extend-diff-ignore = "^*\.user$"
-extend-diff-ignore = "^application/ext/*"
-extend-diff-ignore = "^application/res/*"
+extend-diff-ignore = "^ext/*"
+extend-diff-ignore = "^res/*"
 extend-diff-ignore = "^docs/*"
 extend-diff-ignore = "^travis/*"
-extend-diff-ignore = "^MapGraphics/images/*"
 auto-commit
