@@ -184,8 +184,6 @@ HEADERS  += mainwindow.h\
     gr/gr_const_sink.h \
     src/layer1framing.h
 
-INCLUDEPATH += $$PWD/../MapGraphics
-
 
 !isEmpty(LIBDIR) {
     LIBS += -L$$LIBDIR
