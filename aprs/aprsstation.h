@@ -18,6 +18,17 @@
 #define APRSSTATION_H
 
 #include <QString>
+#include <QPointF>
+
+class AprsIcon
+{
+public:
+    AprsIcon();
+    QString icon;
+    QPointF position;
+    QString callsign;
+    unsigned time_seen;
+};
 
 /**
  * @brief Object holding the properties of an APRS station

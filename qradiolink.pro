@@ -79,7 +79,6 @@ SOURCES += main.cpp\
         ext/mem.c \
         net/netdevice.cpp \
         aprs/aprs.cpp \
-        aprs/aprsicon.cpp \
         aprs/aprspixmapitem.cpp \
         aprs/aprsstation.cpp \
     qtgui/freqctrl.cpp \
@@ -150,7 +149,6 @@ HEADERS  += mainwindow.h\
         net/netdevice.h \
         src/radiocontroller.h \
         aprs/aprs.h \
-        aprs/aprsicon.h \
         aprs/aprspixmapitem.h \
         aprs/aprsstation.h \
     qtgui/freqctrl.h \
