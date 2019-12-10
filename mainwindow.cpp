@@ -263,36 +263,7 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
 
     /// MapGraphics
     ///
-    _map_scene = new MapGraphicsScene(this);
-    _map_view = new MapGraphicsView(_map_scene,this);
-    ui->mapFrame->layout()->addWidget(_map_view);
-
-    QSharedPointer<OSMTileSource> osmTiles(new OSMTileSource(OSMTileSource::OSMTiles), &QObject::deleteLater);
-    QSharedPointer<OSMTileSource> aerialTiles(new OSMTileSource(OSMTileSource::GoogleSatTiles), &QObject::deleteLater);
-    QSharedPointer<GridTileSource> gridTiles(new GridTileSource(), &QObject::deleteLater);
-    QSharedPointer<CompositeTileSource> composite(new CompositeTileSource(), &QObject::deleteLater);
-    composite->addSourceBottom(osmTiles);
-    composite->addSourceBottom(aerialTiles);
-    composite->addSourceTop(gridTiles);
-    _map_view->setTileSource(composite);
-
-
-    CompositeTileSourceConfigurationWidget * tileConfigWidget = new CompositeTileSourceConfigurationWidget(composite.toWeakRef(),
-                                                                                         ui->dockFrame);
-    ui->dockFrame->layout()->addWidget(tileConfigWidget);
-
-
-    //this->ui->menuWindow->addAction(this->ui->dockWidget->toggleViewAction());
-
-    //this->ui->menuWindow->addAction(this->ui->dockWidget3->toggleViewAction());
-    //this->ui->dockWidget->toggleViewAction()->setText("&Layers");
-    //this->ui->dockWidget->toggleViewAction()->setText("&Data");
-    //this->ui->dockWidget3->toggleViewAction()->setText("&Toolbox");
-
-    QObject::connect(_map_view,SIGNAL(map_clicked(QPointF)),this,SLOT(mapClick(QPointF)));
-    QObject::connect(_map_view,SIGNAL(mouse_moved(QPointF)),this,SLOT(getMouseCoord(QPointF)));
-    QObject::connect(_map_view,SIGNAL(zoomLevelChanged(quint8)),this,SLOT(setMapItems(quint8)));
-    QObject::connect(_map_view,SIGNAL(zoomLevelChanged(quint8)),this,SLOT(newAPRSquery(quint8)));
+    _aprs_controller = new AprsController(settings, ui, this);
 
 }
 

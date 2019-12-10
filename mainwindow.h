@@ -33,12 +33,6 @@
 #include <QAudioDeviceInfo>
 #include <math.h>
 #include <complex>
-#include <MapGraphics/MapGraphicsScene.h>
-#include <MapGraphics/MapGraphicsView.h>
-#include <MapGraphics/guts/CompositeTileSourceConfigurationWidget.h>
-#include <MapGraphics/tileSources/OSMTileSource.h>
-#include <MapGraphics/tileSources/GridTileSource.h>
-#include <MapGraphics/tileSources/CompositeTileSource.h>
 #include <libconfig.h++>
 #include "ext/utils.h"
 #include "src/mumbleclient.h"
@@ -48,6 +42,7 @@
 #include "src/settings.h"
 #include "src/logger.h"
 #include "src/mumblechannel.h"
+#include "aprs/aprscontroller.h"
 
 
 typedef std::vector<std::complex<float>> complex_vector;
@@ -270,8 +265,7 @@ private:
     float *_realFftData;
     float *_iirFftData;
 
-    MapGraphicsScene * _map_scene;
-    MapGraphicsView * _map_view;
+    AprsController *_aprs_controller;
 
     QTimer _secondary_text_timer;
     QTimer _video_timer;

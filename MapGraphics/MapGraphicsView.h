@@ -71,6 +71,8 @@ public:
 
     void zoomIn(ZoomMode zMode = CenterZoom);
     void zoomOut(ZoomMode zMode = CenterZoom);
+
+    QPointer<QGraphicsView> _childView;
     
 signals:
     void zoomLevelChanged(quint8 nZoom);
@@ -94,7 +96,7 @@ protected:
 
 private:
     QPointer<MapGraphicsScene> _scene;
-    QPointer<QGraphicsView> _childView;
+
     QPointer<QGraphicsScene> _childScene;
     QSharedPointer<MapTileSource> _tileSource;
 

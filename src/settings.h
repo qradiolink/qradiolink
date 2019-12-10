@@ -92,6 +92,7 @@ public:
     int tot_tx_end;
     int window_width;
     int window_height;
+    int aprs_filter_range;
 
     /// Not saved to config:
 
