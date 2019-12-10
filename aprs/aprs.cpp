@@ -56,7 +56,7 @@ Aprs::~Aprs()
 
 void Aprs::connectionSuccess()
 {
-    qDebug("Connection to APRS established.");
+    emit rawAprsData("Connection to APRS established.\n");
 
     _status=1;
     _connection_tries=0;
@@ -71,7 +71,6 @@ void Aprs::connectionFailed(QAbstractSocket::SocketError error)
 {
     Q_UNUSED(error)
     _status=0;
-    qDebug("OOps! Could not connect to APRS. Trying again.");
     _connection_tries++;
     if(_connection_tries < 30)
     {
@@ -79,10 +78,9 @@ void Aprs::connectionFailed(QAbstractSocket::SocketError error)
     }
     else
     {
-        qDebug("Giving up! APRS is not reachable.");
+        emit rawAprsData("Giving up! APRS is not reachable.\n");
         emit connectionFailure();
     }
-
 }
 
 
@@ -115,9 +113,6 @@ void Aprs::authenticate()
 
     _socket->write(_login_text.toLatin1());
     _socket->flush();
-    qDebug() << "Sent APRS login";
-    qDebug() << _login_text;
-
 }
 
 void Aprs::processData()
@@ -130,7 +125,6 @@ void Aprs::processData()
         QByteArray a = _socket->read(1024);
         response.append(a);
     }
-    qDebug() << response;
 
     if(response.contains("verified"))
     {
@@ -145,7 +139,7 @@ void Aprs::processData()
     else
     {
         //we have a station report
-        emit rawAprsData(response);
+        emit rawAprsData(response + "\n");
         QStringList v = response.split(":");
         QStringList v1 = v[0].split(">");
         QString from = v1[0];
@@ -206,11 +200,7 @@ void Aprs::processData()
             emit aprsData(st);
 
         }
-
-
-
     }
-
 }
 
 void Aprs::setFilter(QPointF &pos, int &range)
@@ -219,7 +209,6 @@ void Aprs::setFilter(QPointF &pos, int &range)
     if( QTime::currentTime() < _delaytime ) return;
 
     QString query = "#filter r/"+QString::number(pos.ry())+"/"+QString::number(pos.rx())+"/0"+QString::number(range)+"\r\n";
-
     _socket->write(query.toLatin1());
     _socket->flush();
     _delaytime = QTime::currentTime().addSecs(1);
@@ -231,7 +220,6 @@ void Aprs::filterCallsign(QString callsign)
     if ((_status!=1)) return;
     if( QTime::currentTime() < _delaytime ) return;
     QString query = "#filter b/"+callsign+"\r\n";
-
     _socket->write(query.toLatin1());
     _socket->flush();
     _delaytime = QTime::currentTime().addSecs(1);
@@ -242,7 +230,6 @@ void Aprs::filterPrefix(QString prefix)
     if ((_status!=1)) return;
     if( QTime::currentTime() < _delaytime ) return;
     QString query = "#filter p/"+prefix+"\r\n";
-
     _socket->write(query.toLatin1());
     _socket->flush();
     _delaytime = QTime::currentTime().addSecs(1);

@@ -7,10 +7,11 @@ AprsController::AprsController(Settings *settings, Ui::MainWindow *wui, QObject 
     ui = wui;
     _settings = settings;
     _aprs = new Aprs(settings);
-    activateAPRS(true);
-
-    _map_scene = new MapGraphicsScene(nullptr);
-    _map_view = new MapGraphicsView(_map_scene, nullptr);
+    connectToAPRS();
+    _zoom_aprs_filter_distance = true;
+    QWidget *widget = reinterpret_cast<QWidget*>(parent);
+    _map_scene = new MapGraphicsScene(widget);
+    _map_view = new MapGraphicsView(_map_scene, widget);
     ui->mapFrame->layout()->addWidget(_map_view);
 
     QSharedPointer<OSMTileSource> osmTiles(new OSMTileSource(OSMTileSource::OSMTiles), &QObject::deleteLater);
@@ -41,12 +42,25 @@ AprsController::AprsController(Settings *settings, Ui::MainWindow *wui, QObject 
     QObject::connect(_map_view,SIGNAL(zoomLevelChanged(quint8)),this,SLOT(newAPRSquery(quint8)));
 }
 
+AprsController::~AprsController()
+{
+    delete _aprs;
+    for(int i=0;i<_aprs_lines.size();i++)
+    {
+        delete _aprs_lines.at(i);
+    }
+    _aprs_lines.clear();
+    for(int i=0;i<_aprs_stations.size();i++)
+    {
+        delete _aprs_stations.at(i);
+    }
+    _aprs_stations.clear();
+}
+
 void AprsController::connectToAPRS()
 {
-
     QObject::connect(_aprs,SIGNAL(aprsData(AprsStation*)),this,SLOT(processAPRSData(AprsStation*)));
     QObject::connect(_aprs,SIGNAL(rawAprsData(QString)),this,SLOT(processRawAPRSData(QString)));
-    //QObject::connect(ui->actionRaw_APRS_messages,SIGNAL(triggered()),this,SLOT(showRawAPRSMessages()));
 }
 
 void AprsController::activateAPRS(bool active)
@@ -67,16 +81,6 @@ void AprsController::activateAPRS(bool active)
     }
 }
 
-void AprsController::showRawAPRSMessages()
-{
-
-    for(int i=0; i<_raw_aprs_messages.size();++i)
-    {
-        ui->appLogTextEdit->append(*_raw_aprs_messages[i]);
-    }
-    //QObject::connect(this,SIGNAL(newMessage(QString)),f,SLOT(addMessage(QString)));
-    //f->show();
-}
 
 void AprsController::filterPrefixAPRS()
 {
@@ -93,7 +97,6 @@ void AprsController::filterPrefixAPRS()
         QString callsign_text;
         bool mobile = false;
         QRegExp re(";([^*]+)\\*");
-        //QRegularExpressionMatch match = re.match(st->payload);
         if(re.indexIn(st->payload)!=-1)
         {
             callsign_text = re.cap(1);
@@ -105,7 +108,7 @@ void AprsController::filterPrefixAPRS()
         if(st->payload.startsWith('=') || st->payload.startsWith('/')
                 || st->payload.startsWith('@') || st->payload.startsWith('!'))
             mobile= true;
-        QString filename = ":aprs/res/aprs_icons/slice_";
+        QString filename = ":/aprs/res/aprs_icons/slice_";
         QString icon;
         QPointF pos = QPointF(st->longitude,st->latitude);
         int zoom = _map_view->zoomLevel();
@@ -226,7 +229,7 @@ void AprsController::changeAPRSTimeFilter(int hours)
         QPointF pos(st->longitude,st->latitude);
         double zoom = _map_view->zoomLevel();
         QPointF xypos = convertToXY(pos, zoom);
-        QString filename = ":aprs/res/aprs_icons/slice_";
+        QString filename = ":/aprs/res/aprs_icons/slice_";
         AprsIcon ic;
         QString icon;
         if(replace_icon)
@@ -302,19 +305,14 @@ void AprsController::newAPRSquery(quint8 zoom)
     if(!_aprs || !_zoom_aprs_filter_distance)
         return;
     QPointF cursor_pos = _map_view->_childView->mapToScene(_map_view->_childView->mapFromGlobal(QCursor::pos()));
-
     QPointF pos = convertToLL(cursor_pos, zoom);
-
-
     int range = _settings->aprs_filter_range;
     _aprs->setFilter(pos, range);
 }
 
 void AprsController::processRawAPRSData(QString data)
 {
-    QString * raw_message = new QString(data);
-    _raw_aprs_messages.push_back(raw_message);
-    //emit newMessage(data);
+    ui->aprsLogTextEdit->append(data);
 }
 
 void AprsController::processAPRSData(AprsStation *st)
@@ -364,7 +362,7 @@ void AprsController::processAPRSData(AprsStation *st)
         AprsPixmapItem *pm = i.key();
         if(replace_icon && (pm->_callsign == st->callsign) && (oldic.icon!="15_0"))
         {
-            QString filename1 = ":aprs/res/aprs_icons/slice_";
+            QString filename1 = ":/aprs/res/aprs_icons/slice_";
             _map_view->_childView->scene()->removeItem(i.key());
             AprsIcon newic;
             QString newicon = "15_0";
@@ -391,7 +389,7 @@ void AprsController::processAPRSData(AprsStation *st)
 
     }
 
-    QString filename = ":aprs/res/aprs_icons/slice_";
+    QString filename = ":/aprs/res/aprs_icons/slice_";
     AprsIcon ic;
     QString icon = st->getImage();
     ic.icon = icon;
@@ -413,7 +411,6 @@ void AprsController::processAPRSData(AprsStation *st)
 
     QString callsign_text;
     QRegExp re(";([^*]+)\\*");
-    //QRegularExpressionMatch match = re.match(st->payload);
     if(re.indexIn(st->payload)!=-1)
     {
         callsign_text = re.cap(1);
@@ -441,8 +438,9 @@ void AprsController::processAPRSData(AprsStation *st)
     _map_view->_childView->scene()->addItem(callsign);
     _map_aprs_text.insert(callsign,pos);
     _aprs_stations.append(st);
+    setMapItems(_map_view->zoomLevel());
     //_db->update_aprs_stations(st);
-    delete st;
+    //delete st;
 }
 
 QPointF AprsController::convertToLL(QPointF pos, double zoom)
@@ -488,7 +486,7 @@ void AprsController::restoreMapState()
         if(st->payload.startsWith('=') || st->payload.startsWith('/')
                 || st->payload.startsWith('@') || st->payload.startsWith('!'))
             mobile= true;
-        QString filename = ":aprs/res/aprs_icons/slice_";
+        QString filename = ":/aprs/res/aprs_icons/slice_";
         QString icon;
         QPointF pos = QPointF(st->longitude,st->latitude);
         int zoom = _map_view->zoomLevel();

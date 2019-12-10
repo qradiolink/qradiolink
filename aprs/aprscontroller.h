@@ -19,11 +19,11 @@ class AprsController : public QObject
     Q_OBJECT
 public:
     explicit AprsController(Settings *settings, Ui::MainWindow *wui, QObject *parent = nullptr);
+    ~AprsController();
     static QPointF convertToLL(QPointF pos, double zoom);
     static QPointF convertToXY(QPointF ll, double zoom);
 
     void connectToAPRS();
-    void showRawAPRSMessages();
     void changeAPRSTimeFilter(int hours);
     void filterPrefixAPRS();
     void clearFilterPrefixAPRS();
