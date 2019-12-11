@@ -139,6 +139,8 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
                      this,SLOT(updateMuteForwardedAudio(bool)));
     QObject::connect(ui->totStopTxCheckBox,SIGNAL(toggled(bool)),
                      this,SLOT(updateTotTxEnd(bool)));
+    QObject::connect(ui->checkBoxTxLimits,SIGNAL(toggled(bool)),
+                     this,SLOT(updateTxLimits(bool)));
     QObject::connect(ui->rssiCalibrateButton,SIGNAL(clicked()),this,SLOT(setRSSICalibration()));
     QObject::connect(ui->saveChannelsButton,SIGNAL(clicked()),this,SLOT(saveMemoryChannels()));
     QObject::connect(ui->agcAttackSpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateAgcAttack(int)));
@@ -532,6 +534,7 @@ void MainWindow::setConfig()
     ui->duplexOpButton->setChecked((bool) _settings->enable_duplex);
     ui->checkBoxAudioCompressor->setChecked((bool)_settings->audio_compressor);
     ui->checkBoxRelays->setChecked((bool)_settings->enable_relays);
+    ui->checkBoxTxLimits->setChecked((bool)_settings->tx_band_limits);
     ui->burstIPCheckBox->setChecked((bool)_settings->burst_ip_modem);
     ui->remoteControlCheckBox->setChecked((bool)_settings->remote_control);
     ui->nightModeCheckBox->setChecked((bool)_settings->night_mode);
@@ -1755,6 +1758,11 @@ void MainWindow::updateTotTimer(int value)
 void MainWindow::updateTotTxEnd(bool value)
 {
     emit setTotTxEnd(value);
+}
+
+void MainWindow::updateTxLimits(bool value)
+{
+    emit setTxLimits(value);
 }
 
 void MainWindow::toggleAudioRecord(bool value)

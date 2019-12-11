@@ -26,7 +26,7 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     _logger = logger;
     _radio_channels = radio_channels;
 
-    _modem = new gr_modem(logger);
+    _modem = new gr_modem(settings, logger);
     _codec = new AudioEncoder(settings);
     _audio_mixer_in = new AudioMixer;
     _layer2 = new Layer2Protocol(logger);
@@ -2335,6 +2335,11 @@ void RadioController::setRadioToT(int value)
 void RadioController::setTotTxEnd(bool value)
 {
     _settings->tot_tx_end = (int)value;
+}
+
+void RadioController::setTxLimits(bool value)
+{
+    _settings->tx_band_limits = (int)value;
 }
 
 

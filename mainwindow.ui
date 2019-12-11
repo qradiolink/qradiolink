@@ -96,7 +96,7 @@
 </string>
         </property>
         <property name="currentIndex">
-         <number>2</number>
+         <number>4</number>
         </property>
         <property name="iconSize">
          <size>
@@ -2530,7 +2530,7 @@ font: 10pt &quot;Sans Serif&quot;;
              </font>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>1</number>
             </property>
             <widget class="QWidget" name="tab">
              <attribute name="title">
@@ -3701,6 +3701,13 @@ and S-meter (dBm)</string>
                     </size>
                    </property>
                   </spacer>
+                 </item>
+                 <item row="4" column="3">
+                  <widget class="QCheckBox" name="checkBoxTxLimits">
+                   <property name="text">
+                    <string>TX limits</string>
+                   </property>
+                  </widget>
                  </item>
                 </layout>
                </widget>

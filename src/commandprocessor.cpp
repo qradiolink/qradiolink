@@ -323,6 +323,12 @@ bool CommandProcessor::processStatusCommands(int command_index, QString &respons
         else
             response.append(QString("Local audio muting while forwarding is disabled."));
         break;
+    case 63:
+        if(_settings->tx_band_limits)
+            response.append(QString("TX band limits are enabled."));
+        else
+            response.append(QString("TX band limits are disabled."));
+        break;
 
     default:
         break;
@@ -924,6 +930,21 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
         }
         break;
     }
+    case 64:
+    {
+        int set = param1.toInt();
+        if(set != 0 && set !=1)
+        {
+            response = "Parameter value is not supported";
+            success = false;
+        }
+        else
+        {
+            response = QString("Setting TX band limits to %1").arg(set);
+            emit setTxLimits((bool)set);
+        }
+        break;
+    }
 
     default:
         break;
@@ -1001,4 +1022,6 @@ void CommandProcessor::buildCommandList()
     _command_list->append(new command("setvoipbitrate", 1, "Set VOIP bitrate (bits/sec"));
     _command_list->append(new command("muteforwarding", 0, "Get local mute status of VOIP forwarded radio"));
     _command_list->append(new command("setmuteforwarding", 1, "Toggle local mute status of VOIP forwarded radio, (1 enabled, 0 disabled)"));
+    _command_list->append(new command("gettxlimits", 0, "Get status of TX band limiter"));
+    _command_list->append(new command("settxlimits", 1, "Toggle TX band limits, (1 enabled, 0 disabled)"));
 }

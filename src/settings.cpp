@@ -52,6 +52,7 @@ Settings::Settings(Logger *logger)
     voip_server="127.0.0.1";
     bb_gain = 1;
     night_mode = 0;
+    tx_band_limits = 0;
 
     /// old stuff, not used
     _mumble_tcp = 1; // used
@@ -557,6 +558,14 @@ void Settings::readConfig()
     }
     try
     {
+        tx_band_limits = cfg.lookup("tx_band_limits");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        tx_band_limits = 1;
+    }
+    try
+    {
         window_width = cfg.lookup("window_width");
     }
     catch(const libconfig::SettingNotFoundException &nfex)
@@ -633,6 +642,7 @@ void Settings::saveConfig()
     root.add("block_buffer_size",libconfig::Setting::TypeInt) = block_buffer_size;
     root.add("radio_tot",libconfig::Setting::TypeInt) = radio_tot;
     root.add("tot_tx_end",libconfig::Setting::TypeInt) = tot_tx_end;
+    root.add("tx_band_limits",libconfig::Setting::TypeInt) = tx_band_limits;
     root.add("window_width",libconfig::Setting::TypeInt) = window_width;
     root.add("window_height",libconfig::Setting::TypeInt) = window_height;
     try

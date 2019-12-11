@@ -90,6 +90,7 @@ public:
     int block_buffer_size;
     int radio_tot; // seconds
     int tot_tx_end;
+    int tx_band_limits;
     int window_width;
     int window_height;
 

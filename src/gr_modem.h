@@ -43,7 +43,7 @@ class gr_modem : public QObject
     Q_OBJECT
 public:
 
-    explicit gr_modem(Logger *logger, QObject *parent = 0);
+    explicit gr_modem(const Settings *settings, Logger *logger, QObject *parent = 0);
     ~gr_modem();
 
     bool demodulateAnalog();
@@ -125,6 +125,7 @@ private:
     void transmit(QVector<std::vector<unsigned char>*> frames);
     bool synchronize(int v_size, std::vector<unsigned char> *data);
 
+    const Settings *_settings;
     Logger *_logger;
     Limits *_limits;
     gr_mod_base *_gr_mod_base;

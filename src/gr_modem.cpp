@@ -16,9 +16,10 @@
 
 #include "gr_modem.h"
 
-gr_modem::gr_modem(Logger *logger, QObject *parent) :
+gr_modem::gr_modem(const Settings *settings, Logger *logger, QObject *parent) :
     QObject(parent)
 {
+    _settings = settings;
     _logger = logger;
     _limits = new Limits;
     _bit_buf_len = 8 *8;
@@ -345,7 +346,17 @@ void gr_modem::tuneTx(long long center_freq)
             _gr_mod_base->tune(center_freq);
         else
         {
-            _logger->log(Logger::LogLevelWarning, "Attempted to set TX frequency outside of band limits");
+            if(!_settings->tx_band_limits)
+            {
+                _gr_mod_base->tune(center_freq);
+                _logger->log(Logger::LogLevelInfo,
+                         "TX frequency is outside of configured band limits");
+            }
+            else
+            {
+                _logger->log(Logger::LogLevelWarning,
+                         "Blocked attempt to set TX frequency outside of configured band limits");
+            }
         }
     }
 }

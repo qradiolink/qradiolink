@@ -69,6 +69,7 @@ signals:
     void setVoxLevel(int);
     void setVoipBitrate(int);
     void setMuteForwardedAudio(bool value);
+    void setTxLimits(bool value);
 
     /// Tuning the radio
     void setCarrierOffset(qint64 offset);

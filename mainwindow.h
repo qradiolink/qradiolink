@@ -160,6 +160,7 @@ public slots:
     void updateBlockBufferSize(int value);
     void updateTotTimer(int value);
     void updateTotTxEnd(bool value);
+    void updateTxLimits(bool value);
 
 signals:
     void terminateConnections();
@@ -227,6 +228,7 @@ signals:
     void setBlockBufferSize(int value);
     void setRadioToT(int value);
     void setTotTxEnd(bool value);
+    void setTxLimits(bool value);
 
 public:
     explicit MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_channels, QWidget *parent = 0);

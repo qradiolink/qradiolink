@@ -184,6 +184,7 @@ public slots:
     void setBlockBufferSize(int value);
     void setRadioToT(int value);
     void setTotTxEnd(bool value);
+    void setTxLimits(bool value);
 
 private:
     unsigned int getFrameLength(unsigned char *data);
