@@ -31,7 +31,6 @@
 #include <gnuradio/blocks/copy.h>
 #include <osmosdr/sink.h>
 #include "src/modem_types.h"
-#include "src/limits.h"
 #include "gr_vector_source.h"
 #include "gr_audio_source.h"
 #include "gr_mod_2fsk_sdr.h"
@@ -117,8 +116,6 @@ private:
     void set_bandwidth_specific();
     osmosdr::gain_range_t _gain_range;
     std::vector<std::string> _gain_names;
-
-    Limits _limits;
 
 };
 

@@ -26,7 +26,7 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     _logger = logger;
     _radio_channels = radio_channels;
 
-    _modem = new gr_modem;
+    _modem = new gr_modem(logger);
     _codec = new AudioEncoder(settings);
     _audio_mixer_in = new AudioMixer;
     _layer2 = new Layer2Protocol(logger);
@@ -1668,7 +1668,7 @@ void RadioController::toggleTX(bool value)
         _mutex->lock();
         _modem->setTxPower(0.01);
         _modem->setBbGain(_settings->bb_gain);
-        _modem->tuneTx(430000000);
+        _modem->tuneTx(433000000);
         _modem->setTxCTCSS(_settings->tx_ctcss);
         _modem->startTX(_settings->block_buffer_size);
         if(_settings->rx_inited)

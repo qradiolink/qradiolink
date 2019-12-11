@@ -16,9 +16,11 @@
 
 #include "gr_modem.h"
 
-gr_modem::gr_modem(QObject *parent) :
+gr_modem::gr_modem(Logger *logger, QObject *parent) :
     QObject(parent)
 {
+    _logger = logger;
+    _limits = new Limits;
     _bit_buf_len = 8 *8;
     _bit_buf = new unsigned char[_bit_buf_len];
     _modem_type_rx = gr_modem_types::ModemTypeBPSK2000;
@@ -45,6 +47,7 @@ gr_modem::~gr_modem()
     if(_gr_mod_base)
         deinitTX(_modem_type_tx);
     delete[] _bit_buf;
+    delete _limits;
 }
 
 void gr_modem::initTX(int modem_type, std::string device_args, std::string device_antenna, int freq_corr)
@@ -336,9 +339,15 @@ void gr_modem::tune(long long center_freq)
 
 void gr_modem::tuneTx(long long center_freq)
 {
-
     if(_gr_mod_base)
-        _gr_mod_base->tune(center_freq);
+    {
+        if(_limits->checkLimit(center_freq))
+            _gr_mod_base->tune(center_freq);
+        else
+        {
+            _logger->log(Logger::LogLevelWarning, "Attempted to set TX frequency outside of band limits");
+        }
+    }
 }
 
 void gr_modem::setCarrierOffset(long long offset)

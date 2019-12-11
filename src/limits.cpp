@@ -26,9 +26,8 @@ Limits::Limits()
     _tx_limits.push_back(std::complex<long long>(10000000000, 10300000000));
 }
 
-bool Limits::checkLimit(double freq)
+bool Limits::checkLimit(long long tx_freq)
 {
-    long long tx_freq = (long long)freq;
     for(unsigned int i=0;i<_tx_limits.size();i++)
     {
         std::complex<long long> band = _tx_limits.at(i);

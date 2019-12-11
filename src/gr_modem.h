@@ -29,6 +29,8 @@
 #include <string>
 #include "ext/utils.h"
 #include "src/settings.h"
+#include "src/limits.h"
+#include "src/logger.h"
 #include "src/layer1framing.h"
 #include "src/modem_types.h"
 #include "gr/gr_mod_base.h"
@@ -41,7 +43,7 @@ class gr_modem : public QObject
     Q_OBJECT
 public:
 
-    explicit gr_modem(QObject *parent = 0);
+    explicit gr_modem(Logger *logger, QObject *parent = 0);
     ~gr_modem();
 
     bool demodulateAnalog();
@@ -123,6 +125,8 @@ private:
     void transmit(QVector<std::vector<unsigned char>*> frames);
     bool synchronize(int v_size, std::vector<unsigned char> *data);
 
+    Logger *_logger;
+    Limits *_limits;
     gr_mod_base *_gr_mod_base;
     gr_demod_base *_gr_demod_base;
     unsigned char *_bit_buf;
