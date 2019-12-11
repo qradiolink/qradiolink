@@ -23,7 +23,6 @@ Limits::Limits()
     _tx_limits.push_back(std::complex<long long>(3400000000, 3410000000));
     _tx_limits.push_back(std::complex<long long>(5660000000, 5670000000));
     _tx_limits.push_back(std::complex<long long>(5725000000, 5850000000));
-    _tx_limits.push_back(std::complex<long long>(5725000000, 5850000000));
     _tx_limits.push_back(std::complex<long long>(10000000000, 10300000000));
 }
 
