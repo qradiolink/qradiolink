@@ -38,7 +38,7 @@ void Layer2Protocol::processRadioMessage(QByteArray data)
     stream >> crc;
     stream.readBytes(tmp, data_len);
     QByteArray message(tmp, data_len);
-    delete tmp;
+    delete[] tmp;
 
     if(crc != gr::digital::crc32(message.toStdString()))
     {

@@ -130,7 +130,7 @@ public slots:
     void tuneToMemoryChannel(int row, int col);
     void tuneToMemoryChannel(radiochannel *chan);
     void editMemoryChannel(QTableWidgetItem* item);
-    void saveMemoryChannes();
+    void saveMemoryChannels();
     void startMemoryScan(bool value);
     void changeFilterWidth(int low, int up);
     void setAudioCompressor(bool value);

@@ -140,7 +140,7 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     QObject::connect(ui->totStopTxCheckBox,SIGNAL(toggled(bool)),
                      this,SLOT(updateTotTxEnd(bool)));
     QObject::connect(ui->rssiCalibrateButton,SIGNAL(clicked()),this,SLOT(setRSSICalibration()));
-    QObject::connect(ui->saveChannelsButton,SIGNAL(clicked()),this,SLOT(saveMemoryChannes()));
+    QObject::connect(ui->saveChannelsButton,SIGNAL(clicked()),this,SLOT(saveMemoryChannels()));
     QObject::connect(ui->agcAttackSpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateAgcAttack(int)));
     QObject::connect(ui->agcDecaySpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateAgcDecay(int)));
     QObject::connect(ui->timeoutTimerSpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateTotTimer(int)));
@@ -858,7 +858,7 @@ void MainWindow::editMemoryChannel(QTableWidgetItem* item)
     }
 }
 
-void MainWindow::saveMemoryChannes()
+void MainWindow::saveMemoryChannels()
 {
     _radio_channels->saveConfig();
 }
