@@ -22,7 +22,7 @@
 #include <QVector>
 #include <QDebug>
 #include <string>
-#include "src/modem_types.h"
+#include <vector>
 #include <gnuradio/top_block.h>
 #include <gnuradio/blocks/rotator_cc.h>
 #include <gnuradio/vocoder/freedv_api.h>
@@ -30,7 +30,8 @@
 #include <gnuradio/analog/sig_source_f.h>
 #include <gnuradio/blocks/copy.h>
 #include <osmosdr/sink.h>
-#include <vector>
+#include "src/modem_types.h"
+#include "src/limits.h"
 #include "gr_vector_source.h"
 #include "gr_audio_source.h"
 #include "gr_mod_2fsk_sdr.h"
@@ -107,7 +108,7 @@ private:
     int _samp_rate;
     int _carrier_freq;
     int _filter_width;
-    float _device_frequency;
+    double _device_frequency;
     int _freq_correction;
     int _carrier_offset;
     int _mode;
@@ -116,6 +117,8 @@ private:
     void set_bandwidth_specific();
     osmosdr::gain_range_t _gain_range;
     std::vector<std::string> _gain_names;
+
+    Limits _limits;
 
 };
 

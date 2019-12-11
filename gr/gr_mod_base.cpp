@@ -568,8 +568,18 @@ int gr_mod_base::set_audio(std::vector<float> *data)
 void gr_mod_base::tune(long long center_freq)
 {
     long long steps = center_freq / 1000000;
-    _device_frequency = center_freq + steps * _freq_correction;
-    _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
+    _device_frequency = double(center_freq) + double(steps * _freq_correction);
+    double tx_freq = _device_frequency - _carrier_offset;
+    if(_limits.checkLimit(tx_freq))
+    {
+        _osmosdr_sink->set_center_freq(tx_freq);
+    }
+    else
+    {
+        qWarning() << "Attempted to tune sink outside of regular bands.";
+        qWarning() << "Sink frequency set instead to " << _osmosdr_sink->get_center_freq();
+        return;
+    }
     set_bandwidth_specific();
 }
 

@@ -105,7 +105,8 @@ SOURCES += main.cpp\
     gr/gr_4fsk_discriminator.cpp \
     gr/gr_const_sink.cpp \
     gr/rx_fft.cpp \
-    src/layer1framing.cpp
+    src/layer1framing.cpp \
+    src/limits.cpp
 
 
 
@@ -172,7 +173,8 @@ HEADERS  += mainwindow.h\
     gr/gr_audio_sink.h \
     gr/gr_4fsk_discriminator.h \
     gr/gr_const_sink.h \
-    src/layer1framing.h
+    src/layer1framing.h \
+    src/limits.h
 
 
 
