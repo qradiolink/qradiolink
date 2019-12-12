@@ -93,6 +93,7 @@ public:
     int tx_band_limits;
     int window_width;
     int window_height;
+    int relay_sequence;
 
     /// Not saved to config:
 

@@ -580,6 +580,14 @@ void Settings::readConfig()
     {
         window_height = 700;
     }
+    try
+    {
+        relay_sequence = cfg.lookup("relay_sequence");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        relay_sequence = 15;
+    }
 
 }
 
@@ -645,6 +653,7 @@ void Settings::saveConfig()
     root.add("tx_band_limits",libconfig::Setting::TypeInt) = tx_band_limits;
     root.add("window_width",libconfig::Setting::TypeInt) = window_width;
     root.add("window_height",libconfig::Setting::TypeInt) = window_height;
+    root.add("relay_sequence",libconfig::Setting::TypeInt) = relay_sequence;
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());

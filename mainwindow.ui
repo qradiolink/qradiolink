@@ -3789,7 +3789,7 @@ and S-meter (dBm)</string>
                   </widget>
                  </item>
                  <item row="1" column="0">
-                  <widget class="QCheckBox" name="relay2checkBox">
+                  <widget class="QCheckBox" name="relay2CheckBox">
                    <property name="text">
                     <string>Relay 2</string>
                    </property>

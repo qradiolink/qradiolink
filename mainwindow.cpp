@@ -560,6 +560,15 @@ void MainWindow::setConfig()
         ui->blockBufferSizeComboBox->setCurrentText(QString::number(_settings->block_buffer_size));
     else
         ui->blockBufferSizeComboBox->setCurrentText("Auto");
+    ui->relay1CheckBox->setChecked(bool(_settings->relay_sequence & 0x1));
+    ui->relay2CheckBox->setChecked(bool((_settings->relay_sequence >> 1) & 0x1));
+    ui->relay3CheckBox->setChecked(bool((_settings->relay_sequence >> 2) & 0x1));
+    ui->relay4CheckBox->setChecked(bool((_settings->relay_sequence >> 3) & 0x1));
+    ui->relay5CheckBox->setChecked(bool((_settings->relay_sequence >> 4) & 0x1));
+    ui->relay6CheckBox->setChecked(bool((_settings->relay_sequence >> 5) & 0x1));
+    ui->relay7CheckBox->setChecked(bool((_settings->relay_sequence >> 6) & 0x1));
+    ui->relay8CheckBox->setChecked(bool((_settings->relay_sequence >> 7) & 0x1));
+
 }
 
 void MainWindow::saveUiConfig()
@@ -596,6 +605,16 @@ void MainWindow::saveUiConfig()
     _settings->show_fft = (int)_fft_active;
     _settings->window_width = this->width();
     _settings->window_height = this->height();
+    int relay_sequence = 0;
+    relay_sequence |= (int)ui->relay1CheckBox->isChecked();
+    relay_sequence |= (int)ui->relay2CheckBox->isChecked() << 1;
+    relay_sequence |= (int)ui->relay3CheckBox->isChecked() << 2;
+    relay_sequence |= (int)ui->relay4CheckBox->isChecked() << 3;
+    relay_sequence |= (int)ui->relay5CheckBox->isChecked() << 4;
+    relay_sequence |= (int)ui->relay6CheckBox->isChecked() << 5;
+    relay_sequence |= (int)ui->relay7CheckBox->isChecked() << 6;
+    relay_sequence |= (int)ui->relay8CheckBox->isChecked() << 7;
+    _settings->relay_sequence = relay_sequence;
     _settings->saveConfig();
 }
 
