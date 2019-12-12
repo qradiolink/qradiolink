@@ -92,7 +92,6 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     _tune_limit_lower = -500000;
     _tune_limit_upper = 500000;
     _step_hz = 10;
-    _max_no_relays = 4;
 
     _rx_mode = gr_modem_types::ModemTypeBPSK2000;
     _tx_mode = gr_modem_types::ModemTypeBPSK2000;
@@ -834,29 +833,37 @@ void RadioController::setRelays(bool transmitting)
     if(!_settings->enable_relays)
         return;
     int res;
+    /// The reason for the loop with individual bit and not the direct call with a bitmask
+    /// is the possibility of adding delays between each relay switch
     if(transmitting)
     {
-        for(int i=0;i<_max_no_relays;i++)
+        for(int i=0;i<8;i++)
         {
-            res = _relay_controller->enableRelay(i);
-            if(!res)
+            if(bool((_settings->relay_sequence >> i) & 0x1))
             {
-                _logger->log(Logger::LogLevelCritical,
-                             "Relay control failed, stopping to avoid damage");
-                exit(EXIT_FAILURE); // bit drastic, ain't it?
+                res = _relay_controller->enableRelay(i);
+                if(!res)
+                {
+                    _logger->log(Logger::LogLevelCritical,
+                                 "Relay control failed, stopping to avoid damage");
+                    exit(EXIT_FAILURE); // bit drastic, ain't it?
+                }
             }
         }
     }
     else
     {
-        for(int i=_max_no_relays-1;i>-1;i--)
+        for(int i=7;i>-1;i--)
         {
-            res = _relay_controller->disableRelay(i);
-            if(!res)
+            if(bool((_settings->relay_sequence >> i) & 0x1))
             {
-                _logger->log(Logger::LogLevelCritical,
-                             "Relay control failed, stopping to avoid damage");
-                exit(EXIT_FAILURE);
+                res = _relay_controller->disableRelay(i);
+                if(!res)
+                {
+                    _logger->log(Logger::LogLevelCritical,
+                                 "Relay control failed, stopping to avoid damage");
+                    exit(EXIT_FAILURE);
+                }
             }
         }
     }

@@ -282,7 +282,6 @@ private:
     float _tx_volume;
     float _voip_volume;
     int _fft_poll_time;
-    int _max_no_relays;
 
 };
 
