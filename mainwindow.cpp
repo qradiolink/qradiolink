@@ -67,7 +67,7 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     ui->tabWidget->setCurrentIndex(0);
     ui->settingsTab->setCurrentIndex(0);
 
-    ui->frameCtrlFreq->setup(10, 10U, 9000000000U, 1, UNITS_MHZ );
+    ui->frameCtrlFreq->setup(11, 10U, 99000000000U, 1, UNITS_MHZ );
     //ui->frameCtrlFreq->setBkColor(QColor(202, 194, 197,0xFF));
     ui->frameCtrlFreq->setBkColor(QColor(0x1F, 0x1D, 0x1D,0xFF));
     ui->frameCtrlFreq->setHighlightColor(QColor(127,55,55,0xFF));
@@ -171,8 +171,8 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
                      ui->plotterFrame,SLOT(setWaterfallRange(float,float)));
     QObject::connect(ui->plotterFrame,SIGNAL(newCenterFreq(qint64)),
                      this,SLOT(tuneFreqPlotter(qint64)));
-    QObject::connect(ui->plotterFrame,SIGNAL(newFilterFreq(int, int)),
-                     this,SLOT(changeFilterWidth(int, int)));
+    QObject::connect(ui->plotterFrame,SIGNAL(newFilterFreq(qint64, qint64)),
+                     this,SLOT(changeFilterWidth(qint64, qint64)));
     QObject::connect(ui->panadapterSlider,SIGNAL(valueChanged(int)),
                      ui->plotterFrame,SLOT(setPercent2DScreen(int)));
     QObject::connect(ui->averagingSlider,SIGNAL(valueChanged(int)),this,SLOT(setAveraging(int)));
@@ -521,7 +521,7 @@ void MainWindow::setConfig()
     ui->lineEditIPaddress->setText(_settings->ip_address);
     ui->plotterFrame->setFilterOffset((qint64)_settings->demod_offset);
     ui->plotterFrame->setCenterFreq(_settings->rx_frequency);
-    ui->frameCtrlFreq->setFrequency(_settings->rx_frequency + _settings->demod_offset);
+    ui->frameCtrlFreq->setFrequency(_settings->rx_frequency + _settings->demod_offset + _settings->lnb_lo_freq);
     ui->plotterFrame->setSampleRate(_settings->rx_sample_rate);
     ui->plotterFrame->setSpanFreq((quint32)_settings->rx_sample_rate);
     ui->sampleRateBox->setCurrentIndex(ui->sampleRateBox->findText
@@ -568,7 +568,7 @@ void MainWindow::setConfig()
     ui->relay6CheckBox->setChecked(bool((_settings->relay_sequence >> 5) & 0x1));
     ui->relay7CheckBox->setChecked(bool((_settings->relay_sequence >> 6) & 0x1));
     ui->relay8CheckBox->setChecked(bool((_settings->relay_sequence >> 7) & 0x1));
-
+    ui->lnbLOEdit->setText(QString::number(_settings->lnb_lo_freq/1000));
 }
 
 void MainWindow::saveUiConfig()
@@ -615,6 +615,7 @@ void MainWindow::saveUiConfig()
     relay_sequence |= (int)ui->relay7CheckBox->isChecked() << 6;
     relay_sequence |= (int)ui->relay8CheckBox->isChecked() << 7;
     _settings->relay_sequence = relay_sequence;
+    _settings->lnb_lo_freq = (long long)(ui->lnbLOEdit->text().toLongLong() * 1000);
     _settings->saveConfig();
 }
 
@@ -1377,11 +1378,12 @@ void MainWindow::tuneMainFreq(qint64 freq)
     ui->frequencyEdit->setText(QString::number(freq/1000));
     ui->tuneDial->setValue(0);
     /// rx_frequency is the center frequency of the source
-    _settings->rx_frequency = freq - _settings->demod_offset;
+    _settings->rx_frequency = freq - _settings->demod_offset - _settings->lnb_lo_freq;
     /// tx_frequency is the actual frequency
-    _settings->tx_frequency = freq;
-    ui->plotterFrame->setCenterFreq(_settings->rx_frequency);
-    ui->plotterFrame->setDemodCenterFreq(_settings->rx_frequency + _settings->demod_offset);
+    _settings->tx_frequency = freq - _settings->lnb_lo_freq;
+    ui->plotterFrame->setCenterFreq(_settings->rx_frequency + _settings->lnb_lo_freq);
+    ui->plotterFrame->setDemodCenterFreq(_settings->rx_frequency +
+                                         _settings->demod_offset + _settings->lnb_lo_freq);
     emit setCarrierOffset(_settings->demod_offset);
     emit tuneFreq(_settings->rx_frequency);
     emit tuneTxFreq(freq);
@@ -1394,13 +1396,14 @@ void MainWindow::tuneFreqPlotter(qint64 freq)
     return; // can't handle this now
     _settings->tx_frequency = freq;
     tuneMainFreq(freq - _settings->demod_offset);
-    ui->frameCtrlFreq->setFrequency(freq + _settings->demod_offset);
+    ui->frameCtrlFreq->setFrequency(freq + _settings->demod_offset + _settings->lnb_lo_freq);
 }
 
 void MainWindow::carrierOffsetChanged(qint64 freq, qint64 offset)
 {
     _settings->demod_offset = offset;
-    ui->frameCtrlFreq->setFrequency(_settings->rx_frequency + _settings->demod_offset, false);
+    ui->frameCtrlFreq->setFrequency(_settings->rx_frequency +
+                                    _settings->demod_offset + _settings->lnb_lo_freq, false);
     emit setCarrierOffset(offset);
     emit tuneTxFreq(freq);
 }
@@ -1409,7 +1412,7 @@ void MainWindow::enterFreq()
 {
     long long new_freq = ui->frequencyEdit->text().toLongLong();
     ui->frameCtrlFreq->setFrequency(new_freq * 1000);
-    _settings->rx_frequency = new_freq * 1000 - _settings->demod_offset;
+    _settings->rx_frequency = new_freq * 1000 - _settings->demod_offset - _settings->lnb_lo_freq;
     emit tuneFreq(_settings->rx_frequency);
 }
 
@@ -1511,10 +1514,12 @@ void MainWindow::updateFreqGUI(long long center_freq, long long carrier_offset)
     // Lots of signals flowing around
     _settings->demod_offset = carrier_offset;
     _settings->rx_frequency = (qint64)center_freq;
-    ui->frameCtrlFreq->setFrequency(_settings->rx_frequency + _settings->demod_offset, false);
+    ui->frameCtrlFreq->setFrequency(_settings->rx_frequency + _settings->demod_offset +
+                                    _settings->lnb_lo_freq, false);
     ui->plotterFrame->setFilterOffset((qint64)_settings->demod_offset);
-    ui->plotterFrame->setCenterFreq(_settings->rx_frequency);
-    ui->frequencyEdit->setText(QString::number((_settings->rx_frequency + _settings->demod_offset)/1000));
+    ui->plotterFrame->setCenterFreq(_settings->rx_frequency + _settings->lnb_lo_freq);
+    ui->frequencyEdit->setText(QString::number((_settings->rx_frequency + _settings->demod_offset
+                                                +_settings->lnb_lo_freq)/1000));
 }
 
 void MainWindow::updateRxCTCSS(int value)
@@ -1621,7 +1626,7 @@ void MainWindow::autoSquelch()
     setSquelchDisplay(squelch);
 }
 
-void MainWindow::changeFilterWidth(int low, int up)
+void MainWindow::changeFilterWidth(qint64 low, qint64 up)
 {
     if(_filter_is_symmetric)
     {

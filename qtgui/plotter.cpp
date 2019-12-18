@@ -1288,9 +1288,9 @@ void CPlotter::drawOverlay()
     if (m_OverlayPixmap.isNull())
         return;
 
-    int     w = m_OverlayPixmap.width();
-    int     h = m_OverlayPixmap.height();
-    int     x,y;
+    qint64     w = m_OverlayPixmap.width();
+    qint64     h = m_OverlayPixmap.height();
+    qint64     x,y;
     float   pixperdiv;
     float   adjoffset;
     float   dbstepsize;
@@ -1317,9 +1317,9 @@ void CPlotter::drawOverlay()
     // X and Y axis areas
     m_YAxisWidth = metrics.width("XXXX") + 2 * HOR_MARGIN;
     m_XAxisYCenter = h - metrics.height()/2;
-    int xAxisHeight = metrics.height() + 2 * VER_MARGIN;
-    int xAxisTop = h - xAxisHeight;
-    int fLabelTop = xAxisTop + VER_MARGIN;
+    qint64 xAxisHeight = metrics.height() + 2 * VER_MARGIN;
+    qint64 xAxisTop = h - xAxisHeight;
+    qint64 fLabelTop = xAxisTop + VER_MARGIN;
 
     if (m_CenterLineEnabled)
     {
@@ -1336,7 +1336,7 @@ void CPlotter::drawOverlay()
     QString label;
     label.setNum(float((StartFreq + m_Span) / m_FreqUnits), 'f', m_FreqDigits);
     calcDivSize(StartFreq, StartFreq + m_Span,
-                qMin(w/(metrics.width(label) + metrics.width("O")), HORZ_DIVS_MAX),
+                qMin(w/(metrics.width(label) + metrics.width("O")), (qint64)HORZ_DIVS_MAX),
                 m_StartFreqAdj, m_FreqPerDiv, m_HorDivs);
     pixperdiv = (float)w * (float) m_FreqPerDiv / (float) m_Span;
     adjoffset = pixperdiv * float (m_StartFreqAdj - StartFreq) / (float) m_FreqPerDiv;
@@ -1344,7 +1344,7 @@ void CPlotter::drawOverlay()
     painter.setPen(QPen(QColor(PLOTTER_GRID_COLOR), 1, Qt::DotLine));
     for (int i = 0; i <= m_HorDivs; i++)
     {
-        x = (int)((float)i * pixperdiv + adjoffset);
+        x = (qint64)((float)i * pixperdiv + adjoffset);
         if (x > m_YAxisWidth)
             painter.drawLine(x, 0, x, xAxisTop);
     }
@@ -1352,10 +1352,10 @@ void CPlotter::drawOverlay()
     // draw frequency values (x axis)
     makeFrequencyStrs();
     painter.setPen(QColor(PLOTTER_TEXT_COLOR));
-    for (int i = 0; i <= m_HorDivs; i++)
+    for (qint64 i = 0; i <= m_HorDivs; i++)
     {
-        int tw = metrics.width(m_HDivText[i]);
-        x = (int)((float)i*pixperdiv + adjoffset);
+        qint64 tw = metrics.width(m_HDivText[i]);
+        x = (qint64)((float)i*pixperdiv + adjoffset);
         if (x > m_YAxisWidth)
         {
             rect.setRect(x - tw/2, fLabelTop, tw*2, metrics.height());
@@ -1368,7 +1368,7 @@ void CPlotter::drawOverlay()
     qint64 dbDivSize = 0;
 
     calcDivSize((qint64) m_PandMindB, (qint64) m_PandMaxdB,
-                qMax(h/m_VdivDelta, VERT_DIVS_MIN), mindBAdj64, dbDivSize,
+                qMax(h/m_VdivDelta, (qint64)VERT_DIVS_MIN), mindBAdj64, dbDivSize,
                 m_VerDivs);
 
     dbstepsize = (float) dbDivSize;
@@ -1384,9 +1384,9 @@ void CPlotter::drawOverlay()
 #endif
 
     painter.setPen(QPen(QColor(PLOTTER_GRID_COLOR), 1, Qt::DotLine));
-    for (int i = 0; i <= m_VerDivs; i++)
+    for (qint64 i = 0; i <= m_VerDivs; i++)
     {
-        y = h - (int)((float) i * pixperdiv + adjoffset);
+        y = h - (qint64)((float) i * pixperdiv + adjoffset);
         if (y < h - xAxisHeight)
             painter.drawLine(m_YAxisWidth, y, w, y);
     }
@@ -1395,9 +1395,9 @@ void CPlotter::drawOverlay()
     int dB = m_PandMaxdB;
     m_YAxisWidth = metrics.width("-120 ");
     painter.setPen(QColor(PLOTTER_TEXT_COLOR));
-    for (int i = 0; i < m_VerDivs; i++)
+    for (qint64 i = 0; i < m_VerDivs; i++)
     {
-        y = h - (int)((float) i * pixperdiv + adjoffset);
+        y = h - (qint64)((float) i * pixperdiv + adjoffset);
         int th = metrics.height();
         if (y < h -xAxisHeight)
         {
@@ -1493,22 +1493,22 @@ void CPlotter::makeFrequencyStrs()
 }
 
 // Convert from screen coordinate to frequency
-int CPlotter::xFromFreq(qint64 freq)
+qint64 CPlotter::xFromFreq(qint64 freq)
 {
-    int w = m_OverlayPixmap.width();
+    qint64 w = m_OverlayPixmap.width();
     qint64 StartFreq = m_CenterFreq + m_FftCenter - m_Span/2;
-    int x = (int) w * ((float)freq - StartFreq)/(float)m_Span;
+    qint64 x = (qint64) w * ((double)freq - StartFreq)/(double)m_Span;
     if (x < 0)
         return 0;
-    if (x > (int)w)
+    if (x > (qint64)w)
         return m_OverlayPixmap.width();
     return x;
 }
 
 // Convert from frequency to screen coordinate
-qint64 CPlotter::freqFromX(int x)
+qint64 CPlotter::freqFromX(qint64 x)
 {
-    int w = m_OverlayPixmap.width();
+    qint64 w = m_OverlayPixmap.width();
     qint64 StartFreq = m_CenterFreq + m_FftCenter - m_Span / 2;
     qint64 f = (qint64)(StartFreq + (float)m_Span * (float)x / (float)w);
     return f;

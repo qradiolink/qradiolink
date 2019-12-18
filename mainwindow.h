@@ -132,7 +132,7 @@ public slots:
     void editMemoryChannel(QTableWidgetItem* item);
     void saveMemoryChannels();
     void startMemoryScan(bool value);
-    void changeFilterWidth(int low, int up);
+    void changeFilterWidth(qint64 low, qint64 up);
     void setAudioCompressor(bool value);
     void setRelays(bool value);
     void setRemoteControl(bool value);

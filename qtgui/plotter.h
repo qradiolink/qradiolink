@@ -32,7 +32,7 @@ public:
     //void SetSdrInterface(CSdrInterface* ptr){m_pSdrInterface = ptr;}
     void draw();		//call to draw new fft data onto screen plot
     void setRunningState(bool running) { m_Running = running; }
-    void setClickResolution(int clickres) { m_ClickResolution = clickres; }
+    void setClickResolution(qint64 clickres) { m_ClickResolution = clickres; }
     void setFilterClickResolution(int clickres) { m_FilterClickResolution = clickres; }
     void setFilterBoxEnabled(bool enabled) { m_FilterBoxEnabled = enabled; }
     void setCenterLineEnabled(bool enabled) { m_CenterLineEnabled = enabled; }
@@ -63,14 +63,14 @@ public:
         return m_DemodHiCutFreq - m_DemodLowCutFreq;
     }
 
-    void setHiLowCutFrequencies(int LowCut, int HiCut)
+    void setHiLowCutFrequencies(qint64 LowCut, qint64 HiCut)
     {
         m_DemodLowCutFreq = LowCut;
         m_DemodHiCutFreq = HiCut;
         drawOverlay();
     }
 
-    void getHiLowCutFrequencies(int *LowCut, int *HiCut)
+    void getHiLowCutFrequencies(qint64 *LowCut, qint64 *HiCut)
     {
         *LowCut = m_DemodLowCutFreq;
         *HiCut = m_DemodHiCutFreq;
@@ -88,8 +88,8 @@ public:
         drawOverlay();
     }
 
-    void setHdivDelta(int delta) { m_HdivDelta = delta; }
-    void setVdivDelta(int delta) { m_VdivDelta = delta; }
+    void setHdivDelta(qint64 delta) { m_HdivDelta = delta; }
+    void setVdivDelta(qint64 delta) { m_VdivDelta = delta; }
 
     void setFreqDigits(int digits) { m_FreqDigits = digits>=0 ? digits : 0; }
 
@@ -123,9 +123,9 @@ public:
 signals:
     void newCenterFreq(qint64 f);
     void newDemodFreq(qint64 freq, qint64 delta); /* delta is the offset from the center */
-    void newLowCutFreq(int f);
-    void newHighCutFreq(int f);
-    void newFilterFreq(int low, int high);  /* substitute for NewLow / NewHigh */
+    void newLowCutFreq(qint64 f);
+    void newHighCutFreq(qint64 f);
+    void newFilterFreq(qint64 low, qint64 high);  /* substitute for NewLow / NewHigh */
     void pandapterRangeChanged(float min, float max);
     void newZoomLevel(float level);
 
@@ -175,8 +175,8 @@ private:
 
     void        drawOverlay();
     void        makeFrequencyStrs();
-    int         xFromFreq(qint64 freq);
-    qint64      freqFromX(int x);
+    qint64 xFromFreq(qint64 freq);
+    qint64      freqFromX(qint64 x);
     float dbFromY(int y);
     void        zoomStepX(float factor, int x);
     qint64      roundFreq(qint64 freq, int resolution);
@@ -200,10 +200,10 @@ private:
     qint32      m_fftPeakHoldBuf[MAX_SCREENSIZE];
     float      *m_fftData;     /*! pointer to incoming FFT data */
     float      *m_wfData;
-    int         m_fftDataSize;
+    qint64         m_fftDataSize;
 
-    int         m_XAxisYCenter;
-    int         m_YAxisWidth;
+    qint64         m_XAxisYCenter;
+    qint64         m_YAxisWidth;
 
     eCapturetype    m_CursorCaptured;
     QPixmap     m_2DPixmap;
@@ -224,19 +224,19 @@ private:
     bool        m_FilterBoxEnabled;   /*!< Draw filter box. */
     bool        m_TooltipsEnabled;     /*!< Tooltips enabled */
     bool        m_BookmarksEnabled;   /*!< Show/hide bookmarks on spectrum */
-    int         m_DemodHiCutFreq;
-    int         m_DemodLowCutFreq;
-    int         m_DemodFreqX;		//screen coordinate x position
-    int         m_DemodHiCutFreqX;	//screen coordinate x position
-    int         m_DemodLowCutFreqX;	//screen coordinate x position
-    int         m_CursorCaptureDelta;
-    int         m_GrabPosition;
+    qint64         m_DemodHiCutFreq;
+    qint64         m_DemodLowCutFreq;
+    qint64         m_DemodFreqX;		//screen coordinate x position
+    qint64         m_DemodHiCutFreqX;	//screen coordinate x position
+    qint64         m_DemodLowCutFreqX;	//screen coordinate x position
+    qint64         m_CursorCaptureDelta;
+    qint64         m_GrabPosition;
     int         m_Percent2DScreen;
 
-    int         m_FLowCmin;
-    int         m_FLowCmax;
-    int         m_FHiCmin;
-    int         m_FHiCmax;
+    qint64         m_FLowCmin;
+    qint64         m_FLowCmax;
+    qint64         m_FHiCmin;
+    qint64         m_FHiCmax;
     bool        m_symetric;
 
     int         m_HorDivs;   /*!< Current number of horizontal divisions. Calculated from width. */
@@ -250,16 +250,16 @@ private:
     qint64      m_Span;
     float       m_SampleFreq;    /*!< Sample rate. */
     qint32      m_FreqUnits;
-    int         m_ClickResolution;
+    qint64         m_ClickResolution;
     int         m_FilterClickResolution;
 
-    int         m_Xzero;
-    int         m_Yzero;  /*!< Used to measure mouse drag direction. */
+    qint64         m_Xzero;
+    qint64         m_Yzero;  /*!< Used to measure mouse drag direction. */
     int         m_FreqDigits;  /*!< Number of decimal digits in frequency strings. */
 
     QFont       m_Font;         /*!< Font used for plotter (system font) */
-    int         m_HdivDelta; /*!< Minimum distance in pixels between two horizontal grid lines (vertical division). */
-    int         m_VdivDelta; /*!< Minimum distance in pixels between two vertical grid lines (horizontal division). */
+    qint64         m_HdivDelta; /*!< Minimum distance in pixels between two horizontal grid lines (vertical division). */
+    qint64         m_VdivDelta; /*!< Minimum distance in pixels between two vertical grid lines (horizontal division). */
 
     quint32     m_LastSampleRate;
 

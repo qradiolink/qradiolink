@@ -588,6 +588,14 @@ void Settings::readConfig()
     {
         relay_sequence = 15;
     }
+    try
+    {
+        lnb_lo_freq = cfg.lookup("lnb_lo_freq");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        lnb_lo_freq = 0;
+    }
 
 }
 
@@ -654,6 +662,7 @@ void Settings::saveConfig()
     root.add("window_width",libconfig::Setting::TypeInt) = window_width;
     root.add("window_height",libconfig::Setting::TypeInt) = window_height;
     root.add("relay_sequence",libconfig::Setting::TypeInt) = relay_sequence;
+    root.add("lnb_lo_freq",libconfig::Setting::TypeInt64) = lnb_lo_freq;
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());

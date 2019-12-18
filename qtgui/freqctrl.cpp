@@ -67,7 +67,7 @@ CFreqCtrl::CFreqCtrl(QWidget *parent) :
     m_HighlightColor = QColor(0x5A, 0x5A, 0x5A, 0xFF);
     m_UnitsColor = Qt::gray;
     m_freq = 434025000;
-    setup(10, 1, 60000000000U, 1, UNITS_GHZ);
+    setup(11, 1, 990000000000U, 1, UNITS_GHZ);
     m_Oldfreq = 0;
     m_LastLeadZeroPos = 0;
     m_LRMouseFreqSel = false;

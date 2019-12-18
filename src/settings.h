@@ -94,6 +94,7 @@ public:
     int window_width;
     int window_height;
     int relay_sequence;
+    long long lnb_lo_freq;
 
     /// Not saved to config:
 
