@@ -135,6 +135,7 @@ public slots:
     void setTxPower(int value, std::string gain_stage="");
     void setRxSensitivity(int value, std::string gain_stage="");
     void setBbGain(int value);
+    void setIfGain(int value);
     void setAgcAttack(float value);
     void setAgcDecay(float value);
     void setSquelch(int value);

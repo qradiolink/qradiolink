@@ -121,7 +121,7 @@ int RelayController::disableRelay(int relay_number)
 
     _relay_mask[0] &= 0 << relay_number;
     int ret = ftdi_write_data(_ftdi_relay, _relay_mask, 1);
-    struct timespec time_to_sleep = {0, 5000000L };
+    struct timespec time_to_sleep = {0, 15000000L };
     nanosleep(&time_to_sleep, NULL);
     if (ret < 0)
     {

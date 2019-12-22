@@ -821,6 +821,12 @@ void gr_demod_base::set_squelch(int value)
     _wfm->set_squelch(value);
 }
 
+void gr_demod_base::set_gain(float value)
+{
+    _usb->set_gain(value);
+    _lsb->set_gain(value);
+}
+
 void gr_demod_base::set_ctcss(float value)
 {
     _top_block->lock();

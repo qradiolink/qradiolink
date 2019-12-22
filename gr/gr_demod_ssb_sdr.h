@@ -27,6 +27,7 @@
 #include <gnuradio/filter/fft_filter_fff.h>
 #include <gnuradio/blocks/complex_to_real.h>
 #include <gnuradio/blocks/multiply_const_ff.h>
+#include <gnuradio/blocks/multiply_const_cc.h>
 #include <gnuradio/analog/rail_ff.h>
 
 
@@ -46,6 +47,7 @@ public:
     void set_filter_width(int filter_width);
     void set_agc_attack(float value);
     void set_agc_decay(float value);
+    void set_gain(float value);
 
 private:
 
@@ -57,7 +59,7 @@ private:
     gr::analog::agc2_cc::sptr _agc;
     gr::analog::feedforward_agc_cc::sptr _feed_forward_agc;
     gr::blocks::complex_to_real::sptr _complex_to_real;
-    gr::blocks::multiply_const_ff::sptr _audio_gain;
+    gr::blocks::multiply_const_cc::sptr _if_gain;
     gr::analog::rail_ff::sptr _rail;
 
     int _samples_per_symbol;

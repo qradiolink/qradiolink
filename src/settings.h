@@ -41,6 +41,7 @@ public:
     QString tx_antenna;
     int tx_power;
     int bb_gain;
+    int if_gain;
     int rx_sensitivity;
     int rx_freq_corr;
     int tx_freq_corr;

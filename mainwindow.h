@@ -138,6 +138,7 @@ public slots:
     void setRemoteControl(bool value);
     void setRSSICalibration();
     void setDigitalGain(int value);
+    void setRxDigitalGain(int value);
     void updateAgcAttack(int value);
     void updateAgcDecay(int value);
     void setRxGainStages(gain_vector rx_gains);
@@ -212,6 +213,7 @@ signals:
     void enableRelays(bool value);
     void calibrateRSSI(float value);
     void setBbGain(int value);
+    void setIfGain(int value);
     void setAgcAttack(float value);
     void setAgcDecay(float value);
     void newMumbleMessage(QString text);

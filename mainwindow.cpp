@@ -97,6 +97,7 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     QObject::connect(ui->rxVolumeDial,SIGNAL(valueChanged(int)),this,SLOT(setVolumeDisplay(int)));
     QObject::connect(ui->micGainSlider,SIGNAL(valueChanged(int)),this,SLOT(setTxVolumeDisplay(int)));
     QObject::connect(ui->digitalGainSlider,SIGNAL(valueChanged(int)),this,SLOT(setDigitalGain(int)));
+    QObject::connect(ui->rxGainSlider,SIGNAL(valueChanged(int)),this,SLOT(setRxDigitalGain(int)));
     QObject::connect(ui->voipGainSlider,SIGNAL(valueChanged(int)),this,SLOT(changeVoipVolume(int)));
     QObject::connect(ui->rxModemTypeComboBox,SIGNAL(currentIndexChanged(int)),
                      this,SLOT(toggleRxMode(int)));
@@ -505,6 +506,7 @@ void MainWindow::setConfig()
     ui->audioOutputComboBox->setCurrentText(_settings->audio_output_device);
     ui->txGainDial->setValue(_settings->tx_power);
     ui->digitalGainSlider->setValue(_settings->bb_gain);
+    ui->rxGainSlider->setValue(_settings->if_gain);
     ui->rxGainDial->setValue(_settings->rx_sensitivity);
     ui->rxSquelchDial->setValue(_settings->squelch);
     ui->rxVolumeDial->setValue(_settings->rx_volume);
@@ -585,6 +587,7 @@ void MainWindow::saveUiConfig()
     _settings->audio_output_device = ui->audioOutputComboBox->currentText();
     _settings->tx_power = (int)ui->txGainDial->value();
     _settings->bb_gain = (int)ui->digitalGainSlider->value();
+    _settings->if_gain = (int)ui->rxGainSlider->value();
     _settings->rx_sensitivity = (int)ui->rxGainDial->value();
     _settings->squelch = (int)ui->rxSquelchDial->value();
     _settings->rx_volume = (int)ui->rxVolumeDial->value();
@@ -1685,6 +1688,12 @@ void MainWindow::setDigitalGain(int value)
 {
     _settings->bb_gain = value;
     emit setBbGain(value);
+}
+
+void MainWindow::setRxDigitalGain(int value)
+{
+    _settings->if_gain = value;
+    emit setIfGain(value);
 }
 
 void MainWindow::updateAgcAttack(int value)

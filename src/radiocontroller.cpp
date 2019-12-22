@@ -1611,6 +1611,7 @@ void RadioController::toggleRX(bool value)
         _modem->enableRSSI((bool)_settings->show_controls);
         _modem->setRxSensitivity(((double)_settings->rx_sensitivity)/100.0);
         _modem->setSquelch(_settings->squelch);
+        _modem->setGain(_settings->if_gain);
         _modem->setRxCTCSS(_settings->rx_ctcss);
         _modem->setCarrierOffset(_settings->demod_offset);
         _modem->setSampRate(_settings->rx_sample_rate);
@@ -2145,6 +2146,12 @@ void RadioController::setBbGain(int value)
     /// Dangerous to use
     _settings->bb_gain = value;
     _modem->setBbGain(_settings->bb_gain);
+}
+
+void RadioController::setIfGain(int value)
+{
+    _settings->if_gain = value;
+    _modem->setGain(_settings->if_gain);
 }
 
 void RadioController::setAgcAttack(float value)

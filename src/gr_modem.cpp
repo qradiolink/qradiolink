@@ -398,6 +398,13 @@ void gr_modem::setBbGain(int value)
         _gr_mod_base->set_bb_gain(bb_gain);
 }
 
+void gr_modem::setGain(int value)
+{
+    float gain = (float)value / 100.0f;
+    if(_gr_demod_base)
+        _gr_demod_base->set_gain(gain);
+}
+
 void gr_modem::setK(bool value)
 {
     if(_gr_mod_base)

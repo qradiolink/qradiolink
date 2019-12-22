@@ -214,6 +214,14 @@ void Settings::readConfig()
     }
     try
     {
+        if_gain = cfg.lookup("if_gain");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        if_gain = 100;
+    }
+    try
+    {
         agc_attack = cfg.lookup("agc_attack");
     }
     catch(const libconfig::SettingNotFoundException &nfex)
@@ -615,6 +623,7 @@ void Settings::saveConfig()
     root.add("audio_output_device",libconfig::Setting::TypeString) = audio_output_device.toStdString();
     root.add("tx_power",libconfig::Setting::TypeInt) = tx_power;
     root.add("bb_gain",libconfig::Setting::TypeInt) = bb_gain;
+    root.add("if_gain",libconfig::Setting::TypeInt) = if_gain;
     root.add("rx_sensitivity",libconfig::Setting::TypeInt) = rx_sensitivity;
     root.add("squelch",libconfig::Setting::TypeInt) = squelch;
     root.add("rx_volume",libconfig::Setting::TypeInt) = rx_volume;

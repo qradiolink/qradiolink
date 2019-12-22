@@ -81,6 +81,7 @@ public slots:
     void set_carrier_offset(long long carrier_offset);
     void set_rx_sensitivity(double value, std::string gain_stage="");
     void set_squelch(int value);
+    void set_gain(float value);
     void set_agc_attack(float value);
     void set_agc_decay(float value);
     void set_ctcss(float value);
