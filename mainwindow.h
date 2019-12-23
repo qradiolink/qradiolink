@@ -162,6 +162,7 @@ public slots:
     void updateTotTimer(int value);
     void updateTotTxEnd(bool value);
     void updateTxLimits(bool value);
+    void calculateShiftFromTxFreq();
 
 signals:
     void terminateConnections();

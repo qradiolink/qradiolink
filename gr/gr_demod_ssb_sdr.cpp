@@ -47,16 +47,16 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(std::vector<int>signature, int sps, int samp_
     _if_gain = gr::blocks::multiply_const_cc::make(0.5);
 
     _filter_usb = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass_2(
-            1, _target_samp_rate, 200, _filter_width,200, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+            1, _target_samp_rate, 300, _filter_width,250, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
     _filter_lsb = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass_2(
-            1, _target_samp_rate, -_filter_width, -200,200, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+            1, _target_samp_rate, -_filter_width, -300,250, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
     _squelch = gr::analog::pwr_squelch_cc::make(-140,0.01,0,true);
     _feed_forward_agc = gr::analog::feedforward_agc_cc::make(320,1);
-    _agc = gr::analog::agc2_cc::make(1e-2, 1e-4, 1, 100);
+    _agc = gr::analog::agc2_cc::make(1e-2, 1e-4, 0.5, 100);
     _rail = gr::analog::rail_ff::make(-1.0, 1.0);
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::band_pass_2(
-                    1, _target_samp_rate, 200, 3600, 200, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+                    2, _target_samp_rate, 300, 3600, 250, 40, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
     _complex_to_real = gr::blocks::complex_to_real::make();
 
 
@@ -87,9 +87,9 @@ void gr_demod_ssb_sdr::set_filter_width(int filter_width)
 {
     _filter_width = filter_width;
     std::vector<gr_complex> filter_usb_taps = gr::filter::firdes::complex_band_pass_2(
-                1, _target_samp_rate, 200, _filter_width,200, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+                1, _target_samp_rate, 300, _filter_width,250, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     std::vector<gr_complex> filter_lsb_taps = gr::filter::firdes::complex_band_pass_2(
-                1, _target_samp_rate, -_filter_width, -200,200, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+                1, _target_samp_rate, -_filter_width, -300,250, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
 
     _filter_usb->set_taps(filter_usb_taps);
     _filter_lsb->set_taps(filter_lsb_taps);

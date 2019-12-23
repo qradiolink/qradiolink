@@ -87,6 +87,7 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     QObject::connect(ui->txStatusButton,SIGNAL(toggled(bool)),this,SLOT(toggleTXwin(bool)));
     QObject::connect(ui->tuneDial,SIGNAL(valueChanged(int)),this,SLOT(clarifierTuneFreq(int)));
     QObject::connect(ui->frequencyEdit,SIGNAL(returnPressed()),this,SLOT(enterFreq()));
+    QObject::connect(ui->txFrequencyEdit,SIGNAL(returnPressed()),this,SLOT(calculateShiftFromTxFreq()));
     QObject::connect(ui->shiftEdit,SIGNAL(returnPressed()),this,SLOT(enterShift()));
     QObject::connect(ui->shiftEdit,SIGNAL(editingFinished()),this,SLOT(enterShift()));
     QObject::connect(ui->txGainDial,SIGNAL(valueChanged(int)),this,SLOT(setTxPowerDisplay(int)));
@@ -1379,6 +1380,7 @@ void MainWindow::tuneMainFreq(qint64 freq)
 {
 
     ui->frequencyEdit->setText(QString::number(freq/1000));
+    ui->txFrequencyEdit->setText(QString::number(freq/1000));
     ui->tuneDial->setValue(0);
     /// rx_frequency is the center frequency of the source
     _settings->rx_frequency = freq - _settings->demod_offset - _settings->lnb_lo_freq;
@@ -1422,6 +1424,15 @@ void MainWindow::enterFreq()
 void MainWindow::enterShift()
 {
     _settings->tx_shift = ui->shiftEdit->text().toLongLong()*1000;
+    emit changeTxShift(_settings->tx_shift);
+}
+
+void MainWindow::calculateShiftFromTxFreq()
+{
+    long long actual_tx_freq = ui->txFrequencyEdit->text().toLongLong() * 1000;
+    long long actual_rx_freq = _settings->rx_frequency + _settings->demod_offset + _settings->lnb_lo_freq;
+    _settings->tx_shift = (actual_tx_freq - actual_rx_freq);
+    ui->shiftEdit->setText(QString::number(_settings->tx_shift / 1000));
     emit changeTxShift(_settings->tx_shift);
 }
 
