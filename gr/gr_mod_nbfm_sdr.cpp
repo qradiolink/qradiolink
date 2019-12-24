@@ -42,7 +42,7 @@ gr_mod_nbfm_sdr::gr_mod_nbfm_sdr(int sps, int samp_rate, int carrier_freq,
     _audio_amplify = gr::blocks::multiply_const_ff::make(0.99,1);
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::band_pass_2(
-                    1, target_samp_rate, 300, 3600, 350, 35, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+                    1, target_samp_rate, 300, 3600, 250, 45, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
 
     static const float coeff[] =  {-0.026316914707422256, -0.2512197494506836, 1.5501943826675415,
                                    -0.2512197494506836, -0.026316914707422256};
