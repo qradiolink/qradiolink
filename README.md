@@ -17,7 +17,7 @@ It can also be used as a low power amateur radio SDR transceiver for demonstrati
 
 The application was originally inspired from the [Codec2 GMSK modem](https://github.com/on1arf/gmsk) project by Kristoff Bonne.
 
-[![Screenshot](http://qradiolink.org/images/qradiolink56.png)](http://qradiolink.org)
+[![Screenshot](http://qradiolink.org/images/qradiolink60.png)](http://qradiolink.org)
 
 
 
