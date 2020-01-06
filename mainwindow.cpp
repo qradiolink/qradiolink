@@ -902,12 +902,14 @@ void MainWindow::startTx()
     {
         emit startTransmission();
         ui->frameCtrlFreq->setFrequency(
-                    _settings->rx_frequency + _settings->demod_offset + _settings->tx_shift, false);
+            _settings->rx_frequency + _settings->demod_offset + _settings->tx_shift + _settings->lnb_lo_freq,
+            false);
         _ptt_activated=true;
     }
     else
     {
-        ui->frameCtrlFreq->setFrequency(_settings->rx_frequency + _settings->demod_offset, false);
+        ui->frameCtrlFreq->setFrequency(
+            _settings->rx_frequency + _settings->demod_offset + _settings->lnb_lo_freq, false);
         _ptt_activated=false;
         endTx();
     }

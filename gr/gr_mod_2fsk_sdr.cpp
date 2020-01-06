@@ -46,8 +46,12 @@ gr_mod_2fsk_sdr::gr_mod_2fsk_sdr(int sps, int samp_rate, int carrier_freq,
     _filter_width = filter_width;
     int nfilts = 15;
     int spacing = 2;
+    float amplif = 0.8f;
     if(fm)
+    {
         spacing = 1;
+        amplif = 0.9f;
+    }
     int second_interp = 10;
     int if_samp_rate = 100000;
     if(_samples_per_symbol == 5)
@@ -67,7 +71,7 @@ gr_mod_2fsk_sdr::gr_mod_2fsk_sdr(int sps, int samp_rate, int carrier_freq,
     _resampler = gr::filter::rational_resampler_base_fff::make(_samples_per_symbol, 1,
                     gr::filter::firdes::root_raised_cosine(_samples_per_symbol,
                                 _samples_per_symbol,1,0.35,nfilts * _samples_per_symbol));
-    _amplify = gr::blocks::multiply_const_cc::make(0.8,1);
+    _amplify = gr::blocks::multiply_const_cc::make(amplif,1);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
     _filter = gr::filter::fft_filter_ccf::make(1,gr::filter::firdes::low_pass_2(
             1, if_samp_rate, _filter_width, 1200, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
