@@ -94,8 +94,12 @@ void AudioWriter::run()
             break;
         }
     }
-    if (!device.isFormatSupported(format)) {
-       _logger->log(Logger::LogLevelCritical, "Raw audio format not supported by backend, cannot play audio.");
+    if (!device.isFormatSupported(format))
+    {
+        _logger->log(Logger::LogLevelCritical, "Raw audio format not supported by backend, cannot play audio.");
+        struct timespec time_to_sleep = {1, 40000000L };
+        nanosleep(&time_to_sleep, NULL);
+        goto start;
     }
     _logger->log(Logger::LogLevelInfo, QString("Using audio output device %1").arg(device.deviceName()));
     QAudioOutput *audio_writer = new QAudioOutput(device, format, this);

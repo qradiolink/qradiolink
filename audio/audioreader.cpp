@@ -75,8 +75,12 @@ void AudioReader::run()
             break;
         }
     }
-    if (!device.isFormatSupported(format)) {
+    if (!device.isFormatSupported(format))
+    {
        _logger->log(Logger::LogLevelCritical, "Raw audio format not supported by backend, cannot capture audio.");
+       struct timespec time_to_sleep = {1, 40000000L };
+       nanosleep(&time_to_sleep, NULL);
+       goto start;
     }
     _logger->log(Logger::LogLevelInfo, QString("Using audio input device %1").arg(device.deviceName()));
     QAudioInput *audio_reader = new QAudioInput(device,format, this);
