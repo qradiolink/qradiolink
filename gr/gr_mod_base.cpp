@@ -85,7 +85,7 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
                                                     gr::vocoder::freedv_api::MODE_700C, 0);
     else
         _freedv_tx700C_usb = make_gr_mod_freedv_sdr(125, 1000000, 1700, 2300, 600,
-                                                    gr::vocoder::freedv_api::MODE_700, 0);
+                                                    gr::vocoder::freedv_api::MODE_700D, 0);
     _freedv_tx800XA_usb = make_gr_mod_freedv_sdr(125, 1000000, 1700, 2500, 200,
                                                  gr::vocoder::freedv_api::MODE_800XA, 0);
 
@@ -97,7 +97,7 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
                                                     gr::vocoder::freedv_api::MODE_700C, 1);
     else
         _freedv_tx700C_lsb = make_gr_mod_freedv_sdr(125, 1000000, 1700, 2300, 600,
-                                                    gr::vocoder::freedv_api::MODE_700, 1);
+                                                    gr::vocoder::freedv_api::MODE_700D, 1);
     _freedv_tx800XA_lsb = make_gr_mod_freedv_sdr(125, 1000000, 1700, 2500, 200,
                                                  gr::vocoder::freedv_api::MODE_800XA, 1);
 

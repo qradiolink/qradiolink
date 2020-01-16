@@ -154,7 +154,7 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
                                                   gr::vocoder::freedv_api::MODE_700C, 0);
     else
         _freedv_rx700C_usb = make_gr_demod_freedv(125, 1000000, 1700, 2300, 600,
-                                                  gr::vocoder::freedv_api::MODE_700, 0);
+                                                  gr::vocoder::freedv_api::MODE_700D, 0);
     _freedv_rx800XA_usb = make_gr_demod_freedv(125, 1000000, 1700, 2500, 0,
                                                gr::vocoder::freedv_api::MODE_800XA, 0);
 
@@ -166,7 +166,7 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
                                                   gr::vocoder::freedv_api::MODE_700C, 1);
     else
         _freedv_rx700C_lsb = make_gr_demod_freedv(125, 1000000, 1700, 2300, 600,
-                                                  gr::vocoder::freedv_api::MODE_700, 1);
+                                                  gr::vocoder::freedv_api::MODE_700D, 1);
     _freedv_rx800XA_lsb = make_gr_demod_freedv(125, 1000000, 1700, 2500, 0,
                                                gr::vocoder::freedv_api::MODE_800XA, 1);
 
