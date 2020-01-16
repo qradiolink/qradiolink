@@ -25,11 +25,11 @@
 #include <gnuradio/blocks/unpack_k_bits_bb.h>
 #include <gnuradio/blocks/float_to_complex.h>
 #include <gnuradio/analog/quadrature_demod_cf.h>
-#include <gnuradio/blocks/multiply_const_cc.h>
+#include <gnuradio/blocks/multiply_const.h>
 #include <gnuradio/blocks/complex_to_mag.h>
 #include <gnuradio/digital/fll_band_edge_cc.h>
 #include <gnuradio/digital/cma_equalizer_cc.h>
-#include <gnuradio/filter/rational_resampler_base_ccf.h>
+#include <gnuradio/filter/rational_resampler_base.h>
 #include <gnuradio/digital/constellation.h>
 #include <gnuradio/digital/constellation_decoder_cb.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
@@ -41,7 +41,7 @@
 #include <gnuradio/blocks/float_to_uchar.h>
 #include <gnuradio/blocks/add_const_ff.h>
 #include <gnuradio/analog/rail_ff.h>
-#include <gnuradio/blocks/multiply_const_ff.h>
+#include <gnuradio/blocks/multiply_const.h>
 #include <gnuradio/blocks/complex_to_float.h>
 #include <gnuradio/blocks/interleave.h>
 #include <gnuradio/fec/decoder.h>

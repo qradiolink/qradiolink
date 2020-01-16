@@ -27,7 +27,7 @@
 #include <gnuradio/blocks/rotator_cc.h>
 #include <gnuradio/vocoder/freedv_api.h>
 #include <gnuradio/constants.h>
-#include <gnuradio/analog/sig_source_f.h>
+#include <gnuradio/analog/sig_source.h>
 #include <gnuradio/blocks/copy.h>
 #include <osmosdr/sink.h>
 #include "src/modem_types.h"

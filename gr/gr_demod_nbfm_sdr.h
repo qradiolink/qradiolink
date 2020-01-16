@@ -20,15 +20,15 @@
 #include <gnuradio/hier_block2.h>
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/analog/agc2_ff.h>
-#include <gnuradio/filter/rational_resampler_base_ccf.h>
-#include <gnuradio/filter/rational_resampler_base_fff.h>
+#include <gnuradio/filter/rational_resampler_base.h>
+#include <gnuradio/filter/rational_resampler_base.h>
 #include <gnuradio/analog/quadrature_demod_cf.h>
 #include <gnuradio/analog/pwr_squelch_cc.h>
 #include <gnuradio/analog/ctcss_squelch_ff.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/filter/fft_filter_fff.h>
 #include <gnuradio/blocks/float_to_short.h>
-#include <gnuradio/blocks/multiply_const_ff.h>
+#include <gnuradio/blocks/multiply_const.h>
 
 
 class gr_demod_nbfm_sdr;

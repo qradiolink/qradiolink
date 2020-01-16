@@ -20,14 +20,14 @@
 #include <gnuradio/hier_block2.h>
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/analog/agc2_cc.h>
-#include <gnuradio/filter/rational_resampler_base_ccf.h>
+#include <gnuradio/filter/rational_resampler_base.h>
 #include <gnuradio/filter/iir_filter_ffd.h>
-#include <gnuradio/filter/rational_resampler_base_fff.h>
+#include <gnuradio/filter/rational_resampler_base.h>
 #include <gnuradio/analog/pwr_squelch_cc.h>
 #include <gnuradio/filter/fft_filter_ccc.h>
 #include <gnuradio/blocks/complex_to_real.h>
 #include <gnuradio/blocks/complex_to_mag.h>
-#include <gnuradio/blocks/multiply_const_ff.h>
+#include <gnuradio/blocks/multiply_const.h>
 
 
 class gr_demod_am_sdr;

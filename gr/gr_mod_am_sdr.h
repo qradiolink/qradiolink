@@ -21,13 +21,13 @@
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/filter/fft_filter_ccc.h>
 #include <gnuradio/filter/fft_filter_fff.h>
-#include <gnuradio/filter/rational_resampler_base_ccf.h>
+#include <gnuradio/filter/rational_resampler_base.h>
 #include <gnuradio/analog/agc2_ff.h>
 #include <gnuradio/analog/feedforward_agc_cc.h>
-#include <gnuradio/blocks/multiply_const_cc.h>
-#include <gnuradio/blocks/multiply_const_ff.h>
-#include <gnuradio/blocks/add_ff.h>
-#include <gnuradio/analog/sig_source_f.h>
+#include <gnuradio/blocks/multiply_const.h>
+#include <gnuradio/blocks/multiply_const.h>
+#include <gnuradio/blocks/add_blk.h>
+#include <gnuradio/analog/sig_source.h>
 #include <gnuradio/blocks/float_to_complex.h>
 #include <gnuradio/analog/rail_ff.h>
 

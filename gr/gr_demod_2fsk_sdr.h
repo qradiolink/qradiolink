@@ -23,11 +23,11 @@
 #include <gnuradio/digital/clock_recovery_mm_cc.h>
 #include <gnuradio/blocks/unpack_k_bits_bb.h>
 #include <gnuradio/blocks/float_to_complex.h>
-#include <gnuradio/blocks/multiply_const_cc.h>
-#include <gnuradio/filter/rational_resampler_base_ccf.h>
+#include <gnuradio/blocks/multiply_const.h>
+#include <gnuradio/filter/rational_resampler_base.h>
 #include <gnuradio/digital/binary_slicer_fb.h>
 #include <gnuradio/digital/fll_band_edge_cc.h>
-#include <gnuradio/blocks/divide_ff.h>
+#include <gnuradio/blocks/divide.h>
 #include <gnuradio/analog/rail_ff.h>
 #include <gnuradio/blocks/complex_to_real.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
@@ -36,7 +36,7 @@
 #include <gnuradio/fec/decoder.h>
 #include <gnuradio/fec/cc_decoder.h>
 #include <gnuradio/blocks/complex_to_mag.h>
-#include <gnuradio/blocks/multiply_const_ff.h>
+#include <gnuradio/blocks/multiply_const.h>
 #include <gnuradio/blocks/add_const_ff.h>
 #include <gnuradio/blocks/delay.h>
 #include <gnuradio/blocks/float_to_uchar.h>

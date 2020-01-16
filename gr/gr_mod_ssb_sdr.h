@@ -23,12 +23,11 @@
 #include <gnuradio/analog/feedforward_agc_cc.h>
 #include <gnuradio/filter/fft_filter_ccc.h>
 #include <gnuradio/filter/fft_filter_fff.h>
-#include <gnuradio/filter/rational_resampler_base_ccf.h>
-#include <gnuradio/blocks/multiply_const_cc.h>
-#include <gnuradio/blocks/multiply_ff.h>
-#include <gnuradio/blocks/multiply_cc.h>
-#include <gnuradio/analog/sig_source_f.h>
-#include <gnuradio/analog/sig_source_c.h>
+#include <gnuradio/filter/rational_resampler_base.h>
+#include <gnuradio/blocks/multiply_const.h>
+#include <gnuradio/blocks/multiply.h>
+#include <gnuradio/blocks/multiply.h>
+#include <gnuradio/analog/sig_source.h>
 #include <gnuradio/blocks/float_to_complex.h>
 #include <gnuradio/analog/rail_ff.h>
 #include <gnuradio/blocks/delay.h>

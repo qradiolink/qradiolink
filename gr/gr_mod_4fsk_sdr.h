@@ -19,15 +19,15 @@
 
 
 #include <gnuradio/hier_block2.h>
-#include <gnuradio/blocks/multiply_const_ff.h>
-#include <gnuradio/blocks/packed_to_unpacked_bb.h>
+#include <gnuradio/blocks/multiply_const.h>
+#include <gnuradio/blocks/packed_to_unpacked.h>
 #include <gnuradio/endianness.h>
-#include <gnuradio/digital/chunks_to_symbols_bf.h>
+#include <gnuradio/digital/chunks_to_symbols.h>
 #include <gnuradio/blocks/repeat.h>
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/analog/sig_source_waveform.h>
-#include <gnuradio/blocks/multiply_cc.h>
-#include <gnuradio/blocks/multiply_const_cc.h>
+#include <gnuradio/blocks/multiply.h>
+#include <gnuradio/blocks/multiply_const.h>
 #include <gnuradio/blocks/complex_to_real.h>
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/digital/map_bb.h>
@@ -35,8 +35,8 @@
 #include <gnuradio/blocks/pack_k_bits_bb.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/analog/frequency_modulator_fc.h>
-#include <gnuradio/filter/rational_resampler_base_ccf.h>
-#include <gnuradio/filter/rational_resampler_base_fff.h>
+#include <gnuradio/filter/rational_resampler_base.h>
+#include <gnuradio/filter/rational_resampler_base.h>
 #include <gnuradio/fec/cc_encoder.h>
 #include <gnuradio/fec/encoder.h>
 

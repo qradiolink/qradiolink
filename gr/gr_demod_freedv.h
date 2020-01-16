@@ -22,14 +22,14 @@
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/analog/agc2_ff.h>
 #include <gnuradio/analog/feedforward_agc_cc.h>
-#include <gnuradio/filter/rational_resampler_base_ccf.h>
-#include <gnuradio/filter/rational_resampler_base_fff.h>
+#include <gnuradio/filter/rational_resampler_base.h>
+#include <gnuradio/filter/rational_resampler_base.h>
 #include <gnuradio/filter/fft_filter_ccc.h>
 #include <gnuradio/filter/fft_filter_fff.h>
 #include <gnuradio/blocks/complex_to_real.h>
 #include <gnuradio/blocks/float_to_short.h>
 #include <gnuradio/blocks/short_to_float.h>
-#include <gnuradio/blocks/multiply_const_ff.h>
+#include <gnuradio/blocks/multiply_const.h>
 #include <gnuradio/vocoder/freedv_rx_ss.h>
 #include <gnuradio/vocoder/freedv_api.h>
 

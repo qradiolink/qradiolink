@@ -29,14 +29,14 @@
 #include <gnuradio/analog/agc2_cc.h>
 #include <gnuradio/analog/agc2_ff.h>
 #include <gnuradio/digital/fll_band_edge_cc.h>
-#include <gnuradio/filter/rational_resampler_base_ccf.h>
+#include <gnuradio/filter/rational_resampler_base.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/digital/descrambler_bb.h>
 #include <gnuradio/blocks/add_const_ff.h>
 #include <gnuradio/fec/decoder.h>
 #include <gnuradio/fec/cc_decoder.h>
 #include <gnuradio/blocks/delay.h>
-#include <gnuradio/blocks/multiply_const_ff.h>
+#include <gnuradio/blocks/multiply_const.h>
 #include <gnuradio/blocks/float_to_uchar.h>
 
 
