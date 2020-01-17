@@ -1443,7 +1443,8 @@ void MainWindow::setTxPowerDisplay(int value)
     _settings->tx_power = value;
     ui->txPowerDisplay->display(value);
     ui->txGainDial->setValue(value);
-    emit setTxPower((int)value);
+    std::string gain_stage="";
+    emit setTxPower((int)value, gain_stage);
 }
 
 void MainWindow::setRxSensitivityDisplay(int value)

@@ -23,6 +23,7 @@
 #include <QVector>
 #include <QMetaType>
 #include <QtGlobal>
+#include <string>
 #include "mainwindow.h"
 #include "src/mumbleclient.h"
 #include "audio/audiowriter.h"
@@ -53,6 +54,7 @@ int main(int argc, char *argv[])
     qRegisterMetaType<complex_vector>("complex_vector");
     typedef QMap<std::string,QVector<int>> gain_vector;
     qRegisterMetaType<gain_vector>("gain_vector");
+    qRegisterMetaType<std::string>("std::string");
 
 
     QApplication a(argc, argv);
@@ -219,8 +221,8 @@ void connectCommandSignals(TelnetServer *telnet_server, MumbleClient *mumbleclie
                      radio_op,SLOT(stopScan()));
     QObject::connect(telnet_server->command_processor,SIGNAL(fineTuneFreq(long long)),radio_op,
                      SLOT(fineTuneFreq(long long)));
-    QObject::connect(telnet_server->command_processor,SIGNAL(setTxPower(int)),radio_op,
-                     SLOT(setTxPower(int)));
+    QObject::connect(telnet_server->command_processor,SIGNAL(setTxPower(int, std::string)),radio_op,
+                     SLOT(setTxPower(int, std::string)));
     QObject::connect(telnet_server->command_processor,SIGNAL(setAgcAttack(float)),
                      radio_op,SLOT(setAgcAttack(float)));
     QObject::connect(telnet_server->command_processor,SIGNAL(setAgcDecay(float)),
@@ -322,7 +324,8 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
     QObject::connect(w,SIGNAL(startMemoryTune(int)), radio_op,SLOT(startMemoryScan(int)));
     QObject::connect(w,SIGNAL(stopMemoryTune()),radio_op,SLOT(stopMemoryScan()));
     QObject::connect(w,SIGNAL(fineTuneFreq(long long)),radio_op,SLOT(fineTuneFreq(long long)));
-    QObject::connect(w,SIGNAL(setTxPower(int)),radio_op,SLOT(setTxPower(int)));
+    QObject::connect(w,SIGNAL(setTxPower(int, std::string)),
+                     radio_op,SLOT(setTxPower(int, std::string)));
     QObject::connect(w,SIGNAL(setBbGain(int)),radio_op,SLOT(setBbGain(int)));
     QObject::connect(w,SIGNAL(setIfGain(int)),radio_op,SLOT(setIfGain(int)));
     QObject::connect(w,SIGNAL(setAgcAttack(float)),radio_op,SLOT(setAgcAttack(float)));

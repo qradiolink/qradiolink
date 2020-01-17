@@ -24,6 +24,7 @@
 #include <QList>
 #include <QRegularExpressionValidator>
 #include <QVector>
+#include <string>
 #include "settings.h"
 #include "logger.h"
 #include "ext/utils.h"
@@ -47,7 +48,7 @@ signals:
     void toggleTX(bool value);
     void toggleRxModemMode(int value);
     void toggleTxModemMode(int value);
-    void setTxPower(int value);
+    void setTxPower(int value, std::string gain_stage="");
     void setRxSensitivity(int value);
     void setSquelch(int value);
     void setVolume(int value);

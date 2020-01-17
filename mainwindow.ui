@@ -4306,7 +4306,7 @@ background-color: rgb(35, 35, 35);</string>
           <number>1</number>
          </property>
          <property name="digitCount">
-          <number>2</number>
+          <number>3</number>
          </property>
          <property name="segmentStyle">
           <enum>QLCDNumber::Flat</enum>
@@ -4482,8 +4482,11 @@ color: rgb(182, 182, 182);</string>
          <property name="autoFillBackground">
           <bool>false</bool>
          </property>
+         <property name="minimum">
+          <number>1</number>
+         </property>
          <property name="maximum">
-          <number>99</number>
+          <number>100</number>
          </property>
          <property name="pageStep">
           <number>1</number>

@@ -178,7 +178,7 @@ signals:
     void toggleWidebandMode(bool value);
     void toggleRxModemMode(int value);
     void toggleTxModemMode(int value);
-    void setTxPower(int value);
+    void setTxPower(int value, std::string gain_stage);
     void setRxSensitivity(int value);
     void setSquelch(int value);
     void setVolume(int value);
