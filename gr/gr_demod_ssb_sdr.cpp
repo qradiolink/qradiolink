@@ -56,7 +56,7 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(std::vector<int>signature, int sps, int samp_
     _rail = gr::analog::rail_ff::make(-1.0, 1.0);
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::band_pass_2(
-                    2, _target_samp_rate, 300, 3600, 250, 30, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+                    2, _target_samp_rate, 300, _filter_width, 250, 40, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
     _complex_to_real = gr::blocks::complex_to_real::make();
 
 
@@ -93,6 +93,8 @@ void gr_demod_ssb_sdr::set_filter_width(int filter_width)
 
     _filter_usb->set_taps(filter_usb_taps);
     _filter_lsb->set_taps(filter_lsb_taps);
+    _audio_filter->set_taps(gr::filter::firdes::band_pass_2(
+            2, _target_samp_rate, 300, _filter_width, 250, 40, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
 }
 
 void gr_demod_ssb_sdr::set_squelch(int value)

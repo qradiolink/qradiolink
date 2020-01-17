@@ -505,7 +505,8 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
         else
         {
             response = QString("Setting TX gain value to %1").arg(set);
-            emit setTxPower(set);
+            std::string gain_stage = "";
+            emit setTxPower(set, gain_stage);
         }
         break;
     }

@@ -2132,7 +2132,7 @@ void RadioController::setTxPower(int value, std::string gain_stage)
     if(gain_stage.size() > 0)
     {
         _tx_stage_gains[gain_stage] = value;
-        _modem->setTxPower((float)value, gain_stage);
+        _modem->setTxPower((float)value/100.0, gain_stage);
     }
     else
     {

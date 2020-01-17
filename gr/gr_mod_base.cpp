@@ -39,8 +39,9 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
     {
         _lime_specific = true;
     }
-    set_bandwidth_specific();
+    //set_bandwidth_specific();
     _osmosdr_sink->set_sample_rate(1000000);
+    _osmosdr_sink->set_bandwidth(1000000);
     _osmosdr_sink->set_antenna(device_antenna);
     _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
     //_osmosdr_sink->set_freq_corr(freq_corr);
@@ -578,7 +579,8 @@ void gr_mod_base::set_power(float value, std::string gain_stage)
 {
     if (!_gain_range.empty() && (gain_stage.size() < 1))
     {
-        double gain =  _gain_range.start() + value*(_gain_range.stop()-_gain_range.start());
+        double gain =  std::floor(double(_gain_range.start()) +
+                double(value)*(double(_gain_range.stop())-double(_gain_range.start())));
         _osmosdr_sink->set_gain(gain);
     }
     else

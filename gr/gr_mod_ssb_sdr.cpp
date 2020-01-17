@@ -41,7 +41,7 @@ gr_mod_ssb_sdr::gr_mod_ssb_sdr(int sps, int samp_rate, int carrier_freq,
     _rail = gr::analog::rail_ff::make(-0.55, 0.55);
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::band_pass_2(
-                    1, target_samp_rate, 300, 3600, 250, 30, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+                    1, target_samp_rate, 300, _filter_width, 250, 30, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
     _float_to_complex = gr::blocks::float_to_complex::make();
     std::vector<float> interp_taps = gr::filter::firdes::low_pass_2(_sps, _samp_rate,
                         _filter_width, _filter_width, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
