@@ -1674,7 +1674,6 @@ void RadioController::toggleTX(bool value)
             _video->deinit();
 
         _mutex->lock();
-        _modem->setTxPower(0.01);
         _modem->setBbGain(_settings->bb_gain);
         _modem->tuneTx(433000000);
         _modem->setTxCTCSS(_settings->tx_ctcss);
@@ -1691,6 +1690,9 @@ void RadioController::toggleTX(bool value)
             ++iter;
         }
         emit txGainStages(tx_gains);
+        _mutex->lock();
+        _modem->setTxPower(0.01);
+        _mutex->unlock();
 
         _settings->tx_inited = true;
     }
@@ -2117,6 +2119,7 @@ void RadioController::setRxSensitivity(int value, std::string gain_stage)
 {
     if(gain_stage.size() > 0)
     {
+        qDebug() << value;
         _rx_stage_gains[gain_stage] = value;
         _modem->setRxSensitivity((float)value, gain_stage);
     }

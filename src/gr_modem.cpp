@@ -55,7 +55,7 @@ void gr_modem::initTX(int modem_type, std::string device_args, std::string devic
 {
     _modem_type_tx = modem_type;
     _gr_mod_base = new gr_mod_base(
-                0, 433500000, 0.5, device_args, device_antenna, freq_corr);
+                0, 433500000, 1.0, device_args, device_antenna, freq_corr);
     toggleTxMode(modem_type);
 
 }

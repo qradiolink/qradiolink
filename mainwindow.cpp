@@ -211,6 +211,7 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     ui->statusBar->hide();
     ui->mainToolBar->hide();
     ui->memoriesFrame->hide();
+    ui->rxGainsFrame->hide();
 
     _video_img = new QPixmap;
     _constellation_img = new QPixmap(300,300);
@@ -377,7 +378,7 @@ void MainWindow::closeEvent (QCloseEvent *event)
     emit disconnectFromServer();
     emit terminateConnections();
     // FIXME: this is the wrong way to stop the radio
-    struct timespec time_to_sleep = {0, 200000000L };
+    struct timespec time_to_sleep = {0, 500000000L };
     nanosleep(&time_to_sleep, NULL);
     event->accept();
 }
@@ -433,6 +434,7 @@ void MainWindow::showControls(bool value)
     {
         ui->plotterContainer->resize(xy.right() -xy.left()-20,xy.bottom()-xy.top()-210);
         ui->controlsFrame->show();
+        ui->rxGainsFrame->show();
         xy = ui->plotterContainer->geometry();
         ui->secondaryTextDisplay->move(xy.left(), xy.bottom() - 150);
         ui->memoriesFrame->move(xy.right() - 30 - 1150, xy.bottom() - 285);
@@ -443,6 +445,7 @@ void MainWindow::showControls(bool value)
     {
         ui->plotterContainer->resize(xy.right() -xy.left()-20,xy.bottom()-xy.top()-120);
         ui->controlsFrame->hide();
+        ui->rxGainsFrame->hide();
         xy = ui->plotterContainer->geometry();
         ui->secondaryTextDisplay->move(xy.left(), xy.bottom() - 150);
         ui->memoriesFrame->move(xy.right() - 30 - 1150, xy.bottom() - 285);
@@ -1452,7 +1455,7 @@ void MainWindow::setRxSensitivityDisplay(int value)
     _settings->rx_sensitivity = value;
     ui->rxSensitivityDisplay->display(value);
     ui->rxGainDial->setValue(value);
-    emit setRxSensitivity((int)value);
+    emit setRxSensitivity((int)value, "");
 }
 
 void MainWindow::setSquelchDisplay(int value)
@@ -1728,6 +1731,12 @@ void MainWindow::updateAgcDecay(int value)
 
 void MainWindow::setRxGainStages(gain_vector rx_gains)
 {
+    for(int i=0;i < _rx_gain_sliders.size();i++)
+    {
+        QSlider *slider = _rx_gain_sliders.at(i);
+        delete slider;
+    }
+    _rx_gain_sliders.clear();
     QMap<std::string, QVector<int>>::const_iterator iter = rx_gains.constBegin();
     while (iter != rx_gains.constEnd())
     {
@@ -1735,18 +1744,27 @@ void MainWindow::setRxGainStages(gain_vector rx_gains)
         QSlider *gain_slider = new QSlider(Qt::Horizontal, this);
         gain_slider->setObjectName(gain_stage_name);
         gain_slider->setRange(iter.value().at(0), iter.value().at(1));
-        gain_slider->setMaximumWidth(150);
+        //qDebug() << QString::fromStdString(iter.key()) << ": " << iter.value().at(0) << " to " << iter.value().at(1);
+        gain_slider->setSingleStep(1);
+        gain_slider->setMaximumWidth(200);
+        gain_slider->setMaximumHeight(100);
         gain_slider->setTickInterval(10);
-        //gain_slider->setVisible(true);
         gain_slider->setToolTip(gain_stage_name);
+        QObject::connect(gain_slider,SIGNAL(valueChanged(int)), this, SLOT(setRxStageGain(int)));
         _rx_gain_sliders.push_back(gain_slider);
         ++iter;
-        //ui->gainsFrame->layout()->addWidget(gain_slider);
+        ui->rxGainsTab->layout()->addWidget(gain_slider);
     }
 }
 
 void MainWindow::setTxGainStages(gain_vector tx_gains)
 {
+    for(int i=0;i < _tx_gain_sliders.size();i++)
+    {
+        QSlider *slider = _tx_gain_sliders.at(i);
+        delete slider;
+    }
+    _tx_gain_sliders.clear();
     QMap<std::string, QVector<int>>::const_iterator iter = tx_gains.constBegin();
     while (iter != tx_gains.constEnd())
     {
@@ -1754,13 +1772,29 @@ void MainWindow::setTxGainStages(gain_vector tx_gains)
         QSlider *gain_slider = new QSlider(Qt::Horizontal, this);
         gain_slider->setObjectName(gain_stage_name);
         gain_slider->setRange(iter.value().at(0), iter.value().at(1));
+        //qDebug() << QString::fromStdString(iter.key()) << ": " << iter.value().at(0) << " to " << iter.value().at(1);
+        gain_slider->setSingleStep(1);
         gain_slider->setMaximumWidth(150);
         gain_slider->setTickInterval(10);
         gain_slider->setToolTip(gain_stage_name);
         _tx_gain_sliders.push_back(gain_slider);
-        //ui->gainsFrame->layout()->addWidget(gain_slider);
+        ui->txGainsTab->layout()->addWidget(gain_slider);
         ++iter;
     }
+}
+
+void MainWindow::setRxStageGain(int value)
+{
+    QSlider *slider = reinterpret_cast<QSlider*>(QObject::sender());
+    std::string stage_name = slider->toolTip().toStdString();
+    emit setRxSensitivity(value, stage_name);
+}
+
+void MainWindow::setTxStageGain(int value)
+{
+    QSlider *slider = reinterpret_cast<QSlider*>(QObject::sender());
+    std::string stage_name = slider->toolTip().toStdString();
+    emit setTxPower(value, stage_name);
 }
 
 void MainWindow::setBurstIPMode(bool value)
