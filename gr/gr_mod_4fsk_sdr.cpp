@@ -53,12 +53,19 @@ gr_mod_4fsk_sdr::gr_mod_4fsk_sdr(int sps, int samp_rate, int carrier_freq,
     _filter_width = filter_width;
 
     int nfilts;
+    int second_interp = 20;
+    if(sps == 4)
+    {
+        nfilts = 50 * _samples_per_symbol;
+        second_interp = 1;
+    }
     if(sps == 5)
         nfilts = 50 * _samples_per_symbol;
     else if(sps == 25)
         nfilts = 10 * _samples_per_symbol;
     else if(sps == 50)
         nfilts = 5 * _samples_per_symbol;
+
     if((nfilts % 2) == 0)
         nfilts += 1;
     int spacing = 4;
@@ -88,8 +95,8 @@ gr_mod_4fsk_sdr::gr_mod_4fsk_sdr(int sps, int samp_rate, int carrier_freq,
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
     _filter = gr::filter::fft_filter_ccf::make(1,gr::filter::firdes::low_pass(
                 1, _samp_rate, _filter_width, _filter_width/2,gr::filter::firdes::WIN_BLACKMAN_HARRIS));
-    _resampler2 = gr::filter::rational_resampler_base_ccf::make(20, 1,
-                        gr::filter::firdes::low_pass(20,_samp_rate,_filter_width,_filter_width*5));
+    _resampler2 = gr::filter::rational_resampler_base_ccf::make(second_interp, 1,
+                gr::filter::firdes::low_pass(second_interp,_samp_rate,_filter_width,_filter_width*5));
 
 
     connect(self(),0,_packed_to_unpacked,0);
@@ -109,8 +116,16 @@ gr_mod_4fsk_sdr::gr_mod_4fsk_sdr(int sps, int samp_rate, int carrier_freq,
         connect(_repeat,0,_freq_modulator,0);
     }
 
-    connect(_freq_modulator,0,_resampler2,0);
-    connect(_resampler2,0,_amplify,0);
+    if(sps == 4)    // Video and Data
+    {
+        connect(_freq_modulator,0,_amplify,0);
+    }
+    else
+    {
+        connect(_freq_modulator,0,_resampler2,0);
+        connect(_resampler2,0,_amplify,0);
+    }
+
     connect(_amplify,0,_bb_gain,0);
     connect(_bb_gain,0,_filter,0);
     connect(_filter,0,self(),0);
