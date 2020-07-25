@@ -96,7 +96,7 @@
 </string>
         </property>
         <property name="currentIndex">
-         <number>4</number>
+         <number>0</number>
         </property>
         <property name="iconSize">
          <size>
@@ -215,7 +215,7 @@ border-style:solid;
 background-color:black;
 }</string>
              </property>
-             <widget class="QFrame" name="constellationDisplay">
+             <widget class="QWidget" name="constellationDisplay" native="true">
               <property name="geometry">
                <rect>
                 <x>0</x>
@@ -246,12 +246,6 @@ background-color:black;
                <string notr="true">border: 1px solid white;
 background-color: #1F1D1D;</string>
               </property>
-              <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
-              </property>
-              <property name="frameShadow">
-               <enum>QFrame::Raised</enum>
-              </property>
               <widget class="QLabel" name="constellationLabel">
                <property name="geometry">
                 <rect>
@@ -269,7 +263,7 @@ background-color: #1F1D1D;</string>
                </property>
               </widget>
              </widget>
-             <widget class="QFrame" name="videoFrame">
+             <widget class="QWidget" name="videoFrame" native="true">
               <property name="geometry">
                <rect>
                 <x>850</x>
@@ -287,15 +281,6 @@ background-color: #1F1D1D;</string>
               <property name="styleSheet">
                <string notr="true">border: 0px solid black;
 background-color: #1F1D1D;</string>
-              </property>
-              <property name="frameShape">
-               <enum>QFrame::NoFrame</enum>
-              </property>
-              <property name="frameShadow">
-               <enum>QFrame::Plain</enum>
-              </property>
-              <property name="lineWidth">
-               <number>0</number>
               </property>
               <widget class="QLabel" name="videoLabel">
                <property name="geometry">
