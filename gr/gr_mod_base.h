@@ -93,8 +93,6 @@ private:
     gr_mod_qpsk_sdr_sptr _qpsk_10k;
     gr_mod_qpsk_sdr_sptr _qpsk_250k;
     gr_mod_qpsk_sdr_sptr _qpsk_video;
-    gr_mod_4fsk_sdr_sptr _4fsk_video;
-    gr_mod_4fsk_sdr_sptr _4fsk_250k;
     gr_mod_ssb_sdr_sptr _usb;
     gr_mod_ssb_sdr_sptr _lsb;
     gr_mod_ssb_sdr_sptr _usb_cw;

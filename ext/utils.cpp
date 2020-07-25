@@ -112,10 +112,8 @@ void buildModeList(QVector<QString> *operating_modes)
     operating_modes->push_back("4FSK RRC 2K");
     operating_modes->push_back("4FSK RRC 1K");
     operating_modes->push_back("4FSK RRC 10K");
-    operating_modes->push_back("Video QPSK 250K");
-    operating_modes->push_back("IP modem QPSK 250K");
-    operating_modes->push_back("Video 4FSK 250K");
-    operating_modes->push_back("IP modem 4FSK 250K");
+    operating_modes->push_back("Video 250K");
+    operating_modes->push_back("IP modem 250K");
     operating_modes->push_back("Test tone");
 }
 
@@ -147,10 +145,8 @@ void buildFilterWidthList(std::vector<std::complex<int>>* filter_widths, std::ve
     filter_widths->push_back(std::complex<int>(-2000, 2000));  // 4FSK 2K RRC
     filter_widths->push_back(std::complex<int>(-1000, 1000));  // 4FSK 1K RRC
     filter_widths->push_back(std::complex<int>(-10000, 10000));    // 4FSK 10K RRC
-    filter_widths->push_back(std::complex<int>(-150000, 150000)); // QPSK 250K VIDEO
-    filter_widths->push_back(std::complex<int>(-150000, 150000)); // QPSK 250K DATA
-    filter_widths->push_back(std::complex<int>(-250000, 250000)); // 4FSK 250K VIDEO
-    filter_widths->push_back(std::complex<int>(-250000, 250000)); // 4FSK 250K DATA
+    filter_widths->push_back(std::complex<int>(-150000, 150000)); // QPSK250000 VIDEO
+    filter_widths->push_back(std::complex<int>(-150000, 150000)); // QPSK250000 DATA
     filter_widths->push_back(std::complex<int>(100, 1000)); // CW K USB
 
 
@@ -180,10 +176,8 @@ void buildFilterWidthList(std::vector<std::complex<int>>* filter_widths, std::ve
     ranges->push_back(std::complex<int>(-2000, 2000));  // 4FSK 2K RRC
     ranges->push_back(std::complex<int>(-1000, 1000));  // 4FSK 1K RRC
     ranges->push_back(std::complex<int>(-10000, 10000));    // 4FSK 10K RRC
-    ranges->push_back(std::complex<int>(-150000, 150000)); // QPSK 250K VIDEO
-    ranges->push_back(std::complex<int>(-150000, 150000)); // QPSK 250K DATA
-    ranges->push_back(std::complex<int>(-250000, 250000)); // 4FSK 250K VIDEO
-    ranges->push_back(std::complex<int>(-250000, 250000)); // 4FSK 250K DATA
+    ranges->push_back(std::complex<int>(-150000, 150000)); // QPSK250000 VIDEO
+    ranges->push_back(std::complex<int>(-150000, 150000)); // QPSK250000 DATA
     ranges->push_back(std::complex<int>(100, 1000)); // CW K USB
 
     symmetric->push_back(true);  // FM
@@ -212,10 +206,8 @@ void buildFilterWidthList(std::vector<std::complex<int>>* filter_widths, std::ve
     symmetric->push_back(true);  // 4FSK 2K RRC
     symmetric->push_back(true);  // 4FSK 1K RRC
     symmetric->push_back(true);    // 4FSK 10K RRC
-    symmetric->push_back(true); // QPSK 250K VIDEO
-    symmetric->push_back(true); // QPSK 250K DATA
-    symmetric->push_back(true); // 4FSK 250K VIDEO
-    symmetric->push_back(true); // 4FSK 250K DATA
+    symmetric->push_back(true); // QPSK250000 VIDEO
+    symmetric->push_back(true); // QPSK250000 DATA
     symmetric->push_back(false); // CW K USB
 
 }

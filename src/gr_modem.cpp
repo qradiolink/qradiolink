@@ -24,8 +24,8 @@ gr_modem::gr_modem(const Settings *settings, Logger *logger, QObject *parent) :
     _limits = new Limits;
     _bit_buf_len = 8 *8;
     _bit_buf = new unsigned char[_bit_buf_len];
-    _modem_type_rx = gr_modem_types::ModemTypeBPSK2K;
-    _modem_type_tx = gr_modem_types::ModemTypeBPSK2K;
+    _modem_type_rx = gr_modem_types::ModemTypeBPSK2000;
+    _modem_type_tx = gr_modem_types::ModemTypeBPSK2000;
     _direct_mode_repeater = false;
     _rx_frame_length = 7;
     _tx_frame_length = 7;
@@ -99,51 +99,51 @@ void gr_modem::toggleTxMode(int modem_type)
     if(_gr_mod_base)
     {
         _gr_mod_base->set_mode(modem_type);
-        if(modem_type == gr_modem_types::ModemTypeBPSK2K)
+        if(modem_type == gr_modem_types::ModemTypeBPSK2000)
         {
             _tx_frame_length = 7;
         }
-        else if(modem_type == gr_modem_types::ModemTypeBPSK1K)
+        else if(modem_type == gr_modem_types::ModemTypeBPSK1000)
         {
             _tx_frame_length = 4;
         }
-        else if(modem_type == gr_modem_types::ModemType2FSK1KFM)
+        else if(modem_type == gr_modem_types::ModemType2FSK1000FM)
         {
             _tx_frame_length = 4;
         }
-        else if(modem_type == gr_modem_types::ModemType2FSK1K)
+        else if(modem_type == gr_modem_types::ModemType2FSK1000)
         {
             _tx_frame_length = 4;
         }
-        else if(modem_type == gr_modem_types::ModemTypeQPSK20K)
+        else if(modem_type == gr_modem_types::ModemTypeQPSK20000)
         {
             _tx_frame_length = 47;
         }
-        else if(modem_type == gr_modem_types::ModemTypeQPSK2K)
+        else if(modem_type == gr_modem_types::ModemTypeQPSK2000)
         {
             _tx_frame_length = 7;
         }
-        else if(modem_type == gr_modem_types::ModemType4FSK20K)
+        else if(modem_type == gr_modem_types::ModemType4FSK20000)
         {
             _tx_frame_length = 47;
         }
-        else if(modem_type == gr_modem_types::ModemType4FSK20KFM)
+        else if(modem_type == gr_modem_types::ModemType4FSK20000FM)
         {
             _tx_frame_length = 47;
         }
-        else if(modem_type == gr_modem_types::ModemType2FSK20K)
+        else if(modem_type == gr_modem_types::ModemType2FSK20000)
         {
             _tx_frame_length = 47;
         }
-        else if(modem_type == gr_modem_types::ModemType4FSK2K)
+        else if(modem_type == gr_modem_types::ModemType4FSK2000)
         {
             _tx_frame_length = 7;
         }
-        else if(modem_type == gr_modem_types::ModemType4FSK2KFM)
+        else if(modem_type == gr_modem_types::ModemType4FSK2000FM)
         {
             _tx_frame_length = 7;
         }
-        else if(modem_type == gr_modem_types::ModemType4FSK1KFM)
+        else if(modem_type == gr_modem_types::ModemType4FSK1000FM)
         {
             _tx_frame_length = 4;
         }
@@ -151,23 +151,15 @@ void gr_modem::toggleTxMode(int modem_type)
         {
             _tx_frame_length = 3122;
         }
-        else if(modem_type == gr_modem_types::ModemType4FSKVideo)
-        {
-            _tx_frame_length = 3122;
-        }
-        else if(modem_type == gr_modem_types::ModemType2FSK2KFM)
+        else if(modem_type == gr_modem_types::ModemType2FSK2000FM)
         {
             _tx_frame_length = 7;
         }
-        else if(modem_type == gr_modem_types::ModemType2FSK2K)
+        else if(modem_type == gr_modem_types::ModemType2FSK2000)
         {
             _tx_frame_length = 7;
         }
-        else if(modem_type == gr_modem_types::ModemTypeQPSK250K)
-        {
-            _tx_frame_length = 1516;
-        }
-        else if(modem_type == gr_modem_types::ModemType4FSK250K)
+        else if(modem_type == gr_modem_types::ModemTypeQPSK250000)
         {
             _tx_frame_length = 1516;
         }
@@ -181,62 +173,62 @@ void gr_modem::toggleRxMode(int modem_type)
     if(_gr_demod_base)
     {
         _gr_demod_base->set_mode(modem_type);
-        if(modem_type == gr_modem_types::ModemTypeBPSK2K)
+        if(modem_type == gr_modem_types::ModemTypeBPSK2000)
         {
             _bit_buf_len = 8 *8;
             _rx_frame_length = 7;
         }
-        else if(modem_type == gr_modem_types::ModemTypeBPSK1K)
+        else if(modem_type == gr_modem_types::ModemTypeBPSK1000)
         {
             _bit_buf_len = 4 *8;
             _rx_frame_length = 4;
         }
-        else if(modem_type == gr_modem_types::ModemType2FSK1KFM)
+        else if(modem_type == gr_modem_types::ModemType2FSK1000FM)
         {
             _bit_buf_len = 4 *8;
             _rx_frame_length = 4;
         }
-        else if(modem_type == gr_modem_types::ModemType2FSK1K)
+        else if(modem_type == gr_modem_types::ModemType2FSK1000)
         {
             _bit_buf_len = 4 *8;
             _rx_frame_length = 4;
         }
-        else if (modem_type == gr_modem_types::ModemTypeQPSK20K)
+        else if (modem_type == gr_modem_types::ModemTypeQPSK20000)
         {
             _bit_buf_len = 48 *8;
             _rx_frame_length = 47;
         }
-        else if (modem_type == gr_modem_types::ModemTypeQPSK2K)
+        else if (modem_type == gr_modem_types::ModemTypeQPSK2000)
         {
             _bit_buf_len = 8 *8;
             _rx_frame_length = 7;
         }
-        else if (modem_type == gr_modem_types::ModemType4FSK20K)
+        else if (modem_type == gr_modem_types::ModemType4FSK20000)
         {
             _bit_buf_len = 48 *8;
             _rx_frame_length = 47;
         }
-        else if (modem_type == gr_modem_types::ModemType4FSK20KFM)
+        else if (modem_type == gr_modem_types::ModemType4FSK20000FM)
         {
             _bit_buf_len = 48 *8;
             _rx_frame_length = 47;
         }
-        else if (modem_type == gr_modem_types::ModemType2FSK20K)
+        else if (modem_type == gr_modem_types::ModemType2FSK20000)
         {
             _bit_buf_len = 48 *8;
             _rx_frame_length = 47;
         }
-        else if (modem_type == gr_modem_types::ModemType4FSK2K)
+        else if (modem_type == gr_modem_types::ModemType4FSK2000)
         {
             _bit_buf_len = 8 *8;
             _rx_frame_length = 7;
         }
-        else if (modem_type == gr_modem_types::ModemType4FSK2KFM)
+        else if (modem_type == gr_modem_types::ModemType4FSK2000FM)
         {
             _bit_buf_len = 8 *8;
             _rx_frame_length = 7;
         }
-        else if (modem_type == gr_modem_types::ModemType4FSK1KFM)
+        else if (modem_type == gr_modem_types::ModemType4FSK1000FM)
         {
             _bit_buf_len = 4 *8;
             _rx_frame_length = 4;
@@ -246,27 +238,17 @@ void gr_modem::toggleRxMode(int modem_type)
             _bit_buf_len = 3123 *8;
             _rx_frame_length = 3122;
         }
-        else if (modem_type == gr_modem_types::ModemType4FSKVideo)
-        {
-            _bit_buf_len = 3123 *8;
-            _rx_frame_length = 3122;
-        }
-        else if(modem_type == gr_modem_types::ModemType2FSK2KFM)
+        else if(modem_type == gr_modem_types::ModemType2FSK2000FM)
         {
             _bit_buf_len = 8 *8;
             _rx_frame_length = 7;
         }
-        else if(modem_type == gr_modem_types::ModemType2FSK2K)
+        else if(modem_type == gr_modem_types::ModemType2FSK2000)
         {
             _bit_buf_len = 8 *8;
             _rx_frame_length = 7;
         }
-        else if (modem_type == gr_modem_types::ModemTypeQPSK250K)
-        {
-            _bit_buf_len = 1517 *8;
-            _rx_frame_length = 1516;
-        }
-        else if (modem_type == gr_modem_types::ModemType4FSK250K)
+        else if (modem_type == gr_modem_types::ModemTypeQPSK250000)
         {
             _bit_buf_len = 1517 *8;
             _rx_frame_length = 1516;
@@ -665,10 +647,10 @@ std::vector<unsigned char>* gr_modem::frame(unsigned char *encoded_audio, int da
     }
     if(frame_type == FrameTypeVoice)
     {
-        if((_modem_type_tx == gr_modem_types::ModemTypeBPSK1K)
-                || (_modem_type_tx == gr_modem_types::ModemType2FSK1KFM)
-                || (_modem_type_tx == gr_modem_types::ModemType2FSK1K)
-                || (_modem_type_tx == gr_modem_types::ModemType4FSK1KFM))
+        if((_modem_type_tx == gr_modem_types::ModemTypeBPSK1000)
+                || (_modem_type_tx == gr_modem_types::ModemType2FSK1000FM)
+                || (_modem_type_tx == gr_modem_types::ModemType2FSK1000)
+                || (_modem_type_tx == gr_modem_types::ModemType4FSK1000FM))
         {
             data->push_back(0xB5);
         }
@@ -699,10 +681,10 @@ std::vector<unsigned char>* gr_modem::frame(unsigned char *encoded_audio, int da
         data->push_back(0x77);
     }
 
-    if((_modem_type_tx != gr_modem_types::ModemTypeBPSK1K) &&
-            (_modem_type_tx != gr_modem_types::ModemType2FSK1KFM) &&
-            (_modem_type_tx != gr_modem_types::ModemType2FSK1K) &&
-            (_modem_type_tx != gr_modem_types::ModemType4FSK1KFM))
+    if((_modem_type_tx != gr_modem_types::ModemTypeBPSK1000) &&
+            (_modem_type_tx != gr_modem_types::ModemType2FSK1000FM) &&
+            (_modem_type_tx != gr_modem_types::ModemType2FSK1000) &&
+            (_modem_type_tx != gr_modem_types::ModemType4FSK1000FM))
         data->push_back(0xAA); // frame start
     for(int i=0;i< data_size;i++)
     {
@@ -815,13 +797,13 @@ bool gr_modem::demodulate()
     std::vector<unsigned char> *demod_data2 = nullptr;
     std::vector<unsigned char> *data;
 
-    if((_modem_type_rx == gr_modem_types::ModemTypeBPSK2K)
-            || (_modem_type_rx == gr_modem_types::ModemType2FSK2KFM)
-            || (_modem_type_rx == gr_modem_types::ModemType2FSK2K)
-            || (_modem_type_rx == gr_modem_types::ModemType2FSK20K)
-            || (_modem_type_rx == gr_modem_types::ModemTypeBPSK1K)
-            || (_modem_type_rx == gr_modem_types::ModemType2FSK1KFM)
-            || (_modem_type_rx == gr_modem_types::ModemType2FSK1K))
+    if((_modem_type_rx == gr_modem_types::ModemTypeBPSK2000)
+            || (_modem_type_rx == gr_modem_types::ModemType2FSK2000FM)
+            || (_modem_type_rx == gr_modem_types::ModemType2FSK2000)
+            || (_modem_type_rx == gr_modem_types::ModemType2FSK20000)
+            || (_modem_type_rx == gr_modem_types::ModemTypeBPSK1000)
+            || (_modem_type_rx == gr_modem_types::ModemType2FSK1000FM)
+            || (_modem_type_rx == gr_modem_types::ModemType2FSK1000))
     {
         demod_data = _gr_demod_base->getData(1);
         demod_data2 = _gr_demod_base->getData(2);
@@ -836,13 +818,13 @@ bool gr_modem::demodulate()
     }
 
     int v_size;
-    if((_modem_type_rx == gr_modem_types::ModemTypeBPSK2K)
-            || (_modem_type_rx == gr_modem_types::ModemTypeBPSK1K)
-            || (_modem_type_rx == gr_modem_types::ModemType2FSK20K)
-            || (_modem_type_rx == gr_modem_types::ModemType2FSK2KFM)
-            || (_modem_type_rx == gr_modem_types::ModemType2FSK2K)
-            || (_modem_type_rx == gr_modem_types::ModemType2FSK1KFM)
-            || (_modem_type_rx == gr_modem_types::ModemType2FSK1K))
+    if((_modem_type_rx == gr_modem_types::ModemTypeBPSK2000)
+            || (_modem_type_rx == gr_modem_types::ModemTypeBPSK1000)
+            || (_modem_type_rx == gr_modem_types::ModemType2FSK20000)
+            || (_modem_type_rx == gr_modem_types::ModemType2FSK2000FM)
+            || (_modem_type_rx == gr_modem_types::ModemType2FSK2000)
+            || (_modem_type_rx == gr_modem_types::ModemType2FSK1000FM)
+            || (_modem_type_rx == gr_modem_types::ModemType2FSK1000))
     {
         if(demod_data->size() >= demod_data2->size())
         {
@@ -864,13 +846,13 @@ bool gr_modem::demodulate()
     bool data_to_process = synchronize(v_size, data);
     demod_data->clear();
     delete demod_data;
-    if((_modem_type_rx == gr_modem_types::ModemTypeBPSK2K)
-            || (_modem_type_rx == gr_modem_types::ModemTypeBPSK1K)
-            || (_modem_type_rx == gr_modem_types::ModemType2FSK20K)
-            || (_modem_type_rx == gr_modem_types::ModemType2FSK2KFM)
-            || (_modem_type_rx == gr_modem_types::ModemType2FSK2K)
-            || (_modem_type_rx == gr_modem_types::ModemType2FSK1KFM)
-            || (_modem_type_rx == gr_modem_types::ModemType2FSK1K))
+    if((_modem_type_rx == gr_modem_types::ModemTypeBPSK2000)
+            || (_modem_type_rx == gr_modem_types::ModemTypeBPSK1000)
+            || (_modem_type_rx == gr_modem_types::ModemType2FSK20000)
+            || (_modem_type_rx == gr_modem_types::ModemType2FSK2000FM)
+            || (_modem_type_rx == gr_modem_types::ModemType2FSK2000)
+            || (_modem_type_rx == gr_modem_types::ModemType2FSK1000FM)
+            || (_modem_type_rx == gr_modem_types::ModemType2FSK1000))
     {
         demod_data2->clear();
         delete demod_data2;
@@ -907,18 +889,18 @@ bool gr_modem::synchronize(int v_size, std::vector<unsigned char> *data)
             _bit_buf_index++;
             int frame_length = _rx_frame_length;
             int bit_buf_len = _bit_buf_len;
-            if((_modem_type_rx != gr_modem_types::ModemTypeBPSK1K)
-                    && (_modem_type_rx != gr_modem_types::ModemType2FSK1KFM)
-                    && (_modem_type_rx != gr_modem_types::ModemType2FSK1K)
-                    && (_modem_type_rx != gr_modem_types::ModemType4FSK1KFM)
+            if((_modem_type_rx != gr_modem_types::ModemTypeBPSK1000)
+                    && (_modem_type_rx != gr_modem_types::ModemType2FSK1000FM)
+                    && (_modem_type_rx != gr_modem_types::ModemType2FSK1000)
+                    && (_modem_type_rx != gr_modem_types::ModemType4FSK1000FM)
                     && (_current_frame_type == FrameTypeVoice))
             {
                 frame_length++; // reserved data
             }
-            else if((_modem_type_rx != gr_modem_types::ModemTypeBPSK1K)
-                    && (_modem_type_rx != gr_modem_types::ModemType2FSK1KFM)
-                    && (_modem_type_rx != gr_modem_types::ModemType4FSK1KFM)
-                    && (_modem_type_rx != gr_modem_types::ModemType2FSK1K)
+            else if((_modem_type_rx != gr_modem_types::ModemTypeBPSK1000)
+                    && (_modem_type_rx != gr_modem_types::ModemType2FSK1000FM)
+                    && (_modem_type_rx != gr_modem_types::ModemType4FSK1000FM)
+                    && (_modem_type_rx != gr_modem_types::ModemType2FSK1000)
                     && (_current_frame_type != FrameTypeVoice))
             {
                 bit_buf_len = _bit_buf_len - 8;
@@ -942,10 +924,10 @@ int gr_modem::findSync(unsigned char bit)
 {
     _shift_reg = (_shift_reg << 1) | (bit & 0x1);
     u_int32_t temp;
-    if((_modem_type_rx == gr_modem_types::ModemTypeBPSK1K) ||
-            (_modem_type_rx == gr_modem_types::ModemType2FSK1KFM) ||
-            (_modem_type_rx == gr_modem_types::ModemType2FSK1K) ||
-            (_modem_type_rx == gr_modem_types::ModemType4FSK1KFM))
+    if((_modem_type_rx == gr_modem_types::ModemTypeBPSK1000) ||
+            (_modem_type_rx == gr_modem_types::ModemType2FSK1000FM) ||
+            (_modem_type_rx == gr_modem_types::ModemType2FSK1000) ||
+            (_modem_type_rx == gr_modem_types::ModemType4FSK1000FM))
     {
         temp = _shift_reg & 0xFF;
         if (temp == FrameTypeVoice1)
@@ -954,10 +936,8 @@ int gr_modem::findSync(unsigned char bit)
             return FrameTypeVoice;
         }
     }
-    if(_modem_type_rx != gr_modem_types::ModemTypeQPSK250K &&
-            _modem_type_rx != gr_modem_types::ModemTypeQPSKVideo &&
-            _modem_type_rx != gr_modem_types::ModemType4FSKVideo &&
-            _modem_type_rx != gr_modem_types::ModemType4FSK250K)
+    if(_modem_type_rx != gr_modem_types::ModemTypeQPSK250000 &&
+            _modem_type_rx != gr_modem_types::ModemTypeQPSKVideo)
     {
         temp = _shift_reg & 0xFFFF;
         if(temp == FrameTypeVoice2)
@@ -1070,20 +1050,20 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
         _last_frame_type = FrameTypeVoice;
         unsigned char *codec2_data = new unsigned char[_rx_frame_length];
         memset(codec2_data,0,_rx_frame_length);
-        if(((_modem_type_rx == gr_modem_types::ModemTypeBPSK1K) ||
-            (_modem_type_rx == gr_modem_types::ModemType2FSK1KFM) ||
-            (_modem_type_rx == gr_modem_types::ModemType2FSK1K) ||
-            (_modem_type_rx == gr_modem_types::ModemType4FSK1KFM))
+        if(((_modem_type_rx == gr_modem_types::ModemTypeBPSK1000) ||
+            (_modem_type_rx == gr_modem_types::ModemType2FSK1000FM) ||
+            (_modem_type_rx == gr_modem_types::ModemType2FSK1000) ||
+            (_modem_type_rx == gr_modem_types::ModemType4FSK1000FM))
                  && (_modem_sync >= 16))
         {
             memcpy(codec2_data, received_data, _rx_frame_length);
             emit digitalAudio(codec2_data,_rx_frame_length);
             emit audioFrameReceived();
         }
-        else if((_modem_type_rx != gr_modem_types::ModemTypeBPSK1K) &&
-                (_modem_type_rx != gr_modem_types::ModemType2FSK1KFM) &&
-                (_modem_type_rx != gr_modem_types::ModemType2FSK1K) &&
-                (_modem_type_rx != gr_modem_types::ModemType4FSK1KFM))
+        else if((_modem_type_rx != gr_modem_types::ModemTypeBPSK1000) &&
+                (_modem_type_rx != gr_modem_types::ModemType2FSK1000FM) &&
+                (_modem_type_rx != gr_modem_types::ModemType2FSK1000) &&
+                (_modem_type_rx != gr_modem_types::ModemType4FSK1000FM))
         {
             memcpy(codec2_data, received_data+1, _rx_frame_length);
             emit digitalAudio(codec2_data,_rx_frame_length);
