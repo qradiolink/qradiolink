@@ -40,7 +40,7 @@ gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(std::vector<int>signature, int sps, int sam
     _samp_rate = samp_rate;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
-    calculate_deemph_taps(8000, 44e-6);
+    calculate_deemph_taps(_target_samp_rate, 44e-6);
 
     /* unused
     static const float coeff[] = {0.06306464970111847, 0.4777590036392212, 0.9183526635169983,
@@ -52,7 +52,7 @@ gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(std::vector<int>signature, int sps, int sam
 
     std::vector<float> taps = gr::filter::firdes::low_pass(50, _samp_rate, _target_samp_rate/2,
                                 _target_samp_rate/2, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
-    std::vector<float> audio_taps = gr::filter::firdes::low_pass(2, 2*_target_samp_rate, 3700, 250,
+    std::vector<float> audio_taps = gr::filter::firdes::low_pass_2(2, 2*_target_samp_rate, 3600, 250, 60,
                                                     gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1,50, taps);
     _audio_resampler = gr::filter::rational_resampler_base_fff::make(2,5, audio_taps);
@@ -73,9 +73,9 @@ gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(std::vector<int>signature, int sps, int sam
     connect(_filter,0,self(),0);
     connect(_filter,0,_squelch,0);
     connect(_squelch,0,_fm_demod,0);
-    connect(_fm_demod,0,_audio_resampler,0);
-    connect(_audio_resampler,0,_de_emph_filter,0);
-    connect(_de_emph_filter,0,_amplify,0);
+    connect(_fm_demod,0,_de_emph_filter,0);
+    connect(_de_emph_filter,0,_audio_resampler,0);
+    connect(_audio_resampler,0,_amplify,0);
     connect(_amplify,0,self(),1);
 
 }

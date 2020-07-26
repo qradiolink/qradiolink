@@ -65,9 +65,9 @@ gr_demod_wbfm_sdr::gr_demod_wbfm_sdr(std::vector<int>signature, int sps, int sam
     connect(_filter,0,_squelch,0);
     connect(_squelch,0,_fm_demod,0);
     connect(_fm_demod,0,_amplify,0);
-    connect(_amplify,0,_audio_resampler,0);
-    connect(_audio_resampler,0,_de_emph_filter,0);
-    connect(_de_emph_filter,0,self(),1);
+    connect(_amplify,0,_de_emph_filter,0);
+    connect(_de_emph_filter,0,_audio_resampler,0);
+    connect(_audio_resampler,0,self(),1);
 
 
 }
