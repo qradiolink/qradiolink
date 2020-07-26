@@ -27,6 +27,7 @@
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/filter/fft_filter_fff.h>
 #include <gnuradio/blocks/multiply_const_ff.h>
+#include <gnuradio/filter/iir_filter_ffd.h>
 
 
 class gr_demod_wbfm_sdr;
@@ -46,19 +47,22 @@ public:
     void set_filter_width(int filter_width);
 
 private:
+    void calculate_deemph_taps(int sample_rate, double tau);
     gr::analog::quadrature_demod_cf::sptr _fm_demod;
+    gr::filter::iir_filter_ffd::sptr _de_emph_filter;
     gr::analog::pwr_squelch_cc::sptr _squelch;
     gr::blocks::multiply_const_ff::sptr _amplify;
     gr::filter::rational_resampler_base_fff::sptr _audio_resampler;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
     gr::filter::fft_filter_ccf::sptr _filter;
-    gr::filter::fft_filter_fff::sptr _deemphasis_filter;
 
     int _samples_per_symbol;
     int _samp_rate;
     int _carrier_freq;
     int _filter_width;
     int _target_samp_rate;
+    std::vector<double> _btaps;
+    std::vector<double> _ataps;
 
 };
 
