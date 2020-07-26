@@ -36,9 +36,11 @@ gr_mod_ssb_sdr::gr_mod_ssb_sdr(int sps, int samp_rate, int carrier_freq,
     float target_samp_rate = 8000.0;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
+    calculate_preemph_taps(8000, 59e-6);
 
     _agc = gr::analog::agc2_ff::make(1, 1e-4, 0.5, 1);
     _rail = gr::analog::rail_ff::make(-0.55, 0.55);
+    _pre_emph_filter = gr::filter::iir_filter_ffd::make(_ataps, _btaps, false);
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::band_pass_2(
                     1, target_samp_rate, 300, _filter_width, 250, 30, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
@@ -51,16 +53,17 @@ gr_mod_ssb_sdr::gr_mod_ssb_sdr(int sps, int samp_rate, int carrier_freq,
     _amplify = gr::blocks::multiply_const_cc::make(1.8,1);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
     _filter_usb = gr::filter::fft_filter_ccc::make(1,gr::filter::firdes::complex_band_pass_2(
-            1, target_samp_rate, 300, _filter_width, 250, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+            1, target_samp_rate, 200, _filter_width, 250, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
     _filter_lsb = gr::filter::fft_filter_ccc::make(1,gr::filter::firdes::complex_band_pass_2(
-            1, target_samp_rate, -_filter_width, -300, 250, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+            1, target_samp_rate, -_filter_width, -200, 250, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
 
 
 
     connect(self(),0,_agc,0);
     connect(_agc,0,_rail,0);
     connect(_rail,0,_audio_filter,0);
-    connect(_audio_filter,0,_float_to_complex,0);
+    connect(_audio_filter,0,_pre_emph_filter,0);
+    connect(_pre_emph_filter,0,_float_to_complex,0);
     if(!sb)
     {
         connect(_float_to_complex,0,_filter_usb,0);
@@ -76,6 +79,60 @@ gr_mod_ssb_sdr::gr_mod_ssb_sdr(int sps, int samp_rate, int carrier_freq,
     //connect(_feed_forward_agc,0,_bb_gain,0);
     connect(_bb_gain,0,_resampler,0);
     connect(_resampler,0,self(),0);
+
+}
+
+void gr_mod_ssb_sdr::calculate_preemph_taps(int sample_rate, double tau, double fh)
+{
+    double fs = (double) sample_rate;
+    // code from GNUradio gr-analog/python/analog/fm_emph.py
+    /**
+        #
+        # Copyright 2005,2007,2012 Free Software Foundation, Inc.
+        #
+        # This file is part of GNU Radio
+        #
+        # SPDX-License-Identifier: GPL-3.0-or-later
+        #
+        #
+    */
+    // Set fh to something sensible, if needed.
+    // N.B. fh == fs/2.0 or fh == 0.0 results in a pole on the unit circle
+    // at z = -1.0 or z = 1.0 respectively.  That makes the filter unstable
+    // and useless.
+    if (fh <= 0.0 || fh >= fs / 2.0)
+    {
+        fh = 0.925 * fs/2.0;
+    }
+
+    // Digital corner frequencies
+    double w_cl = 1.0 / tau;
+    double w_ch = 2.0 * M_PI * fh;
+
+    // Prewarped analog corner frequencies
+    double w_cla = 2.0 * fs * tanf(w_cl / (2.0 * fs));
+    double w_cha = 2.0 * fs * tanf(w_ch / (2.0 * fs));
+
+    // Resulting digital pole, zero, and gain term from the bilinear
+    // transformation of H(s) = (s + w_cla) / (s + w_cha) to
+    // H(z) = b0 (1 - z1 z^-1)/(1 - p1 z^-1)
+    double kl = -w_cla / (2.0 * fs);
+    double kh = -w_cha / (2.0 * fs);
+    double z1 = (1.0 + kl) / (1.0 - kl);
+    double p1 = (1.0 + kh) / (1.0 - kh);
+    double b0 = (1.0 - kl) / (1.0 - kh);
+
+    // Since H(s = infinity) = 1.0, then H(z = -1) = 1.0 and
+    // this filter  has 0 dB gain at fs/2.0.
+    // That isn't what users are going to expect, so adjust with a
+    // gain, g, so that H(z = 1) = 1.0 for 0 dB gain at DC.
+    double w_0dB = 2.0 * M_PI * 0.0;
+    double g = fabs(1.0 - p1 * 1.0 * (cos(-w_0dB) + sin(-w_0dB)))
+        / (b0 * fabs(1.0 - z1 * 1.0 * (cos(-w_0dB) + sin(-w_0dB))));
+
+    _btaps = { g * b0 * 1.0, g * b0 * -z1 };
+    _ataps = { 1.0, -p1 };
+
 
 }
 
