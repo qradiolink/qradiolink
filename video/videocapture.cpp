@@ -183,20 +183,22 @@ static void capture_frame(unsigned char *frame, int& len)
 	      FD_SET(fd, &fds);
 
 	      /* Timeout. */
-          tv.tv_sec = 2;
-          tv.tv_usec = 0;
+          tv.tv_sec = 0;
+          tv.tv_usec = 1000;
 
 	      r = select(fd + 1, &fds, NULL, NULL, &tv);
 
 	      if (-1 == r) {
 		      if (EINTR == errno)
 			      continue;
-		      errno_exit("select");
+              errno_exit("select");
 	      }
 
 	      if (0 == r) {
-		      fprintf(stderr, "select timeout\\n");
-		      exit(EXIT_FAILURE);
+              //fprintf(stderr, "select timeout\\n");
+              //exit(EXIT_FAILURE);
+              len = 0;
+              return;
 	      }
 
 	      if (read_frame(frame, len))
