@@ -549,9 +549,9 @@ void gr_mod_base::start(int buffer_size)
 
 void gr_mod_base::stop()
 {
-    _top_block->stop();
     _audio_source->flush();
     _vector_source->flush();
+    _top_block->stop();
     _top_block->wait();
 }
 

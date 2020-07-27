@@ -31,6 +31,7 @@
 #include <gnuradio/blocks/float_to_complex.h>
 #include <gnuradio/analog/rail_ff.h>
 #include <gnuradio/blocks/delay.h>
+#include <gnuradio/filter/iir_filter_ffd.h>
 
 
 class gr_mod_ssb_sdr;
@@ -47,11 +48,12 @@ public:
     void set_filter_width(int filter_width);
     void set_bb_gain(float value);
 private:
-
+    void calculate_preemph_taps(int sample_rate, double tau, double fh=-1.0);
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
     gr::blocks::multiply_const_cc::sptr _amplify;
     gr::blocks::multiply_const_cc::sptr _bb_gain;
     gr::filter::fft_filter_fff::sptr _audio_filter;
+    gr::filter::iir_filter_ffd::sptr _pre_emph_filter;
     gr::analog::agc2_ff::sptr _agc;
     gr::analog::feedforward_agc_cc::sptr _feed_forward_agc;
     gr::filter::fft_filter_ccc::sptr _filter_usb;
@@ -59,12 +61,12 @@ private:
     gr::blocks::float_to_complex::sptr _float_to_complex;
     gr::analog::rail_ff::sptr _rail;
 
-
-
     int _samp_rate;
     int _sps;
     int _carrier_freq;
     int _filter_width;
+    std::vector<double> _btaps;
+    std::vector<double> _ataps;
 
 };
 

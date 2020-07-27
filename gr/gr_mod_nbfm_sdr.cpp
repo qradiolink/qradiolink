@@ -36,6 +36,7 @@ gr_mod_nbfm_sdr::gr_mod_nbfm_sdr(int sps, int samp_rate, int carrier_freq,
     float if_samp_rate = 50000;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
+    calculate_preemph_taps(8000, 44e-6);
 
     _fm_modulator = gr::analog::frequency_modulator_fc::make(4*M_PI*_filter_width/if_samp_rate);
     _rail = gr::analog::rail_ff::make(-1, 1);
@@ -44,10 +45,7 @@ gr_mod_nbfm_sdr::gr_mod_nbfm_sdr(int sps, int samp_rate, int carrier_freq,
                 1,gr::filter::firdes::band_pass_2(
                     1, target_samp_rate, 300, 3600, 250, 45, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
 
-    static const float coeff[] =  {-0.026316914707422256, -0.2512197494506836, 1.5501943826675415,
-                                   -0.2512197494506836, -0.026316914707422256};
-    std::vector<float> emph_taps(coeff, coeff + sizeof(coeff) / sizeof(coeff[0]) );
-    _emphasis_filter = gr::filter::fft_filter_fff::make(1,emph_taps);
+    _pre_emph_filter = gr::filter::iir_filter_ffd::make(_ataps, _btaps, false);
 
     std::vector<float> if_taps = gr::filter::firdes::low_pass_2(25, if_samp_rate * 4,
                         _filter_width, _filter_width, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
@@ -68,14 +66,68 @@ gr_mod_nbfm_sdr::gr_mod_nbfm_sdr(int sps, int samp_rate, int carrier_freq,
     connect(self(),0,_rail,0);
     connect(_rail,0,_audio_filter,0);
     connect(_audio_filter,0,_audio_amplify,0);
-    connect(_audio_amplify,0,_emphasis_filter,0);
-    connect(_emphasis_filter,0,_if_resampler,0);
+    connect(_audio_amplify,0,_pre_emph_filter,0);
+    connect(_pre_emph_filter,0,_if_resampler,0);
     connect(_if_resampler,0,_fm_modulator,0);
     connect(_fm_modulator,0,_filter,0);
     connect(_filter,0,_amplify,0);
     connect(_amplify,0,_bb_gain,0);
     connect(_bb_gain,0,_resampler,0);
     connect(_resampler,0,self(),0);
+}
+
+void gr_mod_nbfm_sdr::calculate_preemph_taps(int sample_rate, double tau, double fh)
+{
+    double fs = (double) sample_rate;
+    // code from GNUradio gr-analog/python/analog/fm_emph.py
+    /**
+        #
+        # Copyright 2005,2007,2012 Free Software Foundation, Inc.
+        #
+        # This file is part of GNU Radio
+        #
+        # SPDX-License-Identifier: GPL-3.0-or-later
+        #
+        #
+    */
+    // Set fh to something sensible, if needed.
+    // N.B. fh == fs/2.0 or fh == 0.0 results in a pole on the unit circle
+    // at z = -1.0 or z = 1.0 respectively.  That makes the filter unstable
+    // and useless.
+    if (fh <= 0.0 || fh >= fs / 2.0)
+    {
+        fh = 0.925 * fs/2.0;
+    }
+
+    // Digital corner frequencies
+    double w_cl = 1.0 / tau;
+    double w_ch = 2.0 * M_PI * fh;
+
+    // Prewarped analog corner frequencies
+    double w_cla = 2.0 * fs * tanf(w_cl / (2.0 * fs));
+    double w_cha = 2.0 * fs * tanf(w_ch / (2.0 * fs));
+
+    // Resulting digital pole, zero, and gain term from the bilinear
+    // transformation of H(s) = (s + w_cla) / (s + w_cha) to
+    // H(z) = b0 (1 - z1 z^-1)/(1 - p1 z^-1)
+    double kl = -w_cla / (2.0 * fs);
+    double kh = -w_cha / (2.0 * fs);
+    double z1 = (1.0 + kl) / (1.0 - kl);
+    double p1 = (1.0 + kh) / (1.0 - kh);
+    double b0 = (1.0 - kl) / (1.0 - kh);
+
+    // Since H(s = infinity) = 1.0, then H(z = -1) = 1.0 and
+    // this filter  has 0 dB gain at fs/2.0.
+    // That isn't what users are going to expect, so adjust with a
+    // gain, g, so that H(z = 1) = 1.0 for 0 dB gain at DC.
+    double w_0dB = 2.0 * M_PI * 0.0;
+    double g = fabs(1.0 - p1 * 1.0 * (cos(-w_0dB) + sin(-w_0dB)))
+        / (b0 * fabs(1.0 - z1 * 1.0 * (cos(-w_0dB) + sin(-w_0dB))));
+
+    _btaps = { g * b0 * 1.0, g * b0 * -z1 };
+    _ataps = { 1.0, -p1 };
+
+
 }
 
 void gr_mod_nbfm_sdr::set_filter_width(int filter_width)
@@ -107,10 +159,10 @@ void gr_mod_nbfm_sdr::set_ctcss(float value)
     {
         _audio_amplify->set_k(0.98);
         try {
-            disconnect(_emphasis_filter,0,_add,0);
+            disconnect(_pre_emph_filter,0,_add,0);
             disconnect(_add,0,_if_resampler,0);
             disconnect(_tone_source,0,_add,1);
-            connect(_emphasis_filter,0,_if_resampler,0);
+            connect(_pre_emph_filter,0,_if_resampler,0);
         }
         catch(std::invalid_argument &e)
         {
@@ -121,8 +173,8 @@ void gr_mod_nbfm_sdr::set_ctcss(float value)
         _audio_amplify->set_k(0.88);
         _tone_source->set_frequency(value);
         try {
-            disconnect(_emphasis_filter,0,_if_resampler,0);
-            connect(_emphasis_filter,0,_add,0);
+            disconnect(_pre_emph_filter,0,_if_resampler,0);
+            connect(_pre_emph_filter,0,_add,0);
             connect(_add,0,_if_resampler,0);
             connect(_tone_source,0,_add,1);
         }

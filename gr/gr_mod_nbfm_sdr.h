@@ -32,6 +32,7 @@
 #include <gnuradio/blocks/multiply.h>
 #include <gnuradio/analog/sig_source.h>
 #include <gnuradio/analog/rail_ff.h>
+#include <gnuradio/filter/iir_filter_ffd.h>
 
 
 class gr_mod_nbfm_sdr;
@@ -50,8 +51,9 @@ public:
     void set_bb_gain(float value);
 
 private:
-
+    void calculate_preemph_taps(int sample_rate, double tau, double fh=-1.0);
     gr::analog::frequency_modulator_fc::sptr _fm_modulator;
+    gr::filter::iir_filter_ffd::sptr _pre_emph_filter;
     gr::analog::sig_source_f::sptr _tone_source;
     gr::blocks::add_ff::sptr _add;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
@@ -60,7 +62,6 @@ private:
     gr::blocks::multiply_const_cc::sptr _bb_gain;
     gr::blocks::multiply_const_ff::sptr _audio_amplify;
     gr::filter::fft_filter_fff::sptr _audio_filter;
-    gr::filter::fft_filter_fff::sptr _emphasis_filter;
     gr::filter::fft_filter_ccf::sptr _filter;
     gr::analog::sig_source_f::sptr _signal_source;
     gr::blocks::multiply_ff::sptr _multiply;
@@ -71,6 +72,8 @@ private:
     int _sps;
     int _carrier_freq;
     int _filter_width;
+    std::vector<double> _btaps;
+    std::vector<double> _ataps;
 
 };
 

@@ -163,6 +163,8 @@ public slots:
     void updateTotTxEnd(bool value);
     void updateTxLimits(bool value);
     void calculateShiftFromTxFreq();
+    void setRxStageGain(int value);
+    void setTxStageGain(int value);
 
 signals:
     void terminateConnections();
@@ -179,7 +181,7 @@ signals:
     void toggleRxModemMode(int value);
     void toggleTxModemMode(int value);
     void setTxPower(int value, std::string gain_stage);
-    void setRxSensitivity(int value);
+    void setRxSensitivity(int value, std::string gain_stage);
     void setSquelch(int value);
     void setVolume(int value);
     void setTxVolume(int value);

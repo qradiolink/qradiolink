@@ -59,8 +59,8 @@ gr_demod_bpsk_sdr::gr_demod_bpsk_sdr(std::vector<int>signature, int sps, int sam
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0, gain_mu,
                                                               0.001);
     _costas_loop = gr::digital::costas_loop_cc::make(2*M_PI/100,2);
-    _equalizer = gr::digital::cma_equalizer_cc::make(8,1,0.00005,1);
-    _fll = gr::digital::fll_band_edge_cc::make(_samples_per_symbol, 0.35, 32, 24*M_PI/100);
+    _equalizer = gr::digital::cma_equalizer_cc::make(8,1,0.000005,1);
+    _fll = gr::digital::fll_band_edge_cc::make(_samples_per_symbol, 0.35, 32, 8*M_PI/100);
     _shaping_filter = gr::filter::fft_filter_ccf::make(
                 1, gr::filter::firdes::root_raised_cosine(_samples_per_symbol,_samples_per_symbol,1,0.35,15 * _samples_per_symbol));
     _complex_to_real = gr::blocks::complex_to_real::make();

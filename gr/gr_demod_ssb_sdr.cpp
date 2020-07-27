@@ -39,6 +39,7 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(std::vector<int>signature, int sps, int samp_
     _sps = sps;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
+    calculate_deemph_taps(8000, 59e-6);
 
     std::vector<float> taps = gr::filter::firdes::low_pass(_sps, _samp_rate, _target_samp_rate/2,
                             _target_samp_rate/2, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
@@ -47,9 +48,9 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(std::vector<int>signature, int sps, int samp_
     _if_gain = gr::blocks::multiply_const_cc::make(0.5);
 
     _filter_usb = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass_2(
-            1, _target_samp_rate, 300, _filter_width,250, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+            1, _target_samp_rate, 200, _filter_width,250, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
     _filter_lsb = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass_2(
-            1, _target_samp_rate, -_filter_width, -300,250, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+            1, _target_samp_rate, -_filter_width, -200,250, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
     _squelch = gr::analog::pwr_squelch_cc::make(-140,0.01,0,true);
     _feed_forward_agc = gr::analog::feedforward_agc_cc::make(320,1);
     _agc = gr::analog::agc2_cc::make(1e-2, 1e-4, 0.5, 1);
@@ -58,6 +59,7 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(std::vector<int>signature, int sps, int samp_
                 1,gr::filter::firdes::band_pass_2(
                     2, _target_samp_rate, 300, _filter_width, 250, 40, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
     _complex_to_real = gr::blocks::complex_to_real::make();
+    _de_emph_filter = gr::filter::iir_filter_ffd::make(_ataps, _btaps, false);
 
 
     connect(self(),0,_resampler,0);
@@ -77,8 +79,44 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(std::vector<int>signature, int sps, int samp_
     connect(_squelch,0,_agc,0);
     connect(_agc,0,_complex_to_real,0);
     connect(_complex_to_real,0,_rail,0);
-    connect(_rail,0,_audio_filter,0);
+    connect(_rail,0,_de_emph_filter,0);
+    connect(_de_emph_filter,0,_audio_filter,0);
     connect(_audio_filter,0,self(),1);
+
+}
+
+void gr_demod_ssb_sdr::calculate_deemph_taps(int sample_rate, double tau)
+{
+    // code from GNUradio gr-analog/python/analog/fm_emph.py
+    // Digital corner frequency
+    /**
+        #
+        # Copyright 2005,2007,2012 Free Software Foundation, Inc.
+        #
+        # This file is part of GNU Radio
+        #
+        # SPDX-License-Identifier: GPL-3.0-or-later
+        #
+        #
+    */
+    double w_c = 1.0 / tau;
+
+    // Prewarped analog corner frequency
+    double w_ca = 2.0 * double(sample_rate) * tanf(w_c / (2.0 * double(sample_rate)));
+
+    // Resulting digital pole, zero, and gain term from the bilinear
+    // transformation of H(s) = w_ca / (s + w_ca) to
+    // H(z) = b0 (1 - z1 z^-1)/(1 - p1 z^-1)
+    double k = -w_ca / (2.0 * double(sample_rate));
+    double z1 = -1.0;
+    double p1 = (1.0 + k) / (1.0 - k);
+    double b0 = -k / (1.0 - k);
+
+    _btaps = { b0 * 1.0, b0 * -z1 };
+    _ataps = {      1.0,      -p1 };
+
+    // Since H(s = 0) = 1.0, then H(z = 1) = 1.0 and has 0 dB gain at DC
+
 
 }
 

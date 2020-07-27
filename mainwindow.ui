@@ -96,7 +96,7 @@
 </string>
         </property>
         <property name="currentIndex">
-         <number>4</number>
+         <number>0</number>
         </property>
         <property name="iconSize">
          <size>
@@ -215,7 +215,7 @@ border-style:solid;
 background-color:black;
 }</string>
              </property>
-             <widget class="QFrame" name="constellationDisplay">
+             <widget class="QWidget" name="constellationDisplay" native="true">
               <property name="geometry">
                <rect>
                 <x>0</x>
@@ -246,12 +246,6 @@ background-color:black;
                <string notr="true">border: 1px solid white;
 background-color: #1F1D1D;</string>
               </property>
-              <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
-              </property>
-              <property name="frameShadow">
-               <enum>QFrame::Raised</enum>
-              </property>
               <widget class="QLabel" name="constellationLabel">
                <property name="geometry">
                 <rect>
@@ -269,7 +263,7 @@ background-color: #1F1D1D;</string>
                </property>
               </widget>
              </widget>
-             <widget class="QFrame" name="videoFrame">
+             <widget class="QWidget" name="videoFrame" native="true">
               <property name="geometry">
                <rect>
                 <x>850</x>
@@ -287,15 +281,6 @@ background-color: #1F1D1D;</string>
               <property name="styleSheet">
                <string notr="true">border: 0px solid black;
 background-color: #1F1D1D;</string>
-              </property>
-              <property name="frameShape">
-               <enum>QFrame::NoFrame</enum>
-              </property>
-              <property name="frameShadow">
-               <enum>QFrame::Plain</enum>
-              </property>
-              <property name="lineWidth">
-               <number>0</number>
               </property>
               <widget class="QLabel" name="videoLabel">
                <property name="geometry">
@@ -3931,6 +3916,62 @@ font: 12pt &quot;Sans Serif&quot;;</string>
               </item>
              </layout>
             </widget>
+            <widget class="QWidget" name="tab_7">
+             <attribute name="title">
+              <string>Gains</string>
+             </attribute>
+             <layout class="QVBoxLayout" name="verticalLayout_13">
+              <item>
+               <widget class="QFrame" name="rxGainsFrame">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>250</width>
+                  <height>200</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>1200</width>
+                  <height>400</height>
+                 </size>
+                </property>
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_10">
+                 <item>
+                  <widget class="QTabWidget" name="tabWidget_3">
+                   <property name="currentIndex">
+                    <number>0</number>
+                   </property>
+                   <widget class="QWidget" name="rxGainsTab">
+                    <attribute name="title">
+                     <string>RX Gains</string>
+                    </attribute>
+                    <layout class="QVBoxLayout" name="verticalLayout_11"/>
+                   </widget>
+                   <widget class="QWidget" name="txGainsTab">
+                    <attribute name="title">
+                     <string>TX Gains</string>
+                    </attribute>
+                    <layout class="QVBoxLayout" name="verticalLayout_12"/>
+                   </widget>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+             </layout>
+            </widget>
            </widget>
           </item>
           <item>
@@ -4822,61 +4863,6 @@ background-color: rgb(0, 0, 67);
           <string>Last heard</string>
          </property>
         </widget>
-        <widget class="QFrame" name="gainsFrame">
-         <property name="geometry">
-          <rect>
-           <x>840</x>
-           <y>3</y>
-           <width>190</width>
-           <height>74</height>
-          </rect>
-         </property>
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="MinimumExpanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>190</width>
-           <height>74</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>190</width>
-           <height>74</height>
-          </size>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout_10">
-          <item>
-           <widget class="QLabel" name="label_21">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>2</width>
-              <height>2</height>
-             </size>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
         <zorder>label</zorder>
         <zorder>label_14</zorder>
         <zorder>label_11</zorder>
@@ -4897,7 +4883,6 @@ background-color: rgb(0, 0, 67);
         <zorder>scanDownButton</zorder>
         <zorder>labelDisplayCallsign</zorder>
         <zorder>label_22</zorder>
-        <zorder>gainsFrame</zorder>
         <zorder>labelRSSI</zorder>
        </widget>
       </item>
@@ -5285,6 +5270,132 @@ background-color: rgb(150, 150, 150);
           <property name="verticalSpacing">
            <number>1</number>
           </property>
+          <item row="1" column="3">
+           <widget class="QComboBox" name="comboBoxRxCTCSS">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>16</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>75</width>
+              <height>32</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>RX CTCSS</string>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">font: 9pt &quot;Sans Serif&quot;;
+</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <spacer name="horizontalSpacer_6">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="1" column="2">
+           <widget class="QPushButton" name="reverseShiftButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>80</width>
+              <height>32</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>80</width>
+              <height>32</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>Reverse repeater shift</string>
+            </property>
+            <property name="text">
+             <string>Rev</string>
+            </property>
+            <property name="icon">
+             <iconset resource="resources.qrc">
+              <normaloff>:/res/Button-Blank-Gray-icon.png</normaloff>
+              <normalon>:/res/Button-Blank-Yellow-icon.png</normalon>:/res/Button-Blank-Gray-icon.png</iconset>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="2">
+           <widget class="QPushButton" name="duplexOpButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>80</width>
+              <height>32</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>80</width>
+              <height>32</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>Enable or disable duplex mode</string>
+            </property>
+            <property name="autoFillBackground">
+             <bool>false</bool>
+            </property>
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+            <property name="text">
+             <string>Duplex</string>
+            </property>
+            <property name="icon">
+             <iconset resource="resources.qrc">
+              <normaloff>:/res/Button-Blank-Gray-icon.png</normaloff>
+              <normalon>:/res/Button-Blank-Yellow-icon.png</normalon>:/res/Button-Blank-Gray-icon.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>16</width>
+              <height>16</height>
+             </size>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
           <item row="3" column="3">
            <widget class="QComboBox" name="comboBoxTxCTCSS">
             <property name="sizePolicy">
@@ -5381,51 +5492,87 @@ color: #cc0000</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="2">
-           <widget class="QPushButton" name="duplexOpButton">
+          <item row="3" column="4">
+           <widget class="QComboBox" name="txModemTypeComboBox">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
             <property name="minimumSize">
              <size>
-              <width>80</width>
-              <height>32</height>
+              <width>0</width>
+              <height>16</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
-              <width>80</width>
+              <width>150</width>
               <height>32</height>
              </size>
             </property>
-            <property name="toolTip">
-             <string>Enable or disable duplex mode</string>
+            <property name="font">
+             <font>
+              <family>Sans Serif</family>
+              <pointsize>9</pointsize>
+              <weight>50</weight>
+              <italic>false</italic>
+              <bold>false</bold>
+             </font>
             </property>
-            <property name="autoFillBackground">
-             <bool>false</bool>
+            <property name="toolTip">
+             <string>TX Modulation</string>
             </property>
             <property name="styleSheet">
-             <string notr="true"/>
+             <string notr="true">color: rgb(240, 240, 119);
+background-color: rgb(0, 0, 67);
+font: 9pt &quot;Sans Serif&quot;;</string>
             </property>
-            <property name="text">
-             <string>Duplex</string>
+            <property name="maxVisibleItems">
+             <number>25</number>
             </property>
-            <property name="icon">
-             <iconset resource="resources.qrc">
-              <normaloff>:/res/Button-Blank-Gray-icon.png</normaloff>
-              <normalon>:/res/Button-Blank-Yellow-icon.png</normalon>:/res/Button-Blank-Gray-icon.png</iconset>
+           </widget>
+          </item>
+          <item row="1" column="4">
+           <widget class="QComboBox" name="rxModemTypeComboBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
-            <property name="iconSize">
+            <property name="minimumSize">
              <size>
-              <width>16</width>
+              <width>0</width>
               <height>16</height>
              </size>
             </property>
-            <property name="checkable">
-             <bool>true</bool>
+            <property name="maximumSize">
+             <size>
+              <width>150</width>
+              <height>32</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <family>Sans Serif</family>
+              <pointsize>9</pointsize>
+              <weight>50</weight>
+              <italic>false</italic>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="toolTip">
+             <string>RX Modulation</string>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">color: rgb(240, 240, 119);
+background-color: rgb(0, 0, 67);
+font: 9pt &quot;Sans Serif&quot;;</string>
+            </property>
+            <property name="maxVisibleItems">
+             <number>25</number>
             </property>
            </widget>
           </item>
@@ -5489,168 +5636,6 @@ border-width: 4px;
              <bool>true</bool>
             </property>
            </widget>
-          </item>
-          <item row="1" column="4">
-           <widget class="QComboBox" name="rxModemTypeComboBox">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>16</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>150</width>
-              <height>32</height>
-             </size>
-            </property>
-            <property name="font">
-             <font>
-              <family>Sans Serif</family>
-              <pointsize>9</pointsize>
-              <weight>50</weight>
-              <italic>false</italic>
-              <bold>false</bold>
-             </font>
-            </property>
-            <property name="toolTip">
-             <string>RX Modulation</string>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">color: rgb(240, 240, 119);
-background-color: rgb(0, 0, 67);
-font: 9pt &quot;Sans Serif&quot;;</string>
-            </property>
-            <property name="maxVisibleItems">
-             <number>25</number>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="2">
-           <widget class="QPushButton" name="reverseShiftButton">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>80</width>
-              <height>32</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>80</width>
-              <height>32</height>
-             </size>
-            </property>
-            <property name="toolTip">
-             <string>Reverse repeater shift</string>
-            </property>
-            <property name="text">
-             <string>Rev</string>
-            </property>
-            <property name="icon">
-             <iconset resource="resources.qrc">
-              <normaloff>:/res/Button-Blank-Gray-icon.png</normaloff>
-              <normalon>:/res/Button-Blank-Yellow-icon.png</normalon>:/res/Button-Blank-Gray-icon.png</iconset>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="4">
-           <widget class="QComboBox" name="txModemTypeComboBox">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>16</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>150</width>
-              <height>32</height>
-             </size>
-            </property>
-            <property name="font">
-             <font>
-              <family>Sans Serif</family>
-              <pointsize>9</pointsize>
-              <weight>50</weight>
-              <italic>false</italic>
-              <bold>false</bold>
-             </font>
-            </property>
-            <property name="toolTip">
-             <string>TX Modulation</string>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">color: rgb(240, 240, 119);
-background-color: rgb(0, 0, 67);
-font: 9pt &quot;Sans Serif&quot;;</string>
-            </property>
-            <property name="maxVisibleItems">
-             <number>25</number>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="3">
-           <widget class="QComboBox" name="comboBoxRxCTCSS">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>16</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>75</width>
-              <height>32</height>
-             </size>
-            </property>
-            <property name="toolTip">
-             <string>RX CTCSS</string>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">font: 9pt &quot;Sans Serif&quot;;
-</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <spacer name="horizontalSpacer_6">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
           </item>
           <item row="3" column="0">
            <widget class="QFrame" name="frame_8">

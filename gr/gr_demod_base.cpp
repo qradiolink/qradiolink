@@ -81,14 +81,7 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
         double gain =  (double)_gain_range.start() + rf_gain*(
                     (double)_gain_range.stop()- (double)_gain_range.start());
         _osmosdr_source->set_gain_mode(false);
-        if(_gain_names.size() == 1)
-        {
-            _osmosdr_source->set_gain(gain, _gain_names.at(0));
-        }
-        else
-        {
-            _osmosdr_source->set_gain(gain);
-        }
+        _osmosdr_source->set_gain(gain);
     }
     else
     {
@@ -611,9 +604,9 @@ void gr_demod_base::start(int buffer_size)
 
 void gr_demod_base::stop()
 {
-    _top_block->stop();
     _audio_sink->flush();
     _vector_sink->flush();
+    _top_block->stop();
     _top_block->wait();
 }
 
