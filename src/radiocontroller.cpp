@@ -530,7 +530,7 @@ void RadioController::processVideoFrame()
     /// Large alloc
     unsigned char *videobuffer = (unsigned char*)calloc(max_video_frame_size,
                                                         sizeof(unsigned char));
-
+    memset(videobuffer, 0, max_video_frame_size);
     QElapsedTimer timer;
     qint64 microsec;
     timer.start();
