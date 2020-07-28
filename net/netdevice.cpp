@@ -16,25 +16,34 @@
 
 #include "netdevice.h"
 
-NetDevice::NetDevice(Logger *logger, QObject *parent, QString ip_address) :
+NetDevice::NetDevice(Logger *logger, QObject *parent, QString ip_address, int mtu) :
     QObject(parent)
 {
     _logger = logger;
+    _ip_address = ip_address;
     _fd_tun = 0;
     _if_no = 0;
+    _socket = -1;
+    _mtu = mtu;
     if_list();
-    tun_init(ip_address);
 }
 
 NetDevice::~NetDevice()
 {
+    deinit();
+}
+
+void NetDevice::deinit()
+{
     close(_fd_tun);
 }
 
-int NetDevice::tun_init(QString ip_address)
+int NetDevice::tun_init()
 {
-    struct ifreq ifr;
-    int s, err;
+    if(_socket != -1)
+        return 1; // already initialized
+    QString ip_address = _ip_address;
+    int err;
     struct sockaddr_in addr;
     QString dev_str = "tunif" + QString::number(_if_no);
     char *dev = const_cast<char*>(dev_str.toStdString().c_str());
@@ -46,18 +55,18 @@ int NetDevice::tun_init(QString ip_address)
     int flags = fcntl(_fd_tun, F_GETFL, 0);
     fcntl(_fd_tun, F_SETFL, flags | O_NONBLOCK);
 
-    memset(&ifr, 0, sizeof(ifr));
+    memset(&_ifr, 0, sizeof(_ifr));
 
     /* Flags: IFF_TUN   - TUN device (no Ethernet headers)
     *        IFF_TAP   - TAP device
     *
     *        IFF_NO_PI - Do not provide packet information
     */
-    ifr.ifr_flags = IFF_TAP | IFF_NO_PI;
+    _ifr.ifr_flags = IFF_TAP | IFF_NO_PI;
     if( *dev )
-        strncpy(ifr.ifr_name, dev, IFNAMSIZ);
+        strncpy(_ifr.ifr_name, dev, IFNAMSIZ);
 
-    if( (err = ioctl(_fd_tun, TUNSETIFF, (void *) &ifr)) < 0 )
+    if( (err = ioctl(_fd_tun, TUNSETIFF, (void *) &_ifr)) < 0 )
     {
         _logger->log(Logger::LogLevelWarning,
             "creating net device failed, run setcap \"cap_net_raw,cap_net_admin+eip\" qradiolink");
@@ -65,14 +74,14 @@ int NetDevice::tun_init(QString ip_address)
         return err;
     }
     addr.sin_family = AF_INET;
-    s = socket(addr.sin_family, SOCK_DGRAM, IPPROTO_IP);
-    strcpy(dev, ifr.ifr_name);
-    ifr.ifr_addr = *(struct sockaddr *) &addr;
-    ifr.ifr_addr.sa_family = AF_INET;
+    _socket = socket(addr.sin_family, SOCK_DGRAM, IPPROTO_IP);
+    strcpy(dev, _ifr.ifr_name);
+    _ifr.ifr_addr = *(struct sockaddr *) &addr;
+    _ifr.ifr_addr.sa_family = AF_INET;
 
 
     char *ip = const_cast<char*>(ip_address.toStdString().c_str());
-    int ret = inet_pton(AF_INET, ip, ifr.ifr_addr.sa_data + 2);
+    int ret = inet_pton(AF_INET, ip, _ifr.ifr_addr.sa_data + 2);
     if(ret != 1)
     {
         _logger->log(Logger::LogLevelCritical, QString("The IP address is not valid %1").arg(err));
@@ -80,39 +89,39 @@ int NetDevice::tun_init(QString ip_address)
         return err;
     }
 
-    if( (err = ioctl(s, SIOCSIFADDR, &ifr)) < 0)
+    if( (err = ioctl(_socket, SIOCSIFADDR, &_ifr)) < 0)
     {
         _logger->log(Logger::LogLevelCritical, QString("setting address failed %1").arg(err));
         close(_fd_tun);
         return err;
     }
 
-    inet_pton(AF_INET, "255.255.255.0", ifr.ifr_addr.sa_data + 2);
-    if( (err = ioctl(s, SIOCSIFNETMASK, &ifr)) < 0)
+    inet_pton(AF_INET, "255.255.255.0", _ifr.ifr_addr.sa_data + 2);
+    if( (err = ioctl(_socket, SIOCSIFNETMASK, &_ifr)) < 0)
     {
         _logger->log(Logger::LogLevelCritical, QString("setting netmask failed %1").arg(err));
         close(_fd_tun);
         return err;
     }
 
-    if( (err = ioctl(s, SIOCGIFFLAGS, &ifr)) < 0)
+    if( (err = ioctl(_socket, SIOCGIFFLAGS, &_ifr)) < 0)
     {
         _logger->log(Logger::LogLevelCritical, QString("getting flags failed %1").arg(err));
         close(_fd_tun);
         return err;
     }
-    ifr.ifr_flags |= (IFF_UP | IFF_RUNNING);
+    _ifr.ifr_flags |= (IFF_UP | IFF_RUNNING);
 
     //strncpy(ifr.ifr_name, dev, IFNAMSIZ);
-    if( (err = ioctl(s, SIOCSIFFLAGS, &ifr)) < 0 )
+    if( (err = ioctl(_socket, SIOCSIFFLAGS, &_ifr)) < 0 )
     {
         int saved_errno = errno;
         _logger->log(Logger::LogLevelCritical,
                      QString("could not bring tap interface up %1").arg(saved_errno));
         return err;
     }
-    ifr.ifr_mtu = 1480;
-    if( (err = ioctl(s, SIOCSIFMTU, &ifr)) < 0)
+    _ifr.ifr_mtu = _mtu;
+    if( (err = ioctl(_socket, SIOCSIFMTU, &_ifr)) < 0)
     {
         _logger->log(Logger::LogLevelCritical, QString("setting MTU failed %1").arg(err));
         close(_fd_tun);
@@ -122,11 +131,25 @@ int NetDevice::tun_init(QString ip_address)
     return 1;
 }
 
-unsigned char* NetDevice::read_buffered(int &nread)
+int NetDevice::set_mtu(int mtu)
+{
+    int err;
+    _ifr.ifr_mtu = mtu;
+    if( (err = ioctl(_socket, SIOCSIFMTU, &_ifr)) < 0)
+    {
+        _logger->log(Logger::LogLevelCritical, QString("setting MTU failed %1").arg(err));
+        close(_fd_tun);
+        return err;
+    }
+
+    return 1;
+}
+
+unsigned char* NetDevice::read_buffered(int &nread, int size)
 {
     // Using MTU of 1500
-    unsigned char *buffer = new unsigned char[1500];
-    nread = read(_fd_tun,buffer,1500);
+    unsigned char *buffer = new unsigned char[size];
+    nread = read(_fd_tun,buffer,size);
     /*
     if(nread < 0)
     {

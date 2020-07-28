@@ -54,10 +54,11 @@ gr_mod_4fsk_sdr::gr_mod_4fsk_sdr(int sps, int samp_rate, int carrier_freq,
 
     int nfilts;
     int second_interp = 20;
-    if(sps == 4)
+    if(sps == 2)
     {
+        _samples_per_symbol = 5;
         nfilts = 50 * _samples_per_symbol;
-        second_interp = 1;
+        second_interp = 5;
     }
     if(sps == 5)
         nfilts = 50 * _samples_per_symbol;
@@ -115,17 +116,8 @@ gr_mod_4fsk_sdr::gr_mod_4fsk_sdr(int sps, int samp_rate, int carrier_freq,
         connect(_chunks_to_symbols,0,_repeat,0);
         connect(_repeat,0,_freq_modulator,0);
     }
-
-    if(sps == 4)    // Video and Data
-    {
-        connect(_freq_modulator,0,_amplify,0);
-    }
-    else
-    {
-        connect(_freq_modulator,0,_resampler2,0);
-        connect(_resampler2,0,_amplify,0);
-    }
-
+    connect(_freq_modulator,0,_resampler2,0);
+    connect(_resampler2,0,_amplify,0);
     connect(_amplify,0,_bb_gain,0);
     connect(_bb_gain,0,_filter,0);
     connect(_filter,0,self(),0);

@@ -169,7 +169,7 @@ void gr_modem::toggleTxMode(int modem_type)
         }
         else if(modem_type == gr_modem_types::ModemType4FSK250K)
         {
-            _tx_frame_length = 1516;
+            _tx_frame_length = 622;
         }
     }
 
@@ -268,8 +268,8 @@ void gr_modem::toggleRxMode(int modem_type)
         }
         else if (modem_type == gr_modem_types::ModemType4FSK250K)
         {
-            _bit_buf_len = 1517 *8;
-            _rx_frame_length = 1516;
+            _bit_buf_len = 623 *8;
+            _rx_frame_length = 622;
         }
         delete[] _bit_buf;
         _bit_buf = new unsigned char[_bit_buf_len];

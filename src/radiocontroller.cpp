@@ -300,6 +300,7 @@ void RadioController::updateInputAudioStream()
             || (_settings->repeater_enabled)
             || (!_transmitting && !_settings->vox_enabled)
             || (_tx_mode == gr_modem_types::ModemTypeQPSK250K)
+            || (_tx_mode == gr_modem_types::ModemType4FSK250K)
             || (_tx_mode == gr_modem_types::ModemTypeCW600USB)
             || (_text_transmit_on || _proto_transmit_on))
     {
@@ -588,11 +589,14 @@ void RadioController::processVideoFrame()
 
 void RadioController::processInputNetStream()
 {
-    if(_tx_mode != gr_modem_types::ModemTypeQPSK250K)
+    if((_tx_mode != gr_modem_types::ModemTypeQPSK250K)
+            && (_tx_mode != gr_modem_types::ModemType4FSK250K))
         return;
     // 48400 microsec per frame, during this time data enters the interface socket buffer
     qint64 time_per_frame = 48400000;
     qint64 microsec, time_left;
+    int max_frame_size = 0;
+    int read_size = 1500;
     microsec = (quint64)_data_read_timer->nsecsElapsed();
     if(microsec < 46400000)
     {
@@ -604,10 +608,19 @@ void RadioController::processInputNetStream()
     if(time_left > 0)
         nanosleep(&time_to_sleep, NULL);
     _data_read_timer->restart();
-    int max_frame_size = 1516;
+    if(_tx_mode == gr_modem_types::ModemTypeQPSK250K)
+    {
+        max_frame_size = 1516;
+        read_size = 1500;
+    }
+    if(_tx_mode == gr_modem_types::ModemType4FSK250K)
+    {
+        max_frame_size = 622;
+        read_size = 600;
+    }
     unsigned char *netbuffer = (unsigned char*)calloc(max_frame_size, sizeof(unsigned char));
     int nread;
-    unsigned char *buffer = _net_device->read_buffered(nread);
+    unsigned char *buffer = _net_device->read_buffered(nread, read_size);
 
     if(nread > 0)
     {
@@ -880,7 +893,8 @@ void RadioController::startTx()
         {
             _end_tx_timer->stop();
         }
-        if(_tx_mode == gr_modem_types::ModemTypeQPSK250K)
+        if((_tx_mode == gr_modem_types::ModemTypeQPSK250K)
+                || (_tx_mode == gr_modem_types::ModemType4FSK250K))
         {
             _data_modem_reset_timer->start();
             _data_modem_sleep_timer->start();
@@ -1021,7 +1035,8 @@ void RadioController::setAudioRecord(bool value)
 
 void RadioController::updateDataModemReset(bool transmitting, bool ptt_activated)
 {
-    if((_tx_mode == gr_modem_types::ModemTypeQPSK250K) && !_data_modem_sleeping
+    if(((_tx_mode == gr_modem_types::ModemTypeQPSK250K)
+        || (_tx_mode == gr_modem_types::ModemType4FSK250K)) && !_data_modem_sleeping
             && transmitting && ptt_activated)
     {
         qint64 sec_modem_running;
@@ -1033,7 +1048,8 @@ void RadioController::updateDataModemReset(bool transmitting, bool ptt_activated
             _data_modem_sleep_timer->restart();
         }
     }
-    if((_tx_mode == gr_modem_types::ModemTypeQPSK250K) && _data_modem_sleeping)
+    if(((_tx_mode == gr_modem_types::ModemTypeQPSK250K)
+        || (_tx_mode == gr_modem_types::ModemType4FSK250K)) && _data_modem_sleeping)
     {
         qint64 sec_modem_sleeping;
         sec_modem_sleeping = (quint64)_data_modem_sleep_timer->nsecsElapsed()/1000000000;
@@ -1605,6 +1621,11 @@ void RadioController::toggleRX(bool value)
             emit initError("Could not init RX device, check settings");
             return;
         }
+        if((_rx_mode == gr_modem_types::ModemType4FSK250K) ||
+            (_rx_mode == gr_modem_types::ModemTypeQPSK250K))
+            _net_device->tun_init();
+        if((_rx_mode == gr_modem_types::ModemType4FSK250K))
+            _net_device->set_mtu(600);
 
         _mutex->lock();
         _modem->enableGUIFFT((bool)_settings->show_fft);
@@ -1674,6 +1695,11 @@ void RadioController::toggleTX(bool value)
             //_camera->init();
         else
             _video->deinit();
+        if((_tx_mode == gr_modem_types::ModemType4FSK250K) ||
+            (_tx_mode == gr_modem_types::ModemTypeQPSK250K))
+            _net_device->tun_init();
+        if((_tx_mode == gr_modem_types::ModemType4FSK250K))
+            _net_device->set_mtu(600);
 
         _mutex->lock();
         _modem->setBbGain(_settings->bb_gain);
@@ -1881,7 +1907,7 @@ void RadioController::toggleRxMode(int value)
         _step_hz = 1000;
         break;
     case 28:
-        _rx_mode = gr_modem_types::ModemTypeQPSK250K;
+        _rx_mode = gr_modem_types::ModemType4FSK250K;
         _step_hz = 1000;
         _scan_step_hz = 500000;
         break;
@@ -1899,6 +1925,11 @@ void RadioController::toggleRxMode(int value)
         break;
     }
 
+    if((_rx_mode == gr_modem_types::ModemType4FSK250K) ||
+        (_rx_mode == gr_modem_types::ModemTypeQPSK250K))
+        _net_device->tun_init();
+    if((_rx_mode == gr_modem_types::ModemType4FSK250K))
+        _net_device->set_mtu(600);
     _modem->toggleRxMode(_rx_mode);
     if(rx_inited_before)
     {
@@ -2033,6 +2064,13 @@ void RadioController::toggleTxMode(int value)
         //_camera->init();
     else
         _video->deinit();
+    if((_tx_mode == gr_modem_types::ModemType4FSK250K) ||
+        (_tx_mode == gr_modem_types::ModemTypeQPSK250K))
+        _net_device->tun_init();
+    if((_tx_mode == gr_modem_types::ModemType4FSK250K))
+        _net_device->set_mtu(600);
+        //_camera->init();
+
     _mutex->lock();
     if(_settings->tx_inited)
         _modem->stopTX();
