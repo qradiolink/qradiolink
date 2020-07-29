@@ -58,7 +58,7 @@ gr_mod_4fsk_sdr::gr_mod_4fsk_sdr(int sps, int samp_rate, int carrier_freq,
     {
         _samples_per_symbol = 5;
         nfilts = 50 * _samples_per_symbol;
-        second_interp = 5;
+        second_interp = 2;
     }
     if(sps == 5)
         nfilts = 50 * _samples_per_symbol;

@@ -183,7 +183,7 @@ void buildFilterWidthList(std::vector<std::complex<int>>* filter_widths, std::ve
     ranges->push_back(std::complex<int>(-150000, 150000)); // QPSK 250K VIDEO
     ranges->push_back(std::complex<int>(-150000, 150000)); // QPSK 250K DATA
     ranges->push_back(std::complex<int>(-250000, 250000)); // 4FSK 96K VIDEO
-    ranges->push_back(std::complex<int>(-250000, 250000)); // 4FSK 96K DATA
+    ranges->push_back(std::complex<int>(-120000, 120000)); // 4FSK 96K DATA
     ranges->push_back(std::complex<int>(100, 1000)); // CW K USB
 
     symmetric->push_back(true);  // FM
