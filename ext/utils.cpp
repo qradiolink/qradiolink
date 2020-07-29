@@ -114,8 +114,8 @@ void buildModeList(QVector<QString> *operating_modes)
     operating_modes->push_back("4FSK RRC 10K");
     operating_modes->push_back("Video QPSK 250K");
     operating_modes->push_back("IP modem QPSK 250K");
-    operating_modes->push_back("Video 4FSK 250K");
-    operating_modes->push_back("IP modem 4FSK 250K");
+    operating_modes->push_back("Video 4FSK 96K");
+    operating_modes->push_back("IP modem 4FSK 96K");
     operating_modes->push_back("Test tone");
 }
 
@@ -149,8 +149,8 @@ void buildFilterWidthList(std::vector<std::complex<int>>* filter_widths, std::ve
     filter_widths->push_back(std::complex<int>(-10000, 10000));    // 4FSK 10K RRC
     filter_widths->push_back(std::complex<int>(-150000, 150000)); // QPSK 250K VIDEO
     filter_widths->push_back(std::complex<int>(-150000, 150000)); // QPSK 250K DATA
-    filter_widths->push_back(std::complex<int>(-250000, 250000)); // 4FSK 250K VIDEO
-    filter_widths->push_back(std::complex<int>(-250000, 250000)); // 4FSK 250K DATA
+    filter_widths->push_back(std::complex<int>(-120000, 120000)); // 4FSK 96K VIDEO
+    filter_widths->push_back(std::complex<int>(-120000, 120000)); // 4FSK 96K DATA
     filter_widths->push_back(std::complex<int>(100, 1000)); // CW K USB
 
 
@@ -182,8 +182,8 @@ void buildFilterWidthList(std::vector<std::complex<int>>* filter_widths, std::ve
     ranges->push_back(std::complex<int>(-10000, 10000));    // 4FSK 10K RRC
     ranges->push_back(std::complex<int>(-150000, 150000)); // QPSK 250K VIDEO
     ranges->push_back(std::complex<int>(-150000, 150000)); // QPSK 250K DATA
-    ranges->push_back(std::complex<int>(-250000, 250000)); // 4FSK 250K VIDEO
-    ranges->push_back(std::complex<int>(-250000, 250000)); // 4FSK 250K DATA
+    ranges->push_back(std::complex<int>(-250000, 250000)); // 4FSK 96K VIDEO
+    ranges->push_back(std::complex<int>(-250000, 250000)); // 4FSK 96K DATA
     ranges->push_back(std::complex<int>(100, 1000)); // CW K USB
 
     symmetric->push_back(true);  // FM
@@ -214,8 +214,8 @@ void buildFilterWidthList(std::vector<std::complex<int>>* filter_widths, std::ve
     symmetric->push_back(true);    // 4FSK 10K RRC
     symmetric->push_back(true); // QPSK 250K VIDEO
     symmetric->push_back(true); // QPSK 250K DATA
-    symmetric->push_back(true); // 4FSK 250K VIDEO
-    symmetric->push_back(true); // 4FSK 250K DATA
+    symmetric->push_back(true); // 4FSK 96K VIDEO
+    symmetric->push_back(true); // 4FSK 96K DATA
     symmetric->push_back(false); // CW K USB
 
 }

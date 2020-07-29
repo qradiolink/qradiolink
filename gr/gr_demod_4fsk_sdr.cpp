@@ -82,15 +82,15 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
         nfilts = 12 * _samples_per_symbol;
         fll_sps = _samples_per_symbol/4;
     }
-    if(sps == 4)
+    if(sps == 2)
     {
         interpolation = 1;
-        decimation = 2;
-        _samples_per_symbol = sps;
+        decimation = 10;
+        _samples_per_symbol = 5;
         _target_samp_rate = 500000;
         gain_mu = 0.005;
         omega_rel_limit = 0.001;
-        nfilts = 18 * _samples_per_symbol;
+        nfilts = 50 * _samples_per_symbol;
         fll_sps = _samples_per_symbol;
     }
     if((nfilts % 2) == 0)

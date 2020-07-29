@@ -595,7 +595,7 @@ void RadioController::processInputNetStream()
     // 48400 microsec per frame, during this time data enters the interface socket buffer
     qint64 time_per_frame = 48400000;
     qint64 microsec, time_left;
-    int max_frame_size = 0;
+    int max_frame_size = 1516;
     int read_size = 1500;
     microsec = (quint64)_data_read_timer->nsecsElapsed();
     if(microsec < 46400000)
@@ -1621,11 +1621,13 @@ void RadioController::toggleRX(bool value)
             emit initError("Could not init RX device, check settings");
             return;
         }
+        /*
         if((_rx_mode == gr_modem_types::ModemType4FSK250K) ||
             (_rx_mode == gr_modem_types::ModemTypeQPSK250K))
             _net_device->tun_init();
         if((_rx_mode == gr_modem_types::ModemType4FSK250K))
             _net_device->set_mtu(600);
+        */
 
         _mutex->lock();
         _modem->enableGUIFFT((bool)_settings->show_fft);
@@ -1695,11 +1697,13 @@ void RadioController::toggleTX(bool value)
             //_camera->init();
         else
             _video->deinit();
+        /*
         if((_tx_mode == gr_modem_types::ModemType4FSK250K) ||
             (_tx_mode == gr_modem_types::ModemTypeQPSK250K))
             _net_device->tun_init();
         if((_tx_mode == gr_modem_types::ModemType4FSK250K))
             _net_device->set_mtu(600);
+        */
 
         _mutex->lock();
         _modem->setBbGain(_settings->bb_gain);
@@ -1709,6 +1713,7 @@ void RadioController::toggleTX(bool value)
         if(_settings->rx_inited)
             _modem->startRX(_settings->block_buffer_size);
         _mutex->unlock();
+
         const QMap<std::string,QVector<int>> tx_gains = _modem->getTxGainNames();
         /// hold a local copy of stage gains
         QMap<std::string, QVector<int>>::const_iterator iter = tx_gains.constBegin();
