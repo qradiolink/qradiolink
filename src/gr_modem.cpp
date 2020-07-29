@@ -827,7 +827,7 @@ bool gr_modem::demodulate()
         demod_data2 = _gr_demod_base->getData(2);
         if((demod_data == nullptr) || (demod_data2 == nullptr))
             return false;
-    }     
+    }
     else
     {
         demod_data = _gr_demod_base->getData();
@@ -1066,7 +1066,7 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
         delete[] text_data;
     }
     else if (current_frame_type == FrameTypeVoice)
-    {            
+    {
         _last_frame_type = FrameTypeVoice;
         unsigned char *codec2_data = new unsigned char[_rx_frame_length];
         memset(codec2_data,0,_rx_frame_length);

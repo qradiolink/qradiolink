@@ -85,9 +85,9 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
     if(sps == 2)
     {
         interpolation = 1;
-        decimation = 4;
-        _samples_per_symbol = 2;
-        _target_samp_rate = 250000;
+        decimation = 2;
+        _samples_per_symbol = 5;
+        _target_samp_rate = 500000;
         gain_mu = 0.005;
         omega_rel_limit = 0.001;
         nfilts = 50 * _samples_per_symbol;
@@ -141,7 +141,7 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
                                                               omega_rel_limit);
     _clock_recovery_f = gr::digital::clock_recovery_mm_ff::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
                                                               omega_rel_limit);
-    _cma_equalizer = gr::digital::cma_equalizer_cc::make(8,1,0.0005,1);
+    _cma_equalizer = gr::digital::cma_equalizer_cc::make(8,1,0.00005,1);
     _float_to_complex = gr::blocks::float_to_complex::make();
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
 
@@ -155,8 +155,16 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
 
 
     connect(self(),0,_resampler,0);
-    connect(_resampler,0,_fll,0);
-    connect(_fll,0,_filter,0);
+    if(sps != 2)
+    {
+        connect(_resampler,0,_fll,0);
+        connect(_fll,0,_filter,0);
+    }
+    else
+    {
+        connect(_resampler,0,_filter,0);
+    }
+
     connect(_filter,0,self(),0);
     if(fm)
     {

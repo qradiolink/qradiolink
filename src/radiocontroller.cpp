@@ -1908,15 +1908,11 @@ void RadioController::toggleRxMode(int value)
         _scan_step_hz = 500000;
         break;
     case 27:
-        _rx_mode = gr_modem_types::ModemType4FSKVideo;
-        _step_hz = 1000;
-        break;
-    case 28:
         _rx_mode = gr_modem_types::ModemType4FSK250K;
         _step_hz = 1000;
         _scan_step_hz = 500000;
         break;
-    case 29:
+    case 28:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _rx_mode = gr_modem_types::ModemTypeUSB2500;
         _step_hz = 10;
@@ -2050,12 +2046,9 @@ void RadioController::toggleTxMode(int value)
         _tx_mode = gr_modem_types::ModemTypeQPSK250K;
         break;
     case 27:
-        _tx_mode = gr_modem_types::ModemType4FSKVideo;
-        break;
-    case 28:
         _tx_mode = gr_modem_types::ModemType4FSK250K;
         break;
-    case 29:
+    case 28:
         _tx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _tx_mode = gr_modem_types::ModemTypeCW600USB;
         break;
