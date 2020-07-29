@@ -1357,7 +1357,7 @@ void MainWindow::toggleTxMode(int value)
 void MainWindow::initError(QString error)
 {
     Q_UNUSED(error);
-    ui->tabWidget->setCurrentIndex(3);
+    ui->tabWidget->setCurrentIndex(5);
 }
 
 void MainWindow::toggleRepeater(bool value)
