@@ -145,7 +145,6 @@ private:
     gr_demod_qpsk_sdr_sptr _qpsk_10k;
     gr_demod_qpsk_sdr_sptr _qpsk_250k;
     gr_demod_qpsk_sdr_sptr _qpsk_video;
-    gr_demod_4fsk_sdr_sptr _4fsk_video;
     gr_demod_4fsk_sdr_sptr _4fsk_96k;
     gr_demod_ssb_sdr_sptr _usb;
     gr_demod_ssb_sdr_sptr _lsb;

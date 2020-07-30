@@ -74,7 +74,6 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
     _qpsk_10k = make_gr_mod_qpsk_sdr(100, 1000000, 1700, 6500);
     _qpsk_250k = make_gr_mod_qpsk_sdr(4, 1000000, 1700, 160000);
     _qpsk_video = make_gr_mod_qpsk_sdr(4, 1000000, 1700, 160000);
-    _4fsk_video = make_gr_mod_4fsk_sdr(2, 1000000, 1700, 100000, true);
     _4fsk_96k = make_gr_mod_4fsk_sdr(2, 1000000, 1700, 100000, true);
     _usb = make_gr_mod_ssb_sdr(125, 1000000, 1700, 2700, 0);
     _lsb = make_gr_mod_ssb_sdr(125, 1000000, 1700, 2700, 1);
@@ -222,7 +221,7 @@ void gr_mod_base::set_mode(int mode)
         _top_block->disconnect(_qpsk_250k,0,_rotator,0);
         _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
-    case gr_modem_types::ModemType4FSK250K:
+    case gr_modem_types::ModemType4FSK100K:
         _carrier_offset = 0;
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
         _top_block->disconnect(_vector_source,0,_4fsk_96k,0);
@@ -232,11 +231,6 @@ void gr_mod_base::set_mode(int mode)
     case gr_modem_types::ModemTypeQPSKVideo:
         _top_block->disconnect(_vector_source,0,_qpsk_video,0);
         _top_block->disconnect(_qpsk_video,0,_rotator,0);
-        _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
-        break;
-    case gr_modem_types::ModemType4FSKVideo:
-        _top_block->disconnect(_vector_source,0,_4fsk_video,0);
-        _top_block->disconnect(_4fsk_video,0,_rotator,0);
         _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeUSB2500:
@@ -452,7 +446,7 @@ void gr_mod_base::set_mode(int mode)
         _top_block->connect(_qpsk_250k,0,_rotator,0);
         _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
-    case gr_modem_types::ModemType4FSK250K:
+    case gr_modem_types::ModemType4FSK100K:
         _carrier_offset = 250000;
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
@@ -468,15 +462,6 @@ void gr_mod_base::set_mode(int mode)
         _osmosdr_sink->set_sample_rate(1000000);
         _top_block->connect(_vector_source,0,_qpsk_video,0);
         _top_block->connect(_qpsk_video,0,_rotator,0);
-        _top_block->connect(_rotator,0,_osmosdr_sink,0);
-        break;
-    case gr_modem_types::ModemType4FSKVideo:
-        _carrier_offset = 250000;
-        _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
-        _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
-        _osmosdr_sink->set_sample_rate(1000000);
-        _top_block->connect(_vector_source,0,_4fsk_video,0);
-        _top_block->connect(_4fsk_video,0,_rotator,0);
         _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeUSB2500:

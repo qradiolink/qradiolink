@@ -151,10 +151,6 @@ void gr_modem::toggleTxMode(int modem_type)
         {
             _tx_frame_length = 3122;
         }
-        else if(modem_type == gr_modem_types::ModemType4FSKVideo)
-        {
-            _tx_frame_length = 3122;
-        }
         else if(modem_type == gr_modem_types::ModemType2FSK2KFM)
         {
             _tx_frame_length = 7;
@@ -167,7 +163,7 @@ void gr_modem::toggleTxMode(int modem_type)
         {
             _tx_frame_length = 1516;
         }
-        else if(modem_type == gr_modem_types::ModemType4FSK250K)
+        else if(modem_type == gr_modem_types::ModemType4FSK100K)
         {
             _tx_frame_length = 622;
         }
@@ -246,11 +242,6 @@ void gr_modem::toggleRxMode(int modem_type)
             _bit_buf_len = 3123 *8;
             _rx_frame_length = 3122;
         }
-        else if (modem_type == gr_modem_types::ModemType4FSKVideo)
-        {
-            _bit_buf_len = 3123 *8;
-            _rx_frame_length = 3122;
-        }
         else if(modem_type == gr_modem_types::ModemType2FSK2KFM)
         {
             _bit_buf_len = 8 *8;
@@ -266,7 +257,7 @@ void gr_modem::toggleRxMode(int modem_type)
             _bit_buf_len = 1517 *8;
             _rx_frame_length = 1516;
         }
-        else if (modem_type == gr_modem_types::ModemType4FSK250K)
+        else if (modem_type == gr_modem_types::ModemType4FSK100K)
         {
             _bit_buf_len = 623 *8;
             _rx_frame_length = 622;
@@ -956,8 +947,7 @@ int gr_modem::findSync(unsigned char bit)
     }
     if(_modem_type_rx != gr_modem_types::ModemTypeQPSK250K &&
             _modem_type_rx != gr_modem_types::ModemTypeQPSKVideo &&
-            _modem_type_rx != gr_modem_types::ModemType4FSKVideo &&
-            _modem_type_rx != gr_modem_types::ModemType4FSK250K)
+            _modem_type_rx != gr_modem_types::ModemType4FSK100K)
     {
         temp = _shift_reg & 0xFFFF;
         if(temp == FrameTypeVoice2)

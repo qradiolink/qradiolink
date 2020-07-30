@@ -45,7 +45,7 @@ public slots:
 public:
     unsigned char* read_buffered(int &bytes, int size=1500);
     int write_buffered(unsigned char* data, int len);
-    int set_mtu(int mtu=1500);
+    int set_mtu(int mtu=1480);
     int tun_init();
     void deinit();
 

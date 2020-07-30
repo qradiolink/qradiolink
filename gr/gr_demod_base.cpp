@@ -135,7 +135,6 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
     _qpsk_10k = make_gr_demod_qpsk_sdr(25,1000000,1700,6500);
     _qpsk_250k = make_gr_demod_qpsk_sdr(2,1000000,1700,160000);
     _qpsk_video = make_gr_demod_qpsk_sdr(2,1000000,1700,160000);
-    _4fsk_video = make_gr_demod_4fsk_sdr(2,1000000,1700,100000, true);
     _4fsk_96k = make_gr_demod_4fsk_sdr(2,1000000,1700,100000, true);
     _usb = make_gr_demod_ssb_sdr(125, 1000000,1700,2700,0);
     _lsb = make_gr_demod_ssb_sdr(125, 1000000,1700,2700,1);
@@ -333,7 +332,7 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
             //_carrier_offset = 25000;
             //_osmosdr_source->set_center_freq(_device_frequency - _carrier_offset);
             break;
-        case gr_modem_types::ModemType4FSK250K:
+        case gr_modem_types::ModemType4FSK100K:
             _top_block->disconnect(_demod_valve,0,_4fsk_96k,0);
             _top_block->disconnect(_4fsk_96k,0,_rssi_valve,0);
             _top_block->disconnect(_4fsk_96k,1,_const_valve,0);
@@ -348,15 +347,6 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
             _top_block->disconnect(_qpsk_video,1,_const_valve,0);
             _top_block->disconnect(_const_valve,0,_constellation,0);
             _top_block->disconnect(_qpsk_video,2,_vector_sink,0);
-            //_carrier_offset = 25000;
-            //_osmosdr_source->set_center_freq(_device_frequency - _carrier_offset);
-            break;
-        case gr_modem_types::ModemType4FSKVideo:
-            _top_block->disconnect(_demod_valve,0,_4fsk_video,0);
-            _top_block->disconnect(_4fsk_video,0,_rssi_valve,0);
-            _top_block->disconnect(_4fsk_video,1,_const_valve,0);
-            _top_block->disconnect(_const_valve,0,_constellation,0);
-            _top_block->disconnect(_4fsk_video,2,_vector_sink,0);
             //_carrier_offset = 25000;
             //_osmosdr_source->set_center_freq(_device_frequency - _carrier_offset);
             break;
@@ -545,7 +535,7 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
             _top_block->connect(_const_valve,0,_constellation,0);
             _top_block->connect(_qpsk_250k,2,_vector_sink,0);
             break;
-        case gr_modem_types::ModemType4FSK250K:
+        case gr_modem_types::ModemType4FSK100K:
             //_carrier_offset = 250000;
             //_osmosdr_source->set_center_freq(_device_frequency - _carrier_offset);
             _top_block->connect(_demod_valve,0,_4fsk_96k,0);
@@ -562,15 +552,6 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
             _top_block->connect(_qpsk_video,1,_const_valve,0);
             _top_block->connect(_const_valve,0,_constellation,0);
             _top_block->connect(_qpsk_video,2,_vector_sink,0);
-            break;
-        case gr_modem_types::ModemType4FSKVideo:
-            //_carrier_offset = 250000;
-            //_osmosdr_source->set_center_freq(_device_frequency - _carrier_offset);
-            _top_block->connect(_demod_valve,0,_4fsk_video,0);
-            _top_block->connect(_4fsk_video,0,_rssi_valve,0);
-            _top_block->connect(_4fsk_video,1,_const_valve,0);
-            _top_block->connect(_const_valve,0,_constellation,0);
-            _top_block->connect(_4fsk_video,2,_vector_sink,0);
             break;
         case gr_modem_types::ModemTypeUSB2500:
             _top_block->connect(_demod_valve,0,_usb,0);
