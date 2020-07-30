@@ -130,6 +130,7 @@ int NetDevice::tun_init()
     {
         _logger->log(Logger::LogLevelCritical, QString("setting MTU failed %1").arg(err));
         close(_fd_tun);
+        _socket = -1;
         return err;
     }
     _logger->log(Logger::LogLevelInfo, QString("Successfully opened network interface"));
@@ -196,6 +197,7 @@ void NetDevice::if_list()
 {
     if(_socket == -1)
         return;
+    _logger->log(Logger::LogLevelInfo, "Local network interfaces: ");
     char          buf[1024];
     struct ifconf ifc;
     struct ifreq *ifr;
@@ -231,10 +233,9 @@ void NetDevice::if_list()
         {
             _if_no = pattern.cap(1).toInt() + 1;
         }
-
-        printf("%s: IP %s",
-               name.toStdString().c_str(),
-               inet_ntoa(((struct sockaddr_in *)&item->ifr_addr)->sin_addr));
+        QString message = "";
+        message.append(QString("%1: IP %2").arg(name, QString::fromLocal8Bit(
+                     inet_ntoa(((struct sockaddr_in *)&item->ifr_addr)->sin_addr))));
 
 
         if(ioctl(sck, SIOCGIFHWADDR, item) < 0)
@@ -244,8 +245,12 @@ void NetDevice::if_list()
 
 
         if(ioctl(sck, SIOCGIFBRDADDR, item) >= 0)
-            printf(", BROADCAST %s", inet_ntoa(((struct sockaddr_in *)&item->ifr_broadaddr)->sin_addr));
-        printf("\n");
+        {
+            message.append(QString(", BROADCAST %1").arg(
+                 QString::fromLocal8Bit(
+                      inet_ntoa(((struct sockaddr_in *)&item->ifr_broadaddr)->sin_addr))));
+        }
+        _logger->log(Logger::LogLevelInfo, message);
 
     }
 
