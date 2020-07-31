@@ -606,7 +606,7 @@ void RadioController::processInputNetStream()
     if(_tx_mode == gr_modem_types::ModemType4FSK100K)
     {
         max_frame_size = 622;
-        read_size = 600;
+        read_size = 606;
         time_per_frame = 50000000; // ???
     }
 
@@ -1515,7 +1515,7 @@ void RadioController::audioFrameReceived()
 void RadioController::dataFrameReceived()
 {
     emit displayDataReceiveStatus(true);
-    _data_led_timer->start(500);
+    _data_led_timer->start(100);
     /*
     if((_rx_mode != gr_modem_types::ModemTypeQPSK250000)
             && (_rx_mode != gr_modem_types::ModemTypeQPSKVideo) && !_settings->voip_forwarding)

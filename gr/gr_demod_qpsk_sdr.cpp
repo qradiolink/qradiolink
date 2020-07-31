@@ -44,7 +44,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
     fll_bw = 8;
     if(sps <= 4)
     {
-        gain_mu = 0.005;
+        gain_mu = 0.025;
         omega_rel_limit = 0.001;
         filt_length = 35;
         fll_bw = 2;

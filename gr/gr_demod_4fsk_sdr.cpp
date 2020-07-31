@@ -88,8 +88,8 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
         decimation = 2;
         _samples_per_symbol = 5;
         _target_samp_rate = 500000;
-        gain_mu = 0.005;
-        omega_rel_limit = 0.001;
+        gain_mu = 0.05;
+        omega_rel_limit = 0.0001;
         nfilts = 50 * _samples_per_symbol;
         fll_sps = _samples_per_symbol;
     }
