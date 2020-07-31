@@ -33,6 +33,7 @@
 #include <gnuradio/analog/sig_source_f.h>
 #include <gnuradio/analog/rail_ff.h>
 #include <gnuradio/filter/iir_filter_ffd.h>
+#include "emphasis.h"
 
 
 class gr_mod_nbfm_sdr;
@@ -51,7 +52,7 @@ public:
     void set_bb_gain(float value);
 
 private:
-    void calculate_preemph_taps(int sample_rate, double tau, double fh=-1.0);
+
     gr::analog::frequency_modulator_fc::sptr _fm_modulator;
     gr::filter::iir_filter_ffd::sptr _pre_emph_filter;
     gr::analog::sig_source_f::sptr _tone_source;

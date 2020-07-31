@@ -30,6 +30,7 @@
 #include <gnuradio/blocks/multiply_const_cc.h>
 #include <gnuradio/analog/rail_ff.h>
 #include <gnuradio/filter/iir_filter_ffd.h>
+#include "emphasis.h"
 
 
 class gr_demod_ssb_sdr;
@@ -51,7 +52,6 @@ public:
     void set_gain(float value);
 
 private:
-    void calculate_deemph_taps(int sample_rate, double tau);
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
     gr::analog::pwr_squelch_cc::sptr _squelch;
     gr::filter::fft_filter_ccc::sptr _filter_usb;

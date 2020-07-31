@@ -129,8 +129,8 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
     _am = make_gr_demod_am_sdr(125, 1000000,1700,5000);
     _bpsk_1k = make_gr_demod_bpsk_sdr(10,1000000,1700,1300);
     _bpsk_2k = make_gr_demod_bpsk_sdr(5,1000000,1700,2400);
-    _fm_2500 = make_gr_demod_nbfm_sdr(125, 1000000,1700,3000);
-    _fm_5000 = make_gr_demod_nbfm_sdr(125, 1000000,1700,6000);
+    _fm_2500 = make_gr_demod_nbfm_sdr(125, 1000000,1700,3125);
+    _fm_5000 = make_gr_demod_nbfm_sdr(125, 1000000,1700,6250);
     _qpsk_2k = make_gr_demod_qpsk_sdr(125,1000000,1700,1300);
     _qpsk_10k = make_gr_demod_qpsk_sdr(25,1000000,1700,6500);
     _qpsk_250k = make_gr_demod_qpsk_sdr(2,1000000,1700,160000);

@@ -36,7 +36,7 @@ gr_mod_ssb_sdr::gr_mod_ssb_sdr(int sps, int samp_rate, int carrier_freq,
     float target_samp_rate = 8000.0;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
-    calculate_preemph_taps(8000, 59e-6);
+    gr::calculate_preemph_taps(8000, 59e-6, _ataps, _btaps);
 
     _agc = gr::analog::agc2_ff::make(1, 1e-4, 0.5, 1);
     _rail = gr::analog::rail_ff::make(-0.55, 0.55);
@@ -82,59 +82,6 @@ gr_mod_ssb_sdr::gr_mod_ssb_sdr(int sps, int samp_rate, int carrier_freq,
 
 }
 
-void gr_mod_ssb_sdr::calculate_preemph_taps(int sample_rate, double tau, double fh)
-{
-    double fs = (double) sample_rate;
-    // code from GNUradio gr-analog/python/analog/fm_emph.py
-    /**
-        #
-        # Copyright 2005,2007,2012 Free Software Foundation, Inc.
-        #
-        # This file is part of GNU Radio
-        #
-        # SPDX-License-Identifier: GPL-3.0-or-later
-        #
-        #
-    */
-    // Set fh to something sensible, if needed.
-    // N.B. fh == fs/2.0 or fh == 0.0 results in a pole on the unit circle
-    // at z = -1.0 or z = 1.0 respectively.  That makes the filter unstable
-    // and useless.
-    if (fh <= 0.0 || fh >= fs / 2.0)
-    {
-        fh = 0.925 * fs/2.0;
-    }
-
-    // Digital corner frequencies
-    double w_cl = 1.0 / tau;
-    double w_ch = 2.0 * M_PI * fh;
-
-    // Prewarped analog corner frequencies
-    double w_cla = 2.0 * fs * tanf(w_cl / (2.0 * fs));
-    double w_cha = 2.0 * fs * tanf(w_ch / (2.0 * fs));
-
-    // Resulting digital pole, zero, and gain term from the bilinear
-    // transformation of H(s) = (s + w_cla) / (s + w_cha) to
-    // H(z) = b0 (1 - z1 z^-1)/(1 - p1 z^-1)
-    double kl = -w_cla / (2.0 * fs);
-    double kh = -w_cha / (2.0 * fs);
-    double z1 = (1.0 + kl) / (1.0 - kl);
-    double p1 = (1.0 + kh) / (1.0 - kh);
-    double b0 = (1.0 - kl) / (1.0 - kh);
-
-    // Since H(s = infinity) = 1.0, then H(z = -1) = 1.0 and
-    // this filter  has 0 dB gain at fs/2.0.
-    // That isn't what users are going to expect, so adjust with a
-    // gain, g, so that H(z = 1) = 1.0 for 0 dB gain at DC.
-    double w_0dB = 2.0 * M_PI * 0.0;
-    double g = fabs(1.0 - p1 * 1.0 * (cos(-w_0dB) + sin(-w_0dB)))
-        / (b0 * fabs(1.0 - z1 * 1.0 * (cos(-w_0dB) + sin(-w_0dB))));
-
-    _btaps = { g * b0 * 1.0, g * b0 * -z1 };
-    _ataps = { 1.0, -p1 };
-
-
-}
 
 void gr_mod_ssb_sdr::set_filter_width(int filter_width)
 {

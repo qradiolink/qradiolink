@@ -30,6 +30,7 @@
 #include <gnuradio/blocks/float_to_short.h>
 #include <gnuradio/blocks/multiply_const_ff.h>
 #include <gnuradio/filter/iir_filter_ffd.h>
+#include "emphasis.h"
 
 
 class gr_demod_nbfm_sdr;
@@ -50,7 +51,6 @@ public:
 
 
 private:
-    void calculate_deemph_taps(int sample_rate, double tau);
     gr::blocks::float_to_short::sptr _float_to_short;
     gr::analog::quadrature_demod_cf::sptr _fm_demod;
     gr::filter::iir_filter_ffd::sptr _de_emph_filter;

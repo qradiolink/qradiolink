@@ -106,7 +106,8 @@ SOURCES += main.cpp\
     gr/gr_const_sink.cpp \
     gr/rx_fft.cpp \
     src/layer1framing.cpp \
-    src/limits.cpp
+    src/limits.cpp \
+    gr/emphasis.cpp
 
 
 
@@ -174,7 +175,8 @@ HEADERS  += mainwindow.h\
     gr/gr_4fsk_discriminator.h \
     gr/gr_const_sink.h \
     src/layer1framing.h \
-    src/limits.h
+    src/limits.h \
+    gr/emphasis.h
 
 
 

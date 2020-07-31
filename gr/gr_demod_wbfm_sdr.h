@@ -28,6 +28,7 @@
 #include <gnuradio/filter/fft_filter_fff.h>
 #include <gnuradio/blocks/multiply_const_ff.h>
 #include <gnuradio/filter/iir_filter_ffd.h>
+#include "emphasis.h"
 
 
 class gr_demod_wbfm_sdr;
@@ -47,7 +48,6 @@ public:
     void set_filter_width(int filter_width);
 
 private:
-    void calculate_deemph_taps(int sample_rate, double tau);
     gr::analog::quadrature_demod_cf::sptr _fm_demod;
     gr::filter::iir_filter_ffd::sptr _de_emph_filter;
     gr::analog::pwr_squelch_cc::sptr _squelch;
