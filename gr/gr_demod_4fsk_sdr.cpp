@@ -141,7 +141,7 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
                                                               omega_rel_limit);
     _clock_recovery_f = gr::digital::clock_recovery_mm_ff::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
                                                               omega_rel_limit);
-    _cma_equalizer = gr::digital::cma_equalizer_cc::make(8,1,0.00005,1);
+    _cma_equalizer = gr::digital::cma_equalizer_cc::make(8,2,0.00005,1);
     _float_to_complex = gr::blocks::float_to_complex::make();
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
 

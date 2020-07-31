@@ -39,6 +39,32 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
 
     int decimation;
     int interpolation;
+    float gain_mu, omega_rel_limit;
+    int filt_length, fll_bw;
+    fll_bw = 8;
+    if(sps <= 4)
+    {
+        gain_mu = 0.005;
+        omega_rel_limit = 0.001;
+        filt_length = 35;
+        fll_bw = 2;
+    }
+    else if(sps >= 125)
+    {
+        gain_mu = 0.005;
+        omega_rel_limit = 0.001;
+        filt_length = 21;
+        fll_bw = 12;
+    }
+    else
+    {
+        gain_mu = 0.001;
+        omega_rel_limit = 0.001;
+        filt_length = 19;
+    }
+
+    ////////////////////////////
+
     if(sps > 4 && sps < 125)
     {
         interpolation = 1;
@@ -92,29 +118,6 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
     _agc = gr::analog::agc2_cc::make(1e-1, 1e-1, 1, 10);
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
             1, _target_samp_rate, _filter_width, filter_slope,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
-    float gain_mu, omega_rel_limit;
-    int filt_length, fll_bw;
-    fll_bw = 8;
-    if(sps <= 4)
-    {
-        gain_mu = 0.005;
-        omega_rel_limit = 0.001;
-        filt_length = 35;
-        fll_bw = 2;
-    }
-    else if(sps >= 125)
-    {
-        gain_mu = 0.005;
-        omega_rel_limit = 0.001;
-        filt_length = 21;
-        fll_bw = 12;
-    }
-    else
-    {
-        gain_mu = 0.001;
-        omega_rel_limit = 0.001;
-        filt_length = 19;
-    }
 
     _fll = gr::digital::fll_band_edge_cc::make(_samples_per_symbol, 0.35, 32, fll_bw*M_PI/100);
     _shaping_filter = gr::filter::fft_filter_ccf::make(
