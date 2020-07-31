@@ -615,7 +615,7 @@ void RadioController::processInputNetStream()
     {
         return;
     }
-    if((_tx_mode == gr_modem_types::ModemType4FSK100K) && (microsec < 40000000))
+    if((_tx_mode == gr_modem_types::ModemType4FSK100K) && (microsec < 20000000))
     {
         return;
     }
