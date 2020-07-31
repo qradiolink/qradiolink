@@ -651,7 +651,10 @@ std::vector<unsigned char>* gr_modem::frame(unsigned char *encoded_audio, int da
     std::vector<unsigned char> *data = new std::vector<unsigned char>;
     if(frame_type == FrameTypeIP && _burst_ip_modem)
     {
-        for(int i = 0;i < 50;i++)
+        int preamble_size = 50;
+        if(_modem_type_tx == gr_modem_types::ModemType4FSK100K) // hack because of clock sync
+            preamble_size = 150;
+        for(int i = 0;i < preamble_size;i++)
             data->push_back(0xCC);
     }
     if(frame_type == FrameTypeVoice)

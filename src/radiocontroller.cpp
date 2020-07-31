@@ -611,14 +611,11 @@ void RadioController::processInputNetStream()
     }
 
     microsec = (quint64)_data_read_timer->nsecsElapsed();
-    if((_tx_mode == gr_modem_types::ModemTypeQPSK250K) && (microsec < 40000000))
+    if(microsec < 40000000)
     {
         return;
     }
-    if((_tx_mode == gr_modem_types::ModemType4FSK100K) && (microsec < 20000000))
-    {
-        return;
-    }
+
     time_left = time_per_frame - microsec;
     struct timespec time_to_sleep = {0, (long)time_left };
 
