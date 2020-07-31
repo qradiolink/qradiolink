@@ -69,7 +69,7 @@ Features
 - Repeater linking via VOIP and Mumble - a group of repeaters can be linked duplex by sharing the same Mumble channel. This feature is still experimental and WIP.
 - Internal audio mixing of audio from VOIP server and audio from radio
 - USB FTDI (FT232) relay control support (for RF switches, power amplifier and filter control)
-- Full duplex 250 kbit/s IP radio modem with configurable TX/RX offsets
+- Full duplex DQPSK 250 kbit/s and 4FSK 100 kbit/s IP radio modems with configurable TX/RX offsets
 - Automatic carrier tracking and Doppler effect correction for all digital modes except FreeDV modes. The system can track Doppler shifts of 5-10 kHz, depending on mode. It requires a CNR of at least 10-12 dB, more for FSK modes than for PSK modes.
 - Supported hardware: [**Ettus USRP bus devices**](https://ettus.com), [**RTL-SDR**](https://osmocom.org/projects/sdr/wiki/rtl-sdr), [**ADALM-Pluto (PlutoSDR)**](https://www.analog.com/en/design-center/evaluation-hardware-and-software/evaluation-boards-kits/adalm-pluto.html), (supported with SoapySDR and [**SoapyPlutoSDR**](https://github.com/pothosware/SoapyPlutoSDR)), [**LimeSDR-mini**](https://www.crowdsupply.com/lime-micro/limesdr-mini) (partly supported, through SoapySDR), BladeRF, other devices supported by [**gr-osmosdr**](https://osmocom.org/projects/sdr/wiki/GrOsmoSDR) like HackRF and RedPitaya (not tested)
  
@@ -155,7 +155,7 @@ qmake .. INSTALL_PREFIX=/usr/local/bin LIBDIR=/opt/lib INCDIR=/opt/include
 </pre>
 
 Known issues:
-- In low light, the automatic adjustment of ISO in the video camera can cause very long times to capture a frame. The solution is to use plenty of lighting for video. Otherwise the video transmission will experience very frequent interruptions.
+- In low light, the automatic adjustment of ISO in the video camera can cause longer times to capture a video frame. The solution is to use more lighting for video. Otherwise the video transmission will experience some interruptions.
 
 
 Setup and running
@@ -197,7 +197,7 @@ When running in headless mode, console log will be disabled by default with the 
 - In half duplex mode the receiver is muted during transmit and the RX gain is minimized. Do not rely on this feature if using a power amplifier, please use a RF switch (antenna switch) with enough isolation, or introduce attenuators in the relay sequence to avoid destroying the receiver LNA.
 - The transmitter of the device is active at all times if enabled, even when no samples are being output. Although there is no signal being generated, local oscillator leakage may be present and show up on the spectrum display. This is not a problem usually, unless if you keep a power amplifier connected and enabled at all times. You can use the USB relays to disable it in this case when not transmitting.
 - FreeDV modes and PSK modes are very sensitive to amplifier non-linearity. You should not try to use them within a non-linear envelope to avoid signal distortion, splatter or unwanted spectrum components. Digital gain for these modes has been set in such a way to avoid non-linear zone for most devices output stages. If this is not satisfactory, you can use the digital gain setting to increase the digital gain.
-- Receive and transmit gains currently operate as described in the gr-osmosdr manual. At lowest settings, the programmable gain attenuator will be set, following with any IF stages if present and finally any LNA stages if present. This behaviour is desirable since there is no point setting the LNA to a higher value than the PGA if the signal power is already above the P1dB point of the LNA stage. While this behaviour is simple and easy to understand, in the future it may be possible to adjust all gain stages separately.
+- Receive and transmit gains currently operate as described in the gr-osmosdr manual. At lowest settings, the programmable gain attenuator will be set, following with any IF stages if present and finally any LNA stages if present. This behaviour is desirable since there is no point setting the LNA to a higher value than the PGA if the signal power is already above the P1dB point of the LNA stage. Controls for adjusting individual gain stages can also be found on the Settings page.
 - Transmit shift can be positive or negative. After changing the value, you need to press **Enter** to put it into effect. Setting the TX shift is not possible while transmitting a signal. Although the shift is stored as Hertz and you can edit this value in the config, the UI will only allow a value in kHz to be entered (e.g. -7600 kHz standard EU UHF repeater shift). To switch to the reverse repeater frequency, use the **Rev** button.
 - USB relays using FTDI (FT232) chipsets are used to control RF switches, power amplifiers and filter boards. To determine if your USB relay board is supported, look for a similar line in  the output of lsusb:
 <pre>
