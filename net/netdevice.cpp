@@ -25,6 +25,7 @@ NetDevice::NetDevice(Logger *logger, QObject *parent, QString ip_address, int mt
     _if_no = 0;
     _socket = -1;
     _mtu = mtu;
+    if_list();
 }
 
 NetDevice::~NetDevice()
@@ -37,14 +38,14 @@ void NetDevice::deinit()
     close(_fd_tun);
 }
 
-int NetDevice::tun_init()
+int NetDevice::tun_init(QString ip_address)
 {
     if(_socket != -1)
         return 1; // already initialized
-    QString ip_address = _ip_address;
+    _ip_address = ip_address;
     int err;
     struct sockaddr_in addr;
-    QString dev_str = "tunif" + QString::number(_if_no);
+    QString dev_str = "tunif" + _ip_address.back();
     char *dev = const_cast<char*>(dev_str.toStdString().c_str());
     if( (_fd_tun = open("/dev/net/tun", O_RDWR)) < 0 )
     {
@@ -79,7 +80,7 @@ int NetDevice::tun_init()
     _ifr.ifr_addr.sa_family = AF_INET;
 
 
-    char *ip = const_cast<char*>(ip_address.toStdString().c_str());
+    char *ip = const_cast<char*>(_ip_address.toStdString().c_str());
     int ret = inet_pton(AF_INET, ip, _ifr.ifr_addr.sa_data + 2);
     if(ret != 1)
     {

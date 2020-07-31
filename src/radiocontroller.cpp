@@ -1923,7 +1923,7 @@ void RadioController::toggleRxMode(int value)
 
     if((_rx_mode == gr_modem_types::ModemType4FSK100K) ||
         (_rx_mode == gr_modem_types::ModemTypeQPSK250K))
-        _net_device->tun_init();
+        _net_device->tun_init(_settings->ip_address);
     if((_rx_mode == gr_modem_types::ModemType4FSK100K))
         _net_device->set_mtu(580);
     if((_rx_mode == gr_modem_types::ModemTypeQPSK250K))
@@ -2060,7 +2060,7 @@ void RadioController::toggleTxMode(int value)
         _video->deinit();
     if((_tx_mode == gr_modem_types::ModemType4FSK100K) ||
         (_tx_mode == gr_modem_types::ModemTypeQPSK250K))
-        _net_device->tun_init();
+        _net_device->tun_init(_settings->ip_address);
     if((_tx_mode == gr_modem_types::ModemType4FSK100K))
         _net_device->set_mtu(580);
     if((_tx_mode == gr_modem_types::ModemTypeQPSK250K))
