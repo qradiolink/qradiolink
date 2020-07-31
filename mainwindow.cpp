@@ -206,6 +206,8 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     ui->controlsFrame->hide();
     ui->constellationDisplay->hide();
     ui->secondaryTextDisplay->hide();
+    ui->videoFrame->setWindowFlags(Qt::Window | Qt::WindowStaysOnTopHint
+                                   | Qt::WindowCloseButtonHint);
     ui->videoFrame->hide();
     ui->menuBar->hide();
     ui->statusBar->hide();
