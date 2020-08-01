@@ -274,7 +274,7 @@ void Settings::readConfig()
     }
     catch(const libconfig::SettingNotFoundException &nfex)
     {
-        voip_volume = 50;
+        voip_volume = 60;
     }
     try
     {
