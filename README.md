@@ -155,7 +155,8 @@ qmake .. INSTALL_PREFIX=/usr/local/bin LIBDIR=/opt/lib INCDIR=/opt/include
 </pre>
 
 Known issues:
-- In low light, the automatic adjustment of ISO in the video camera can cause longer times to capture a video frame. The solution is to use more lighting for video. Otherwise the video transmission will experience some interruptions.
+- IP modems operating in burst mode experience unacceptably high packet loss due to lost frames.
+- FM CTCSS decoder is not very reliable
 
 
 Setup and running

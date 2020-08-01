@@ -266,7 +266,7 @@ void Settings::readConfig()
     }
     catch(const libconfig::SettingNotFoundException &nfex)
     {
-        tx_volume = 50;
+        tx_volume = 45;
     }
     try
     {
@@ -578,7 +578,7 @@ void Settings::readConfig()
     }
     catch(const libconfig::SettingNotFoundException &nfex)
     {
-        window_width = 1200;
+        window_width = 1280;
     }
     try
     {
