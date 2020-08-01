@@ -210,7 +210,7 @@ void Settings::readConfig()
     }
     catch(const libconfig::SettingNotFoundException &nfex)
     {
-        bb_gain = 1;
+        bb_gain = 5;
     }
     try
     {
@@ -218,7 +218,7 @@ void Settings::readConfig()
     }
     catch(const libconfig::SettingNotFoundException &nfex)
     {
-        if_gain = 100;
+        if_gain = 50;
     }
     try
     {
@@ -522,7 +522,7 @@ void Settings::readConfig()
     }
     catch(const libconfig::SettingNotFoundException &nfex)
     {
-        voip_bitrate = 24600;
+        voip_bitrate = 38400;
     }
     try
     {

@@ -64,6 +64,9 @@ gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(std::vector<int>signature, int sps, int sam
     _squelch = gr::analog::pwr_squelch_cc::make(-140,0.01,0,true);
     _ctcss = gr::analog::ctcss_squelch_ff::make(8000,88.5,0.02,4000,0,true);
     _amplify = gr::blocks::multiply_const_ff::make(2.0);
+    _audio_filter = gr::filter::fft_filter_fff::make(
+                1,gr::filter::firdes::band_pass_2(
+                    1, 8000, 300, 3500, 200, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
     _float_to_short = gr::blocks::float_to_short::make();
 
 
@@ -75,7 +78,8 @@ gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(std::vector<int>signature, int sps, int sam
     connect(_squelch,0,_fm_demod,0);
     connect(_fm_demod,0,_de_emph_filter,0);
     connect(_de_emph_filter,0,_audio_resampler,0);
-    connect(_audio_resampler,0,_amplify,0);
+    connect(_audio_resampler,0,_audio_filter,0);
+    connect(_audio_filter,0,_amplify,0);
     connect(_amplify,0,self(),1);
 
 }
@@ -101,9 +105,9 @@ void gr_demod_nbfm_sdr::set_ctcss(float value)
     if(value == 0)
     {
         try {
-            disconnect(_de_emph_filter,0,_ctcss,0);
-            disconnect(_ctcss,0,_amplify,0);
-            connect(_de_emph_filter,0,_amplify,0);
+            disconnect(_audio_resampler,0,_ctcss,0);
+            disconnect(_ctcss,0,_audio_filter,0);
+            connect(_audio_resampler,0,_audio_filter,0);
         }
         catch(std::invalid_argument &e)
         {
@@ -114,9 +118,9 @@ void gr_demod_nbfm_sdr::set_ctcss(float value)
     {
         _ctcss->set_frequency(value);
         try {
-            disconnect(_de_emph_filter,0,_amplify,0);
-            connect(_de_emph_filter,0,_ctcss,0);
-            connect(_ctcss,0,_amplify,0);
+            disconnect(_audio_resampler,0,_audio_filter,0);
+            connect(_audio_resampler,0,_ctcss,0);
+            connect(_ctcss,0,_audio_filter,0);
         }
         catch(std::invalid_argument &e)
         {
