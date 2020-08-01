@@ -55,7 +55,7 @@ private:
     gr::analog::quadrature_demod_cf::sptr _fm_demod;
     gr::filter::iir_filter_ffd::sptr _de_emph_filter;
     gr::analog::pwr_squelch_cc::sptr _squelch;
-    gr::blocks::multiply_const_ff::sptr _amplify;
+    gr::blocks::multiply_const_ff::sptr _level_control;
     gr::analog::ctcss_squelch_ff::sptr _ctcss;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
     gr::filter::rational_resampler_base_fff::sptr _audio_resampler;
