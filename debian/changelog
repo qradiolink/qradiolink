@@ -1,3 +1,16 @@
+qradiolink (0.8.3-1) RELEASED; urgency=medium
+
+  [ Adrian Musceac ]
+  * Improvements to SSB and FM transceivers
+  * Proper FM pre-emphasis and de-emphasis
+  * Individual RX and TX gain stages can be controlled individually
+  * 4FSK IP modem with 96 kbit/s speed
+  * Some bug fixes, notably video timeout in low light
+
+  
+ -- Adrian Musceac <kantooon@gmail.com>  Sat, 1 Aug 2020 17:00:00 +0300
+
+
 qradiolink (0.8.3-alpha2) UNRELEASED; urgency=medium
 
   [ Adrian Musceac ]
