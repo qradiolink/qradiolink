@@ -19,9 +19,10 @@
 
 #include <gnuradio/hier_block2.h>
 #include <gnuradio/filter/firdes.h>
-#include <gnuradio/analog/agc2_cc.h>
+#include <gnuradio/analog/agc2_ff.h>
 #include <gnuradio/filter/rational_resampler_base_ccf.h>
 #include <gnuradio/filter/iir_filter_ffd.h>
+#include <gnuradio/filter/fft_filter_fff.h>
 #include <gnuradio/filter/rational_resampler_base_fff.h>
 #include <gnuradio/analog/pwr_squelch_cc.h>
 #include <gnuradio/filter/fft_filter_ccc.h>
@@ -50,10 +51,11 @@ private:
     gr::filter::rational_resampler_base_fff::sptr _audio_resampler;
     gr::analog::pwr_squelch_cc::sptr _squelch;
     gr::filter::fft_filter_ccc::sptr _filter;
-    gr::analog::agc2_cc::sptr _agc;
+    gr::analog::agc2_ff::sptr _agc;
     gr::blocks::complex_to_mag::sptr _complex_to_mag;
-    gr::filter::iir_filter_ffd::sptr _audio_filter;
+    gr::filter::iir_filter_ffd::sptr _iir_filter;
     gr::blocks::multiply_const_ff::sptr _audio_gain;
+    gr::filter::fft_filter_fff::sptr _audio_filter;
 
     int _samples_per_symbol;
     int _samp_rate;

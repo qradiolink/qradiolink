@@ -54,14 +54,14 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(std::vector<int>signature, int sps, int samp_
     _squelch = gr::analog::pwr_squelch_cc::make(-140,0.01,0,true);
     _feed_forward_agc = gr::analog::feedforward_agc_cc::make(320,1);
     _agc = gr::analog::agc2_cc::make(1e-2, 1e-4, 0.8, 1);
-    _agc->set_max_gain(0.8);
+    _agc->set_max_gain(0.9);
     _rail = gr::analog::rail_ff::make(-1.0, 1.0);
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::band_pass_2(
                     2, _target_samp_rate, 300, _filter_width, 200, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
     _complex_to_real = gr::blocks::complex_to_real::make();
     _de_emph_filter = gr::filter::iir_filter_ffd::make(_ataps, _btaps, false);
-    _level_control = gr::blocks::multiply_const_ff::make(0.9);
+    _level_control = gr::blocks::multiply_const_ff::make(0.99);
 
 
     connect(self(),0,_resampler,0);

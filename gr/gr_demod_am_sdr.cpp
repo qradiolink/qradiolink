@@ -43,14 +43,15 @@ gr_demod_am_sdr::gr_demod_am_sdr(std::vector<int>signature, int sps, int samp_ra
 
     std::vector<float> taps = gr::filter::firdes::low_pass(50, _samp_rate, _target_samp_rate/2, _target_samp_rate/2,
                                                            gr::filter::firdes::WIN_BLACKMAN_HARRIS);
-    std::vector<float> audio_taps = gr::filter::firdes::low_pass(2, _target_samp_rate, 4000, 1200,
+    std::vector<float> audio_taps = gr::filter::firdes::low_pass(2, _target_samp_rate, 3000, 600,
                                                                  gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1,50,taps);
     _audio_resampler = gr::filter::rational_resampler_base_fff::make(2,5, audio_taps);
     _filter = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
                             1, _target_samp_rate, -_filter_width, _filter_width,1200,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     _squelch = gr::analog::pwr_squelch_cc::make(-140,0.01,0,true);
-    _agc = gr::analog::agc2_cc::make(1e-1, 1e-3, 1, 1);
+    _agc = gr::analog::agc2_ff::make(1e-2, 1e-4, 2.0, 2.0);
+    _agc->set_max_gain(2.0);
     _complex_to_mag = gr::blocks::complex_to_mag::make();
     std::vector<double> fft;
     fft.push_back(1);
@@ -58,20 +59,25 @@ gr_demod_am_sdr::gr_demod_am_sdr(std::vector<int>signature, int sps, int samp_ra
     std::vector<double> ffd;
     ffd.push_back(0);
     ffd.push_back(0.9999);
-    _audio_filter = gr::filter::iir_filter_ffd::make(fft,ffd);
+    _iir_filter = gr::filter::iir_filter_ffd::make(fft,ffd);
     _audio_gain = gr::blocks::multiply_const_ff::make(0.99);
+    _audio_filter = gr::filter::fft_filter_fff::make(
+                1,gr::filter::firdes::band_pass_2(
+                    1, 8000, 300, 3000, 200, 60, gr::filter::firdes::WIN_HAMMING));
+
 
 
     connect(self(),0,_resampler,0);
     connect(_resampler,0,_filter,0);
     connect(_filter,0,self(),0);
     connect(_filter,0,_squelch,0);
-    connect(_squelch,0,_agc,0);
-    connect(_agc,0,_complex_to_mag,0);
-    connect(_complex_to_mag,0,_audio_filter,0);
-    connect(_audio_filter,0,_audio_gain,0);
+    connect(_squelch,0,_complex_to_mag,0);
+    connect(_complex_to_mag,0,_agc,0);
+    connect(_agc,0,_iir_filter,0);
+    connect(_iir_filter,0,_audio_gain,0);
     connect(_audio_gain,0,_audio_resampler,0);
-    connect(_audio_resampler,0,self(),1);
+    connect(_audio_resampler,0,_audio_filter,0);
+    connect(_audio_filter,0,self(),1);
 
 
 }
