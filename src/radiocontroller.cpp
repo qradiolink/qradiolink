@@ -1674,6 +1674,8 @@ void RadioController::toggleTX(bool value)
         try
         {
             _mutex->lock();
+            if(_settings->rx_inited)
+                _modem->stopRX();
             _modem->initTX(_tx_mode, _settings->tx_device_args.toStdString(),
                            _settings->tx_antenna.toStdString(), _settings->tx_freq_corr);
             _mutex->unlock();
@@ -1681,6 +1683,8 @@ void RadioController::toggleTX(bool value)
         catch(std::runtime_error &e)
         {
             _modem->deinitTX(_tx_mode);
+            if(_settings->rx_inited)
+                _modem->startRX(_settings->block_buffer_size);
             _mutex->unlock();
             _logger->log(Logger::LogLevelFatal,
                          "Could not init TX device, check settings and restart");
@@ -1698,6 +1702,8 @@ void RadioController::toggleTX(bool value)
         _modem->tuneTx(433000000);
         _modem->setTxCTCSS(_settings->tx_ctcss);
         _modem->startTX(_settings->block_buffer_size);
+        if(_settings->rx_inited)
+            _modem->startRX(_settings->block_buffer_size);
         _mutex->unlock();
 
         const QMap<std::string,QVector<int>> tx_gains = _modem->getTxGainNames();
