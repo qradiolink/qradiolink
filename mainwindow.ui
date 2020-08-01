@@ -285,7 +285,7 @@ background-color: #1F1D1D;</string>
               <widget class="QLabel" name="videoLabel">
                <property name="geometry">
                 <rect>
-                 <x>40</x>
+                 <x>0</x>
                  <y>0</y>
                  <width>320</width>
                  <height>240</height>

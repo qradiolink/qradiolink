@@ -184,7 +184,7 @@ static void capture_frame(unsigned char *frame, int& len)
 
 	      /* Timeout. */
           tv.tv_sec = 0;
-          tv.tv_usec = 1000;
+          tv.tv_usec = 4000;
 
 	      r = select(fd + 1, &fds, NULL, NULL, &tv);
 
