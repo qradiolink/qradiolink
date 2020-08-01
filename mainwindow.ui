@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1200</width>
+    <width>1280</width>
     <height>721</height>
    </rect>
   </property>
@@ -122,7 +122,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>1200</width>
+            <width>1280</width>
             <height>391</height>
            </rect>
           </property>
@@ -285,7 +285,7 @@ background-color: #1F1D1D;</string>
               <widget class="QLabel" name="videoLabel">
                <property name="geometry">
                 <rect>
-                 <x>0</x>
+                 <x>40</x>
                  <y>0</y>
                  <width>320</width>
                  <height>240</height>
@@ -2468,23 +2468,6 @@ font: 10pt &quot;Sans Serif&quot;;
               <string>Satellite</string>
              </attribute>
             </widget>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="geoTab">
-         <attribute name="title">
-          <string>Geo services</string>
-         </attribute>
-         <layout class="QGridLayout" name="gridLayout_16">
-          <item row="0" column="0">
-           <widget class="QFrame" name="mapFrame">
-            <property name="frameShape">
-             <enum>QFrame::StyledPanel</enum>
-            </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
-            </property>
            </widget>
           </item>
          </layout>
@@ -5185,7 +5168,7 @@ background-color: rgb(150, 150, 150);
           </property>
           <property name="minimumSize">
            <size>
-            <width>20</width>
+            <width>30</width>
             <height>70</height>
            </size>
           </property>
@@ -5227,13 +5210,13 @@ background-color: rgb(150, 150, 150);
           </property>
           <property name="minimumSize">
            <size>
-            <width>30</width>
+            <width>48</width>
             <height>70</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>30</width>
+            <width>48</width>
             <height>70</height>
            </size>
           </property>
@@ -5248,13 +5231,13 @@ background-color: rgb(150, 150, 150);
           </property>
           <property name="icon">
            <iconset resource="resources.qrc">
-            <normaloff>:/res/arrow-up.png</normaloff>
-            <normalon>:/res/arrow-up-red.png</normalon>:/res/arrow-up.png</iconset>
+            <normaloff>:/res/constellation_icon.png</normaloff>
+            <normalon>:/res/constellation_icon_enabled.png</normalon>:/res/constellation_icon.png</iconset>
           </property>
           <property name="iconSize">
            <size>
-            <width>24</width>
-            <height>24</height>
+            <width>32</width>
+            <height>32</height>
            </size>
           </property>
           <property name="checkable">
@@ -5864,7 +5847,7 @@ font: 12pt &quot;Sans Serif&quot;;</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1200</width>
+     <width>1280</width>
      <height>30</height>
     </rect>
    </property>
