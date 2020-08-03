@@ -980,8 +980,8 @@ void CommandProcessor::buildCommandList()
     /// action commands
     _command_list->append(new command("setrx", 1, "Start/stop receiver, 1 enabled, 0 disabled"));
     _command_list->append(new command("settx", 1, "Start/stop transmitter, 1 enabled, 0 disabled"));
-    _command_list->append(new command("setrxmode", 1, "Set RX mode (string mode)"));
-    _command_list->append(new command("settxmode", 1, "Set TX mode (string mode)"));
+    _command_list->append(new command("setrxmode", 1, "Set RX mode (integer number, see list_modes)"));
+    _command_list->append(new command("settxmode", 1, "Set TX mode (integer number, see list_modes)"));
     _command_list->append(new command("setrxctcss", 1, "Set RX CTCSS (floating point number, 0.0 to 200.0)"));
     _command_list->append(new command("settxctcss", 1, "Set TX CTCSS (floating point number, 0.0 to 200.0)"));
     _command_list->append(new command("setsquelch", 1, "Set squelch (integer number, -150 to 10)"));
