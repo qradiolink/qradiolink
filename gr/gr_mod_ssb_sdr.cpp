@@ -36,7 +36,7 @@ gr_mod_ssb_sdr::gr_mod_ssb_sdr(int sps, int samp_rate, int carrier_freq,
     float target_samp_rate = 8000.0;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
-    gr::calculate_preemph_taps(8000, 59e-6, _ataps, _btaps);
+    gr::calculate_preemph_taps(8000, 65e-6, _ataps, _btaps);
 
     _agc = gr::analog::agc2_ff::make(1, 1e-4, 0.5, 1);
     _agc->set_max_gain(0.5);

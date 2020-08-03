@@ -40,7 +40,7 @@ gr_demod_wbfm_sdr::gr_demod_wbfm_sdr(std::vector<int>signature, int sps, int sam
     _samp_rate = samp_rate;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
-    gr::calculate_deemph_taps(8000, 41e-6, _ataps, _btaps);
+    gr::calculate_deemph_taps(8000, 50e-6, _ataps, _btaps);
 
     _de_emph_filter = gr::filter::iir_filter_ffd::make(_ataps, _btaps, false);
 

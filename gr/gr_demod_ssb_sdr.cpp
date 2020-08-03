@@ -39,7 +39,7 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(std::vector<int>signature, int sps, int samp_
     _sps = sps;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
-    gr::calculate_deemph_taps(8000, 59e-6, _ataps, _btaps);
+    gr::calculate_deemph_taps(8000, 65e-6, _ataps, _btaps);
 
     std::vector<float> taps = gr::filter::firdes::low_pass(_sps, _samp_rate, _target_samp_rate/2,
                             _target_samp_rate/2, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
