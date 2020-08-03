@@ -379,7 +379,7 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
     case 20:
     {
         int set = param1.toInt();
-        if(set < 0 || set > _mode_list->size())
+        if(set < 0 || set >= _mode_list->size())
         {
             response = "Operating mode not found";
             success = false;
@@ -394,7 +394,7 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
     case 21:
     {
         int set = param1.toInt();
-        if(set < 0 || set > _mode_list->size())
+        if(set < 0 || set >= _mode_list->size())
         {
             response = "Operating mode not found";
             success = false;
