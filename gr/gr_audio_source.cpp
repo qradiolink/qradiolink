@@ -65,7 +65,7 @@ int gr_audio_source::work(int noutput_items,
     if(_finished)
     {
         guard.unlock();
-        struct timespec time_to_sleep = {0, 35000000L };
+        struct timespec time_to_sleep = {0, 5000000L };
         nanosleep(&time_to_sleep, NULL);
         _finished = false;
         return 0;
