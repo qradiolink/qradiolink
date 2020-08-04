@@ -58,7 +58,6 @@ void VideoEncoder::encode_jpeg(unsigned char *videobuffer, unsigned long &encode
 {
     int len;
     unsigned char *frame = new unsigned char[230400];
-    QDateTime dateTime1 = QDateTime::currentDateTime();
     capture_frame(frame, len);
     if(len < 1)
     {
@@ -66,9 +65,6 @@ void VideoEncoder::encode_jpeg(unsigned char *videobuffer, unsigned long &encode
         encoded_size = 0;
         return;
     }
-    QDateTime dateTime2 = QDateTime::currentDateTime();
-    qint64 milliseconds = dateTime1.msecsTo(dateTime2);
-    Q_UNUSED(milliseconds);
 
     unsigned char *input = frame;
     struct jpeg_compress_struct cinfo;

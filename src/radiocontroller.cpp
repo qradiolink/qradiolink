@@ -601,7 +601,7 @@ void RadioController::processInputNetStream()
     {
         max_frame_size = 1516;
         read_size = 1500;
-        time_per_frame = 48400000;
+        time_per_frame = 48000000;
     }
     if(_tx_mode == gr_modem_types::ModemType4FSK100K)
     {
