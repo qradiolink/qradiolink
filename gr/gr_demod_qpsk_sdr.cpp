@@ -155,7 +155,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
     else
     {
         connect(_resampler,0,_shaping_filter,0);
-        _agc->set_max_gain(1);
+        _agc->set_max_gain(10);
     }
     connect(_shaping_filter,0,self(),0);
     connect(_shaping_filter,0,_agc,0);
