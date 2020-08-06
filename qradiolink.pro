@@ -76,10 +76,10 @@ SOURCES += main.cpp\
         ext/snd.c \
         ext/mem.c \
         net/netdevice.cpp \
+        src/layer1framing.cpp \
+        src/limits.cpp \
     qtgui/freqctrl.cpp \
     qtgui/plotter.cpp \
-    gr/gr_vector_source.cpp \
-    gr/gr_vector_sink.cpp \
     gr/gr_demod_bpsk_sdr.cpp \
     gr/gr_mod_bpsk_sdr.cpp \
     gr/gr_mod_qpsk_sdr.cpp \
@@ -105,9 +105,9 @@ SOURCES += main.cpp\
     gr/gr_4fsk_discriminator.cpp \
     gr/gr_const_sink.cpp \
     gr/rx_fft.cpp \
-    src/layer1framing.cpp \
-    src/limits.cpp \
-    gr/emphasis.cpp
+    gr/emphasis.cpp \
+    gr/gr_byte_source.cpp \
+    gr/gr_bit_sink.cpp
 
 
 
@@ -145,10 +145,10 @@ HEADERS  += mainwindow.h\
         ext/compressor.h \
         net/netdevice.h \
         src/radiocontroller.h \
+        src/layer1framing.h \
+        src/limits.h \
     qtgui/freqctrl.h \
     qtgui/plotter.h \
-    gr/gr_vector_source.h \
-    gr/gr_vector_sink.h \
     gr/gr_demod_bpsk_sdr.h \
     gr/gr_mod_bpsk_sdr.h \
     gr/gr_mod_qpsk_sdr.h \
@@ -174,9 +174,9 @@ HEADERS  += mainwindow.h\
     gr/gr_audio_sink.h \
     gr/gr_4fsk_discriminator.h \
     gr/gr_const_sink.h \
-    src/layer1framing.h \
-    src/limits.h \
-    gr/emphasis.h
+    gr/emphasis.h \
+    gr/gr_byte_source.h \
+    gr/gr_bit_sink.h
 
 
 

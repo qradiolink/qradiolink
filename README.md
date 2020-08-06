@@ -155,7 +155,7 @@ qmake .. INSTALL_PREFIX=/usr/local/bin LIBDIR=/opt/lib INCDIR=/opt/include
 </pre>
 
 Known issues:
-- IP modems operating in burst mode experience unacceptably high packet loss due to lost frames.
+- IP modems operating in burst mode experience some packet loss due to lost frames.
 - FM CTCSS decoder is not very reliable
 
 

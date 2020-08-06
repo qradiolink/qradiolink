@@ -51,6 +51,7 @@ int gr_audio_source::set_data(std::vector<float> *data)
 
     gr::thread::scoped_lock guard(_mutex);
     _data->insert(_data->end(),data->begin(),data->end());
+    data->clear();
     delete data;
     _finished = false;
     return 0;

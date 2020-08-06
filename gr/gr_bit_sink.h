@@ -15,24 +15,24 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-#ifndef GR_VECTOR_SINK_H
-#define GR_VECTOR_SINK_H
+#ifndef GR_BIT_SINK_H
+#define GR_BIT_SINK_H
 
 #include <gnuradio/sync_block.h>
 #include <gnuradio/sync_interpolator.h>
 #include <gnuradio/io_signature.h>
 #include <stdio.h>
 
-class gr_vector_sink;
-typedef boost::shared_ptr<gr_vector_sink> gr_vector_sink_sptr;
+class gr_bit_sink;
+typedef boost::shared_ptr<gr_bit_sink> gr_bit_sink_sptr;
 
-gr_vector_sink_sptr make_gr_vector_sink();
+gr_bit_sink_sptr make_gr_bit_sink();
 
-class gr_vector_sink : public gr::sync_block
+class gr_bit_sink : public gr::sync_block
 {
 public:
-    gr_vector_sink();
-    ~gr_vector_sink();
+    gr_bit_sink();
+    ~gr_bit_sink();
     int work(int noutput_items,
            gr_vector_const_void_star &input_items,
            gr_vector_void_star &output_items);
@@ -49,4 +49,4 @@ private:
     boost::mutex _boost_mutex;
 };
 
-#endif // GR_VECTOR_SINK_H
+#endif // GR_BIT_SINK_H

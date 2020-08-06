@@ -31,7 +31,7 @@
 #include <gnuradio/blocks/copy.h>
 #include <osmosdr/sink.h>
 #include "src/modem_types.h"
-#include "gr_vector_source.h"
+#include "gr_byte_source.h"
 #include "gr_audio_source.h"
 #include "gr_mod_2fsk_sdr.h"
 #include "gr_mod_4fsk_sdr.h"
@@ -67,7 +67,7 @@ public slots:
 
 private:
     gr::top_block_sptr _top_block;
-    gr_vector_source_sptr _vector_source;
+    gr_byte_source_sptr _byte_source;
     gr_audio_source_sptr _audio_source;
     osmosdr::sink::sptr _osmosdr_sink;
     gr::blocks::rotator_cc::sptr _rotator;
