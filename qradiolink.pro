@@ -107,7 +107,8 @@ SOURCES += main.cpp\
     gr/rx_fft.cpp \
     gr/emphasis.cpp \
     gr/gr_byte_source.cpp \
-    gr/gr_bit_sink.cpp
+    gr/gr_bit_sink.cpp \
+    gr/gr_sample_sink.cpp
 
 
 
@@ -176,7 +177,8 @@ HEADERS  += mainwindow.h\
     gr/gr_const_sink.h \
     gr/emphasis.h \
     gr/gr_byte_source.h \
-    gr/gr_bit_sink.h
+    gr/gr_bit_sink.h \
+    gr/gr_sample_sink.h
 
 
 
