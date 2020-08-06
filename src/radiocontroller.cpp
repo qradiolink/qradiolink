@@ -1451,8 +1451,12 @@ void RadioController::textData(QString text, bool repeat)
     _repeat_text = repeat;
     _text_out = text;
     _process_text = true;
-    //_proto_out = _radio_protocol->buildPageMessage(_callsign, text, false, _callsign);
-    //_process_data = true;
+}
+
+void RadioController::pageUser(QString user, QString message)
+{
+    _proto_out = _layer2->buildPageMessage(_callsign, user, message, false, _callsign);
+    _process_data = true;
 }
 
 void RadioController::textMumble(QString text, bool channel)

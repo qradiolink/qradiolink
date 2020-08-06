@@ -48,7 +48,7 @@ public:
     void setStations(QVector<Station*> list);
     void setChannels(ChannelList channels);
     QByteArray buildRadioMessage(QByteArray data, int msg_type);
-    QByteArray buildPageMessage(QString calling_callsign, QString called_callsign,
+    QByteArray buildPageMessage(QString calling_callsign, QString called_callsign, QString message,
                                 bool retransmit=false, QString via_node="");
 
 signals:

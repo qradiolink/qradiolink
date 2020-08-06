@@ -191,6 +191,7 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     QObject::connect(ui->removeChannelButton,SIGNAL(clicked()), this, SLOT(removeMemoryChannel()));
     QObject::connect(ui->memoriesTableWidget,SIGNAL(itemChanged(QTableWidgetItem*)),
                      this,SLOT(editMemoryChannel(QTableWidgetItem*)));
+    QObject::connect(ui->pageUserButton,SIGNAL(clicked()), this, SLOT(pageUserRequested()));
 
     QObject::connect(&_secondary_text_timer,SIGNAL(timeout()),ui->secondaryTextDisplay,SLOT(hide()));
     QObject::connect(&_video_timer,SIGNAL(timeout()),ui->videoFrame,SLOT(hide()));
@@ -1862,4 +1863,12 @@ void MainWindow::updateBlockBufferSize(int value)
 {
     Q_UNUSED(value);
     emit setBlockBufferSize(ui->blockBufferSizeComboBox->currentText().toInt());
+}
+
+void MainWindow::pageUserRequested()
+{
+    QString user = ui->pagedUserEdit->text();
+    QString msg = ui->sendTextEdit->toPlainText();
+    if(user.size() > 0)
+        emit pageUser(user, msg);
 }

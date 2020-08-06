@@ -186,6 +186,7 @@ public slots:
     void setRadioToT(int value);
     void setTotTxEnd(bool value);
     void setTxLimits(bool value);
+    void pageUser(QString user, QString message);
 
 private:
     unsigned int getFrameLength(unsigned char *data);
