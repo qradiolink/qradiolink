@@ -96,7 +96,7 @@
 </string>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>2</number>
         </property>
         <property name="iconSize">
          <size>
@@ -2459,7 +2459,11 @@ font: 10pt &quot;Sans Serif&quot;;
                    </property>
                    <layout class="QHBoxLayout" name="horizontalLayout_10">
                     <item>
-                     <widget class="QLineEdit" name="pagedUserEdit"/>
+                     <widget class="QLineEdit" name="pagedUserEdit">
+                      <property name="placeholderText">
+                       <string>Target callsign</string>
+                      </property>
+                     </widget>
                     </item>
                     <item>
                      <spacer name="horizontalSpacer_19">
@@ -2569,23 +2573,6 @@ font: 10pt &quot;Sans Serif&quot;;
                   </spacer>
                  </item>
                 </layout>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-            <widget class="QWidget" name="tab_5">
-             <attribute name="title">
-              <string>Type 2 messages</string>
-             </attribute>
-             <layout class="QGridLayout" name="gridLayout_15">
-              <item row="0" column="0">
-               <widget class="QFrame" name="frame_12">
-                <property name="frameShape">
-                 <enum>QFrame::StyledPanel</enum>
-                </property>
-                <property name="frameShadow">
-                 <enum>QFrame::Raised</enum>
-                </property>
                </widget>
               </item>
              </layout>

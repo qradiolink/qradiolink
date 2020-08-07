@@ -1398,6 +1398,7 @@ void RadioController::receiveNetData(unsigned char *data, int size)
 void RadioController::protoReceived(QByteArray data)
 {
     _incoming_proto_buffer.append(data);
+    dataFrameReceived();
 }
 
 /// signal from Mumble
