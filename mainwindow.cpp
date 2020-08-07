@@ -301,7 +301,7 @@ void MainWindow::setTheme(bool value)
                 "QWidget#memoryControlsFrame {background: none}"
                 "QWidget#memoriesFrame {background: none}"
                 "QWidget#memoriesTableWidget {background: none}"
-                "QWidget {background-color:#2a2a2a; color:#ffffd3}"
+                "QWidget, QLabel, QTabWidget, QFrame {background-color:#2a2a2a; color:#ffffd3}"
                 "QPushButton {background-color:#555555; color:#ffffd3;"
                     "border:1px solid #444444;border-style:outset;"
                     "border-radius: 3px;}"
@@ -322,6 +322,7 @@ void MainWindow::setTheme(bool value)
     else
     {
         setStyleSheet(
+                "QWidget, QLabel, QTabWidget, QFrame {background-color:#cccccc; color:#000000}"
                 "QPushButton:hover {background-color:#005a84; color:#ffffd3}"
                 "QCheckBox:hover {background-color:#fcfcfc; color:#0e0e00}"
                 "QCheckBox:checked {color:#585800}"
