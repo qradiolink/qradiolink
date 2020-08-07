@@ -52,6 +52,7 @@ public:
                                 bool retransmit=false, QString via_node="");
 
 signals:
+    void havePageMessage(QString calling_user, QString called_user, QString page_message);
 
 public slots:
     void processRadioMessage(QByteArray data);

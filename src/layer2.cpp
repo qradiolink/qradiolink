@@ -148,11 +148,9 @@ void Layer2Protocol::processPageMessage(QByteArray message)
 {
     QRadioLink::PageMessage page;
     page.ParseFromArray(message.data(), message.size());
-    _logger->log(Logger::LogLevelDebug, QString("Paging message from %1 to %2, text: %3 via %4").arg(
-                     QString::fromStdString(page.calling_user())).arg(
-                     QString::fromStdString(page.called_user())).arg(
-                     QString::fromStdString(page.msg())).arg(
-                     QString::fromStdString(page.via_node())));
+    emit havePageMessage(QString::fromStdString(page.calling_user()),
+                        QString::fromStdString(page.called_user()),
+                        QString::fromStdString(page.msg()));
 }
 
 

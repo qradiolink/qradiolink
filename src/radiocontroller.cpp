@@ -135,6 +135,9 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     QObject::connect(_modem,SIGNAL(netData(unsigned char*,int)),this,
                      SLOT(receiveNetData(unsigned char*,int)));
 
+    QObject::connect(_layer2,SIGNAL(havePageMessage(QString,QString,QString)),this,
+                     SLOT(receivedPageMessage(QString,QString,QString)));
+
     //QObject::connect(_camera,SIGNAL(imageCaptured(unsigned char*,int)),this,
     //                 SLOT(processVideoFrame(unsigned char*,int)));
 
@@ -1486,6 +1489,36 @@ void RadioController::textReceived(QString text)
         _incoming_text_buffer = "";
     }
     emit printText(text, false);
+}
+
+void RadioController::receivedPageMessage(QString calling_user,
+                                          QString called_user, QString page_message)
+{
+    _logger->log(Logger::LogLevelDebug, QString("Paging message from %1 to %2, text: %3").arg(
+                     calling_user).arg(called_user).arg(page_message));
+
+    if(QString::compare(called_user, _callsign.trimmed(), Qt::CaseInsensitive)  == 0)
+    {
+        emit newPageMessage(calling_user, page_message);
+        QString filename = ":/res/BeepBeep.raw";
+        QFile resfile(filename);
+        resfile.open(QIODevice::ReadOnly);
+        QByteArray *sound = new QByteArray(resfile.readAll());
+
+        short* origin = (short*) sound->data();
+        int size = sound->size();
+
+        short *samples = new short[size/sizeof(short)];
+        for(unsigned int i=0;i<size/sizeof(short);i++)
+        {
+            samples[i] = short(origin[i] / 2);
+        }
+        emit writePCM(samples, size, false, AudioProcessor::AUDIO_MODE_ANALOG);
+        short *silence = new short[4096/sizeof(short)];
+        memset(silence, 0, 4096);
+        emit writePCM(silence, 4096, false, AudioProcessor::AUDIO_MODE_ANALOG);
+        delete sound;
+    }
 }
 
 /// GUI only
