@@ -166,6 +166,7 @@ public slots:
     void setRxStageGain(int value);
     void setTxStageGain(int value);
     void pageUserRequested();
+    void displayPageMessage(QString page_user, QString page_message);
 
 signals:
     void terminateConnections();

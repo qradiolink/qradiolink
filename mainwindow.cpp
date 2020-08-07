@@ -1872,3 +1872,9 @@ void MainWindow::pageUserRequested()
     if(user.size() > 0)
         emit pageUser(user, msg);
 }
+
+void MainWindow::displayPageMessage(QString page_user, QString page_message)
+{
+    ui->pagedByLabel->setText(QString("Paged by: <strong>%1</strong>").arg(page_user));
+    ui->pageMessageLabel->setText(page_message);
+}

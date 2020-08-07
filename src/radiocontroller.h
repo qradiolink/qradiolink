@@ -102,6 +102,7 @@ signals:
     void newMumbleMessage(QString text);
     void tuneToMemoryChannel(radiochannel *chan);
     void recordAudio(bool value);
+    void newPageMessage(QString paged_by, QString message);
 
 
 public slots:
