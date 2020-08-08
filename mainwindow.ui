@@ -2427,7 +2427,7 @@ font: 10pt &quot;Sans Serif&quot;;
           <item row="0" column="1">
            <widget class="QTabWidget" name="tabWidget_2">
             <property name="currentIndex">
-             <number>1</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="tab_4">
              <attribute name="title">
