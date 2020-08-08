@@ -15,15 +15,15 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-#include "gr_vector_sink.h"
+#include "gr_bit_sink.h"
 
-gr_vector_sink_sptr
-make_gr_vector_sink ()
+gr_bit_sink_sptr
+make_gr_bit_sink ()
 {
-    return gnuradio::get_initial_sptr(new gr_vector_sink);
+    return gnuradio::get_initial_sptr(new gr_bit_sink);
 }
 
-gr_vector_sink::gr_vector_sink() :
+gr_bit_sink::gr_bit_sink() :
         gr::sync_block("gr_vector_sink",
                        gr::io_signature::make (1, 1, sizeof (unsigned char)),
                        gr::io_signature::make (0, 0, 0))
@@ -34,18 +34,18 @@ gr_vector_sink::gr_vector_sink() :
 
 }
 
-gr_vector_sink::~gr_vector_sink()
+gr_bit_sink::~gr_bit_sink()
 {
     delete _data;
 }
 
-void gr_vector_sink::flush()
+void gr_bit_sink::flush()
 {
     gr::thread::scoped_lock guard(_mutex);
     _data->clear();
 }
 
-std::vector<unsigned char> * gr_vector_sink::get_data()
+std::vector<unsigned char> * gr_bit_sink::get_data()
 {
     gr::thread::scoped_lock guard(_mutex);
     std::vector<unsigned char>* data = new std::vector<unsigned char>;
@@ -61,7 +61,7 @@ std::vector<unsigned char> * gr_vector_sink::get_data()
     return data;
 }
 
-int gr_vector_sink::work(int noutput_items,
+int gr_bit_sink::work(int noutput_items,
        gr_vector_const_void_star &input_items,
        gr_vector_void_star &output_items)
 {

@@ -75,13 +75,14 @@ QByteArray Layer2Protocol::buildRadioMessage(QByteArray data, int msg_type)
     return message;
 }
 
-QByteArray Layer2Protocol::buildPageMessage(QString calling_callsign, QString called_callsign,
+QByteArray Layer2Protocol::buildPageMessage(QString calling_callsign, QString called_callsign, QString message,
                                            bool retransmit, QString via_node)
 {
 
     QRadioLink::PageMessage *p = new QRadioLink::PageMessage;
     p->set_calling_user(calling_callsign.toStdString());
     p->set_called_user(called_callsign.toStdString());
+    p->set_msg(message.toStdString());
     p->set_retransmit(retransmit);
     p->set_via_node(via_node.toStdString());
     int size = p->ByteSize();
@@ -147,10 +148,9 @@ void Layer2Protocol::processPageMessage(QByteArray message)
 {
     QRadioLink::PageMessage page;
     page.ParseFromArray(message.data(), message.size());
-    _logger->log(Logger::LogLevelDebug, QString("Paging message from %1 to %2 via %3").arg(
-                     QString::fromStdString(page.calling_user())).arg(
-                     QString::fromStdString(page.called_user())).arg(
-                     QString::fromStdString(page.via_node())));
+    emit havePageMessage(QString::fromStdString(page.calling_user()),
+                        QString::fromStdString(page.called_user()),
+                        QString::fromStdString(page.msg()));
 }
 
 

@@ -24,7 +24,7 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
     _top_block = gr::make_top_block("modulator");
     _freq_correction = freq_corr;
     _mode = 9999;
-    _vector_source = make_gr_vector_source();
+    _byte_source = make_gr_byte_source();
     _audio_source = make_gr_audio_source();
 
     _carrier_offset = 0;
@@ -125,57 +125,57 @@ void gr_mod_base::set_mode(int mode)
 {
     _top_block->lock();
     _audio_source->flush();
-    _vector_source->flush();
+    _byte_source->flush();
 
     switch(_mode)
     {
     case gr_modem_types::ModemType2FSK2KFM:
-        _top_block->disconnect(_vector_source,0,_2fsk_2k_fm,0);
+        _top_block->disconnect(_byte_source,0,_2fsk_2k_fm,0);
         _top_block->disconnect(_2fsk_2k_fm,0,_rotator,0);
         _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemType2FSK1KFM:
-        _top_block->disconnect(_vector_source,0,_2fsk_1k_fm,0);
+        _top_block->disconnect(_byte_source,0,_2fsk_1k_fm,0);
         _top_block->disconnect(_2fsk_1k_fm,0,_rotator,0);
         _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemType2FSK2K:
-        _top_block->disconnect(_vector_source,0,_2fsk_2k,0);
+        _top_block->disconnect(_byte_source,0,_2fsk_2k,0);
         _top_block->disconnect(_2fsk_2k,0,_rotator,0);
         _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemType2FSK1K:
-        _top_block->disconnect(_vector_source,0,_2fsk_1k,0);
+        _top_block->disconnect(_byte_source,0,_2fsk_1k,0);
         _top_block->disconnect(_2fsk_1k,0,_rotator,0);
         _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemType2FSK20K:
-        _top_block->disconnect(_vector_source,0,_2fsk_10k,0);
+        _top_block->disconnect(_byte_source,0,_2fsk_10k,0);
         _top_block->disconnect(_2fsk_10k,0,_rotator,0);
         _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemType4FSK2K:
-        _top_block->disconnect(_vector_source,0,_4fsk_2k,0);
+        _top_block->disconnect(_byte_source,0,_4fsk_2k,0);
         _top_block->disconnect(_4fsk_2k,0,_rotator,0);
         _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemType4FSK20K:
-        _top_block->disconnect(_vector_source,0,_4fsk_10k,0);
+        _top_block->disconnect(_byte_source,0,_4fsk_10k,0);
         _top_block->disconnect(_4fsk_10k,0,_rotator,0);
         _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemType4FSK2KFM:
-        _top_block->disconnect(_vector_source,0,_4fsk_2k_fm,0);
+        _top_block->disconnect(_byte_source,0,_4fsk_2k_fm,0);
         _top_block->disconnect(_4fsk_2k_fm,0,_rotator,0);
         _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemType4FSK1KFM:
-        _top_block->disconnect(_vector_source,0,_4fsk_1k_fm,0);
+        _top_block->disconnect(_byte_source,0,_4fsk_1k_fm,0);
         _top_block->disconnect(_4fsk_1k_fm,0,_rotator,0);
         _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemType4FSK20KFM:
-        _top_block->disconnect(_vector_source,0,_4fsk_10k_fm,0);
+        _top_block->disconnect(_byte_source,0,_4fsk_10k_fm,0);
         _top_block->disconnect(_4fsk_10k_fm,0,_rotator,0);
         _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
@@ -185,12 +185,12 @@ void gr_mod_base::set_mode(int mode)
         _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeBPSK1K:
-        _top_block->disconnect(_vector_source,0,_bpsk_1k,0);
+        _top_block->disconnect(_byte_source,0,_bpsk_1k,0);
         _top_block->disconnect(_bpsk_1k,0,_rotator,0);
         _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeBPSK2K:
-        _top_block->disconnect(_vector_source,0,_bpsk_2k,0);
+        _top_block->disconnect(_byte_source,0,_bpsk_2k,0);
         _top_block->disconnect(_bpsk_2k,0,_rotator,0);
         _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
@@ -205,31 +205,31 @@ void gr_mod_base::set_mode(int mode)
         _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeQPSK2K:
-        _top_block->disconnect(_vector_source,0,_qpsk_2k,0);
+        _top_block->disconnect(_byte_source,0,_qpsk_2k,0);
         _top_block->disconnect(_qpsk_2k,0,_rotator,0);
         _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeQPSK20K:
-        _top_block->disconnect(_vector_source,0,_qpsk_10k,0);
+        _top_block->disconnect(_byte_source,0,_qpsk_10k,0);
         _top_block->disconnect(_qpsk_10k,0,_rotator,0);
         _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeQPSK250K:
         _carrier_offset = 0;
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
-        _top_block->disconnect(_vector_source,0,_qpsk_250k,0);
+        _top_block->disconnect(_byte_source,0,_qpsk_250k,0);
         _top_block->disconnect(_qpsk_250k,0,_rotator,0);
         _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemType4FSK100K:
         _carrier_offset = 0;
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
-        _top_block->disconnect(_vector_source,0,_4fsk_96k,0);
+        _top_block->disconnect(_byte_source,0,_4fsk_96k,0);
         _top_block->disconnect(_4fsk_96k,0,_rotator,0);
         _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeQPSKVideo:
-        _top_block->disconnect(_vector_source,0,_qpsk_video,0);
+        _top_block->disconnect(_byte_source,0,_qpsk_video,0);
         _top_block->disconnect(_qpsk_video,0,_rotator,0);
         _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
@@ -289,7 +289,7 @@ void gr_mod_base::set_mode(int mode)
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
         _osmosdr_sink->set_sample_rate(1000000);
-        _top_block->connect(_vector_source,0,_2fsk_2k_fm,0);
+        _top_block->connect(_byte_source,0,_2fsk_2k_fm,0);
         _top_block->connect(_2fsk_2k_fm,0,_rotator,0);
         _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
@@ -298,7 +298,7 @@ void gr_mod_base::set_mode(int mode)
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
         _osmosdr_sink->set_sample_rate(1000000);
-        _top_block->connect(_vector_source,0,_2fsk_1k_fm,0);
+        _top_block->connect(_byte_source,0,_2fsk_1k_fm,0);
         _top_block->connect(_2fsk_1k_fm,0,_rotator,0);
         _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
@@ -307,7 +307,7 @@ void gr_mod_base::set_mode(int mode)
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
         _osmosdr_sink->set_sample_rate(1000000);
-        _top_block->connect(_vector_source,0,_2fsk_2k,0);
+        _top_block->connect(_byte_source,0,_2fsk_2k,0);
         _top_block->connect(_2fsk_2k,0,_rotator,0);
         _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
@@ -316,7 +316,7 @@ void gr_mod_base::set_mode(int mode)
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
         _osmosdr_sink->set_sample_rate(1000000);
-        _top_block->connect(_vector_source,0,_2fsk_1k,0);
+        _top_block->connect(_byte_source,0,_2fsk_1k,0);
         _top_block->connect(_2fsk_1k,0,_rotator,0);
         _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
@@ -325,7 +325,7 @@ void gr_mod_base::set_mode(int mode)
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
         _osmosdr_sink->set_sample_rate(1000000);
-        _top_block->connect(_vector_source,0,_2fsk_10k,0);
+        _top_block->connect(_byte_source,0,_2fsk_10k,0);
         _top_block->connect(_2fsk_10k,0,_rotator,0);
         _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
@@ -334,7 +334,7 @@ void gr_mod_base::set_mode(int mode)
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
         _osmosdr_sink->set_sample_rate(1000000);
-        _top_block->connect(_vector_source,0,_4fsk_2k,0);
+        _top_block->connect(_byte_source,0,_4fsk_2k,0);
         _top_block->connect(_4fsk_2k,0,_rotator,0);
         _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
@@ -343,7 +343,7 @@ void gr_mod_base::set_mode(int mode)
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
         _osmosdr_sink->set_sample_rate(1000000);
-        _top_block->connect(_vector_source,0,_4fsk_10k,0);
+        _top_block->connect(_byte_source,0,_4fsk_10k,0);
         _top_block->connect(_4fsk_10k,0,_rotator,0);
         _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
@@ -352,7 +352,7 @@ void gr_mod_base::set_mode(int mode)
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
         _osmosdr_sink->set_sample_rate(1000000);
-        _top_block->connect(_vector_source,0,_4fsk_2k_fm,0);
+        _top_block->connect(_byte_source,0,_4fsk_2k_fm,0);
         _top_block->connect(_4fsk_2k_fm,0,_rotator,0);
         _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
@@ -361,7 +361,7 @@ void gr_mod_base::set_mode(int mode)
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
         _osmosdr_sink->set_sample_rate(1000000);
-        _top_block->connect(_vector_source,0,_4fsk_1k_fm,0);
+        _top_block->connect(_byte_source,0,_4fsk_1k_fm,0);
         _top_block->connect(_4fsk_1k_fm,0,_rotator,0);
         _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
@@ -370,7 +370,7 @@ void gr_mod_base::set_mode(int mode)
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
         _osmosdr_sink->set_sample_rate(1000000);
-        _top_block->connect(_vector_source,0,_4fsk_10k_fm,0);
+        _top_block->connect(_byte_source,0,_4fsk_10k_fm,0);
         _top_block->connect(_4fsk_10k_fm,0,_rotator,0);
         _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
@@ -388,7 +388,7 @@ void gr_mod_base::set_mode(int mode)
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
         _osmosdr_sink->set_sample_rate(1000000);
-        _top_block->connect(_vector_source,0,_bpsk_1k,0);
+        _top_block->connect(_byte_source,0,_bpsk_1k,0);
         _top_block->connect(_bpsk_1k,0,_rotator,0);
         _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
@@ -397,7 +397,7 @@ void gr_mod_base::set_mode(int mode)
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
         _osmosdr_sink->set_sample_rate(1000000);
-        _top_block->connect(_vector_source,0,_bpsk_2k,0);
+        _top_block->connect(_byte_source,0,_bpsk_2k,0);
         _top_block->connect(_bpsk_2k,0,_rotator,0);
         _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
@@ -424,7 +424,7 @@ void gr_mod_base::set_mode(int mode)
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
         _osmosdr_sink->set_sample_rate(1000000);
-        _top_block->connect(_vector_source,0,_qpsk_2k,0);
+        _top_block->connect(_byte_source,0,_qpsk_2k,0);
         _top_block->connect(_qpsk_2k,0,_rotator,0);
         _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
@@ -433,7 +433,7 @@ void gr_mod_base::set_mode(int mode)
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
         _osmosdr_sink->set_sample_rate(1000000);
-        _top_block->connect(_vector_source,0,_qpsk_10k,0);
+        _top_block->connect(_byte_source,0,_qpsk_10k,0);
         _top_block->connect(_qpsk_10k,0,_rotator,0);
         _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
@@ -442,7 +442,7 @@ void gr_mod_base::set_mode(int mode)
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
         _osmosdr_sink->set_sample_rate(1000000);
-        _top_block->connect(_vector_source,0,_qpsk_250k,0);
+        _top_block->connect(_byte_source,0,_qpsk_250k,0);
         _top_block->connect(_qpsk_250k,0,_rotator,0);
         _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
@@ -451,7 +451,7 @@ void gr_mod_base::set_mode(int mode)
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
         _osmosdr_sink->set_sample_rate(1000000);
-        _top_block->connect(_vector_source,0,_4fsk_96k,0);
+        _top_block->connect(_byte_source,0,_4fsk_96k,0);
         _top_block->connect(_4fsk_96k,0,_rotator,0);
         _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
@@ -460,7 +460,7 @@ void gr_mod_base::set_mode(int mode)
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
         _osmosdr_sink->set_sample_rate(1000000);
-        _top_block->connect(_vector_source,0,_qpsk_video,0);
+        _top_block->connect(_byte_source,0,_qpsk_video,0);
         _top_block->connect(_qpsk_video,0,_rotator,0);
         _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
@@ -557,7 +557,7 @@ void gr_mod_base::set_mode(int mode)
 void gr_mod_base::start(int buffer_size)
 {
     _audio_source->flush();
-    _vector_source->flush();
+    _byte_source->flush();
     if(buffer_size)
         _top_block->start(buffer_size);
     else // automatic
@@ -567,14 +567,14 @@ void gr_mod_base::start(int buffer_size)
 void gr_mod_base::stop()
 {
     _audio_source->flush();
-    _vector_source->flush();
+    _byte_source->flush();
     _top_block->stop();
     _top_block->wait();
 }
 
 int gr_mod_base::set_data(std::vector<u_int8_t> *data)
 {
-    return _vector_source->set_data(data);
+    return _byte_source->set_data(data);
 }
 
 int gr_mod_base::set_audio(std::vector<float> *data)
@@ -696,7 +696,7 @@ void gr_mod_base::flush_sources()
 {
     _top_block->lock();
     _audio_source->flush();
-    _vector_source->flush();
+    _byte_source->flush();
     _top_block->unlock();
 }
 

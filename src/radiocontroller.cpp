@@ -135,6 +135,9 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     QObject::connect(_modem,SIGNAL(netData(unsigned char*,int)),this,
                      SLOT(receiveNetData(unsigned char*,int)));
 
+    QObject::connect(_layer2,SIGNAL(havePageMessage(QString,QString,QString)),this,
+                     SLOT(receivedPageMessage(QString,QString,QString)));
+
     //QObject::connect(_camera,SIGNAL(imageCaptured(unsigned char*,int)),this,
     //                 SLOT(processVideoFrame(unsigned char*,int)));
 
@@ -601,7 +604,7 @@ void RadioController::processInputNetStream()
     {
         max_frame_size = 1516;
         read_size = 1500;
-        time_per_frame = 48400000;
+        time_per_frame = 48000000;
     }
     if(_tx_mode == gr_modem_types::ModemType4FSK100K)
     {
@@ -1395,6 +1398,7 @@ void RadioController::receiveNetData(unsigned char *data, int size)
 void RadioController::protoReceived(QByteArray data)
 {
     _incoming_proto_buffer.append(data);
+    dataFrameReceived();
 }
 
 /// signal from Mumble
@@ -1451,8 +1455,12 @@ void RadioController::textData(QString text, bool repeat)
     _repeat_text = repeat;
     _text_out = text;
     _process_text = true;
-    //_proto_out = _radio_protocol->buildPageMessage(_callsign, text, false, _callsign);
-    //_process_data = true;
+}
+
+void RadioController::pageUser(QString user, QString message)
+{
+    _proto_out = _layer2->buildPageMessage(_callsign, user, message, false, _callsign);
+    _process_data = true;
 }
 
 void RadioController::textMumble(QString text, bool channel)
@@ -1482,6 +1490,36 @@ void RadioController::textReceived(QString text)
         _incoming_text_buffer = "";
     }
     emit printText(text, false);
+}
+
+void RadioController::receivedPageMessage(QString calling_user,
+                                          QString called_user, QString page_message)
+{
+    _logger->log(Logger::LogLevelDebug, QString("Paging message from %1 to %2, text: %3").arg(
+                     calling_user).arg(called_user).arg(page_message));
+
+    if(QString::compare(called_user, _callsign.trimmed(), Qt::CaseInsensitive)  == 0)
+    {
+        emit newPageMessage(calling_user, page_message);
+        QString filename = ":/res/BeepBeep.raw";
+        QFile resfile(filename);
+        resfile.open(QIODevice::ReadOnly);
+        QByteArray *sound = new QByteArray(resfile.readAll());
+
+        short* origin = (short*) sound->data();
+        int size = sound->size();
+
+        short *samples = new short[size/sizeof(short)];
+        for(unsigned int i=0;i<size/sizeof(short);i++)
+        {
+            samples[i] = short(origin[i] / 2);
+        }
+        emit writePCM(samples, size, false, AudioProcessor::AUDIO_MODE_ANALOG);
+        short *silence = new short[4096/sizeof(short)];
+        memset(silence, 0, 4096);
+        emit writePCM(silence, 4096, false, AudioProcessor::AUDIO_MODE_ANALOG);
+        delete sound;
+    }
 }
 
 /// GUI only

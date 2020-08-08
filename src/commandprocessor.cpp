@@ -236,10 +236,12 @@ bool CommandProcessor::processStatusCommands(int command_index, QString &respons
             response.append("Not transmitting.");
         break;
     case 3:
-        response.append(QString("Current RX mode is %1.").arg(_mode_list->at(_settings->rx_mode)));
+        response.append(QString("Current RX mode is: %1 - %2.").arg(_settings->rx_mode).arg(
+                                                                    _mode_list->at(_settings->rx_mode)));
         break;
     case 4:
-        response.append(QString("Current TX mode is %1.").arg(_mode_list->at(_settings->tx_mode)));
+        response.append(QString("Current TX mode is: %1 - %2.").arg(_settings->tx_mode).arg(
+                                                                    _mode_list->at(_settings->tx_mode)));
         break;
     case 5:
         response.append(QString("Current RX CTCSS tone is %1.").arg(_settings->rx_ctcss));
@@ -303,7 +305,7 @@ bool CommandProcessor::processStatusCommands(int command_index, QString &respons
         break;
     case 54:
         for(int i=0;i<_mode_list->size();i++)
-            response.append(_mode_list->at(i) + "\n");
+            response.append(QString::number(i) + ": " + _mode_list->at(i) + "\n");
         break;
     case 55:
         if(_settings->recording_audio)
@@ -376,8 +378,8 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
     }
     case 20:
     {
-        int set = _mode_list->indexOf(param1);
-        if(set == -1)
+        int set = param1.toInt();
+        if(set < 0 || set >= _mode_list->size())
         {
             response = "Operating mode not found";
             success = false;
@@ -391,8 +393,8 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
     }
     case 21:
     {
-        int set = _mode_list->indexOf(param1);
-        if(set == -1)
+        int set = param1.toInt();
+        if(set < 0 || set >= _mode_list->size())
         {
             response = "Operating mode not found";
             success = false;
@@ -978,8 +980,8 @@ void CommandProcessor::buildCommandList()
     /// action commands
     _command_list->append(new command("setrx", 1, "Start/stop receiver, 1 enabled, 0 disabled"));
     _command_list->append(new command("settx", 1, "Start/stop transmitter, 1 enabled, 0 disabled"));
-    _command_list->append(new command("setrxmode", 1, "Set RX mode (string mode)"));
-    _command_list->append(new command("settxmode", 1, "Set TX mode (string mode)"));
+    _command_list->append(new command("setrxmode", 1, "Set RX mode (integer number, see list_modes)"));
+    _command_list->append(new command("settxmode", 1, "Set TX mode (integer number, see list_modes)"));
     _command_list->append(new command("setrxctcss", 1, "Set RX CTCSS (floating point number, 0.0 to 200.0)"));
     _command_list->append(new command("settxctcss", 1, "Set TX CTCSS (floating point number, 0.0 to 200.0)"));
     _command_list->append(new command("setsquelch", 1, "Set squelch (integer number, -150 to 10)"));

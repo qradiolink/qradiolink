@@ -102,6 +102,7 @@ signals:
     void newMumbleMessage(QString text);
     void tuneToMemoryChannel(radiochannel *chan);
     void recordAudio(bool value);
+    void newPageMessage(QString paged_by, QString message);
 
 
 public slots:
@@ -186,6 +187,8 @@ public slots:
     void setRadioToT(int value);
     void setTotTxEnd(bool value);
     void setTxLimits(bool value);
+    void pageUser(QString user, QString message);
+    void receivedPageMessage(QString calling_user, QString called_user, QString page_message);
 
 private:
     unsigned int getFrameLength(unsigned char *data);

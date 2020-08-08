@@ -14,17 +14,17 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#include "gr_vector_source.h"
+#include "gr_byte_source.h"
 
 
-gr_vector_source_sptr
-make_gr_vector_source ()
+gr_byte_source_sptr
+make_gr_byte_source ()
 {
-    return gnuradio::get_initial_sptr(new gr_vector_source);
+    return gnuradio::get_initial_sptr(new gr_byte_source);
 }
 
-gr_vector_source::gr_vector_source() :
-        gr::sync_block("gr_vector_source",
+gr_byte_source::gr_byte_source() :
+        gr::sync_block("gr_byte_source",
                        gr::io_signature::make (0, 0, 0),
                        gr::io_signature::make (1, 1, sizeof (unsigned char)))
 {
@@ -33,37 +33,31 @@ gr_vector_source::gr_vector_source() :
     _data = new std::vector<unsigned char>;
 }
 
-gr_vector_source::~gr_vector_source()
+gr_byte_source::~gr_byte_source()
 {
     delete _data;
 }
 
 
-void gr_vector_source::flush()
+void gr_byte_source::flush()
 {
     gr::thread::scoped_lock guard(_mutex);
     _data->clear();
 }
 
-int gr_vector_source::set_data(std::vector<unsigned char> *data)
+int gr_byte_source::set_data(std::vector<unsigned char> *data)
 {
 
-    if(_offset == 0)
-    {
-        gr::thread::scoped_lock guard(_mutex);
-        _data->reserve(_data->size() + data->size());
-        _data->insert(_data->end(),data->begin(),data->end());
-        delete data;
-        _finished = false;
-        return 0;
-    }
-    else
-    {
-        return 1;
-    }
+    gr::thread::scoped_lock guard(_mutex);
+    _data->reserve(_data->size() + data->size());
+    _data->insert(_data->end(),data->begin(),data->end());
+    data->clear();
+    delete data;
+    _finished = false;
+    return 0;
 }
 
-int gr_vector_source::work(int noutput_items,
+int gr_byte_source::work(int noutput_items,
        gr_vector_const_void_star &input_items,
        gr_vector_void_star &output_items)
 {
@@ -72,7 +66,7 @@ int gr_vector_source::work(int noutput_items,
     if(_finished)
     {
         guard.unlock();
-        struct timespec time_to_sleep = {0, 35000000L };
+        struct timespec time_to_sleep = {0, 5000000L };
         nanosleep(&time_to_sleep, NULL);
         _finished = false;
         return 0;
@@ -88,7 +82,7 @@ int gr_vector_source::work(int noutput_items,
     }
 
     _offset += n;
-    if(_offset == _data->size())
+    if(_offset >= _data->size())
     {
         _data->clear();
         _finished = true;

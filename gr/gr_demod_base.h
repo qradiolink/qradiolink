@@ -42,7 +42,7 @@
 #include <osmosdr/source.h>
 #include <vector>
 #include "gr_audio_sink.h"
-#include "gr_vector_sink.h"
+#include "gr_bit_sink.h"
 #include "gr_const_sink.h"
 #include "rx_fft.h"
 #include "gr_deframer_bb.h"
@@ -102,7 +102,7 @@ public slots:
 private:
     gr::top_block_sptr _top_block;
     gr_audio_sink_sptr _audio_sink;
-    gr_vector_sink_sptr _vector_sink;
+    gr_bit_sink_sptr _bit_sink;
     rx_fft_c_sptr _fft_sink;
     gr::blocks::message_debug::sptr _message_sink;
     gr::blocks::copy::sptr _rssi_valve;

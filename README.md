@@ -17,7 +17,7 @@ It can also be used as a low power amateur radio SDR transceiver for demonstrati
 
 The application was originally inspired from the [Codec2 GMSK modem](https://github.com/on1arf/gmsk) project by Kristoff Bonne.
 
-[![Screenshot](http://qradiolink.org/images/qradiolink60.png)](http://qradiolink.org)
+[![Screenshot](http://qradiolink.org/images/qradiolink51.png)](http://qradiolink.org)
 
 
 
@@ -108,7 +108,7 @@ $ sudo apt install libjpeg-turbo8-dev libjpeg-dev
 [Downloads](https://github.com/qradiolink/qradiolink/releases "Downloads")
 ----
 
-Debian Buster x86_64 packages are provided via Travis CI automated builds. An AppImage for running the application on any Linux distribution without installing it is also provided. The AppImage is based on Debian Buster packages.
+Debian Buster x86_64 packages are provided via Travis CI automated builds. An AppImage for running the application on other Linux distributions with glibc >= 2.27 without installing it is also provided. The AppImage is based on Debian Buster packages.
 Please see the [Github releases page](https://github.com/qradiolink/qradiolink/releases) for binary downloads.
 
 Opensuse packages are available from [Opensuse build server](https://build.opensuse.org/package/show/hardware:sdr/qradiolink)
@@ -155,7 +155,7 @@ qmake .. INSTALL_PREFIX=/usr/local/bin LIBDIR=/opt/lib INCDIR=/opt/include
 </pre>
 
 Known issues:
-- IP modems operating in burst mode experience unacceptably high packet loss due to lost frames.
+- IP modems operating in burst mode experience some packet loss due to lost frames.
 - FM CTCSS decoder is not very reliable
 
 

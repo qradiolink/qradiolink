@@ -522,7 +522,7 @@ void Settings::readConfig()
     }
     catch(const libconfig::SettingNotFoundException &nfex)
     {
-        voip_bitrate = 38400;
+        voip_bitrate = 24600;
     }
     try
     {
@@ -554,7 +554,7 @@ void Settings::readConfig()
     }
     catch(const libconfig::SettingNotFoundException &nfex)
     {
-        radio_tot = 60;
+        radio_tot = 120;
     }
     try
     {

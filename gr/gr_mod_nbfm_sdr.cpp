@@ -36,7 +36,7 @@ gr_mod_nbfm_sdr::gr_mod_nbfm_sdr(int sps, int samp_rate, int carrier_freq,
     float if_samp_rate = 50000;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
-    gr::calculate_preemph_taps(8000, 44e-6, _ataps, _btaps);
+    gr::calculate_preemph_taps(8000, 50e-6, _ataps, _btaps);
 
     _fm_modulator = gr::analog::frequency_modulator_fc::make(4*M_PI*_filter_width/if_samp_rate);
     _rail = gr::analog::rail_ff::make(-1, 1);

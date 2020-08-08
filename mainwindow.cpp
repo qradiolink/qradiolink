@@ -191,6 +191,7 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     QObject::connect(ui->removeChannelButton,SIGNAL(clicked()), this, SLOT(removeMemoryChannel()));
     QObject::connect(ui->memoriesTableWidget,SIGNAL(itemChanged(QTableWidgetItem*)),
                      this,SLOT(editMemoryChannel(QTableWidgetItem*)));
+    QObject::connect(ui->pageUserButton,SIGNAL(clicked()), this, SLOT(pageUserRequested()));
 
     QObject::connect(&_secondary_text_timer,SIGNAL(timeout()),ui->secondaryTextDisplay,SLOT(hide()));
     QObject::connect(&_video_timer,SIGNAL(timeout()),ui->videoFrame,SLOT(hide()));
@@ -300,7 +301,7 @@ void MainWindow::setTheme(bool value)
                 "QWidget#memoryControlsFrame {background: none}"
                 "QWidget#memoriesFrame {background: none}"
                 "QWidget#memoriesTableWidget {background: none}"
-                "QWidget {background-color:#2a2a2a; color:#ffffd3}"
+                "QWidget, QLabel, QTabWidget, QFrame {background-color:#2a2a2a; color:#ffffd3}"
                 "QPushButton {background-color:#555555; color:#ffffd3;"
                     "border:1px solid #444444;border-style:outset;"
                     "border-radius: 3px;}"
@@ -321,6 +322,7 @@ void MainWindow::setTheme(bool value)
     else
     {
         setStyleSheet(
+                "QWidget, QLabel, QTabWidget, QFrame {background-color:#cccccc; color:#000000}"
                 "QPushButton:hover {background-color:#005a84; color:#ffffd3}"
                 "QCheckBox:hover {background-color:#fcfcfc; color:#0e0e00}"
                 "QCheckBox:checked {color:#585800}"
@@ -1862,4 +1864,18 @@ void MainWindow::updateBlockBufferSize(int value)
 {
     Q_UNUSED(value);
     emit setBlockBufferSize(ui->blockBufferSizeComboBox->currentText().toInt());
+}
+
+void MainWindow::pageUserRequested()
+{
+    QString user = ui->pagedUserEdit->text();
+    QString msg = ui->sendTextEdit->toPlainText();
+    if(user.size() > 0)
+        emit pageUser(user, msg);
+}
+
+void MainWindow::displayPageMessage(QString page_user, QString page_message)
+{
+    ui->pagedByLabel->setText(QString("Paged by: <strong>%1</strong>").arg(page_user));
+    ui->pageMessageLabel->setText(page_message);
 }

@@ -7,8 +7,9 @@ option optimize_for = SPEED;
 message PageMessage {
     required string calling_user = 1;
     required string called_user = 2;
-    optional bool retransmit = 3;
-    optional string via_node = 4;
+    optional string msg = 3;
+    optional bool retransmit = 4;
+    optional string via_node = 5;
 }
 
 message Channel {

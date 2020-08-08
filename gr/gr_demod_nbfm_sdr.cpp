@@ -40,7 +40,7 @@ gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(std::vector<int>signature, int sps, int sam
     _samp_rate = samp_rate;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
-    gr::calculate_deemph_taps(_target_samp_rate, 44e-6, _ataps, _btaps);
+    gr::calculate_deemph_taps(_target_samp_rate, 50e-6, _ataps, _btaps);
 
     /* unused
     static const float coeff[] = {0.06306464970111847, 0.4777590036392212, 0.9183526635169983,
@@ -76,10 +76,10 @@ gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(std::vector<int>signature, int sps, int sam
     connect(_filter,0,self(),0);
     connect(_filter,0,_squelch,0);
     connect(_squelch,0,_fm_demod,0);
-    connect(_fm_demod,0,_de_emph_filter,0);
-    connect(_de_emph_filter,0,_audio_resampler,0);
+    connect(_fm_demod,0,_audio_resampler,0);
     connect(_audio_resampler,0,_audio_filter,0);
-    connect(_audio_filter,0,_level_control,0);
+    connect(_audio_filter,0,_de_emph_filter,0);
+    connect(_de_emph_filter,0,_level_control,0);
     connect(_level_control,0,self(),1);
 
 }

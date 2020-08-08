@@ -373,6 +373,8 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
                      radio_op,SLOT(setTotTxEnd(bool)));
     QObject::connect(w,SIGNAL(setTxLimits(bool)),
                      radio_op,SLOT(setTxLimits(bool)));
+    QObject::connect(w,SIGNAL(pageUser(QString,QString)),
+                     radio_op,SLOT(pageUser(QString, QString)));
     QObject::connect(w,SIGNAL(connectToServer(QString, unsigned)),
                      mumbleclient,SLOT(connectToServer(QString, unsigned)));
     QObject::connect(w,SIGNAL(disconnectFromServer()),mumbleclient,SLOT(disconnectFromServer()));
@@ -418,6 +420,8 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
                      w, SLOT(setTxGainStages(gain_vector)));
     QObject::connect(radio_op, SIGNAL(tuneToMemoryChannel(radiochannel*)),
                      w, SLOT(tuneToMemoryChannel(radiochannel*)));
+    QObject::connect(radio_op, SIGNAL(newPageMessage(QString,QString)),
+                     w, SLOT(displayPageMessage(QString,QString)));
 
     /// Mumble to GUI
     QObject::connect(mumbleclient,SIGNAL(onlineStations(StationList)),

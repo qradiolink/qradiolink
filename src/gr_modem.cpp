@@ -720,11 +720,7 @@ void gr_modem::transmit(QVector<std::vector<unsigned char>*> frames)
         frames.at(i)->clear();
         delete frames.at(i);
     }
-    int ret = 1;
-    while(ret)
-    {
-        ret = _gr_mod_base->set_data(all_frames);
-    }
+    _gr_mod_base->set_data(all_frames);
 
 }
 
