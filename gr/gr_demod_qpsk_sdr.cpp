@@ -44,24 +44,27 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
     fll_bw = 24;
     if(sps <= 4)
     {
-        gain_mu = 0.05;
-        omega_rel_limit = 0.001;
-        filt_length = 35;
+        gain_mu = 0.025;
+        omega_rel_limit = 0.005;
+        filt_length = 125;
         fll_bw = 48;
     }
     else if(sps >= 125)
     {
         gain_mu = 0.005;
         omega_rel_limit = 0.001;
-        filt_length = 21;
+        filt_length = 55;
         fll_bw = 12;
     }
     else
     {
         gain_mu = 0.001;
         omega_rel_limit = 0.001;
-        filt_length = 19;
+        filt_length = 55;
     }
+
+    if((filt_length & 1) == 0)
+        filt_length++;
 
     ////////////////////////////
 
@@ -115,7 +118,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
 
     _resampler = gr::filter::rational_resampler_base_ccf::make(interpolation, decimation, taps);
     _resampler->set_thread_priority(99);
-    _agc = gr::analog::agc2_cc::make(1e-1, 1e-1, 1, 10);
+    _agc = gr::analog::agc2_cc::make(1e-1, 1e-1, 1, 1);
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
             1, _target_samp_rate, _filter_width, filter_slope,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
 
@@ -155,7 +158,7 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
     else
     {
         connect(_resampler,0,_shaping_filter,0);
-        _agc->set_max_gain(10);
+        _agc->set_max_gain(50);
     }
     connect(_shaping_filter,0,self(),0);
     connect(_shaping_filter,0,_agc,0);
