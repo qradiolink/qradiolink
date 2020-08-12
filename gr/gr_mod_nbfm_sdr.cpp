@@ -45,7 +45,7 @@ gr_mod_nbfm_sdr::gr_mod_nbfm_sdr(int sps, int samp_rate, int carrier_freq,
                 1,gr::filter::firdes::band_pass_2(
                     1, target_samp_rate, 300, 3000, 200, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
 
-    _pre_emph_filter = gr::filter::iir_filter_ffd::make(_ataps, _btaps, false);
+    _pre_emph_filter = gr::filter::iir_filter_ffd::make(_btaps, _ataps, false);
 
     std::vector<float> if_taps = gr::filter::firdes::low_pass_2(25, if_samp_rate * 4,
                         _filter_width, 1200, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
@@ -63,8 +63,7 @@ gr_mod_nbfm_sdr::gr_mod_nbfm_sdr(int sps, int samp_rate, int carrier_freq,
                 1, if_samp_rate, _filter_width, 1200, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
 
 
-    connect(self(),0,_rail,0);
-    connect(_rail,0,_audio_filter,0);
+    connect(self(),0,_audio_filter,0);
     connect(_audio_filter,0,_audio_amplify,0);
     connect(_audio_amplify,0,_pre_emph_filter,0);
     connect(_pre_emph_filter,0,_if_resampler,0);

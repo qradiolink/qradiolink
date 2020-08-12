@@ -60,7 +60,7 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(std::vector<int>signature, int sps, int samp_
                 1,gr::filter::firdes::band_pass_2(
                     2, _target_samp_rate, 300, _filter_width, 200, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
     _complex_to_real = gr::blocks::complex_to_real::make();
-    _de_emph_filter = gr::filter::iir_filter_ffd::make(_ataps, _btaps, false);
+    _de_emph_filter = gr::filter::iir_filter_ffd::make(_btaps, _ataps, false);
     _level_control = gr::blocks::multiply_const_ff::make(0.99);
 
 

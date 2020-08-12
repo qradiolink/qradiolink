@@ -42,7 +42,7 @@ gr_demod_wbfm_sdr::gr_demod_wbfm_sdr(std::vector<int>signature, int sps, int sam
     _filter_width = filter_width;
     gr::calculate_deemph_taps(8000, 50e-6, _ataps, _btaps);
 
-    _de_emph_filter = gr::filter::iir_filter_ffd::make(_ataps, _btaps, false);
+    _de_emph_filter = gr::filter::iir_filter_ffd::make(_btaps, _ataps, false);
 
     std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _target_samp_rate/2,
                                     _target_samp_rate/2, gr::filter::firdes::WIN_BLACKMAN_HARRIS);

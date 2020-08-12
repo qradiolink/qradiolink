@@ -48,7 +48,7 @@ gr_demod_nbfm_sdr::gr_demod_nbfm_sdr(std::vector<int>signature, int sps, int sam
     std::vector<float> deemph_taps(coeff, coeff + sizeof(coeff) / sizeof(coeff[0]) );
     */
 
-    _de_emph_filter = gr::filter::iir_filter_ffd::make(_ataps, _btaps, false);
+    _de_emph_filter = gr::filter::iir_filter_ffd::make(_btaps, _ataps, false);
 
     std::vector<float> taps = gr::filter::firdes::low_pass(50, _samp_rate, _target_samp_rate/2,
                                 _target_samp_rate/2, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
