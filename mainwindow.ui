@@ -89,12 +89,6 @@
           <bold>false</bold>
          </font>
         </property>
-        <property name="styleSheet">
-         <string notr="true">font: 10pt &quot;Sans Serif&quot;;
-
-
-</string>
-        </property>
         <property name="currentIndex">
          <number>0</number>
         </property>
