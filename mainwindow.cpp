@@ -313,6 +313,7 @@ void MainWindow::setTheme(bool value)
                 "QDial {background-color:#5a5a5a; color:#ffffd3}"
                 "QDial:hover {background-color:#002c86; color:#ffffd3}"
                 "QComboBox {color: #f0f077; background-color: #000043;}"
+                "QComboBox QAbstractItemView::item {color: #f0f077; background-color: #000043;}"
                 "QComboBox:hover {color: #f0f077; background-color: #000043;}"
                 "QComboBox QAbstractItemView {color: #f0f077; background-color: #000043;}"
                 "QTreeWidgetItem {background-color:#001e5a; color:#ffffd3}"
@@ -327,6 +328,9 @@ void MainWindow::setTheme(bool value)
     else
     {
         QString stylesheet =
+                "QWidget#memoryControlsFrame {background: none}"
+                "QWidget#memoriesFrame {background: none}"
+                "QWidget#memoriesTableWidget {background: none}"
                 "QWidget, QLabel, QTabWidget, QFrame {background-color:#cccccc; color:#000000}"
                 "QPushButton:hover {background-color:#005a84; color:#ffffd3}"
                 "QCheckBox:hover {background-color:#fcfcfc; color:#0e0e00}"
@@ -335,6 +339,7 @@ void MainWindow::setTheme(bool value)
                 "QDial {background-color:#9a9a9a; color:#ffffd3}"
                 "QDial:hover {background-color:#002c86; color:#ffffd3}"
                 "QComboBox {color: #f0f077; background-color: #000043;}"
+                "QComboBox QAbstractItemView::item {color: #f0f077; background-color: #000043;}"
                 "QComboBox:hover {color: #f0f077; background-color: #000043;}"
                 "QComboBox QAbstractItemView {color: #f0f077; background-color: #000043;}"
                 "QTreeWidgetItem {background-color:#2a2a2a; color:#ffffd3}"
