@@ -1,3 +1,13 @@
+qradiolink (0.8.3-4) RELEASED; urgency=medium
+
+  [ Adrian Musceac ]
+  * Fixes broken stylesheet for night mode
+  * Fixes reversed FM pre-emphasis and de-emphasis
+
+  
+ -- Adrian Musceac <kantooon@gmail.com>  Thu, 13 Aug 2020 16:30:00 +0300
+
+
 qradiolink (0.8.3-3) RELEASED; urgency=medium
 
   [ Adrian Musceac ]
