@@ -17,7 +17,7 @@ It can also be used as a low power amateur radio SDR transceiver for demonstrati
 
 The application was originally inspired from the [Codec2 GMSK modem](https://github.com/on1arf/gmsk) project by Kristoff Bonne.
 
-[![Screenshot](http://qradiolink.org/images/qradiolink51.png)](http://qradiolink.org)
+[![Screenshot](http://qradiolink.org/images/qradiolink62.png)](http://qradiolink.org)
 
 
 
@@ -70,6 +70,7 @@ Features
 - Internal audio mixing of audio from VOIP server and audio from radio
 - USB FTDI (FT232) relay control support (for RF switches, power amplifier and filter control)
 - Full duplex DQPSK 250 kbit/s and 4FSK 96 kbit/s IP radio modems with configurable TX/RX offsets
+- User paging
 - Automatic carrier tracking and Doppler effect correction for all digital modes except FreeDV modes. The system can track Doppler shifts of 5-10 kHz, depending on mode. It requires a CNR of at least 10-12 dB, more for FSK modes than for PSK modes.
 - Supported hardware: [**Ettus USRP bus devices**](https://ettus.com), [**RTL-SDR**](https://osmocom.org/projects/sdr/wiki/rtl-sdr), [**ADALM-Pluto (PlutoSDR)**](https://www.analog.com/en/design-center/evaluation-hardware-and-software/evaluation-boards-kits/adalm-pluto.html), (supported with SoapySDR and [**SoapyPlutoSDR**](https://github.com/pothosware/SoapyPlutoSDR)), [**LimeSDR-mini**](https://www.crowdsupply.com/lime-micro/limesdr-mini) [**LimeNET-Micro**](https://wiki.myriadrf.org/LimeNET_Micro) (both through SoapySDR), BladeRF, other devices supported by [**gr-osmosdr**](https://osmocom.org/projects/sdr/wiki/GrOsmoSDR) like HackRF and RedPitaya (not tested)
  

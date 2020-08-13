@@ -80,7 +80,6 @@ private:
     gr_mod_2fsk_sdr_sptr _2fsk_10k;
     gr_mod_4fsk_sdr_sptr _4fsk_2k;
     gr_mod_4fsk_sdr_sptr _4fsk_1k;
-    gr_mod_4fsk_sdr_sptr _4fsk_10k;
     gr_mod_4fsk_sdr_sptr _4fsk_2k_fm;
     gr_mod_4fsk_sdr_sptr _4fsk_1k_fm;
     gr_mod_4fsk_sdr_sptr _4fsk_10k_fm;

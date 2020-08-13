@@ -61,10 +61,9 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
     _2fsk_1k = make_gr_mod_2fsk_sdr(50, 1000000, 1700, 2000, false);
     _2fsk_10k = make_gr_mod_2fsk_sdr(5, 1000000, 1700, 13500, true);
     _4fsk_2k = make_gr_mod_4fsk_sdr(25, 1000000, 1700, 4000, false);
-    _4fsk_10k = make_gr_mod_4fsk_sdr(5, 1000000, 1700, 20000, false);
     _4fsk_2k_fm = make_gr_mod_4fsk_sdr(25, 1000000, 1700, 1800, true);
     _4fsk_1k_fm = make_gr_mod_4fsk_sdr(50, 1000000, 1700, 900, true);
-    _4fsk_10k_fm = make_gr_mod_4fsk_sdr(5, 1000000, 1700, 8500, true);
+    _4fsk_10k_fm = make_gr_mod_4fsk_sdr(5, 1000000, 1700, 7500, true);
     _am = make_gr_mod_am_sdr(125,1000000, 1700, 5000);
     _bpsk_1k = make_gr_mod_bpsk_sdr(50, 1000000, 1700, 1500);
     _bpsk_2k = make_gr_mod_bpsk_sdr(25, 1000000, 1700, 2800);
@@ -149,7 +148,7 @@ void gr_mod_base::set_mode(int mode)
         _top_block->disconnect(_2fsk_1k,0,_rotator,0);
         _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
-    case gr_modem_types::ModemType2FSK20K:
+    case gr_modem_types::ModemType2FSK10KFM:
         _top_block->disconnect(_byte_source,0,_2fsk_10k,0);
         _top_block->disconnect(_2fsk_10k,0,_rotator,0);
         _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
@@ -157,11 +156,6 @@ void gr_mod_base::set_mode(int mode)
     case gr_modem_types::ModemType4FSK2K:
         _top_block->disconnect(_byte_source,0,_4fsk_2k,0);
         _top_block->disconnect(_4fsk_2k,0,_rotator,0);
-        _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
-        break;
-    case gr_modem_types::ModemType4FSK20K:
-        _top_block->disconnect(_byte_source,0,_4fsk_10k,0);
-        _top_block->disconnect(_4fsk_10k,0,_rotator,0);
         _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemType4FSK2KFM:
@@ -174,7 +168,7 @@ void gr_mod_base::set_mode(int mode)
         _top_block->disconnect(_4fsk_1k_fm,0,_rotator,0);
         _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
-    case gr_modem_types::ModemType4FSK20KFM:
+    case gr_modem_types::ModemType4FSK10KFM:
         _top_block->disconnect(_byte_source,0,_4fsk_10k_fm,0);
         _top_block->disconnect(_4fsk_10k_fm,0,_rotator,0);
         _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
@@ -320,7 +314,7 @@ void gr_mod_base::set_mode(int mode)
         _top_block->connect(_2fsk_1k,0,_rotator,0);
         _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
-    case gr_modem_types::ModemType2FSK20K:
+    case gr_modem_types::ModemType2FSK10KFM:
         _carrier_offset = 50000;
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
@@ -336,15 +330,6 @@ void gr_mod_base::set_mode(int mode)
         _osmosdr_sink->set_sample_rate(1000000);
         _top_block->connect(_byte_source,0,_4fsk_2k,0);
         _top_block->connect(_4fsk_2k,0,_rotator,0);
-        _top_block->connect(_rotator,0,_osmosdr_sink,0);
-        break;
-    case gr_modem_types::ModemType4FSK20K:
-        _carrier_offset = 50000;
-        _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
-        _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
-        _osmosdr_sink->set_sample_rate(1000000);
-        _top_block->connect(_byte_source,0,_4fsk_10k,0);
-        _top_block->connect(_4fsk_10k,0,_rotator,0);
         _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemType4FSK2KFM:
@@ -365,7 +350,7 @@ void gr_mod_base::set_mode(int mode)
         _top_block->connect(_4fsk_1k_fm,0,_rotator,0);
         _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
-    case gr_modem_types::ModemType4FSK20KFM:
+    case gr_modem_types::ModemType4FSK10KFM:
         _carrier_offset = 50000;
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
@@ -651,7 +636,6 @@ void gr_mod_base::set_bb_gain(float value)
     _2fsk_1k->set_bb_gain(value);
     _2fsk_10k->set_bb_gain(value);
     _4fsk_2k->set_bb_gain(value);
-    _4fsk_10k->set_bb_gain(value);
     _4fsk_2k_fm->set_bb_gain(value);
     _4fsk_1k_fm->set_bb_gain(value);
     _4fsk_10k_fm->set_bb_gain(value);
@@ -664,6 +648,7 @@ void gr_mod_base::set_bb_gain(float value)
     _qpsk_10k->set_bb_gain(value);
     _qpsk_250k->set_bb_gain(value);
     _qpsk_video->set_bb_gain(value);
+    _4fsk_96k->set_bb_gain(value);
     _usb->set_bb_gain(value);
     _lsb->set_bb_gain(value);
     _usb_cw->set_bb_gain(value);

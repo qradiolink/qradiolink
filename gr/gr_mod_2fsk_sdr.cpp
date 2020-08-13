@@ -44,7 +44,7 @@ gr_mod_2fsk_sdr::gr_mod_2fsk_sdr(int sps, int samp_rate, int carrier_freq,
     _samp_rate =samp_rate;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
-    int nfilts = 15;
+    int nfilts = 15 * _samples_per_symbol;
     int spacing = 2;
     float amplif = 0.8f;
     if(fm)
@@ -58,6 +58,8 @@ gr_mod_2fsk_sdr::gr_mod_2fsk_sdr(int sps, int samp_rate, int carrier_freq,
     {
         nfilts = nfilts * 5;
     }
+    if((nfilts % 2) == 0)
+        nfilts += 1;
 
     _packed_to_unpacked = gr::blocks::packed_to_unpacked_bb::make(1,gr::GR_MSB_FIRST);
     _scrambler = gr::digital::scrambler_bb::make(0x8A, 0x7F ,7);
@@ -70,7 +72,7 @@ gr_mod_2fsk_sdr::gr_mod_2fsk_sdr(int sps, int samp_rate, int carrier_freq,
     _repeat = gr::blocks::repeat::make(4, _samples_per_symbol);
     _resampler = gr::filter::rational_resampler_base_fff::make(_samples_per_symbol, 1,
                     gr::filter::firdes::root_raised_cosine(_samples_per_symbol,
-                                _samples_per_symbol,1,0.35,nfilts * _samples_per_symbol));
+                                _samples_per_symbol,1,0.35,nfilts));
     _amplify = gr::blocks::multiply_const_cc::make(amplif,1);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
     _filter = gr::filter::fft_filter_ccf::make(1,gr::filter::firdes::low_pass_2(

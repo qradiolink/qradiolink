@@ -12,6 +12,14 @@ message PageMessage {
     optional string via_node = 5;
 }
 
+ message FileMessage {
+    required string file_name = 1;
+    required string file_data = 2;
+    required uint32 file_size = 3;
+    optional uint32 crc_32 = 4;
+}
+
+
 message Channel {
     optional uint32 channel_id = 1;
     optional uint32 parent_id = 2;
