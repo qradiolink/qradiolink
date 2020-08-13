@@ -123,15 +123,11 @@ void gr_modem::toggleTxMode(int modem_type)
         {
             _tx_frame_length = 7;
         }
-        else if(modem_type == gr_modem_types::ModemType4FSK20K)
+        else if(modem_type == gr_modem_types::ModemType4FSK10KFM)
         {
             _tx_frame_length = 47;
         }
-        else if(modem_type == gr_modem_types::ModemType4FSK20KFM)
-        {
-            _tx_frame_length = 47;
-        }
-        else if(modem_type == gr_modem_types::ModemType2FSK20K)
+        else if(modem_type == gr_modem_types::ModemType2FSK10KFM)
         {
             _tx_frame_length = 47;
         }
@@ -207,17 +203,12 @@ void gr_modem::toggleRxMode(int modem_type)
             _bit_buf_len = 8 *8;
             _rx_frame_length = 7;
         }
-        else if (modem_type == gr_modem_types::ModemType4FSK20K)
+        else if (modem_type == gr_modem_types::ModemType4FSK10KFM)
         {
             _bit_buf_len = 48 *8;
             _rx_frame_length = 47;
         }
-        else if (modem_type == gr_modem_types::ModemType4FSK20KFM)
-        {
-            _bit_buf_len = 48 *8;
-            _rx_frame_length = 47;
-        }
-        else if (modem_type == gr_modem_types::ModemType2FSK20K)
+        else if (modem_type == gr_modem_types::ModemType2FSK10KFM)
         {
             _bit_buf_len = 48 *8;
             _rx_frame_length = 47;
@@ -809,7 +800,7 @@ bool gr_modem::demodulate()
     if((_modem_type_rx == gr_modem_types::ModemTypeBPSK2K)
             || (_modem_type_rx == gr_modem_types::ModemType2FSK2KFM)
             || (_modem_type_rx == gr_modem_types::ModemType2FSK2K)
-            || (_modem_type_rx == gr_modem_types::ModemType2FSK20K)
+            || (_modem_type_rx == gr_modem_types::ModemType2FSK10KFM)
             || (_modem_type_rx == gr_modem_types::ModemTypeBPSK1K)
             || (_modem_type_rx == gr_modem_types::ModemType2FSK1KFM)
             || (_modem_type_rx == gr_modem_types::ModemType2FSK1K))
@@ -829,7 +820,7 @@ bool gr_modem::demodulate()
     int v_size;
     if((_modem_type_rx == gr_modem_types::ModemTypeBPSK2K)
             || (_modem_type_rx == gr_modem_types::ModemTypeBPSK1K)
-            || (_modem_type_rx == gr_modem_types::ModemType2FSK20K)
+            || (_modem_type_rx == gr_modem_types::ModemType2FSK10KFM)
             || (_modem_type_rx == gr_modem_types::ModemType2FSK2KFM)
             || (_modem_type_rx == gr_modem_types::ModemType2FSK2K)
             || (_modem_type_rx == gr_modem_types::ModemType2FSK1KFM)
@@ -857,7 +848,7 @@ bool gr_modem::demodulate()
     delete demod_data;
     if((_modem_type_rx == gr_modem_types::ModemTypeBPSK2K)
             || (_modem_type_rx == gr_modem_types::ModemTypeBPSK1K)
-            || (_modem_type_rx == gr_modem_types::ModemType2FSK20K)
+            || (_modem_type_rx == gr_modem_types::ModemType2FSK10KFM)
             || (_modem_type_rx == gr_modem_types::ModemType2FSK2KFM)
             || (_modem_type_rx == gr_modem_types::ModemType2FSK2K)
             || (_modem_type_rx == gr_modem_types::ModemType2FSK1KFM)

@@ -328,9 +328,8 @@ void RadioController::updateInputAudioStream()
         emit setAudioReadMode(true, (bool)_settings->audio_compressor, audio_mode);
     }
     else if((_tx_mode == gr_modem_types::ModemTypeQPSK20K) ||
-            (_tx_mode == gr_modem_types::ModemType2FSK20K) ||
-            (_tx_mode == gr_modem_types::ModemType4FSK20K) ||
-            (_tx_mode == gr_modem_types::ModemType4FSK20KFM))
+            (_tx_mode == gr_modem_types::ModemType2FSK10KFM) ||
+            (_tx_mode == gr_modem_types::ModemType4FSK10KFM))
     {
         audio_mode = AudioProcessor::AUDIO_MODE_OPUS;
         emit setAudioReadMode(true, (bool)_settings->audio_compressor, audio_mode);
@@ -1904,7 +1903,7 @@ void RadioController::toggleRxMode(int value)
         _scan_step_hz = 12500;
         break;
     case 20:
-        _rx_mode = gr_modem_types::ModemType2FSK20K;
+        _rx_mode = gr_modem_types::ModemType2FSK10KFM;
         _step_hz = 500;
         _scan_step_hz = 50000;
         break;
@@ -1924,7 +1923,7 @@ void RadioController::toggleRxMode(int value)
         _scan_step_hz = 12500;
         break;
     case 24:
-        _rx_mode = gr_modem_types::ModemType4FSK20KFM;
+        _rx_mode = gr_modem_types::ModemType4FSK10KFM;
         _step_hz = 500;
         _scan_step_hz = 50000;
         break;
@@ -2057,7 +2056,7 @@ void RadioController::toggleTxMode(int value)
         _tx_mode = gr_modem_types::ModemType2FSK1K;
         break;
     case 20:
-        _tx_mode = gr_modem_types::ModemType2FSK20K;
+        _tx_mode = gr_modem_types::ModemType2FSK10KFM;
         break;
     case 21:
         _tx_mode = gr_modem_types::ModemType4FSK2K;
@@ -2069,7 +2068,7 @@ void RadioController::toggleTxMode(int value)
         _tx_mode = gr_modem_types::ModemType4FSK1KFM;
         break;
     case 24:
-        _tx_mode = gr_modem_types::ModemType4FSK20KFM;
+        _tx_mode = gr_modem_types::ModemType4FSK10KFM;
         break;
     case 25:
         _tx_mode = gr_modem_types::ModemTypeQPSKVideo;
