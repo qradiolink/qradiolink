@@ -136,7 +136,7 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
     _freq_demod = gr::analog::quadrature_demod_cf::make(_samples_per_symbol/(spacing * M_PI/2));
     _shaping_filter = gr::filter::fft_filter_fff::make(
                 1, gr::filter::firdes::root_raised_cosine(1.05,_target_samp_rate,
-                                    _target_samp_rate/_samples_per_symbol,0.5,nfilts));
+                                    _target_samp_rate/_samples_per_symbol,0.35,nfilts));
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
                                                               omega_rel_limit);
     _clock_recovery_f = gr::digital::clock_recovery_mm_ff::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,

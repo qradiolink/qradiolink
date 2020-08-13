@@ -44,7 +44,7 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(std::vector<int>signature, int sps, int sam
         _samples_per_symbol = sps;
         decim = 50;
         interp = 1;
-        nfilts = 35;
+        nfilts = 35  * _samples_per_symbol;
         gain_mu = 0.025;
     }
     else
@@ -53,12 +53,14 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(std::vector<int>signature, int sps, int sam
         _samples_per_symbol = sps*2;
         decim = 25;
         interp = 1;
-        nfilts = 125;
+        nfilts = 125  * _samples_per_symbol;
         gain_mu = 0.025;
     }
     int spacing = 2;
     if(fm)
         spacing = 1;
+    if((nfilts % 2) == 0)
+        nfilts += 1;
 
     _samp_rate =samp_rate;
     _carrier_freq = carrier_freq;
@@ -102,7 +104,7 @@ gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(std::vector<int>signature, int sps, int sam
     _freq_demod = gr::analog::quadrature_demod_cf::make(_samples_per_symbol/(spacing * M_PI/2));
     _shaping_filter = gr::filter::fft_filter_ccf::make(
                 1, gr::filter::firdes::root_raised_cosine(1,_target_samp_rate,
-                                    _target_samp_rate/_samples_per_symbol,0.35,nfilts * _samples_per_symbol));
+                                    _target_samp_rate/_samples_per_symbol,0.35,nfilts));
     _multiply_const_fec = gr::blocks::multiply_const_ff::make(128);
     _float_to_uchar = gr::blocks::float_to_uchar::make();
     _add_const_fec = gr::blocks::add_const_ff::make(128.0);
