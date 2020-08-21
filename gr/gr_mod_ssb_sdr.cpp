@@ -38,9 +38,9 @@ gr_mod_ssb_sdr::gr_mod_ssb_sdr(int sps, int samp_rate, int carrier_freq,
     _filter_width = filter_width;
     gr::calculate_preemph_taps(8000, 65e-6, _ataps, _btaps);
 
-    _agc = gr::analog::agc2_ff::make(1, 1e-4, 0.5, 1);
-    _agc->set_max_gain(0.5);
-    _rail = gr::analog::rail_ff::make(-0.55, 0.55);
+    _agc = gr::analog::agc2_ff::make(1, 1e-3, 0.5, 1);
+    _agc->set_max_gain(100);
+    _rail = gr::analog::rail_ff::make(-0.6, 0.6);
     _pre_emph_filter = gr::filter::iir_filter_ffd::make(_btaps, _ataps, false);
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::band_pass_2(
