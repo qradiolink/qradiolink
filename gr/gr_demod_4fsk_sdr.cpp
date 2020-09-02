@@ -41,7 +41,10 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
     _filter_width = filter_width;
 
     int rs, bw, decimation, interpolation, nfilts;
-    float gain_mu, omega_rel_limit;
+    float gain_omega, gain_mu, omega_rel_limit;
+    gain_omega = 0.005;
+    gain_mu = 0.05;
+    omega_rel_limit = 0.005;
     int fll_sps;
     if(sps == 1)
     {
@@ -51,8 +54,6 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
         interpolation = 2;
         rs = 10000;
         bw = 4000;
-        gain_mu = 0.005;
-        omega_rel_limit = 0.001;
         nfilts = 32 * _samples_per_symbol;
         fll_sps = _samples_per_symbol/4;
     }
@@ -64,8 +65,6 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
         interpolation = 1;
         rs = 2000;
         bw = 4000;
-        gain_mu = 0.025;
-        omega_rel_limit = 0.001;
         nfilts = 25 * _samples_per_symbol;
         fll_sps = _samples_per_symbol/4;
     }
@@ -77,8 +76,6 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
         interpolation = 1;
         rs = 1000;
         bw = 2000;
-        gain_mu = 0.025;
-        omega_rel_limit = 0.001;
         nfilts = 12 * _samples_per_symbol;
         fll_sps = _samples_per_symbol/4;
     }
@@ -88,8 +85,6 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
         decimation = 2;
         _samples_per_symbol = 5;
         _target_samp_rate = 500000;
-        gain_mu = 0.05;
-        omega_rel_limit = 0.0001;
         nfilts = 50 * _samples_per_symbol;
         fll_sps = _samples_per_symbol;
     }
@@ -129,7 +124,7 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
         _discriminator = make_gr_4fsk_discriminator();
     }
 
-    _phase_mod = gr::analog::phase_modulator_fc::make(2 * M_PI / 4);
+    _phase_mod = gr::analog::phase_modulator_fc::make(M_PI / 2);
     _rail = gr::analog::rail_ff::make(-1.9, 1.9);
     _symbol_filter = gr::filter::fft_filter_ccf::make(1,symbol_filter_taps);
 
@@ -137,9 +132,10 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
     _shaping_filter = gr::filter::fft_filter_fff::make(
                 1, gr::filter::firdes::root_raised_cosine(1.05,_target_samp_rate,
                                     _target_samp_rate/_samples_per_symbol,0.35,nfilts));
-    _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
+    _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_omega*gain_omega, 0.5, gain_omega,
                                                               omega_rel_limit);
-    _clock_recovery_f = gr::digital::clock_recovery_mm_ff::make(_samples_per_symbol, 0.025*gain_mu*gain_mu, 0.5, gain_mu,
+    _clock_recovery_f = gr::digital::clock_recovery_mm_ff::make(_samples_per_symbol,
+                                                                gain_omega*gain_omega, 0.5, gain_mu,
                                                               omega_rel_limit);
     _cma_equalizer = gr::digital::cma_equalizer_cc::make(8,2,0.00005,1);
     _float_to_complex = gr::blocks::float_to_complex::make();
@@ -173,9 +169,9 @@ gr_demod_4fsk_sdr::gr_demod_4fsk_sdr(std::vector<int>signature, int sps, int sam
         connect(_rail,0,_shaping_filter,0);
         connect(_shaping_filter,0,_clock_recovery_f,0);
         connect(_clock_recovery_f,0,_phase_mod,0);
-        connect(_phase_mod,0,_cma_equalizer,0);
-        connect(_cma_equalizer,0,self(),1);
-        connect(_cma_equalizer,0,_complex_to_float,0);
+        //connect(_phase_mod,0,_cma_equalizer,0);
+        connect(_phase_mod,0,self(),1);
+        connect(_phase_mod,0,_complex_to_float,0);
     }
     else
     {

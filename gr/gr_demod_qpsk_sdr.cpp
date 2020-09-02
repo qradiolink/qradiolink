@@ -39,11 +39,12 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
 
     int decimation;
     int interpolation;
-    float gain_mu, omega_rel_limit;
+    float gain_omega, gain_mu, omega_rel_limit;
     int fll_bw;
     fll_bw = 2;
-    gain_mu = 0.005;
-    omega_rel_limit = 0.001;
+    gain_omega = 0.005;
+    gain_mu = 0.05;
+    omega_rel_limit = 0.005;
 
 
     ////////////////////////////
@@ -107,12 +108,13 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
                 1, gr::filter::firdes::root_raised_cosine(_samples_per_symbol,
                        _samples_per_symbol,1,0.35, 11 * _samples_per_symbol));
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol,
-                0.025*gain_mu*gain_mu, 0, gain_mu, omega_rel_limit);
+                gain_omega*gain_omega, 0.5, gain_mu, omega_rel_limit);
     std::vector<float> pfb_taps = gr::filter::firdes::root_raised_cosine(flt_size * _samples_per_symbol,
                                        flt_size * _samples_per_symbol, 1, 0.35, flt_size * 11 * _samples_per_symbol);
+    _costas_pll = gr::digital::costas_loop_cc::make(2*M_PI/100/_samples_per_symbol,4,true);
     _clock_sync = gr::digital::pfb_clock_sync_ccf::make(_samples_per_symbol,
                                                     2*M_PI/100,pfb_taps,flt_size, flt_size / 2, 1.5, 1);
-    _costas_loop = gr::digital::costas_loop_cc::make(2*M_PI/100,4,true);
+    _costas_loop = gr::digital::costas_loop_cc::make(2*M_PI/200,4,true);
     _equalizer = gr::digital::cma_equalizer_cc::make(8,2,0.00005,1);
 
     _diff_phasor = gr::digital::diff_phasor_cc::make();
@@ -133,17 +135,17 @@ gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int sam
     if(sps > 4)
     {
         connect(_resampler,0,_fll,0);
-        connect(_fll,0,_agc,0);
+        connect(_fll,0,_shaping_filter,0);
     }
     else
     {
-        connect(_resampler,0,_agc,0);
-        _agc->set_max_gain(50);
+        connect(_resampler,0,_shaping_filter,0);
     }
 
-    connect(_agc,0,_shaping_filter,0);
+    connect(_shaping_filter,0,_agc,0);
     connect(_shaping_filter,0,self(),0);
-    connect(_shaping_filter,0,_clock_recovery,0);
+    connect(_agc,0,_costas_pll,0);
+    connect(_costas_pll,0,_clock_recovery,0);
     connect(_clock_recovery,0,_equalizer,0);
     connect(_equalizer,0,_costas_loop,0);
     connect(_costas_loop,0,_diff_phasor,0);

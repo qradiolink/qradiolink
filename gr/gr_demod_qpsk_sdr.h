@@ -63,6 +63,7 @@ private:
     gr::digital::clock_recovery_mm_cc::sptr _clock_recovery;
     gr::digital::pfb_clock_sync_ccf::sptr _clock_sync;
     gr::digital::costas_loop_cc::sptr _costas_loop;
+    gr::digital::costas_loop_cc::sptr _costas_pll;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
     gr::filter::fft_filter_ccf::sptr _shaping_filter;
     gr::filter::fft_filter_ccf::sptr _filter;
