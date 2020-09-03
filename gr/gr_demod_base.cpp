@@ -122,9 +122,9 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
     _2fsk_1k = make_gr_demod_2fsk_sdr(10,1000000,1700,2000, false);
     _2fsk_10k = make_gr_demod_2fsk_sdr(1,1000000,1700,13500, true);
     _4fsk_2k = make_gr_demod_4fsk_sdr(5,1000000,1700,4000, false);
-    _4fsk_2k_fm = make_gr_demod_4fsk_sdr(5,1000000,1700,1800, true);
-    _4fsk_1k_fm = make_gr_demod_4fsk_sdr(10,1000000,1700,900, true);
-    _4fsk_10k_fm = make_gr_demod_4fsk_sdr(1,1000000,1700,7500, true);
+    _4fsk_2k_fm = make_gr_demod_4fsk_sdr(5,1000000,1700,2500, true);
+    _4fsk_1k_fm = make_gr_demod_4fsk_sdr(10,1000000,1700,1250, true);
+    _4fsk_10k_fm = make_gr_demod_4fsk_sdr(1,1000000,1700,12500, true);
     _am = make_gr_demod_am_sdr(125, 1000000,1700,5000);
     _bpsk_1k = make_gr_demod_bpsk_sdr(10,1000000,1700,1300);
     _bpsk_2k = make_gr_demod_bpsk_sdr(5,1000000,1700,2400);
@@ -134,7 +134,7 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
     _qpsk_10k = make_gr_demod_qpsk_sdr(25,1000000,1700,6500);
     _qpsk_250k = make_gr_demod_qpsk_sdr(2,1000000,1700,160000);
     _qpsk_video = make_gr_demod_qpsk_sdr(2,1000000,1700,160000);
-    _4fsk_96k = make_gr_demod_4fsk_sdr(2,1000000,1700,100000, true);
+    _4fsk_96k = make_gr_demod_4fsk_sdr(2,1000000,1700,125000, true);
     _usb = make_gr_demod_ssb_sdr(125, 1000000,1700,2700,0);
     _lsb = make_gr_demod_ssb_sdr(125, 1000000,1700,2700,1);
     _wfm = make_gr_demod_wbfm_sdr(125, 1000000,1700,75000);

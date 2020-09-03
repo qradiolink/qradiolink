@@ -644,8 +644,6 @@ std::vector<unsigned char>* gr_modem::frame(unsigned char *encoded_audio, int da
     {
         // hack because of clock sync
         int preamble_size = 5;
-        if(_modem_type_tx == gr_modem_types::ModemType4FSK100K)
-            preamble_size = 3;
         for(int i = 0;i < preamble_size;i++)
             data->push_back(0xCC);
     }
