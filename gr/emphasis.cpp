@@ -17,6 +17,7 @@ void calculate_deemph_taps(int sample_rate, double tau, std::vector<double>& ata
                            std::vector<double>& btaps)
 {
     // code from GNUradio gr-analog/python/analog/fm_emph.py
+
     // Digital corner frequency
 
     double w_c = 1.0 / tau;
@@ -44,16 +45,7 @@ void calculate_preemph_taps(int sample_rate, double tau, std::vector<double>& at
 {
     double fs = (double) sample_rate;
     // code from GNUradio gr-analog/python/analog/fm_emph.py
-    /**
-        #
-        # Copyright 2005,2007,2012 Free Software Foundation, Inc.
-        #
-        # This file is part of GNU Radio
-        #
-        # SPDX-License-Identifier: GPL-3.0-or-later
-        #
-        #
-    */
+
     // Set fh to something sensible, if needed.
     // N.B. fh == fs/2.0 or fh == 0.0 results in a pole on the unit circle
     // at z = -1.0 or z = 1.0 respectively.  That makes the filter unstable
