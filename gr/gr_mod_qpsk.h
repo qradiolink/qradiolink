@@ -14,8 +14,8 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#ifndef GR_MOD_QPSK_SDR_H
-#define GR_MOD_QPSK_SDR_H
+#ifndef GR_MOD_QPSK_H
+#define GR_MOD_QPSK_H
 
 #include <gnuradio/hier_block2.h>
 #include <gnuradio/blocks/multiply_const_ff.h>
@@ -42,17 +42,17 @@
 #include <gnuradio/filter/rational_resampler_base_ccf.h>
 
 
-class gr_mod_qpsk_sdr;
+class gr_mod_qpsk;
 
-typedef boost::shared_ptr<gr_mod_qpsk_sdr> gr_mod_qpsk_sdr_sptr;
-gr_mod_qpsk_sdr_sptr make_gr_mod_qpsk_sdr(int sps=125, int samp_rate=250000, int carrier_freq=1700,
+typedef boost::shared_ptr<gr_mod_qpsk> gr_mod_qpsk_sptr;
+gr_mod_qpsk_sptr make_gr_mod_qpsk(int sps=125, int samp_rate=250000, int carrier_freq=1700,
                                           int filter_width=8000);
 
-class gr_mod_qpsk_sdr : public gr::hier_block2
+class gr_mod_qpsk : public gr::hier_block2
 {
 
 public:
-    explicit gr_mod_qpsk_sdr(int sps=125, int samp_rate=250000, int carrier_freq=1700,
+    explicit gr_mod_qpsk(int sps=125, int samp_rate=250000, int carrier_freq=1700,
                              int filter_width=8000);
     void set_bb_gain(float value);
 
@@ -81,4 +81,4 @@ private:
 };
 
 
-#endif // GR_MOD_QPSK_SDR_H
+#endif // GR_MOD_QPSK_H

@@ -14,8 +14,8 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#ifndef GR_DEMOD_4FSK_SDR_H
-#define GR_DEMOD_4FSK_SDR_H
+#ifndef GR_DEMOD_4FSK_H
+#define GR_DEMOD_4FSK_H
 
 #include <gnuradio/hier_block2.h>
 #include <gnuradio/endianness.h>
@@ -46,16 +46,16 @@
 #include <gnuradio/fec/cc_decoder.h>
 #include "gr_4fsk_discriminator.h"
 
-class gr_demod_4fsk_sdr;
+class gr_demod_4fsk;
 
-typedef boost::shared_ptr<gr_demod_4fsk_sdr> gr_demod_4fsk_sdr_sptr;
-gr_demod_4fsk_sdr_sptr make_gr_demod_4fsk_sdr(int sps=125, int samp_rate=250000, int carrier_freq=1700,
+typedef boost::shared_ptr<gr_demod_4fsk> gr_demod_4fsk_sptr;
+gr_demod_4fsk_sptr make_gr_demod_4fsk(int sps=125, int samp_rate=250000, int carrier_freq=1700,
                                           int filter_width=8000, bool fm=true);
 
-class gr_demod_4fsk_sdr : public gr::hier_block2
+class gr_demod_4fsk : public gr::hier_block2
 {
 public:
-    explicit gr_demod_4fsk_sdr(std::vector<int> signature, int sps=4, int samp_rate=8000, int carrier_freq=1600,
+    explicit gr_demod_4fsk(std::vector<int> signature, int sps=4, int samp_rate=8000, int carrier_freq=1600,
                                int filter_width=1800, bool fm=true);
 
 
@@ -100,4 +100,4 @@ private:
 
 };
 
-#endif // GR_DEMOD_QPSK_SDR_H
+#endif // GR_DEMOD_4FSK_H

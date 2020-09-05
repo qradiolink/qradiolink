@@ -14,16 +14,16 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#include "gr_mod_ssb_sdr.h"
+#include "gr_mod_ssb.h"
 
-gr_mod_ssb_sdr_sptr make_gr_mod_ssb_sdr(int sps, int samp_rate, int carrier_freq,
+gr_mod_ssb_sptr make_gr_mod_ssb(int sps, int samp_rate, int carrier_freq,
                                           int filter_width, int sb)
 {
-    return gnuradio::get_initial_sptr(new gr_mod_ssb_sdr(sps, samp_rate, carrier_freq,
+    return gnuradio::get_initial_sptr(new gr_mod_ssb(sps, samp_rate, carrier_freq,
                                                       filter_width, sb));
 }
 
-gr_mod_ssb_sdr::gr_mod_ssb_sdr(int sps, int samp_rate, int carrier_freq,
+gr_mod_ssb::gr_mod_ssb(int sps, int samp_rate, int carrier_freq,
                                  int filter_width, int sb) :
     gr::hier_block2 ("gr_mod_ssb_sdr",
                       gr::io_signature::make (1, 1, sizeof (float)),
@@ -84,7 +84,7 @@ gr_mod_ssb_sdr::gr_mod_ssb_sdr(int sps, int samp_rate, int carrier_freq,
 }
 
 
-void gr_mod_ssb_sdr::set_filter_width(int filter_width)
+void gr_mod_ssb::set_filter_width(int filter_width)
 {
     _filter_width = filter_width;
     float target_samp_rate = 8000.0;
@@ -101,7 +101,7 @@ void gr_mod_ssb_sdr::set_filter_width(int filter_width)
     _filter_lsb->set_taps(filter_lsb_taps);
 }
 
-void gr_mod_ssb_sdr::set_bb_gain(float value)
+void gr_mod_ssb::set_bb_gain(float value)
 {
     _bb_gain->set_k(value);
 }

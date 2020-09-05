@@ -14,8 +14,8 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#ifndef GR_MOD_2FSK_SDR_H
-#define GR_MOD_2FSK_SDR_H
+#ifndef GR_MOD_2FSK_H
+#define GR_MOD_2FSK_H
 
 #include <gnuradio/hier_block2.h>
 #include <gnuradio/blocks/multiply_const_ff.h>
@@ -39,17 +39,17 @@
 #include <gnuradio/filter/rational_resampler_base_ccf.h>
 
 
-class gr_mod_2fsk_sdr;
+class gr_mod_2fsk;
 
-typedef boost::shared_ptr<gr_mod_2fsk_sdr> gr_mod_2fsk_sdr_sptr;
-gr_mod_2fsk_sdr_sptr make_gr_mod_2fsk_sdr(int sps=125, int samp_rate=250000, int carrier_freq=1700,
+typedef boost::shared_ptr<gr_mod_2fsk> gr_mod_2fsk_sptr;
+gr_mod_2fsk_sptr make_gr_mod_2fsk(int sps=125, int samp_rate=250000, int carrier_freq=1700,
                                           int filter_width=8000, bool fm=false);
 
-class gr_mod_2fsk_sdr : public gr::hier_block2
+class gr_mod_2fsk : public gr::hier_block2
 {
 
 public:
-    explicit gr_mod_2fsk_sdr(int sps=125, int samp_rate=250000, int carrier_freq=1700,
+    explicit gr_mod_2fsk(int sps=125, int samp_rate=250000, int carrier_freq=1700,
                              int filter_width=8000, bool fm=false);
     void set_bb_gain(float value);
 
@@ -75,4 +75,4 @@ private:
     int _filter_width;
 };
 
-#endif // GR_MOD_2FSK_SDR_H
+#endif // GR_MOD_2FSK_H

@@ -14,16 +14,16 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#include "gr_mod_nbfm_sdr.h"
+#include "gr_mod_nbfm.h"
 
-gr_mod_nbfm_sdr_sptr make_gr_mod_nbfm_sdr(int sps, int samp_rate, int carrier_freq,
+gr_mod_nbfm_sptr make_gr_mod_nbfm(int sps, int samp_rate, int carrier_freq,
                                           int filter_width)
 {
-    return gnuradio::get_initial_sptr(new gr_mod_nbfm_sdr(sps, samp_rate, carrier_freq,
+    return gnuradio::get_initial_sptr(new gr_mod_nbfm(sps, samp_rate, carrier_freq,
                                                       filter_width));
 }
 
-gr_mod_nbfm_sdr::gr_mod_nbfm_sdr(int sps, int samp_rate, int carrier_freq,
+gr_mod_nbfm::gr_mod_nbfm(int sps, int samp_rate, int carrier_freq,
                                  int filter_width) :
     gr::hier_block2 ("gr_mod_nbfm_sdr",
                       gr::io_signature::make (1, 1, sizeof (float)),
@@ -76,7 +76,7 @@ gr_mod_nbfm_sdr::gr_mod_nbfm_sdr(int sps, int samp_rate, int carrier_freq,
 }
 
 
-void gr_mod_nbfm_sdr::set_filter_width(int filter_width)
+void gr_mod_nbfm::set_filter_width(int filter_width)
 {
     _filter_width = filter_width;
     float if_samp_rate = 50000;
@@ -93,13 +93,13 @@ void gr_mod_nbfm_sdr::set_filter_width(int filter_width)
     _fm_modulator->set_sensitivity(4*M_PI*_filter_width/if_samp_rate);
 }
 
-void gr_mod_nbfm_sdr::set_bb_gain(float value)
+void gr_mod_nbfm::set_bb_gain(float value)
 {
     _bb_gain->set_k(value);
 }
 
 
-void gr_mod_nbfm_sdr::set_ctcss(float value)
+void gr_mod_nbfm::set_ctcss(float value)
 {
     if(value == 0)
     {

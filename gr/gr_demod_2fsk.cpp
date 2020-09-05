@@ -14,9 +14,9 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#include "gr_demod_2fsk_sdr.h"
+#include "gr_demod_2fsk.h"
 
-gr_demod_2fsk_sdr_sptr make_gr_demod_2fsk_sdr(int sps, int samp_rate, int carrier_freq,
+gr_demod_2fsk_sptr make_gr_demod_2fsk(int sps, int samp_rate, int carrier_freq,
                                           int filter_width, bool fm)
 {
     std::vector<int> signature;
@@ -24,13 +24,13 @@ gr_demod_2fsk_sdr_sptr make_gr_demod_2fsk_sdr(int sps, int samp_rate, int carrie
     signature.push_back(sizeof (gr_complex));
     signature.push_back(sizeof (char));
     signature.push_back(sizeof (char));
-    return gnuradio::get_initial_sptr(new gr_demod_2fsk_sdr(signature, sps, samp_rate, carrier_freq,
+    return gnuradio::get_initial_sptr(new gr_demod_2fsk(signature, sps, samp_rate, carrier_freq,
                                                       filter_width, fm));
 }
 
 
 
-gr_demod_2fsk_sdr::gr_demod_2fsk_sdr(std::vector<int>signature, int sps, int samp_rate, int carrier_freq,
+gr_demod_2fsk::gr_demod_2fsk(std::vector<int>signature, int sps, int samp_rate, int carrier_freq,
                                  int filter_width, bool fm) :
     gr::hier_block2 ("gr_demod_2fsk_sdr",
                       gr::io_signature::make (1, 1, sizeof (gr_complex)),

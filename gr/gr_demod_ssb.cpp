@@ -14,21 +14,21 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#include "gr_demod_ssb_sdr.h"
+#include "gr_demod_ssb.h"
 
-gr_demod_ssb_sdr_sptr make_gr_demod_ssb_sdr(int sps, int samp_rate, int carrier_freq,
+gr_demod_ssb_sptr make_gr_demod_ssb(int sps, int samp_rate, int carrier_freq,
                                           int filter_width, int sb)
 {
     std::vector<int> signature;
     signature.push_back(sizeof (gr_complex));
     signature.push_back(sizeof (float));
-    return gnuradio::get_initial_sptr(new gr_demod_ssb_sdr(signature, sps, samp_rate, carrier_freq,
+    return gnuradio::get_initial_sptr(new gr_demod_ssb(signature, sps, samp_rate, carrier_freq,
                                                       filter_width, sb));
 }
 
 
 
-gr_demod_ssb_sdr::gr_demod_ssb_sdr(std::vector<int>signature, int sps, int samp_rate, int carrier_freq,
+gr_demod_ssb::gr_demod_ssb(std::vector<int>signature, int sps, int samp_rate, int carrier_freq,
                                  int filter_width, int sb) :
     gr::hier_block2 ("gr_demod_ssb_sdr",
                       gr::io_signature::make (1, 1, sizeof (gr_complex)),
@@ -89,7 +89,7 @@ gr_demod_ssb_sdr::gr_demod_ssb_sdr(std::vector<int>signature, int sps, int samp_
 }
 
 
-void gr_demod_ssb_sdr::set_filter_width(int filter_width)
+void gr_demod_ssb::set_filter_width(int filter_width)
 {
     _filter_width = filter_width;
     std::vector<gr_complex> filter_usb_taps = gr::filter::firdes::complex_band_pass_2(
@@ -103,22 +103,22 @@ void gr_demod_ssb_sdr::set_filter_width(int filter_width)
             2, _target_samp_rate, 300, _filter_width, 250, 40, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
 }
 
-void gr_demod_ssb_sdr::set_squelch(int value)
+void gr_demod_ssb::set_squelch(int value)
 {
     _squelch->set_threshold(value);
 }
 
-void gr_demod_ssb_sdr::set_agc_attack(float value)
+void gr_demod_ssb::set_agc_attack(float value)
 {
     _agc->set_attack_rate(value);
 }
 
-void gr_demod_ssb_sdr::set_agc_decay(float value)
+void gr_demod_ssb::set_agc_decay(float value)
 {
     _agc->set_decay_rate(value);
 }
 
-void gr_demod_ssb_sdr::set_gain(float value)
+void gr_demod_ssb::set_gain(float value)
 {
     _if_gain->set_k(value);
 }

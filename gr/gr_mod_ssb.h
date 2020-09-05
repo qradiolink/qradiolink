@@ -14,8 +14,8 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#ifndef GR_MOD_SSB_SDR_H
-#define GR_MOD_SSB_SDR_H
+#ifndef GR_MOD_SSB_H
+#define GR_MOD_SSB_H
 
 #include <gnuradio/hier_block2.h>
 #include <gnuradio/filter/firdes.h>
@@ -36,16 +36,16 @@
 #include "emphasis.h"
 
 
-class gr_mod_ssb_sdr;
+class gr_mod_ssb;
 
-typedef boost::shared_ptr<gr_mod_ssb_sdr> gr_mod_ssb_sdr_sptr;
-gr_mod_ssb_sdr_sptr make_gr_mod_ssb_sdr(int sps=125, int samp_rate=250000, int carrier_freq=1700,
+typedef boost::shared_ptr<gr_mod_ssb> gr_mod_ssb_sptr;
+gr_mod_ssb_sptr make_gr_mod_ssb(int sps=125, int samp_rate=250000, int carrier_freq=1700,
                                           int filter_width=8000, int sb=0);
 
-class gr_mod_ssb_sdr : public gr::hier_block2
+class gr_mod_ssb : public gr::hier_block2
 {
 public:
-    explicit gr_mod_ssb_sdr(int sps=125, int samp_rate=250000, int carrier_freq=1700,
+    explicit gr_mod_ssb(int sps=125, int samp_rate=250000, int carrier_freq=1700,
                              int filter_width=8000, int sb=0);
     void set_filter_width(int filter_width);
     void set_bb_gain(float value);
@@ -71,4 +71,4 @@ private:
 
 };
 
-#endif // GR_MOD_SSB_SDR_H
+#endif // GR_MOD_SSB_H

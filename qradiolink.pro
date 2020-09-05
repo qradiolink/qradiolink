@@ -80,23 +80,9 @@ SOURCES += main.cpp\
         src/limits.cpp \
     qtgui/freqctrl.cpp \
     qtgui/plotter.cpp \
-    gr/gr_demod_bpsk_sdr.cpp \
-    gr/gr_mod_bpsk_sdr.cpp \
-    gr/gr_mod_qpsk_sdr.cpp \
-    gr/gr_demod_qpsk_sdr.cpp \
-    gr/gr_mod_4fsk_sdr.cpp \
-    gr/gr_demod_4fsk_sdr.cpp \
     gr/gr_mod_base.cpp \
     gr/gr_demod_base.cpp \
-    gr/gr_mod_nbfm_sdr.cpp \
     gr/gr_demod_nbfm_sdr.cpp \
-    gr/gr_demod_wbfm_sdr.cpp \
-    gr/gr_mod_ssb_sdr.cpp \
-    gr/gr_demod_ssb_sdr.cpp \
-    gr/gr_mod_am_sdr.cpp \
-    gr/gr_demod_am_sdr.cpp \
-    gr/gr_mod_2fsk_sdr.cpp \
-    gr/gr_demod_2fsk_sdr.cpp \
     gr/gr_demod_freedv.cpp \
     gr/gr_mod_freedv.cpp \
     gr/gr_deframer_bb.cpp \
@@ -108,7 +94,21 @@ SOURCES += main.cpp\
     gr/emphasis.cpp \
     gr/gr_byte_source.cpp \
     gr/gr_bit_sink.cpp \
-    gr/gr_sample_sink.cpp
+    gr/gr_sample_sink.cpp \
+    gr/gr_demod_2fsk.cpp \
+    gr/gr_demod_4fsk.cpp \
+    gr/gr_demod_am.cpp \
+    gr/gr_demod_bpsk.cpp \
+    gr/gr_demod_qpsk.cpp \
+    gr/gr_demod_ssb.cpp \
+    gr/gr_demod_wbfm.cpp \
+    gr/gr_mod_2fsk.cpp \
+    gr/gr_mod_4fsk.cpp \
+    gr/gr_mod_am.cpp \
+    gr/gr_mod_bpsk.cpp \
+    gr/gr_mod_nbfm.cpp \
+    gr/gr_mod_qpsk.cpp \
+    gr/gr_mod_ssb.cpp
 
 
 
@@ -150,23 +150,8 @@ HEADERS  += mainwindow.h\
         src/limits.h \
     qtgui/freqctrl.h \
     qtgui/plotter.h \
-    gr/gr_demod_bpsk_sdr.h \
-    gr/gr_mod_bpsk_sdr.h \
-    gr/gr_mod_qpsk_sdr.h \
-    gr/gr_demod_qpsk_sdr.h \
-    gr/gr_mod_4fsk_sdr.h \
-    gr/gr_demod_4fsk_sdr.h \
     gr/gr_mod_base.h \
     gr/gr_demod_base.h \
-    gr/gr_mod_nbfm_sdr.h \
-    gr/gr_demod_nbfm_sdr.h \
-    gr/gr_demod_wbfm_sdr.h \
-    gr/gr_mod_ssb_sdr.h \
-    gr/gr_demod_ssb_sdr.h \
-    gr/gr_mod_am_sdr.h \
-    gr/gr_demod_am_sdr.h \
-    gr/gr_mod_2fsk_sdr.h \
-    gr/gr_demod_2fsk_sdr.h \
     gr/gr_demod_freedv.h \
     gr/gr_mod_freedv.h \
     gr/rx_fft.h \
@@ -178,7 +163,22 @@ HEADERS  += mainwindow.h\
     gr/emphasis.h \
     gr/gr_byte_source.h \
     gr/gr_bit_sink.h \
-    gr/gr_sample_sink.h
+    gr/gr_sample_sink.h \
+    gr/gr_demod_2fsk.h \
+    gr/gr_demod_4fsk.h \
+    gr/gr_demod_am.h \
+    gr/gr_demod_bpsk.h \
+    gr/gr_demod_nbfm.h \
+    gr/gr_demod_qpsk.h \
+    gr/gr_demod_ssb.h \
+    gr/gr_demod_wbfm.h \
+    gr/gr_mod_2fsk.h \
+    gr/gr_mod_4fsk.h \
+    gr/gr_mod_am.h \
+    gr/gr_mod_bpsk.h \
+    gr/gr_mod_nbfm.h \
+    gr/gr_mod_qpsk.h \
+    gr/gr_mod_ssb.h
 
 
 

@@ -14,16 +14,16 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#include "gr_mod_am_sdr.h"
+#include "gr_mod_am.h"
 
-gr_mod_am_sdr_sptr make_gr_mod_am_sdr(int sps, int samp_rate, int carrier_freq,
+gr_mod_am_sptr make_gr_mod_am(int sps, int samp_rate, int carrier_freq,
                                           int filter_width)
 {
-    return gnuradio::get_initial_sptr(new gr_mod_am_sdr(sps, samp_rate, carrier_freq,
+    return gnuradio::get_initial_sptr(new gr_mod_am(sps, samp_rate, carrier_freq,
                                                       filter_width));
 }
 
-gr_mod_am_sdr::gr_mod_am_sdr(int sps, int samp_rate, int carrier_freq,
+gr_mod_am::gr_mod_am(int sps, int samp_rate, int carrier_freq,
                                  int filter_width) :
     gr::hier_block2 ("gr_mod_am_sdr",
                       gr::io_signature::make (1, 1, sizeof (float)),
@@ -72,7 +72,7 @@ gr_mod_am_sdr::gr_mod_am_sdr(int sps, int samp_rate, int carrier_freq,
     connect(_filter,0,self(),0);
 }
 
-void gr_mod_am_sdr::set_filter_width(int filter_width)
+void gr_mod_am::set_filter_width(int filter_width)
 {
     _filter_width = filter_width;
     std::vector<float> interp_taps = gr::filter::firdes::low_pass(_sps, _samp_rate,
@@ -84,7 +84,7 @@ void gr_mod_am_sdr::set_filter_width(int filter_width)
     _filter->set_taps(filter_taps);
 }
 
-void gr_mod_am_sdr::set_bb_gain(float value)
+void gr_mod_am::set_bb_gain(float value)
 {
     _bb_gain->set_k(value);
 }

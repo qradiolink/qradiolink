@@ -14,23 +14,23 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#include "gr_demod_qpsk_sdr.h"
+#include "gr_demod_qpsk.h"
 #include <complex>
 
-gr_demod_qpsk_sdr_sptr make_gr_demod_qpsk_sdr(int sps, int samp_rate, int carrier_freq,
+gr_demod_qpsk_sptr make_gr_demod_qpsk(int sps, int samp_rate, int carrier_freq,
                                           int filter_width)
 {
     std::vector<int> signature;
     signature.push_back(sizeof (gr_complex));
     signature.push_back(sizeof (gr_complex));
     signature.push_back(sizeof (char));
-    return gnuradio::get_initial_sptr(new gr_demod_qpsk_sdr(signature, sps, samp_rate, carrier_freq,
+    return gnuradio::get_initial_sptr(new gr_demod_qpsk(signature, sps, samp_rate, carrier_freq,
                                                       filter_width));
 }
 
 
 
-gr_demod_qpsk_sdr::gr_demod_qpsk_sdr(std::vector<int>signature, int sps, int samp_rate, int carrier_freq,
+gr_demod_qpsk::gr_demod_qpsk(std::vector<int>signature, int sps, int samp_rate, int carrier_freq,
                                  int filter_width) :
     gr::hier_block2 ("gr_demod_qpsk_sdr",
                       gr::io_signature::make (1, 1, sizeof (gr_complex)),

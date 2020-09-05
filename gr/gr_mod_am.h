@@ -14,58 +14,49 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#ifndef GR_MOD_NBFM_SDR_H
-#define GR_MOD_NBFM_SDR_H
-
+#ifndef GR_MOD_AM_H
+#define GR_MOD_AM_H
 
 #include <gnuradio/hier_block2.h>
-#include <gnuradio/analog/frequency_modulator_fc.h>
-#include <gnuradio/analog/sig_source_f.h>
-#include <gnuradio/blocks/add_ff.h>
 #include <gnuradio/filter/firdes.h>
-#include <gnuradio/filter/fft_filter_ccf.h>
+#include <gnuradio/filter/fft_filter_ccc.h>
 #include <gnuradio/filter/fft_filter_fff.h>
 #include <gnuradio/filter/rational_resampler_base_ccf.h>
-#include <gnuradio/filter/rational_resampler_base_fff.h>
+#include <gnuradio/analog/agc2_ff.h>
+#include <gnuradio/analog/feedforward_agc_cc.h>
 #include <gnuradio/blocks/multiply_const_cc.h>
 #include <gnuradio/blocks/multiply_const_ff.h>
-#include <gnuradio/blocks/multiply_ff.h>
+#include <gnuradio/blocks/add_ff.h>
 #include <gnuradio/analog/sig_source_f.h>
+#include <gnuradio/blocks/float_to_complex.h>
 #include <gnuradio/analog/rail_ff.h>
-#include <gnuradio/filter/iir_filter_ffd.h>
-#include "emphasis.h"
 
+class gr_mod_am;
 
-class gr_mod_nbfm_sdr;
-
-typedef boost::shared_ptr<gr_mod_nbfm_sdr> gr_mod_nbfm_sdr_sptr;
-gr_mod_nbfm_sdr_sptr make_gr_mod_nbfm_sdr(int sps=125, int samp_rate=250000, int carrier_freq=1700,
+typedef boost::shared_ptr<gr_mod_am> gr_mod_am_sptr;
+gr_mod_am_sptr make_gr_mod_am(int sps=125, int samp_rate=250000, int carrier_freq=1700,
                                           int filter_width=8000);
 
-class gr_mod_nbfm_sdr : public gr::hier_block2
+class gr_mod_am : public gr::hier_block2
 {
 public:
-    explicit gr_mod_nbfm_sdr(int sps=125, int samp_rate=250000, int carrier_freq=1700,
+    explicit gr_mod_am(int sps=125, int samp_rate=250000, int carrier_freq=1700,
                              int filter_width=8000);
     void set_filter_width(int filter_width);
-    void set_ctcss(float value);
     void set_bb_gain(float value);
 
 private:
-
-    gr::analog::frequency_modulator_fc::sptr _fm_modulator;
-    gr::filter::iir_filter_ffd::sptr _pre_emph_filter;
-    gr::analog::sig_source_f::sptr _tone_source;
-    gr::blocks::add_ff::sptr _add;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
-    gr::filter::rational_resampler_base_fff::sptr _if_resampler;
     gr::blocks::multiply_const_cc::sptr _amplify;
     gr::blocks::multiply_const_cc::sptr _bb_gain;
     gr::blocks::multiply_const_ff::sptr _audio_amplify;
     gr::filter::fft_filter_fff::sptr _audio_filter;
-    gr::filter::fft_filter_ccf::sptr _filter;
+    gr::filter::fft_filter_ccc::sptr _filter;
+    gr::analog::agc2_ff::sptr _agc;
+    gr::analog::feedforward_agc_cc::sptr _feed_forward_agc;
     gr::analog::sig_source_f::sptr _signal_source;
-    gr::blocks::multiply_ff::sptr _multiply;
+    gr::blocks::add_ff::sptr _add;
+    gr::blocks::float_to_complex::sptr _float_to_complex;
     gr::analog::rail_ff::sptr _rail;
 
 
@@ -73,9 +64,7 @@ private:
     int _sps;
     int _carrier_freq;
     int _filter_width;
-    std::vector<double> _btaps;
-    std::vector<double> _ataps;
 
 };
 
-#endif // GR_MOD_NBFM_SDR_H
+#endif // GR_MOD_AM_H

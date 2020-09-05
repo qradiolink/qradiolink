@@ -14,56 +14,55 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#ifndef GR_DEMOD_WBFM_SDR_H
-#define GR_DEMOD_WBFM_SDR_H
+#ifndef GR_DEMOD_AM_H
+#define GR_DEMOD_AM_H
 
 #include <gnuradio/hier_block2.h>
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/analog/agc2_ff.h>
 #include <gnuradio/filter/rational_resampler_base_ccf.h>
-#include <gnuradio/filter/rational_resampler_base_fff.h>
-#include <gnuradio/analog/quadrature_demod_cf.h>
-#include <gnuradio/analog/pwr_squelch_cc.h>
-#include <gnuradio/filter/fft_filter_ccf.h>
-#include <gnuradio/filter/fft_filter_fff.h>
-#include <gnuradio/blocks/multiply_const_ff.h>
 #include <gnuradio/filter/iir_filter_ffd.h>
-#include "emphasis.h"
+#include <gnuradio/filter/fft_filter_fff.h>
+#include <gnuradio/filter/rational_resampler_base_fff.h>
+#include <gnuradio/analog/pwr_squelch_cc.h>
+#include <gnuradio/filter/fft_filter_ccc.h>
+#include <gnuradio/blocks/complex_to_real.h>
+#include <gnuradio/blocks/complex_to_mag.h>
+#include <gnuradio/blocks/multiply_const_ff.h>
 
 
-class gr_demod_wbfm_sdr;
+class gr_demod_am;
 
-typedef boost::shared_ptr<gr_demod_wbfm_sdr> gr_demod_wbfm_sdr_sptr;
-gr_demod_wbfm_sdr_sptr make_gr_demod_wbfm_sdr(int sps=125, int samp_rate=250000, int carrier_freq=1700,
+typedef boost::shared_ptr<gr_demod_am> gr_demod_am_sptr;
+gr_demod_am_sptr make_gr_demod_am(int sps=125, int samp_rate=250000, int carrier_freq=1700,
                                           int filter_width=8000);
 
-class gr_demod_wbfm_sdr : public gr::hier_block2
+class gr_demod_am : public gr::hier_block2
 {
 public:
-    explicit gr_demod_wbfm_sdr(std::vector<int> signature, int sps=4, int samp_rate=8000, int carrier_freq=1600,
+    explicit gr_demod_am(std::vector<int> signature, int sps=4, int samp_rate=8000, int carrier_freq=1600,
                                int filter_width=1800);
-
 
     void set_squelch(int value);
     void set_filter_width(int filter_width);
-
 private:
-    gr::analog::quadrature_demod_cf::sptr _fm_demod;
-    gr::filter::iir_filter_ffd::sptr _de_emph_filter;
-    gr::analog::pwr_squelch_cc::sptr _squelch;
-    gr::blocks::multiply_const_ff::sptr _amplify;
-    gr::filter::rational_resampler_base_fff::sptr _audio_resampler;
+
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
-    gr::filter::fft_filter_ccf::sptr _filter;
+    gr::filter::rational_resampler_base_fff::sptr _audio_resampler;
+    gr::analog::pwr_squelch_cc::sptr _squelch;
+    gr::filter::fft_filter_ccc::sptr _filter;
+    gr::analog::agc2_ff::sptr _agc;
+    gr::blocks::complex_to_mag::sptr _complex_to_mag;
+    gr::filter::iir_filter_ffd::sptr _iir_filter;
+    gr::blocks::multiply_const_ff::sptr _audio_gain;
+    gr::filter::fft_filter_fff::sptr _audio_filter;
 
     int _samples_per_symbol;
     int _samp_rate;
     int _carrier_freq;
     int _filter_width;
     int _target_samp_rate;
-    std::vector<double> _btaps;
-    std::vector<double> _ataps;
 
 };
 
-#endif // GR_DEMOD_WBFM_SDR_H
+#endif // GR_DEMOD_AM_H

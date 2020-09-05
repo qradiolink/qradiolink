@@ -55,28 +55,28 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
 
     _signal_source = gr::analog::sig_source_f::make(8000, gr::analog::GR_SIN_WAVE, 600, 0.001, 1);
 
-    _2fsk_2k_fm = make_gr_mod_2fsk_sdr(25, 1000000, 1700, 2700, true); // 4000 for non FM, 2700 for FM
-    _2fsk_1k_fm = make_gr_mod_2fsk_sdr(50, 1000000, 1700, 1350, true);
-    _2fsk_2k = make_gr_mod_2fsk_sdr(25, 1000000, 1700, 4000, false);
-    _2fsk_1k = make_gr_mod_2fsk_sdr(50, 1000000, 1700, 2000, false);
-    _2fsk_10k = make_gr_mod_2fsk_sdr(5, 1000000, 1700, 13500, true);
-    _4fsk_2k = make_gr_mod_4fsk_sdr(25, 1000000, 1700, 4000, false);
-    _4fsk_2k_fm = make_gr_mod_4fsk_sdr(25, 1000000, 1700, 2500, true);
-    _4fsk_1k_fm = make_gr_mod_4fsk_sdr(50, 1000000, 1700, 1250, true);
-    _4fsk_10k_fm = make_gr_mod_4fsk_sdr(5, 1000000, 1700, 12500, true);
-    _am = make_gr_mod_am_sdr(125,1000000, 1700, 5000);
-    _bpsk_1k = make_gr_mod_bpsk_sdr(50, 1000000, 1700, 1500);
-    _bpsk_2k = make_gr_mod_bpsk_sdr(25, 1000000, 1700, 2800);
-    _fm_2500 = make_gr_mod_nbfm_sdr(20, 1000000, 1700, 3125);
-    _fm_5000 = make_gr_mod_nbfm_sdr(20, 1000000, 1700, 6250);
-    _qpsk_2k = make_gr_mod_qpsk_sdr(500, 1000000, 1700, 1300);
-    _qpsk_10k = make_gr_mod_qpsk_sdr(100, 1000000, 1700, 6500);
-    _qpsk_250k = make_gr_mod_qpsk_sdr(4, 1000000, 1700, 160000);
-    _qpsk_video = make_gr_mod_qpsk_sdr(4, 1000000, 1700, 160000);
-    _4fsk_96k = make_gr_mod_4fsk_sdr(2, 1000000, 1700, 125000, true);
-    _usb = make_gr_mod_ssb_sdr(125, 1000000, 1700, 2700, 0);
-    _lsb = make_gr_mod_ssb_sdr(125, 1000000, 1700, 2700, 1);
-    _usb_cw = make_gr_mod_ssb_sdr(125, 1000000, 1700, 1000, 0);
+    _2fsk_2k_fm = make_gr_mod_2fsk(25, 1000000, 1700, 2700, true); // 4000 for non FM, 2700 for FM
+    _2fsk_1k_fm = make_gr_mod_2fsk(50, 1000000, 1700, 1350, true);
+    _2fsk_2k = make_gr_mod_2fsk(25, 1000000, 1700, 4000, false);
+    _2fsk_1k = make_gr_mod_2fsk(50, 1000000, 1700, 2000, false);
+    _2fsk_10k = make_gr_mod_2fsk(5, 1000000, 1700, 13500, true);
+    _4fsk_2k = make_gr_mod_4fsk(25, 1000000, 1700, 4000, false);
+    _4fsk_2k_fm = make_gr_mod_4fsk(25, 1000000, 1700, 2500, true);
+    _4fsk_1k_fm = make_gr_mod_4fsk(50, 1000000, 1700, 1250, true);
+    _4fsk_10k_fm = make_gr_mod_4fsk(5, 1000000, 1700, 12500, true);
+    _am = make_gr_mod_am(125,1000000, 1700, 5000);
+    _bpsk_1k = make_gr_mod_bpsk(50, 1000000, 1700, 1500);
+    _bpsk_2k = make_gr_mod_bpsk(25, 1000000, 1700, 2800);
+    _fm_2500 = make_gr_mod_nbfm(20, 1000000, 1700, 3125);
+    _fm_5000 = make_gr_mod_nbfm(20, 1000000, 1700, 6250);
+    _qpsk_2k = make_gr_mod_qpsk(500, 1000000, 1700, 1300);
+    _qpsk_10k = make_gr_mod_qpsk(100, 1000000, 1700, 6500);
+    _qpsk_250k = make_gr_mod_qpsk(4, 1000000, 1700, 160000);
+    _qpsk_video = make_gr_mod_qpsk(4, 1000000, 1700, 160000);
+    _4fsk_96k = make_gr_mod_4fsk(2, 1000000, 1700, 125000, true);
+    _usb = make_gr_mod_ssb(125, 1000000, 1700, 2700, 0);
+    _lsb = make_gr_mod_ssb(125, 1000000, 1700, 2700, 1);
+    _usb_cw = make_gr_mod_ssb(125, 1000000, 1700, 1000, 0);
     _freedv_tx1600_usb = make_gr_mod_freedv_sdr(125, 1000000, 1700, 2500, 200,
                                                 gr::vocoder::freedv_api::MODE_1600, 0);
 

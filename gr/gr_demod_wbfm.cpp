@@ -14,21 +14,21 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#include "gr_demod_wbfm_sdr.h"
+#include "gr_demod_wbfm.h"
 
-gr_demod_wbfm_sdr_sptr make_gr_demod_wbfm_sdr(int sps, int samp_rate, int carrier_freq,
+gr_demod_wbfm_sptr make_gr_demod_wbfm(int sps, int samp_rate, int carrier_freq,
                                           int filter_width)
 {
     std::vector<int> signature;
     signature.push_back(sizeof (gr_complex));
     signature.push_back(sizeof (float));
-    return gnuradio::get_initial_sptr(new gr_demod_wbfm_sdr(signature, sps, samp_rate, carrier_freq,
+    return gnuradio::get_initial_sptr(new gr_demod_wbfm(signature, sps, samp_rate, carrier_freq,
                                                       filter_width));
 }
 
 
 
-gr_demod_wbfm_sdr::gr_demod_wbfm_sdr(std::vector<int>signature, int sps, int samp_rate, int carrier_freq,
+gr_demod_wbfm::gr_demod_wbfm(std::vector<int>signature, int sps, int samp_rate, int carrier_freq,
                                  int filter_width) :
     gr::hier_block2 ("gr_demod_wbfm_sdr",
                       gr::io_signature::make (1, 1, sizeof (gr_complex)),
@@ -73,7 +73,7 @@ gr_demod_wbfm_sdr::gr_demod_wbfm_sdr(std::vector<int>signature, int sps, int sam
 }
 
 
-void gr_demod_wbfm_sdr::set_filter_width(int filter_width)
+void gr_demod_wbfm::set_filter_width(int filter_width)
 {
     _filter_width = filter_width;
     std::vector<float> filter_taps = gr::filter::firdes::low_pass(
@@ -84,7 +84,7 @@ void gr_demod_wbfm_sdr::set_filter_width(int filter_width)
 }
 
 
-void gr_demod_wbfm_sdr::set_squelch(int value)
+void gr_demod_wbfm::set_squelch(int value)
 {
     _squelch->set_threshold(value);
 }

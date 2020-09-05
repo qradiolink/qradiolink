@@ -14,57 +14,62 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#ifndef GR_MOD_BPSK_SDR_H
-#define GR_MOD_BPSK_SDR_H
+#ifndef GR_MOD_4FSK_H
+#define GR_MOD_4FSK_H
+
 
 #include <gnuradio/hier_block2.h>
 #include <gnuradio/blocks/multiply_const_ff.h>
-#include <gnuradio/analog/sig_source_c.h>
 #include <gnuradio/blocks/packed_to_unpacked_bb.h>
 #include <gnuradio/endianness.h>
-#include <gnuradio/digital/chunks_to_symbols_bc.h>
+#include <gnuradio/digital/chunks_to_symbols_bf.h>
 #include <gnuradio/blocks/repeat.h>
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/analog/sig_source_waveform.h>
 #include <gnuradio/blocks/multiply_cc.h>
 #include <gnuradio/blocks/multiply_const_cc.h>
 #include <gnuradio/blocks/complex_to_real.h>
-#include <gnuradio/filter/pfb_arb_resampler_ccf.h>
-#include <gnuradio/blocks/repeat.h>
 #include <gnuradio/filter/firdes.h>
+#include <gnuradio/digital/map_bb.h>
 #include <gnuradio/digital/scrambler_bb.h>
+#include <gnuradio/blocks/pack_k_bits_bb.h>
+#include <gnuradio/filter/fft_filter_ccf.h>
+#include <gnuradio/analog/frequency_modulator_fc.h>
+#include <gnuradio/filter/rational_resampler_base_ccf.h>
+#include <gnuradio/filter/rational_resampler_base_fff.h>
 #include <gnuradio/fec/cc_encoder.h>
 #include <gnuradio/fec/encoder.h>
-#include <gnuradio/filter/fft_filter_ccf.h>
-#include <gnuradio/filter/rational_resampler_base_ccf.h>
 
 
-class gr_mod_bpsk_sdr;
+class gr_mod_4fsk;
 
-typedef boost::shared_ptr<gr_mod_bpsk_sdr> gr_mod_bpsk_sdr_sptr;
-gr_mod_bpsk_sdr_sptr make_gr_mod_bpsk_sdr(int sps=125, int samp_rate=250000, int carrier_freq=1700,
-                                          int filter_width=8000);
+typedef boost::shared_ptr<gr_mod_4fsk> gr_mod_4fsk_sptr;
+gr_mod_4fsk_sptr make_gr_mod_4fsk(int sps=125, int samp_rate=250000, int carrier_freq=1700,
+                                          int filter_width=8000, bool fm=true);
 
-class gr_mod_bpsk_sdr : public gr::hier_block2
+class gr_mod_4fsk : public gr::hier_block2
 {
 
 public:
-    explicit gr_mod_bpsk_sdr(int sps=125, int samp_rate=250000, int carrier_freq=1700,
-                             int filter_width=8000);
+    explicit gr_mod_4fsk(int sps=125, int samp_rate=250000, int carrier_freq=1700,
+                             int filter_width=8000, bool fm=true);
     void set_bb_gain(float value);
 
 private:
     gr::blocks::packed_to_unpacked_bb::sptr _packed_to_unpacked;
-    gr::digital::chunks_to_symbols_bc::sptr _chunks_to_symbols;
-    gr::filter::fft_filter_ccf::sptr _shaping_filter;
+    gr::digital::chunks_to_symbols_bf::sptr _chunks_to_symbols;
+    gr::blocks::multiply_const_ff::sptr _scale_pulses;
     gr::blocks::multiply_const_cc::sptr _amplify;
     gr::blocks::multiply_const_cc::sptr _bb_gain;
-    gr::fec::encoder::sptr _encode_ccsds;
     gr::digital::scrambler_bb::sptr _scrambler;
     gr::blocks::repeat::sptr _repeat;
     gr::filter::fft_filter_ccf::sptr _filter;
-    gr::filter::rational_resampler_base_ccf::sptr _resampler;
+    gr::blocks::pack_k_bits_bb::sptr _packer;
+    gr::digital::map_bb::sptr _map;
+    gr::analog::frequency_modulator_fc::sptr _freq_modulator;
+    gr::fec::encoder::sptr _encode_ccsds;
     gr::filter::rational_resampler_base_ccf::sptr _resampler2;
+    gr::filter::rational_resampler_base_fff::sptr _resampler;
 
 
 
@@ -75,4 +80,5 @@ private:
 
 };
 
-#endif // GR_MOD_BPSK_SDR_H
+
+#endif // GR_MOD_4FSK_H

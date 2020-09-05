@@ -14,68 +14,66 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#ifndef GR_DEMOD_QPSK_SDR_H
-#define GR_DEMOD_QPSK_SDR_H
+#ifndef GR_DEMOD_BPSK_H
+#define GR_DEMOD_BPSK_H
 
 #include <gnuradio/hier_block2.h>
 #include <gnuradio/endianness.h>
 #include <gnuradio/filter/firdes.h>
+#include <gnuradio/blocks/complex_to_real.h>
 #include <gnuradio/digital/clock_recovery_mm_cc.h>
+#include <gnuradio/digital/binary_slicer_fb.h>
 #include <gnuradio/blocks/float_to_complex.h>
-#include <gnuradio/blocks/complex_to_float.h>
-#include <gnuradio/blocks/multiply_const_cc.h>
-#include <gnuradio/blocks/multiply_const_ff.h>
-#include <gnuradio/digital/diff_phasor_cc.h>
-#include <gnuradio/blocks/interleave.h>
-#include <gnuradio/fec/decoder.h>
-#include <gnuradio/fec/cc_decoder.h>
 #include <gnuradio/digital/costas_loop_cc.h>
 #include <gnuradio/digital/cma_equalizer_cc.h>
 #include <gnuradio/analog/agc2_cc.h>
+#include <gnuradio/analog/agc2_ff.h>
 #include <gnuradio/digital/fll_band_edge_cc.h>
 #include <gnuradio/filter/rational_resampler_base_ccf.h>
-#include <gnuradio/digital/constellation.h>
-#include <gnuradio/digital/constellation_decoder_cb.h>
-#include <gnuradio/digital/pfb_clock_sync_ccf.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/digital/descrambler_bb.h>
-#include <gnuradio/blocks/float_to_uchar.h>
 #include <gnuradio/blocks/add_const_ff.h>
+#include <gnuradio/fec/decoder.h>
+#include <gnuradio/fec/cc_decoder.h>
+#include <gnuradio/blocks/delay.h>
+#include <gnuradio/blocks/multiply_const_ff.h>
+#include <gnuradio/blocks/float_to_uchar.h>
 
 
-class gr_demod_qpsk_sdr;
+class gr_demod_bpsk;
 
-typedef boost::shared_ptr<gr_demod_qpsk_sdr> gr_demod_qpsk_sdr_sptr;
-gr_demod_qpsk_sdr_sptr make_gr_demod_qpsk_sdr(int sps=125, int samp_rate=250000, int carrier_freq=1700,
+typedef boost::shared_ptr<gr_demod_bpsk> gr_demod_bpsk_sptr;
+gr_demod_bpsk_sptr make_gr_demod_bpsk(int sps=125, int samp_rate=250000, int carrier_freq=1700,
                                           int filter_width=8000);
 
-class gr_demod_qpsk_sdr : public gr::hier_block2
+class gr_demod_bpsk : public gr::hier_block2
 {
 public:
-    explicit gr_demod_qpsk_sdr(std::vector<int> signature, int sps=4, int samp_rate=8000, int carrier_freq=1600,
+    explicit gr_demod_bpsk(std::vector<int> signature, int sps=4, int samp_rate=8000, int carrier_freq=1600,
                                int filter_width=1800);
 
-
 private:
+
     gr::digital::cma_equalizer_cc::sptr _equalizer;
+    gr::blocks::complex_to_real::sptr _complex_to_real;
     gr::analog::agc2_cc::sptr _agc;
     gr::digital::fll_band_edge_cc::sptr _fll;
-    gr::digital::clock_recovery_mm_cc::sptr _clock_recovery;
-    gr::digital::pfb_clock_sync_ccf::sptr _clock_sync;
-    gr::digital::costas_loop_cc::sptr _costas_loop;
-    gr::digital::costas_loop_cc::sptr _costas_pll;
-    gr::filter::rational_resampler_base_ccf::sptr _resampler;
     gr::filter::fft_filter_ccf::sptr _shaping_filter;
-    gr::filter::fft_filter_ccf::sptr _filter;
-    gr::digital::descrambler_bb::sptr _descrambler;
-    gr::fec::decoder::sptr _decode_ccsds;
-    gr::digital::diff_phasor_cc::sptr _diff_phasor;
-    gr::blocks::multiply_const_cc::sptr _rotate_const;
-    gr::blocks::multiply_const_ff::sptr _multiply_const_fec;
-    gr::blocks::complex_to_float::sptr _complex_to_float;
-    gr::blocks::interleave::sptr _interleave;
+    gr::digital::clock_recovery_mm_cc::sptr _clock_recovery;
+    gr::digital::costas_loop_cc::sptr _costas_loop;
     gr::blocks::float_to_uchar::sptr _float_to_uchar;
     gr::blocks::add_const_ff::sptr _add_const_fec;
+
+    gr::filter::rational_resampler_base_ccf::sptr _resampler;
+    gr::filter::fft_filter_ccf::sptr _filter;
+    gr::digital::descrambler_bb::sptr _descrambler;
+    gr::digital::descrambler_bb::sptr _descrambler2;
+    gr::blocks::delay::sptr _delay;
+    gr::blocks::multiply_const_ff::sptr _multiply_const_fec;
+    gr::fec::decoder::sptr _cc_decoder;
+    gr::fec::decoder::sptr _cc_decoder2;
+
+
 
 
     int _samples_per_symbol;
@@ -86,4 +84,4 @@ private:
 
 };
 
-#endif // GR_DEMOD_QPSK_SDR_H
+#endif // GR_DEMOD_BPSK_H
