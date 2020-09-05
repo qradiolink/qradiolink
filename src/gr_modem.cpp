@@ -514,9 +514,9 @@ void gr_modem::sendCallsign(QString callsign)
 void gr_modem::startTransmission(QString callsign)
 {
     std::vector<unsigned char> *tx_start = new std::vector<unsigned char>;
-    for(int i = 0;i<_tx_frame_length*2;i++)
+    // set preamble to 48 bits
+    for(int i = 0;i < 6;i++)
     {
-
         tx_start->push_back(0xAA);
     }
     QVector<std::vector<unsigned char>*> frames;
