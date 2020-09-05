@@ -298,28 +298,33 @@ void MainWindow::setTheme(bool value)
     if(value)
     {
         QString stylesheet =
-                "QWidget#memoryControlsFrame {background: none}"
-                "QWidget#memoriesFrame {background: none}"
-                "QWidget#memoriesTableWidget {background: none}"
-                "QWidget, QLabel, QTabWidget, QFrame {background-color:#2a2a2a; color:#ffffd3}"
+                "QTabBar::tab { background: #00374f; color: #ffffd3; padding: 8px; padding-left: 20px;padding-right: 20px;"
+                    " border: 1px solid #000000; border-style:outset; border-top-left-radius: 4px;border-top-right-radius: 4px;} "
+                "QTabBar::tab:selected { background: #00008d; color: #ffffd3;} "
+                "QTabBar::tab:!selected { margin-top: 5px;}"
+                "QTabBar::tab:hover:!selected {background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #00008d, stop: 0.4 #00374f, stop: 0.5 #00374f, stop: 1.0 #00008d);}"
+                "QWidget#memoryControlsFrame {background: none;}"
+                "QWidget#memoriesFrame {background: none;}"
+                "QWidget#memoriesTableWidget {background: none;}"
+                "QWidget, QLabel, QTabWidget, QFrame {background-color:#2a2a2a; color:#ffffd3;}"
                 "QPushButton {background-color:#555555; color:#ffffd3;"
                     "border:1px solid #444444;border-style:outset;"
                     "border-radius: 3px;}"
-                "QPushButton:hover {background-color:#005a84; color:#ffffd3}"
-                "QPushButton:checked {background-color:#7a7a84; color:#ffffd3}"
-                "QCheckBox:hover {background-color:#555555; color:#ffffd3}"
-                "QCheckBox:checked {color:#fffb6f}"
-                "QSlider:hover {background-color: #004362; color:#ffffd3}"
-                "QDial {background-color:#5a5a5a; color:#ffffd3}"
+                "QPushButton:hover {background-color:#005a84; color:#ffffd3;}"
+                "QPushButton:checked {background-color:#7a7a84; color:#ffffd3;}"
+                "QCheckBox:hover {background-color:#555555; color:#ffffd3;}"
+                "QCheckBox:checked {color:#fffb6f;}"
+                "QSlider:hover {background-color: #004362; color:#ffffd3;}"
+                "QDial {background-color:#5a5a5a; color:#ffffd3;}"
                 "QDial:hover {background-color:#002c86; color:#ffffd3}"
                 "QComboBox {color: #f0f077; background-color: #000043;}"
                 "QComboBox QAbstractItemView::item {color: #f0f077; background-color: #000043;}"
                 "QComboBox:hover {color: #f0f077; background-color: #000043;}"
                 "QComboBox QAbstractItemView {color: #f0f077; background-color: #000043;}"
-                "QTreeWidgetItem {background-color:#001e5a; color:#ffffd3}"
+                "QTreeWidgetItem {background-color:#001e5a; color:#ffffd3;}"
                 "QTreeWidgetItem:hover {background-color:#002c86; color:#ffffd3}"
-                "QLineEdit {background-color:#a3a3a3; color:#000000}"
-                "QTextEdit {background-color:#a3a3a3; color:#000000}";
+                "QLineEdit {background-color:#a3a3a3; color:#000000;}"
+                "QTextEdit {background-color:#a3a3a3; color:#000000;}";
 
          setStyleSheet("");
          setStyleSheet(stylesheet);
@@ -328,14 +333,19 @@ void MainWindow::setTheme(bool value)
     else
     {
         QString stylesheet =
+                "QTabBar::tab { background-color: #d1d1d1; color: #000000; padding: 8px; padding-left: 20px;padding-right: 20px;"
+                    "border: 1px solid #dddddd; border-style:outset; border-top-left-radius: 4px;border-top-right-radius: 4px;} "
+                "QTabBar::tab:selected { background-color: #00008d; color: #ffffd3; } "
+                "QTabBar::tab:!selected { margin-top: 5px;}"
+                "QTabBar::tab:hover:!selected {background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #fafafa, stop: 0.4 #f4f4f4, stop: 0.5 #e7e7e7, stop: 1.0 #fafafa);}"
                 "QWidget#memoryControlsFrame {background: none}"
                 "QWidget#memoriesFrame {background: none}"
                 "QWidget#memoriesTableWidget {background: none}"
                 "QWidget, QLabel, QTabWidget, QFrame {background-color:#cccccc; color:#000000}"
                 "QPushButton:hover {background-color:#005a84; color:#ffffd3}"
-                "QCheckBox:hover {background-color:#fcfcfc; color:#0e0e00}"
+                "QCheckBox:hover {background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #fafafa, stop: 0.4 #f4f4f4, stop: 0.5 #e7e7e7, stop: 1.0 #fafafa);}"
                 "QCheckBox:checked {color:#585800}"
-                "QSlider:hover {background-color: #004362; color:#ffffd3}"
+                "QSlider:hover {background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #fafafa, stop: 0.4 #f4f4f4, stop: 0.5 #e7e7e7, stop: 1.0 #fafafa);}"
                 "QDial {background-color:#9a9a9a; color:#ffffd3}"
                 "QDial:hover {background-color:#002c86; color:#ffffd3}"
                 "QComboBox {color: #f0f077; background-color: #000043;}"
