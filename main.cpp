@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
     RadioController *radio_op = new RadioController(settings, logger, radio_channels);
     AudioWriter *audiowriter = new AudioWriter(settings, logger);
     AudioReader *audioreader = new AudioReader(settings, logger);
-    TelnetServer *telnet_server = new TelnetServer(settings, logger);
+    TelnetServer *telnet_server = new TelnetServer(settings, logger, radio_channels);
 
 
     /// Init threads

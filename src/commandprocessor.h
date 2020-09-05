@@ -27,13 +27,15 @@
 #include <string>
 #include "settings.h"
 #include "logger.h"
+#include "radiochannel.h"
 #include "ext/utils.h"
 
 class CommandProcessor : public QObject
 {
     Q_OBJECT
 public:
-    explicit CommandProcessor(const Settings *settings, Logger *logger, QObject *parent = nullptr);
+    explicit CommandProcessor(const Settings *settings, Logger *logger,
+                              RadioChannels *radio_channels, QObject *parent = nullptr);
     ~CommandProcessor();
     QStringList listAvailableCommands(bool mumble_text=false);
     bool validateCommand(QString message);
@@ -129,6 +131,7 @@ private:
     Logger *_logger;
     QVector<command*> *_command_list;
     QVector<QString> *_mode_list;
+    RadioChannels *_radio_channels;
 
     QStringList getCommand(QString message, int &command_index);
     bool processStatusCommands(int command_index, QString &response);

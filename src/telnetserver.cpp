@@ -18,12 +18,13 @@
 
 static QString CRLF ="\r\n";
 
-TelnetServer::TelnetServer(const Settings *settings, Logger *logger, QObject *parent) :
+TelnetServer::TelnetServer(const Settings *settings, Logger *logger, RadioChannels *radio_channels,
+                           QObject *parent) :
     QObject(parent)
 {
     _settings = settings;
     _logger = logger;
-    command_processor = new CommandProcessor(settings, logger);
+    command_processor = new CommandProcessor(settings, logger, radio_channels);
     _server = new QTcpServer;
     _hostaddr = QHostAddress::Any;
     _stop = false;

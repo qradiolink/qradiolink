@@ -16,7 +16,8 @@
 
 #include "commandprocessor.h"
 
-CommandProcessor::CommandProcessor(const Settings *settings, Logger *logger, QObject *parent)
+CommandProcessor::CommandProcessor(const Settings *settings, Logger *logger,
+                                   RadioChannels *radio_channels, QObject *parent)
     : QObject(parent)
 {
     _settings = settings;
@@ -24,6 +25,7 @@ CommandProcessor::CommandProcessor(const Settings *settings, Logger *logger, QOb
     _command_list = new QVector<command*>;
     buildCommandList();
     _mode_list = new QVector<QString>;
+    _radio_channels = radio_channels;
     buildModeList(_mode_list);
 }
 
@@ -330,6 +332,19 @@ bool CommandProcessor::processStatusCommands(int command_index, QString &respons
             response.append(QString("TX band limits are enabled."));
         else
             response.append(QString("TX band limits are disabled."));
+        break;
+    case 65:
+    {
+        QVector<radiochannel*> *channels = _radio_channels->getChannels();
+        for(int i=0;i<channels->size();i++)
+        {
+            radiochannel *channel = channels->at(i);
+            response.append(QString::number(i) + ": " + QString::fromStdString(channel->name) +
+                            " | " + QString::number(channel->rx_frequency) + "|" +
+                            " | " + QString::number(channel->tx_frequency) + "|" +
+                            " | " + QString::number(channel->tx_shift) + "|" +"\n");
+        }
+    }
         break;
 
     default:
@@ -948,6 +963,22 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
         }
         break;
     }
+    case 66:
+    {
+        QVector<radiochannel*> *channels = _radio_channels->getChannels();
+        int set = param1.toInt();
+        if(set < 0 || set >= channels->size())
+        {
+            response = "Parameter value is not supported";
+            success = false;
+        }
+        else
+        {
+            response = QString("NOT IMPLEMENTED YET: Setting Radio channel to %1").arg(set);
+            // TODO: implement changing radio channel
+        }
+        break;
+    }
 
     default:
         break;
@@ -1027,4 +1058,6 @@ void CommandProcessor::buildCommandList()
     _command_list->append(new command("setmuteforwarding", 1, "Toggle local mute status of VOIP forwarded radio, (1 enabled, 0 disabled)"));
     _command_list->append(new command("gettxlimits", 0, "Get status of TX band limiter"));
     _command_list->append(new command("settxlimits", 1, "Toggle TX band limits, (1 enabled, 0 disabled)"));
+    _command_list->append(new command("listradiochan", 0, "List memory channels"));
+    _command_list->append(new command("setradiochan", 1, "Set radio channel (integer value)"));
 }

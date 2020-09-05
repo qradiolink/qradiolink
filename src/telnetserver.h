@@ -35,13 +35,15 @@
 #include "settings.h"
 #include "station.h"
 #include "commandprocessor.h"
+#include "radiochannel.h"
 #include "logger.h"
 
 class TelnetServer : public QObject
 {
     Q_OBJECT
 public:
-    explicit TelnetServer(const Settings *settings, Logger *logger, QObject *parent = 0);
+    explicit TelnetServer(const Settings *settings, Logger *logger, RadioChannels *radio_channels,
+                          QObject *parent = 0);
     ~TelnetServer();
 
     CommandProcessor *command_processor; // public needed for signals and slots
