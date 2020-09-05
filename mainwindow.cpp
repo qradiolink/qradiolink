@@ -300,7 +300,7 @@ void MainWindow::setTheme(bool value)
         QString stylesheet =
                 "QTabBar::tab { background: #00374f; color: #ffffd3; padding: 8px; padding-left: 20px;padding-right: 20px;"
                     " border: 1px solid #000000; border-style:outset; border-top-left-radius: 4px;border-top-right-radius: 4px;} "
-                "QTabBar::tab:selected { background: #00008d; color: #ffffd3;} "
+                "QTabBar::tab:selected { background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #0000a3, stop: 1.0 #000043); color: #ffffd3;} "
                 "QTabBar::tab:!selected { margin-top: 5px;}"
                 "QTabBar::tab:hover:!selected {background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #00008d, stop: 0.4 #00374f, stop: 0.5 #00374f, stop: 1.0 #00008d);}"
                 "QWidget#memoryControlsFrame {background: none;}"
@@ -334,8 +334,8 @@ void MainWindow::setTheme(bool value)
     {
         QString stylesheet =
                 "QTabBar::tab { background-color: #d1d1d1; color: #000000; padding: 8px; padding-left: 20px;padding-right: 20px;"
-                    "border: 1px solid #dddddd; border-style:outset; border-top-left-radius: 4px;border-top-right-radius: 4px;} "
-                "QTabBar::tab:selected { background-color: #00008d; color: #ffffd3; } "
+                    "border: 1px solid #dddddd; border-style:outset; border-top-left-radius: 5px;border-top-right-radius: 5px;} "
+                "QTabBar::tab:selected { background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #0000a3, stop: 1.0 #000043); color: #ffffd3; } "
                 "QTabBar::tab:!selected { margin-top: 5px;}"
                 "QTabBar::tab:hover:!selected {background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #fafafa, stop: 0.4 #f4f4f4, stop: 0.5 #e7e7e7, stop: 1.0 #fafafa);}"
                 "QWidget#memoryControlsFrame {background: none}"
