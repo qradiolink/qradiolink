@@ -99,7 +99,7 @@ gr_demod_2fsk::gr_demod_2fsk(std::vector<int>signature, int sps, int samp_rate, 
     _symbol_filter = gr::filter::fft_filter_ccf::make(1,symbol_filter_taps);
 
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol,
-                                                              gain_omega*gain_omega, 0, gain_mu,
+                                                              gain_omega*gain_omega, 0.5, gain_mu,
                                                               0.001);
 
     _freq_demod = gr::analog::quadrature_demod_cf::make(_samples_per_symbol/(spacing * M_PI/2));
