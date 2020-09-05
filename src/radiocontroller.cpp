@@ -2149,11 +2149,6 @@ void RadioController::toggleRepeat(bool value)
     {
         _settings->repeater_enabled = value;
     }
-    /// old code: this enables direct repeat in same mode only (direct loopback)
-    /**
-     if(_rx_mode == _tx_mode)
-        _modem->setRepeater(value);
-    */
 }
 
 void RadioController::fineTuneFreq(long long center_freq)

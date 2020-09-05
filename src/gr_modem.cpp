@@ -26,7 +26,6 @@ gr_modem::gr_modem(const Settings *settings, Logger *logger, QObject *parent) :
     _bit_buf = new unsigned char[_bit_buf_len];
     _modem_type_rx = gr_modem_types::ModemTypeBPSK2K;
     _modem_type_tx = gr_modem_types::ModemTypeBPSK2K;
-    _direct_mode_repeater = false;
     _rx_frame_length = 7;
     _tx_frame_length = 7;
     _bit_buf_index = 0;
@@ -489,13 +488,6 @@ void gr_modem::enableDemod(bool value)
 ///
 
 
-/// allows audio to bypass RadioController transcoding and loop
-/// back directly to radio
-void gr_modem::setRepeater(bool value)
-{
-    _direct_mode_repeater = value;
-}
-
 void gr_modem::sendCallsign(QString callsign)
 {
     std::vector<unsigned char> *send_callsign = new std::vector<unsigned char>;
@@ -768,12 +760,6 @@ bool gr_modem::demodulateAnalog()
         return false;
     if(audio_data->size() > 0)
     {
-        if(_direct_mode_repeater)
-        {
-            std::vector<float> *repeated_audio = new std::vector<float>(
-                        audio_data->begin(),audio_data->end());
-            transmitPCMAudio(repeated_audio);
-        }
         emit pcmAudio(audio_data);
         return true;
     }
@@ -1014,10 +1000,6 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
             }
         }
         QString text = QString::fromLocal8Bit(text_data,string_length);
-        if(_direct_mode_repeater)
-        {
-            transmitTextData(text);
-        }
         emit textReceived(text);
         delete[] text_data;
     }
@@ -1037,10 +1019,6 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
 
         QString callsign(text_data);
         callsign = callsign.remove(QRegExp("[^a-zA-Z/\\d\\s]"));
-        if(_direct_mode_repeater)
-        {
-            sendCallsign(callsign);
-        }
         emit callsignReceived(callsign);
         delete[] text_data;
     }
@@ -1066,13 +1044,6 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
         {
             memcpy(codec2_data, received_data+1, _rx_frame_length);
             emit digitalAudio(codec2_data,_rx_frame_length);
-            emit audioFrameReceived();
-        }
-        if(_direct_mode_repeater)
-        {
-            unsigned char *repeated_frame = new unsigned char[_rx_frame_length];
-            memcpy(repeated_frame, codec2_data, _rx_frame_length);
-            transmitDigitalAudio(repeated_frame, _rx_frame_length);
             emit audioFrameReceived();
         }
 
