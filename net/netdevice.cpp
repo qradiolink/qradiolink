@@ -45,7 +45,7 @@ int NetDevice::tun_init(QString ip_address)
     _ip_address = ip_address;
     int err;
     struct sockaddr_in addr;
-    QString dev_str = "tunif" + _ip_address.back();
+    QString dev_str = QString("tunif%1").arg(_ip_address.at(_ip_address.size() - 1));
     char *dev = const_cast<char*>(dev_str.toStdString().c_str());
     if( (_fd_tun = open("/dev/net/tun", O_RDWR)) < 0 )
     {
