@@ -638,9 +638,12 @@ void RadioController::processInputNetStream()
         memcpy(&(netbuffer[12]), &crc, 4);
         memcpy(&(netbuffer[16]), buffer, nread);
 
-        for(int k=nread+16,i=0;k<max_frame_size;k++,i++)
+        if(!_settings->burst_ip_modem)
         {
-            netbuffer[k] = _rand_frame_data[i];
+            for(int k=nread+16,i=0;k<max_frame_size;k++,i++)
+            {
+                netbuffer[k] = _rand_frame_data[i];
+            }
         }
 
         emit netData(netbuffer,max_frame_size);
@@ -2582,7 +2585,7 @@ void RadioController::memoryScan(bool receiving, bool wait_for_timer)
             return;
         }
     }
-    struct timespec time_to_sleep;
+
     radiochannel *chan = _memory_channels.at(_memory_scan_index);
     if(chan->skip)
     {
@@ -2591,8 +2594,20 @@ void RadioController::memoryScan(bool receiving, bool wait_for_timer)
             _memory_scan_index = 0;
         return;
     }
+    tuneMemoryChannel(chan);
+
+    _memory_scan_index++;
+    if(_memory_scan_index >= _memory_channels.size())
+        _memory_scan_index = 0;
+
+    _scan_timer->restart();
+}
+
+void RadioController::tuneMemoryChannel(radiochannel *chan)
+{
     _settings->rx_frequency = chan->rx_frequency - _settings->demod_offset;
     tuneFreq(_settings->rx_frequency);
+    struct timespec time_to_sleep;
     time_to_sleep = {0, 1000L }; /// Give PLL time to settle
     nanosleep(&time_to_sleep, NULL);
     toggleRxMode(chan->rx_mode);
@@ -2603,11 +2618,12 @@ void RadioController::memoryScan(bool receiving, bool wait_for_timer)
     nanosleep(&time_to_sleep, NULL);
     toggleTxMode(chan->tx_mode);
 
+    setSquelch(chan->squelch);
+    setVolume(chan->rx_volume);
+    setTxPower(chan->tx_power);
+    setRxSensitivity(chan->rx_sensitivity);
+    setRxCTCSS(chan->rx_ctcss);
+    setTxCTCSS(chan->tx_ctcss);
+
     emit tuneToMemoryChannel(chan);
-
-    _memory_scan_index++;
-    if(_memory_scan_index >= _memory_channels.size())
-        _memory_scan_index = 0;
-
-    _scan_timer->restart();
 }

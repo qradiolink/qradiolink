@@ -71,6 +71,7 @@ public:
     void flushRadioToVoipBuffer();
     void updateDataModemReset(bool transmitting, bool ptt_activated);
 
+
 signals:
     void finished();
     void setAudioReadMode(bool capture, bool preprocess, int audio_mode);
@@ -155,6 +156,7 @@ public slots:
     void stopScan();
     void startMemoryScan(int direction);
     void stopMemoryScan();
+    void tuneMemoryChannel(radiochannel *chan);
     void endAudioTransmission();
     void processVoipAudioFrame(short *pcm, int samples, quint64 sid);
     void processVoipVideoFrame(unsigned char *video_frame, int size, quint64 sid);

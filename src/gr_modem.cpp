@@ -514,8 +514,8 @@ void gr_modem::sendCallsign(QString callsign)
 void gr_modem::startTransmission(QString callsign)
 {
     std::vector<unsigned char> *tx_start = new std::vector<unsigned char>;
-    // set preamble to 48 bits
-    for(int i = 0;i < 6;i++)
+    // set preamble to 48 bits (ramp-up included)
+    for(int i = 0;i < 8;i++)
     {
         tx_start->push_back(0xAA);
     }
@@ -634,10 +634,9 @@ std::vector<unsigned char>* gr_modem::frame(unsigned char *encoded_audio, int da
     std::vector<unsigned char> *data = new std::vector<unsigned char>;
     if(frame_type == FrameTypeIP && _burst_ip_modem)
     {
-        // hack because of clock sync
-        int preamble_size = 5;
+        int preamble_size = 10;
         for(int i = 0;i < preamble_size;i++)
-            data->push_back(0xCC);
+            data->push_back(0x8A);
     }
     if(frame_type == FrameTypeVoice)
     {

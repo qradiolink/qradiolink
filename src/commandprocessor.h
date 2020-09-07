@@ -93,6 +93,9 @@ signals:
     void startMemoryTune(int scan_direction);
     void stopMemoryTune();
 
+    /// Memory channels
+    void tuneMemoryChannel(radiochannel*);
+
     /// VOIP
     void connectToServer(QString server, unsigned port);
     void disconnectFromServer();

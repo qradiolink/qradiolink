@@ -975,7 +975,7 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
         else
         {
             response = QString("NOT IMPLEMENTED YET: Setting Radio channel to %1").arg(set);
-            // TODO: implement changing radio channel
+            emit tuneMemoryChannel(channels->at(set));
         }
         break;
     }

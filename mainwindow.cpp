@@ -805,33 +805,7 @@ void MainWindow::tuneToMemoryChannel(int row, int col)
 
     QVector<radiochannel*> *channels = _radio_channels->getChannels();
     radiochannel *chan = channels->at(row);
-
-    ui->frameCtrlFreq->setFrequency(chan->rx_frequency);
-    tuneMainFreq(chan->rx_frequency);
-    _settings->tx_shift = chan->tx_shift;
-    emit changeTxShift(_settings->tx_shift);
-    ui->shiftEdit->setText(QString::number(chan->tx_shift / 1000));
-
-    ui->rxModemTypeComboBox->setCurrentIndex(chan->rx_mode);
-    ui->txModemTypeComboBox->setCurrentIndex(chan->tx_mode);
-    toggleRxMode(chan->rx_mode);
-    toggleTxMode(chan->tx_mode);
-
-    setSquelchDisplay(chan->squelch);
-    setVolumeDisplay(chan->rx_volume);
-    setTxPowerDisplay(chan->tx_power);
-    setRxSensitivityDisplay(chan->rx_sensitivity);
-    emit setRxCTCSS(chan->rx_ctcss);
-    emit setTxCTCSS(chan->tx_ctcss);
-    if(chan->rx_ctcss > 0.0)
-        ui->comboBoxRxCTCSS->setCurrentText(QString::number(chan->rx_ctcss));
-    else
-        ui->comboBoxRxCTCSS->setCurrentText("CTCSS");
-    if(chan->tx_ctcss > 0.0)
-        ui->comboBoxTxCTCSS->setCurrentText(QString::number(chan->tx_ctcss));
-    else
-        ui->comboBoxTxCTCSS->setCurrentText("CTCSS");
-
+    tuneToMemoryChannel(chan);
 }
 
 void MainWindow::tuneToMemoryChannel(radiochannel *chan)
@@ -840,9 +814,12 @@ void MainWindow::tuneToMemoryChannel(radiochannel *chan)
     tuneMainFreq(chan->rx_frequency);
     _settings->tx_shift = chan->tx_shift;
     ui->shiftEdit->setText(QString::number(chan->tx_shift / 1000));
+    emit changeTxShift(_settings->tx_shift);
 
     ui->rxModemTypeComboBox->setCurrentIndex(chan->rx_mode);
     ui->txModemTypeComboBox->setCurrentIndex(chan->tx_mode);
+    toggleRxMode(chan->rx_mode);
+    toggleTxMode(chan->tx_mode);
 
     setSquelchDisplay(chan->squelch);
     setVolumeDisplay(chan->rx_volume);
