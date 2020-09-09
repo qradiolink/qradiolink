@@ -634,9 +634,9 @@ std::vector<unsigned char>* gr_modem::frame(unsigned char *encoded_audio, int da
     std::vector<unsigned char> *data = new std::vector<unsigned char>;
     if(frame_type == FrameTypeIP && _burst_ip_modem)
     {
-        int preamble_size = 10;
+        int preamble_size = 10; // increase ramp-up symbols to 20
         for(int i = 0;i < preamble_size;i++)
-            data->push_back(0x8A);
+            data->push_back(0xAA);
     }
     if(frame_type == FrameTypeVoice)
     {

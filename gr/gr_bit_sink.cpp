@@ -48,12 +48,13 @@ void gr_bit_sink::flush()
 std::vector<unsigned char> * gr_bit_sink::get_data()
 {
     gr::thread::scoped_lock guard(_mutex);
-    std::vector<unsigned char>* data = new std::vector<unsigned char>;
+
     // Buffer up to X bits
-    if(_data->size() < 1)
+    if(_data->size() < 32)
     {
-        return data;
+        return nullptr;
     }
+    std::vector<unsigned char>* data = new std::vector<unsigned char>;
     data->reserve(_data->size());
     data->insert(data->end(),_data->begin(),_data->end());
     _data->clear();
@@ -71,7 +72,7 @@ int gr_bit_sink::work(int noutput_items,
         return noutput_items;
     }
     gr::thread::scoped_lock guard(_mutex);
-    if(_data->size() > 1024 * 1024)
+    if(_data->size() > 1048576)
     {
         // not reading data fast enough, anything more than 400 msec
         // of data in the buffer is a problem downstream so dropping buffer
