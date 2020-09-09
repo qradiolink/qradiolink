@@ -1,3 +1,14 @@
+qradiolink (0.8.3-5) RELEASED; urgency=medium
+
+  [ Adrian Musceac ]
+  * Re-enable AppImage build
+  * Fix too low modulation index in 4FSK modem
+  * Enable changing radio channels from telnet and Mumble
+
+  
+ -- Adrian Musceac <kantooon@gmail.com>  Wed, 09 Sep 2020 19:30:00 +0300
+
+
 qradiolink (0.8.3-4) RELEASED; urgency=medium
 
   [ Adrian Musceac ]
