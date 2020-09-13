@@ -23,7 +23,6 @@
 #include <gnuradio/blocks/packed_to_unpacked_bb.h>
 #include <gnuradio/endianness.h>
 #include <gnuradio/digital/chunks_to_symbols_bc.h>
-#include <gnuradio/blocks/repeat.h>
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/analog/sig_source_waveform.h>
 #include <gnuradio/blocks/multiply_cc.h>
@@ -65,7 +64,6 @@ private:
     gr::blocks::multiply_const_cc::sptr _amplify;
     gr::blocks::multiply_const_cc::sptr _bb_gain;
     gr::digital::scrambler_bb::sptr _scrambler;
-    gr::blocks::repeat::sptr _repeat;
     gr::filter::fft_filter_ccf::sptr _filter;
     gr::digital::diff_encoder_bb::sptr _diff_encoder;
     gr::blocks::pack_k_bits_bb::sptr _packer;

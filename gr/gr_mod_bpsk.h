@@ -30,7 +30,6 @@
 #include <gnuradio/blocks/multiply_const_cc.h>
 #include <gnuradio/blocks/complex_to_real.h>
 #include <gnuradio/filter/pfb_arb_resampler_ccf.h>
-#include <gnuradio/blocks/repeat.h>
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/digital/scrambler_bb.h>
 #include <gnuradio/fec/cc_encoder.h>
@@ -56,12 +55,10 @@ public:
 private:
     gr::blocks::packed_to_unpacked_bb::sptr _packed_to_unpacked;
     gr::digital::chunks_to_symbols_bc::sptr _chunks_to_symbols;
-    gr::filter::fft_filter_ccf::sptr _shaping_filter;
     gr::blocks::multiply_const_cc::sptr _amplify;
     gr::blocks::multiply_const_cc::sptr _bb_gain;
     gr::fec::encoder::sptr _encode_ccsds;
     gr::digital::scrambler_bb::sptr _scrambler;
-    gr::blocks::repeat::sptr _repeat;
     gr::filter::fft_filter_ccf::sptr _filter;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
     gr::filter::rational_resampler_base_ccf::sptr _resampler2;

@@ -84,4 +84,4 @@ private:
 
 };
 
-#endif // GR_DEMOD_BPSK_H
+#endif // GR_DEMOD_DSSS_H

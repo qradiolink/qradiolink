@@ -104,7 +104,7 @@ gr_demod_4fsk::gr_demod_4fsk(std::vector<int>signature, int sps, int samp_rate, 
                                                                          gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     _resampler = gr::filter::rational_resampler_base_ccf::make(interpolation, decimation, taps);
     _resampler->set_thread_priority(99);
-    _fll = gr::digital::fll_band_edge_cc::make(fll_sps, 0.01, 16, 48*M_PI/100);
+    _fll = gr::digital::fll_band_edge_cc::make(_samples_per_symbol, 0.25, 32, 48*M_PI/100);
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
                                 1, _target_samp_rate, _filter_width,_filter_width/2,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     if(!fm)
