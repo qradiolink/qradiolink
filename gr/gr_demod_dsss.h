@@ -21,14 +21,11 @@
 #include <gnuradio/endianness.h>
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/blocks/complex_to_real.h>
-#include <gnuradio/digital/clock_recovery_mm_cc.h>
 #include <gnuradio/digital/binary_slicer_fb.h>
 #include <gnuradio/blocks/float_to_complex.h>
 #include <gnuradio/digital/costas_loop_cc.h>
-#include <gnuradio/digital/cma_equalizer_cc.h>
 #include <gnuradio/analog/agc2_cc.h>
 #include <gnuradio/analog/agc2_ff.h>
-#include <gnuradio/digital/fll_band_edge_cc.h>
 #include <gnuradio/filter/rational_resampler_base_ccf.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/digital/descrambler_bb.h>
@@ -38,6 +35,7 @@
 #include <gnuradio/blocks/delay.h>
 #include <gnuradio/blocks/multiply_const_ff.h>
 #include <gnuradio/blocks/float_to_uchar.h>
+#include <gr/dsss_decoder_cc_impl.h>
 
 
 class gr_demod_dsss;
@@ -54,12 +52,9 @@ public:
 
 private:
 
-    gr::digital::cma_equalizer_cc::sptr _equalizer;
     gr::blocks::complex_to_real::sptr _complex_to_real;
     gr::analog::agc2_cc::sptr _agc;
-    gr::digital::fll_band_edge_cc::sptr _fll;
-    gr::filter::fft_filter_ccf::sptr _shaping_filter;
-    gr::digital::clock_recovery_mm_cc::sptr _clock_recovery;
+    gr::dsss::dsss_decoder_cc::sptr _dsss_decoder;
     gr::digital::costas_loop_cc::sptr _costas_loop;
     gr::blocks::float_to_uchar::sptr _float_to_uchar;
     gr::blocks::add_const_ff::sptr _add_const_fec;

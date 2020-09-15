@@ -42,6 +42,7 @@ gr_demod_dsss::gr_demod_dsss(std::vector<int>signature, int sps, int samp_rate, 
     _samp_rate =samp_rate;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
+    std::vector<int> dsss_code;
 
     std::vector<int> polys;
     polys.push_back(109);
@@ -55,15 +56,9 @@ gr_demod_dsss::gr_demod_dsss(std::vector<int>signature, int sps, int samp_rate, 
     _agc = gr::analog::agc2_cc::make(1e-1, 1e-1, 1, 10);
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
                             1, _target_samp_rate, _filter_width,1200,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
-    float gain_mu = 0.025;
-    _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol,
-                                                              0.025*gain_mu*gain_mu, 0.5, gain_mu,
-                                                              0.001);
     _costas_loop = gr::digital::costas_loop_cc::make(2*M_PI/100,2);
-    _equalizer = gr::digital::cma_equalizer_cc::make(8,1,0.000005,1);
-    _fll = gr::digital::fll_band_edge_cc::make(_samples_per_symbol, 0.35, 32, 8*M_PI/100);
-    _shaping_filter = gr::filter::fft_filter_ccf::make(
-                1, gr::filter::firdes::root_raised_cosine(_samples_per_symbol,_samples_per_symbol,1,0.35,15 * _samples_per_symbol));
+
+    _dsss_decoder = gr::dsss::dsss_decoder_cc::make(dsss_code, _samples_per_symbol);
     _complex_to_real = gr::blocks::complex_to_real::make();
 
     _multiply_const_fec = gr::blocks::multiply_const_ff::make(64);
@@ -82,13 +77,9 @@ gr_demod_dsss::gr_demod_dsss(std::vector<int>signature, int sps, int samp_rate, 
 
 
     connect(self(),0,_resampler,0);
-    connect(_resampler,0,_fll,0);
-    connect(_fll,0,_shaping_filter,0);
-    connect(_shaping_filter,0,self(),0);
-    connect(_shaping_filter,0,_agc,0);
-    connect(_agc,0,_clock_recovery,0);
-    connect(_clock_recovery,0,_equalizer,0);
-    connect(_equalizer,0,_costas_loop,0);
+    connect(_resampler,0,_agc,0);
+    connect(_agc,0,_dsss_decoder,0);
+    connect(_dsss_decoder,0,_costas_loop,0);
     connect(_costas_loop,0,_complex_to_real,0);
     connect(_costas_loop,0,self(),1);
     connect(_complex_to_real,0,_multiply_const_fec,0);
