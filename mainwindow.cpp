@@ -314,7 +314,6 @@ void MainWindow::setTheme(bool value)
                 "QPushButton:checked {background-color:#7a7a84; color:#ffffd3;}"
                 "QCheckBox:hover {background-color:#555555; color:#ffffd3;}"
                 "QCheckBox:checked {color:#fffb6f;}"
-                "QSlider:hover {background-color: #004362; color:#ffffd3;}"
                 "QDial {background-color:#5a5a5a; color:#ffffd3;}"
                 "QDial:hover {background-color:#002c86; color:#ffffd3}"
                 "QComboBox {color: #f0f077; background-color: #000043;}"
@@ -324,7 +323,23 @@ void MainWindow::setTheme(bool value)
                 "QTreeWidgetItem {background-color:#001e5a; color:#ffffd3;}"
                 "QTreeWidgetItem:hover {background-color:#002c86; color:#ffffd3}"
                 "QLineEdit {background-color:#a3a3a3; color:#000000;}"
-                "QTextEdit {background-color:#a3a3a3; color:#000000;}";
+                "QTextEdit {background-color:#a3a3a3; color:#000000;}"
+                "QSlider::sub-page {"
+                    "background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #0000a3, stop: 1.0 #000043);"
+                    "border: 1px solid #777;border-style:outset;height: 5px;border-radius: 3px;}"
+                "QSlider::add-page {"
+                    "background-color: #f0f077;border: 1px solid #777;border-style:inset;height: 5px;border-radius: 3px;}"
+                "QSlider::handle {"
+                    "background-color: qlineargradient(x1:0, y1:0, x2:1, y2:1,"
+                    " stop:0 #eee, stop:1 #ccc);"
+                    "border: 1px solid #777;width: 16px;border-radius: 4px;}"
+                "QSlider::handle:hover {"
+                    "background-color: qlineargradient(x1:0, y1:0, x2:1, y2:1,"
+                    " stop:0 #fff, stop:1 #ddd);"
+                    "border: 1px solid #444;border-radius: 4px;}"
+                "QSlider::sub-page:disabled {background-color: #bbb;border-color: #999;}"
+                "QSlider::add-page:disabled {background-color: #eee;border-color: #999;}"
+                "QSlider::handle:disabled {background-color: #eee;border: 1px solid #aaa;border-radius: 4px;};";
 
          setStyleSheet("");
          setStyleSheet(stylesheet);
@@ -345,7 +360,6 @@ void MainWindow::setTheme(bool value)
                 "QPushButton:hover {background-color:#005a84; color:#ffffd3}"
                 "QCheckBox:hover {background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #fafafa, stop: 0.4 #f4f4f4, stop: 0.5 #e7e7e7, stop: 1.0 #fafafa);}"
                 "QCheckBox:checked {color:#585800}"
-                "QSlider:hover {background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #fafafa, stop: 0.4 #f4f4f4, stop: 0.5 #e7e7e7, stop: 1.0 #fafafa);}"
                 "QDial {background-color:#9a9a9a; color:#ffffd3}"
                 "QDial:hover {background-color:#002c86; color:#ffffd3}"
                 "QComboBox {color: #f0f077; background-color: #000043;}"
@@ -356,7 +370,24 @@ void MainWindow::setTheme(bool value)
                 "QTreeWidget {background-color:#2a2a2a; color:#ffffd3}"
                 "QTreeWidgetItem:hover {background-color:#002c86; color:#ffffd3}"
                 "QLineEdit {background-color:#ffffff; color:#000000}"
-                "QTextEdit {background-color:#ffffff; color:#000000}";
+                "QTextEdit {background-color:#ffffff; color:#000000}"
+                "QSlider::sub-page {border: 1px solid #bbb;"
+                    "background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #0000a3, stop: 1.0 #000043);"
+                    "border: 1px solid #777;border-style:outset;height: 5px;border-radius: 3px;}"
+                "QSlider::add-page {border: 1px solid #bbb;"
+                    "background-color: #ffffd3;border: 1px solid #777;border-style:inset;height: 5px;border-radius: 3px;}"
+                "QSlider::handle {"
+                    "background-color: qlineargradient(x1:0, y1:0, x2:1, y2:1,"
+                    " stop:0 #eee, stop:1 #ccc);"
+                    "border: 1px solid #777;width: 6px;height:6px;border-radius: 4px;}"
+                "QSlider::handle:hover {"
+                    "background-color: qlineargradient(x1:0, y1:0, x2:1, y2:1,"
+                    " stop:0 #fff, stop:1 #ddd);"
+                    "border: 1px solid #444;border-radius: 4px;}"
+                "QSlider::sub-page:disabled {background-color: #bbb;border-color: #999;}"
+                "QSlider::add-page:disabled {background-color: #eee;border-color: #999;}"
+                "QSlider::handle:disabled {background-color: #eee;border: 1px solid #aaa;border-radius: 4px;};";
+
         setStyleSheet("");
         setStyleSheet(stylesheet);
     }
