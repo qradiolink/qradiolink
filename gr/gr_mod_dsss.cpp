@@ -37,18 +37,14 @@ gr_mod_dsss::gr_mod_dsss(int sps, int samp_rate, int carrier_freq,
     polys.push_back(109);
     polys.push_back(79);
 
-    std::vector<int> dsss_code;
-    dsss_code.push_back(1);
-    dsss_code.push_back(1);
-    dsss_code.push_back(1);
-    dsss_code.push_back(0);
-    dsss_code.push_back(1);
+    static const int barker_13[] = {1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1};
+    std::vector<int> dsss_code (barker_13, barker_13 + sizeof(barker_13) / sizeof(barker_13[0]) );
 
-    _samples_per_symbol = sps;
+    _samples_per_symbol = sps; // 25
     _samp_rate =samp_rate;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
-    int if_samp_rate = 8000;
+    int if_samp_rate = 5200;
 
     _packed_to_unpacked = gr::blocks::packed_to_unpacked_bb::make(1,gr::GR_MSB_FIRST);
     _unpacked_to_packed = gr::blocks::unpacked_to_packed_bb::make(1,gr::GR_MSB_FIRST);
@@ -58,25 +54,21 @@ gr_mod_dsss::gr_mod_dsss(int sps, int samp_rate, int carrier_freq,
     _encode_ccsds = gr::fec::encoder::make(encoder, 1, 1);
 
     _chunks_to_symbols = gr::digital::chunks_to_symbols_bc::make(constellation);
-    int nfilts = 128;
-    std::vector<float> rrc_taps = gr::filter::firdes::root_raised_cosine(nfilts, nfilts,
-                                                        1, 0.35, nfilts * 11 * _samples_per_symbol);
-    //_shaping_filter = gr::filter::pfb_arb_resampler_ccf::make(_samples_per_symbol, rrc_taps, nfilts);
-    _resampler = gr::filter::rational_resampler_base_ccf::make(_samples_per_symbol, 1,
+
+
+    _resampler = gr::filter::pfb_arb_resampler_ccf::make(_samples_per_symbol,
                                   gr::filter::firdes::root_raised_cosine(_samples_per_symbol,
-                                        _samples_per_symbol,1,0.35,11 * _samples_per_symbol));
+                                        _samples_per_symbol,1,0.35,11 * _samples_per_symbol), 32);
     _resampler->set_thread_priority(99);
-    _shaping_filter = gr::filter::fft_filter_ccf::make(
-                1, gr::filter::firdes::root_raised_cosine(1,_samp_rate,_samp_rate/_samples_per_symbol,
-                                                          0.35,nfilts * _samples_per_symbol));
+
     _dsss_encoder = gr::dsss::dsss_encoder_bb::make(dsss_code);
     _amplify = gr::blocks::multiply_const_cc::make(0.5,1);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
     _filter = gr::filter::fft_filter_ccf::make(
                 1,gr::filter::firdes::low_pass_2(
                     1, if_samp_rate, _filter_width, 1200, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
-    _resampler2 = gr::filter::rational_resampler_base_ccf::make(10, 1,
-                        gr::filter::firdes::low_pass(10,_samp_rate,_filter_width,_filter_width*5));
+    _resampler2 = gr::filter::pfb_arb_resampler_ccf::make(float(_samp_rate)/float(if_samp_rate),
+                        gr::filter::firdes::low_pass(10,_samp_rate,_filter_width,_filter_width*5), 32);
 
 
     connect(self(),0,_packed_to_unpacked,0);

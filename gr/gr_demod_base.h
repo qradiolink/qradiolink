@@ -55,6 +55,7 @@
 #include "gr_demod_ssb.h"
 #include "gr_demod_wbfm.h"
 #include "gr_demod_freedv.h"
+#include "gr_demod_dsss.h"
 #include "src/modem_types.h"
 
 class gr_demod_base : public QObject
@@ -138,6 +139,7 @@ private:
     gr_demod_am_sptr _am;
     gr_demod_bpsk_sptr _bpsk_1k;
     gr_demod_bpsk_sptr _bpsk_2k;
+    gr_demod_dsss_sptr _bpsk_dsss_8;
     gr_demod_nbfm_sptr _fm_2500;
     gr_demod_nbfm_sptr _fm_5000;
     gr_demod_qpsk_sptr _qpsk_2k;

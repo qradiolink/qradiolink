@@ -41,6 +41,7 @@
 #include "gr_mod_qpsk.h"
 #include "gr_mod_ssb.h"
 #include "gr_mod_freedv.h"
+#include "gr_mod_dsss.h"
 
 class gr_mod_base : public QObject
 {
@@ -86,6 +87,7 @@ private:
     gr_mod_am_sptr _am;
     gr_mod_bpsk_sptr _bpsk_1k;
     gr_mod_bpsk_sptr _bpsk_2k;
+    gr_mod_dsss_sptr _bpsk_dsss_8;
     gr_mod_nbfm_sptr _fm_2500;
     gr_mod_nbfm_sptr _fm_5000;
     gr_mod_qpsk_sptr _qpsk_2k;

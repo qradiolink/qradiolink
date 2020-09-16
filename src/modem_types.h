@@ -26,6 +26,7 @@ namespace gr_modem_types {
         ModemType2FSK10KFM,
         ModemType2FSK10KFMINET,
         ModemTypeBPSK1K,
+        ModemTypeBPSK8,
         ModemTypeQPSK250K,
         ModemType4FSK100K,
         ModemTypeFREEDV1600USB,

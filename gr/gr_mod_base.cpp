@@ -67,6 +67,7 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
     _am = make_gr_mod_am(125,1000000, 1700, 5000);
     _bpsk_1k = make_gr_mod_bpsk(50, 1000000, 1700, 1500);
     _bpsk_2k = make_gr_mod_bpsk(25, 1000000, 1700, 2800);
+    _bpsk_dsss_8 = make_gr_mod_dsss(25, 1000000, 1700, 200);
     _fm_2500 = make_gr_mod_nbfm(20, 1000000, 1700, 3125);
     _fm_5000 = make_gr_mod_nbfm(20, 1000000, 1700, 6250);
     _qpsk_2k = make_gr_mod_qpsk(500, 1000000, 1700, 1300);
@@ -186,6 +187,11 @@ void gr_mod_base::set_mode(int mode)
     case gr_modem_types::ModemTypeBPSK2K:
         _top_block->disconnect(_byte_source,0,_bpsk_2k,0);
         _top_block->disconnect(_bpsk_2k,0,_rotator,0);
+        _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
+        break;
+    case gr_modem_types::ModemTypeBPSK8:
+        _top_block->disconnect(_byte_source,0,_bpsk_dsss_8,0);
+        _top_block->disconnect(_bpsk_dsss_8,0,_rotator,0);
         _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeNBFM2500:
@@ -384,6 +390,15 @@ void gr_mod_base::set_mode(int mode)
         _osmosdr_sink->set_sample_rate(1000000);
         _top_block->connect(_byte_source,0,_bpsk_2k,0);
         _top_block->connect(_bpsk_2k,0,_rotator,0);
+        _top_block->connect(_rotator,0,_osmosdr_sink,0);
+        break;
+    case gr_modem_types::ModemTypeBPSK8:
+        _carrier_offset = 50000;
+        _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
+        _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
+        _osmosdr_sink->set_sample_rate(1000000);
+        _top_block->connect(_byte_source,0,_bpsk_dsss_8,0);
+        _top_block->connect(_bpsk_dsss_8,0,_rotator,0);
         _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeNBFM2500:
@@ -642,6 +657,7 @@ void gr_mod_base::set_bb_gain(float value)
     _am->set_bb_gain(value);
     _bpsk_1k->set_bb_gain(value);
     _bpsk_2k->set_bb_gain(value);
+    _bpsk_dsss_8->set_bb_gain(value);
     _fm_2500->set_bb_gain(value);
     _fm_5000->set_bb_gain(value);
     _qpsk_2k->set_bb_gain(value);

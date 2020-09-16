@@ -37,12 +37,13 @@ gr_demod_dsss::gr_demod_dsss(std::vector<int>signature, int sps, int samp_rate, 
                       gr::io_signature::makev (4, 4, signature))
 {
 
-    _target_samp_rate = 20000;
-    _samples_per_symbol = sps;
+    _target_samp_rate = 5200;
+    _samples_per_symbol = sps; // 25
     _samp_rate =samp_rate;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
-    std::vector<int> dsss_code;
+    static const int barker_13[] = {1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1};
+    std::vector<int> dsss_code (barker_13, barker_13 + sizeof(barker_13) / sizeof(barker_13[0]) );
 
     std::vector<int> polys;
     polys.push_back(109);
@@ -51,7 +52,7 @@ gr_demod_dsss::gr_demod_dsss(std::vector<int>signature, int sps, int samp_rate, 
 
     std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _target_samp_rate/2, _target_samp_rate/2,
                                                            gr::filter::firdes::WIN_BLACKMAN_HARRIS);
-    _resampler = gr::filter::rational_resampler_base_ccf::make(1, 50, taps);
+    _resampler = gr::filter::pfb_arb_resampler_ccf::make(float(_target_samp_rate)/float(_samp_rate), taps, 32);
     _resampler->set_thread_priority(99);
     _agc = gr::analog::agc2_cc::make(1e-1, 1e-1, 1, 10);
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
