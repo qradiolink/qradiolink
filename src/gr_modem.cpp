@@ -106,6 +106,10 @@ void gr_modem::toggleTxMode(int modem_type)
         {
             _tx_frame_length = 4;
         }
+        else if(modem_type == gr_modem_types::ModemTypeBPSK8)
+        {
+            _tx_frame_length = 7;
+        }
         else if(modem_type == gr_modem_types::ModemType2FSK1KFM)
         {
             _tx_frame_length = 4;
@@ -181,6 +185,11 @@ void gr_modem::toggleRxMode(int modem_type)
         {
             _bit_buf_len = 4 *8;
             _rx_frame_length = 4;
+        }
+        if(modem_type == gr_modem_types::ModemTypeBPSK8)
+        {
+            _bit_buf_len = 8 *8;
+            _rx_frame_length = 7;
         }
         else if(modem_type == gr_modem_types::ModemType2FSK1KFM)
         {
@@ -785,6 +794,7 @@ bool gr_modem::demodulate()
             || (_modem_type_rx == gr_modem_types::ModemType2FSK2K)
             || (_modem_type_rx == gr_modem_types::ModemType2FSK10KFM)
             || (_modem_type_rx == gr_modem_types::ModemTypeBPSK1K)
+            || (_modem_type_rx == gr_modem_types::ModemTypeBPSK8)
             || (_modem_type_rx == gr_modem_types::ModemType2FSK1KFM)
             || (_modem_type_rx == gr_modem_types::ModemType2FSK1K))
     {
@@ -803,6 +813,7 @@ bool gr_modem::demodulate()
     int v_size;
     if((_modem_type_rx == gr_modem_types::ModemTypeBPSK2K)
             || (_modem_type_rx == gr_modem_types::ModemTypeBPSK1K)
+            || (_modem_type_rx == gr_modem_types::ModemTypeBPSK8)
             || (_modem_type_rx == gr_modem_types::ModemType2FSK10KFM)
             || (_modem_type_rx == gr_modem_types::ModemType2FSK2KFM)
             || (_modem_type_rx == gr_modem_types::ModemType2FSK2K)
@@ -831,6 +842,7 @@ bool gr_modem::demodulate()
     delete demod_data;
     if((_modem_type_rx == gr_modem_types::ModemTypeBPSK2K)
             || (_modem_type_rx == gr_modem_types::ModemTypeBPSK1K)
+            || (_modem_type_rx == gr_modem_types::ModemTypeBPSK8)
             || (_modem_type_rx == gr_modem_types::ModemType2FSK10KFM)
             || (_modem_type_rx == gr_modem_types::ModemType2FSK2KFM)
             || (_modem_type_rx == gr_modem_types::ModemType2FSK2K)

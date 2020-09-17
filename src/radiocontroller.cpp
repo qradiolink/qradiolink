@@ -692,6 +692,7 @@ void RadioController::transmitTextData()
     start_text_tx:
     int frame_size;
     if((_tx_mode == gr_modem_types::ModemTypeBPSK2K) ||
+            (_tx_mode == gr_modem_types::ModemTypeBPSK8) ||
             (_tx_mode == gr_modem_types::ModemType2FSK2KFM) ||
             (_tx_mode == gr_modem_types::ModemType2FSK2K) ||
             (_tx_mode == gr_modem_types::ModemType4FSK2K) ||
@@ -765,6 +766,7 @@ void RadioController::transmitBinData()
     start_data_tx:
     int frame_size;
     if((_tx_mode == gr_modem_types::ModemTypeBPSK2K) ||
+            (_tx_mode == gr_modem_types::ModemTypeBPSK8) ||
             (_tx_mode == gr_modem_types::ModemType2FSK2KFM) ||
             (_tx_mode == gr_modem_types::ModemType2FSK2K) ||
             (_tx_mode == gr_modem_types::ModemType4FSK2K) ||
@@ -965,6 +967,7 @@ void RadioController::stopTx()
         {
             _modem->endTransmission(_callsign);
             if((_tx_mode == gr_modem_types::ModemTypeBPSK2K) ||
+                    (_tx_mode == gr_modem_types::ModemTypeBPSK8) ||
                     (_tx_mode == gr_modem_types::ModemType2FSK2KFM) ||
                     (_tx_mode == gr_modem_types::ModemType2FSK2K) ||
                     (_tx_mode == gr_modem_types::ModemType4FSK2K) ||
@@ -1950,6 +1953,11 @@ void RadioController::toggleRxMode(int value)
         _step_hz = 10;
         _scan_step_hz = 2500;
         break;
+    case 29:
+        _rx_mode = gr_modem_types::ModemTypeBPSK8;
+        _step_hz = 5;
+        _scan_step_hz = 500;
+        break;
     default:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _rx_mode = gr_modem_types::ModemTypeUSB2500;
@@ -2085,6 +2093,9 @@ void RadioController::toggleTxMode(int value)
     case 28:
         _tx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _tx_mode = gr_modem_types::ModemTypeCW600USB;
+        break;
+    case 29:
+        _tx_mode = gr_modem_types::ModemTypeBPSK8;
         break;
     default:
         _tx_mode = gr_modem_types::ModemTypeBPSK2K;
