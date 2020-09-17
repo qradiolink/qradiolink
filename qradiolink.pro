@@ -186,7 +186,8 @@ HEADERS  += mainwindow.h\
     gr/gr_mod_dsss.h \
     gr/gr_mod_nbfm.h \
     gr/gr_mod_qpsk.h \
-    gr/gr_mod_ssb.h
+    gr/gr_mod_ssb.h \
+    style.h
 
 
 

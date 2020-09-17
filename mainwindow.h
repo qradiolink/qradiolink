@@ -42,6 +42,7 @@
 #include "src/settings.h"
 #include "src/logger.h"
 #include "src/mumblechannel.h"
+#include "style.h"
 
 
 typedef std::vector<std::complex<float>> complex_vector;

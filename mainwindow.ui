@@ -636,7 +636,7 @@ color: rgb(255, 255, 255);</string>
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
-                 <height>20</height>
+                 <height>25</height>
                 </size>
                </property>
                <property name="toolTip">
@@ -2005,8 +2005,7 @@ border-width: 4px;
                   <item row="2" column="2">
                    <widget class="QLineEdit" name="mumbleTextMessageEdit">
                     <property name="styleSheet">
-                     <string notr="true">color: rgb(0, 0, 70);
-background-color: rgba(255, 255, 255, 180);</string>
+                     <string notr="true"/>
                     </property>
                    </widget>
                   </item>
@@ -2606,7 +2605,7 @@ font: 10pt &quot;Sans Serif&quot;;
              </font>
             </property>
             <property name="currentIndex">
-             <number>2</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="tab">
              <attribute name="title">
@@ -4987,7 +4986,7 @@ background-color: rgb(0, 0, 67);
           </property>
           <property name="minimumSize">
            <size>
-            <width>120</width>
+            <width>130</width>
             <height>60</height>
            </size>
           </property>
@@ -5020,6 +5019,11 @@ background-color: rgb(0, 0, 67);
              </property>
              <property name="toolTip">
               <string>Sync</string>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: none;
+border: none;
+border-radius: 0px;</string>
              </property>
              <property name="text">
               <string/>
@@ -5058,6 +5062,11 @@ background-color: rgb(0, 0, 67);
              <property name="toolTip">
               <string>Transmitting</string>
              </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: none;
+border: none;
+border-radius: 0px;</string>
+             </property>
              <property name="text">
               <string/>
              </property>
@@ -5090,7 +5099,9 @@ background-color: rgb(0, 0, 67);
               <string>Receiving data</string>
              </property>
              <property name="styleSheet">
-              <string notr="true"/>
+              <string notr="true">background-color: none;
+border: none;
+border-radius: 0px;</string>
              </property>
              <property name="text">
               <string/>
@@ -5125,6 +5136,11 @@ background-color: rgb(0, 0, 67);
              </property>
              <property name="toolTip">
               <string>Receiving audio</string>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: none;
+border: none;
+border-radius: 0px;</string>
              </property>
              <property name="text">
               <string/>
