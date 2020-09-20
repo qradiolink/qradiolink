@@ -51,7 +51,7 @@ class gr_mod_dsss : public gr::hier_block2
 {
 
 public:
-    explicit gr_mod_dsss(int sps=125, int samp_rate=250000, int carrier_freq=1700,
+    explicit gr_mod_dsss(int sps=25, int samp_rate=250000, int carrier_freq=1700,
                              int filter_width=8000);
     void set_bb_gain(float value);
 
@@ -66,8 +66,9 @@ private:
     gr::digital::scrambler_bb::sptr _scrambler;
     gr::dsss::dsss_encoder_bb::sptr _dsss_encoder;
     gr::filter::fft_filter_ccf::sptr _filter;
-    gr::filter::pfb_arb_resampler_ccf::sptr _resampler;
-    gr::filter::pfb_arb_resampler_ccf::sptr _resampler2;
+    gr::filter::rational_resampler_base_ccf::sptr _resampler;
+    gr::filter::rational_resampler_base_ccf::sptr _resampler_if;
+    gr::filter::rational_resampler_base_ccf::sptr _resampler_rf;
 
 
 

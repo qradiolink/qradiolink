@@ -297,8 +297,8 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
             _top_block->disconnect(_bpsk_dsss_8,0,_rssi_valve,0);
             _top_block->disconnect(_bpsk_dsss_8,1,_const_valve,0);
             _top_block->disconnect(_const_valve,0,_constellation,0);
-            _top_block->disconnect(_bpsk_dsss_8,2,_deframer_700_1,0);
-            _top_block->disconnect(_bpsk_dsss_8,3,_deframer_700_2,0);
+            _top_block->disconnect(_bpsk_dsss_8,2,_deframer1,0);
+            _top_block->disconnect(_bpsk_dsss_8,3,_deframer2,0);
             break;
         case gr_modem_types::ModemTypeNBFM2500:
             _top_block->disconnect(_demod_valve,0,_fm_2500,0);
@@ -495,8 +495,8 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
             _top_block->connect(_bpsk_dsss_8,0,_rssi_valve,0);
             _top_block->connect(_bpsk_dsss_8,1,_const_valve,0);
             _top_block->connect(_const_valve,0,_constellation,0);
-            _top_block->connect(_bpsk_dsss_8,2,_deframer_700_1,0);
-            _top_block->connect(_bpsk_dsss_8,3,_deframer_700_2,0);
+            _top_block->connect(_bpsk_dsss_8,2,_deframer1,0);
+            _top_block->connect(_bpsk_dsss_8,3,_deframer2,0);
             break;
         case gr_modem_types::ModemTypeNBFM2500:
             _top_block->connect(_demod_valve,0,_fm_2500,0);

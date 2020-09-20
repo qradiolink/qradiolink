@@ -42,7 +42,7 @@
 class gr_demod_dsss;
 
 typedef boost::shared_ptr<gr_demod_dsss> gr_demod_dsss_sptr;
-gr_demod_dsss_sptr make_gr_demod_dsss(int sps=125, int samp_rate=250000, int carrier_freq=1700,
+gr_demod_dsss_sptr make_gr_demod_dsss(int sps=25, int samp_rate=250000, int carrier_freq=1700,
                                           int filter_width=8000);
 
 class gr_demod_dsss : public gr::hier_block2
@@ -60,7 +60,8 @@ private:
     gr::blocks::float_to_uchar::sptr _float_to_uchar;
     gr::blocks::add_const_ff::sptr _add_const_fec;
 
-    gr::filter::pfb_arb_resampler_ccf::sptr _resampler;
+    gr::filter::rational_resampler_base_ccf::sptr _resampler;
+    gr::filter::rational_resampler_base_ccf::sptr _resampler_if;
     gr::filter::fft_filter_ccf::sptr _filter;
     gr::digital::descrambler_bb::sptr _descrambler;
     gr::digital::descrambler_bb::sptr _descrambler2;
@@ -77,6 +78,7 @@ private:
     int _carrier_freq;
     int _filter_width;
     int _target_samp_rate;
+    int _if_samp_rate;
 
 };
 
