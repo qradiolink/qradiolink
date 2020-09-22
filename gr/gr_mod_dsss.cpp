@@ -69,7 +69,7 @@ gr_mod_dsss::gr_mod_dsss(int sps, int samp_rate, int carrier_freq,
                 1,gr::filter::firdes::low_pass_2(
                     1, if_samp_rate, _filter_width, 1200, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
     _resampler_if = gr::filter::rational_resampler_base_ccf::make(50,13,
-                        gr::filter::firdes::low_pass(50.0/13.0,if_samp_rate2*50,_filter_width,_filter_width*5));
+                        gr::filter::firdes::low_pass(50.0,if_samp_rate*50,_filter_width,_filter_width*5));
     _resampler_rf = gr::filter::rational_resampler_base_ccf::make(50, 1,
                         gr::filter::firdes::low_pass(50,_samp_rate,_filter_width,_filter_width*5));
 

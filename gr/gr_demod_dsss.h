@@ -28,6 +28,7 @@
 #include <gnuradio/analog/agc2_ff.h>
 #include <gnuradio/filter/rational_resampler_base_ccf.h>
 #include <gnuradio/filter/pfb_arb_resampler_ccf.h>
+#include <gnuradio/digital/clock_recovery_mm_cc.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/digital/descrambler_bb.h>
 #include <gnuradio/blocks/add_const_ff.h>
@@ -56,6 +57,8 @@ private:
     gr::blocks::complex_to_real::sptr _complex_to_real;
     gr::analog::agc2_cc::sptr _agc;
     gr::dsss::dsss_decoder_cc::sptr _dsss_decoder;
+    gr::digital::clock_recovery_mm_cc::sptr _clock_recovery;
+    gr::digital::costas_loop_cc::sptr _costas_freq;
     gr::digital::costas_loop_cc::sptr _costas_loop;
     gr::blocks::float_to_uchar::sptr _float_to_uchar;
     gr::blocks::add_const_ff::sptr _add_const_fec;

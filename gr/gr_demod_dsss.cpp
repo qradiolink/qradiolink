@@ -48,6 +48,10 @@ gr_demod_dsss::gr_demod_dsss(std::vector<int>signature, int sps, int samp_rate, 
     std::vector<int> polys;
     polys.push_back(109);
     polys.push_back(79);
+    float gain_omega, gain_mu, omega_rel_limit;
+    gain_omega = 0.005;
+    gain_mu = 0.05;
+    omega_rel_limit = 0.005;
 
 
     std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _if_samp_rate/2, _if_samp_rate/2,
@@ -55,7 +59,7 @@ gr_demod_dsss::gr_demod_dsss(std::vector<int>signature, int sps, int samp_rate, 
     _resampler = gr::filter::rational_resampler_base_ccf::make(1, 50, taps);
     _resampler->set_thread_priority(99);
 
-    std::vector<float> taps_if = gr::filter::firdes::low_pass(1, _if_samp_rate*13, _target_samp_rate/2, _target_samp_rate/2,
+    std::vector<float> taps_if = gr::filter::firdes::low_pass(1, _if_samp_rate, _target_samp_rate/2, _target_samp_rate/2,
                                                            gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     _resampler_if = gr::filter::rational_resampler_base_ccf::make(13, 50, taps_if);
 
@@ -63,9 +67,11 @@ gr_demod_dsss::gr_demod_dsss(std::vector<int>signature, int sps, int samp_rate, 
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
                             1, _target_samp_rate, _filter_width,1200,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     _costas_loop = gr::digital::costas_loop_cc::make(2*M_PI/100,2);
-
+    _costas_freq = gr::digital::costas_loop_cc::make(2*M_PI/400,2,true);
     _dsss_decoder = gr::dsss::dsss_decoder_cc::make(dsss_code, _samples_per_symbol);
     _complex_to_real = gr::blocks::complex_to_real::make();
+    _clock_recovery = gr::digital::clock_recovery_mm_cc::make(1,
+                gain_omega*gain_omega, 0.5, gain_mu, omega_rel_limit);
 
     _multiply_const_fec = gr::blocks::multiply_const_ff::make(64);
     _float_to_uchar = gr::blocks::float_to_uchar::make();
@@ -84,10 +90,13 @@ gr_demod_dsss::gr_demod_dsss(std::vector<int>signature, int sps, int samp_rate, 
 
     connect(self(),0,_resampler,0);
     connect(_resampler,0,_resampler_if,0);
-    connect(_resampler_if,0,_agc,0);
-    connect(_agc,0,_dsss_decoder,0);
-    connect(_dsss_decoder,0,self(),0);
-    connect(_dsss_decoder,0,_costas_loop,0);
+    connect(_resampler_if,0,_filter,0);
+    connect(_filter,0,_agc,0);
+    connect(_filter,0,self(),0);
+    connect(_agc,0,_costas_freq,0);
+    connect(_costas_freq,0,_dsss_decoder,0);
+    connect(_dsss_decoder,0,_clock_recovery,0);
+    connect(_clock_recovery,0,_costas_loop,0);
     connect(_costas_loop,0,_complex_to_real,0);
     connect(_costas_loop,0,self(),1);
     connect(_complex_to_real,0,_multiply_const_fec,0);

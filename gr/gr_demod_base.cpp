@@ -128,7 +128,7 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
     _am = make_gr_demod_am(125, 1000000,1700,5000);
     _bpsk_1k = make_gr_demod_bpsk(10,1000000,1700,1300);
     _bpsk_2k = make_gr_demod_bpsk(5,1000000,1700,2400);
-    _bpsk_dsss_8 = make_gr_demod_dsss(25,1000000,1700,200);
+    _bpsk_dsss_8 = make_gr_demod_dsss(25,1000000,1700,150);
     _fm_2500 = make_gr_demod_nbfm(125, 1000000,1700,3125);
     _fm_5000 = make_gr_demod_nbfm(125, 1000000,1700,6250);
     _qpsk_2k = make_gr_demod_qpsk(125,1000000,1700,1300);
@@ -650,7 +650,7 @@ std::vector<unsigned char>* gr_demod_base::getData(int nr)
             data = _deframer1->get_data();
             break;
         case gr_modem_types::ModemTypeBPSK8:
-            data = _deframer_700_1->get_data();
+            data = _deframer1->get_data();
             break;
         }
     }

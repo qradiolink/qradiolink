@@ -944,7 +944,6 @@ int gr_modem::findSync(unsigned char bit)
         temp = _shift_reg & 0xFFFFFF;
         if(temp == FrameTypeText)
         {
-            std::cerr << "Text sync" << std::endl;
             _sync_found = true;
             return FrameTypeText;
         }
