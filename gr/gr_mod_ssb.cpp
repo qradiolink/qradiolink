@@ -36,12 +36,10 @@ gr_mod_ssb::gr_mod_ssb(int sps, int samp_rate, int carrier_freq,
     float target_samp_rate = 8000.0;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
-    gr::calculate_preemph_taps(8000, 65e-6, _ataps, _btaps);
 
     _agc = gr::analog::agc2_ff::make(1, 1e-3, 0.5, 1);
     _agc->set_max_gain(100);
     _rail = gr::analog::rail_ff::make(-0.6, 0.6);
-    _pre_emph_filter = gr::filter::iir_filter_ffd::make(_btaps, _ataps, false);
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::band_pass_2(
                     1, target_samp_rate, 300, _filter_width, 200, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
@@ -63,8 +61,7 @@ gr_mod_ssb::gr_mod_ssb(int sps, int samp_rate, int carrier_freq,
     connect(self(),0,_agc,0);
     connect(_agc,0,_rail,0);
     connect(_rail,0,_audio_filter,0);
-    connect(_audio_filter,0,_pre_emph_filter,0);
-    connect(_pre_emph_filter,0,_float_to_complex,0);
+    connect(_audio_filter,0,_float_to_complex,0);
     if(!sb)
     {
         connect(_float_to_complex,0,_filter_usb,0);

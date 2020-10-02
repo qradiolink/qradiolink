@@ -32,8 +32,6 @@
 #include <gnuradio/blocks/float_to_complex.h>
 #include <gnuradio/analog/rail_ff.h>
 #include <gnuradio/blocks/delay.h>
-#include <gnuradio/filter/iir_filter_ffd.h>
-#include "emphasis.h"
 
 
 class gr_mod_ssb;
@@ -54,7 +52,6 @@ private:
     gr::blocks::multiply_const_cc::sptr _amplify;
     gr::blocks::multiply_const_cc::sptr _bb_gain;
     gr::filter::fft_filter_fff::sptr _audio_filter;
-    gr::filter::iir_filter_ffd::sptr _pre_emph_filter;
     gr::analog::agc2_ff::sptr _agc;
     gr::analog::feedforward_agc_cc::sptr _feed_forward_agc;
     gr::filter::fft_filter_ccc::sptr _filter_usb;
@@ -66,8 +63,6 @@ private:
     int _sps;
     int _carrier_freq;
     int _filter_width;
-    std::vector<double> _btaps;
-    std::vector<double> _ataps;
 
 };
 

@@ -39,7 +39,6 @@ gr_demod_ssb::gr_demod_ssb(std::vector<int>signature, int sps, int samp_rate, in
     _sps = sps;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
-    gr::calculate_deemph_taps(8000, 65e-6, _ataps, _btaps);
 
     std::vector<float> taps = gr::filter::firdes::low_pass(_sps, _samp_rate, _target_samp_rate/2,
                             _target_samp_rate/2, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
@@ -60,7 +59,6 @@ gr_demod_ssb::gr_demod_ssb(std::vector<int>signature, int sps, int samp_rate, in
                 1,gr::filter::firdes::band_pass_2(
                     2, _target_samp_rate, 300, _filter_width, 200, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
     _complex_to_real = gr::blocks::complex_to_real::make();
-    _de_emph_filter = gr::filter::iir_filter_ffd::make(_btaps, _ataps, false);
     _level_control = gr::blocks::multiply_const_ff::make(0.99);
 
 
@@ -81,8 +79,7 @@ gr_demod_ssb::gr_demod_ssb(std::vector<int>signature, int sps, int samp_rate, in
     connect(_squelch,0,_agc,0);
     connect(_agc,0,_complex_to_real,0);
     connect(_complex_to_real,0,_rail,0);
-    connect(_rail,0,_de_emph_filter,0);
-    connect(_de_emph_filter,0,_level_control,0);
+    connect(_rail,0,_level_control,0);
     connect(_level_control,0,_audio_filter,0);
     connect(_audio_filter,0,self(),1);
 
