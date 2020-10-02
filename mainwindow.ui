@@ -1376,7 +1376,7 @@ color: rgb(255, 255, 255);</string>
                 <bool>false</bool>
                </property>
                <property name="styleSheet">
-                <string notr="true">font: 10pt &quot;Sans Serif&quot;;</string>
+                <string notr="true"/>
                </property>
                <property name="text">
                 <string>Disconnect</string>
@@ -1512,8 +1512,7 @@ color: rgb(255, 255, 255);</string>
                 <bool>false</bool>
                </property>
                <property name="styleSheet">
-                <string notr="true">font: 9pt &quot;Sans Serif&quot;;
-</string>
+                <string notr="true"/>
                </property>
                <property name="text">
                 <string>Connect</string>
@@ -1677,9 +1676,7 @@ color: rgb(255, 255, 255);</string>
                 <bool>false</bool>
                </property>
                <property name="styleSheet">
-                <string notr="true">font: 10pt &quot;Sans Serif&quot;;
-border-width: 4px;
-</string>
+                <string notr="true"/>
                </property>
                <property name="text">
                 <string>Repeater</string>
@@ -1730,9 +1727,7 @@ border-width: 4px;
                 <bool>false</bool>
                </property>
                <property name="styleSheet">
-                <string notr="true">font: 10pt &quot;Sans Serif&quot;;
-border-width: 4px;
-</string>
+                <string notr="true"/>
                </property>
                <property name="text">
                 <string>Vox</string>
@@ -1780,9 +1775,7 @@ border-width: 4px;
                 <bool>false</bool>
                </property>
                <property name="styleSheet">
-                <string notr="true">font: 10pt &quot;Sans Serif&quot;;
-border-width: 4px;
-</string>
+                <string notr="true"/>
                </property>
                <property name="text">
                 <string>Forward radio</string>
@@ -1824,9 +1817,7 @@ border-width: 4px;
                 <bool>false</bool>
                </property>
                <property name="styleSheet">
-                <string notr="true">font: 10pt &quot;Sans Serif&quot;;
-border-width: 4px;
-</string>
+                <string notr="true"/>
                </property>
                <property name="text">
                 <string>PTT for VOIP</string>
@@ -2388,10 +2379,7 @@ font: 10pt &quot;Sans Serif&quot;;
                    </size>
                   </property>
                   <property name="styleSheet">
-                   <string notr="true">font: 12pt &quot;Sans Serif&quot;;
-
-
-</string>
+                   <string notr="true"/>
                   </property>
                   <property name="text">
                    <string>Clear</string>
@@ -3129,6 +3117,9 @@ and S-meter (dBm)</string>
                  </item>
                  <item row="6" column="4">
                   <widget class="QCheckBox" name="muteForwardedAudioCheckBox">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
                    <property name="text">
                     <string>Mute forwarded audio</string>
                    </property>
@@ -5623,9 +5614,7 @@ color: #FF0000;</string>
              <string>TX Modulation</string>
             </property>
             <property name="styleSheet">
-             <string notr="true">color: rgb(240, 240, 119);
-background-color: rgb(0, 0, 67);
-font: 9pt &quot;Sans Serif&quot;;</string>
+             <string notr="true">font: 9pt &quot;Sans Serif&quot;;</string>
             </property>
             <property name="maxVisibleItems">
              <number>25</number>
@@ -5665,9 +5654,7 @@ font: 9pt &quot;Sans Serif&quot;;</string>
              <string>RX Modulation</string>
             </property>
             <property name="styleSheet">
-             <string notr="true">color: rgb(240, 240, 119);
-background-color: rgb(0, 0, 67);
-font: 9pt &quot;Sans Serif&quot;;</string>
+             <string notr="true">font: 9pt &quot;Sans Serif&quot;;</string>
             </property>
             <property name="maxVisibleItems">
              <number>25</number>
