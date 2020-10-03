@@ -18,17 +18,18 @@ void calculate_deemph_taps(int sample_rate, double tau, std::vector<double>& ata
 {
     // code from GNUradio gr-analog/python/analog/fm_emph.py
 
+    double fs = (double) sample_rate;
     // Digital corner frequency
 
     double w_c = 1.0 / tau;
 
     // Prewarped analog corner frequency
-    double w_ca = 2.0 * double(sample_rate) * tanf(w_c / (2.0 * double(sample_rate)));
+    double w_ca = 2.0 * fs * tanf(w_c / (2.0 * fs));
 
     // Resulting digital pole, zero, and gain term from the bilinear
     // transformation of H(s) = w_ca / (s + w_ca) to
     // H(z) = b0 (1 - z1 z^-1)/(1 - p1 z^-1)
-    double k = -w_ca / (2.0 * double(sample_rate));
+    double k = -w_ca / (2.0 * fs);
     double z1 = -1.0;
     double p1 = (1.0 + k) / (1.0 - k);
     double b0 = -k / (1.0 - k);
