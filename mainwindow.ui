@@ -3335,9 +3335,7 @@ and S-meter (dBm)</string>
                        <bool>false</bool>
                       </property>
                       <property name="styleSheet">
-                       <string notr="true">color: rgb(0, 0, 70);
-background-color: rgba(255, 255, 255, 180);
-font: 12pt &quot;Sans Serif&quot;;</string>
+                       <string notr="true">font: 12pt &quot;Sans Serif&quot;;</string>
                       </property>
                       <property name="inputMethodHints">
                        <set>Qt::ImhDigitsOnly</set>
