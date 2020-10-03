@@ -2,7 +2,6 @@
 #define STYLE_H
 
 #include <QString>
-#include <QComboBox>
 
 static const QString night_stylesheet =
         "QTabBar::tab { background: #00374f; color: #ffffd3; padding: 8px; padding-left: 20px;padding-right: 20px;"
