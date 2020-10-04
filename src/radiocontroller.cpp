@@ -182,6 +182,7 @@ RadioController::~RadioController()
     delete _cw_timer;
     delete _modem;
     delete[] _rand_frame_data;
+    delete[] _fft_data;
     _to_voip_buffer->clear();
     delete _to_voip_buffer;
     delete _relay_controller;
@@ -532,8 +533,7 @@ void RadioController::processVideoFrame()
     unsigned long encoded_size;
 
     /// Large alloc
-    unsigned char *videobuffer = (unsigned char*)calloc(max_video_frame_size,
-                                                        sizeof(unsigned char));
+    unsigned char *videobuffer = new unsigned char[max_video_frame_size];
     memset(videobuffer, 0, max_video_frame_size);
     QElapsedTimer timer;
     qint64 microsec;
@@ -544,8 +544,7 @@ void RadioController::processVideoFrame()
 
     if(_settings->voip_ptt_enabled && _transmitting && (encoded_size > 0))
     {
-        unsigned char *video_frame = (unsigned char*)calloc(encoded_size,
-                                                            sizeof(unsigned char));
+        unsigned char *video_frame = new unsigned char[encoded_size];
         memcpy(video_frame, &(videobuffer[24]), encoded_size);
         emit voipVideoData(video_frame, encoded_size);
         delete[] videobuffer;
@@ -566,7 +565,6 @@ void RadioController::processVideoFrame()
         nanosleep(&time_to_sleep, NULL);
     }
 
-    //qDebug() << "video out " << microsec << " / " << encoded_size;
 
     if(encoded_size > max_video_frame_size - 24)
     {
@@ -626,7 +624,7 @@ void RadioController::processInputNetStream()
         nanosleep(&time_to_sleep, NULL);
     _data_read_timer->restart();
 
-    unsigned char *netbuffer = (unsigned char*)calloc(max_frame_size, sizeof(unsigned char));
+    unsigned char *netbuffer = new unsigned char[max_frame_size];
     int nread;
     unsigned char *buffer = _net_device->read_buffered(nread, read_size);
 
@@ -875,7 +873,7 @@ void RadioController::setRelays(bool transmitting)
                 {
                     _logger->log(Logger::LogLevelCritical,
                                  "Relay control failed, stopping to avoid damage");
-                    exit(EXIT_FAILURE); // bit drastic, ain't it?
+                    exit(EXIT_FAILURE);
                 }
             }
         }
@@ -926,33 +924,12 @@ void RadioController::startTx()
         _modem->tuneTx(_tx_frequency + _settings->tx_shift);
         _modem->setTxPower((float)_settings->tx_power/100);
 
-        /** old code
-        if(_settings->_rx_inited && !_settings->_repeater_enabled &&
-                        (_rx_mode != gr_modem_types::ModemTypeQPSK250000))
-            _modem->stopRX();
-
-
-        if(_settings->_tx_started)
-            _modem->stopTX();
-
-        /// LimeSDR calibration procedure happens after every tune request
-        struct timespec time_to_sleep = {0, 10000000L };
-        nanosleep(&time_to_sleep, NULL);
-        _modem->startTX(_settings->block_buffer_size);
-        */
-
         _settings->tx_started = true;
         if((_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL))
         {
             _modem->startTransmission(_callsign);
         }
-        if((_tx_radio_type == radio_type::RADIO_TYPE_ANALOG)
-                && ((_tx_mode == gr_modem_types::ModemTypeNBFM2500) ||
-                    (_tx_mode == gr_modem_types::ModemTypeNBFM5000)))
-        {
-            // disabled. breaks things
-            //sendTxBeep(_settings->end_beep);
-        }
+
         _radio_time_out_timer->start(1000 * _settings->radio_tot);
         emit displayTransmitStatus(true);
     }
@@ -1307,11 +1284,11 @@ unsigned int RadioController::getFrameCRC32(unsigned char *data)
     memcpy(&crc2, &data[16], 4);
     memcpy(&crc3, &data[20], 4);
     if(crc1 == crc2)
-        return (unsigned int)crc1;
+        return crc1;
     else if(crc1 == crc3)
-        return (unsigned int)crc1;
+        return crc1;
     else if(crc2 == crc3)
-        return (unsigned int)crc2;
+        return crc2;
     else
         return 0;
 }
