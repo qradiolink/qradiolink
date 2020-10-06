@@ -39,12 +39,12 @@ void Station::initWidget()
     _tree_item->setText(0,callsign);
     _tree_item->setText(3,QString::number(id));
     _tree_item->setIcon(0,QIcon(":/res/im-user.png"));
-    _tree_item->setBackgroundColor(0,QColor("#ffffff"));
-    _tree_item->setBackgroundColor(1,QColor("#ffffff"));
-    _tree_item->setBackgroundColor(2,QColor("#ffffff"));
-    _tree_item->setBackgroundColor(3,QColor("#ffffff"));
+    _tree_item->setBackground(0,QColor("#ffffff"));
+    _tree_item->setBackground(1,QColor("#ffffff"));
+    _tree_item->setBackground(2,QColor("#ffffff"));
+    _tree_item->setBackground(3,QColor("#ffffff"));
     if(is_user)
-        _tree_item->setTextColor(0,QColor("#cc0000"));
+        _tree_item->setForeground(0,QColor("#cc0000"));
 }
 
 QTreeWidgetItem* Station::getWidget() const

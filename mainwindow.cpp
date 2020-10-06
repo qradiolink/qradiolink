@@ -723,7 +723,7 @@ void MainWindow::removeMemoryChannel()
             row_list.insert(items.at(i)->row());
         }
     }
-    QList<int> chan_to_remove = row_list.toList();
+    QList<int> chan_to_remove = row_list.values();
     std::sort(chan_to_remove.begin(), chan_to_remove.end());
     std::reverse(chan_to_remove.begin(), chan_to_remove.end());
     for(int i=0;i<chan_to_remove.size();i++)
@@ -1120,14 +1120,14 @@ void MainWindow::updateOnlineStations(StationList stations)
             st_item->setText(0,stations.at(i)->callsign);
             st_item->setText(3,QString::number(stations.at(i)->id));
             st_item->setIcon(0,QIcon(":/res/im-user.png"));
-            st_item->setBackgroundColor(0,QColor("#2a2a2a"));
-            st_item->setBackgroundColor(1,QColor("#2a2a2a"));
-            st_item->setBackgroundColor(2,QColor("#2a2a2a"));
-            st_item->setBackgroundColor(3,QColor("#2a2a2a"));
+            st_item->setBackground(0,QColor("#2a2a2a"));
+            st_item->setBackground(1,QColor("#2a2a2a"));
+            st_item->setBackground(2,QColor("#2a2a2a"));
+            st_item->setBackground(3,QColor("#2a2a2a"));
             if(stations.at(i)->is_user)
-                st_item->setTextColor(0,QColor("#ff0000"));
+                st_item->setForeground(0,QColor("#ff0000"));
             else {
-                st_item->setTextColor(0,QColor("#dfdf6f"));
+                st_item->setForeground(0,QColor("#dfdf6f"));
             }
             item->addChild(st_item);
         }
@@ -1179,12 +1179,12 @@ void MainWindow::updateChannels(ChannelList channels)
         t->setText(2,QString::number(chan->id));
         t->setText(0,chan->name);
         t->setText(1,chan->description);
-        t->setBackgroundColor(0,QColor("#2a2a2a"));
-        t->setBackgroundColor(1,QColor("#2a2a2a"));
-        t->setBackgroundColor(2,QColor("#2a2a2a"));
-        t->setTextColor(0,QColor("#dfdf6f"));
-        t->setTextColor(1,QColor("#dfdf6f"));
-        t->setTextColor(2,QColor("#dfdf6f"));
+        t->setBackground(0,QColor("#2a2a2a"));
+        t->setBackground(1,QColor("#2a2a2a"));
+        t->setBackground(2,QColor("#2a2a2a"));
+        t->setForeground(0,QColor("#dfdf6f"));
+        t->setForeground(1,QColor("#dfdf6f"));
+        t->setForeground(2,QColor("#dfdf6f"));
         t->setIcon(0,QIcon(":/res/call-start.png"));
 
         if(chan->parent_id <= 0)
@@ -1214,12 +1214,12 @@ void MainWindow::joinedChannel(quint64 channel_id)
     if(old_channel_list.size() > 0)
     {
         QTreeWidgetItem *t = old_channel_list.at(0);
-        t->setBackgroundColor(0,QColor("#2a2a2a"));
-        t->setBackgroundColor(1,QColor("#2a2a2a"));
-        t->setBackgroundColor(2,QColor("#2a2a2a"));
-        t->setTextColor(0,QColor("#dfdf6f"));
-        t->setTextColor(1,QColor("#dfdf6f"));
-        t->setTextColor(2,QColor("#dfdf6f"));
+        t->setBackground(0,QColor("#2a2a2a"));
+        t->setBackground(1,QColor("#2a2a2a"));
+        t->setBackground(2,QColor("#2a2a2a"));
+        t->setForeground(0,QColor("#dfdf6f"));
+        t->setForeground(1,QColor("#dfdf6f"));
+        t->setForeground(2,QColor("#dfdf6f"));
         t->setIcon(0,QIcon(":/res/call-start.png"));
     }
 
@@ -1229,12 +1229,12 @@ void MainWindow::joinedChannel(quint64 channel_id)
     if(channel_list.size() > 0)
     {
         QTreeWidgetItem *t = channel_list.at(0);
-        t->setBackgroundColor(0,QColor("#ff0000"));
-        t->setBackgroundColor(1,QColor("#2a2a2a"));
-        t->setBackgroundColor(2,QColor("#2a2a2a"));
-        t->setTextColor(0,QColor("#ffffff"));
-        t->setTextColor(1,QColor("#ffffff"));
-        t->setTextColor(2,QColor("#ffffff"));
+        t->setBackground(0,QColor("#ff0000"));
+        t->setBackground(1,QColor("#2a2a2a"));
+        t->setBackground(2,QColor("#2a2a2a"));
+        t->setForeground(0,QColor("#ffffff"));
+        t->setForeground(1,QColor("#ffffff"));
+        t->setForeground(2,QColor("#ffffff"));
         t->setIcon(0,QIcon(":/res/call-start.png"));
     }
     _current_voip_channel = channel_id;

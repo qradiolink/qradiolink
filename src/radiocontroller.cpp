@@ -925,7 +925,7 @@ void RadioController::startTx()
         _modem->setTxPower((float)_settings->tx_power/100);
 
         _settings->tx_started = true;
-        if((_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL))
+        if(_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL)
         {
             _modem->startTransmission(_callsign);
         }
@@ -1947,9 +1947,9 @@ void RadioController::toggleRxMode(int value)
     if((_rx_mode == gr_modem_types::ModemType4FSK100K) ||
         (_rx_mode == gr_modem_types::ModemTypeQPSK250K))
         _net_device->tun_init(_settings->ip_address);
-    if((_rx_mode == gr_modem_types::ModemType4FSK100K))
+    if(_rx_mode == gr_modem_types::ModemType4FSK100K)
         _net_device->set_mtu(580);
-    if((_rx_mode == gr_modem_types::ModemTypeQPSK250K))
+    if(_rx_mode == gr_modem_types::ModemTypeQPSK250K)
         _net_device->set_mtu(1480);
     _modem->toggleRxMode(_rx_mode);
     if(rx_inited_before)
@@ -2087,9 +2087,9 @@ void RadioController::toggleTxMode(int value)
     if((_tx_mode == gr_modem_types::ModemType4FSK100K) ||
         (_tx_mode == gr_modem_types::ModemTypeQPSK250K))
         _net_device->tun_init(_settings->ip_address);
-    if((_tx_mode == gr_modem_types::ModemType4FSK100K))
+    if(_tx_mode == gr_modem_types::ModemType4FSK100K)
         _net_device->set_mtu(580);
-    if((_tx_mode == gr_modem_types::ModemTypeQPSK250K))
+    if(_tx_mode == gr_modem_types::ModemTypeQPSK250K)
         _net_device->set_mtu(1480);
         //_camera->init();
 
