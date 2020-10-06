@@ -18,6 +18,7 @@
 #define SSLCLIENT_H
 
 #include <QSslSocket>
+#include <QSslConfiguration>
 #include <QByteArray>
 #include <QSslCipher>
 #include <QSslCertificate>

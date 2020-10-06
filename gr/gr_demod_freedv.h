@@ -17,7 +17,7 @@
 #ifndef GR_DEMOD_FREEDV_H
 #define GR_DEMOD_FREEDV_H
 
-
+#define CODEC2_LEGACY
 #include <gnuradio/hier_block2.h>
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/analog/agc2_ff.h>
@@ -32,6 +32,7 @@
 #include <gnuradio/blocks/multiply_const.h>
 #include <gnuradio/vocoder/freedv_rx_ss.h>
 #include <gnuradio/vocoder/freedv_api.h>
+
 
 
 class gr_demod_freedv;

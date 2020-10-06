@@ -85,7 +85,7 @@ QByteArray Layer2Protocol::buildPageMessage(QString calling_callsign, QString ca
     p->set_msg(message.toStdString());
     p->set_retransmit(retransmit);
     p->set_via_node(via_node.toStdString());
-    int size = p->ByteSize();
+    int size = p->ByteSizeLong();
     unsigned char data[size];
     p->SerializeToArray(data,size);
     QByteArray msg(reinterpret_cast<const char*>(data));
@@ -112,9 +112,9 @@ QByteArray Layer2Protocol::buildRepeaterInfo()
         u->set_channel_id(_voip_users.at(i)->channel_id);
         u->set_name(_voip_users.at(i)->callsign.toStdString().c_str());
     }
-    char bin[repeater_info.ByteSize()];
-    repeater_info.SerializeToArray(bin,repeater_info.ByteSize());
-    data.append(bin, repeater_info.ByteSize());
+    char bin[repeater_info.ByteSizeLong()];
+    repeater_info.SerializeToArray(bin,repeater_info.ByteSizeLong());
+    data.append(bin, repeater_info.ByteSizeLong());
     return buildRadioMessage(data, MsgTypeRepeaterInfo);
 }
 

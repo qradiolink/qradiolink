@@ -168,6 +168,7 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
 
 gr_demod_base::~gr_demod_base()
 {
+    _top_block->disconnect_all();
     _osmosdr_source.reset();
 }
 

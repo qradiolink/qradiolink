@@ -17,6 +17,7 @@
 #ifndef GR_MOD_BASE_H
 #define GR_MOD_BASE_H
 
+#define CODEC2_LEGACY
 #include <QObject>
 #include <QMap>
 #include <QVector>

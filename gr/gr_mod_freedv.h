@@ -17,6 +17,7 @@
 #ifndef GR_MOD_FREEDV_H
 #define GR_MOD_FREEDV_H
 
+#define CODEC2_LEGACY
 #include <gnuradio/hier_block2.h>
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/analog/agc2_ff.h>

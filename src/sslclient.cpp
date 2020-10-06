@@ -25,7 +25,7 @@ SSLClient::SSLClient(QObject *parent) :
     _reconnect = false;
     _hostname = "127.0.0.1";
     _port= MUMBLE_PORT;
-    QSslSocket::addDefaultCaCertificates(QSslSocket::systemCaCertificates());
+    QSslSocket::addDefaultCaCertificates(QSslConfiguration::systemCaCertificates());
     {
         QList<QSslCipher> pref;
         foreach(QSslCipher c, QSslSocket::defaultCiphers()) {

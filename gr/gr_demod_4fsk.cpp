@@ -45,7 +45,6 @@ gr_demod_4fsk::gr_demod_4fsk(std::vector<int>signature, int sps, int samp_rate, 
     gain_omega = 0.005;
     gain_mu = 0.025;
     omega_rel_limit = 0.001;
-    int fll_sps;
     if(sps == 1)
     {
         _target_samp_rate = 80000;
@@ -55,7 +54,6 @@ gr_demod_4fsk::gr_demod_4fsk(std::vector<int>signature, int sps, int samp_rate, 
         rs = 10000;
         bw = 4000;
         nfilts = 32 * _samples_per_symbol;
-        fll_sps = _samples_per_symbol/4;
     }
     if(sps == 5)
     {
@@ -66,7 +64,6 @@ gr_demod_4fsk::gr_demod_4fsk(std::vector<int>signature, int sps, int samp_rate, 
         rs = 2000;
         bw = 4000;
         nfilts = 25 * _samples_per_symbol;
-        fll_sps = _samples_per_symbol/4;
     }
     if(sps == 10)
     {
@@ -77,7 +74,6 @@ gr_demod_4fsk::gr_demod_4fsk(std::vector<int>signature, int sps, int samp_rate, 
         rs = 1000;
         bw = 2000;
         nfilts = 12 * _samples_per_symbol;
-        fll_sps = _samples_per_symbol/4;
     }
     if(sps == 2)
     {
@@ -86,7 +82,6 @@ gr_demod_4fsk::gr_demod_4fsk(std::vector<int>signature, int sps, int samp_rate, 
         _samples_per_symbol = 5;
         _target_samp_rate = 500000;
         nfilts = 50 * _samples_per_symbol;
-        fll_sps = _samples_per_symbol;
     }
     if((nfilts % 2) == 0)
         nfilts += 1;

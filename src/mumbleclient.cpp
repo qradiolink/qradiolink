@@ -115,7 +115,7 @@ void MumbleClient::sendVersion()
     v->set_release("1.0");
     v->set_os("GNU/Linux");
     v->set_os_version("x.x");
-    int size = v->ByteSize();
+    int size = v->ByteSizeLong();
     quint8 data[size];
     v->SerializeToArray(data,size);
     quint16 type = 0;
@@ -136,7 +136,7 @@ void MumbleClient::authenticate()
     auth->set_username(username.toStdString());
     auth->set_password(_settings->voip_password.toStdString());
     auth->set_opus(true);
-    int size = auth->ByteSize();
+    int size = auth->ByteSizeLong();
     unsigned char data[size];
     auth->SerializeToArray(data,size);
     quint16 type = 2;
@@ -153,7 +153,7 @@ void MumbleClient::pingServer()
     quint64 ts=now.tv_sec*1000000+now.tv_usec;
     MumbleProto::Ping ping;
     ping.set_timestamp(ts);
-    int size = ping.ByteSize();
+    int size = ping.ByteSizeLong();
     quint8 data[size];
     ping.SerializeToArray(data,size);
     sendProtoMessage(data,3,size);
@@ -431,7 +431,7 @@ void MumbleClient::joinChannel(int id)
     us.set_self_mute(false);
     us.set_channel_id(id);
     us.set_comment(_settings->callsign.toStdString().c_str());
-    int size = us.ByteSize();
+    int size = us.ByteSizeLong();
     quint8 data[size];
     us.SerializeToArray(data,size);
     sendProtoMessage(data,9,size);
@@ -463,7 +463,7 @@ int MumbleClient::muteStation(QString radio_id)
     us.set_actor(_session_id);
     us.set_self_mute(true);
     us.set_self_deaf(true);
-    int size = us.ByteSize();
+    int size = us.ByteSizeLong();
     quint8 data[size];
     us.SerializeToArray(data,size);
     sendProtoMessage(data,9,size);
@@ -493,7 +493,7 @@ int MumbleClient::unmuteStation(QString radio_id)
     us.set_actor(_session_id);
     us.set_self_deaf(false);
     us.set_self_mute(false);
-    int size = us.ByteSize();
+    int size = us.ByteSizeLong();
     quint8 data[size];
     us.SerializeToArray(data,size);
     sendProtoMessage(data,9,size);
@@ -513,7 +513,7 @@ void MumbleClient::disconnectFromCall()
     us.set_session(_session_id);
     us.set_self_mute(true);
     us.set_self_deaf(true);
-    int size = us.ByteSize();
+    int size = us.ByteSizeLong();
     quint8 data[size];
     us.SerializeToArray(data,size);
     sendProtoMessage(data,9,size);
@@ -549,7 +549,7 @@ QString MumbleClient::createChannel(QString channel_name)
     channel.set_parent(0); // FIXME: channel parent?
     channel.set_name(name.toStdString());
     channel.set_temporary(true);
-    int size = channel.ByteSize();
+    int size = channel.ByteSizeLong();
     quint8 data[size];
     channel.SerializeToArray(data,size);
     quint16 type = 7;
@@ -558,7 +558,7 @@ QString MumbleClient::createChannel(QString channel_name)
     MumbleProto::UserState us;
     us.set_session(_session_id);
     us.set_actor(_session_id);
-    int msize = us.ByteSize();
+    int msize = us.ByteSizeLong();
     quint8 mdata[msize];
     us.SerializeToArray(mdata,msize);
     sendProtoMessage(mdata,9,msize);
@@ -573,7 +573,7 @@ void MumbleClient::setSelfMute(bool mute)
     us.set_self_mute(mute);
     us.set_session(_session_id);
     us.set_actor(_session_id);
-    int msize = us.ByteSize();
+    int msize = us.ByteSizeLong();
     quint8 mdata[msize];
     us.SerializeToArray(mdata,msize);
     sendProtoMessage(mdata,9,msize);
@@ -588,7 +588,7 @@ void MumbleClient::setSelfDeaf(bool deaf, bool mute)
     us.set_self_deaf(deaf);
     us.set_session(_session_id);
     us.set_actor(_session_id);
-    int msize = us.ByteSize();
+    int msize = us.ByteSizeLong();
     quint8 mdata[msize];
     us.SerializeToArray(mdata,msize);
     sendProtoMessage(mdata,9,msize);
@@ -603,7 +603,7 @@ void MumbleClient::setMute(bool mute)
     us.set_self_mute(mute);
     us.set_session(_session_id);
     us.set_actor(_session_id);
-    int msize = us.ByteSize();
+    int msize = us.ByteSizeLong();
     quint8 mdata[msize];
     us.SerializeToArray(mdata,msize);
     sendProtoMessage(mdata,9,msize);
@@ -615,7 +615,7 @@ void MumbleClient::newCommandMessage(QString msg, int to_id)
     tm.set_actor(_session_id);
     tm.add_session(to_id);
     tm.set_message(msg.toStdString());
-    int msize = tm.ByteSize();
+    int msize = tm.ByteSizeLong();
     quint8 mdata[msize];
     tm.SerializeToArray(mdata,msize);
     sendProtoMessage(mdata,11,msize);
@@ -627,7 +627,7 @@ void MumbleClient::newMumbleMessage(QString text)
     tm.add_channel_id(_channel_id);
     tm.add_session(_session_id);
     tm.set_message(text.toStdString());
-    int msize = tm.ByteSize();
+    int msize = tm.ByteSizeLong();
     quint8 mdata[msize];
     tm.SerializeToArray(mdata,msize);
     sendProtoMessage(mdata,11,msize);
