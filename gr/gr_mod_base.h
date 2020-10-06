@@ -24,9 +24,10 @@
 #include <QDebug>
 #include <string>
 #include <vector>
+#include <gnuradio/vocoder/freedv_api.h>
+#undef I // FIXME: remove this workaround later
 #include <gnuradio/top_block.h>
 #include <gnuradio/blocks/rotator_cc.h>
-#include <gnuradio/vocoder/freedv_api.h>
 #include <gnuradio/constants.h>
 #include <gnuradio/analog/sig_source.h>
 #include <gnuradio/blocks/copy.h>
@@ -43,6 +44,7 @@
 #include "gr_mod_ssb.h"
 #include "gr_mod_freedv.h"
 #include "gr_mod_dsss.h"
+
 
 class gr_mod_base : public QObject
 {
