@@ -76,12 +76,12 @@ int gettimeofday(struct timeval * tp, struct timezone * tzp)
 #define FFT_MAX_DB      30.f
 
 // Colors of type QRgb in 0xAARRGGBB format (unsigned int)
-#define PLOTTER_BGD_COLOR           0xFF1F1D1D
+#define PLOTTER_BGD_COLOR           0xFF1F1D22
 #define PLOTTER_GRID_COLOR          0xFF444242
 #define PLOTTER_TEXT_COLOR          0xFFDADADA
 #define PLOTTER_CENTER_LINE_COLOR   0xFF00B0B0
 #define PLOTTER_FILTER_LINE_COLOR   0xFFE10000
-#define PLOTTER_FILTER_BOX_COLOR    0xFF00882B
+#define PLOTTER_FILTER_BOX_COLOR    0xFF92BD6C
 // FIXME: Should cache the QColors also
 
 static inline bool val_is_out_of_range(float val, float min, float max)
@@ -1628,7 +1628,7 @@ void CPlotter::moveToDemodFreq(void)
 void CPlotter::setFftPlotColor(const QColor color)
 {
     m_FftColor = color;
-    m_FftFillCol = QColor("#009ec1");
+    m_FftFillCol = QColor("#2c92cc");
     m_FftFillCol.setAlpha(0x7A);
     m_PeakHoldColor = color;
     m_PeakHoldColor.setAlpha(60);
