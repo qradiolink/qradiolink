@@ -93,8 +93,8 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     _tune_limit_upper = 500000;
     _step_hz = 10;
 
-    _rx_mode = gr_modem_types::ModemTypeBPSK2000;
-    _tx_mode = gr_modem_types::ModemTypeBPSK2000;
+    _rx_mode = gr_modem_types::ModemTypeBPSK2K;
+    _tx_mode = gr_modem_types::ModemTypeBPSK2K;
     _rx_radio_type = radio_type::RADIO_TYPE_DIGITAL;
     _tx_radio_type = radio_type::RADIO_TYPE_DIGITAL;
 
@@ -134,6 +134,9 @@ RadioController::RadioController(Settings *settings, Logger *logger,
                      SLOT(receiveVideoData(unsigned char*,int)));
     QObject::connect(_modem,SIGNAL(netData(unsigned char*,int)),this,
                      SLOT(receiveNetData(unsigned char*,int)));
+
+    QObject::connect(_layer2,SIGNAL(havePageMessage(QString,QString,QString)),this,
+                     SLOT(receivedPageMessage(QString,QString,QString)));
 
     //QObject::connect(_camera,SIGNAL(imageCaptured(unsigned char*,int)),this,
     //                 SLOT(processVideoFrame(unsigned char*,int)));
@@ -179,6 +182,7 @@ RadioController::~RadioController()
     delete _cw_timer;
     delete _modem;
     delete[] _rand_frame_data;
+    delete[] _fft_data;
     _to_voip_buffer->clear();
     delete _to_voip_buffer;
     delete _relay_controller;
@@ -299,7 +303,9 @@ void RadioController::updateInputAudioStream()
     if(_settings->voip_forwarding
             || (_settings->repeater_enabled)
             || (!_transmitting && !_settings->vox_enabled)
-            || (_tx_mode == gr_modem_types::ModemTypeQPSK250000)
+            || (_tx_mode == gr_modem_types::ModemTypeQPSK250K)
+            || (_tx_mode == gr_modem_types::ModemTypeBPSK8)
+            || (_tx_mode == gr_modem_types::ModemType4FSK100K)
             || (_tx_mode == gr_modem_types::ModemTypeCW600USB)
             || (_text_transmit_on || _proto_transmit_on))
     {
@@ -309,24 +315,23 @@ void RadioController::updateInputAudioStream()
 
     /// If we got here we are using local audio input
     int audio_mode;
-    if((_tx_mode == gr_modem_types::ModemTypeBPSK2000) ||
-            (_tx_mode == gr_modem_types::ModemType2FSK2000FM) ||
-            (_tx_mode == gr_modem_types::ModemType2FSK2000) ||
-            (_tx_mode == gr_modem_types::ModemType4FSK2000) ||
-            (_tx_mode == gr_modem_types::ModemType4FSK2000FM) ||
-            (_tx_mode == gr_modem_types::ModemTypeQPSK2000) ||
-            (_tx_mode == gr_modem_types::ModemTypeBPSK1000) ||
-            (_tx_mode == gr_modem_types::ModemType2FSK1000FM) ||
-            (_tx_mode == gr_modem_types::ModemType2FSK1000) ||
-            (_tx_mode == gr_modem_types::ModemType4FSK1000FM))
+    if((_tx_mode == gr_modem_types::ModemTypeBPSK2K) ||
+            (_tx_mode == gr_modem_types::ModemType2FSK2KFM) ||
+            (_tx_mode == gr_modem_types::ModemType2FSK2K) ||
+            (_tx_mode == gr_modem_types::ModemType4FSK2K) ||
+            (_tx_mode == gr_modem_types::ModemType4FSK2KFM) ||
+            (_tx_mode == gr_modem_types::ModemTypeQPSK2K) ||
+            (_tx_mode == gr_modem_types::ModemTypeBPSK1K) ||
+            (_tx_mode == gr_modem_types::ModemType2FSK1KFM) ||
+            (_tx_mode == gr_modem_types::ModemType2FSK1K) ||
+            (_tx_mode == gr_modem_types::ModemType4FSK1KFM))
     {
         audio_mode = AudioProcessor::AUDIO_MODE_CODEC2;
         emit setAudioReadMode(true, (bool)_settings->audio_compressor, audio_mode);
     }
-    else if((_tx_mode == gr_modem_types::ModemTypeQPSK20000) ||
-            (_tx_mode == gr_modem_types::ModemType2FSK20000) ||
-            (_tx_mode == gr_modem_types::ModemType4FSK20000) ||
-            (_tx_mode == gr_modem_types::ModemType4FSK20000FM))
+    else if((_tx_mode == gr_modem_types::ModemTypeQPSK20K) ||
+            (_tx_mode == gr_modem_types::ModemType2FSK10KFM) ||
+            (_tx_mode == gr_modem_types::ModemType4FSK10KFM))
     {
         audio_mode = AudioProcessor::AUDIO_MODE_OPUS;
         emit setAudioReadMode(true, (bool)_settings->audio_compressor, audio_mode);
@@ -494,17 +499,17 @@ void RadioController::txAudio(short *audiobuffer, int audiobuffer_size,
     {
         audiobuffer[i] = audiobuffer[i] * _tx_volume;
     }
-    if((_tx_mode == gr_modem_types::ModemTypeBPSK2000) ||
-            (_tx_mode == gr_modem_types::ModemType2FSK2000FM) ||
-            (_tx_mode == gr_modem_types::ModemType2FSK2000) ||
-            (_tx_mode == gr_modem_types::ModemType4FSK2000) ||
-            (_tx_mode == gr_modem_types::ModemType4FSK2000FM) ||
-            (_tx_mode == gr_modem_types::ModemTypeQPSK2000))
+    if((_tx_mode == gr_modem_types::ModemTypeBPSK2K) ||
+            (_tx_mode == gr_modem_types::ModemType2FSK2KFM) ||
+            (_tx_mode == gr_modem_types::ModemType2FSK2K) ||
+            (_tx_mode == gr_modem_types::ModemType4FSK2K) ||
+            (_tx_mode == gr_modem_types::ModemType4FSK2KFM) ||
+            (_tx_mode == gr_modem_types::ModemTypeQPSK2K))
         encoded_audio = _codec->encode_codec2_1400(audiobuffer, audiobuffer_size, packet_size);
-    else if((_tx_mode == gr_modem_types::ModemTypeBPSK1000) ||
-            (_tx_mode == gr_modem_types::ModemType2FSK1000FM) ||
-            (_tx_mode == gr_modem_types::ModemType2FSK1000) ||
-            (_tx_mode == gr_modem_types::ModemType4FSK1000FM))
+    else if((_tx_mode == gr_modem_types::ModemTypeBPSK1K) ||
+            (_tx_mode == gr_modem_types::ModemType2FSK1KFM) ||
+            (_tx_mode == gr_modem_types::ModemType2FSK1K) ||
+            (_tx_mode == gr_modem_types::ModemType4FSK1KFM))
         encoded_audio = _codec->encode_codec2_700(audiobuffer, audiobuffer_size, packet_size);
     else
         encoded_audio = _codec->encode_opus(audiobuffer, audiobuffer_size, packet_size);
@@ -528,9 +533,8 @@ void RadioController::processVideoFrame()
     unsigned long encoded_size;
 
     /// Large alloc
-    unsigned char *videobuffer = (unsigned char*)calloc(max_video_frame_size,
-                                                        sizeof(unsigned char));
-
+    unsigned char *videobuffer = new unsigned char[max_video_frame_size];
+    memset(videobuffer, 0, max_video_frame_size);
     QElapsedTimer timer;
     qint64 microsec;
     timer.start();
@@ -540,8 +544,7 @@ void RadioController::processVideoFrame()
 
     if(_settings->voip_ptt_enabled && _transmitting && (encoded_size > 0))
     {
-        unsigned char *video_frame = (unsigned char*)calloc(encoded_size,
-                                                            sizeof(unsigned char));
+        unsigned char *video_frame = new unsigned char[encoded_size];
         memcpy(video_frame, &(videobuffer[24]), encoded_size);
         emit voipVideoData(video_frame, encoded_size);
         delete[] videobuffer;
@@ -562,7 +565,6 @@ void RadioController::processVideoFrame()
         nanosleep(&time_to_sleep, NULL);
     }
 
-    //qDebug() << "video out " << microsec << " / " << encoded_size;
 
     if(encoded_size > max_video_frame_size - 24)
     {
@@ -587,26 +589,44 @@ void RadioController::processVideoFrame()
 
 void RadioController::processInputNetStream()
 {
-    if(_tx_mode != gr_modem_types::ModemTypeQPSK250000)
+    if((_tx_mode != gr_modem_types::ModemTypeQPSK250K)
+            && (_tx_mode != gr_modem_types::ModemType4FSK100K))
         return;
     // 48400 microsec per frame, during this time data enters the interface socket buffer
     qint64 time_per_frame = 48400000;
     qint64 microsec, time_left;
+    int max_frame_size = 1516;
+    int read_size = 1500;
+
+    if(_tx_mode == gr_modem_types::ModemTypeQPSK250K)
+    {
+        max_frame_size = 1516;
+        read_size = 1500;
+        time_per_frame = 48000000;
+    }
+    if(_tx_mode == gr_modem_types::ModemType4FSK100K)
+    {
+        max_frame_size = 622;
+        read_size = 606;
+        time_per_frame = 50000000; // ???
+    }
+
     microsec = (quint64)_data_read_timer->nsecsElapsed();
-    if(microsec < 46400000)
+    if(microsec < 40000000)
     {
         return;
     }
+
     time_left = time_per_frame - microsec;
     struct timespec time_to_sleep = {0, (long)time_left };
 
     if(time_left > 0)
         nanosleep(&time_to_sleep, NULL);
     _data_read_timer->restart();
-    int max_frame_size = 1516;
-    unsigned char *netbuffer = (unsigned char*)calloc(max_frame_size, sizeof(unsigned char));
+
+    unsigned char *netbuffer = new unsigned char[max_frame_size];
     int nread;
-    unsigned char *buffer = _net_device->read_buffered(nread);
+    unsigned char *buffer = _net_device->read_buffered(nread, read_size);
 
     if(nread > 0)
     {
@@ -616,9 +636,13 @@ void RadioController::processInputNetStream()
         memcpy(&(netbuffer[8]), &nread, 4);
         memcpy(&(netbuffer[12]), &crc, 4);
         memcpy(&(netbuffer[16]), buffer, nread);
-        for(int k=nread+16,i=0;k<max_frame_size;k++,i++)
+
+        if(!_settings->burst_ip_modem)
         {
-            netbuffer[k] = _rand_frame_data[i];
+            for(int k=nread+16,i=0;k<max_frame_size;k++,i++)
+            {
+                netbuffer[k] = _rand_frame_data[i];
+            }
         }
 
         emit netData(netbuffer,max_frame_size);
@@ -631,6 +655,7 @@ void RadioController::processInputNetStream()
     }
     else
     {
+        /// no data from the net if
         unsigned int fake_nread = 0;
         memcpy(&(netbuffer[0]), &fake_nread, 4);
         memcpy(&(netbuffer[4]), &fake_nread, 4);
@@ -665,17 +690,18 @@ void RadioController::transmitTextData()
 
     start_text_tx:
     int frame_size;
-    if((_tx_mode == gr_modem_types::ModemTypeBPSK2000) ||
-            (_tx_mode == gr_modem_types::ModemType2FSK2000FM) ||
-            (_tx_mode == gr_modem_types::ModemType2FSK2000) ||
-            (_tx_mode == gr_modem_types::ModemType4FSK2000) ||
-            (_tx_mode == gr_modem_types::ModemType4FSK2000FM) ||
-            (_tx_mode == gr_modem_types::ModemTypeQPSK2000))
+    if((_tx_mode == gr_modem_types::ModemTypeBPSK2K) ||
+            (_tx_mode == gr_modem_types::ModemTypeBPSK8) ||
+            (_tx_mode == gr_modem_types::ModemType2FSK2KFM) ||
+            (_tx_mode == gr_modem_types::ModemType2FSK2K) ||
+            (_tx_mode == gr_modem_types::ModemType4FSK2K) ||
+            (_tx_mode == gr_modem_types::ModemType4FSK2KFM) ||
+            (_tx_mode == gr_modem_types::ModemTypeQPSK2K))
         frame_size = 7;
-    else if((_tx_mode == gr_modem_types::ModemTypeBPSK1000) ||
-            (_tx_mode == gr_modem_types::ModemType2FSK1000FM) ||
-            (_tx_mode == gr_modem_types::ModemType2FSK1000) ||
-            (_tx_mode == gr_modem_types::ModemType4FSK1000FM))
+    else if((_tx_mode == gr_modem_types::ModemTypeBPSK1K) ||
+            (_tx_mode == gr_modem_types::ModemType2FSK1KFM) ||
+            (_tx_mode == gr_modem_types::ModemType2FSK1K) ||
+            (_tx_mode == gr_modem_types::ModemType4FSK1KFM))
         frame_size = 4;
     else
         frame_size = 47;
@@ -738,17 +764,18 @@ void RadioController::transmitBinData()
 
     start_data_tx:
     int frame_size;
-    if((_tx_mode == gr_modem_types::ModemTypeBPSK2000) ||
-            (_tx_mode == gr_modem_types::ModemType2FSK2000FM) ||
-            (_tx_mode == gr_modem_types::ModemType2FSK2000) ||
-            (_tx_mode == gr_modem_types::ModemType4FSK2000) ||
-            (_tx_mode == gr_modem_types::ModemType4FSK2000FM) ||
-            (_tx_mode == gr_modem_types::ModemTypeQPSK2000))
+    if((_tx_mode == gr_modem_types::ModemTypeBPSK2K) ||
+            (_tx_mode == gr_modem_types::ModemTypeBPSK8) ||
+            (_tx_mode == gr_modem_types::ModemType2FSK2KFM) ||
+            (_tx_mode == gr_modem_types::ModemType2FSK2K) ||
+            (_tx_mode == gr_modem_types::ModemType4FSK2K) ||
+            (_tx_mode == gr_modem_types::ModemType4FSK2KFM) ||
+            (_tx_mode == gr_modem_types::ModemTypeQPSK2K))
         frame_size = 7;
-    else if((_tx_mode == gr_modem_types::ModemTypeBPSK1000) ||
-            (_tx_mode == gr_modem_types::ModemType2FSK1000FM) ||
-            (_tx_mode == gr_modem_types::ModemType2FSK1000) ||
-            (_tx_mode == gr_modem_types::ModemType4FSK1000FM))
+    else if((_tx_mode == gr_modem_types::ModemTypeBPSK1K) ||
+            (_tx_mode == gr_modem_types::ModemType2FSK1KFM) ||
+            (_tx_mode == gr_modem_types::ModemType2FSK1K) ||
+            (_tx_mode == gr_modem_types::ModemType4FSK1KFM))
         frame_size = 4;
     else
         frame_size = 47;
@@ -846,7 +873,7 @@ void RadioController::setRelays(bool transmitting)
                 {
                     _logger->log(Logger::LogLevelCritical,
                                  "Relay control failed, stopping to avoid damage");
-                    exit(EXIT_FAILURE); // bit drastic, ain't it?
+                    exit(EXIT_FAILURE);
                 }
             }
         }
@@ -879,7 +906,8 @@ void RadioController::startTx()
         {
             _end_tx_timer->stop();
         }
-        if(_tx_mode == gr_modem_types::ModemTypeQPSK250000)
+        if((_tx_mode == gr_modem_types::ModemTypeQPSK250K)
+                || (_tx_mode == gr_modem_types::ModemType4FSK100K))
         {
             _data_modem_reset_timer->start();
             _data_modem_sleep_timer->start();
@@ -896,33 +924,12 @@ void RadioController::startTx()
         _modem->tuneTx(_tx_frequency + _settings->tx_shift);
         _modem->setTxPower((float)_settings->tx_power/100);
 
-        /** old code
-        if(_settings->_rx_inited && !_settings->_repeater_enabled &&
-                        (_rx_mode != gr_modem_types::ModemTypeQPSK250000))
-            _modem->stopRX();
-
-
-        if(_settings->_tx_started)
-            _modem->stopTX();
-
-        /// LimeSDR calibration procedure happens after every tune request
-        struct timespec time_to_sleep = {0, 10000000L };
-        nanosleep(&time_to_sleep, NULL);
-        _modem->startTX(_settings->block_buffer_size);
-        */
-
         _settings->tx_started = true;
         if((_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL))
         {
             _modem->startTransmission(_callsign);
         }
-        if((_tx_radio_type == radio_type::RADIO_TYPE_ANALOG)
-                && ((_tx_mode == gr_modem_types::ModemTypeNBFM2500) ||
-                    (_tx_mode == gr_modem_types::ModemTypeNBFM5000)))
-        {
-            // disabled. breaks things
-            //sendTxBeep(_settings->end_beep);
-        }
+
         _radio_time_out_timer->start(1000 * _settings->radio_tot);
         emit displayTransmitStatus(true);
     }
@@ -937,12 +944,13 @@ void RadioController::stopTx()
         if(_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL)
         {
             _modem->endTransmission(_callsign);
-            if((_tx_mode == gr_modem_types::ModemTypeBPSK2000) ||
-                    (_tx_mode == gr_modem_types::ModemType2FSK2000FM) ||
-                    (_tx_mode == gr_modem_types::ModemType2FSK2000) ||
-                    (_tx_mode == gr_modem_types::ModemType4FSK2000) ||
-                    (_tx_mode == gr_modem_types::ModemType4FSK2000FM) ||
-                    (_tx_mode == gr_modem_types::ModemTypeQPSK2000))
+            if((_tx_mode == gr_modem_types::ModemTypeBPSK2K) ||
+                    (_tx_mode == gr_modem_types::ModemTypeBPSK8) ||
+                    (_tx_mode == gr_modem_types::ModemType2FSK2KFM) ||
+                    (_tx_mode == gr_modem_types::ModemType2FSK2K) ||
+                    (_tx_mode == gr_modem_types::ModemType4FSK2K) ||
+                    (_tx_mode == gr_modem_types::ModemType4FSK2KFM) ||
+                    (_tx_mode == gr_modem_types::ModemTypeQPSK2K))
                 tx_tail_msec = 800;
             else
                 tx_tail_msec = 500;
@@ -1020,7 +1028,8 @@ void RadioController::setAudioRecord(bool value)
 
 void RadioController::updateDataModemReset(bool transmitting, bool ptt_activated)
 {
-    if((_tx_mode == gr_modem_types::ModemTypeQPSK250000) && !_data_modem_sleeping
+    if(((_tx_mode == gr_modem_types::ModemTypeQPSK250K)
+        || (_tx_mode == gr_modem_types::ModemType4FSK100K)) && !_data_modem_sleeping
             && transmitting && ptt_activated)
     {
         qint64 sec_modem_running;
@@ -1032,7 +1041,8 @@ void RadioController::updateDataModemReset(bool transmitting, bool ptt_activated
             _data_modem_sleep_timer->restart();
         }
     }
-    if((_tx_mode == gr_modem_types::ModemTypeQPSK250000) && _data_modem_sleeping)
+    if(((_tx_mode == gr_modem_types::ModemTypeQPSK250K)
+        || (_tx_mode == gr_modem_types::ModemType4FSK100K)) && _data_modem_sleeping)
     {
         qint64 sec_modem_sleeping;
         sec_modem_sleeping = (quint64)_data_modem_sleep_timer->nsecsElapsed()/1000000000;
@@ -1137,19 +1147,19 @@ void RadioController::receiveDigitalAudio(unsigned char *data, int size)
     short *audio_out;
     int samples; // reference
     int audio_mode = AudioProcessor::AUDIO_MODE_OPUS;
-    if((_rx_mode == gr_modem_types::ModemTypeBPSK2000) ||
-            (_rx_mode == gr_modem_types::ModemType2FSK2000FM) ||
-            (_rx_mode == gr_modem_types::ModemType2FSK2000) ||
-            (_rx_mode == gr_modem_types::ModemType4FSK2000) ||
-            (_rx_mode == gr_modem_types::ModemType4FSK2000FM) ||
-            (_rx_mode == gr_modem_types::ModemTypeQPSK2000))
+    if((_rx_mode == gr_modem_types::ModemTypeBPSK2K) ||
+            (_rx_mode == gr_modem_types::ModemType2FSK2KFM) ||
+            (_rx_mode == gr_modem_types::ModemType2FSK2K) ||
+            (_rx_mode == gr_modem_types::ModemType4FSK2K) ||
+            (_rx_mode == gr_modem_types::ModemType4FSK2KFM) ||
+            (_rx_mode == gr_modem_types::ModemTypeQPSK2K))
     {
         audio_out = _codec->decode_codec2_1400(data, size, samples);
     }
-    else if((_rx_mode == gr_modem_types::ModemTypeBPSK1000) ||
-            (_rx_mode == gr_modem_types::ModemType2FSK1000FM) ||
-            (_rx_mode == gr_modem_types::ModemType2FSK1000) ||
-            (_rx_mode == gr_modem_types::ModemType4FSK1000FM))
+    else if((_rx_mode == gr_modem_types::ModemTypeBPSK1K) ||
+            (_rx_mode == gr_modem_types::ModemType2FSK1KFM) ||
+            (_rx_mode == gr_modem_types::ModemType2FSK1K) ||
+            (_rx_mode == gr_modem_types::ModemType4FSK1KFM))
         audio_out = _codec->decode_codec2_700(data, size, samples);
     else
     {
@@ -1158,16 +1168,16 @@ void RadioController::receiveDigitalAudio(unsigned char *data, int size)
     delete[] data;
     if(samples > 0)
     {
-        if((_rx_mode == gr_modem_types::ModemTypeBPSK2000) ||
-                (_rx_mode == gr_modem_types::ModemType2FSK2000FM) ||
-                (_rx_mode == gr_modem_types::ModemType2FSK2000) ||
-                (_rx_mode == gr_modem_types::ModemType4FSK2000) ||
-                (_rx_mode == gr_modem_types::ModemType4FSK2000FM) ||
-                (_rx_mode == gr_modem_types::ModemTypeQPSK2000) ||
-                (_rx_mode == gr_modem_types::ModemTypeBPSK1000) ||
-                (_rx_mode == gr_modem_types::ModemType2FSK1000FM) ||
-                (_rx_mode == gr_modem_types::ModemType4FSK1000FM) ||
-                (_rx_mode == gr_modem_types::ModemType2FSK1000))
+        if((_rx_mode == gr_modem_types::ModemTypeBPSK2K) ||
+                (_rx_mode == gr_modem_types::ModemType2FSK2KFM) ||
+                (_rx_mode == gr_modem_types::ModemType2FSK2K) ||
+                (_rx_mode == gr_modem_types::ModemType4FSK2K) ||
+                (_rx_mode == gr_modem_types::ModemType4FSK2KFM) ||
+                (_rx_mode == gr_modem_types::ModemTypeQPSK2K) ||
+                (_rx_mode == gr_modem_types::ModemTypeBPSK1K) ||
+                (_rx_mode == gr_modem_types::ModemType2FSK1KFM) ||
+                (_rx_mode == gr_modem_types::ModemType4FSK1KFM) ||
+                (_rx_mode == gr_modem_types::ModemType2FSK1K))
         {
             audio_mode = AudioProcessor::AUDIO_MODE_CODEC2;
         }
@@ -1274,11 +1284,11 @@ unsigned int RadioController::getFrameCRC32(unsigned char *data)
     memcpy(&crc2, &data[16], 4);
     memcpy(&crc3, &data[20], 4);
     if(crc1 == crc2)
-        return (unsigned int)crc1;
+        return crc1;
     else if(crc1 == crc3)
-        return (unsigned int)crc1;
+        return crc1;
     else if(crc2 == crc3)
-        return (unsigned int)crc2;
+        return crc2;
     else
         return 0;
 }
@@ -1371,6 +1381,7 @@ void RadioController::receiveNetData(unsigned char *data, int size)
 void RadioController::protoReceived(QByteArray data)
 {
     _incoming_proto_buffer.append(data);
+    dataFrameReceived();
 }
 
 /// signal from Mumble
@@ -1427,8 +1438,12 @@ void RadioController::textData(QString text, bool repeat)
     _repeat_text = repeat;
     _text_out = text;
     _process_text = true;
-    //_proto_out = _radio_protocol->buildPageMessage(_callsign, text, false, _callsign);
-    //_process_data = true;
+}
+
+void RadioController::pageUser(QString user, QString message)
+{
+    _proto_out = _layer2->buildPageMessage(_callsign, user, message, false, _callsign);
+    _process_data = true;
 }
 
 void RadioController::textMumble(QString text, bool channel)
@@ -1458,6 +1473,36 @@ void RadioController::textReceived(QString text)
         _incoming_text_buffer = "";
     }
     emit printText(text, false);
+}
+
+void RadioController::receivedPageMessage(QString calling_user,
+                                          QString called_user, QString page_message)
+{
+    _logger->log(Logger::LogLevelDebug, QString("Paging message from %1 to %2, text: %3").arg(
+                     calling_user).arg(called_user).arg(page_message));
+
+    if(QString::compare(called_user, _callsign.trimmed(), Qt::CaseInsensitive)  == 0)
+    {
+        emit newPageMessage(calling_user, page_message);
+        QString filename = ":/res/BeepBeep.raw";
+        QFile resfile(filename);
+        resfile.open(QIODevice::ReadOnly);
+        QByteArray *sound = new QByteArray(resfile.readAll());
+
+        short* origin = (short*) sound->data();
+        int size = sound->size();
+
+        short *samples = new short[size/sizeof(short)];
+        for(unsigned int i=0;i<size/sizeof(short);i++)
+        {
+            samples[i] = short(origin[i] / 2);
+        }
+        emit writePCM(samples, size, false, AudioProcessor::AUDIO_MODE_ANALOG);
+        short *silence = new short[4096/sizeof(short)];
+        memset(silence, 0, 4096);
+        emit writePCM(silence, 4096, false, AudioProcessor::AUDIO_MODE_ANALOG);
+        delete sound;
+    }
 }
 
 /// GUI only
@@ -1491,7 +1536,7 @@ void RadioController::audioFrameReceived()
 void RadioController::dataFrameReceived()
 {
     emit displayDataReceiveStatus(true);
-    _data_led_timer->start(500);
+    _data_led_timer->start(100);
     /*
     if((_rx_mode != gr_modem_types::ModemTypeQPSK250000)
             && (_rx_mode != gr_modem_types::ModemTypeQPSKVideo) && !_settings->voip_forwarding)
@@ -1658,9 +1703,9 @@ void RadioController::toggleTX(bool value)
         }
         catch(std::runtime_error &e)
         {
+            _modem->deinitTX(_tx_mode);
             if(_settings->rx_inited)
                 _modem->startRX(_settings->block_buffer_size);
-            _modem->deinitTX(_tx_mode);
             _mutex->unlock();
             _logger->log(Logger::LogLevelFatal,
                          "Could not init TX device, check settings and restart");
@@ -1681,6 +1726,7 @@ void RadioController::toggleTX(bool value)
         if(_settings->rx_inited)
             _modem->startRX(_settings->block_buffer_size);
         _mutex->unlock();
+
         const QMap<std::string,QVector<int>> tx_gains = _modem->getTxGainNames();
         /// hold a local copy of stage gains
         QMap<std::string, QVector<int>>::const_iterator iter = tx_gains.constBegin();
@@ -1801,67 +1847,67 @@ void RadioController::toggleRxMode(int value)
         _scan_step_hz = 10000;
         break;
     case 12:
-        _rx_mode = gr_modem_types::ModemTypeBPSK2000;
+        _rx_mode = gr_modem_types::ModemTypeBPSK2K;
         _step_hz = 5;
         _scan_step_hz = 12500;
         break;
     case 13:
-        _rx_mode = gr_modem_types::ModemTypeBPSK1000;
+        _rx_mode = gr_modem_types::ModemTypeBPSK1K;
         _step_hz = 5;
         _scan_step_hz = 6250;
         break;
     case 14:
-        _rx_mode = gr_modem_types::ModemTypeQPSK2000;
+        _rx_mode = gr_modem_types::ModemTypeQPSK2K;
         _step_hz = 5;
         _scan_step_hz = 6250;
         break;
     case 15:
-        _rx_mode = gr_modem_types::ModemTypeQPSK20000;
+        _rx_mode = gr_modem_types::ModemTypeQPSK20K;
         _step_hz = 50;
         _scan_step_hz = 25000;
         break;
     case 16:
-        _rx_mode = gr_modem_types::ModemType2FSK2000FM;
+        _rx_mode = gr_modem_types::ModemType2FSK2KFM;
         _step_hz = 10;
         _scan_step_hz = 12500;
         break;
     case 17:
-        _rx_mode = gr_modem_types::ModemType2FSK1000FM;
+        _rx_mode = gr_modem_types::ModemType2FSK1KFM;
         _step_hz = 10;
         _scan_step_hz = 12500;
         break;
     case 18:
-        _rx_mode = gr_modem_types::ModemType2FSK2000;
+        _rx_mode = gr_modem_types::ModemType2FSK2K;
         _step_hz = 10;
         _scan_step_hz = 12500;
         break;
     case 19:
-        _rx_mode = gr_modem_types::ModemType2FSK1000;
+        _rx_mode = gr_modem_types::ModemType2FSK1K;
         _step_hz = 10;
         _scan_step_hz = 12500;
         break;
     case 20:
-        _rx_mode = gr_modem_types::ModemType2FSK20000;
+        _rx_mode = gr_modem_types::ModemType2FSK10KFM;
         _step_hz = 500;
         _scan_step_hz = 50000;
         break;
     case 21:
-        _rx_mode = gr_modem_types::ModemType4FSK2000;
+        _rx_mode = gr_modem_types::ModemType4FSK2K;
         _step_hz = 5;
         _scan_step_hz = 12500;
         break;
     case 22:
-        _rx_mode = gr_modem_types::ModemType4FSK2000FM;
+        _rx_mode = gr_modem_types::ModemType4FSK2KFM;
         _step_hz = 5;
         _scan_step_hz = 12500;
         break;
     case 23:
-        _rx_mode = gr_modem_types::ModemType4FSK1000FM;
+        _rx_mode = gr_modem_types::ModemType4FSK1KFM;
         _step_hz = 5;
         _scan_step_hz = 12500;
         break;
     case 24:
-        _rx_mode = gr_modem_types::ModemType4FSK20000FM;
+        _rx_mode = gr_modem_types::ModemType4FSK10KFM;
         _step_hz = 500;
         _scan_step_hz = 50000;
         break;
@@ -1870,15 +1916,25 @@ void RadioController::toggleRxMode(int value)
         _step_hz = 1000;
         break;
     case 26:
-        _rx_mode = gr_modem_types::ModemTypeQPSK250000;
+        _rx_mode = gr_modem_types::ModemTypeQPSK250K;
         _step_hz = 1000;
         _scan_step_hz = 500000;
         break;
     case 27:
+        _rx_mode = gr_modem_types::ModemType4FSK100K;
+        _step_hz = 1000;
+        _scan_step_hz = 500000;
+        break;
+    case 28:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _rx_mode = gr_modem_types::ModemTypeUSB2500;
         _step_hz = 10;
         _scan_step_hz = 2500;
+        break;
+    case 29:
+        _rx_mode = gr_modem_types::ModemTypeBPSK8;
+        _step_hz = 5;
+        _scan_step_hz = 500;
         break;
     default:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
@@ -1888,6 +1944,13 @@ void RadioController::toggleRxMode(int value)
         break;
     }
 
+    if((_rx_mode == gr_modem_types::ModemType4FSK100K) ||
+        (_rx_mode == gr_modem_types::ModemTypeQPSK250K))
+        _net_device->tun_init(_settings->ip_address);
+    if((_rx_mode == gr_modem_types::ModemType4FSK100K))
+        _net_device->set_mtu(580);
+    if((_rx_mode == gr_modem_types::ModemTypeQPSK250K))
+        _net_device->set_mtu(1480);
     _modem->toggleRxMode(_rx_mode);
     if(rx_inited_before)
     {
@@ -1958,56 +2021,62 @@ void RadioController::toggleTxMode(int value)
         _tx_mode = gr_modem_types::ModemTypeAM5000;
         break;
     case 12:
-        _tx_mode = gr_modem_types::ModemTypeBPSK2000;
+        _tx_mode = gr_modem_types::ModemTypeBPSK2K;
         break;
     case 13:
-        _tx_mode = gr_modem_types::ModemTypeBPSK1000;
+        _tx_mode = gr_modem_types::ModemTypeBPSK1K;
         break;
     case 14:
-        _tx_mode = gr_modem_types::ModemTypeQPSK2000;
+        _tx_mode = gr_modem_types::ModemTypeQPSK2K;
         break;
     case 15:
-        _tx_mode = gr_modem_types::ModemTypeQPSK20000;
+        _tx_mode = gr_modem_types::ModemTypeQPSK20K;
         break;
     case 16:
-        _tx_mode = gr_modem_types::ModemType2FSK2000FM;
+        _tx_mode = gr_modem_types::ModemType2FSK2KFM;
         break;
     case 17:
-        _tx_mode = gr_modem_types::ModemType2FSK1000FM;
+        _tx_mode = gr_modem_types::ModemType2FSK1KFM;
         break;
     case 18:
-        _tx_mode = gr_modem_types::ModemType2FSK2000;
+        _tx_mode = gr_modem_types::ModemType2FSK2K;
         break;
     case 19:
-        _tx_mode = gr_modem_types::ModemType2FSK1000;
+        _tx_mode = gr_modem_types::ModemType2FSK1K;
         break;
     case 20:
-        _tx_mode = gr_modem_types::ModemType2FSK20000;
+        _tx_mode = gr_modem_types::ModemType2FSK10KFM;
         break;
     case 21:
-        _tx_mode = gr_modem_types::ModemType4FSK2000;
+        _tx_mode = gr_modem_types::ModemType4FSK2K;
         break;
     case 22:
-        _tx_mode = gr_modem_types::ModemType4FSK2000FM;
+        _tx_mode = gr_modem_types::ModemType4FSK2KFM;
         break;
     case 23:
-        _tx_mode = gr_modem_types::ModemType4FSK1000FM;
+        _tx_mode = gr_modem_types::ModemType4FSK1KFM;
         break;
     case 24:
-        _tx_mode = gr_modem_types::ModemType4FSK20000FM;
+        _tx_mode = gr_modem_types::ModemType4FSK10KFM;
         break;
     case 25:
         _tx_mode = gr_modem_types::ModemTypeQPSKVideo;
         break;
     case 26:
-        _tx_mode = gr_modem_types::ModemTypeQPSK250000;
+        _tx_mode = gr_modem_types::ModemTypeQPSK250K;
         break;
     case 27:
+        _tx_mode = gr_modem_types::ModemType4FSK100K;
+        break;
+    case 28:
         _tx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _tx_mode = gr_modem_types::ModemTypeCW600USB;
         break;
+    case 29:
+        _tx_mode = gr_modem_types::ModemTypeBPSK8;
+        break;
     default:
-        _tx_mode = gr_modem_types::ModemTypeBPSK2000;
+        _tx_mode = gr_modem_types::ModemTypeBPSK2K;
         break;
     }
     if(_tx_mode == gr_modem_types::ModemTypeQPSKVideo)
@@ -2015,6 +2084,15 @@ void RadioController::toggleTxMode(int value)
         //_camera->init();
     else
         _video->deinit();
+    if((_tx_mode == gr_modem_types::ModemType4FSK100K) ||
+        (_tx_mode == gr_modem_types::ModemTypeQPSK250K))
+        _net_device->tun_init(_settings->ip_address);
+    if((_tx_mode == gr_modem_types::ModemType4FSK100K))
+        _net_device->set_mtu(580);
+    if((_tx_mode == gr_modem_types::ModemTypeQPSK250K))
+        _net_device->set_mtu(1480);
+        //_camera->init();
+
     _mutex->lock();
     if(_settings->tx_inited)
         _modem->stopTX();
@@ -2063,11 +2141,6 @@ void RadioController::toggleRepeat(bool value)
     {
         _settings->repeater_enabled = value;
     }
-    /// old code: this enables direct repeat in same mode only (direct loopback)
-    /**
-     if(_rx_mode == _tx_mode)
-        _modem->setRepeater(value);
-    */
 }
 
 void RadioController::fineTuneFreq(long long center_freq)
@@ -2501,7 +2574,7 @@ void RadioController::memoryScan(bool receiving, bool wait_for_timer)
             return;
         }
     }
-    struct timespec time_to_sleep;
+
     radiochannel *chan = _memory_channels.at(_memory_scan_index);
     if(chan->skip)
     {
@@ -2510,8 +2583,20 @@ void RadioController::memoryScan(bool receiving, bool wait_for_timer)
             _memory_scan_index = 0;
         return;
     }
+    tuneMemoryChannel(chan);
+
+    _memory_scan_index++;
+    if(_memory_scan_index >= _memory_channels.size())
+        _memory_scan_index = 0;
+
+    _scan_timer->restart();
+}
+
+void RadioController::tuneMemoryChannel(radiochannel *chan)
+{
     _settings->rx_frequency = chan->rx_frequency - _settings->demod_offset;
     tuneFreq(_settings->rx_frequency);
+    struct timespec time_to_sleep;
     time_to_sleep = {0, 1000L }; /// Give PLL time to settle
     nanosleep(&time_to_sleep, NULL);
     toggleRxMode(chan->rx_mode);
@@ -2522,11 +2607,12 @@ void RadioController::memoryScan(bool receiving, bool wait_for_timer)
     nanosleep(&time_to_sleep, NULL);
     toggleTxMode(chan->tx_mode);
 
+    setSquelch(chan->squelch);
+    setVolume(chan->rx_volume);
+    setTxPower(chan->tx_power);
+    setRxSensitivity(chan->rx_sensitivity);
+    setRxCTCSS(chan->rx_ctcss);
+    setTxCTCSS(chan->tx_ctcss);
+
     emit tuneToMemoryChannel(chan);
-
-    _memory_scan_index++;
-    if(_memory_scan_index >= _memory_channels.size())
-        _memory_scan_index = 0;
-
-    _scan_timer->restart();
 }

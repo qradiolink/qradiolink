@@ -71,6 +71,7 @@ public:
     void flushRadioToVoipBuffer();
     void updateDataModemReset(bool transmitting, bool ptt_activated);
 
+
 signals:
     void finished();
     void setAudioReadMode(bool capture, bool preprocess, int audio_mode);
@@ -102,6 +103,7 @@ signals:
     void newMumbleMessage(QString text);
     void tuneToMemoryChannel(radiochannel *chan);
     void recordAudio(bool value);
+    void newPageMessage(QString paged_by, QString message);
 
 
 public slots:
@@ -154,6 +156,7 @@ public slots:
     void stopScan();
     void startMemoryScan(int direction);
     void stopMemoryScan();
+    void tuneMemoryChannel(radiochannel *chan);
     void endAudioTransmission();
     void processVoipAudioFrame(short *pcm, int samples, quint64 sid);
     void processVoipVideoFrame(unsigned char *video_frame, int size, quint64 sid);
@@ -186,6 +189,8 @@ public slots:
     void setRadioToT(int value);
     void setTotTxEnd(bool value);
     void setTxLimits(bool value);
+    void pageUser(QString user, QString message);
+    void receivedPageMessage(QString calling_user, QString called_user, QString page_message);
 
 private:
     unsigned int getFrameLength(unsigned char *data);

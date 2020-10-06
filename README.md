@@ -17,7 +17,7 @@ It can also be used as a low power amateur radio SDR transceiver for demonstrati
 
 The application was originally inspired from the [Codec2 GMSK modem](https://github.com/on1arf/gmsk) project by Kristoff Bonne.
 
-[![Screenshot](http://qradiolink.org/images/qradiolink60.png)](http://qradiolink.org)
+[![Screenshot](http://qradiolink.org/images/qradiolink62.png)](http://qradiolink.org)
 
 
 
@@ -69,9 +69,10 @@ Features
 - Repeater linking via VOIP and Mumble - a group of repeaters can be linked duplex by sharing the same Mumble channel. This feature is still experimental and WIP.
 - Internal audio mixing of audio from VOIP server and audio from radio
 - USB FTDI (FT232) relay control support (for RF switches, power amplifier and filter control)
-- Full duplex 250 kbit/s IP radio modem with configurable TX/RX offsets
+- Full duplex DQPSK 250 kbit/s and 4FSK 96 kbit/s IP radio modems with configurable TX/RX offsets
+- User paging
 - Automatic carrier tracking and Doppler effect correction for all digital modes except FreeDV modes. The system can track Doppler shifts of 5-10 kHz, depending on mode. It requires a CNR of at least 10-12 dB, more for FSK modes than for PSK modes.
-- Supported hardware: [**Ettus USRP bus devices**](https://ettus.com), [**RTL-SDR**](https://osmocom.org/projects/sdr/wiki/rtl-sdr), [**ADALM-Pluto (PlutoSDR)**](https://www.analog.com/en/design-center/evaluation-hardware-and-software/evaluation-boards-kits/adalm-pluto.html), (supported with SoapySDR and [**SoapyPlutoSDR**](https://github.com/pothosware/SoapyPlutoSDR)), [**LimeSDR-mini**](https://www.crowdsupply.com/lime-micro/limesdr-mini) (partly supported, through SoapySDR), BladeRF, other devices supported by [**gr-osmosdr**](https://osmocom.org/projects/sdr/wiki/GrOsmoSDR) like HackRF and RedPitaya (not tested)
+- Supported hardware: [**Ettus USRP bus devices**](https://ettus.com), [**RTL-SDR**](https://osmocom.org/projects/sdr/wiki/rtl-sdr), [**ADALM-Pluto (PlutoSDR)**](https://www.analog.com/en/design-center/evaluation-hardware-and-software/evaluation-boards-kits/adalm-pluto.html), (supported with SoapySDR and [**SoapyPlutoSDR**](https://github.com/pothosware/SoapyPlutoSDR)), [**LimeSDR-mini**](https://www.crowdsupply.com/lime-micro/limesdr-mini) [**LimeNET-Micro**](https://wiki.myriadrf.org/LimeNET_Micro) (both through SoapySDR), BladeRF, other devices supported by [**gr-osmosdr**](https://osmocom.org/projects/sdr/wiki/GrOsmoSDR) like HackRF and RedPitaya (not tested)
  
 
 Requirements
@@ -81,7 +82,7 @@ Requirements
 - Build dependencies on Debian Buster with Qt5 and GNU radio 3.7.13: 
 
 <pre>
-$ sudo apt-get install gnuradio-dev protobuf-compiler gr-osmosdr gnuradio libvolk1-dev libvolk1-bin libprotobuf17 libprotobuf-dev libopus0 libopus-dev libspeexdsp1 libspeexdsp-dev libpulse0 libpulse-dev libcodec2-0.8.1 libcodec2-dev libasound2 libasound2-dev libjpeg62-turbo libjpeg62-turbo-dev libconfig++9v5 libconfig++-dev qt5-qmake qt5-default qtbase5-dev libqt5core5a libqt5gui5 libqt5network5 libqt5sql5 qtmultimedia5-dev libqt5multimediawidgets5 libqt5multimedia5-plugins libqt5multimedia5 libftdi1-dev libftdi1 libsndfile1-dev libsndfile1
+$ sudo apt-get install gnuradio-dev protobuf-compiler gr-osmosdr gnuradio libvolk1-dev libvolk1-bin libprotobuf17 libprotobuf-dev libopus0 libopus-dev libspeexdsp1 libspeexdsp-dev libpulse0 libpulse-dev libcodec2-0.8.1 libcodec2-dev libasound2 libasound2-dev libjpeg62-turbo libjpeg62-turbo-dev libconfig++9v5 libconfig++-dev qt5-qmake qt5-default qtbase5-dev libqt5core5a libqt5gui5 libqt5network5 libqt5sql5 qtmultimedia5-dev libqt5multimediawidgets5 libqt5multimedia5-plugins libqt5multimedia5 libftdi-dev libftdi1 libsndfile1-dev libsndfile1
 </pre>
 
 - Qt >= 5.11 and Qt5 development packages (older versions of Qt5 >= 5.2 might work as well)
@@ -108,7 +109,7 @@ $ sudo apt install libjpeg-turbo8-dev libjpeg-dev
 [Downloads](https://github.com/qradiolink/qradiolink/releases "Downloads")
 ----
 
-Debian Buster x86_64 packages are provided via Travis CI automated builds. An AppImage for running the application on any Linux distribution without installing it is also provided. The AppImage is based on Debian Buster packages.
+Debian Buster x86_64 packages are provided via Travis CI automated builds. An AppImage for running the application on other Linux distributions with glibc >= 2.27 without installing it is also provided. The AppImage is based on Debian Buster packages.
 Please see the [Github releases page](https://github.com/qradiolink/qradiolink/releases) for binary downloads.
 
 Opensuse packages are available from [Opensuse build server](https://build.opensuse.org/package/show/hardware:sdr/qradiolink)
@@ -155,7 +156,8 @@ qmake .. INSTALL_PREFIX=/usr/local/bin LIBDIR=/opt/lib INCDIR=/opt/include
 </pre>
 
 Known issues:
-- In low light, the automatic adjustment of ISO in the video camera can cause very long times to capture a frame. The solution is to use plenty of lighting for video. Otherwise the video transmission will experience very frequent interruptions.
+- IP modems operating in burst mode experience some packet loss due to lost frames.
+- FM CTCSS decoder is not very reliable
 
 
 Setup and running
@@ -163,6 +165,8 @@ Setup and running
 - It is recommended to start the application using the command line when running the first few times and look for any error messages output to the console. Some of them can be ignored safely, others are critical. Logging to console is by default enabled.
 - **It is not recommended to run qradiolink as root**
 - When first run, go to the **Setup** tab first and configure the options, then click Save before starting TX or RX. Without the correct device arguments, the application can crash when enabling RX or TX. This is not something that the application can control and keep functioning properly.
+- LimeSDR-mini and LimeNET-Micro devices require a device string like **soapy=0,driver=lime**. If you are using more than one device, use the **SoapySDRUtil --find** command and add the serial number of the device to the device arguments string, like **soapy=0,serial=583A29CED231**
+- ADALM-Pluto requires a device argument like **soapy=0**
 - GNU radio main DSP blocks are highly optimized (including on embedded ARM platforms) by using the VOLK library. To minimize the CPU resources consumed by QRadioLink it is recommended to run the **volk_profile** utility after GNU radio has been installed. This command only needs to be run when GNU radio or libvolk are upgraded.
 - High sample rates, high FPS rates and high FFT sizes all affect the CPU performance adversely. On embedded platforms with low resources, you can disable the spectrum display completely using the FFT checkbox. The FPS value also sets the rate at which the S-meter and constellation display are updated, so reduce it to minimum usable values. If the controls menu is not visible, the S-meter display will not consume CPU resources. Similar for the Constellation display.
 - Pulseaudio can be configured for low latency audio by changing settings in /etc/pulse. If you experience interruptions or audio glitches with Pulseaudio, you can try the following workaround: add **tsched=0** to this line in /etc/pulse/default.pa and restart Pulseaudio
@@ -197,7 +201,7 @@ When running in headless mode, console log will be disabled by default with the 
 - In half duplex mode the receiver is muted during transmit and the RX gain is minimized. Do not rely on this feature if using a power amplifier, please use a RF switch (antenna switch) with enough isolation, or introduce attenuators in the relay sequence to avoid destroying the receiver LNA.
 - The transmitter of the device is active at all times if enabled, even when no samples are being output. Although there is no signal being generated, local oscillator leakage may be present and show up on the spectrum display. This is not a problem usually, unless if you keep a power amplifier connected and enabled at all times. You can use the USB relays to disable it in this case when not transmitting.
 - FreeDV modes and PSK modes are very sensitive to amplifier non-linearity. You should not try to use them within a non-linear envelope to avoid signal distortion, splatter or unwanted spectrum components. Digital gain for these modes has been set in such a way to avoid non-linear zone for most devices output stages. If this is not satisfactory, you can use the digital gain setting to increase the digital gain.
-- Receive and transmit gains currently operate as described in the gr-osmosdr manual. At lowest settings, the programmable gain attenuator will be set, following with any IF stages if present and finally any LNA stages if present. This behaviour is desirable since there is no point setting the LNA to a higher value than the PGA if the signal power is already above the P1dB point of the LNA stage. While this behaviour is simple and easy to understand, in the future it may be possible to adjust all gain stages separately.
+- Receive and transmit gains currently operate as described in the gr-osmosdr manual. At lowest settings, the programmable gain attenuator will be set, following with any IF stages if present and finally any LNA stages if present. This behaviour is desirable since there is no point setting the LNA to a higher value than the PGA if the signal power is already above the P1dB point of the LNA stage. Controls for adjusting individual gain stages can also be found on the Settings page.
 - Transmit shift can be positive or negative. After changing the value, you need to press **Enter** to put it into effect. Setting the TX shift is not possible while transmitting a signal. Although the shift is stored as Hertz and you can edit this value in the config, the UI will only allow a value in kHz to be entered (e.g. -7600 kHz standard EU UHF repeater shift). To switch to the reverse repeater frequency, use the **Rev** button.
 - USB relays using FTDI (FT232) chipsets are used to control RF switches, power amplifiers and filter boards. To determine if your USB relay board is supported, look for a similar line in  the output of lsusb:
 <pre>

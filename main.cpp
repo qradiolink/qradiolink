@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
     RadioController *radio_op = new RadioController(settings, logger, radio_channels);
     AudioWriter *audiowriter = new AudioWriter(settings, logger);
     AudioReader *audioreader = new AudioReader(settings, logger);
-    TelnetServer *telnet_server = new TelnetServer(settings, logger);
+    TelnetServer *telnet_server = new TelnetServer(settings, logger, radio_channels);
 
 
     /// Init threads
@@ -289,6 +289,8 @@ void connectCommandSignals(TelnetServer *telnet_server, MumbleClient *mumbleclie
                      radio_op,SLOT(startMemoryScan(int)));
     QObject::connect(telnet_server->command_processor,SIGNAL(stopMemoryTune()),
                      radio_op,SLOT(stopMemoryScan()));
+    QObject::connect(telnet_server->command_processor,SIGNAL(tuneMemoryChannel(radiochannel*)),
+                     radio_op,SLOT(tuneMemoryChannel(radiochannel*)));
     QObject::connect(telnet_server->command_processor,SIGNAL(setVoxLevel(int)),
                      radio_op,SLOT(setVoxLevel(int)));
     QObject::connect(telnet_server->command_processor,SIGNAL(setVoipBitrate(int)),
@@ -373,6 +375,8 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
                      radio_op,SLOT(setTotTxEnd(bool)));
     QObject::connect(w,SIGNAL(setTxLimits(bool)),
                      radio_op,SLOT(setTxLimits(bool)));
+    QObject::connect(w,SIGNAL(pageUser(QString,QString)),
+                     radio_op,SLOT(pageUser(QString, QString)));
     QObject::connect(w,SIGNAL(connectToServer(QString, unsigned)),
                      mumbleclient,SLOT(connectToServer(QString, unsigned)));
     QObject::connect(w,SIGNAL(disconnectFromServer()),mumbleclient,SLOT(disconnectFromServer()));
@@ -418,6 +422,8 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
                      w, SLOT(setTxGainStages(gain_vector)));
     QObject::connect(radio_op, SIGNAL(tuneToMemoryChannel(radiochannel*)),
                      w, SLOT(tuneToMemoryChannel(radiochannel*)));
+    QObject::connect(radio_op, SIGNAL(newPageMessage(QString,QString)),
+                     w, SLOT(displayPageMessage(QString,QString)));
 
     /// Mumble to GUI
     QObject::connect(mumbleclient,SIGNAL(onlineStations(StationList)),

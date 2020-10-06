@@ -42,19 +42,20 @@
 #include <osmosdr/source.h>
 #include <vector>
 #include "gr_audio_sink.h"
-#include "gr_vector_sink.h"
+#include "gr_bit_sink.h"
 #include "gr_const_sink.h"
 #include "rx_fft.h"
 #include "gr_deframer_bb.h"
-#include "gr_demod_2fsk_sdr.h"
-#include "gr_demod_4fsk_sdr.h"
-#include "gr_demod_am_sdr.h"
-#include "gr_demod_bpsk_sdr.h"
-#include "gr_demod_nbfm_sdr.h"
-#include "gr_demod_qpsk_sdr.h"
-#include "gr_demod_ssb_sdr.h"
-#include "gr_demod_wbfm_sdr.h"
+#include "gr_demod_2fsk.h"
+#include "gr_demod_4fsk.h"
+#include "gr_demod_am.h"
+#include "gr_demod_bpsk.h"
+#include "gr_demod_nbfm.h"
+#include "gr_demod_qpsk.h"
+#include "gr_demod_ssb.h"
+#include "gr_demod_wbfm.h"
 #include "gr_demod_freedv.h"
+#include "gr_demod_dsss.h"
 #include "src/modem_types.h"
 
 class gr_demod_base : public QObject
@@ -102,7 +103,7 @@ public slots:
 private:
     gr::top_block_sptr _top_block;
     gr_audio_sink_sptr _audio_sink;
-    gr_vector_sink_sptr _vector_sink;
+    gr_bit_sink_sptr _bit_sink;
     rx_fft_c_sptr _fft_sink;
     gr::blocks::message_debug::sptr _message_sink;
     gr::blocks::copy::sptr _rssi_valve;
@@ -126,28 +127,29 @@ private:
     gr_deframer_bb_sptr _deframer1_10k;
     gr_deframer_bb_sptr _deframer2_10k;
 
-    gr_demod_2fsk_sdr_sptr _2fsk_2k_fm;
-    gr_demod_2fsk_sdr_sptr _2fsk_1k_fm;
-    gr_demod_2fsk_sdr_sptr _2fsk_2k;
-    gr_demod_2fsk_sdr_sptr _2fsk_1k;
-    gr_demod_2fsk_sdr_sptr _2fsk_10k;
-    gr_demod_4fsk_sdr_sptr _4fsk_2k;
-    gr_demod_4fsk_sdr_sptr _4fsk_10k;
-    gr_demod_4fsk_sdr_sptr _4fsk_2k_fm;
-    gr_demod_4fsk_sdr_sptr _4fsk_1k_fm;
-    gr_demod_4fsk_sdr_sptr _4fsk_10k_fm;
-    gr_demod_am_sdr_sptr _am;
-    gr_demod_bpsk_sdr_sptr _bpsk_1k;
-    gr_demod_bpsk_sdr_sptr _bpsk_2k;
-    gr_demod_nbfm_sdr_sptr _fm_2500;
-    gr_demod_nbfm_sdr_sptr _fm_5000;
-    gr_demod_qpsk_sdr_sptr _qpsk_2k;
-    gr_demod_qpsk_sdr_sptr _qpsk_10k;
-    gr_demod_qpsk_sdr_sptr _qpsk_250k;
-    gr_demod_qpsk_sdr_sptr _qpsk_video;
-    gr_demod_ssb_sdr_sptr _usb;
-    gr_demod_ssb_sdr_sptr _lsb;
-    gr_demod_wbfm_sdr_sptr _wfm;
+    gr_demod_2fsk_sptr _2fsk_2k_fm;
+    gr_demod_2fsk_sptr _2fsk_1k_fm;
+    gr_demod_2fsk_sptr _2fsk_2k;
+    gr_demod_2fsk_sptr _2fsk_1k;
+    gr_demod_2fsk_sptr _2fsk_10k;
+    gr_demod_4fsk_sptr _4fsk_2k;
+    gr_demod_4fsk_sptr _4fsk_2k_fm;
+    gr_demod_4fsk_sptr _4fsk_1k_fm;
+    gr_demod_4fsk_sptr _4fsk_10k_fm;
+    gr_demod_am_sptr _am;
+    gr_demod_bpsk_sptr _bpsk_1k;
+    gr_demod_bpsk_sptr _bpsk_2k;
+    gr_demod_dsss_sptr _bpsk_dsss_8;
+    gr_demod_nbfm_sptr _fm_2500;
+    gr_demod_nbfm_sptr _fm_5000;
+    gr_demod_qpsk_sptr _qpsk_2k;
+    gr_demod_qpsk_sptr _qpsk_10k;
+    gr_demod_qpsk_sptr _qpsk_250k;
+    gr_demod_qpsk_sptr _qpsk_video;
+    gr_demod_4fsk_sptr _4fsk_96k;
+    gr_demod_ssb_sptr _usb;
+    gr_demod_ssb_sptr _lsb;
+    gr_demod_wbfm_sptr _wfm;
     gr_demod_freedv_sptr _freedv_rx1600_usb;
     gr_demod_freedv_sptr _freedv_rx700C_usb;
     gr_demod_freedv_sptr _freedv_rx800XA_usb;

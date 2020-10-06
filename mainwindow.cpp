@@ -191,6 +191,7 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     QObject::connect(ui->removeChannelButton,SIGNAL(clicked()), this, SLOT(removeMemoryChannel()));
     QObject::connect(ui->memoriesTableWidget,SIGNAL(itemChanged(QTableWidgetItem*)),
                      this,SLOT(editMemoryChannel(QTableWidgetItem*)));
+    QObject::connect(ui->pageUserButton,SIGNAL(clicked()), this, SLOT(pageUserRequested()));
 
     QObject::connect(&_secondary_text_timer,SIGNAL(timeout()),ui->secondaryTextDisplay,SLOT(hide()));
     QObject::connect(&_video_timer,SIGNAL(timeout()),ui->videoFrame,SLOT(hide()));
@@ -206,6 +207,8 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     ui->controlsFrame->hide();
     ui->constellationDisplay->hide();
     ui->secondaryTextDisplay->hide();
+    ui->videoFrame->setWindowFlags(Qt::Window | Qt::WindowStaysOnTopHint
+                                   | Qt::WindowCloseButtonHint);
     ui->videoFrame->hide();
     ui->menuBar->hide();
     ui->statusBar->hide();
@@ -294,45 +297,13 @@ void MainWindow::setTheme(bool value)
     _settings->night_mode = (int) value;
     if(value)
     {
-        setStyleSheet(
-                "QWidget#memoryControlsFrame {background: none}"
-                "QWidget#memoriesFrame {background: none}"
-                "QWidget#memoriesTableWidget {background: none}"
-                "QWidget {background-color:#2a2a2a; color:#ffffd3}"
-                "QPushButton {background-color:#555555; color:#ffffd3;"
-                    "border:1px solid #444444;border-style:outset;"
-                    "border-radius: 3px;}"
-                "QPushButton:hover {background-color:#005a84; color:#ffffd3}"
-                "QPushButton:checked {background-color:#7a7a84; color:#ffffd3}"
-                "QCheckBox:hover {background-color:#555555; color:#ffffd3}"
-                "QCheckBox:checked {color:#fffb6f}"
-                "QSlider:hover {background-color: rgb(0, 67, 98); color:#ffffd3}"
-                "QDial {background-color:#5a5a5a; color:#ffffd3}"
-                "QDial:hover {background-color:#002c86; color:#ffffd3}"
-                "QComboBox:hover {color: rgb(240, 240, 119); background-color: rgb(0, 0, 67)}"
-                "QComboBox QAbstractItemView {color: rgb(240, 240, 119); background-color: rgb(0, 0, 67);}"
-                "QTreeWidgetItem {background-color:#001e5a; color:#ffffd3}"
-                "QTreeWidgetItem:hover {background-color:#002c86; color:#ffffd3}"
-                "QLineEdit {background-color:#a3a3a3; color:#000000}"
-                "QTextEdit {background-color:#a3a3a3; color:#000000}");
+         setStyleSheet("");
+         setStyleSheet(night_stylesheet);
     }
     else
     {
-        setStyleSheet(
-                "QPushButton:hover {background-color:#005a84; color:#ffffd3}"
-                "QCheckBox:hover {background-color:#fcfcfc; color:#0e0e00}"
-                "QCheckBox:checked {color:#585800}"
-                "QSlider:hover {background-color: rgb(0, 67, 98); color:#ffffd3}"
-                "QDial {background-color:#9a9a9a; color:#ffffd3}"
-                "QDial:hover {background-color:#002c86; color:#ffffd3}"
-                "QComboBox {color: rgb(240, 240, 119); background-color: rgb(0, 0, 67);}"
-                "QComboBox:hover {color: rgb(240, 240, 119); background-color: rgb(0, 0, 67);}"
-                "QComboBox QAbstractItemView {color: rgb(240, 240, 119); background-color: rgb(0, 0, 67);}"
-                "QTreeWidgetItem {background-color:#2a2a2a; color:#ffffd3}"
-                "QTreeWidget {background-color:#2a2a2a; color:#ffffd3}"
-                "QTreeWidgetItem:hover {background-color:#002c86; color:#ffffd3}"
-                "QLineEdit {background-color:#ffffff; color:#000000}"
-                "QTextEdit {background-color:#ffffff; color:#000000}");
+        setStyleSheet("");
+        setStyleSheet(day_stylesheet);
     }
 }
 
@@ -779,33 +750,7 @@ void MainWindow::tuneToMemoryChannel(int row, int col)
 
     QVector<radiochannel*> *channels = _radio_channels->getChannels();
     radiochannel *chan = channels->at(row);
-
-    ui->frameCtrlFreq->setFrequency(chan->rx_frequency);
-    tuneMainFreq(chan->rx_frequency);
-    _settings->tx_shift = chan->tx_shift;
-    emit changeTxShift(_settings->tx_shift);
-    ui->shiftEdit->setText(QString::number(chan->tx_shift / 1000));
-
-    ui->rxModemTypeComboBox->setCurrentIndex(chan->rx_mode);
-    ui->txModemTypeComboBox->setCurrentIndex(chan->tx_mode);
-    toggleRxMode(chan->rx_mode);
-    toggleTxMode(chan->tx_mode);
-
-    setSquelchDisplay(chan->squelch);
-    setVolumeDisplay(chan->rx_volume);
-    setTxPowerDisplay(chan->tx_power);
-    setRxSensitivityDisplay(chan->rx_sensitivity);
-    emit setRxCTCSS(chan->rx_ctcss);
-    emit setTxCTCSS(chan->tx_ctcss);
-    if(chan->rx_ctcss > 0.0)
-        ui->comboBoxRxCTCSS->setCurrentText(QString::number(chan->rx_ctcss));
-    else
-        ui->comboBoxRxCTCSS->setCurrentText("CTCSS");
-    if(chan->tx_ctcss > 0.0)
-        ui->comboBoxTxCTCSS->setCurrentText(QString::number(chan->tx_ctcss));
-    else
-        ui->comboBoxTxCTCSS->setCurrentText("CTCSS");
-
+    tuneToMemoryChannel(chan);
 }
 
 void MainWindow::tuneToMemoryChannel(radiochannel *chan)
@@ -814,9 +759,12 @@ void MainWindow::tuneToMemoryChannel(radiochannel *chan)
     tuneMainFreq(chan->rx_frequency);
     _settings->tx_shift = chan->tx_shift;
     ui->shiftEdit->setText(QString::number(chan->tx_shift / 1000));
+    emit changeTxShift(_settings->tx_shift);
 
     ui->rxModemTypeComboBox->setCurrentIndex(chan->rx_mode);
     ui->txModemTypeComboBox->setCurrentIndex(chan->tx_mode);
+    toggleRxMode(chan->rx_mode);
+    toggleTxMode(chan->tx_mode);
 
     setSquelchDisplay(chan->squelch);
     setVolumeDisplay(chan->rx_volume);
@@ -1357,7 +1305,7 @@ void MainWindow::toggleTxMode(int value)
 void MainWindow::initError(QString error)
 {
     Q_UNUSED(error);
-    ui->tabWidget->setCurrentIndex(3);
+    ui->tabWidget->setCurrentIndex(4);
 }
 
 void MainWindow::toggleRepeater(bool value)
@@ -1860,4 +1808,18 @@ void MainWindow::updateBlockBufferSize(int value)
 {
     Q_UNUSED(value);
     emit setBlockBufferSize(ui->blockBufferSizeComboBox->currentText().toInt());
+}
+
+void MainWindow::pageUserRequested()
+{
+    QString user = ui->pagedUserEdit->text();
+    QString msg = ui->sendTextEdit->toPlainText();
+    if(user.size() > 0)
+        emit pageUser(user, msg);
+}
+
+void MainWindow::displayPageMessage(QString page_user, QString page_message)
+{
+    ui->pagedByLabel->setText(QString("Paged by: <strong>%1</strong>").arg(page_user));
+    ui->pageMessageLabel->setText(page_message);
 }

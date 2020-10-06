@@ -36,22 +36,28 @@ class NetDevice : public QObject
 {
     Q_OBJECT
 public:
-    explicit NetDevice(Logger *logger, QObject *parent = 0, QString ip_address="");
+    explicit NetDevice(Logger *logger, QObject *parent = 0, QString ip_address="", int mtu=1480);
     ~NetDevice();
 signals:
 
 public slots:
 
 public:
-    unsigned char* read_buffered(int &bytes);
+    unsigned char* read_buffered(int &bytes, int size=1500);
     int write_buffered(unsigned char* data, int len);
+    int set_mtu(int mtu=1480);
+    int tun_init(QString ip_address);
+    void if_list();
+    void deinit();
 
 private:
     Logger *_logger;
-    int tun_init(QString ip_address);
-    void if_list();
+    QString _ip_address;
     int _fd_tun;
     int _if_no;
+    int _mtu;
+    struct ifreq _ifr;
+    int _socket;
 
 };
 

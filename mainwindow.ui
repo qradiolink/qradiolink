@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1200</width>
+    <width>1280</width>
     <height>721</height>
    </rect>
   </property>
@@ -89,12 +89,6 @@
           <bold>false</bold>
          </font>
         </property>
-        <property name="styleSheet">
-         <string notr="true">font: 10pt &quot;Sans Serif&quot;;
-
-
-</string>
-        </property>
         <property name="currentIndex">
          <number>0</number>
         </property>
@@ -122,7 +116,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>1200</width>
+            <width>1280</width>
             <height>391</height>
            </rect>
           </property>
@@ -642,7 +636,7 @@ color: rgb(255, 255, 255);</string>
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
-                 <height>20</height>
+                 <height>25</height>
                 </size>
                </property>
                <property name="toolTip">
@@ -1382,7 +1376,7 @@ color: rgb(255, 255, 255);</string>
                 <bool>false</bool>
                </property>
                <property name="styleSheet">
-                <string notr="true">font: 10pt &quot;Sans Serif&quot;;</string>
+                <string notr="true"/>
                </property>
                <property name="text">
                 <string>Disconnect</string>
@@ -1518,8 +1512,7 @@ color: rgb(255, 255, 255);</string>
                 <bool>false</bool>
                </property>
                <property name="styleSheet">
-                <string notr="true">font: 9pt &quot;Sans Serif&quot;;
-</string>
+                <string notr="true"/>
                </property>
                <property name="text">
                 <string>Connect</string>
@@ -1683,9 +1676,7 @@ color: rgb(255, 255, 255);</string>
                 <bool>false</bool>
                </property>
                <property name="styleSheet">
-                <string notr="true">font: 10pt &quot;Sans Serif&quot;;
-border-width: 4px;
-</string>
+                <string notr="true"/>
                </property>
                <property name="text">
                 <string>Repeater</string>
@@ -1736,9 +1727,7 @@ border-width: 4px;
                 <bool>false</bool>
                </property>
                <property name="styleSheet">
-                <string notr="true">font: 10pt &quot;Sans Serif&quot;;
-border-width: 4px;
-</string>
+                <string notr="true"/>
                </property>
                <property name="text">
                 <string>Vox</string>
@@ -1786,9 +1775,7 @@ border-width: 4px;
                 <bool>false</bool>
                </property>
                <property name="styleSheet">
-                <string notr="true">font: 10pt &quot;Sans Serif&quot;;
-border-width: 4px;
-</string>
+                <string notr="true"/>
                </property>
                <property name="text">
                 <string>Forward radio</string>
@@ -1830,9 +1817,7 @@ border-width: 4px;
                 <bool>false</bool>
                </property>
                <property name="styleSheet">
-                <string notr="true">font: 10pt &quot;Sans Serif&quot;;
-border-width: 4px;
-</string>
+                <string notr="true"/>
                </property>
                <property name="text">
                 <string>PTT for VOIP</string>
@@ -2011,8 +1996,7 @@ border-width: 4px;
                   <item row="2" column="2">
                    <widget class="QLineEdit" name="mumbleTextMessageEdit">
                     <property name="styleSheet">
-                     <string notr="true">color: rgb(0, 0, 70);
-background-color: rgba(255, 255, 255, 180);</string>
+                     <string notr="true"/>
                     </property>
                    </widget>
                   </item>
@@ -2395,10 +2379,7 @@ font: 10pt &quot;Sans Serif&quot;;
                    </size>
                   </property>
                   <property name="styleSheet">
-                   <string notr="true">font: 12pt &quot;Sans Serif&quot;;
-
-
-</string>
+                   <string notr="true"/>
                   </property>
                   <property name="text">
                    <string>Clear</string>
@@ -2442,23 +2423,137 @@ font: 10pt &quot;Sans Serif&quot;;
                 <property name="frameShadow">
                  <enum>QFrame::Raised</enum>
                 </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-            <widget class="QWidget" name="tab_5">
-             <attribute name="title">
-              <string>Type 2 messages</string>
-             </attribute>
-             <layout class="QGridLayout" name="gridLayout_15">
-              <item row="0" column="0">
-               <widget class="QFrame" name="frame_12">
-                <property name="frameShape">
-                 <enum>QFrame::StyledPanel</enum>
-                </property>
-                <property name="frameShadow">
-                 <enum>QFrame::Raised</enum>
-                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_14">
+                 <item>
+                  <widget class="QFrame" name="frame_14">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_10">
+                    <item>
+                     <widget class="QLineEdit" name="pagedUserEdit">
+                      <property name="placeholderText">
+                       <string>Target callsign</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <spacer name="horizontalSpacer_19">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="pageUserButton">
+                      <property name="text">
+                       <string>Page user</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QFrame" name="frame_15">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>300</height>
+                    </size>
+                   </property>
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QVBoxLayout" name="verticalLayout_15">
+                    <item>
+                     <widget class="QLabel" name="pagedByLabel">
+                      <property name="minimumSize">
+                       <size>
+                        <width>320</width>
+                        <height>30</height>
+                       </size>
+                      </property>
+                      <property name="text">
+                       <string>Paged by:</string>
+                      </property>
+                      <property name="wordWrap">
+                       <bool>true</bool>
+                      </property>
+                      <property name="textInteractionFlags">
+                       <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QLabel" name="pageMessageLabel">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Fixed" vsizetype="MinimumExpanding">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>320</width>
+                        <height>0</height>
+                       </size>
+                      </property>
+                      <property name="text">
+                       <string/>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                      </property>
+                      <property name="wordWrap">
+                       <bool>true</bool>
+                      </property>
+                      <property name="textInteractionFlags">
+                       <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="verticalSpacer_4">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
                </widget>
               </item>
              </layout>
@@ -2468,23 +2563,6 @@ font: 10pt &quot;Sans Serif&quot;;
               <string>Satellite</string>
              </attribute>
             </widget>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="geoTab">
-         <attribute name="title">
-          <string>Geo services</string>
-         </attribute>
-         <layout class="QGridLayout" name="gridLayout_16">
-          <item row="0" column="0">
-           <widget class="QFrame" name="mapFrame">
-            <property name="frameShape">
-             <enum>QFrame::StyledPanel</enum>
-            </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
-            </property>
            </widget>
           </item>
          </layout>
@@ -3039,6 +3117,9 @@ and S-meter (dBm)</string>
                  </item>
                  <item row="6" column="4">
                   <widget class="QCheckBox" name="muteForwardedAudioCheckBox">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
                    <property name="text">
                     <string>Mute forwarded audio</string>
                    </property>
@@ -3140,13 +3221,6 @@ and S-meter (dBm)</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="12" column="4">
-                  <widget class="QCheckBox" name="checkBoxAudioCompressor">
-                   <property name="text">
-                    <string>Audio compressor</string>
-                   </property>
-                  </widget>
-                 </item>
                  <item row="6" column="2">
                   <widget class="QLabel" name="label_40">
                    <property name="sizePolicy">
@@ -3196,14 +3270,14 @@ and S-meter (dBm)</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="12" column="0">
-                  <widget class="QLabel" name="label_49">
+                 <item row="7" column="4">
+                  <widget class="QCheckBox" name="checkBoxAudioCompressor">
                    <property name="text">
-                    <string>TX frequency</string>
+                    <string>Audio compressor</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="12" column="1">
+                 <item row="13" column="3">
                   <widget class="QFrame" name="frame_13">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -3254,9 +3328,7 @@ and S-meter (dBm)</string>
                        <bool>false</bool>
                       </property>
                       <property name="styleSheet">
-                       <string notr="true">color: rgb(0, 0, 70);
-background-color: rgba(255, 255, 255, 180);
-font: 12pt &quot;Sans Serif&quot;;</string>
+                       <string notr="true">font: 12pt &quot;Sans Serif&quot;;</string>
                       </property>
                       <property name="inputMethodHints">
                        <set>Qt::ImhDigitsOnly</set>
@@ -3285,6 +3357,13 @@ font: 12pt &quot;Sans Serif&quot;;</string>
                      </widget>
                     </item>
                    </layout>
+                  </widget>
+                 </item>
+                 <item row="13" column="2">
+                  <widget class="QLabel" name="label_49">
+                   <property name="text">
+                    <string>TX frequency</string>
+                   </property>
                   </widget>
                  </item>
                 </layout>
@@ -3951,7 +4030,7 @@ font: 12pt &quot;Sans Serif&quot;;</string>
                  <item>
                   <widget class="QTabWidget" name="tabWidget_3">
                    <property name="currentIndex">
-                    <number>0</number>
+                    <number>1</number>
                    </property>
                    <widget class="QWidget" name="rxGainsTab">
                     <attribute name="title">
@@ -3986,7 +4065,7 @@ font: 12pt &quot;Sans Serif&quot;;</string>
              <string>Save settings</string>
             </property>
             <property name="autoFillBackground">
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
             <property name="text">
              <string>Save</string>
@@ -4101,14 +4180,6 @@ background-color: rgba(255, 255, 255, 180);</string>
           <width>600</width>
           <height>80</height>
          </size>
-        </property>
-        <property name="autoFillBackground">
-         <bool>true</bool>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">font: 8pt &quot;Sans Serif&quot;;
-
-</string>
         </property>
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
@@ -4904,7 +4975,7 @@ background-color: rgb(0, 0, 67);
           </property>
           <property name="minimumSize">
            <size>
-            <width>120</width>
+            <width>130</width>
             <height>60</height>
            </size>
           </property>
@@ -4937,6 +5008,11 @@ background-color: rgb(0, 0, 67);
              </property>
              <property name="toolTip">
               <string>Sync</string>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: none;
+border: none;
+border-radius: 0px;</string>
              </property>
              <property name="text">
               <string/>
@@ -4975,6 +5051,11 @@ background-color: rgb(0, 0, 67);
              <property name="toolTip">
               <string>Transmitting</string>
              </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: none;
+border: none;
+border-radius: 0px;</string>
+             </property>
              <property name="text">
               <string/>
              </property>
@@ -5007,7 +5088,9 @@ background-color: rgb(0, 0, 67);
               <string>Receiving data</string>
              </property>
              <property name="styleSheet">
-              <string notr="true"/>
+              <string notr="true">background-color: none;
+border: none;
+border-radius: 0px;</string>
              </property>
              <property name="text">
               <string/>
@@ -5042,6 +5125,11 @@ background-color: rgb(0, 0, 67);
              </property>
              <property name="toolTip">
               <string>Receiving audio</string>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: none;
+border: none;
+border-radius: 0px;</string>
              </property>
              <property name="text">
               <string/>
@@ -5185,7 +5273,7 @@ background-color: rgb(150, 150, 150);
           </property>
           <property name="minimumSize">
            <size>
-            <width>20</width>
+            <width>30</width>
             <height>70</height>
            </size>
           </property>
@@ -5227,13 +5315,13 @@ background-color: rgb(150, 150, 150);
           </property>
           <property name="minimumSize">
            <size>
-            <width>30</width>
+            <width>48</width>
             <height>70</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>30</width>
+            <width>48</width>
             <height>70</height>
            </size>
           </property>
@@ -5248,13 +5336,13 @@ background-color: rgb(150, 150, 150);
           </property>
           <property name="icon">
            <iconset resource="resources.qrc">
-            <normaloff>:/res/arrow-up.png</normaloff>
-            <normalon>:/res/arrow-up-red.png</normalon>:/res/arrow-up.png</iconset>
+            <normaloff>:/res/constellation_icon.png</normaloff>
+            <normalon>:/res/constellation_icon_enabled.png</normalon>:/res/constellation_icon.png</iconset>
           </property>
           <property name="iconSize">
            <size>
-            <width>24</width>
-            <height>24</height>
+            <width>32</width>
+            <height>32</height>
            </size>
           </property>
           <property name="checkable">
@@ -5470,8 +5558,7 @@ background-color: rgb(150, 150, 150);
             </property>
             <property name="styleSheet">
              <string notr="true">font: 14pt &quot;Sans Serif&quot;;
-border-width: 4px;
-color: #cc0000</string>
+color: #FF0000;</string>
             </property>
             <property name="text">
              <string>TX</string>
@@ -5525,9 +5612,7 @@ color: #cc0000</string>
              <string>TX Modulation</string>
             </property>
             <property name="styleSheet">
-             <string notr="true">color: rgb(240, 240, 119);
-background-color: rgb(0, 0, 67);
-font: 9pt &quot;Sans Serif&quot;;</string>
+             <string notr="true">font: 9pt &quot;Sans Serif&quot;;</string>
             </property>
             <property name="maxVisibleItems">
              <number>25</number>
@@ -5567,9 +5652,7 @@ font: 9pt &quot;Sans Serif&quot;;</string>
              <string>RX Modulation</string>
             </property>
             <property name="styleSheet">
-             <string notr="true">color: rgb(240, 240, 119);
-background-color: rgb(0, 0, 67);
-font: 9pt &quot;Sans Serif&quot;;</string>
+             <string notr="true">font: 9pt &quot;Sans Serif&quot;;</string>
             </property>
             <property name="maxVisibleItems">
              <number>25</number>
@@ -5612,9 +5695,9 @@ font: 9pt &quot;Sans Serif&quot;;</string>
              <bool>false</bool>
             </property>
             <property name="styleSheet">
-             <string notr="true">color: #009900;
+             <string notr="true">color: #00BB00;
 font: 14pt &quot;Sans Serif&quot;;
-border-width: 4px;
+
 
 </string>
             </property>
@@ -5728,8 +5811,7 @@ border-width: 4px;
                 <string>Transmission split in kHz (press Enter)</string>
                </property>
                <property name="styleSheet">
-                <string notr="true">color: rgb(0, 0, 70);
-background-color: rgba(255, 255, 255, 180);
+                <string notr="true">background-color: rgba(255, 255, 255, 180);
 font: 12pt &quot;Sans Serif&quot;;s</string>
                </property>
                <property name="inputMethodHints">
@@ -5748,7 +5830,7 @@ font: 12pt &quot;Sans Serif&quot;;s</string>
                 <set>Qt::AlignCenter</set>
                </property>
                <property name="placeholderText">
-                <string notr="true"/>
+                <string notr="true">Repeater shift</string>
                </property>
                <property name="clearButtonEnabled">
                 <bool>true</bool>
@@ -5818,8 +5900,7 @@ font: 12pt &quot;Sans Serif&quot;;s</string>
                 <bool>false</bool>
                </property>
                <property name="styleSheet">
-                <string notr="true">color: rgb(0, 0, 70);
-background-color: rgba(255, 255, 255, 180);
+                <string notr="true">background-color: rgba(255, 255, 255, 180);
 font: 12pt &quot;Sans Serif&quot;;</string>
                </property>
                <property name="inputMethodHints">
@@ -5864,7 +5945,7 @@ font: 12pt &quot;Sans Serif&quot;;</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1200</width>
+     <width>1280</width>
      <height>30</height>
     </rect>
    </property>

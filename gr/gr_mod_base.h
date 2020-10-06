@@ -31,16 +31,17 @@
 #include <gnuradio/blocks/copy.h>
 #include <osmosdr/sink.h>
 #include "src/modem_types.h"
-#include "gr_vector_source.h"
+#include "gr_byte_source.h"
 #include "gr_audio_source.h"
-#include "gr_mod_2fsk_sdr.h"
-#include "gr_mod_4fsk_sdr.h"
-#include "gr_mod_am_sdr.h"
-#include "gr_mod_bpsk_sdr.h"
-#include "gr_mod_nbfm_sdr.h"
-#include "gr_mod_qpsk_sdr.h"
-#include "gr_mod_ssb_sdr.h"
+#include "gr_mod_2fsk.h"
+#include "gr_mod_4fsk.h"
+#include "gr_mod_am.h"
+#include "gr_mod_bpsk.h"
+#include "gr_mod_nbfm.h"
+#include "gr_mod_qpsk.h"
+#include "gr_mod_ssb.h"
 #include "gr_mod_freedv.h"
+#include "gr_mod_dsss.h"
 
 class gr_mod_base : public QObject
 {
@@ -67,35 +68,36 @@ public slots:
 
 private:
     gr::top_block_sptr _top_block;
-    gr_vector_source_sptr _vector_source;
+    gr_byte_source_sptr _byte_source;
     gr_audio_source_sptr _audio_source;
     osmosdr::sink::sptr _osmosdr_sink;
     gr::blocks::rotator_cc::sptr _rotator;
     gr::analog::sig_source_f::sptr _signal_source;
 
-    gr_mod_2fsk_sdr_sptr _2fsk_2k_fm;
-    gr_mod_2fsk_sdr_sptr _2fsk_1k_fm;
-    gr_mod_2fsk_sdr_sptr _2fsk_2k;
-    gr_mod_2fsk_sdr_sptr _2fsk_1k;
-    gr_mod_2fsk_sdr_sptr _2fsk_10k;
-    gr_mod_4fsk_sdr_sptr _4fsk_2k;
-    gr_mod_4fsk_sdr_sptr _4fsk_1k;
-    gr_mod_4fsk_sdr_sptr _4fsk_10k;
-    gr_mod_4fsk_sdr_sptr _4fsk_2k_fm;
-    gr_mod_4fsk_sdr_sptr _4fsk_1k_fm;
-    gr_mod_4fsk_sdr_sptr _4fsk_10k_fm;
-    gr_mod_am_sdr_sptr _am;
-    gr_mod_bpsk_sdr_sptr _bpsk_1k;
-    gr_mod_bpsk_sdr_sptr _bpsk_2k;
-    gr_mod_nbfm_sdr_sptr _fm_2500;
-    gr_mod_nbfm_sdr_sptr _fm_5000;
-    gr_mod_qpsk_sdr_sptr _qpsk_2k;
-    gr_mod_qpsk_sdr_sptr _qpsk_10k;
-    gr_mod_qpsk_sdr_sptr _qpsk_250k;
-    gr_mod_qpsk_sdr_sptr _qpsk_video;
-    gr_mod_ssb_sdr_sptr _usb;
-    gr_mod_ssb_sdr_sptr _lsb;
-    gr_mod_ssb_sdr_sptr _usb_cw;
+    gr_mod_2fsk_sptr _2fsk_2k_fm;
+    gr_mod_2fsk_sptr _2fsk_1k_fm;
+    gr_mod_2fsk_sptr _2fsk_2k;
+    gr_mod_2fsk_sptr _2fsk_1k;
+    gr_mod_2fsk_sptr _2fsk_10k;
+    gr_mod_4fsk_sptr _4fsk_2k;
+    gr_mod_4fsk_sptr _4fsk_1k;
+    gr_mod_4fsk_sptr _4fsk_2k_fm;
+    gr_mod_4fsk_sptr _4fsk_1k_fm;
+    gr_mod_4fsk_sptr _4fsk_10k_fm;
+    gr_mod_am_sptr _am;
+    gr_mod_bpsk_sptr _bpsk_1k;
+    gr_mod_bpsk_sptr _bpsk_2k;
+    gr_mod_dsss_sptr _bpsk_dsss_8;
+    gr_mod_nbfm_sptr _fm_2500;
+    gr_mod_nbfm_sptr _fm_5000;
+    gr_mod_qpsk_sptr _qpsk_2k;
+    gr_mod_qpsk_sptr _qpsk_10k;
+    gr_mod_qpsk_sptr _qpsk_250k;
+    gr_mod_qpsk_sptr _qpsk_video;
+    gr_mod_4fsk_sptr _4fsk_96k;
+    gr_mod_ssb_sptr _usb;
+    gr_mod_ssb_sptr _lsb;
+    gr_mod_ssb_sptr _usb_cw;
     gr_mod_freedv_sdr_sptr _freedv_tx1600_usb;
     gr_mod_freedv_sdr_sptr _freedv_tx700C_usb;
     gr_mod_freedv_sdr_sptr _freedv_tx1600_lsb;

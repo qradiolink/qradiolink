@@ -105,7 +105,6 @@ public slots:
     void calibrateRSSI(float value);
     void enableDemod(bool value);
     double getFreqGUI();
-    void setRepeater(bool value);
     void getFFTData(float *data, unsigned int &size);
     void setCarrierOffset(long long offset);
     void setTxCarrierOffset(long long offset);
@@ -135,7 +134,6 @@ private:
 
     long _bit_buf_index;
     int _bit_buf_len;
-    bool _direct_mode_repeater;
     int _modem_type_rx;
     int _modem_type_tx;
     int _tx_frame_length;

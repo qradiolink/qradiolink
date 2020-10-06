@@ -49,18 +49,12 @@ void gr_audio_source::flush()
 int gr_audio_source::set_data(std::vector<float> *data)
 {
 
-    if(_offset == 0)
-    {
-        gr::thread::scoped_lock guard(_mutex);
-        _data->insert(_data->end(),data->begin(),data->end());
-        delete data;
-        _finished = false;
-        return 0;
-    }
-    else
-    {
-        return 1;
-    }
+    gr::thread::scoped_lock guard(_mutex);
+    _data->insert(_data->end(),data->begin(),data->end());
+    data->clear();
+    delete data;
+    _finished = false;
+    return 0;
 }
 
 int gr_audio_source::work(int noutput_items,
@@ -72,7 +66,7 @@ int gr_audio_source::work(int noutput_items,
     if(_finished)
     {
         guard.unlock();
-        struct timespec time_to_sleep = {0, 35000000L };
+        struct timespec time_to_sleep = {0, 5000000L };
         nanosleep(&time_to_sleep, NULL);
         _finished = false;
         return 0;
@@ -88,7 +82,7 @@ int gr_audio_source::work(int noutput_items,
     }
 
     _offset += n;
-    if(_offset == _data->size())
+    if(_offset >= _data->size())
     {
         _data->clear();
         _finished = true;

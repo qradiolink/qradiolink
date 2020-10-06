@@ -42,6 +42,7 @@
 #include "src/settings.h"
 #include "src/logger.h"
 #include "src/mumblechannel.h"
+#include "style.h"
 
 
 typedef std::vector<std::complex<float>> complex_vector;
@@ -165,6 +166,8 @@ public slots:
     void calculateShiftFromTxFreq();
     void setRxStageGain(int value);
     void setTxStageGain(int value);
+    void pageUserRequested();
+    void displayPageMessage(QString page_user, QString page_message);
 
 signals:
     void terminateConnections();
@@ -234,6 +237,7 @@ signals:
     void setRadioToT(int value);
     void setTotTxEnd(bool value);
     void setTxLimits(bool value);
+    void pageUser(QString user, QString text);
 
 public:
     explicit MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_channels, QWidget *parent = 0);
