@@ -1120,10 +1120,10 @@ void MainWindow::updateOnlineStations(StationList stations)
             st_item->setText(0,stations.at(i)->callsign);
             st_item->setText(3,QString::number(stations.at(i)->id));
             st_item->setIcon(0,QIcon(":/res/im-user.png"));
-            st_item->setBackground(0,QColor("#2a2a2a"));
-            st_item->setBackground(1,QColor("#2a2a2a"));
-            st_item->setBackground(2,QColor("#2a2a2a"));
-            st_item->setBackground(3,QColor("#2a2a2a"));
+            st_item->setBackground(0,QColor("#505a62"));
+            st_item->setBackground(1,QColor("#505a62"));
+            st_item->setBackground(2,QColor("#505a62"));
+            st_item->setBackground(3,QColor("#505a62"));
             if(stations.at(i)->is_user)
                 st_item->setForeground(0,QColor("#ff0000"));
             else {
@@ -1179,9 +1179,9 @@ void MainWindow::updateChannels(ChannelList channels)
         t->setText(2,QString::number(chan->id));
         t->setText(0,chan->name);
         t->setText(1,chan->description);
-        t->setBackground(0,QColor("#2a2a2a"));
-        t->setBackground(1,QColor("#2a2a2a"));
-        t->setBackground(2,QColor("#2a2a2a"));
+        t->setBackground(0,QColor("#505a62"));
+        t->setBackground(1,QColor("#505a62"));
+        t->setBackground(2,QColor("#505a62"));
         t->setForeground(0,QColor("#dfdf6f"));
         t->setForeground(1,QColor("#dfdf6f"));
         t->setForeground(2,QColor("#dfdf6f"));
@@ -1214,9 +1214,9 @@ void MainWindow::joinedChannel(quint64 channel_id)
     if(old_channel_list.size() > 0)
     {
         QTreeWidgetItem *t = old_channel_list.at(0);
-        t->setBackground(0,QColor("#2a2a2a"));
-        t->setBackground(1,QColor("#2a2a2a"));
-        t->setBackground(2,QColor("#2a2a2a"));
+        t->setBackground(0,QColor("#505a62"));
+        t->setBackground(1,QColor("#505a62"));
+        t->setBackground(2,QColor("#505a62"));
         t->setForeground(0,QColor("#dfdf6f"));
         t->setForeground(1,QColor("#dfdf6f"));
         t->setForeground(2,QColor("#dfdf6f"));
@@ -1230,8 +1230,8 @@ void MainWindow::joinedChannel(quint64 channel_id)
     {
         QTreeWidgetItem *t = channel_list.at(0);
         t->setBackground(0,QColor("#ff0000"));
-        t->setBackground(1,QColor("#2a2a2a"));
-        t->setBackground(2,QColor("#2a2a2a"));
+        t->setBackground(1,QColor("#505a62"));
+        t->setBackground(2,QColor("#505a62"));
         t->setForeground(0,QColor("#ffffff"));
         t->setForeground(1,QColor("#ffffff"));
         t->setForeground(2,QColor("#ffffff"));
