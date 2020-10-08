@@ -391,7 +391,7 @@ void MainWindow::changeEvent(QEvent *event)
         else if (!isMinimized())
         {
             emit enableGUIFFT(_fft_active);
-            emit enableRSSI(_controls_active);
+            emit enableRSSI(true);
         }
     }
 
@@ -423,7 +423,7 @@ void MainWindow::showControls(bool value)
         _settings->show_controls = 0;
         _controls_active = false;
     }
-    emit enableRSSI(value);
+    //emit enableRSSI(value);
 }
 
 void MainWindow::showConstellation(bool value)
@@ -1530,8 +1530,8 @@ void MainWindow::updateRSSI(float value)
         //setFFTRange(1);
         _range_set = true;
     }
-    if(isMinimized() || !_settings->show_controls)
-        return;
+    //if(isMinimized() || !_settings->show_controls)
+    //    return;
 
     //float S9 = 80.0; // degrees
     /// Scale is 6 dB per S-unit

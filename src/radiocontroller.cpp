@@ -1088,8 +1088,8 @@ void RadioController::getRSSI()
     float rssi = _modem->getRSSI();
     _rssi_read_timer->restart();
     _settings->rssi = rssi;
-    if(!_settings->show_controls)
-        return;
+    //if(!_settings->show_controls)
+    //    return;
     if(rssi < 99.0f)
         emit newRSSIValue(rssi);
 }
@@ -1653,7 +1653,7 @@ void RadioController::toggleRX(bool value)
         _mutex->lock();
         _modem->enableGUIFFT((bool)_settings->show_fft);
         _modem->enableGUIConst((bool)_settings->show_constellation);
-        _modem->enableRSSI((bool)_settings->show_controls);
+        _modem->enableRSSI(true);
         _modem->setRxSensitivity(((double)_settings->rx_sensitivity)/100.0);
         _modem->setSquelch(_settings->squelch);
         _modem->setGain(_settings->if_gain);
@@ -2359,7 +2359,6 @@ void RadioController::enableGUIConst(bool value)
 
 void RadioController::enableRSSI(bool value)
 {
-    _settings->show_controls = (int)value;
     _modem->enableRSSI(value);
 }
 

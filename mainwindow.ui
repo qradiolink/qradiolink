@@ -1019,7 +1019,7 @@ color: rgb(255, 255, 255);</string>
                 <enum>Qt::Horizontal</enum>
                </property>
                <property name="sizeType">
-                <enum>QSizePolicy::Fixed</enum>
+                <enum>QSizePolicy::MinimumExpanding</enum>
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
@@ -4888,81 +4888,6 @@ color: rgb(182, 182, 182);</string>
           <string>Clarifier</string>
          </property>
         </widget>
-        <widget class="QLabel" name="labelRSSI">
-         <property name="geometry">
-          <rect>
-           <x>655</x>
-           <y>47</y>
-           <width>51</width>
-           <height>25</height>
-          </rect>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">background-color: rgba(0, 0, 0, 125);
-color: rgb(85, 255, 0);
-border: 0px solid white;
-font: 11px &quot;Sans Serif&quot;;</string>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::Panel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Plain</enum>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-         <property name="textInteractionFlags">
-          <set>Qt::TextSelectableByMouse</set>
-         </property>
-        </widget>
-        <widget class="QLabel" name="labelSMeter">
-         <property name="geometry">
-          <rect>
-           <x>600</x>
-           <y>8</y>
-           <width>160</width>
-           <height>65</height>
-          </rect>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">background-color: rgb(0, 0, 0);</string>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Sunken</enum>
-         </property>
-         <property name="lineWidth">
-          <number>3</number>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-        <zorder>label</zorder>
-        <zorder>label_14</zorder>
-        <zorder>label_11</zorder>
-        <zorder>rxSquelchDisplay</zorder>
-        <zorder>rxSensitivityDisplay</zorder>
-        <zorder>txPowerDisplay</zorder>
-        <zorder>rxVolumeDisplay</zorder>
-        <zorder>label_9</zorder>
-        <zorder>rxSquelchDial</zorder>
-        <zorder>rxVolumeDial</zorder>
-        <zorder>txGainDial</zorder>
-        <zorder>rxGainDial</zorder>
-        <zorder>tuneDial</zorder>
-        <zorder>label_20</zorder>
-        <zorder>labelSMeter</zorder>
-        <zorder>labelRSSI</zorder>
        </widget>
       </item>
       <item>
@@ -5269,6 +5194,87 @@ background-color: rgb(150, 150, 150);
             </widget>
            </item>
           </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QFrame" name="frame_rssi">
+          <property name="minimumSize">
+           <size>
+            <width>160</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <widget class="QLabel" name="labelSMeter">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>160</width>
+             <height>70</height>
+            </rect>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>160</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Sunken</enum>
+           </property>
+           <property name="lineWidth">
+            <number>3</number>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+          <widget class="QLabel" name="labelRSSI">
+           <property name="geometry">
+            <rect>
+             <x>56</x>
+             <y>40</y>
+             <width>51</width>
+             <height>25</height>
+            </rect>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">background-color: rgba(0, 0, 0, 125);
+color: rgb(85, 255, 0);
+border: 0px solid white;
+font: 11px &quot;Sans Serif&quot;;</string>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::Panel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Plain</enum>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::TextSelectableByMouse</set>
+           </property>
+          </widget>
          </widget>
         </item>
         <item>
