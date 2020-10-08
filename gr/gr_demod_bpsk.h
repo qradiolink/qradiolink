@@ -38,6 +38,8 @@
 #include <gnuradio/blocks/delay.h>
 #include <gnuradio/blocks/multiply_const.h>
 #include <gnuradio/blocks/float_to_uchar.h>
+#include <gnuradio/fec/decode_ccsds_27_fb.h>
+#include <gnuradio/blocks/packed_to_unpacked.h>
 
 
 class gr_demod_bpsk;
@@ -63,6 +65,10 @@ private:
     gr::digital::costas_loop_cc::sptr _costas_loop;
     gr::blocks::float_to_uchar::sptr _float_to_uchar;
     gr::blocks::add_const_ff::sptr _add_const_fec;
+    gr::fec::decode_ccsds_27_fb::sptr _ccsds_decoder;
+    gr::fec::decode_ccsds_27_fb::sptr _ccsds_decoder2;
+    gr::blocks::packed_to_unpacked_bb::sptr _packed_to_unpacked;
+    gr::blocks::packed_to_unpacked_bb::sptr _packed_to_unpacked2;
 
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
     gr::filter::fft_filter_ccf::sptr _filter;

@@ -115,9 +115,14 @@ gr_demod_2fsk::gr_demod_2fsk(std::vector<int>signature, int sps, int samp_rate, 
     _cc_decoder = gr::fec::decoder::make(decoder, 1, 1);
     _cc_decoder2 = gr::fec::decoder::make(decoder2, 1, 1);
 
+    _ccsds_decoder = gr::fec::decode_ccsds_27_fb::make();
+    _ccsds_decoder2 = gr::fec::decode_ccsds_27_fb::make();
+    _packed_to_unpacked = gr::blocks::packed_to_unpacked_bb::make(1, gr::GR_MSB_FIRST);
+    _packed_to_unpacked2 = gr::blocks::packed_to_unpacked_bb::make(1, gr::GR_MSB_FIRST);
+
     _complex_to_real = gr::blocks::complex_to_real::make();
 
-    _delay = gr::blocks::delay::make(1,1);
+    _delay = gr::blocks::delay::make(4,1);
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
     _descrambler2 = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
 
@@ -149,15 +154,21 @@ gr_demod_2fsk::gr_demod_2fsk(std::vector<int>signature, int sps, int samp_rate, 
     }
     connect(_clock_recovery,0,self(),1);
     connect(_clock_recovery,0,_complex_to_real,0);
-    connect(_complex_to_real,0,_multiply_const_fec,0);
-    connect(_multiply_const_fec,0,_add_const_fec,0);
-    connect(_add_const_fec,0,_float_to_uchar,0);
-    connect(_float_to_uchar,0,_cc_decoder,0);
-    connect(_cc_decoder,0,_descrambler,0);
+    connect(_complex_to_real,0,_ccsds_decoder,0);
+    connect(_ccsds_decoder,0,_packed_to_unpacked,0);
+    connect(_packed_to_unpacked,0,_descrambler,0);
+    //connect(_multiply_const_fec,0,_add_const_fec,0);
+    //connect(_add_const_fec,0,_float_to_uchar,0);
+    //connect(_float_to_uchar,0,_cc_decoder,0);
+    //connect(_cc_decoder,0,_descrambler,0);
     connect(_descrambler,0,self(),2);
-    connect(_float_to_uchar,0,_delay,0);
-    connect(_delay,0,_cc_decoder2,0);
-    connect(_cc_decoder2,0,_descrambler2,0);
+    //connect(_float_to_uchar,0,_delay,0);
+    //connect(_delay,0,_cc_decoder2,0);
+    //connect(_cc_decoder2,0,_descrambler2,0);
+    connect(_complex_to_real,0,_delay,0);
+    connect(_delay,0,_ccsds_decoder2,0);
+    connect(_ccsds_decoder2,0,_packed_to_unpacked2,0);
+    connect(_packed_to_unpacked2,0,_descrambler2,0);
     connect(_descrambler2,0,self(),3);
 
 

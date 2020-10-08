@@ -36,7 +36,8 @@
 #include <gnuradio/fec/cc_encoder.h>
 #include <gnuradio/fec/encoder.h>
 #include <gnuradio/filter/rational_resampler_base.h>
-#include <gnuradio/filter/rational_resampler_base.h>
+#include <gnuradio/fec/encode_ccsds_27_bb.h>
+#include <gnuradio/blocks/unpacked_to_packed.h>
 
 
 class gr_mod_2fsk;
@@ -56,6 +57,8 @@ public:
 private:
     gr::blocks::packed_to_unpacked_bb::sptr _packed_to_unpacked;
     gr::fec::encoder::sptr _encode_ccsds;
+    gr::fec::encode_ccsds_27_bb::sptr _ccsds_encoder;
+    gr::blocks::unpacked_to_packed_bb::sptr _unpacked_to_packed;
     gr::digital::chunks_to_symbols_bf::sptr _chunks_to_symbols;
     gr::blocks::multiply_const_cc::sptr _amplify;
     gr::blocks::multiply_const_cc::sptr _bb_gain;

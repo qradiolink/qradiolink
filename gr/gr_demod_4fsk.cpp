@@ -142,6 +142,9 @@ gr_demod_4fsk::gr_demod_4fsk(std::vector<int>signature, int sps, int samp_rate, 
     gr::fec::code::cc_decoder::sptr decoder = gr::fec::code::cc_decoder::make(80, 7, 2, polys);
     _decode_ccsds = gr::fec::decoder::make(decoder, 1, 1);
 
+    _ccsds_decoder = gr::fec::decode_ccsds_27_fb::make();
+    _packed_to_unpacked = gr::blocks::packed_to_unpacked_bb::make(1, gr::GR_MSB_FIRST);
+
 
     connect(self(),0,_resampler,0);
     if(sps != 2)
@@ -193,30 +196,16 @@ gr_demod_4fsk::gr_demod_4fsk(std::vector<int>signature, int sps, int samp_rate, 
         connect(_complex_to_float,0,_interleave,0);
         connect(_complex_to_float,1,_interleave,1);
     }
-    connect(_interleave,0,_multiply_const_fec,0);
-    connect(_multiply_const_fec,0,_add_const_fec,0);
-    connect(_add_const_fec,0,_float_to_uchar,0);
-    connect(_float_to_uchar,0,_decode_ccsds,0);
-    connect(_decode_ccsds,0,_descrambler,0);
+    connect(_interleave,0,_ccsds_decoder,0);
+    //connect(_multiply_const_fec,0,_add_const_fec,0);
+    //connect(_add_const_fec,0,_float_to_uchar,0);
+    //connect(_float_to_uchar,0,_decode_ccsds,0);
+    //connect(_decode_ccsds,0,_descrambler,0);
+    connect(_ccsds_decoder,0,_packed_to_unpacked,0);
+    connect(_packed_to_unpacked,0,_descrambler,0);
     connect(_descrambler,0,self(),2);
 
 
-    /** unused
-    std::vector<unsigned int> const_map;
-    const_map.push_back(0);
-    const_map.push_back(1);
-    const_map.push_back(3);
-    const_map.push_back(2);
-    std::vector<int> pre_diff_code;
-    std::vector<gr_complex> constellation_points;
-    constellation_points.push_back(-0.707107 - 0.707107j);
-    constellation_points.push_back(-0.707107 + 0.707107j);
-    constellation_points.push_back(0.707107 + 0.707107j);
-    constellation_points.push_back(0.707107 - 0.707107j);
-    gr::digital::constellation_expl_rect::sptr constellation = gr::digital::constellation_expl_rect::make(
-                constellation_points,pre_diff_code,4,2,2,1,1,const_map);
-    _constellation_receiver = gr::digital::constellation_decoder_cb::make(constellation);
-    */
 
 
 }

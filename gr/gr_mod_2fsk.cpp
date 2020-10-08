@@ -67,6 +67,10 @@ gr_mod_2fsk::gr_mod_2fsk(int sps, int samp_rate, int carrier_freq,
 
      gr::fec::code::cc_encoder::sptr encoder = gr::fec::code::cc_encoder::make(80, 7, 2, polys);
     _encode_ccsds = gr::fec::encoder::make(encoder, 1, 1);
+
+    _unpacked_to_packed = gr::blocks::unpacked_to_packed_bb::make(1, gr::GR_MSB_FIRST);
+    _ccsds_encoder = gr::fec::encode_ccsds_27_bb::make();
+
     _chunks_to_symbols = gr::digital::chunks_to_symbols_bf::make(constellation);
     _freq_modulator = gr::analog::frequency_modulator_fc::make((spacing * M_PI/2)/(_samples_per_symbol));
     _repeat = gr::blocks::repeat::make(4, _samples_per_symbol);
@@ -82,8 +86,10 @@ gr_mod_2fsk::gr_mod_2fsk(int sps, int samp_rate, int carrier_freq,
 
     connect(self(),0,_packed_to_unpacked,0);
     connect(_packed_to_unpacked,0,_scrambler,0);
-    connect(_scrambler,0,_encode_ccsds,0);
-    connect(_encode_ccsds,0,_map,0);
+    connect(_scrambler,0,_unpacked_to_packed,0);
+    connect(_unpacked_to_packed,0,_ccsds_encoder,0);
+    //connect(_scrambler,0,_encode_ccsds,0);
+    connect(_ccsds_encoder,0,_map,0);
     connect(_map,0,_chunks_to_symbols,0);
     if(fm)
     {

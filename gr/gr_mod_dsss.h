@@ -39,6 +39,7 @@
 #include <gnuradio/fec/encoder.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/filter/rational_resampler_base.h>
+#include <gnuradio/fec/encode_ccsds_27_bb.h>
 
 
 class gr_mod_dsss;
@@ -63,6 +64,8 @@ private:
     gr::blocks::multiply_const_cc::sptr _amplify;
     gr::blocks::multiply_const_cc::sptr _bb_gain;
     gr::fec::encoder::sptr _encode_ccsds;
+    gr::fec::encode_ccsds_27_bb::sptr _ccsds_encoder;
+    gr::blocks::unpacked_to_packed_bb::sptr _unpacked_to_packed2;
     gr::digital::scrambler_bb::sptr _scrambler;
     gr::dsss::dsss_encoder_bb::sptr _dsss_encoder;
     gr::filter::fft_filter_ccf::sptr _filter;
