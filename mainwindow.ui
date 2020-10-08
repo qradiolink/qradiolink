@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1280</width>
+    <width>1400</width>
     <height>721</height>
    </rect>
   </property>
@@ -357,7 +357,7 @@ color: rgb(255, 255, 255);</string>
             </widget>
            </item>
            <item row="1" column="1">
-            <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0">
+            <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0">
              <property name="spacing">
               <number>2</number>
              </property>
@@ -481,7 +481,7 @@ color: rgb(255, 255, 255);</string>
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
-                 <width>15</width>
+                 <width>10</width>
                  <height>10</height>
                 </size>
                </property>
@@ -579,7 +579,7 @@ color: rgb(255, 255, 255);</string>
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
-                 <width>15</width>
+                 <width>10</width>
                  <height>20</height>
                 </size>
                </property>
@@ -609,7 +609,7 @@ color: rgb(255, 255, 255);</string>
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
-                 <width>15</width>
+                 <width>10</width>
                  <height>20</height>
                 </size>
                </property>
@@ -666,7 +666,7 @@ color: rgb(255, 255, 255);</string>
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
-                 <width>15</width>
+                 <width>10</width>
                  <height>20</height>
                 </size>
                </property>
@@ -699,7 +699,7 @@ color: rgb(255, 255, 255);</string>
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
-                 <width>15</width>
+                 <width>10</width>
                  <height>20</height>
                 </size>
                </property>
@@ -725,7 +725,7 @@ color: rgb(255, 255, 255);</string>
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
-                 <width>15</width>
+                 <width>10</width>
                  <height>20</height>
                 </size>
                </property>
@@ -832,7 +832,7 @@ color: rgb(255, 255, 255);</string>
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
-                 <width>15</width>
+                 <width>10</width>
                  <height>20</height>
                 </size>
                </property>
@@ -873,7 +873,7 @@ color: rgb(255, 255, 255);</string>
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
-                 <width>15</width>
+                 <width>10</width>
                  <height>20</height>
                 </size>
                </property>
@@ -901,6 +901,190 @@ color: rgb(255, 255, 255);</string>
                </property>
                <property name="checkable">
                 <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_20">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeType">
+                <enum>QSizePolicy::Fixed</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>10</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_25">
+               <property name="text">
+                <string>Scan</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="scanDownButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>Scan down</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="resources.qrc">
+                 <normaloff>:/res/arrow-left-double.png</normaloff>
+                 <normalon>:/res/go-first-view.png</normalon>:/res/arrow-left-double.png</iconset>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="scanUpButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="toolTip">
+                <string>Scan up</string>
+               </property>
+               <property name="layoutDirection">
+                <enum>Qt::LeftToRight</enum>
+               </property>
+               <property name="autoFillBackground">
+                <bool>false</bool>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">font: 8pt &quot;Sans Serif&quot;;
+
+</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="resources.qrc">
+                 <normaloff>:/res/arrow-right-double.png</normaloff>
+                 <normalon>:/res/go-last-view.png</normalon>
+                 <activeon>:/res/go-last-view.png</activeon>
+                 <selectedon>:/res/go-last-view.png</selectedon>:/res/arrow-right-double.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>16</width>
+                 <height>16</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_21">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_22">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeType">
+                <enum>QSizePolicy::Fixed</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>10</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_22">
+               <property name="text">
+                <string>Last heard</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="labelDisplayCallsign">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>70</width>
+                 <height>25</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <family>Monospace</family>
+                 <pointsize>9</pointsize>
+                 <weight>50</weight>
+                 <italic>false</italic>
+                 <bold>false</bold>
+                </font>
+               </property>
+               <property name="toolTip">
+                <string>Incoming transmission callsign</string>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">color: rgb(255, 255, 255);
+font: 9pt &quot;Monospace&quot;;
+background-color: rgb(0, 0, 67);
+</string>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Sunken</enum>
+               </property>
+               <property name="lineWidth">
+                <number>1</number>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+               <property name="textInteractionFlags">
+                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                </property>
               </widget>
              </item>
@@ -4704,61 +4888,6 @@ color: rgb(182, 182, 182);</string>
           <string>Clarifier</string>
          </property>
         </widget>
-        <widget class="QPushButton" name="scanUpButton">
-         <property name="geometry">
-          <rect>
-           <x>1156</x>
-           <y>40</y>
-           <width>32</width>
-           <height>32</height>
-          </rect>
-         </property>
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="toolTip">
-          <string>Scan up</string>
-         </property>
-         <property name="layoutDirection">
-          <enum>Qt::LeftToRight</enum>
-         </property>
-         <property name="autoFillBackground">
-          <bool>false</bool>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">font: 8pt &quot;Sans Serif&quot;;
-
-</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="resources.qrc">
-           <normaloff>:/res/arrow-right-double.png</normaloff>
-           <normalon>:/res/go-last-view.png</normalon>
-           <activeon>:/res/go-last-view.png</activeon>
-           <selectedon>:/res/go-last-view.png</selectedon>:/res/arrow-right-double.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>16</width>
-           <height>16</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
         <widget class="QLabel" name="labelRSSI">
          <property name="geometry">
           <rect>
@@ -4818,120 +4947,6 @@ font: 11px &quot;Sans Serif&quot;;</string>
           <set>Qt::AlignCenter</set>
          </property>
         </widget>
-        <widget class="QLabel" name="label_25">
-         <property name="geometry">
-          <rect>
-           <x>1138</x>
-           <y>20</y>
-           <width>41</width>
-           <height>16</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Scan</string>
-         </property>
-        </widget>
-        <widget class="QPushButton" name="scanDownButton">
-         <property name="geometry">
-          <rect>
-           <x>1118</x>
-           <y>40</y>
-           <width>32</width>
-           <height>32</height>
-          </rect>
-         </property>
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="toolTip">
-          <string>Scan down</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="resources.qrc">
-           <normaloff>:/res/arrow-left-double.png</normaloff>
-           <normalon>:/res/go-first-view.png</normalon>:/res/arrow-left-double.png</iconset>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-        <widget class="QLabel" name="labelDisplayCallsign">
-         <property name="geometry">
-          <rect>
-           <x>1039</x>
-           <y>44</y>
-           <width>70</width>
-           <height>25</height>
-          </rect>
-         </property>
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>70</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="font">
-          <font>
-           <family>Monospace</family>
-           <pointsize>9</pointsize>
-           <weight>50</weight>
-           <italic>false</italic>
-           <bold>false</bold>
-          </font>
-         </property>
-         <property name="toolTip">
-          <string>Incoming transmission callsign</string>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">color: rgb(255, 255, 255);
-font: 9pt &quot;Monospace&quot;;
-background-color: rgb(0, 0, 67);
-</string>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Sunken</enum>
-         </property>
-         <property name="lineWidth">
-          <number>1</number>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-         <property name="textInteractionFlags">
-          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-         </property>
-        </widget>
-        <widget class="QLabel" name="label_22">
-         <property name="geometry">
-          <rect>
-           <x>1040</x>
-           <y>19</y>
-           <width>71</width>
-           <height>20</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Last heard</string>
-         </property>
-        </widget>
         <zorder>label</zorder>
         <zorder>label_14</zorder>
         <zorder>label_11</zorder>
@@ -4946,12 +4961,7 @@ background-color: rgb(0, 0, 67);
         <zorder>rxGainDial</zorder>
         <zorder>tuneDial</zorder>
         <zorder>label_20</zorder>
-        <zorder>scanUpButton</zorder>
         <zorder>labelSMeter</zorder>
-        <zorder>label_25</zorder>
-        <zorder>scanDownButton</zorder>
-        <zorder>labelDisplayCallsign</zorder>
-        <zorder>label_22</zorder>
         <zorder>labelRSSI</zorder>
        </widget>
       </item>
@@ -5942,7 +5952,7 @@ font: 12pt &quot;Sans Serif&quot;;s</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1280</width>
+     <width>1400</width>
      <height>30</height>
     </rect>
    </property>
