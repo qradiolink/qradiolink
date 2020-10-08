@@ -57,8 +57,8 @@ Features
 - Memory channels (store frequency, name, TX shift, operating mode, squelch value, volume, TX power, RX gain, TX and RX CTCSS) and memory channel scan 
 - Split operation (transmit on other frequency than the receive frequency with no shift limitation, used mostly for repeater operation)
 - Digital voice codecs: Codec2 700 bit/s, Codec2 1400 bit/s, Opus 9600 bit/s
-- FreeDV digital voice modulator and demodulator (currently supports only 1600, 700C and 800XA modes)
-- Digital modulations: **FreeDV 1600**, **FreeDV 700C**, **FreeDV 800XA**, **BPSK**, **DQPSK**, **2FSK**, **4FSK**
+- FreeDV digital voice modulator and demodulator (currently supports only 1600, 700D and 800XA modes)
+- Digital modulations: **FreeDV 1600**, **FreeDV 700D**, **FreeDV 800XA**, **BPSK**, **DQPSK**, **2FSK**, **4FSK**
 - Digital voice modem bitrates over the air from 1 kbit/s to 10 kbit/s
 - Video bitrate below 250 kbit/s at 10 frames/second (currently no sound with video)
 - Analog modulations: FM (12.5 kHz), narrow FM (6.25 kHz), SSB, AM, Wide FM (broadcast, receive-only)

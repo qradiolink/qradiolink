@@ -151,10 +151,10 @@ private:
     gr_demod_ssb_sptr _lsb;
     gr_demod_wbfm_sptr _wfm;
     gr_demod_freedv_sptr _freedv_rx1600_usb;
-    gr_demod_freedv_sptr _freedv_rx700C_usb;
+    gr_demod_freedv_sptr _freedv_rx700D_usb;
     gr_demod_freedv_sptr _freedv_rx800XA_usb;
     gr_demod_freedv_sptr _freedv_rx1600_lsb;
-    gr_demod_freedv_sptr _freedv_rx700C_lsb;
+    gr_demod_freedv_sptr _freedv_rx700D_lsb;
     gr_demod_freedv_sptr _freedv_rx800XA_lsb;
 
     osmosdr::source::sptr _osmosdr_source;

@@ -92,10 +92,10 @@ void buildModeList(QVector<QString> *operating_modes)
     operating_modes->push_back("USB");
     operating_modes->push_back("LSB");
     operating_modes->push_back("FreeDV1600 USB");
-    operating_modes->push_back("FreeDV700C USB");
+    operating_modes->push_back("FreeDV700D USB");
     operating_modes->push_back("FreeDV800XA USB");
     operating_modes->push_back("FreeDV1600 LSB");
-    operating_modes->push_back("FreeDV700C LSB");
+    operating_modes->push_back("FreeDV700D LSB");
     operating_modes->push_back("FreeDV800XA LSB");
     operating_modes->push_back("AM");
     operating_modes->push_back("BPSK 2K");
