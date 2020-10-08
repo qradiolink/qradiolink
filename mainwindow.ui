@@ -1721,7 +1721,7 @@ background-color: rgb(0, 0, 67);
            </widget>
           </item>
           <item>
-           <widget class="QFrame" name="frame_4">
+           <widget class="QFrame" name="mumbleControlsFrame">
             <property name="frameShape">
              <enum>QFrame::StyledPanel</enum>
             </property>
@@ -2365,7 +2365,7 @@ color: rgb(0, 67, 98);</string>
             </property>
             <property name="maximumSize">
              <size>
-              <width>550</width>
+              <width>1200</width>
               <height>16777215</height>
              </size>
             </property>
@@ -2392,7 +2392,7 @@ color: rgb(0, 67, 98);</string>
              <item>
               <widget class="QPlainTextEdit" name="sendTextEdit">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
@@ -2400,13 +2400,13 @@ color: rgb(0, 67, 98);</string>
                <property name="minimumSize">
                 <size>
                  <width>500</width>
-                 <height>70</height>
+                 <height>100</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
-                 <height>70</height>
+                 <height>200</height>
                 </size>
                </property>
                <property name="font">
@@ -2431,7 +2431,7 @@ font: 10pt &quot;Sans Serif&quot;;
              <item>
               <widget class="QTextEdit" name="receivedTextEdit">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
@@ -2439,7 +2439,7 @@ font: 10pt &quot;Sans Serif&quot;;
                <property name="minimumSize">
                 <size>
                  <width>500</width>
-                 <height>270</height>
+                 <height>250</height>
                 </size>
                </property>
                <property name="styleSheet">
@@ -2575,19 +2575,6 @@ font: 10pt &quot;Sans Serif&quot;;
            </widget>
           </item>
           <item row="0" column="2">
-           <spacer name="horizontalSpacer_14">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="0" column="1">
            <widget class="QTabWidget" name="tabWidget_2">
             <property name="currentIndex">
              <number>0</number>
@@ -2609,10 +2596,16 @@ font: 10pt &quot;Sans Serif&quot;;
                  <item>
                   <widget class="QFrame" name="frame_14">
                    <property name="sizePolicy">
-                    <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+                    <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>50</height>
+                    </size>
                    </property>
                    <property name="frameShape">
                     <enum>QFrame::StyledPanel</enum>
@@ -2674,6 +2667,12 @@ font: 10pt &quot;Sans Serif&quot;;
                    <layout class="QVBoxLayout" name="verticalLayout_15">
                     <item>
                      <widget class="QLabel" name="pagedByLabel">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
                       <property name="minimumSize">
                        <size>
                         <width>320</width>
@@ -2694,7 +2693,7 @@ font: 10pt &quot;Sans Serif&quot;;
                     <item>
                      <widget class="QLabel" name="pageMessageLabel">
                       <property name="sizePolicy">
-                       <sizepolicy hsizetype="Fixed" vsizetype="MinimumExpanding">
+                       <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
                         <horstretch>0</horstretch>
                         <verstretch>0</verstretch>
                        </sizepolicy>
@@ -2702,7 +2701,7 @@ font: 10pt &quot;Sans Serif&quot;;
                       <property name="minimumSize">
                        <size>
                         <width>320</width>
-                        <height>0</height>
+                        <height>250</height>
                        </size>
                       </property>
                       <property name="text">
@@ -2727,10 +2726,13 @@ font: 10pt &quot;Sans Serif&quot;;
                    <property name="orientation">
                     <enum>Qt::Vertical</enum>
                    </property>
+                   <property name="sizeType">
+                    <enum>QSizePolicy::Fixed</enum>
+                   </property>
                    <property name="sizeHint" stdset="0">
                     <size>
                      <width>20</width>
-                     <height>40</height>
+                     <height>30</height>
                     </size>
                    </property>
                   </spacer>
@@ -2746,6 +2748,22 @@ font: 10pt &quot;Sans Serif&quot;;
              </attribute>
             </widget>
            </widget>
+          </item>
+          <item row="0" column="1">
+           <spacer name="horizontalSpacer_14">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Fixed</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
           </item>
          </layout>
         </widget>
@@ -4899,7 +4917,7 @@ color: rgb(182, 182, 182);</string>
          <enum>QLayout::SetFixedSize</enum>
         </property>
         <item>
-         <widget class="QFrame" name="frame">
+         <widget class="QFrame" name="ledFrame">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -5735,7 +5753,7 @@ font: 14pt &quot;Sans Serif&quot;;
            </widget>
           </item>
           <item row="3" column="0">
-           <widget class="QFrame" name="frame_8">
+           <widget class="QFrame" name="shiftEditFrame">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -5825,8 +5843,7 @@ font: 14pt &quot;Sans Serif&quot;;
                 <string>Transmission split in kHz (press Enter)</string>
                </property>
                <property name="styleSheet">
-                <string notr="true">background-color: rgba(255, 255, 255, 180);
-font: 12pt &quot;Sans Serif&quot;;s</string>
+                <string notr="true">font: 12pt &quot;Sans Serif&quot;;</string>
                </property>
                <property name="inputMethodHints">
                 <set>Qt::ImhNone</set>
@@ -5855,7 +5872,7 @@ font: 12pt &quot;Sans Serif&quot;;s</string>
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="QFrame" name="frame_10">
+           <widget class="QFrame" name="freqEditFrame">
             <property name="frameShape">
              <enum>QFrame::StyledPanel</enum>
             </property>
