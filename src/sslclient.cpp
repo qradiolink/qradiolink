@@ -25,25 +25,13 @@ SSLClient::SSLClient(QObject *parent) :
     _reconnect = false;
     _hostname = "127.0.0.1";
     _port= MUMBLE_PORT;
-    QSslSocket::addDefaultCaCertificates(QSslConfiguration::systemCaCertificates());
-    {
-        QList<QSslCipher> pref;
-        foreach(QSslCipher c, QSslSocket::defaultCiphers()) {
-            if (c.usedBits() < 128)
-                continue;
-            pref << c;
-        }
-        if (pref.isEmpty())
-            qFatal("No ciphers of at least 128 bit found");
-        QSslSocket::setDefaultCiphers(pref);
-    }
     _socket = new QSslSocket;
     _socket->setPeerVerifyMode(QSslSocket::QueryPeer);
     _socket->ignoreSslErrors();
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-    _socket->setProtocol(QSsl::TlsV1_2);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+    _socket->setProtocol(QSsl::TlsV1_3);
 #else
-    _socket->setProtocol(QSsl::TlsV1);
+    _socket->setProtocol(QSsl::TlsV1_2);
 #endif
     QObject::connect(_socket,SIGNAL(error(QAbstractSocket::SocketError )),
                      this,SLOT(connectionFailed(QAbstractSocket::SocketError)));
