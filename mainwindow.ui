@@ -90,7 +90,7 @@
          </font>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>2</number>
         </property>
         <property name="iconSize">
          <size>
@@ -2423,9 +2423,6 @@ color: rgb(0, 67, 98);</string>
 font: 10pt &quot;Sans Serif&quot;;
 </string>
                </property>
-               <property name="tabStopWidth">
-                <number>400</number>
-               </property>
               </widget>
              </item>
              <item>
@@ -2455,9 +2452,6 @@ font: 10pt &quot;Sans Serif&quot;;
                </property>
                <property name="readOnly">
                 <bool>true</bool>
-               </property>
-               <property name="tabStopWidth">
-                <number>1024</number>
                </property>
               </widget>
              </item>

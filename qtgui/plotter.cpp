@@ -1300,7 +1300,7 @@ void CPlotter::drawOverlay()
     QPainter        painter(&m_OverlayPixmap);
     painter.setRenderHint(QPainter::HighQualityAntialiasing);
 
-    painter.initFrom(this);
+    painter.begin(this);
     painter.setFont(m_Font);
 
     // solid background
@@ -1315,7 +1315,7 @@ void CPlotter::drawOverlay()
 #define VER_MARGIN 5
 
     // X and Y axis areas
-    m_YAxisWidth = metrics.width("XXXX") + 2 * HOR_MARGIN;
+    m_YAxisWidth = metrics.horizontalAdvance("XXXX") + 2 * HOR_MARGIN;
     m_XAxisYCenter = h - metrics.height()/2;
     qint64 xAxisHeight = metrics.height() + 2 * VER_MARGIN;
     qint64 xAxisTop = h - xAxisHeight;
@@ -1336,7 +1336,7 @@ void CPlotter::drawOverlay()
     QString label;
     label.setNum(float((StartFreq + m_Span) / m_FreqUnits), 'f', m_FreqDigits);
     calcDivSize(StartFreq, StartFreq + m_Span,
-                qMin(w/(metrics.width(label) + metrics.width("O")), (qint64)HORZ_DIVS_MAX),
+                qMin(w/(metrics.width(label) + metrics.horizontalAdvance("O")), (qint64)HORZ_DIVS_MAX),
                 m_StartFreqAdj, m_FreqPerDiv, m_HorDivs);
     pixperdiv = (float)w * (float) m_FreqPerDiv / (float) m_Span;
     adjoffset = pixperdiv * float (m_StartFreqAdj - StartFreq) / (float) m_FreqPerDiv;
@@ -1354,7 +1354,7 @@ void CPlotter::drawOverlay()
     painter.setPen(QColor(PLOTTER_TEXT_COLOR));
     for (qint64 i = 0; i <= m_HorDivs; i++)
     {
-        qint64 tw = metrics.width(m_HDivText[i]);
+        qint64 tw = metrics.horizontalAdvance(m_HDivText[i]);
         x = (qint64)((float)i*pixperdiv + adjoffset);
         if (x > m_YAxisWidth)
         {
@@ -1393,7 +1393,7 @@ void CPlotter::drawOverlay()
 
     // draw amplitude values (y axis)
     int dB = m_PandMaxdB;
-    m_YAxisWidth = metrics.width("-120 ");
+    m_YAxisWidth = metrics.horizontalAdvance("-120 ");
     painter.setPen(QColor(PLOTTER_TEXT_COLOR));
     for (qint64 i = 0; i < m_VerDivs; i++)
     {
