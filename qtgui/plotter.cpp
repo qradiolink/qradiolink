@@ -309,9 +309,9 @@ void CPlotter::mouseMoveEvent(QMouseEvent* event)
                 }
                 if (m_TooltipsEnabled)
                     QToolTip::showText(event->globalPos(),
-                                       QString("F: %1 kHz \n%2 dBFS")
-                                       .arg(freqFromX(pt.x())/1.e3f, 0, 'f', 3).arg(dbFromY(pt.y()), 1, 10, 3),
-                                       this);
+                       QString("F: %1 kHz \n%2 dBFS")
+                       .arg(freqFromX(pt.x())/1.e3f, 0, 'f', 3).arg(dbFromY(pt.y())),
+                       this);
             }
             m_GrabPosition = 0;
         }
@@ -1300,7 +1300,8 @@ void CPlotter::drawOverlay()
     QPainter        painter(&m_OverlayPixmap);
     painter.setRenderHint(QPainter::HighQualityAntialiasing);
 
-    painter.begin(this);
+    if(!painter.isActive())
+        painter.begin(this);
     painter.setFont(m_Font);
 
     // solid background
@@ -1336,7 +1337,7 @@ void CPlotter::drawOverlay()
     QString label;
     label.setNum(float((StartFreq + m_Span) / m_FreqUnits), 'f', m_FreqDigits);
     calcDivSize(StartFreq, StartFreq + m_Span,
-                qMin(w/(metrics.width(label) + metrics.horizontalAdvance("O")), (qint64)HORZ_DIVS_MAX),
+                qMin(w/(metrics.horizontalAdvance(label) + metrics.horizontalAdvance("O")), (qint64)HORZ_DIVS_MAX),
                 m_StartFreqAdj, m_FreqPerDiv, m_HorDivs);
     pixperdiv = (float)w * (float) m_FreqPerDiv / (float) m_Span;
     adjoffset = pixperdiv * float (m_StartFreqAdj - StartFreq) / (float) m_FreqPerDiv;
