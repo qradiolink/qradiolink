@@ -78,21 +78,21 @@ Features
 Requirements
 ----
 
-- Since release 0.8.4, GNU radio version is changed to 3.8 and Qt5 is used for the graphical interface. Debian Bullseye is the base GNU/Linux distribution for which packages are built.
+- Since release 0.8.4, GNU radio version is changed to 3.8 and Qt 5.14 is used for the graphical interface. Debian Bullseye is the base GNU/Linux distribution for which packages are built.
 - Build dependencies on Debian Bullseye with Qt5 and GNU radio 3.8: 
 
 <pre>
 $ sudo apt-get install gnuradio-dev protobuf-compiler gr-osmosdr gnuradio libvolk2-dev libvolk2-bin libprotobuf23 libprotobuf-dev libopus0 libopus-dev libspeexdsp1 libspeexdsp-dev libpulse0 libpulse-dev liblog4cpp5v5 libcodec2-0.9 libcodec2-dev libasound2 libasound2-dev libjpeg62-turbo libjpeg62-turbo-dev libconfig++9v5 libconfig++-dev qt5-qmake qt5-default qtbase5-dev libqt5core5a libqt5gui5 libqt5network5 libqt5sql5 qtmultimedia5-dev libqt5multimediawidgets5 libqt5multimedia5-plugins libqt5multimedia5 libftdi-dev libftdi1 libsndfile1-dev libsndfile1
 </pre>
 
-- Qt >= 5.11 and Qt5 development packages (older versions of Qt5 >= 5.2 might work as well)
+- Qt >= 5.14 and Qt5 development packages (older versions of Qt5 >= 5.11 might work as well)
 - qmake
 - Pulseaudio or Alsa or Jack
 - Gnuradio >= 3.8 built with UHD, SoapySDR support and FreeDV/Codec2 support. 
 - Boost and boost-devel
 - libgnuradio-osmosdr (gr-osmosdr) built with UHD, RTL-SDR, SoapySDR, HackRF, RedPitaya or BladeRF support
 - libprotobuf, libopus, libspeexdsp, libpulse-simple, libpulse, libasound, libcodec2, libsqlite3, libjpeg, libconfig++, libvolk, libftdi, libsndfile1, qtmultimedia5-dev, libqt5multimediawidgets5, libqt5multimedia5, libqt5multimedia5 (gstreamer1.0-plugins-bad for Qt video)
-- protoc compiler (libprotoc 2.6.1 or greater)
+- protoc compiler (libprotoc 2.6.1 or greater, depending on which version of libprotobuf is used)
 - optionally SoapySDR and SoapyPlutoSDR, SoapyLMS7
 
 In order to build on Ubuntu 17.10 you have to install the following packages, assuming a full GNU Radio development environment is already installed. Please note these instructions are for a very old version of QRadioLink and are not guaranteed to work with newer versions. It is recommended to follow the Debian install guide and adjust for Ubuntu differences.
