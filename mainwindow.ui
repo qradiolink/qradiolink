@@ -4194,62 +4194,6 @@ and S-meter (dBm)</string>
               </item>
              </layout>
             </widget>
-            <widget class="QWidget" name="tab_7">
-             <attribute name="title">
-              <string>Gains</string>
-             </attribute>
-             <layout class="QVBoxLayout" name="verticalLayout_13">
-              <item>
-               <widget class="QFrame" name="rxGainsFrame">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>250</width>
-                  <height>200</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>1200</width>
-                  <height>400</height>
-                 </size>
-                </property>
-                <property name="frameShape">
-                 <enum>QFrame::StyledPanel</enum>
-                </property>
-                <property name="frameShadow">
-                 <enum>QFrame::Raised</enum>
-                </property>
-                <layout class="QVBoxLayout" name="verticalLayout_10">
-                 <item>
-                  <widget class="QTabWidget" name="tabWidget_3">
-                   <property name="currentIndex">
-                    <number>1</number>
-                   </property>
-                   <widget class="QWidget" name="rxGainsTab">
-                    <attribute name="title">
-                     <string>RX Gains</string>
-                    </attribute>
-                    <layout class="QVBoxLayout" name="verticalLayout_11"/>
-                   </widget>
-                   <widget class="QWidget" name="txGainsTab">
-                    <attribute name="title">
-                     <string>TX Gains</string>
-                    </attribute>
-                    <layout class="QVBoxLayout" name="verticalLayout_12"/>
-                   </widget>
-                  </widget>
-                 </item>
-                </layout>
-               </widget>
-              </item>
-             </layout>
-            </widget>
            </widget>
           </item>
           <item>
@@ -4904,6 +4848,92 @@ color: rgb(182, 182, 182);</string>
          <property name="text">
           <string>Clarifier</string>
          </property>
+        </widget>
+        <widget class="QFrame" name="rxGainsFrameMenu">
+         <property name="geometry">
+          <rect>
+           <x>590</x>
+           <y>3</y>
+           <width>421</width>
+           <height>71</height>
+          </rect>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>200</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_11">
+          <item>
+           <widget class="QLabel" name="label_21">
+            <property name="maximumSize">
+             <size>
+              <width>60</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>RX Gains</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QFrame" name="txGainsFrameMenu">
+         <property name="geometry">
+          <rect>
+           <x>1020</x>
+           <y>3</y>
+           <width>371</width>
+           <height>71</height>
+          </rect>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>200</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_12">
+          <item>
+           <widget class="QLabel" name="label_50">
+            <property name="maximumSize">
+             <size>
+              <width>60</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>TX Gains</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </widget>
       </item>

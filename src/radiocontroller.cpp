@@ -2192,7 +2192,6 @@ void RadioController::setRxSensitivity(int value, std::string gain_stage)
 {
     if(gain_stage.size() > 0)
     {
-        qDebug() << value;
         _rx_stage_gains[gain_stage] = value;
         _modem->setRxSensitivity((float)value, gain_stage);
     }
@@ -2208,7 +2207,7 @@ void RadioController::setTxPower(int value, std::string gain_stage)
     if(gain_stage.size() > 0)
     {
         _tx_stage_gains[gain_stage] = value;
-        _modem->setTxPower((float)value/100.0, gain_stage);
+        _modem->setTxPower((float)value, gain_stage);
     }
     else
     {

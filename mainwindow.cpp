@@ -214,7 +214,7 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     ui->statusBar->hide();
     ui->mainToolBar->hide();
     ui->memoriesFrame->hide();
-    ui->rxGainsFrame->hide();
+
 
     _video_img = new QPixmap;
     _constellation_img = new QPixmap(300,300);
@@ -405,7 +405,6 @@ void MainWindow::showControls(bool value)
     {
         ui->plotterContainer->resize(xy.right() -xy.left()-20,xy.bottom()-xy.top()-210);
         ui->controlsFrame->show();
-        ui->rxGainsFrame->show();
         xy = ui->plotterContainer->geometry();
         ui->secondaryTextDisplay->move(xy.left(), xy.bottom() - 150);
         ui->memoriesFrame->move(xy.right() - 30 - 1150, xy.bottom() - 285);
@@ -416,7 +415,6 @@ void MainWindow::showControls(bool value)
     {
         ui->plotterContainer->resize(xy.right() -xy.left()-20,xy.bottom()-xy.top()-120);
         ui->controlsFrame->hide();
-        ui->rxGainsFrame->hide();
         xy = ui->plotterContainer->geometry();
         ui->secondaryTextDisplay->move(xy.left(), xy.bottom() - 150);
         ui->memoriesFrame->move(xy.right() - 30 - 1150, xy.bottom() - 285);
@@ -1690,18 +1688,18 @@ void MainWindow::setRxGainStages(gain_vector rx_gains)
     {
         QString gain_stage_name = QString::fromStdString(iter.key());
         QSlider *gain_slider = new QSlider(Qt::Horizontal, this);
-        gain_slider->setObjectName(gain_stage_name);
+        //gain_slider->setObjectName(gain_stage_name);
         gain_slider->setRange(iter.value().at(0), iter.value().at(1));
         //qDebug() << QString::fromStdString(iter.key()) << ": " << iter.value().at(0) << " to " << iter.value().at(1);
         gain_slider->setSingleStep(1);
-        gain_slider->setMaximumWidth(200);
-        gain_slider->setMaximumHeight(100);
+        gain_slider->setMaximumWidth(100);
+        gain_slider->setMaximumHeight(40);
         gain_slider->setTickInterval(10);
         gain_slider->setToolTip(gain_stage_name);
         QObject::connect(gain_slider,SIGNAL(valueChanged(int)), this, SLOT(setRxStageGain(int)));
         _rx_gain_sliders.push_back(gain_slider);
         ++iter;
-        ui->rxGainsTab->layout()->addWidget(gain_slider);
+        ui->rxGainsFrameMenu->layout()->addWidget(gain_slider);
     }
 }
 
@@ -1718,15 +1716,17 @@ void MainWindow::setTxGainStages(gain_vector tx_gains)
     {
         QString gain_stage_name = QString::fromStdString(iter.key());
         QSlider *gain_slider = new QSlider(Qt::Horizontal, this);
-        gain_slider->setObjectName(gain_stage_name);
+        //gain_slider->setObjectName(gain_stage_name);
         gain_slider->setRange(iter.value().at(0), iter.value().at(1));
         //qDebug() << QString::fromStdString(iter.key()) << ": " << iter.value().at(0) << " to " << iter.value().at(1);
         gain_slider->setSingleStep(1);
-        gain_slider->setMaximumWidth(150);
+        gain_slider->setMaximumWidth(100);
+        gain_slider->setMaximumHeight(40);
         gain_slider->setTickInterval(10);
         gain_slider->setToolTip(gain_stage_name);
+        QObject::connect(gain_slider,SIGNAL(valueChanged(int)), this, SLOT(setTxStageGain(int)));
         _tx_gain_sliders.push_back(gain_slider);
-        ui->txGainsTab->layout()->addWidget(gain_slider);
+        ui->txGainsFrameMenu->layout()->addWidget(gain_slider);
         ++iter;
     }
 }
