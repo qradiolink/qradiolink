@@ -25,6 +25,7 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     _settings = settings;
     _logger = logger;
     _radio_channels = radio_channels;
+    _vf_counter = 0;
 
     _modem = new gr_modem(settings, logger);
     _codec = new AudioEncoder(settings);
@@ -529,12 +530,14 @@ void RadioController::processVideoFrame()
     if((_tx_mode != gr_modem_types::ModemTypeQPSKVideo) || _video_on)
         return;
     _video_on = true;
+    _vf_counter++;
+    qDebug() << _vf_counter;
     unsigned int max_video_frame_size = 3122;
     unsigned long encoded_size;
 
     /// Large alloc
     unsigned char *videobuffer = new unsigned char[230400];
-    memset(videobuffer, 0, 230400);
+    memset(videobuffer, 0, 230400*sizeof(unsigned char));
     QElapsedTimer timer;
     qint64 microsec;
     timer.start();
@@ -569,8 +572,7 @@ void RadioController::processVideoFrame()
         struct timespec time_to_sleep = {0, (100000000 - (long)microsec)};
         nanosleep(&time_to_sleep, NULL);
     }
-
-    u_int32_t crc = (u_int32_t)gr::digital::crc32(&(videobuffer[24]), real_size);
+    u_int32_t crc = (u_int32_t)gr::digital::crc32(&(videobuffer[24]), (size_t)real_size);
 
     memcpy(&(videobuffer[0]), &real_size, 4);
     memcpy(&(videobuffer[4]), &real_size, 4);
@@ -1251,9 +1253,9 @@ void RadioController::receivePCMAudio(std::vector<float> *audio_data)
 /// Used by video and IP modem
 u_int32_t RadioController::getFrameLength(unsigned char *data)
 {
-    u_int32_t frame_size1;
-    u_int32_t frame_size2;
-    u_int32_t frame_size3;
+    u_int32_t frame_size1 = 0;
+    u_int32_t frame_size2 = 0;
+    u_int32_t frame_size3 = 0;
     /// do we really need this redundancy?
     memcpy(&frame_size1, &data[0], 4);
     memcpy(&frame_size2, &data[4], 4);
@@ -1271,9 +1273,9 @@ u_int32_t RadioController::getFrameLength(unsigned char *data)
 /// Used by video and IP modem
 u_int32_t RadioController::getFrameCRC32(unsigned char *data)
 {
-    u_int32_t crc1;
-    u_int32_t crc2;
-    u_int32_t crc3;
+    u_int32_t crc1 = 0;
+    u_int32_t crc2 = 0;
+    u_int32_t crc3 = 0;
 
     memcpy(&crc1, &data[12], 4);
     memcpy(&crc2, &data[16], 4);
@@ -1293,7 +1295,7 @@ void RadioController::receiveVideoData(unsigned char *data, int size)
 {
     Q_UNUSED(size);
     u_int32_t frame_size = getFrameLength(data);
-    if(frame_size == 0)
+    if(frame_size <= 0)
     {
         _logger->log(Logger::LogLevelWarning, "received wrong video frame size, dropping frame ");
         delete[] data;
@@ -1306,11 +1308,11 @@ void RadioController::receiveVideoData(unsigned char *data, int size)
         return;
     }
     unsigned char *jpeg_frame = new unsigned char[frame_size];
-    memcpy(jpeg_frame, &data[24], frame_size);
-    u_int32_t crc;
-    memcpy(&crc, &data[12], 4);
+    memcpy(jpeg_frame, &(data[24]), frame_size);
+    u_int32_t crc = 0;
+    memcpy(&crc, &(data[12]), 4);
     delete[] data;
-    u_int32_t crc_check = (u_int32_t) gr::digital::crc32(jpeg_frame, frame_size);
+    u_int32_t crc_check = (u_int32_t) gr::digital::crc32(jpeg_frame, (size_t)frame_size);
     if(crc != crc_check)
     {
         /// JPEG decoder has this nasty habit of segfaulting on image errors

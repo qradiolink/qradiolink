@@ -288,6 +288,7 @@ private:
     float _tx_volume;
     float _voip_volume;
     int _fft_poll_time;
+    long _vf_counter;
 
 };
 
