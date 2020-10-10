@@ -44,7 +44,7 @@ gr_demod_qpsk::gr_demod_qpsk(std::vector<int>signature, int sps, int samp_rate, 
     fll_bw = 2;
     gain_omega = 0.005;
     gain_mu = 0.05;
-    omega_rel_limit = 0.005;
+    omega_rel_limit = 0.001;
 
 
     ////////////////////////////
@@ -114,8 +114,8 @@ gr_demod_qpsk::gr_demod_qpsk(std::vector<int>signature, int sps, int samp_rate, 
     _costas_pll = gr::digital::costas_loop_cc::make(2*M_PI/100/_samples_per_symbol,4,true);
     _clock_sync = gr::digital::pfb_clock_sync_ccf::make(_samples_per_symbol,
                                                     2*M_PI/100,pfb_taps,flt_size, flt_size / 2, 1.5, 1);
-    _costas_loop = gr::digital::costas_loop_cc::make(2*M_PI/100,4,true);
-    _equalizer = gr::digital::cma_equalizer_cc::make(8,2,0.00005,1);
+    _costas_loop = gr::digital::costas_loop_cc::make(M_PI/200,4,true);
+    _equalizer = gr::digital::cma_equalizer_cc::make(8,2,0.00001,1);
 
     _diff_phasor = gr::digital::diff_phasor_cc::make();
     const std::complex<float> i(0, 1);

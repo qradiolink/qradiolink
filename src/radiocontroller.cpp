@@ -1298,7 +1298,6 @@ void RadioController::receiveVideoData(unsigned char *data, int size)
 {
     Q_UNUSED(size);
     unsigned int frame_size = getFrameLength(data);
-    unsigned int crc = getFrameCRC32(data);
     if(frame_size == 0)
     {
         _logger->log(Logger::LogLevelWarning, "received wrong video frame size, dropping frame ");
@@ -1313,6 +1312,8 @@ void RadioController::receiveVideoData(unsigned char *data, int size)
     }
     unsigned char *jpeg_frame = new unsigned char[frame_size];
     memcpy(jpeg_frame, &data[24], frame_size);
+    unsigned int crc;
+    memcpy(&crc, &data[12], 4);
     delete[] data;
     unsigned int crc_check = gr::digital::crc32(jpeg_frame, frame_size);
     if(crc != crc_check)
