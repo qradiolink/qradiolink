@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>FreeXceiver</string>
+   <string>QRadioLink</string>
   </property>
   <property name="windowIcon">
    <iconset resource="resources.qrc">
@@ -90,7 +90,7 @@
          </font>
         </property>
         <property name="currentIndex">
-         <number>2</number>
+         <number>0</number>
         </property>
         <property name="iconSize">
          <size>
@@ -848,15 +848,17 @@ color: rgb(255, 255, 255);</string>
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>80</width>
-                 <height>28</height>
+                 <width>100</width>
+                 <height>35</height>
                 </size>
                </property>
                <property name="toolTip">
                 <string>Automatic squelch</string>
                </property>
                <property name="styleSheet">
-                <string notr="true">font: 8pt &quot;Sans Serif&quot;;</string>
+                <string notr="true">font: 8pt &quot;Sans Serif&quot;;
+padding-left:15px;
+padding-right:15px;</string>
                </property>
                <property name="text">
                 <string>AutoSq</string>
@@ -889,12 +891,16 @@ color: rgb(255, 255, 255);</string>
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>60</width>
-                 <height>28</height>
+                 <width>100</width>
+                 <height>35</height>
                 </size>
                </property>
                <property name="toolTip">
                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Memory channels&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">padding-left:15px;
+padding-right:15px;</string>
                </property>
                <property name="text">
                 <string>Mem</string>
@@ -1046,8 +1052,8 @@ color: rgb(255, 255, 255);</string>
                </property>
                <property name="minimumSize">
                 <size>
-                 <width>70</width>
-                 <height>25</height>
+                 <width>90</width>
+                 <height>32</height>
                 </size>
                </property>
                <property name="font">
@@ -1063,10 +1069,9 @@ color: rgb(255, 255, 255);</string>
                 <string>Incoming transmission callsign</string>
                </property>
                <property name="styleSheet">
-                <string notr="true">color: rgb(255, 255, 255);
+                <string notr="true">color: #ffffde;
 font: 9pt &quot;Monospace&quot;;
-background-color: rgb(0, 0, 67);
-</string>
+background-color: #4a5053</string>
                </property>
                <property name="frameShape">
                 <enum>QFrame::StyledPanel</enum>
