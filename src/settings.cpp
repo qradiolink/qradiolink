@@ -378,7 +378,7 @@ void Settings::readConfig()
     }
     catch(const libconfig::SettingNotFoundException &nfex)
     {
-        scan_step = 0;
+        scan_step = 2500;
     }
     try
     {

@@ -232,7 +232,6 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     ui->plotterFrame->setSampleRate(1000000);
     ui->plotterFrame->setSpanFreq((quint32)1000000);
     ui->plotterFrame->setRunningState(false);
-    //ui->plotterFrame->setFftRate(10);
     ui->plotterFrame->setPercent2DScreen(50);
     ui->plotterFrame->setFftFill(true);
     ui->plotterFrame->setFreqDigits(3);
@@ -660,7 +659,7 @@ void MainWindow::addDisplayChannel(radiochannel *chan, int r)
     ui->memoriesTableWidget->horizontalHeader()->setHidden(false);
     ui->memoriesTableWidget->horizontalHeader()->setStyleSheet(
     "color: rgb(255, 105, 105);background-color: rgba(0, 40, 102, 155);font-weight: bold;"
-    "font: 9pt \"Sans Serif\"; ");
+    "font: 9pt \"Sans Serif\"; border:1px solid black;");
     ui->memoriesTableWidget->setStyleSheet(
     "color: rgb(255, 255, 255);background-color: rgba(0, 40, 102, 75);font: 9pt \"Sans Serif\"; font-weight: bold;"
     "QTableWidget {color: rgb(255, 255, 255);background-color: rgba(0, 40, 102, 75);font: 9pt \"Sans Serif\";}"
@@ -1443,30 +1442,68 @@ void MainWindow::startScan(bool value)
 {
     int scan_direction = 0;
     QObject *which_button = this->sender();
-    if(which_button == ui->scanUpButton)
-        scan_direction = 1;
+
     if(value)
     {
+        if(which_button == ui->scanUpButton)
+        {
+            scan_direction = 1;
+            ui->scanDownButton->setDisabled(true);
+        }
+        if(which_button == ui->scanDownButton)
+        {
+            scan_direction = 0;
+            ui->scanUpButton->setDisabled(true);
+        }
         int step = ui->lineEditScanStep->text().toInt();
         emit startAutoTuneFreq(step, scan_direction);
     }
     else
+    {
+        if(which_button == ui->scanUpButton)
+        {
+            ui->scanDownButton->setDisabled(false);
+        }
+        if(which_button == ui->scanDownButton)
+        {
+            ui->scanUpButton->setDisabled(false);
+        }
         emit stopAutoTuneFreq();
+    }
 }
 
 void MainWindow::startMemoryScan(bool value)
 {
     int scan_direction = 0;
     QObject *which_button = this->sender();
-    if(which_button == ui->memoryScanUpButton)
-        scan_direction = 1;
+
     if(value)
     {
+        if(which_button == ui->memoryScanUpButton)
+        {
+            scan_direction = 1;
+            ui->memoryScanDownButton->setDisabled(true);
+        }
+        if(which_button == ui->memoryScanDownButton)
+        {
+            scan_direction = 0;
+            ui->memoryScanUpButton->setDisabled(true);
+        }
 
         emit startMemoryTune(scan_direction);
     }
     else
+    {
+        if(which_button == ui->memoryScanUpButton)
+        {
+            ui->memoryScanDownButton->setDisabled(false);
+        }
+        if(which_button == ui->memoryScanDownButton)
+        {
+            ui->memoryScanUpButton->setDisabled(false);
+        }
         emit stopMemoryTune();
+    }
 }
 
 

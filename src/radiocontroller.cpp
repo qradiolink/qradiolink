@@ -967,11 +967,6 @@ void RadioController::stopTx()
         _end_tx_timer->start(tx_tail_msec);
         _radio_time_out_timer->stop();
 
-        /** old code
-        if(_settings->_rx_inited && !_settings->_repeater_enabled &&
-                    (_rx_mode != gr_modem_types::ModemTypeQPSK250000))
-           _modem->startRX(_settings->block_buffer_size);
-        */
     }
 }
 
@@ -1008,7 +1003,6 @@ void RadioController::radioTimeout()
         }
     }
 
-    //_audio_mixer_in->addSamples(samples, size, -1000);
     emit writePCM(samples, size, false, AudioProcessor::AUDIO_MODE_ANALOG);
     if(_settings->tot_tx_end)
         _transmitting = false;
@@ -1517,12 +1511,6 @@ void RadioController::callsignReceived(QString callsign)
     QString time= QDateTime::currentDateTime().toString("dd/MMM/yyyy hh:mm:ss");
     QString text = "\n\n<br/><b>" + time + "</b> " + "<font color=\"#FF5555\">"
             + callsign + " </font><br/>\n";
-    /** disabled because of unwanted interaction
-    short *samples = new short[_data_rec_sound->size()/sizeof(short)];
-    short *origin = (short*) _data_rec_sound->data();
-    memcpy(samples, origin, _data_rec_sound->size());
-    emit writePCM(samples, _data_rec_sound->size(), false, AudioProcessor::AUDIO_MODE_ANALOG);
-    */
     emit printText(text,true);
     emit printCallsign(callsign);
 }
@@ -1539,16 +1527,6 @@ void RadioController::dataFrameReceived()
 {
     emit displayDataReceiveStatus(true);
     _data_led_timer->start(100);
-    /*
-    if((_rx_mode != gr_modem_types::ModemTypeQPSK250000)
-            && (_rx_mode != gr_modem_types::ModemTypeQPSKVideo) && !_settings->voip_forwarding)
-    {
-        short *sound = (short*) _data_rec_sound->data();
-        short *samples = new short[_data_rec_sound->size()/sizeof(short)];
-        memcpy(samples, sound, _data_rec_sound->size());
-        emit writePCM(samples, _data_rec_sound->size(), false, AudioProcessor::AUDIO_MODE_ANALOG);
-    }
-    */
 }
 
 /// GUI leds and Mumble text signal
