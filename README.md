@@ -17,8 +17,7 @@ It can also be used as a low power amateur radio SDR transceiver for demonstrati
 
 The application was originally inspired from the [Codec2 GMSK modem](https://github.com/on1arf/gmsk) project by Kristoff Bonne.
 
-[![Screenshot](http://qradiolink.org/images/qradiolink62.png)](http://qradiolink.org)
-
+[![Screenshot](http://qradiolink.org/images/qradiolink69.png)](http://qradiolink.org)
 
 
 Alternatives to QRadioLink
@@ -78,7 +77,7 @@ Features
 Requirements
 ----
 
-- Since release 0.8.4, GNU radio version is changed to 3.8 and Qt 5.14 is used for the graphical interface. Debian Bullseye is the base GNU/Linux distribution for which packages are built.
+- Since release 0.8.5, GNU radio version is changed to 3.8 and Qt 5.14 is used for the graphical interface. Debian Bullseye is the base GNU/Linux distribution for which packages are built.
 - Build dependencies on Debian Bullseye with Qt5 and GNU radio 3.8: 
 
 <pre>
