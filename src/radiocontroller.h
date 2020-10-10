@@ -193,8 +193,8 @@ public slots:
     void receivedPageMessage(QString calling_user, QString called_user, QString page_message);
 
 private:
-    unsigned int getFrameLength(unsigned char *data);
-    unsigned int getFrameCRC32(unsigned char *data);
+    u_int32_t getFrameLength(unsigned char *data);
+    u_int32_t getFrameCRC32(unsigned char *data);
 
 
     void updateInputAudioStream();
