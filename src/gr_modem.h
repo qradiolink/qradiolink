@@ -132,7 +132,7 @@ private:
     gr_demod_base *_gr_demod_base;
     unsigned char *_bit_buf;
 
-    long _bit_buf_index;
+    int _bit_buf_index;
     int _bit_buf_len;
     int _modem_type_rx;
     int _modem_type_tx;

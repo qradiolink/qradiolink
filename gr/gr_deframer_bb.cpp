@@ -93,34 +93,34 @@ int gr_deframer_bb::findSync(unsigned char bit)
         _sync_found = true;
         return temp;
     }
-    if((temp == 0x89ED))
+    if(temp == 0x89ED)
     {
         _sync_found = true;
         return temp;
     }
-    if((temp == 0xED89))
+    if(temp == 0xED89)
     {
         _sync_found = true;
         return temp;
     }
-    if((temp == 0x98DE))
+    if(temp == 0x98DE)
     {
         _sync_found = true;
         return temp;
     }
-    if((temp == 0xED77))
+    if(temp == 0xED77)
     {
         _sync_found = true;
         return temp;
     }
-    if((temp == 0x8CC8))
+    if(temp == 0x8CC8)
     {
 
         _sync_found = true;
         return temp;
     }
     temp = _shift_reg & 0xFFFFFF;
-    if((temp == 0x4C8A2B))
+    if(temp == 0x4C8A2B)
     {
         _sync_found = true;
         return temp;

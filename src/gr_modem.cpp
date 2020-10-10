@@ -904,7 +904,7 @@ bool gr_modem::synchronize(int v_size, std::vector<unsigned char> *data)
             {
 
                 unsigned char *frame_data = new unsigned char[frame_length];
-                packBytes(frame_data,_bit_buf,_bit_buf_index);
+                packBytes(frame_data,_bit_buf,bit_buf_len);
                 processReceivedData(frame_data, _current_frame_type);
                 _sync_found = false;
                 _shift_reg = 0;

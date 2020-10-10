@@ -43,7 +43,7 @@ private:
     int findSync(unsigned char bit);
     int _modem_type;
     bool _sync_found;
-    long _bit_buf_index;
+    int _bit_buf_index;
     int _bit_buf_len;
     unsigned long long _shift_reg;
     unsigned int _offset;

@@ -631,7 +631,7 @@ void RadioController::processInputNetStream()
 
     if(nread > 0)
     {
-        unsigned int crc = gr::digital::crc32(buffer, nread);
+        u_int32_t crc = (u_int32_t)gr::digital::crc32(buffer, nread);
         memcpy(&(netbuffer[0]), &nread, 4);
         memcpy(&(netbuffer[4]), &nread, 4);
         memcpy(&(netbuffer[8]), &nread, 4);
