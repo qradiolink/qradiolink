@@ -915,16 +915,7 @@ void CPlotter::paintEvent(QPaintEvent *)
         painter.setOpacity(0.50);
         painter.drawPixmap(0, 0, m_2DPixmap_h2);
     }
-    if(!m_2DPixmap_h3.isNull())
-    {
-        painter.setOpacity(0.25);
-        painter.drawPixmap(0, 0, m_2DPixmap_h3);
-    }
 
-    if(!m_2DPixmap_h2.isNull())
-    {
-        m_2DPixmap_h3 = m_2DPixmap.copy(0, 0, m_2DPixmap_h2.width(), m_2DPixmap_h2.height());
-    }
     if(!m_2DPixmap_h1.isNull())
     {
         m_2DPixmap_h2 = m_2DPixmap.copy(0, 0, m_2DPixmap_h1.width(), m_2DPixmap_h1.height());
