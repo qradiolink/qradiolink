@@ -25,7 +25,6 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     _settings = settings;
     _logger = logger;
     _radio_channels = radio_channels;
-    _vf_counter = 0;
 
     _modem = new gr_modem(settings, logger);
     _codec = new AudioEncoder(settings);
@@ -1306,8 +1305,6 @@ void RadioController::receiveVideoData(unsigned char *data, int size)
         delete[] data;
         return;
     }
-    _vf_counter++;
-    qDebug() << _vf_counter;
     unsigned char *jpeg_frame = new unsigned char[frame_size];
     memcpy(jpeg_frame, &(data[24]), frame_size*sizeof(unsigned char));
     u_int32_t crc = 0;
@@ -1359,8 +1356,7 @@ void RadioController::receiveNetData(unsigned char *data, int size)
         return;
     }
     dataFrameReceived();
-    _vf_counter++;
-    qDebug() << _vf_counter;
+
     unsigned char *net_frame = new unsigned char[frame_size];
     memcpy(net_frame, &(data[16]), frame_size);
     u_int32_t crc;

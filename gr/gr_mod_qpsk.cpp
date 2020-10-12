@@ -84,10 +84,10 @@ gr_mod_qpsk::gr_mod_qpsk(int sps, int samp_rate, int carrier_freq,
 
     connect(self(),0,_packed_to_unpacked,0);
     connect(_packed_to_unpacked,0,_scrambler,0);
-    //connect(_scrambler,0,_encode_ccsds,0);
-    connect(_scrambler,0,_unpacked_to_packed,0);
-    connect(_unpacked_to_packed,0,_ccsds_encoder,0);
-    connect(_ccsds_encoder,0,_packer,0);
+    connect(_scrambler,0,_encode_ccsds,0);
+    //connect(_scrambler,0,_unpacked_to_packed,0);
+    //connect(_unpacked_to_packed,0,_ccsds_encoder,0);
+    connect(_encode_ccsds,0,_packer,0);
     connect(_packer,0,_map,0);
     connect(_map,0,_diff_encoder,0);
     connect(_diff_encoder,0,_chunks_to_symbols,0);

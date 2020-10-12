@@ -196,13 +196,13 @@ gr_demod_4fsk::gr_demod_4fsk(std::vector<int>signature, int sps, int samp_rate, 
         connect(_complex_to_float,0,_interleave,0);
         connect(_complex_to_float,1,_interleave,1);
     }
-    connect(_interleave,0,_ccsds_decoder,0);
-    //connect(_multiply_const_fec,0,_add_const_fec,0);
-    //connect(_add_const_fec,0,_float_to_uchar,0);
-    //connect(_float_to_uchar,0,_decode_ccsds,0);
-    //connect(_decode_ccsds,0,_descrambler,0);
-    connect(_ccsds_decoder,0,_packed_to_unpacked,0);
-    connect(_packed_to_unpacked,0,_descrambler,0);
+    connect(_interleave,0,_multiply_const_fec,0);
+    connect(_multiply_const_fec,0,_add_const_fec,0);
+    connect(_add_const_fec,0,_float_to_uchar,0);
+    connect(_float_to_uchar,0,_decode_ccsds,0);
+    connect(_decode_ccsds,0,_descrambler,0);
+    //connect(_ccsds_decoder,0,_packed_to_unpacked,0);
+    //connect(_packed_to_unpacked,0,_descrambler,0);
     connect(_descrambler,0,self(),2);
 
 
