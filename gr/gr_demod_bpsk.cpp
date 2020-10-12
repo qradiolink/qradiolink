@@ -75,8 +75,8 @@ gr_demod_bpsk::gr_demod_bpsk(std::vector<int>signature, int sps, int samp_rate, 
     _packed_to_unpacked = gr::blocks::packed_to_unpacked_bb::make(1, gr::GR_MSB_FIRST);
     _packed_to_unpacked2 = gr::blocks::packed_to_unpacked_bb::make(1, gr::GR_MSB_FIRST);
 
-    gr::fec::code::cc_decoder::sptr decoder = gr::fec::code::cc_decoder::make(256, 7, 2, polys, 0, -1, CC_TAILBITING);
-    gr::fec::code::cc_decoder::sptr decoder2 = gr::fec::code::cc_decoder::make(256, 7, 2, polys);
+    gr::fec::code::cc_decoder::sptr decoder = gr::fec::code::cc_decoder::make(80, 7, 2, polys);
+    gr::fec::code::cc_decoder::sptr decoder2 = gr::fec::code::cc_decoder::make(80, 7, 2, polys);
     _cc_decoder = gr::fec::decoder::make(decoder, 1, 1);
     _cc_decoder2 = gr::fec::decoder::make(decoder2, 1, 1);
 
