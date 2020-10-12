@@ -540,7 +540,7 @@ static void init_device(void)
 
 
         control.id = V4L2_CID_BRIGHTNESS;
-        control.value = 1;
+        control.value = 100;
         if (ioctl(fd, VIDIOC_S_CTRL, &control) < 0) {
             printf("Couldn't set v4l brightness!\n");
             //errno_exit("VIDIOC_S_FMT");
