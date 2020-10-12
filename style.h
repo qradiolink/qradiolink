@@ -43,7 +43,7 @@ static const QString night_stylesheet =
             "background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #0a619c, stop: 1.0 #1487ce);"
             "border: 1px solid #777;border-style:outset;height: 5px;border-radius: 3px;}"
         "QSlider::add-page {"
-            "background-color: #f0f077;border: 1px solid #777;border-style:inset;height: 5px;border-radius: 3px;}"
+            "background-color: #67696e;border: 1px solid #777;border-style:inset;height: 5px;border-radius: 3px;}"
         "QSlider::handle {"
             "background-color: qlineargradient(x1:0, y1:0, x2:1, y2:1,"
             " stop:0 #eee, stop:1 #ccc);"
