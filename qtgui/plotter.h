@@ -207,9 +207,6 @@ private:
 
     eCapturetype    m_CursorCaptured;
     QPixmap     m_2DPixmap;
-    QPixmap     m_2DPixmap_h1;
-    QPixmap     m_2DPixmap_h2;
-    QPixmap     m_2DPixmap_h3;
     QPixmap     m_OverlayPixmap;
     QPixmap     m_WaterfallPixmap;
     QColor      m_ColorTbl[256];

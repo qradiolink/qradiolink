@@ -898,42 +898,7 @@ void CPlotter::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
 
-    /// Draw FFT
-    painter.setOpacity(1.0);
     painter.drawPixmap(0, 0, m_2DPixmap);
-
-    /// FFT history effect
-    /// TODO: make the FFT history effect configurable
-    painter.setCompositionMode(QPainter::CompositionMode_HardLight);
-    if(!m_2DPixmap_h1.isNull())
-    {
-        painter.setOpacity(0.75);
-        painter.drawPixmap(0, 0, m_2DPixmap_h1);
-    }
-    if(!m_2DPixmap_h2.isNull())
-    {
-        painter.setOpacity(0.50);
-        painter.drawPixmap(0, 0, m_2DPixmap_h2);
-    }
-    if(!m_2DPixmap_h3.isNull())
-    {
-        painter.setOpacity(0.25);
-        painter.drawPixmap(0, 0, m_2DPixmap_h3);
-    }
-
-    if(!m_2DPixmap_h2.isNull())
-    {
-        m_2DPixmap_h3 = m_2DPixmap.copy(0, 0, m_2DPixmap_h2.width(), m_2DPixmap_h2.width());
-    }
-    if(!m_2DPixmap_h1.isNull())
-    {
-        m_2DPixmap_h2 = m_2DPixmap.copy(0, 0, m_2DPixmap_h1.width(), m_2DPixmap_h1.width());
-    }
-    m_2DPixmap_h1 = m_2DPixmap.copy(0, 0, m_2DPixmap.width(), m_2DPixmap.width());
-
-    /// Draw Waterfall
-    painter.setCompositionMode(QPainter::CompositionMode_Source);
-    painter.setOpacity(1.0);
     painter.drawPixmap(0, m_Percent2DScreen * m_Size.height() / 100,
                        m_WaterfallPixmap);
 }
