@@ -1307,8 +1307,7 @@ void RadioController::receiveVideoData(unsigned char *data, int size)
     }
     unsigned char *jpeg_frame = new unsigned char[frame_size];
     memcpy(jpeg_frame, &(data[24]), frame_size*sizeof(unsigned char));
-    u_int32_t crc = 0;
-    memcpy(&crc, &(data[12]), 4*sizeof(unsigned char));
+    u_int32_t crc = getFrameCRC32(data);
     delete[] data;
     u_int32_t crc_check = (u_int32_t) gr::digital::crc32(jpeg_frame, (size_t)frame_size);
     if(crc != crc_check)
