@@ -65,8 +65,8 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
     _4fsk_1k_fm = make_gr_mod_4fsk(50, 1000000, 1700, 1250, true);
     _4fsk_10k_fm = make_gr_mod_4fsk(5, 1000000, 1700, 12500, true);
     _am = make_gr_mod_am(125,1000000, 1700, 5000);
-    _bpsk_1k = make_gr_mod_bpsk(50, 1000000, 1700, 1500);
-    _bpsk_2k = make_gr_mod_bpsk(25, 1000000, 1700, 2800);
+    _bpsk_1k = make_gr_mod_bpsk(500, 1000000, 1700, 1500);
+    _bpsk_2k = make_gr_mod_bpsk(250, 1000000, 1700, 2800);
     _bpsk_dsss_8 = make_gr_mod_dsss(25, 1000000, 1700, 200);
     _fm_2500 = make_gr_mod_nbfm(20, 1000000, 1700, 3125);
     _fm_5000 = make_gr_mod_nbfm(20, 1000000, 1700, 6250);

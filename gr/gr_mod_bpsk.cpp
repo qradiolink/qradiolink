@@ -62,8 +62,6 @@ gr_mod_bpsk::gr_mod_bpsk(int sps, int samp_rate, int carrier_freq,
     _filter = gr::filter::fft_filter_ccf::make(
                 1,gr::filter::firdes::low_pass_2(
                     1, if_samp_rate, _filter_width, 1200, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
-    _resampler2 = gr::filter::rational_resampler_base_ccf::make(10, 1,
-                        gr::filter::firdes::low_pass(10,_samp_rate,_filter_width,_filter_width*5));
 
 
     connect(self(),0,_packed_to_unpacked,0);
@@ -76,8 +74,7 @@ gr_mod_bpsk::gr_mod_bpsk(int sps, int samp_rate, int carrier_freq,
     connect(_resampler,0,_amplify,0);
     //connect(_filter,0,_amplify,0);
     connect(_amplify,0,_bb_gain,0);
-    connect(_bb_gain,0,_resampler2,0);
-    connect(_resampler2,0,self(),0);
+    connect(_bb_gain,0,self(),0);
 
 }
 
