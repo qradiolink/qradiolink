@@ -28,10 +28,7 @@ gr_bit_sink::gr_bit_sink() :
                        gr::io_signature::make (1, 1, sizeof (unsigned char)),
                        gr::io_signature::make (0, 0, 0))
 {
-    _offset = 0;
-    _finished = false;
     _data = new std::vector<unsigned char>;
-
 }
 
 gr_bit_sink::~gr_bit_sink()
@@ -48,7 +45,6 @@ void gr_bit_sink::flush()
 std::vector<unsigned char> * gr_bit_sink::get_data()
 {
     gr::thread::scoped_lock guard(_mutex);
-
     // Buffer up to X bits
     if(_data->size() < 32)
     {

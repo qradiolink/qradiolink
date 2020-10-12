@@ -41,8 +41,6 @@ public:
     void flush();
 
 private:
-    unsigned int _offset;
-    bool _finished;
     std::vector<unsigned char> *_data;
     gr::thread::condition_variable _cond_wait;
     gr::thread::mutex _mutex;

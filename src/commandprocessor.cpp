@@ -37,6 +37,8 @@ CommandProcessor::~CommandProcessor()
     }
     _command_list->clear();
     delete _command_list;
+    _mode_list->clear();
+    delete _mode_list;
 }
 
 

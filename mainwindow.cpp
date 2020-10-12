@@ -923,6 +923,8 @@ void MainWindow::updateConstellation(complex_vector *constellation_data)
 {
     if(isMinimized())
     {
+        constellation_data->clear();
+        delete constellation_data;
         return;
     }
     _mutex.lock();
@@ -1698,7 +1700,6 @@ void MainWindow::setRxDigitalGain(int value)
 
 void MainWindow::updateAgcAttack(int value)
 {
-    Q_UNUSED(value);
     _settings->agc_attack = value;
     float attack = (float)pow(10, -value);
     emit setAgcAttack(attack);
@@ -1706,7 +1707,6 @@ void MainWindow::updateAgcAttack(int value)
 
 void MainWindow::updateAgcDecay(int value)
 {
-    Q_UNUSED(value);
     _settings->agc_decay = value;
     float decay = (float)pow(10, -value);
     emit setAgcDecay(decay);

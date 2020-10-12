@@ -74,7 +74,7 @@ static const QString day_stylesheet =
         "QPushButton:hover {margin:2px;background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #fafafa, stop: 0.4 #f4f4f4, stop: 0.5 #e7e7e7, stop: 1.0 #fafafa); border: 1px solid gray; border-style: outset; border-radius:4px;}"
         "QCheckBox:hover {background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #fafafa, stop: 0.4 #f4f4f4, stop: 0.5 #e7e7e7, stop: 1.0 #fafafa);}"
         "QCheckBox:checked {color:#585800}"
-        "QHeaderView::section {background-color: rgba(0, 40, 102, 25);}"
+        "QHeaderView::section {background-color: #0c3668;}"
         "QDial {background-color:#9a9a9a; color:#ffffd3;border:0px solid black;}"
         "QDial:hover {background-color:#002c86; color:#ffffd3}"
         "QComboBox {border: 1px solid #1487ce; border-style: outset;border-radius: 6px; color: #f0f077; padding: 3px 6px 3px 6px; background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #0a619c, stop: 1.0 #1487ce);}"

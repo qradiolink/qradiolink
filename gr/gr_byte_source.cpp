@@ -74,9 +74,9 @@ int gr_byte_source::work(int noutput_items,
 
 
     unsigned char *out = (unsigned char*)(output_items[0]);
-    unsigned n = std::min((unsigned)_data->size() - _offset,
-                                  (unsigned)noutput_items);
-    for(unsigned i=0;i < n;i++)
+    unsigned int n = std::min((unsigned int)_data->size() - _offset,
+                                  (unsigned int)noutput_items);
+    for(unsigned int i=0;i < n;i++)
     {
         out[i] = _data->at(_offset + i);
     }

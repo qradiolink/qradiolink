@@ -41,7 +41,7 @@ public:
     int set_data(std::vector<unsigned char> *data);
     void flush();
 private:
-    unsigned _offset;
+    unsigned int _offset;
     bool _finished;
     std::vector<unsigned char> *_data;
     gr::thread::condition_variable _cond_wait;

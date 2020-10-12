@@ -530,8 +530,7 @@ void RadioController::processVideoFrame()
     if((_tx_mode != gr_modem_types::ModemTypeQPSKVideo) || _video_on)
         return;
     _video_on = true;
-    _vf_counter++;
-    qDebug() << _vf_counter;
+
     unsigned int max_video_frame_size = 3122;
     unsigned long encoded_size;
 
@@ -549,11 +548,10 @@ void RadioController::processVideoFrame()
         encoded_size = max_video_frame_size - 24;
     }
     u_int32_t real_size = (u_int32_t) encoded_size;
-
     if(_settings->voip_ptt_enabled && _transmitting && (real_size > 0))
     {
         unsigned char *video_frame = new unsigned char[real_size];
-        memcpy(video_frame, &(videobuffer[24]), real_size);
+        memcpy(video_frame, &(videobuffer[24]), real_size*sizeof(unsigned char));
         emit voipVideoData(video_frame, real_size);
         delete[] videobuffer;
         microsec = (quint64)timer.nsecsElapsed();
@@ -574,12 +572,12 @@ void RadioController::processVideoFrame()
     }
     u_int32_t crc = (u_int32_t)gr::digital::crc32(&(videobuffer[24]), (size_t)real_size);
 
-    memcpy(&(videobuffer[0]), &real_size, 4);
-    memcpy(&(videobuffer[4]), &real_size, 4);
-    memcpy(&(videobuffer[8]), &real_size, 4);
-    memcpy(&(videobuffer[12]), &crc, 4);
-    memcpy(&(videobuffer[16]), &crc, 4);
-    memcpy(&(videobuffer[20]), &crc, 4);
+    memcpy(&(videobuffer[0]), &real_size, 4*sizeof(unsigned char));
+    memcpy(&(videobuffer[4]), &real_size, 4*sizeof(unsigned char));
+    memcpy(&(videobuffer[8]), &real_size, 4*sizeof(unsigned char));
+    memcpy(&(videobuffer[12]), &crc, 4*sizeof(unsigned char));
+    memcpy(&(videobuffer[16]), &crc, 4*sizeof(unsigned char));
+    memcpy(&(videobuffer[20]), &crc, 4*sizeof(unsigned char));
     /// Rest of video frame filled with garbage to keep the same radio frame size
     for(unsigned int k=real_size+24,i=0;k<max_video_frame_size;k++,i++)
     {
@@ -1257,9 +1255,9 @@ u_int32_t RadioController::getFrameLength(unsigned char *data)
     u_int32_t frame_size2 = 0;
     u_int32_t frame_size3 = 0;
     /// do we really need this redundancy?
-    memcpy(&frame_size1, &data[0], 4);
-    memcpy(&frame_size2, &data[4], 4);
-    memcpy(&frame_size3, &data[8], 4);
+    memcpy(&frame_size1, &data[0], 4*sizeof(unsigned char));
+    memcpy(&frame_size2, &data[4], 4*sizeof(unsigned char));
+    memcpy(&frame_size3, &data[8], 4*sizeof(unsigned char));
     if(frame_size1 == frame_size2)
         return frame_size1;
     else if(frame_size1 == frame_size3)
@@ -1277,9 +1275,9 @@ u_int32_t RadioController::getFrameCRC32(unsigned char *data)
     u_int32_t crc2 = 0;
     u_int32_t crc3 = 0;
 
-    memcpy(&crc1, &data[12], 4);
-    memcpy(&crc2, &data[16], 4);
-    memcpy(&crc3, &data[20], 4);
+    memcpy(&crc1, &data[12], 4*sizeof(unsigned char));
+    memcpy(&crc2, &data[16], 4*sizeof(unsigned char));
+    memcpy(&crc3, &data[20], 4*sizeof(unsigned char));
     if(crc1 == crc2)
         return crc1;
     else if(crc1 == crc3)
@@ -1295,6 +1293,7 @@ void RadioController::receiveVideoData(unsigned char *data, int size)
 {
     Q_UNUSED(size);
     u_int32_t frame_size = getFrameLength(data);
+
     if(frame_size <= 0)
     {
         _logger->log(Logger::LogLevelWarning, "received wrong video frame size, dropping frame ");
@@ -1307,10 +1306,12 @@ void RadioController::receiveVideoData(unsigned char *data, int size)
         delete[] data;
         return;
     }
+    _vf_counter++;
+    qDebug() << _vf_counter;
     unsigned char *jpeg_frame = new unsigned char[frame_size];
-    memcpy(jpeg_frame, &(data[24]), frame_size);
+    memcpy(jpeg_frame, &(data[24]), frame_size*sizeof(unsigned char));
     u_int32_t crc = 0;
-    memcpy(&crc, &(data[12]), 4);
+    memcpy(&crc, &(data[12]), 4*sizeof(unsigned char));
     delete[] data;
     u_int32_t crc_check = (u_int32_t) gr::digital::crc32(jpeg_frame, (size_t)frame_size);
     if(crc != crc_check)
@@ -1358,12 +1359,14 @@ void RadioController::receiveNetData(unsigned char *data, int size)
         return;
     }
     dataFrameReceived();
+    _vf_counter++;
+    qDebug() << _vf_counter;
     unsigned char *net_frame = new unsigned char[frame_size];
-    memcpy(net_frame, &data[16], frame_size);
+    memcpy(net_frame, &(data[16]), frame_size);
     u_int32_t crc;
     memcpy(&crc, &data[12], 4);
     delete[] data;
-    u_int32_t crc_check = (u_int32_t)gr::digital::crc32(net_frame, frame_size);
+    u_int32_t crc_check = (u_int32_t)gr::digital::crc32(net_frame, (size_t)frame_size);
 
     if(crc != crc_check)
     {
