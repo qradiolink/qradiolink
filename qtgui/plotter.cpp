@@ -923,13 +923,13 @@ void CPlotter::paintEvent(QPaintEvent *)
 
     if(!m_2DPixmap_h2.isNull())
     {
-        m_2DPixmap_h3 = m_2DPixmap.copy(0, 0, m_2DPixmap_h2.width(), m_2DPixmap_h2.height());
+        m_2DPixmap_h3 = m_2DPixmap.copy(0, 0, m_2DPixmap_h2.width(), m_2DPixmap_h2.width());
     }
     if(!m_2DPixmap_h1.isNull())
     {
-        m_2DPixmap_h2 = m_2DPixmap.copy(0, 0, m_2DPixmap_h1.width(), m_2DPixmap_h1.height());
+        m_2DPixmap_h2 = m_2DPixmap.copy(0, 0, m_2DPixmap_h1.width(), m_2DPixmap_h1.width());
     }
-    m_2DPixmap_h1 = m_2DPixmap.copy(0, 0, m_2DPixmap.width(), m_2DPixmap.height());
+    m_2DPixmap_h1 = m_2DPixmap.copy(0, 0, m_2DPixmap.width(), m_2DPixmap.width());
 
     /// Draw Waterfall
     painter.setCompositionMode(QPainter::CompositionMode_Source);
