@@ -5143,9 +5143,7 @@ border-radius: 0px;</string>
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Push to talk (Space key)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="styleSheet">
-           <string notr="true">font: 18pt &quot;Sans Serif&quot;;
-color: rgb(255, 255, 255);
-background-color: rgb(132, 0, 0);
+           <string notr="true">
 </string>
           </property>
           <property name="text">

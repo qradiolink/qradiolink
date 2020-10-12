@@ -246,7 +246,7 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     _eff_freq->setOpacity(0.6);
     ui->frameCtrlFreq->setGraphicsEffect(_eff_freq);
     _eff_const = new QGraphicsOpacityEffect(this);
-    _eff_const->setOpacity(0.6);
+    _eff_const->setOpacity(0.5);
     ui->constellationDisplay->setGraphicsEffect(_eff_const);
     _constellation_painter = new QPainter(_constellation_img);
     _constellation_painter->end();
