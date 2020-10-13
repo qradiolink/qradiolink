@@ -4,11 +4,15 @@
 #include <QString>
 
 static const QString night_stylesheet =
+        "QTabWidget::pane { border-top: 2px solid #52677B;}"
+        "QTabWidget::tab-bar {left: 2px;}"
         "QTabBar::tab { background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #4a5053, stop: 1.0 #505a62);; color: #ffffd3; padding: 8px; padding-left: 20px;padding-right: 20px;"
             " border: 1px solid #000000; border-style:outset; border-top-left-radius: 4px;border-top-right-radius: 4px;} "
         "QTabBar::tab:selected { background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #40484a, stop: 1.0 #4a5053); color: #ffffd3;} "
         "QTabBar::tab:!selected { margin-top: 5px;}"
         "QTabBar::tab:hover:!selected {background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #505a62, stop: 0.4 #00374f, stop: 0.5 #00374f, stop: 1.0 #505a62);}"
+        "QTabBar::tab:first:selected {margin-left: 0px;}"
+        "QTabBar::tab:last:selected {margin-right: 0px;}"
         "QWidget#memoryControlsFrame {background: none;}"
         "QWidget#memoriesFrame {background: none;}"
         "QWidget#memoriesTableWidget {background: none;}"
@@ -18,7 +22,7 @@ static const QString night_stylesheet =
         "QLabel {border:1px solid #505050;border-radius:4px;background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #4a5053, stop: 1.0 #505a62); color: #ffffd3;}"
         "QPushButton#buttonTransmit {font: 18pt \"Sans Serif\";color: #bbbbbb; background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #770000, stop: 0.3 #990000, stop: 0.7 #990000, stop: 1.0 #770000);border: 1px solid #CC0000; border-style: outset;}"
         "QPushButton#buttonTransmit:checked {font: 18pt \"Sans Serif\";color: #ffffff; background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #880000, stop: 0.3 #CC0000, stop: 0.7 #CF0000, stop: 1.0 #AA0000);border: 1px solid #330000; border-style: inset;}"
-        "QPushButton {background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #4a5053, stop: 0.4 #505a62, stop: 0.5 #5a697d, stop: 1.0 #4a5053); color:#ffffd3;"
+        "QPushButton {background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #5f6669, stop: 0.3 #5a697d, stop: 0.5 #505a62, stop: 1.0 #4f5659); color:#ffffd3;"
             "border-radius: 4px;border:1px solid #747474;border-style:outset;margin:2px;padding:5px;}"
         "QPushButton:hover {background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #505a62, stop: 0.4 #00374f, stop: 0.5 #00374f, stop: 1.0 #505a62); color:#ffffd3;border:1px solid #002c86;}"
         "QPushButton:checked, QPushButton:hover:pressed {background-color:#4a5053; color:#ffffd3;border-style:inset;}"
@@ -26,6 +30,7 @@ static const QString night_stylesheet =
         "QCheckBox:hover {background-color:#555555; color:#ffffd3;}"
         "QCheckBox:checked {color:#fffb6f;}"
         "QHeaderView::section {background-color: rgba(0, 40, 102, 25);}"
+        "QTableView {selection-background-color: rgba(20, 135, 206, 170);color:#ffffff}"
         "QDial {background-color:#5a5a5a; color:#ffffd3;}"
         "QDial:hover {background-color:#002c86; color:#ffffd3}"
         "QComboBox {border: 1px solid #1487ce; border-style: outset;border-radius: 6px; color: #f0f077; padding: 3px 6px 3px 6px; background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #0a619c, stop: 1.0 #1487ce);}"
@@ -58,11 +63,15 @@ static const QString night_stylesheet =
 
 
 static const QString day_stylesheet =
+        "QTabWidget::pane { border-top: 2px solid #A2A7BB;}"
+        "QTabWidget::tab-bar {left: 2px;}"
         "QTabBar::tab { background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #d0dae4, stop: 0.3 #dfdfdf, stop: 0.7 #c7c7c7, stop: 1.0 #d0dae4); color: #000000; padding: 8px; padding-left: 20px;padding-right: 20px;"
             "border: 1px solid #aaaaaa; border-style:outset; border-top-left-radius: 5px;border-top-right-radius: 5px;} "
-        "QTabBar::tab:selected { background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #fafafa, stop: 0.4 #f4f4f4, stop: 0.5 #e7e7e7, stop: 1.0 #fafafa); color: #000000; } "
+        "QTabBar::tab:selected {background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #fafafa, stop: 0.4 #f4f4f4, stop: 0.5 #e7e7e7, stop: 1.0 #fafafa); color: #000000; } "
         "QTabBar::tab:!selected { margin-top: 5px;}"
         "QTabBar::tab:hover:!selected {background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #fafafa, stop: 0.4 #f4f4f4, stop: 0.5 #e7e7e7, stop: 1.0 #fafafa);}"
+        "QTabBar::tab:first:selected {margin-left: 0;}"
+        "QTabBar::tab:last:selected {margin-right: 0;}"
         "QWidget#memoryControlsFrame {background: none}"
         "QWidget#memoriesFrame {background: none;}"
         "QWidget#memoriesTableWidget {background: none}"
@@ -79,6 +88,7 @@ static const QString day_stylesheet =
         "QCheckBox:hover {background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #fafafa, stop: 0.4 #f4f4f4, stop: 0.5 #e7e7e7, stop: 1.0 #fafafa);}"
         "QCheckBox:checked {color:#585800}"
         "QHeaderView::section {background-color: rgba(0, 40, 102, 25);}"
+        "QTableView {selection-background-color: rgba(20, 135, 206, 170);color:#ffffff}"
         "QDial {background-color:#9a9a9a; color:#ffffd3;border:0px solid black;}"
         "QDial:hover {background-color:#002c86; color:#ffffd3}"
         "QComboBox {border: 1px solid #1487ce; border-style: outset;border-radius: 6px; color: #f0f077; padding: 3px 6px 3px 6px; background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #0a619c, stop: 1.0 #1487ce);}"
