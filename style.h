@@ -4,7 +4,7 @@
 #include <QString>
 
 static const QString night_stylesheet =
-        "QTabWidget::pane { border-top: 2px solid #52677B;}"
+        "QTabWidget::pane { border: 1px solid #71717c;}"
         "QTabWidget::tab-bar {left: 2px;}"
         "QTabBar::tab { background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #4a5053, stop: 1.0 #505a62);; color: #ffffd3; padding: 8px; padding-left: 20px;padding-right: 20px;"
             " border: 1px solid #000000; border-style:outset; border-top-left-radius: 4px;border-top-right-radius: 4px;} "
@@ -63,7 +63,7 @@ static const QString night_stylesheet =
 
 
 static const QString day_stylesheet =
-        "QTabWidget::pane { border-top: 2px solid #A2A7BB;}"
+        "QTabWidget::pane { border: 1px solid #B2B7BB;}"
         "QTabWidget::tab-bar {left: 2px;}"
         "QTabBar::tab { background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #d0dae4, stop: 0.3 #dfdfdf, stop: 0.7 #c7c7c7, stop: 1.0 #d0dae4); color: #000000; padding: 8px; padding-left: 20px;padding-right: 20px;"
             "border: 1px solid #aaaaaa; border-style:outset; border-top-left-radius: 5px;border-top-right-radius: 5px;} "
