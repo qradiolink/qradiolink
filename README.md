@@ -87,7 +87,14 @@ $ sudo apt-get install gnuradio-dev protobuf-compiler gr-osmosdr gnuradio libvol
 - Qt >= 5.14 and Qt5 development packages (older versions of Qt5 >= 5.11 might work as well)
 - qmake
 - Pulseaudio or Alsa or Jack
-- Gnuradio >= 3.8 built with UHD, SoapySDR support and FreeDV/Codec2 support. 
+- Gnuradio >= 3.8 built with UHD, SoapySDR support and FreeDV/Codec2 support. Please verify that the following was printed before you (or your distribution's packager) built gnuradio:
+<pre>
+--   * gr-vocoder
+--   * * codec2
+--   * * freedv
+</pre>
+
+In [#67](https://github.com/qradiolink/qradiolink/issues/67) it was reported that it may be necessary to [set some cmake options](https://github.com/qradiolink/qradiolink/issues/67#issuecomment-706307297) In order for [codec2](https://github.com/drowe67/codec2) and it's freedv support to be detected properly.
 - Boost and boost-devel
 - libgnuradio-osmosdr (gr-osmosdr) built with UHD, RTL-SDR, SoapySDR, HackRF, RedPitaya or BladeRF support
 - libprotobuf, libopus, libspeexdsp, libpulse-simple, libpulse, libasound, libcodec2, libsqlite3, libjpeg, libconfig++, libvolk, libftdi, libsndfile1, qtmultimedia5-dev, libqt5multimediawidgets5, libqt5multimedia5, libqt5multimedia5 (gstreamer1.0-plugins-bad for Qt video)
