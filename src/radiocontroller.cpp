@@ -208,9 +208,11 @@ void RadioController::run()
     int last_channel_broadcast_time = 0;
     while(!_stop_thread)
     {
+        _mutex->lock();
         bool transmitting = _transmitting;
         bool voip_forwarding = _settings->voip_forwarding;
         bool data_modem_sleeping = _data_modem_sleeping;
+        _mutex->unlock();
 
         QCoreApplication::processEvents(); // process signals
         if(_settings->voip_connected)
@@ -242,10 +244,12 @@ void RadioController::run()
             stopTx();
         }
 
+        _mutex->lock();
         if(_text_transmit_on)
             _process_text = false;
         if(_proto_transmit_on)
             _process_data = false;
+        _mutex->unlock();
 
         /// Get all available data from the demodulator
         QtConcurrent::run(this, &RadioController::getFFTData);
@@ -406,7 +410,9 @@ bool RadioController::processMixerQueue()
         {
             if(!_voip_tx_timer->isActive())
             {
+                _mutex->lock();
                 _transmitting = true;
+                _mutex->unlock();
             }
             _voip_tx_timer->start(500);
             /// Out to radio and don't loop back to Mumble
@@ -445,13 +451,21 @@ void RadioController::txAudio(short *audiobuffer, int audiobuffer_size,
         {
             _vox_timer->start(500);
             if(!_settings->tx_started && !_settings->voip_ptt_enabled)
+            {
+                _mutex->lock();
                 _transmitting = true;
+                _mutex->unlock();
+            }
         }
         if(!vad && !_vox_timer->isActive())
         {
             /// Vox timer ran out, stopping TX
             if(_settings->tx_started && !_settings->voip_ptt_enabled)
+            {
+                _mutex->lock();
                 _transmitting = false;
+                _mutex->unlock();
+            }
             /// Audio input stream will be stopped at the next thread iteration
             delete[] audiobuffer;
             return;
@@ -674,14 +688,18 @@ void RadioController::transmitTextData()
 {
     if(!_settings->tx_inited)
     {
+        _mutex->lock();
         _process_text = false;
+        _mutex->unlock();
         return;
     }
     if(_text_transmit_on)
         return;
 
+    _mutex->lock();
     _text_transmit_on = true;
     _transmitting = true;
+    _mutex->unlock();
     /// callsign frame
     // FIXME: this doesn't seem to work, callsign is actually sent
     // after the first text frame most of the time
@@ -740,22 +758,28 @@ void RadioController::transmitTextData()
     {
         goto start_text_tx;
     }
+    _mutex->lock();
     _transmitting = false;
     _text_transmit_on = false;
+    _mutex->unlock();
 }
 
 void RadioController::transmitBinData()
 {
     if(!_settings->tx_inited)
     {
+        _mutex->lock();
         _process_data = false;
+        _mutex->unlock();
         return;
     }
     if(_proto_transmit_on)
         return;
 
+    _mutex->lock();
     _proto_transmit_on = true;
     _transmitting = true;
+    _mutex->unlock();
     /// callsign frame
     // FIXME: this doesn't seem to work, callsign is actually sent
     // after the first text frame most of the time
@@ -816,8 +840,10 @@ void RadioController::transmitBinData()
     {
         goto start_data_tx;
     }
+    _mutex->lock();
     _transmitting = false;
     _proto_transmit_on = false;
+    _mutex->unlock();
     _proto_out.clear();
 }
 
@@ -1004,13 +1030,19 @@ void RadioController::radioTimeout()
 
     emit writePCM(samples, size, false, AudioProcessor::AUDIO_MODE_ANALOG);
     if(_settings->tot_tx_end)
+    {
+        _mutex->lock();
         _transmitting = false;
+        _mutex->unlock();
+    }
 }
 
 void RadioController::stopVoipTx()
 {
     /// Called by voip tx timer
+    _mutex->lock();
     _transmitting = false;
+    _mutex->unlock();
 }
 
 void RadioController::setAudioRecord(bool value)
@@ -1420,13 +1452,20 @@ void RadioController::startTransmission()
                      "works only with separate devices");
         return;
     }
+
     if(_settings->tx_inited || _settings->voip_ptt_enabled)
+    {
+        _mutex->lock();
         _transmitting = true;
+        _mutex->unlock();
+    }
 }
 
 void RadioController::endTransmission()
 {
+    _mutex->lock();
     _transmitting = false;
+    _mutex->unlock();
 }
 
 void RadioController::textData(QString text, bool repeat)
@@ -2096,6 +2135,7 @@ void RadioController::setVOIPForwarding(bool value)
 void RadioController::setVox(bool value)
 {
     _settings->vox_enabled = value;
+    _mutex->lock();
     if(!_settings->vox_enabled)
     {
         _transmitting = false;
@@ -2104,6 +2144,7 @@ void RadioController::setVox(bool value)
     {
         _transmitting = true;
     }
+    _mutex->unlock();
 }
 
 void RadioController::toggleRepeat(bool value)
