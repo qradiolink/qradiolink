@@ -1029,6 +1029,7 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
 
         QString callsign(text_data);
         callsign = callsign.remove(QRegExp("[^a-zA-Z/\\d\\s]"));
+        callsign = callsign.left(7);
         emit callsignReceived(callsign);
         delete[] text_data;
     }
@@ -1040,12 +1041,18 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
         if(((_modem_type_rx == gr_modem_types::ModemTypeBPSK1K) ||
             (_modem_type_rx == gr_modem_types::ModemType2FSK1KFM) ||
             (_modem_type_rx == gr_modem_types::ModemType2FSK1K) ||
-            (_modem_type_rx == gr_modem_types::ModemType4FSK1KFM))
-                 && (_modem_sync >= 16))
+            (_modem_type_rx == gr_modem_types::ModemType4FSK1KFM)))
         {
-            memcpy(codec2_data, received_data, _rx_frame_length);
-            emit digitalAudio(codec2_data,_rx_frame_length);
-            emit audioFrameReceived();
+            if(_modem_sync >= 16)
+            {
+                memcpy(codec2_data, received_data, _rx_frame_length);
+                emit digitalAudio(codec2_data,_rx_frame_length);
+                emit audioFrameReceived();
+            }
+            else
+            {
+                delete[] codec2_data;
+            }
         }
         else if((_modem_type_rx != gr_modem_types::ModemTypeBPSK1K) &&
                 (_modem_type_rx != gr_modem_types::ModemType2FSK1KFM) &&
