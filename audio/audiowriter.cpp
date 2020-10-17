@@ -146,6 +146,7 @@ void AudioWriter::run()
                     {
                         _recorder->writeSamples(pcm, bytes/sizeof(short));
                     }
+                    delete[] pcm;
                     /// time it takes for the packet to be played without overflow
                     long play_time = 1000/(8000/(bytes/sizeof(short))) * 1000000L;
                     if(play_time > 2000000L)
@@ -167,6 +168,7 @@ void AudioWriter::run()
                         {
                             _recorder->writeSamples(pcm, 640/sizeof(short));
                         }
+                        delete[] pcm;
                         /// time it takes for the packet to be played without overflow
                         struct timespec time_to_sleep = {0, 39000000L };
                         nanosleep(&time_to_sleep, NULL);
@@ -181,6 +183,7 @@ void AudioWriter::run()
                         {
                             _recorder->writeSamples(pcm, leftover/sizeof(short));
                         }
+                        delete[] pcm;
                         /// time it takes for the packet to be played without overflow
                         long play_time = 1000/(8000/(leftover/sizeof(short))) * 1000000L;
                         struct timespec time_to_sleep = {0, play_time };
@@ -228,7 +231,7 @@ void AudioWriter::run()
 void AudioWriter::processStateChange(QAudio::State state)
 {
     /// Not needed...
-    if((state == QAudio::IdleState))
+    if(state == QAudio::IdleState)
     {
         QAudioOutput *audio_writer = reinterpret_cast<QAudioOutput*>(this->sender());
         audio_writer->resume();
