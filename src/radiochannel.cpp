@@ -32,6 +32,7 @@ RadioChannels::~RadioChannels()
     }
     _channels->clear();
     delete _channels;
+    delete _memories_file;
 }
 
 QVector<radiochannel *> *RadioChannels::getChannels()

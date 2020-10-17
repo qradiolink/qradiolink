@@ -65,6 +65,11 @@ Settings::Settings(Logger *logger)
     _id = 0;
 }
 
+Settings::~Settings()
+{
+    delete _config_file;
+}
+
 QFileInfo *Settings::setupConfig()
 {
     QDir files = QDir::homePath();

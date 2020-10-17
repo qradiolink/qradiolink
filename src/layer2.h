@@ -42,6 +42,7 @@ public:
         MsgTypeRepeaterInfo,
     };
     explicit Layer2Protocol(Logger *logger, QObject *parent = 0);
+    ~Layer2Protocol();
 
     QByteArray buildRepeaterInfo();
     void addChannel(MumbleChannel *chan);

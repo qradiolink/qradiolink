@@ -90,6 +90,7 @@ AudioEncoder::~AudioEncoder()
     opus_decoder_destroy(_dec_voip);
     codec2_destroy(_codec2_1400);
     codec2_destroy(_codec2_700);
+    codec2_destroy(_codec2_2400);
     delete _processor;
 }
 

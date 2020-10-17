@@ -30,6 +30,7 @@ class Settings
 {
 public:
     explicit Settings(Logger *logger);
+    ~Settings();
     QFileInfo *setupConfig();
     void readConfig();
     void saveConfig();

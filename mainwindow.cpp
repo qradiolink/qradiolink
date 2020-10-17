@@ -222,6 +222,7 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     _iirFftData = new float[1048576];
     _s_meter_bg = new QPixmap(":/res/s-meter-bg-black-small.png");
     _current_voip_channel = -1;
+    _ptt_activated = false;
     _fft_active = (bool)_settings->show_fft;
     _controls_active = (bool)_settings->show_controls;
 
@@ -338,6 +339,7 @@ MainWindow::~MainWindow()
     delete _eff_video;
     delete _eff_text_display;
     delete _eff_mem_display;
+    delete _s_meter_bg;
     delete ui;
 }
 

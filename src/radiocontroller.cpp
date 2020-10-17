@@ -181,6 +181,7 @@ RadioController::~RadioController()
     delete _end_tx_timer;
     delete _cw_timer;
     delete _modem;
+    delete _mutex;
     delete[] _rand_frame_data;
     delete[] _fft_data;
     _to_voip_buffer->clear();
@@ -188,6 +189,14 @@ RadioController::~RadioController()
     delete _relay_controller;
     delete _end_rec_sound;
     delete _data_rec_sound;
+    delete _timeout_sound;
+    delete _data_read_timer;
+    delete _data_modem_reset_timer;
+    delete _data_modem_sleep_timer;
+    delete _scan_timer;
+    delete _const_read_timer;
+    delete _rssi_read_timer;
+    delete _fft_read_timer;
 }
 
 void RadioController::stop()

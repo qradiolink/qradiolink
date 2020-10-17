@@ -23,6 +23,12 @@ Layer2Protocol::Layer2Protocol(Logger *logger, QObject *parent) :
     _buffer = new QByteArray;
 }
 
+Layer2Protocol::~Layer2Protocol()
+{
+    _buffer->clear();
+    delete _buffer;
+}
+
 void Layer2Protocol::processRadioMessage(QByteArray data)
 {
     int msg_type;
