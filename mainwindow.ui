@@ -1533,7 +1533,7 @@ background-color: #4a5053</string>
                <property name="minimumSize">
                 <size>
                  <width>120</width>
-                 <height>25</height>
+                 <height>30</height>
                 </size>
                </property>
                <property name="maximumSize">
@@ -1632,7 +1632,7 @@ background-color: #4a5053</string>
                <property name="minimumSize">
                 <size>
                  <width>250</width>
-                 <height>25</height>
+                 <height>30</height>
                 </size>
                </property>
                <property name="styleSheet">
@@ -2792,7 +2792,7 @@ font: 10pt &quot;Sans Serif&quot;;
              </font>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>1</number>
             </property>
             <widget class="QWidget" name="tab">
              <attribute name="title">
@@ -3624,7 +3624,7 @@ and S-meter (dBm)</string>
                    </property>
                    <property name="maximumSize">
                     <size>
-                     <width>150</width>
+                     <width>200</width>
                      <height>16777215</height>
                     </size>
                    </property>
@@ -3689,7 +3689,7 @@ and S-meter (dBm)</string>
                    </property>
                    <property name="minimumSize">
                     <size>
-                     <width>200</width>
+                     <width>300</width>
                      <height>0</height>
                     </size>
                    </property>
@@ -3715,6 +3715,12 @@ and S-meter (dBm)</string>
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>300</width>
+                     <height>16777215</height>
+                    </size>
                    </property>
                   </widget>
                  </item>
@@ -3796,7 +3802,7 @@ and S-meter (dBm)</string>
                    </property>
                    <property name="minimumSize">
                     <size>
-                     <width>200</width>
+                     <width>300</width>
                      <height>0</height>
                     </size>
                    </property>
@@ -5143,8 +5149,7 @@ border-radius: 0px;</string>
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Push to talk (Space key)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="styleSheet">
-           <string notr="true">
-</string>
+           <string notr="true"/>
           </property>
           <property name="text">
            <string>PTT</string>

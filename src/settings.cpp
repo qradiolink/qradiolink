@@ -146,7 +146,7 @@ void Settings::readConfig()
     }
     catch(const libconfig::SettingNotFoundException &nfex)
     {
-        tx_device_args = "uhd";
+        tx_device_args = "soapy=0,driver=plutosdr";
     }
     try
     {
@@ -154,7 +154,7 @@ void Settings::readConfig()
     }
     catch(const libconfig::SettingNotFoundException &nfex)
     {
-        rx_antenna = "RX2";
+        rx_antenna = "Auto";
     }
     try
     {
@@ -162,7 +162,7 @@ void Settings::readConfig()
     }
     catch(const libconfig::SettingNotFoundException &nfex)
     {
-        tx_antenna = "TX/RX";
+        tx_antenna = "Auto";
     }
     try
     {
@@ -578,7 +578,7 @@ void Settings::readConfig()
     }
     catch(const libconfig::SettingNotFoundException &nfex)
     {
-        window_width = 1280;
+        window_width = 1400;
     }
     try
     {
