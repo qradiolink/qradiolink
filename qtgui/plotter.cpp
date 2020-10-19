@@ -1000,7 +1000,6 @@ void CPlotter::draw()
     if (w != 0 && h != 0)
     {
         // first copy into 2Dbitmap the overlay bitmap.
-        m_2DPixmap = m_OverlayPixmap.copy(0,0,w,h);
 
         QPainter painter2(&m_2DPixmap);
         painter2.setRenderHint(QPainter::HighQualityAntialiasing);
@@ -1021,6 +1020,8 @@ void CPlotter::draw()
 
         // draw the pandapter
         painter2.setPen(m_FftColor);
+        painter2.setOpacity(1.0);
+        painter2.setCompositionMode(QPainter::CompositionMode_Source);
         n = xmax - xmin;
         for (i = 0; i < n; i++)
         {
@@ -1052,6 +1053,29 @@ void CPlotter::draw()
         {
             painter2.drawPolyline(LineBuf, n);
         }
+
+        painter2.setCompositionMode(QPainter::CompositionMode_SoftLight);
+        if(!m_2DPixmap_h1.isNull())
+        {
+            painter2.setOpacity(0.75);
+            painter2.drawPixmap(0, 0, m_2DPixmap_h1);
+        }
+        if(!m_2DPixmap_h2.isNull())
+        {
+            painter2.setOpacity(0.50);
+            painter2.drawPixmap(0, 0, m_2DPixmap_h2);
+        }
+
+        if(!m_2DPixmap_h1.isNull())
+        {
+           m_2DPixmap_h2 = m_2DPixmap_h1.copy(0, 0, m_2DPixmap_h1.width(), m_2DPixmap_h1.height());
+        }
+        m_2DPixmap_h1 = m_2DPixmap.copy(0, 0, m_2DPixmap.width(), m_2DPixmap.height());
+
+        painter2.setCompositionMode(QPainter::CompositionMode_Source);
+        painter2.setOpacity(1.0);
+
+
 
         // Peak detection
         if (m_PeakDetection > 0)
@@ -1105,6 +1129,10 @@ void CPlotter::draw()
 
             m_PeakHoldValid = true;
         }
+
+        painter2.setOpacity(0.5);
+        painter2.drawPixmap(0, 0, m_OverlayPixmap);
+
 
       painter2.end();
 
@@ -1629,8 +1657,8 @@ void CPlotter::moveToDemodFreq(void)
 void CPlotter::setFftPlotColor(const QColor color)
 {
     m_FftColor = color;
-    m_FftFillCol = QColor("#2F5AA8");
-    m_FftFillCol.setAlpha(0x7A);
+    m_FftFillCol = QColor("#2F6AB8");
+    m_FftFillCol.setAlpha(0xDD);
     m_PeakHoldColor = color;
     m_PeakHoldColor.setAlpha(60);
 }
