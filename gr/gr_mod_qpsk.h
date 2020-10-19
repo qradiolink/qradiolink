@@ -39,8 +39,6 @@
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/digital/constellation.h>
 #include <gnuradio/filter/rational_resampler_base.h>
-#include <gnuradio/fec/encode_ccsds_27_bb.h>
-#include <gnuradio/blocks/unpacked_to_packed.h>
 
 
 class gr_mod_qpsk;
@@ -62,13 +60,10 @@ private:
     gr::blocks::packed_to_unpacked_bb::sptr _packed_to_unpacked;
     gr::digital::chunks_to_symbols_bc::sptr _chunks_to_symbols;
     gr::fec::encoder::sptr _encode_ccsds;
-    gr::fec::encode_ccsds_27_bb::sptr _ccsds_encoder;
-    gr::blocks::unpacked_to_packed_bb::sptr _unpacked_to_packed;
     gr::filter::fft_filter_ccf::sptr _shaping_filter;
     gr::blocks::multiply_const_cc::sptr _amplify;
     gr::blocks::multiply_const_cc::sptr _bb_gain;
     gr::digital::scrambler_bb::sptr _scrambler;
-    gr::filter::fft_filter_ccf::sptr _filter;
     gr::digital::diff_encoder_bb::sptr _diff_encoder;
     gr::blocks::pack_k_bits_bb::sptr _packer;
     gr::digital::map_bb::sptr _map;

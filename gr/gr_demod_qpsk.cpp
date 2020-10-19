@@ -73,9 +73,6 @@ gr_demod_qpsk::gr_demod_qpsk(std::vector<int>signature, int sps, int samp_rate, 
     _samp_rate =samp_rate;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
-    int filter_slope = 1200;
-    if(_target_samp_rate > 100000)
-        filter_slope = 15000;
 
     std::vector<int> map;
     map.push_back(0);
@@ -100,8 +97,6 @@ gr_demod_qpsk::gr_demod_qpsk(std::vector<int>signature, int sps, int samp_rate, 
     _resampler = gr::filter::rational_resampler_base_ccf::make(interpolation, decimation, taps);
     _resampler->set_thread_priority(99);
     _agc = gr::analog::agc2_cc::make(1e-1, 1e-1, 1, 1);
-    _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
-            1, _target_samp_rate, _filter_width, filter_slope,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
 
     _fll = gr::digital::fll_band_edge_cc::make(_samples_per_symbol, 0.35, 32, fll_bw*M_PI/100);
     _shaping_filter = gr::filter::fft_filter_ccf::make(
@@ -128,9 +123,6 @@ gr_demod_qpsk::gr_demod_qpsk(std::vector<int>signature, int sps, int samp_rate, 
     _add_const_fec = gr::blocks::add_const_ff::make(128.0);
     gr::fec::code::cc_decoder::sptr decoder = gr::fec::code::cc_decoder::make(80, 7, 2, polys);
     _decode_ccsds = gr::fec::decoder::make(decoder, 1, 1);
-
-    _ccsds_decoder = gr::fec::decode_ccsds_27_fb::make();
-    _packed_to_unpacked = gr::blocks::packed_to_unpacked_bb::make(1, gr::GR_MSB_FIRST);
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
 
 
@@ -162,8 +154,6 @@ gr_demod_qpsk::gr_demod_qpsk(std::vector<int>signature, int sps, int samp_rate, 
     connect(_add_const_fec,0,_float_to_uchar,0);
     connect(_float_to_uchar,0,_decode_ccsds,0);
     connect(_decode_ccsds,0,_descrambler,0);
-    //connect(_ccsds_decoder,0,_packed_to_unpacked,0);
-    //connect(_packed_to_unpacked,0,_descrambler,0);
     connect(_descrambler,0,self(),2);
 
 }

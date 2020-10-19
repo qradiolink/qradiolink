@@ -142,9 +142,6 @@ gr_demod_4fsk::gr_demod_4fsk(std::vector<int>signature, int sps, int samp_rate, 
     gr::fec::code::cc_decoder::sptr decoder = gr::fec::code::cc_decoder::make(80, 7, 2, polys);
     _decode_ccsds = gr::fec::decoder::make(decoder, 1, 1);
 
-    _ccsds_decoder = gr::fec::decode_ccsds_27_fb::make();
-    _packed_to_unpacked = gr::blocks::packed_to_unpacked_bb::make(1, gr::GR_MSB_FIRST);
-
 
     connect(self(),0,_resampler,0);
     if(sps != 2)
@@ -201,8 +198,6 @@ gr_demod_4fsk::gr_demod_4fsk(std::vector<int>signature, int sps, int samp_rate, 
     connect(_add_const_fec,0,_float_to_uchar,0);
     connect(_float_to_uchar,0,_decode_ccsds,0);
     connect(_decode_ccsds,0,_descrambler,0);
-    //connect(_ccsds_decoder,0,_packed_to_unpacked,0);
-    //connect(_packed_to_unpacked,0,_descrambler,0);
     connect(_descrambler,0,self(),2);
 
 

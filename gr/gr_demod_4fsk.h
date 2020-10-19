@@ -45,8 +45,6 @@
 #include <gnuradio/blocks/interleave.h>
 #include <gnuradio/fec/decoder.h>
 #include <gnuradio/fec/cc_decoder.h>
-#include <gnuradio/fec/decode_ccsds_27_fb.h>
-#include <gnuradio/blocks/packed_to_unpacked.h>
 #include "gr_4fsk_discriminator.h"
 
 class gr_demod_4fsk;
@@ -92,8 +90,6 @@ private:
     gr::blocks::float_to_uchar::sptr _float_to_uchar;
     gr::blocks::add_const_ff::sptr _add_const_fec;
     gr::fec::decoder::sptr _decode_ccsds;
-    gr::fec::decode_ccsds_27_fb::sptr _ccsds_decoder;
-    gr::blocks::packed_to_unpacked_bb::sptr _packed_to_unpacked;
     gr::filter::fft_filter_fff::sptr _shaping_filter;
     gr::analog::phase_modulator_fc::sptr _phase_mod;
 

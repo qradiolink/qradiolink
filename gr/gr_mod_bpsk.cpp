@@ -49,30 +49,21 @@ gr_mod_bpsk::gr_mod_bpsk(int sps, int samp_rate, int carrier_freq,
     gr::fec::code::cc_encoder::sptr encoder = gr::fec::code::cc_encoder::make(80, 7, 2, polys);
     _encode_ccsds = gr::fec::encoder::make(encoder, 1, 1);
 
-    _unpacked_to_packed = gr::blocks::unpacked_to_packed_bb::make(1, gr::GR_MSB_FIRST);
-    _ccsds_encoder = gr::fec::encode_ccsds_27_bb::make();
-
     _chunks_to_symbols = gr::digital::chunks_to_symbols_bc::make(constellation);
     _resampler = gr::filter::rational_resampler_base_ccf::make(_samples_per_symbol, 1,
                 gr::filter::firdes::root_raised_cosine(_samples_per_symbol,
                         _samples_per_symbol, 1, 0.35,11 * _samples_per_symbol));
     _resampler->set_thread_priority(99);
-    _amplify = gr::blocks::multiply_const_cc::make(0.65 ,1);
+    _amplify = gr::blocks::multiply_const_cc::make(0.6 ,1);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
-    _filter = gr::filter::fft_filter_ccf::make(
-                1,gr::filter::firdes::low_pass_2(
-                    1, if_samp_rate, _filter_width, 1200, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
 
 
     connect(self(),0,_packed_to_unpacked,0);
     connect(_packed_to_unpacked,0,_scrambler,0);
     connect(_scrambler,0,_encode_ccsds,0);
-    //connect(_scrambler,0,_unpacked_to_packed,0);
-    //(_unpacked_to_packed,0,_ccsds_encoder,0);
     connect(_encode_ccsds,0,_chunks_to_symbols,0);
     connect(_chunks_to_symbols,0,_resampler,0);
     connect(_resampler,0,_amplify,0);
-    //connect(_filter,0,_amplify,0);
     connect(_amplify,0,_bb_gain,0);
     connect(_bb_gain,0,self(),0);
 

@@ -75,9 +75,6 @@ gr_mod_4fsk::gr_mod_4fsk(int sps, int samp_rate, int carrier_freq,
     gr::fec::code::cc_encoder::sptr encoder = gr::fec::code::cc_encoder::make(80, 7, 2, polys);
     _encode_ccsds = gr::fec::encoder::make(encoder, 1, 1);
 
-    _unpacked_to_packed = gr::blocks::unpacked_to_packed_bb::make(1, gr::GR_MSB_FIRST);
-    _ccsds_encoder = gr::fec::encode_ccsds_27_bb::make();
-
     _map = gr::digital::map_bb::make(map);
 
     _chunks_to_symbols = gr::digital::chunks_to_symbols_bf::make(constellation);
@@ -97,8 +94,6 @@ gr_mod_4fsk::gr_mod_4fsk(int sps, int samp_rate, int carrier_freq,
 
     connect(self(),0,_packed_to_unpacked,0);
     connect(_packed_to_unpacked,0,_scrambler,0);
-    //connect(_scrambler,0,_unpacked_to_packed,0);
-    //connect(_unpacked_to_packed,0,_ccsds_encoder,0);
     connect(_scrambler,0,_encode_ccsds,0);
     connect(_encode_ccsds,0,_packer,0);
     connect(_packer,0,_map,0);

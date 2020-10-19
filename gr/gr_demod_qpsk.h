@@ -41,8 +41,6 @@
 #include <gnuradio/digital/descrambler_bb.h>
 #include <gnuradio/blocks/float_to_uchar.h>
 #include <gnuradio/blocks/add_const_ff.h>
-#include <gnuradio/fec/decode_ccsds_27_fb.h>
-#include <gnuradio/blocks/packed_to_unpacked.h>
 
 
 class gr_demod_qpsk;
@@ -71,8 +69,6 @@ private:
     gr::filter::fft_filter_ccf::sptr _filter;
     gr::digital::descrambler_bb::sptr _descrambler;
     gr::fec::decoder::sptr _decode_ccsds;
-    gr::fec::decode_ccsds_27_fb::sptr _ccsds_decoder;
-    gr::blocks::packed_to_unpacked_bb::sptr _packed_to_unpacked;
     gr::digital::diff_phasor_cc::sptr _diff_phasor;
     gr::blocks::multiply_const_cc::sptr _rotate_const;
     gr::blocks::multiply_const_ff::sptr _multiply_const_fec;

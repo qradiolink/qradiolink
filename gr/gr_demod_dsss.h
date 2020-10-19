@@ -38,8 +38,6 @@
 #include <gnuradio/blocks/multiply_const.h>
 #include <gnuradio/blocks/float_to_uchar.h>
 #include <gr/dsss_decoder_cc_impl.h>
-#include <gnuradio/fec/decode_ccsds_27_fb.h>
-#include <gnuradio/blocks/packed_to_unpacked.h>
 
 
 class gr_demod_dsss;
@@ -74,10 +72,6 @@ private:
     gr::blocks::multiply_const_ff::sptr _multiply_const_fec;
     gr::fec::decoder::sptr _cc_decoder;
     gr::fec::decoder::sptr _cc_decoder2;
-    gr::fec::decode_ccsds_27_fb::sptr _ccsds_decoder;
-    gr::fec::decode_ccsds_27_fb::sptr _ccsds_decoder2;
-    gr::blocks::packed_to_unpacked_bb::sptr _packed_to_unpacked;
-    gr::blocks::packed_to_unpacked_bb::sptr _packed_to_unpacked2;
 
 
 

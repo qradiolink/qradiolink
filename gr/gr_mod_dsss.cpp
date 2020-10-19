@@ -55,8 +55,6 @@ gr_mod_dsss::gr_mod_dsss(int sps, int samp_rate, int carrier_freq,
     _encode_ccsds = gr::fec::encoder::make(encoder, 1, 1);
 
     _unpacked_to_packed = gr::blocks::unpacked_to_packed_bb::make(1, gr::GR_MSB_FIRST);
-    _ccsds_encoder = gr::fec::encode_ccsds_27_bb::make();
-    _unpacked_to_packed2 = gr::blocks::unpacked_to_packed_bb::make(1,gr::GR_MSB_FIRST);
 
     _chunks_to_symbols = gr::digital::chunks_to_symbols_bc::make(constellation);
 
@@ -81,8 +79,6 @@ gr_mod_dsss::gr_mod_dsss(int sps, int samp_rate, int carrier_freq,
     connect(self(),0,_packed_to_unpacked,0);
     connect(_packed_to_unpacked,0,_scrambler,0);
     connect(_scrambler,0,_encode_ccsds,0);
-    //connect(_scrambler,0,_unpacked_to_packed2,0);
-    //connect(_unpacked_to_packed2,0,_ccsds_encoder,0);
     connect(_encode_ccsds,0,_unpacked_to_packed,0);
     connect(_unpacked_to_packed,0,_dsss_encoder,0);
     connect(_dsss_encoder,0,_chunks_to_symbols,0);
