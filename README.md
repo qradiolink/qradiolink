@@ -168,6 +168,7 @@ Known issues:
 
 Setup and running
 -------
+- **Notice**: due to an issue present in GNU radio 3.8, it is necessary to perform a workaround step to re-enable digital modes. You need to run the **volk_profile** command, and after it completes, inspect the file **~/.volk/volk_config** in the /home directory. Locate the line starting with **volk_8u_x4_conv_k7_r2_8u** and ensure it ends with  **spiral spiral**: **volk_8u_x4_conv_k7_r2_8u spiral spiral**. If it does not not, change it so it looks like this. After performing this step, digital modes should work again. 
 - It is recommended to start the application using the command line when running the first few times and look for any error messages output to the console. Some of them can be ignored safely, others are critical. Logging to console is by default enabled.
 - **It is not recommended to run qradiolink as root**
 - When first run, go to the **Setup** tab first and configure the options, then click Save before starting TX or RX. Without the correct device arguments, the application can crash when enabling RX or TX. This is not something that the application can control and keep functioning properly.
