@@ -96,6 +96,7 @@ void AudioWriter::run()
     }
     if (!device.isFormatSupported(format))
     {
+        delete processor;
         _logger->log(Logger::LogLevelCritical, "Raw audio format not supported by backend, cannot play audio.");
         struct timespec time_to_sleep = {1, 40000000L };
         nanosleep(&time_to_sleep, NULL);
