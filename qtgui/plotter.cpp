@@ -1001,6 +1001,7 @@ void CPlotter::draw()
     {
         // first copy into 2Dbitmap the overlay bitmap.
 
+        m_2DPixmap.fill(QColor(PLOTTER_BGD_COLOR));
         QPainter painter2(&m_2DPixmap);
         painter2.setRenderHint(QPainter::HighQualityAntialiasing);
 
@@ -1060,20 +1061,20 @@ void CPlotter::draw()
             painter2.setOpacity(0.75);
             painter2.drawPixmap(0, 0, m_2DPixmap_h1);
         }
+        painter2.setCompositionMode(QPainter::CompositionMode_HardLight);
         if(!m_2DPixmap_h2.isNull())
         {
             painter2.setOpacity(0.50);
             painter2.drawPixmap(0, 0, m_2DPixmap_h2);
         }
+        painter2.setCompositionMode(QPainter::CompositionMode_Source);
+        painter2.setOpacity(1.0);
 
         if(!m_2DPixmap_h1.isNull())
         {
            m_2DPixmap_h2 = m_2DPixmap_h1.copy(0, 0, m_2DPixmap_h1.width(), m_2DPixmap_h1.height());
         }
         m_2DPixmap_h1 = m_2DPixmap.copy(0, 0, m_2DPixmap.width(), m_2DPixmap.height());
-
-        painter2.setCompositionMode(QPainter::CompositionMode_Source);
-        painter2.setOpacity(1.0);
 
 
 
@@ -1339,6 +1340,7 @@ void CPlotter::drawOverlay()
     Q_UNUSED(gradient);
     painter.setBrush(Qt::SolidPattern);
     painter.fillRect(0, 0, w, h, QColor(PLOTTER_BGD_COLOR));
+    painter.fillRect(0, 0, w, h, Qt::transparent);
 
 #define HOR_MARGIN 5
 #define VER_MARGIN 5
@@ -1657,10 +1659,10 @@ void CPlotter::moveToDemodFreq(void)
 void CPlotter::setFftPlotColor(const QColor color)
 {
     m_FftColor = color;
-    m_FftFillCol = QColor("#2F6AB8");
-    m_FftFillCol.setAlpha(0xDD);
+    m_FftFillCol = QColor("#2F6AB8");//#0c6ebf
+    m_FftFillCol.setAlpha(0xFF);
     m_PeakHoldColor = color;
-    m_PeakHoldColor.setAlpha(60);
+    m_PeakHoldColor.setAlpha(155);
 }
 
 /** Enable/disable filling the area below the FFT plot. */
