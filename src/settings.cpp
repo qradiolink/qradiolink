@@ -123,7 +123,7 @@ void Settings::readConfig()
     /// Read values
     try
     {
-        cfg.lookupValue("rx_freq_corr", rx_freq_corr);
+        rx_freq_corr = cfg.lookup("rx_freq_corr");
     }
     catch(const libconfig::SettingNotFoundException &nfex)
     {
@@ -131,7 +131,7 @@ void Settings::readConfig()
     }
     try
     {
-        cfg.lookupValue("tx_freq_corr", tx_freq_corr);
+        tx_freq_corr = cfg.lookup("tx_freq_corr");
     }
     catch(const libconfig::SettingNotFoundException &nfex)
     {
