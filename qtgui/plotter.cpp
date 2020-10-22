@@ -1674,12 +1674,12 @@ void CPlotter::setFftPlotColor(const QColor color)
     m_FftColor = color;
     if(m_fftHistory)
     {
-        m_FftFillCol = QColor("#0c6ebf");//#0c6ebf
+        m_FftFillCol = QColor("#0b3363");//#0c6ebf#0b3363
         m_FftFillCol.setAlpha(0xFF);
     }
     else
     {
-        m_FftFillCol = QColor("#2F6AB8");//#0c6ebf
+        m_FftFillCol = QColor("#0b3363");//#0c6ebf#0b3363
         m_FftFillCol.setAlpha(0x7F);
     }
     m_PeakHoldColor = color;
@@ -1717,12 +1717,12 @@ void CPlotter::setFFTHistory(bool enabled)
     m_fftHistory = enabled;
     if(m_fftHistory)
     {
-        m_FftFillCol = QColor("#0c6ebf");//#0c6ebf
+        m_FftFillCol = QColor("#0b3363");//#0c6ebf#0b3363
         m_FftFillCol.setAlpha(0xFF);
     }
     else
     {
-        m_FftFillCol = QColor("#2F6AB8");//#0c6ebf
+        m_FftFillCol = QColor("#0b3363");//#0c6ebf#0b3363
         m_FftFillCol.setAlpha(0x7F);
     }
 }
