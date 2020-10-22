@@ -140,6 +140,7 @@ public slots:
     void setFftPlotColor(const QColor color);
     void setFftFill(bool enabled);
     void setPeakHold(bool enabled);
+    void setFFTHistory(bool enabled);
     void setFftRange(float min, float max);
     void setPandapterRange(float min, float max);
     void setWaterfallRange(float min, float max);
@@ -217,6 +218,7 @@ private:
     QString     m_HDivText[HORZ_DIVS_MAX+1];
     bool        m_Running;
     bool        m_DrawOverlay;
+    bool        m_fftHistory;
     qint64      m_CenterFreq;       // The HW frequency
     qint64      m_FftCenter;        // Center freq in the -span ... +span range
     qint64      m_DemodCenterFreq;
@@ -278,7 +280,8 @@ private:
     quint64     msec_per_wfline;    // milliseconds between waterfall updates
     quint64     wf_span;            // waterfall span in milliseconds (0 = auto)
     int         fft_rate;           // expected FFT rate (needed when WF span is auto)
-    QPoint LineBuf[MAX_SCREENSIZE];
+    QPoint      LineBuf[MAX_SCREENSIZE];
+
 };
 
 #endif // PLOTTER_H

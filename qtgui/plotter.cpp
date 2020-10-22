@@ -149,6 +149,7 @@ CPlotter::CPlotter(QWidget *parent) : QFrame(parent)
 
     m_PeakHoldActive = false;
     m_PeakHoldValid = false;
+    m_fftHistory = false;
 
     m_FftCenter = 0;
     m_CenterFreq = 144500000;
@@ -869,6 +870,10 @@ void CPlotter::resizeEvent(QResizeEvent* )
         m_OverlayPixmap.fill(Qt::black);
         m_2DPixmap = QPixmap(m_Size.width(), fft_plot_height);
         m_2DPixmap.fill(Qt::black);
+        m_2DPixmap_h1 = QPixmap(m_Size.width(), fft_plot_height);
+        m_2DPixmap_h1.fill(Qt::black);
+        m_2DPixmap_h2 = QPixmap(m_Size.width(), fft_plot_height);
+        m_2DPixmap_h2.fill(Qt::black);
 
         int height = (100 - m_Percent2DScreen) * m_Size.height() / 100;
         if (m_WaterfallPixmap.isNull())
@@ -898,7 +903,12 @@ void CPlotter::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
 
+    painter.setOpacity(1.0);
     painter.drawPixmap(0, 0, m_2DPixmap);
+    painter.setOpacity(0.75);
+    painter.setCompositionMode(QPainter::CompositionMode_SourceAtop);
+    painter.drawPixmap(0, 0, m_OverlayPixmap);
+    painter.setOpacity(1.0);
     painter.drawPixmap(0, m_Percent2DScreen * m_Size.height() / 100,
                        m_WaterfallPixmap);
 }
@@ -999,11 +1009,10 @@ void CPlotter::draw()
 
     if (w != 0 && h != 0)
     {
-        // first copy into 2Dbitmap the overlay bitmap.
 
         m_2DPixmap.fill(QColor(PLOTTER_BGD_COLOR));
         QPainter painter2(&m_2DPixmap);
-        painter2.setRenderHint(QPainter::HighQualityAntialiasing);
+        painter2.setRenderHint(QPainter::Antialiasing);
 
 // workaround for "fixed" line drawing since Qt 5
 // see http://stackoverflow.com/questions/16990326
@@ -1022,7 +1031,7 @@ void CPlotter::draw()
         // draw the pandapter
         painter2.setPen(m_FftColor);
         painter2.setOpacity(1.0);
-        painter2.setCompositionMode(QPainter::CompositionMode_Source);
+        painter2.setCompositionMode(QPainter::CompositionMode_SourceAtop);
         n = xmax - xmin;
         for (i = 0; i < n; i++)
         {
@@ -1055,26 +1064,30 @@ void CPlotter::draw()
             painter2.drawPolyline(LineBuf, n);
         }
 
-        painter2.setCompositionMode(QPainter::CompositionMode_SoftLight);
-        if(!m_2DPixmap_h1.isNull())
+        if(m_fftHistory)
         {
-            painter2.setOpacity(0.75);
-            painter2.drawPixmap(0, 0, m_2DPixmap_h1);
-        }
-        painter2.setCompositionMode(QPainter::CompositionMode_HardLight);
-        if(!m_2DPixmap_h2.isNull())
-        {
-            painter2.setOpacity(0.50);
-            painter2.drawPixmap(0, 0, m_2DPixmap_h2);
-        }
-        painter2.setCompositionMode(QPainter::CompositionMode_Source);
-        painter2.setOpacity(1.0);
+            if(!m_2DPixmap_h1.isNull())
+            {
+                painter2.setCompositionMode(QPainter::CompositionMode_SourceIn);
+                painter2.setOpacity(0.65);
+                painter2.drawPixmap(0, 0, m_2DPixmap_h1);
+            }
 
-        if(!m_2DPixmap_h1.isNull())
-        {
-           m_2DPixmap_h2 = m_2DPixmap_h1.copy(0, 0, m_2DPixmap_h1.width(), m_2DPixmap_h1.height());
+            if(!m_2DPixmap_h2.isNull())
+            {
+                painter2.setCompositionMode(QPainter::CompositionMode_Darken);
+                painter2.setOpacity(0.35);
+                painter2.drawPixmap(0, 0, m_2DPixmap_h2);
+            }
+            painter2.setCompositionMode(QPainter::CompositionMode_SourceAtop);
+            painter2.setOpacity(0.5);
+
+            if(!m_2DPixmap_h1.isNull())
+            {
+               m_2DPixmap_h2 = m_2DPixmap_h1.copy(0, 0, m_2DPixmap_h1.width(), m_2DPixmap_h1.height());
+            }
+            m_2DPixmap_h1 = m_2DPixmap.copy(0, 0, m_2DPixmap.width(), m_2DPixmap.height());
         }
-        m_2DPixmap_h1 = m_2DPixmap.copy(0, 0, m_2DPixmap.width(), m_2DPixmap.height());
 
 
 
@@ -1130,9 +1143,6 @@ void CPlotter::draw()
 
             m_PeakHoldValid = true;
         }
-
-        painter2.setOpacity(0.5);
-        painter2.drawPixmap(0, 0, m_OverlayPixmap);
 
 
       painter2.end();
@@ -1339,8 +1349,10 @@ void CPlotter::drawOverlay()
     gradient.setColorAt(0, QColor("#181818")); // #24678e
     Q_UNUSED(gradient);
     painter.setBrush(Qt::SolidPattern);
-    painter.fillRect(0, 0, w, h, QColor(PLOTTER_BGD_COLOR));
+
+    painter.setCompositionMode(QPainter::CompositionMode_Source);
     painter.fillRect(0, 0, w, h, Qt::transparent);
+    painter.setOpacity(1.0);
 
 #define HOR_MARGIN 5
 #define VER_MARGIN 5
@@ -1447,7 +1459,8 @@ void CPlotter::drawOverlay()
 
         int dw = m_DemodHiCutFreqX - m_DemodLowCutFreqX;
 
-        painter.setOpacity(0.4);
+        painter.setOpacity(0.35);
+        painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
         painter.fillRect(m_DemodLowCutFreqX, 0, dw, h,
                          QColor(PLOTTER_FILTER_BOX_COLOR));
 
@@ -1659,8 +1672,16 @@ void CPlotter::moveToDemodFreq(void)
 void CPlotter::setFftPlotColor(const QColor color)
 {
     m_FftColor = color;
-    m_FftFillCol = QColor("#2F6AB8");//#0c6ebf
-    m_FftFillCol.setAlpha(0xFF);
+    if(m_fftHistory)
+    {
+        m_FftFillCol = QColor("#0c6ebf");//#0c6ebf
+        m_FftFillCol.setAlpha(0xFF);
+    }
+    else
+    {
+        m_FftFillCol = QColor("#2F6AB8");//#0c6ebf
+        m_FftFillCol.setAlpha(0x7F);
+    }
     m_PeakHoldColor = color;
     m_PeakHoldColor.setAlpha(155);
 }
@@ -1689,6 +1710,21 @@ void CPlotter::setPeakDetection(bool enabled, float c)
         m_PeakDetection = -1;
     else
         m_PeakDetection = c;
+}
+
+void CPlotter::setFFTHistory(bool enabled)
+{
+    m_fftHistory = enabled;
+    if(m_fftHistory)
+    {
+        m_FftFillCol = QColor("#0c6ebf");//#0c6ebf
+        m_FftFillCol.setAlpha(0xFF);
+    }
+    else
+    {
+        m_FftFillCol = QColor("#2F6AB8");//#0c6ebf
+        m_FftFillCol.setAlpha(0x7F);
+    }
 }
 
 void CPlotter::calcDivSize (qint64 low, qint64 high, int divswanted, qint64 &adjlow, qint64 &step, int& divs)

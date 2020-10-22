@@ -135,6 +135,7 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     QObject::connect(ui->checkBoxRelays,SIGNAL(toggled(bool)),this,SLOT(setRelays(bool)));
     QObject::connect(ui->burstIPCheckBox,SIGNAL(toggled(bool)),this,SLOT(setBurstIPMode(bool)));
     QObject::connect(ui->nightModeCheckBox,SIGNAL(toggled(bool)),this,SLOT(setTheme(bool)));
+    QObject::connect(ui->fftHistoryCheckBox,SIGNAL(toggled(bool)),this,SLOT(setFFTHistory(bool)));
     QObject::connect(ui->remoteControlCheckBox,SIGNAL(toggled(bool)),
                      this,SLOT(setRemoteControl(bool)));
     QObject::connect(ui->muteForwardedAudioCheckBox,SIGNAL(toggled(bool)),
@@ -240,6 +241,8 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     ui->plotterFrame->setClickResolution(1);
     ui->plotterFrame->setFftRange(-120.0,-30.0);
     ui->plotterFrame->setWaterfallRange(-120.0,-30.0);
+    ui->plotterFrame->setFFTHistory(false);
+    ui->plotterFrame->setFftPlotColor(QColor(0x77CCCCCC));
     _range_set = false;
     //QPixmap pm = QPixmap::grabWidget(ui->frameCtrlFreq);
     //ui->frameCtrlFreq->setMask(pm.createHeuristicMask(false));
@@ -277,6 +280,7 @@ void MainWindow::initSettings()
     updateMemories();
     updateRSSI(9999);
     setEnabledFFT((bool)_settings->show_fft);
+    setFFTHistory((bool)_settings->fft_history);
     setEnabledDuplex((bool) _settings->enable_duplex);
     setAudioCompressor((bool) _settings->audio_compressor);
     ui->showConstellationButton->setChecked(_settings->show_constellation);
@@ -523,6 +527,7 @@ void MainWindow::setConfig()
     ui->burstIPCheckBox->setChecked((bool)_settings->burst_ip_modem);
     ui->remoteControlCheckBox->setChecked((bool)_settings->remote_control);
     ui->nightModeCheckBox->setChecked((bool)_settings->night_mode);
+    ui->fftHistoryCheckBox->setChecked((bool)_settings->fft_history);
     ui->muteForwardedAudioCheckBox->setChecked((bool)_settings->mute_forwarded_audio);
     ui->rssiCalibrateEdit->setText(QString::number(_settings->rssi_calibration_value));
     if(_settings->rx_ctcss > 0.0)
@@ -1568,6 +1573,20 @@ void MainWindow::toggleVox(bool value)
 void MainWindow::setPeakDetect(bool value)
 {
     ui->plotterFrame->setPeakDetection(value, 6.0);
+}
+
+void MainWindow::setFFTHistory(bool value)
+{
+    ui->plotterFrame->setFFTHistory(value);
+    if(value)
+    {
+        ui->plotterFrame->setFftPlotColor(QColor(0xFFFFFFFF));
+    }
+    else
+    {
+        ui->plotterFrame->setFftPlotColor(QColor(0x77CCCCCC));
+    }
+    _settings->fft_history = (int)value;
 }
 
 void MainWindow::updateRSSI(float value)

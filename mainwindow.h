@@ -150,6 +150,7 @@ public slots:
     void changeVoipVolume(int value);
     void setBurstIPMode(bool value);
     void setTheme(bool value);
+    void setFFTHistory(bool value);
     void updateScanResumeTime(int value);
     void updateAudioOutput(int value);
     void updateAudioInput(int value);

@@ -2792,7 +2792,7 @@ font: 10pt &quot;Sans Serif&quot;;
              </font>
             </property>
             <property name="currentIndex">
-             <number>1</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="tab">
              <attribute name="title">
@@ -3562,6 +3562,13 @@ and S-meter (dBm)</string>
                   <widget class="QLabel" name="label_49">
                    <property name="text">
                     <string>TX frequency</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="13" column="4">
+                  <widget class="QCheckBox" name="fftHistoryCheckBox">
+                   <property name="text">
+                    <string>FFT history effect</string>
                    </property>
                   </widget>
                  </item>

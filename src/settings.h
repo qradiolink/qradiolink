@@ -72,6 +72,7 @@ public:
     float fft_averaging;
     int waterfall_fps;
     int show_fft;
+    int fft_history;
     int audio_compressor;
     int enable_relays;
     int mute_forwarded_audio;
