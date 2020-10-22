@@ -38,7 +38,12 @@ void VideoEncoder::init(QString device_name)
         return;
     dev_name = (char*)(device_name.toStdString().c_str());
     _logger->log(Logger::LogLevelInfo,"Using video device: " + device_name);
-    open_device();
+    int retval = open_device();
+    if(retval != 0)
+    {
+        _logger->log(Logger::LogLevelCritical,"Could not open device: " + device_name);
+        return;
+    }
     init_device();
     start_capturing();
     _init = true;
