@@ -80,6 +80,7 @@ SOURCES += main.cpp\
         src/limits.cpp \
     qtgui/freqctrl.cpp \
     qtgui/plotter.cpp \
+    qtgui/skinneddial.cpp \
     gr/gr_mod_base.cpp \
     gr/gr_demod_base.cpp \
     gr/gr_demod_nbfm_sdr.cpp \
@@ -154,6 +155,7 @@ HEADERS  += mainwindow.h\
         src/limits.h \
     qtgui/freqctrl.h \
     qtgui/plotter.h \
+    qtgui/skinneddial.h \
     gr/gr_mod_base.h \
     gr/gr_demod_base.h \
     gr/gr_demod_freedv.h \

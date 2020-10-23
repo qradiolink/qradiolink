@@ -47,6 +47,8 @@
         <file>res/constellation_icon_enabled.png</file>
         <file>res/arrow-down.png</file>
         <file>res/go-down-arrow.png</file>
+        <file>res/dial-background.png</file>
+        <file>res/dial-needle.png</file>
     </qresource>
     <qresource prefix="/fonts">
         <file>res/LiquidCrystal-Normal.otf</file>

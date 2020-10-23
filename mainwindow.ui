@@ -4655,7 +4655,7 @@ color: rgb(182, 182, 182);</string>
           <string>RX gain</string>
          </property>
         </widget>
-        <widget class="QDial" name="rxSquelchDial">
+        <widget class="SkinnedDial" name="rxSquelchDial">
          <property name="geometry">
           <rect>
            <x>-1</x>
@@ -4698,7 +4698,7 @@ color: rgb(182, 182, 182);</string>
           <bool>true</bool>
          </property>
         </widget>
-        <widget class="QDial" name="rxVolumeDial">
+        <widget class="SkinnedDial" name="rxVolumeDial">
          <property name="geometry">
           <rect>
            <x>124</x>
@@ -4732,7 +4732,7 @@ color: rgb(182, 182, 182);</string>
           <bool>true</bool>
          </property>
         </widget>
-        <widget class="QDial" name="txGainDial">
+        <widget class="SkinnedDial" name="txGainDial">
          <property name="geometry">
           <rect>
            <x>246</x>
@@ -4769,7 +4769,7 @@ color: rgb(182, 182, 182);</string>
           <bool>true</bool>
          </property>
         </widget>
-        <widget class="QDial" name="rxGainDial">
+        <widget class="SkinnedDial" name="rxGainDial">
          <property name="geometry">
           <rect>
            <x>374</x>
@@ -4809,7 +4809,7 @@ color: rgb(182, 182, 182);</string>
           <bool>true</bool>
          </property>
         </widget>
-        <widget class="QDial" name="tuneDial">
+        <widget class="SkinnedDial" name="tuneDial">
          <property name="geometry">
           <rect>
            <x>508</x>
@@ -6061,6 +6061,11 @@ font: 14pt &quot;Sans Serif&quot;;
    <extends>QFrame</extends>
    <header>qtgui/plotter.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SkinnedDial</class>
+   <extends>QDial</extends>
+   <header>qtgui/skinneddial.h</header>
   </customwidget>
  </customwidgets>
  <resources>
