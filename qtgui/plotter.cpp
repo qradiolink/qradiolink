@@ -1010,8 +1010,15 @@ void CPlotter::draw()
     if (w != 0 && h != 0)
     {
 
-        m_2DPixmap.fill(QColor(PLOTTER_BGD_COLOR));
+        //m_2DPixmap.fill(QColor(PLOTTER_BGD_COLOR));
         QPainter painter2(&m_2DPixmap);
+        // solid background
+        QLinearGradient gradient(w/2, 0, w/2, h);
+        gradient.setColorAt(0, QColor("#0f2b4a")); // #053856
+        gradient.setColorAt(1, QColor("#607468")); // #607468 #4b5b51
+
+        painter2.fillRect(0, 0, w, h, QBrush(gradient));
+        painter2.setBrush(Qt::SolidPattern);
         painter2.setRenderHint(QPainter::Antialiasing);
 
 // workaround for "fixed" line drawing since Qt 5
@@ -1343,13 +1350,7 @@ void CPlotter::drawOverlay()
         painter.begin(this);
     painter.setFont(m_Font);
 
-    // solid background
-    QLinearGradient gradient(w/2, 0, w/2, h);
-    gradient.setColorAt(1, QColor("#181818")); // #053856
-    gradient.setColorAt(0, QColor("#181818")); // #24678e
-    Q_UNUSED(gradient);
     painter.setBrush(Qt::SolidPattern);
-
     painter.setCompositionMode(QPainter::CompositionMode_Source);
     painter.fillRect(0, 0, w, h, Qt::transparent);
     painter.setOpacity(1.0);
@@ -1459,7 +1460,7 @@ void CPlotter::drawOverlay()
 
         int dw = m_DemodHiCutFreqX - m_DemodLowCutFreqX;
 
-        painter.setOpacity(0.35);
+        painter.setOpacity(0.25);
         painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
         painter.fillRect(m_DemodLowCutFreqX, 0, dw, h,
                          QColor(PLOTTER_FILTER_BOX_COLOR));
@@ -1679,8 +1680,8 @@ void CPlotter::setFftPlotColor(const QColor color)
     }
     else
     {
-        m_FftFillCol = QColor("#0b3363");//#0c6ebf#0b3363
-        m_FftFillCol.setAlpha(0x7F);
+        m_FftFillCol = QColor("#0c3464");//#0c6ebf#0b3363
+        m_FftFillCol.setAlpha(0xFF);
     }
     m_PeakHoldColor = color;
     m_PeakHoldColor.setAlpha(155);
@@ -1722,8 +1723,8 @@ void CPlotter::setFFTHistory(bool enabled)
     }
     else
     {
-        m_FftFillCol = QColor("#0b3363");//#0c6ebf#0b3363
-        m_FftFillCol.setAlpha(0x7F);
+        m_FftFillCol = QColor("#0c3464");//#0c6ebf#0b3363
+        m_FftFillCol.setAlpha(0xFF);
     }
 }
 
