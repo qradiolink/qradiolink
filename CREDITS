@@ -4,6 +4,7 @@ GNU radio FFT code and UI plotter from the Gqrx project:
 /* + + +   This Software is released under the "Simplified BSD License"  + + +
  * Copyright 2010 Moe Wheatley. All rights reserved.
  * Copyright 2011-2013 Alexandru Csete OZ9AEC
+ * FFT history and other small modifications by Adrian Musceac 2020
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -184,6 +185,7 @@ S-meter image from Wikipedia: https://en.wikipedia.org/wiki/File:Pmeter-t.jpg
 Icons from KDE 4 Oxygen theme
 Liquid Crystal font by Chase Babb https://www.dafont.com/liquid-crystal.font
 
+Audio compressor code from:
 // (c) Copyright 2016, Sean Connelly (@voidqk), http://syntheti.cc
 // MIT License
 // Project Home: https://github.com/voidqk/sndfilter
