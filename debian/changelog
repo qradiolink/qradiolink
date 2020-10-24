@@ -1,3 +1,14 @@
+qradiolink (0.8.5-rc2) UNRELEASED; urgency=medium
+
+  [ Adrian Musceac ]
+  * Upgraded to GNU radio 3.8 and Qt 5.14
+  * Fixed some memory leaks and bugs
+  * Minor UI style changes
+
+  
+ -- Adrian Musceac <kantooon@gmail.com>  Fri, 23 Oct 2020 21:30:00 +0300
+
+
 qradiolink (0.8.5-rc1) UNRELEASED; urgency=medium
 
   [ Adrian Musceac ]
