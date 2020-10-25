@@ -131,10 +131,10 @@ git clone https://github.com/qradiolink/qradiolink
 cd qradiolink/
 git checkout master
 mkdir -p build
-cd ext/
+cd src/ext/
 protoc --cpp_out=. Mumble.proto
 protoc --cpp_out=. QRadioLink.proto
-cd ../build/
+cd ../../build/
 qmake ..
 make
 ./qradiolink

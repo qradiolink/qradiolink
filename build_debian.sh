@@ -4,10 +4,10 @@ set -e
 set -x
 
 mkdir -p build
-cd ext/
+cd src/ext/
 protoc --cpp_out=. Mumble.proto
 protoc --cpp_out=. QRadioLink.proto
-cd ../build/
+cd ../../build/
 qmake "CONFIG+=debug" ..
 make -j4
 
