@@ -40,7 +40,7 @@ private:
     Logger *_logger;
     struct ftdi_context *_ftdi_relay;
     bool _ftdi_relay_enabled;
-    unsigned char *_relay_mask;
+    unsigned char _relay_mask;
 };
 
 #endif // RELAYCONTROLLER_H

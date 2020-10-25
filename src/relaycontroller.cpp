@@ -21,14 +21,12 @@ RelayController::RelayController(Logger *logger, QObject *parent) : QObject(pare
     _logger = logger;
     _ftdi_relay = 0;
     _ftdi_relay_enabled = false;
-    _relay_mask = new unsigned char[1];
-    memset(_relay_mask,0,1);
+    memset(&_relay_mask,0,1);
 }
 
 RelayController::~RelayController()
 {
     deinit();
-    delete[] _relay_mask;
 }
 
 void RelayController::init()
@@ -53,8 +51,8 @@ void RelayController::init()
 
     ftdi_set_bitmode(_ftdi_relay, 0xFF, BITMODE_BITBANG);
     _ftdi_relay_enabled = true;
-    _relay_mask[0] = 0x0;
-    int ret = ftdi_write_data(_ftdi_relay, _relay_mask, 1);
+    _relay_mask = 0x0;
+    int ret = ftdi_write_data(_ftdi_relay, &_relay_mask, 1);
     if (ret < 0)
     {
         _logger->log(Logger::LogLevelCritical,
@@ -66,8 +64,8 @@ void RelayController::deinit()
 {
     if(_ftdi_relay_enabled)
     {
-        _relay_mask[0] = 0x0;
-        int ret = ftdi_write_data(_ftdi_relay, _relay_mask, 1);
+        _relay_mask = 0x0;
+        int ret = ftdi_write_data(_ftdi_relay, &_relay_mask, 1);
         if (ret < 0)
         {
             _logger->log(Logger::LogLevelCritical,
@@ -93,15 +91,15 @@ int RelayController::enableRelay(int relay_number)
         return 0;
     }
 
-    _relay_mask[0] |= 1 << relay_number;
-    int ret = ftdi_write_data(_ftdi_relay, _relay_mask, 1);
+    _relay_mask |= 1 << relay_number;
+    int ret = ftdi_write_data(_ftdi_relay, &_relay_mask, 1);
     struct timespec time_to_sleep = {0, 10000000L };
     nanosleep(&time_to_sleep, NULL);
     if (ret < 0)
     {
         _logger->log(Logger::LogLevelCritical,
             QString("Enable failed for relay number %1 %2 %3").arg(relay_number).arg(
-                  _relay_mask[0]).arg(ftdi_get_error_string(_ftdi_relay)));
+                  _relay_mask).arg(ftdi_get_error_string(_ftdi_relay)));
         return 0;
     }
     return 1;
@@ -119,8 +117,8 @@ int RelayController::disableRelay(int relay_number)
         return 0;
     }
 
-    _relay_mask[0] &= ~(1 << relay_number);
-    int ret = ftdi_write_data(_ftdi_relay, _relay_mask, 1);
+    _relay_mask &= ~(1 << relay_number);
+    int ret = ftdi_write_data(_ftdi_relay, &_relay_mask, 1);
     struct timespec time_to_sleep = {0, 5000000L };
     nanosleep(&time_to_sleep, NULL);
     if (ret < 0)
