@@ -26,7 +26,7 @@
    <string>QRadioLink</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="resources.qrc">
+   <iconset>
     <normaloff>:/res/logo.png</normaloff>:/res/logo.png</iconset>
   </property>
   <property name="styleSheet">
@@ -948,7 +948,7 @@ padding-right:15px;</string>
                 <string/>
                </property>
                <property name="icon">
-                <iconset resource="resources.qrc">
+                <iconset>
                  <normaloff>:/res/arrow-left-double.png</normaloff>
                  <normalon>:/res/go-first-view.png</normalon>:/res/arrow-left-double.png</iconset>
                </property>
@@ -989,7 +989,7 @@ padding-right:15px;</string>
                 <string/>
                </property>
                <property name="icon">
-                <iconset resource="resources.qrc">
+                <iconset>
                  <normaloff>:/res/arrow-right-double.png</normaloff>
                  <normalon>:/res/go-last-view.png</normalon>
                  <activeon>:/res/go-last-view.png</activeon>
@@ -1381,7 +1381,7 @@ background-color: #4a5053</string>
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset resource="resources.qrc">
+                 <iconset>
                   <normaloff>:/res/arrow-right-double.png</normaloff>
                   <normalon>:/res/go-last-view.png</normalon>
                   <activeoff>:/res/arrow-right-double.png</activeoff>
@@ -1871,7 +1871,7 @@ background-color: #4a5053</string>
                 <string>Repeater</string>
                </property>
                <property name="icon">
-                <iconset resource="resources.qrc">
+                <iconset>
                  <normaloff>:/res/Button-Blank-Gray-icon.png</normaloff>
                  <normalon>:/res/Button-Blank-Yellow-icon.png</normalon>:/res/Button-Blank-Gray-icon.png</iconset>
                </property>
@@ -1922,7 +1922,7 @@ background-color: #4a5053</string>
                 <string>Vox</string>
                </property>
                <property name="icon">
-                <iconset resource="resources.qrc">
+                <iconset>
                  <normaloff>:/res/Button-Blank-Gray-icon.png</normaloff>
                  <normalon>:/res/Button-Blank-Yellow-icon.png</normalon>:/res/Button-Blank-Gray-icon.png</iconset>
                </property>
@@ -1970,7 +1970,7 @@ background-color: #4a5053</string>
                 <string>Forward radio</string>
                </property>
                <property name="icon">
-                <iconset resource="resources.qrc">
+                <iconset>
                  <normaloff>:/res/Button-Blank-Gray-icon.png</normaloff>
                  <normalon>:/res/Button-Blank-Yellow-icon.png</normalon>:/res/Button-Blank-Gray-icon.png</iconset>
                </property>
@@ -2012,7 +2012,7 @@ background-color: #4a5053</string>
                 <string>PTT for VOIP</string>
                </property>
                <property name="icon">
-                <iconset resource="resources.qrc">
+                <iconset>
                  <normaloff>:/res/Button-Blank-Gray-icon.png</normaloff>
                  <normalon>:/res/Button-Blank-Yellow-icon.png</normalon>:/res/Button-Blank-Gray-icon.png</iconset>
                </property>
@@ -2030,7 +2030,7 @@ background-color: #4a5053</string>
                 <string>Broadcast info</string>
                </property>
                <property name="icon">
-                <iconset resource="resources.qrc">
+                <iconset>
                  <normaloff>:/res/Button-Blank-Gray-icon.png</normaloff>
                  <normalon>:/res/Button-Blank-Yellow-icon.png</normalon>:/res/Button-Blank-Gray-icon.png</iconset>
                </property>
@@ -2310,7 +2310,7 @@ color: rgb(0, 67, 98);</string>
                      <string>Send</string>
                     </property>
                     <property name="icon">
-                     <iconset resource="resources.qrc">
+                     <iconset>
                       <normaloff>:/res/view-conversation-balloon.png</normaloff>:/res/view-conversation-balloon.png</iconset>
                     </property>
                    </widget>
@@ -5011,7 +5011,7 @@ border-radius: 0px;</string>
               <string/>
              </property>
              <property name="pixmap">
-              <pixmap resource="resources.qrc">:/res/Button-Blank-Yellow-icon.png</pixmap>
+              <pixmap>:/res/Button-Blank-Yellow-icon.png</pixmap>
              </property>
              <property name="scaledContents">
               <bool>true</bool>
@@ -5053,7 +5053,7 @@ border-radius: 0px;</string>
               <string/>
              </property>
              <property name="pixmap">
-              <pixmap resource="resources.qrc">:/res/Button-Blank-Red-icon.png</pixmap>
+              <pixmap>:/res/Button-Blank-Red-icon.png</pixmap>
              </property>
              <property name="scaledContents">
               <bool>true</bool>
@@ -5089,7 +5089,7 @@ border-radius: 0px;</string>
               <string/>
              </property>
              <property name="pixmap">
-              <pixmap resource="resources.qrc">:/res/Button-Blank-Blue-icon.png</pixmap>
+              <pixmap>:/res/Button-Blank-Blue-icon.png</pixmap>
              </property>
              <property name="scaledContents">
               <bool>true</bool>
@@ -5128,7 +5128,7 @@ border-radius: 0px;</string>
               <string/>
              </property>
              <property name="pixmap">
-              <pixmap resource="resources.qrc">:/res/Button-Blank-Green-icon.png</pixmap>
+              <pixmap>:/res/Button-Blank-Green-icon.png</pixmap>
              </property>
              <property name="scaledContents">
               <bool>true</bool>
@@ -5162,7 +5162,7 @@ border-radius: 0px;</string>
            <string>PTT</string>
           </property>
           <property name="icon">
-           <iconset resource="resources.qrc">
+           <iconset>
             <normaloff>:/res/Button-Blank-Gray-icon.png</normaloff>
             <normalon>:/res/Button-Blank-Red-icon.png</normalon>:/res/Button-Blank-Gray-icon.png</iconset>
           </property>
@@ -5361,7 +5361,7 @@ font: 11px &quot;Sans Serif&quot;;</string>
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="resources.qrc">
+           <iconset>
             <normaloff>:/res/arrow-up.png</normaloff>
             <normalon>:/res/arrow-up-red.png</normalon>:/res/arrow-up.png</iconset>
           </property>
@@ -5406,7 +5406,7 @@ font: 11px &quot;Sans Serif&quot;;</string>
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="resources.qrc">
+           <iconset>
             <normaloff>:/res/constellation_icon.png</normaloff>
             <normalon>:/res/constellation_icon_enabled.png</normalon>:/res/constellation_icon.png</iconset>
           </property>
@@ -5498,7 +5498,7 @@ font: 11px &quot;Sans Serif&quot;;</string>
              <string>Rev</string>
             </property>
             <property name="icon">
-             <iconset resource="resources.qrc">
+             <iconset>
               <normaloff>:/res/Button-Blank-Gray-icon.png</normaloff>
               <normalon>:/res/Button-Blank-Yellow-icon.png</normalon>:/res/Button-Blank-Gray-icon.png</iconset>
             </property>
@@ -5540,7 +5540,7 @@ font: 11px &quot;Sans Serif&quot;;</string>
              <string>Duplex</string>
             </property>
             <property name="icon">
-             <iconset resource="resources.qrc">
+             <iconset>
               <normaloff>:/res/Button-Blank-Gray-icon.png</normaloff>
               <normalon>:/res/Button-Blank-Yellow-icon.png</normalon>:/res/Button-Blank-Gray-icon.png</iconset>
             </property>
@@ -5635,7 +5635,7 @@ color: #FF0000;</string>
              <string>TX</string>
             </property>
             <property name="icon">
-             <iconset resource="resources.qrc">
+             <iconset>
               <normaloff>:/res/Button-Blank-Gray-icon.png</normaloff>
               <normalon>:/res/Button-Blank-Red-icon.png</normalon>:/res/Button-Blank-Gray-icon.png</iconset>
             </property>
@@ -5776,7 +5776,7 @@ font: 14pt &quot;Sans Serif&quot;;
              <string>RX</string>
             </property>
             <property name="icon">
-             <iconset resource="resources.qrc">
+             <iconset>
               <normaloff>:/res/Button-Blank-Gray-icon.png</normaloff>
               <normalon>:/res/Button-Blank-Green-icon.png</normalon>:/res/Button-Blank-Gray-icon.png</iconset>
             </property>
@@ -6053,23 +6053,21 @@ font: 14pt &quot;Sans Serif&quot;;
   <customwidget>
    <class>CFreqCtrl</class>
    <extends>QFrame</extends>
-   <header location="global">qtgui/freqctrl.h</header>
+   <header location="global">src/qtgui/freqctrl.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>CPlotter</class>
    <extends>QFrame</extends>
-   <header>qtgui/plotter.h</header>
+   <header>src/qtgui/plotter.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>SkinnedDial</class>
    <extends>QDial</extends>
-   <header>qtgui/skinneddial.h</header>
+   <header>src/qtgui/skinneddial.h</header>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="resources.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

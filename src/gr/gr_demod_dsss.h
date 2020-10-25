@@ -37,7 +37,7 @@
 #include <gnuradio/blocks/delay.h>
 #include <gnuradio/blocks/multiply_const.h>
 #include <gnuradio/blocks/float_to_uchar.h>
-#include <gr/dsss_decoder_cc_impl.h>
+#include <src/gr/dsss_decoder_cc_impl.h>
 
 
 class gr_demod_dsss;

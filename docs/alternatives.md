@@ -1,0 +1,14 @@
+Alternatives to QRadioLink
+---
+
+Free software projects that work on Linux and have similar features to QRadioLink are listed below.
+
+- [**FreeDV**](https://freedv.org/) is a Digital Voice mode for HF radio. The application works for Windows, Linux and OSX and allows any SSB radio to be used for low bit rate digital voice. It is the original free software Codec2 implementation. It does not require a SDR and works with any analog radio.
+- [**SvxLink**](https://www.svxlink.org/) is a great project which inspired the radio linking features of QRadioLink. The Qtel component is a full-featured Echolink GUI client. It does not require using a SDR and can work with any FM radio.
+- [**Gqrx**](https://gqrx.dk/) is an open source software defined radio receiver (SDR) powered by the GNU Radio SDK and the Qt graphical toolkit. Gqrx inspired the use of GNU radio in QRadioLink and some features, code and architecture were copied verbatim from Gqrx as the best alternative available. Despite the graphical resemblance to it, Gqrx is much more suitable for the purpose of general SDR receiver. There are several trade-offs made in QRadioLink to emphasize CPU performance to the detriment of signal quality. One such tradeoff is the use of an audio sample rate of 8000 Hz in QRadioLink compared to the more faithful 48000 Hz in Gqrx. Other major differences are lack of Wide FM stereo, RDS decoding, lack of waterfall persistence, lack of I/Q samples recording and lower SSB / AM performance in QRadioLink. Gqrx is also more user friendly and has a wide support community.
+- [**SDRangel**](https://github.com/f4exb/sdrangel) is a full SDR transceiver for SSB, FM, DMR, D-Star, C4FM and DVB-S. It can use only SDR hardware but it supports a large number of them.
+- [**Mumble**](https://www.mumble.info/) is what QRadioLink uses under the hood. It is a great alternative for people who don't want to use SDR radios.
+- [**Codec2 GMSK**](https://github.com/on1arf/gmsk) is a great and free software alternative to D-Star on VHF-UHF handheld radios. It only requires a radio capable of 9600 baud packet.
+- [**OP25**](http://osmocom.org/projects/op25/wiki) is a free software implementation of D-Star, DMR and C4FM (Yaesu digital voice standard). It works with FM radios capable of 9600 baud packet as well as SDRs.
+- [**Charon**](https://github.com/tvelliott/charon) is a stand-alone OFDM transceiver with batman-adv mesh networking capabilities. The IP modem in Charon is very advanced and can be embedded on the PlutoSDR. It is the base for several amateur radio mesh networks. Only works with SDR hardware.
+- [**MMDVM**](https://github.com/g4klx/MMDVM) extremely robust free software implementation of D-Star, DMR and C4FM (Yaesu digital voice standard). Works with RaspberryPi, Arduino and any radios capable of 9600 baud packet. 

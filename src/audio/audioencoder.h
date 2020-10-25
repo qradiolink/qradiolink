@@ -20,7 +20,7 @@
 #include <QDebug>
 #include <opus/opus.h>
 #include <codec2/codec2.h>
-#include "audio/audioprocessor.h"
+#include "src/audio/audioprocessor.h"
 #include "src/settings.h"
 
 

@@ -31,7 +31,7 @@
 #include <gnuradio/blocks/multiply_const.h>
 #include <gnuradio/blocks/complex_to_real.h>
 #include <gnuradio/filter/pfb_arb_resampler_ccf.h>
-#include <gr/dsss_encoder_bb_impl.h>
+#include <src/gr/dsss_encoder_bb_impl.h>
 #include <gnuradio/blocks/repeat.h>
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/digital/scrambler_bb.h>

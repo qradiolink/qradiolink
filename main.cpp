@@ -26,8 +26,8 @@
 #include <string>
 #include "mainwindow.h"
 #include "src/mumbleclient.h"
-#include "audio/audiowriter.h"
-#include "audio/audioreader.h"
+#include "src/audio/audiowriter.h"
+#include "src/audio/audioreader.h"
 #include "src/mumblechannel.h"
 #include "src/radiochannel.h"
 #include "src/radiocontroller.h"

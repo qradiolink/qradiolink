@@ -27,14 +27,14 @@
 #include <QByteArray>
 #include <QCoreApplication>
 #include <string>
-#include "ext/utils.h"
+#include "src/ext/utils.h"
 #include "src/settings.h"
 #include "src/limits.h"
 #include "src/logger.h"
 #include "src/layer1framing.h"
 #include "src/modem_types.h"
-#include "gr/gr_mod_base.h"
-#include "gr/gr_demod_base.h"
+#include "src/gr/gr_mod_base.h"
+#include "src/gr/gr_demod_base.h"
 
 #include <math.h>
 

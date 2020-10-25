@@ -34,27 +34,27 @@ CONFIG(opengl) {
 CONFIG(qtaudio) {
     message(Building with Qt audio support.)
     DEFINES += USE_QT_AUDIO
-    SOURCES += video/imagecapture.cpp
-    HEADERS += video/imagecapture.h
+    SOURCES += src/video/imagecapture.cpp
+    HEADERS += src/video/imagecapture.h
 } else {
     message(Building without Qt audio support)
-    SOURCES += audio/audiointerface.cpp
-    HEADERS += audio/audiointerface.h
+    SOURCES += src/audio/audiointerface.cpp
+    HEADERS += src/audio/audiointerface.h
     LIBS += -lpulse-simple -lpulse
 }
 
 
 SOURCES += main.cpp\
         mainwindow.cpp\
-        audio/audioencoder.cpp\
-        audio/audioprocessor.cpp \
-        video/videoencoder.cpp \
-        video/videocapture.cpp \
+        src/audio/audioencoder.cpp\
+        src/audio/audioprocessor.cpp \
+        src/video/videoencoder.cpp \
+        src/video/videocapture.cpp \
         src/mumbleclient.cpp\
         src/layer2.cpp \
-        audio/audiowriter.cpp \
-        audio/audioreader.cpp \
-        audio/audiorecorder.cpp \
+        src/audio/audiowriter.cpp \
+        src/audio/audioreader.cpp \
+        src/audio/audiorecorder.cpp \
         src/mumblechannel.cpp \
         src/radiochannel.cpp \
         src/relaycontroller.cpp \
@@ -66,65 +66,65 @@ SOURCES += main.cpp\
         src/station.cpp\
         src/logger.cpp \
         src/gr_modem.cpp \
-        audio/audiomixer.cpp \
+        src/audio/audiomixer.cpp \
         src/telnetclient.cpp\
-        ext/Mumble.pb.cc\
-        ext/QRadioLink.pb.cc\
-        ext/utils.cpp\
-        ext/filt.cpp\
-        ext/compressor.c \
-        ext/snd.c \
-        ext/mem.c \
-        net/netdevice.cpp \
+        src/ext/Mumble.pb.cc\
+        src/ext/QRadioLink.pb.cc\
+        src/ext/utils.cpp\
+        src/ext/filt.cpp\
+        src/ext/compressor.c \
+        src/ext/snd.c \
+        src/ext/mem.c \
+        src/net/netdevice.cpp \
         src/layer1framing.cpp \
         src/limits.cpp \
-    qtgui/freqctrl.cpp \
-    qtgui/plotter.cpp \
-    qtgui/skinneddial.cpp \
-    gr/gr_mod_base.cpp \
-    gr/gr_demod_base.cpp \
-    gr/gr_demod_nbfm_sdr.cpp \
-    gr/gr_demod_freedv.cpp \
-    gr/gr_mod_freedv.cpp \
-    gr/gr_deframer_bb.cpp \
-    gr/gr_audio_source.cpp \
-    gr/gr_audio_sink.cpp \
-    gr/gr_4fsk_discriminator.cpp \
-    gr/gr_const_sink.cpp \
-    gr/rx_fft.cpp \
-    gr/emphasis.cpp \
-    gr/dsss_encoder_bb_impl.cc \
-    gr/dsss_decoder_cc_impl.cc \
-    gr/gr_byte_source.cpp \
-    gr/gr_bit_sink.cpp \
-    gr/gr_sample_sink.cpp \
-    gr/gr_demod_2fsk.cpp \
-    gr/gr_demod_4fsk.cpp \
-    gr/gr_demod_am.cpp \
-    gr/gr_demod_bpsk.cpp \
-    gr/gr_demod_dsss.cpp \
-    gr/gr_demod_qpsk.cpp \
-    gr/gr_demod_ssb.cpp \
-    gr/gr_demod_wbfm.cpp \
-    gr/gr_mod_2fsk.cpp \
-    gr/gr_mod_4fsk.cpp \
-    gr/gr_mod_am.cpp \
-    gr/gr_mod_bpsk.cpp \
-    gr/gr_mod_dsss.cpp \
-    gr/gr_mod_nbfm.cpp \
-    gr/gr_mod_qpsk.cpp \
-    gr/gr_mod_ssb.cpp
+    src/qtgui/freqctrl.cpp \
+    src/qtgui/plotter.cpp \
+    src/qtgui/skinneddial.cpp \
+    src/gr/gr_mod_base.cpp \
+    src/gr/gr_demod_base.cpp \
+    src/gr/gr_demod_nbfm_sdr.cpp \
+    src/gr/gr_demod_freedv.cpp \
+    src/gr/gr_mod_freedv.cpp \
+    src/gr/gr_deframer_bb.cpp \
+    src/gr/gr_audio_source.cpp \
+    src/gr/gr_audio_sink.cpp \
+    src/gr/gr_4fsk_discriminator.cpp \
+    src/gr/gr_const_sink.cpp \
+    src/gr/rx_fft.cpp \
+    src/gr/emphasis.cpp \
+    src/gr/dsss_encoder_bb_impl.cc \
+    src/gr/dsss_decoder_cc_impl.cc \
+    src/gr/gr_byte_source.cpp \
+    src/gr/gr_bit_sink.cpp \
+    src/gr/gr_sample_sink.cpp \
+    src/gr/gr_demod_2fsk.cpp \
+    src/gr/gr_demod_4fsk.cpp \
+    src/gr/gr_demod_am.cpp \
+    src/gr/gr_demod_bpsk.cpp \
+    src/gr/gr_demod_dsss.cpp \
+    src/gr/gr_demod_qpsk.cpp \
+    src/gr/gr_demod_ssb.cpp \
+    src/gr/gr_demod_wbfm.cpp \
+    src/gr/gr_mod_2fsk.cpp \
+    src/gr/gr_mod_4fsk.cpp \
+    src/gr/gr_mod_am.cpp \
+    src/gr/gr_mod_bpsk.cpp \
+    src/gr/gr_mod_dsss.cpp \
+    src/gr/gr_mod_nbfm.cpp \
+    src/gr/gr_mod_qpsk.cpp \
+    src/gr/gr_mod_ssb.cpp
 
 
 
 HEADERS  += mainwindow.h\
-        audio/audioencoder.h\
-        audio/audioprocessor.h \
-        video/videoencoder.h \
+        src/audio/audioencoder.h\
+        src/audio/audioprocessor.h \
+        src/video/videoencoder.h \
         src/layer2.h \
-        audio/audiowriter.h \
-        audio/audioreader.h \
-        audio/audiorecorder.h \
+        src/audio/audiowriter.h \
+        src/audio/audioreader.h \
+        src/audio/audiorecorder.h \
         src/mumblechannel.h \
         src/radiochannel.h \
         src/relaycontroller.h \
@@ -138,57 +138,57 @@ HEADERS  += mainwindow.h\
         src/logger.h \
         src/modem_types.h \
         src/gr_modem.h \
-        audio/audiomixer.h \
+        src/audio/audiomixer.h \
         src/config_defines.h\
-        ext/dec.h\
-        ext/Mumble.pb.h\
-        ext/PacketDataStream.h\
-        ext/QRadioLink.pb.h\
-        ext/utils.h \
-        ext/filt.h \
-        ext/snd.h \
-        ext/mem.h \
-        ext/compressor.h \
-        net/netdevice.h \
+        src/ext/dec.h\
+        src/ext/Mumble.pb.h\
+        src/ext/PacketDataStream.h\
+        src/ext/QRadioLink.pb.h\
+        src/ext/utils.h \
+        src/ext/filt.h \
+        src/ext/snd.h \
+        src/ext/mem.h \
+        src/ext/compressor.h \
+        src/net/netdevice.h \
         src/radiocontroller.h \
         src/layer1framing.h \
         src/limits.h \
-    qtgui/freqctrl.h \
-    qtgui/plotter.h \
-    qtgui/skinneddial.h \
-    gr/gr_mod_base.h \
-    gr/gr_demod_base.h \
-    gr/gr_demod_freedv.h \
-    gr/gr_mod_freedv.h \
-    gr/rx_fft.h \
-    gr/gr_deframer_bb.h \
-    gr/gr_audio_source.h \
-    gr/gr_audio_sink.h \
-    gr/gr_4fsk_discriminator.h \
-    gr/gr_const_sink.h \
-    gr/emphasis.h \
-    gr/dsss_encoder_bb_impl.h \
-    gr/dsss_decoder_cc_impl.h \
-    gr/gr_byte_source.h \
-    gr/gr_bit_sink.h \
-    gr/gr_sample_sink.h \
-    gr/gr_demod_2fsk.h \
-    gr/gr_demod_4fsk.h \
-    gr/gr_demod_am.h \
-    gr/gr_demod_bpsk.h \
-    gr/gr_demod_dsss.h \
-    gr/gr_demod_nbfm.h \
-    gr/gr_demod_qpsk.h \
-    gr/gr_demod_ssb.h \
-    gr/gr_demod_wbfm.h \
-    gr/gr_mod_2fsk.h \
-    gr/gr_mod_4fsk.h \
-    gr/gr_mod_am.h \
-    gr/gr_mod_bpsk.h \
-    gr/gr_mod_dsss.h \
-    gr/gr_mod_nbfm.h \
-    gr/gr_mod_qpsk.h \
-    gr/gr_mod_ssb.h \
+    src/qtgui/freqctrl.h \
+    src/qtgui/plotter.h \
+    src/qtgui/skinneddial.h \
+    src/gr/gr_mod_base.h \
+    src/gr/gr_demod_base.h \
+    src/gr/gr_demod_freedv.h \
+    src/gr/gr_mod_freedv.h \
+    src/gr/rx_fft.h \
+    src/gr/gr_deframer_bb.h \
+    src/gr/gr_audio_source.h \
+    src/gr/gr_audio_sink.h \
+    src/gr/gr_4fsk_discriminator.h \
+    src/gr/gr_const_sink.h \
+    src/gr/emphasis.h \
+    src/gr/dsss_encoder_bb_impl.h \
+    src/gr/dsss_decoder_cc_impl.h \
+    src/gr/gr_byte_source.h \
+    src/gr/gr_bit_sink.h \
+    src/gr/gr_sample_sink.h \
+    src/gr/gr_demod_2fsk.h \
+    src/gr/gr_demod_4fsk.h \
+    src/gr/gr_demod_am.h \
+    src/gr/gr_demod_bpsk.h \
+    src/gr/gr_demod_dsss.h \
+    src/gr/gr_demod_nbfm.h \
+    src/gr/gr_demod_qpsk.h \
+    src/gr/gr_demod_ssb.h \
+    src/gr/gr_demod_wbfm.h \
+    src/gr/gr_mod_2fsk.h \
+    src/gr/gr_mod_4fsk.h \
+    src/gr/gr_mod_am.h \
+    src/gr/gr_mod_bpsk.h \
+    src/gr/gr_mod_dsss.h \
+    src/gr/gr_mod_nbfm.h \
+    src/gr/gr_mod_qpsk.h \
+    src/gr/gr_mod_ssb.h \
     style.h
 
 

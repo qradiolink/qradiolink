@@ -16,7 +16,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "videoencoder.h"
-#include "video/videocapture.cpp"
+#include "src/video/videocapture.cpp"
 #include <jpeglib.h>
 #include <setjmp.h>
 

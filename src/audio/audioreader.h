@@ -14,56 +14,44 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#ifndef AUDIOWRITER_H
-#define AUDIOWRITER_H
+#ifndef AUDIOREADER_H
+#define AUDIOREADER_H
 
-#include <QObject>
-#include <QVector>
 #include <QCoreApplication>
 #include <QMutex>
-#include <QAudioOutput>
-#include <QAudio>
-#include "audio/audioprocessor.h"
+#include <QAudioInput>
+#include <QDebug>
+#include "src/audio/audioprocessor.h"
 #include "src/settings.h"
 #include "src/logger.h"
-#include "audio/audiorecorder.h"
 
-class AudioWriter : public QObject
+class AudioReader : public QObject
 {
     Q_OBJECT
 public:
-    explicit AudioWriter(const Settings *settings, Logger *logger, QObject *parent = 0);
-    ~AudioWriter();
+    explicit AudioReader(const Settings *settings, Logger *logger, QObject *parent = 0);
 
 signals:
     void finished();
+    void audioPCM(short *pcm, int bytes, int vad, bool radio_only);
 
 public slots:
     void run();
-    void writePCM(short *pcm, int bytes, bool preprocess, int audio_mode);
+    void setReadMode(bool capture, bool preprocess, int audio_mode);
     void stop();
     void restart();
-    void recordAudio(bool value);
-    void processStateChange(QAudio::State state);
 
 private:
-    struct audio_samples
-    {
-        audio_samples() : pcm(0), bytes(0), preprocess(false), audio_mode(0) {}
-        short *pcm;
-        int bytes;
-        bool preprocess;
-        int audio_mode;
-    };
     const Settings *_settings;
     Logger *_logger;
-    AudioRecorder *_recorder;
-    QVector<audio_samples*> *_rx_sample_queue;
+    QByteArray *_buffer;
     bool _working;
     bool _restart;
-    bool _record_audio;
+    bool _capture_audio;
+    bool _read_preprocess;
+    int _read_audio_mode;
     QMutex _mutex;
 
 };
 
-#endif // AUDIOWRITER_H
+#endif // AUDIOREADER_H

@@ -20,22 +20,6 @@ The application was originally inspired from the [Codec2 GMSK modem](https://git
 [![Screenshot](http://qradiolink.org/images/qradiolink72.png)](http://qradiolink.org)
 
 
-Alternatives to QRadioLink
----
-
-Free software projects that work on Linux and have similar features to QRadioLink are listed below.
-
-- [**FreeDV**](https://freedv.org/) is a Digital Voice mode for HF radio. The application works for Windows, Linux and OSX and allows any SSB radio to be used for low bit rate digital voice. It is the original free software Codec2 implementation. It does not require a SDR and works with any analog radio.
-- [**SvxLink**](https://www.svxlink.org/) is a great project which inspired the radio linking features of QRadioLink. The Qtel component is a full-featured Echolink GUI client. It does not require using a SDR and can work with any FM radio.
-- [**Gqrx**](https://gqrx.dk/) is an open source software defined radio receiver (SDR) powered by the GNU Radio SDK and the Qt graphical toolkit. Gqrx inspired the use of GNU radio in QRadioLink and some features, code and architecture were copied verbatim from Gqrx as the best alternative available. Despite the graphical resemblance to it, Gqrx is much more suitable for the purpose of general SDR receiver. There are several trade-offs made in QRadioLink to emphasize CPU performance to the detriment of signal quality. One such tradeoff is the use of an audio sample rate of 8000 Hz in QRadioLink compared to the more faithful 48000 Hz in Gqrx. Other major differences are lack of Wide FM stereo, RDS decoding, lack of waterfall persistence, lack of I/Q samples recording and lower SSB / AM performance in QRadioLink. Gqrx is also more user friendly and has a wide support community.
-- [**SDRangel**](https://github.com/f4exb/sdrangel) is a full SDR transceiver for SSB, FM, DMR, D-Star, C4FM and DVB-S. It can use only SDR hardware but it supports a large number of them.
-- [**Mumble**](https://www.mumble.info/) is what QRadioLink uses under the hood. It is a great alternative for people who don't want to use SDR radios.
-- [**Codec2 GMSK**](https://github.com/on1arf/gmsk) is a great and free software alternative to D-Star on VHF-UHF handheld radios. It only requires a radio capable of 9600 baud packet.
-- [**OP25**](http://osmocom.org/projects/op25/wiki) is a free software implementation of D-Star, DMR and C4FM (Yaesu digital voice standard). It works with FM radios capable of 9600 baud packet as well as SDRs.
-- [**Charon**](https://github.com/tvelliott/charon) is a stand-alone OFDM transceiver with batman-adv mesh networking capabilities. The IP modem in Charon is very advanced and can be embedded on the PlutoSDR. It is the base for several amateur radio mesh networks. Only works with SDR hardware.
-- [**MMDVM**](https://github.com/g4klx/MMDVM) extremely robust free software implementation of D-Star, DMR and C4FM (Yaesu digital voice standard). Works with RaspberryPi, Arduino and any radios capable of 9600 baud packet.
-
-
 Features
 ---
 
@@ -165,77 +149,15 @@ Known issues:
 - IP modems operating in burst mode experience some packet loss due to lost frames.
 - FM CTCSS decoder is not very reliable
 
+Operation
+----
 
-Setup and running
--------
-- **Notice**: due to an issue present in GNU radio 3.8, it is necessary to perform a workaround step to re-enable digital modes. You need to run the **volk_profile** command, and after it completes, inspect the file **~/.volk/volk_config** in the /home directory. Locate the line starting with **volk_8u_x4_conv_k7_r2_8u** and ensure it ends with  **spiral spiral**: **volk_8u_x4_conv_k7_r2_8u spiral spiral**. If it does not not, change it so it looks like this. After performing this step, digital modes should work again. 
-- It is recommended to start the application using the command line when running the first few times and look for any error messages output to the console. Some of them can be ignored safely, others are critical. Logging to console is by default enabled.
-- **It is not recommended to run qradiolink as root**
-- When first run, go to the **Setup** tab first and configure the options, then click Save before starting TX or RX. Without the correct device arguments, the application can crash when enabling RX or TX. This is not something that the application can control and keep functioning properly.
-- LimeSDR-mini and LimeNET-Micro devices require a device string like **soapy=0,driver=lime**. If you are using more than one device, use the **SoapySDRUtil --find** command and add the serial number of the device to the device arguments string, like **soapy=0,serial=583A29CED231**
-- ADALM-Pluto requires a device argument like **soapy=0,driver=plutosdr**
-- GNU radio main DSP blocks are highly optimized (including on embedded ARM platforms) by using the VOLK library. To minimize the CPU resources consumed by QRadioLink it is recommended to run the **volk_profile** utility after GNU radio has been installed. This command only needs to be run when GNU radio or libvolk are upgraded.
-- High sample rates, high FPS rates and high FFT sizes all affect the CPU performance adversely. On embedded platforms with low resources, you can disable the spectrum display completely using the FFT checkbox. The FPS value also sets the rate at which the S-meter and constellation display are updated, so reduce it to minimum usable values. If the controls menu is not visible, the S-meter display will not consume CPU resources. Similar for the Constellation display.
-- Pulseaudio can be configured for low latency audio by changing settings in /etc/pulse. If you experience interruptions or audio glitches with Pulseaudio, you can try the following workaround: add **tsched=0** to this line in /etc/pulse/default.pa and restart Pulseaudio
-<pre>
-load-module module-udev-detect tsched=0
-</pre>
-Alsa may require you to place an **.asoundrc** file in the home directory with contents similar to this:
-<pre>
-period_time 0
-period_size 1024
-buffer_size 4096
-rate 48000
-</pre>
-- You can only transmit when you have selected a sample rate of 1 Msps (1000000). Other sample rates are for receiving only (except if you are using two different devices for receive and transmit). This is a hardware limitation on most devices because the transmit sample rate is fixed at 1 Msps to save CPU resources and most hardware cannot cope with two sample rates simultaneously.
-- Filter widths for reception and transmission of the analog modes (FM, SSB, AM) are configurable. To increase or decrease them, drag the margins of the filter box on the spectrum display.
-- You can change the FFT reference display level by hovering with the mouse on the sidebar where the dB numbers are displayed and dragging this bar up and down. You can also drag the frequency bar below the FFT display to the left and right, and you can zoom in and out with the mouse wheel on both of the number bars. Right clicking the frequency bar resets the frequency zoom to the normal default value.
-- VOIP uses [umurmur](https://github.com/umurmur/umurmur) as a server. A version known to work with qradiolink is mirrored at [qradiolink](https://github.com/qradiolink/umurmur)  You can use QRadioLink as a pure VOIP client without using the radio by selecting "Use PTT for VOIP". For radio over IP operation, you need to toggle "Forward radio" to send the digital or analog radio voice to the VOIP server and viceversa. Any voice packets coming from the server will be transmitted directly after transcoding in this case. Full duplex audio from more than one VOIP client at the same time can now be transmitted. The **Mumble** application is now also compatible with QRadioLink. It is recommended to enable **Push To Talk** in Mumble and maximize the network robustness and latency settings. Text messages from Mumble are displayed inside the application, but no action is taken for channel-wide messages. Text messages can also be sent to the current Mumble channel. If remote control is enabled, private Mumble text messages will control the radio.
-The Mumble VOIP connection uses the Opus codec at a higher bitrate, so ensure the server can handle bitrates up to 50 kbit/s per client. The VOIP bitrate can be configured in the **Setup** page. On Android phones, the **Plumble** application can be used as a client.
-- The VOIP username will be your callsign, plus a number of 4 random characters allowing you to use multiple clients on the same server. The server password is stored in plain text inside the config file. You can use chmod to set this file readable by your user only.
-- Remote control via Mumble private text messages requires enabling remote control in settings, and using the Mumble client to send text messages to the QRadioLink username. Text messages sent to the channel will be ignored by the application. Authentication of user who is sending the commands is not yet implemented.
-- Running headless (no graphical user interface) for usage on embedded platforms like the Raspberry Pi or similar boards requires starting QRadioLink from the command line with the **--headless** option; example:
-<pre>
-$ qradiolink --headless  >> $HOME/.config/qradiolink/qradiolink.log 2>&1
-</pre>
-When running in headless mode, console log will be disabled by default with the above command. Init scripts for SysV/systemd will be provided at some point to be able to run QRadioLink as a system service. When running headless from CLI, the network command server is started by default listening on the port configured in the settings file (or 4939 if not configured). Headless and remote operation will usually require you to enable VOIP forwarding either in the configuration file or via a command, unless you want to use audio from the machine where QRadioLink is running. CPU consumption can reach 50% at 800 MHz CPU clock for a headless QRadioLink instance connected to the VOIP network and operating as a duplex repeater (depending on mode used).
-- The configuration file is located in $HOME/.config/qradiolink/qradiolink.cfg
-- The memory channels storage file is located in $HOME/.config/qradiolink/qradiolink_mem.cfg
-- Log messages are stored in $HOME/.config/qradiolink/qradiolink.log (this location will likely change in the future)
-- After adding a memory channel, you can edit its values by double clicking on a table cell. This may cause the radio to switch to that channel. The settings are not updated instantly, so if you make a change, after you press Enter, switch to another channel and back to get the updates. A button allows you to save channels before the window is closed.  Saving sorted channels is not possible yet. Otherwise, the channels, like the settings, will be stored on exit (if no application crash meanwhile).
-- **Before any upgrade**, please make a backup of the $HOME/.config/qradiolink/ directory in case something goes wrong, to avoid losing settings and channels.
-- Digital gain can be safely ignored on most devices. It was added as a workaround for the PlutoSDR and is no longer required. Leave it at 5 (half scale) unless you know better.
-- In full duplex operation you need to have sufficient isolation between the TX antenna port and the RX antenna port to avoid overloading your input or destroying the LNA stage.
-- In half duplex mode the receiver is muted during transmit and the RX gain is minimized. Do not rely on this feature if using a power amplifier, please use a RF switch (antenna switch) with enough isolation, or introduce attenuators in the relay sequence to avoid destroying the receiver LNA.
-- The transmitter of the device is active at all times if enabled, even when no samples are being output. Although there is no signal being generated, local oscillator leakage may be present and show up on the spectrum display. This is not a problem usually, unless if you keep a power amplifier connected and enabled at all times. You can use the USB relays to disable it in this case when not transmitting.
-- FreeDV modes and PSK modes are very sensitive to amplifier non-linearity. You should not try to use them within a non-linear envelope to avoid signal distortion, splatter or unwanted spectrum components. Digital gain for these modes has been set in such a way to avoid non-linear zone for most devices output stages. If this is not satisfactory, you can use the digital gain setting to increase the digital gain.
-- Receive and transmit gains currently operate as described in the gr-osmosdr manual. At lowest settings, the programmable gain attenuator will be set, following with any IF stages if present and finally any LNA stages if present. This behaviour is desirable since there is no point setting the LNA to a higher value than the PGA if the signal power is already above the P1dB point of the LNA stage. Controls for adjusting individual gain stages can also be found on the Settings page.
-- Transmit shift can be positive or negative. After changing the value, you need to press **Enter** to put it into effect. Setting the TX shift is not possible while transmitting a signal. Although the shift is stored as Hertz and you can edit this value in the config, the UI will only allow a value in kHz to be entered (e.g. -7600 kHz standard EU UHF repeater shift). To switch to the reverse repeater frequency, use the **Rev** button.
-- USB relays using FTDI (FT232) chipsets are used to control RF switches, power amplifiers and filter boards. To determine if your USB relay board is supported, look for a similar line in  the output of lsusb:
-<pre>
-Bus 002 Device 003: ID 0403:6001 Future Technology Devices International, Ltd FT232 Serial (UART) IC
-</pre>
-Do note that the identifier digits are the most important: **0403:6001**. 
-At the moment, such USB relays can be sourced on Amazon and Ebay and can be identified by the light silver-blue colour of the board. Other types of relays may be supported in the future.
-- QRadioLink can control a maximum of 8 relays, and the used relays can be configured in the Setup page. The setting called **relay_sequence** is an 8 bit char bitmask that can take values from 0 to 255 and each bit controls the relay with the bit+1 number, starting with bit 0 and relay number 1. The order in which relays are activated and deactivated during a transmission cycle is always as follows: activation starting with relay 1 to relay 8, deactivation in reverse order (relay 8 to relay 1). A Python script **( ext/ftdi.py )** is included to help you determine the order of relays on the board.
-- Video will be displayed in the upper right corner. If your camera does not work, see the V4L2 guide in the docs/ directory for troubleshooting camera settings.
-- IP over radio operation mode requires net administration priviledges to be granted to the application. See the instructions in the docs/ directory. An error message will be output at startup if these priviledges are not present. You can safely ignore this message if you don't need to use the IP modem facility.
-- VOX mode requires careful setup of system microphone gain to avoid getting stuck on transmit. The VOX activation level can be configured in the **Setup** page.
-- Repeater mode requires the radio to operate in **Duplex** mode. Prior to enabling repeater mode, make sure to configure the TX shift (positive or negative). Mixed mode repeat is  possible, so you can operate the receiver on a different mode to the transmitter (FM to Codec2/Opus/FreeDV or viceversa). If radio forwarding is enabled, audio from the repeater will be broadcast to the VOIP network as well. The repeater can now handle mixing of audio incoming from the VOIP network and coming from the radio receiver so it is possible for two or more users on different connected repeaters to speak simultaneously.
-- When operating a repeater linked to the VOIP network, you may experience small delays of voice due to transcoding operations, especially for mixed mode repeaters (in addition to network latencies).
-- Setting application internal microphone gain above the middle of the scale might cause clipping and distortion of audio, as the system volume also affects what goes to the radio.
-- The VOIP volume slider controls the volume of the audio **sent** to the Mumble server.
-- Audio recordings are saved in the directory specified in the settings. Audio is recorded in FLAC (free lossless audio compression) format, with audio data only being written to file when there is something being played back on the audio interface. That means that recording while there is silence will not generate file data. The file name corresponds to the time when the recording was started.
-- It is now possible to mute self or deafen self from the UI without disconnecting from the VOIP server.
-- The S-meter calibration feature is not complete yet, however you can enter in the Setup tab the level (integer value expressed in dBm) of a known signal (e.g. sent by a generator) to correct the reading. Do NOT apply signals with levels above -30 to 0 dBm to the receiver input as this might damage your receiver, depending on hardware. Please note that the RSSI and S-meter values displayed are relative to the current operating mode filter bandwidth, so the FM reading will be different to a SSB reading! Calibration tables support for different bands may be provided in the future.
-- The network remote control feature (for headless mode) is work in progress. The network server will listen on all network interfaces and the default control port is 4939. There is no provision for authentication of the user, if you need security you can filter the remote control port in the firewall, use SSH to log in to the remote system and telnet from there to localhost port 4939. To use the network remote control feature, you can simply use the telnet program or you can create simple Python or shell scripts to automate the commands. The help command will list all the available commands as well as parameters.
-
+See docs/README.md
 
 
 Credits and License
 -------------------
-- QRadioLink is written by Adrian Musceac YO8RZZ, and is released under an Open Source License,
- the GNU General Public License version 3.
+- QRadioLink is released under an Open Source License, the GNU General Public License version 3. Authors and contributors are listed in the AUTHORS file.
 - The CFreqCtrl and CPlotter widgets are Copyright 2010 Moe Wheatley and Alexandru Csete OZ9AEC.
 - It makes use of other code under compatible licenses, and the authors are credited in the source files.
 - [GNU radio](https://www.gnuradio.org/)  is a free software development toolkit that provides signal processing

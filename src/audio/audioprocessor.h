@@ -21,13 +21,13 @@
 #include <QString>
 #include <QDebug>
 #include <stdio.h>
-#include "ext/utils.h"
-#include "ext/filt.h"
+#include "src/ext/utils.h"
+#include "src/ext/filt.h"
 #include <math.h>
 extern "C"
 {
-#include "ext/compressor.h"
-#include "ext/snd.h"
+#include "src/ext/compressor.h"
+#include "src/ext/snd.h"
 }
 #include <speex/speex_preprocess.h>
 #include "unistd.h"
