@@ -189,7 +189,7 @@ HEADERS  += mainwindow.h\
     src/gr/gr_mod_nbfm.h \
     src/gr/gr_mod_qpsk.h \
     src/gr/gr_mod_ssb.h \
-    style.h
+    src/style.h
 
 
 

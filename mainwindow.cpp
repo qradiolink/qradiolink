@@ -75,7 +75,6 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     ui->frameCtrlFreq->setDigitColor(QColor(0,205,0,0xFF));
     ui->frameCtrlFreq->setUnitsColor(QColor(254,254,254,0xFF));
 
-    ui->txGainDial->setNotchesVisible(true);
 
     QObject::connect(ui->buttonTransmit,SIGNAL(toggled(bool)),this,SLOT(startTx()));
     QObject::connect(ui->sendTextButton,SIGNAL(clicked()),this,SLOT(sendTextRequested()));
@@ -1341,7 +1340,7 @@ void MainWindow::toggleReverseShift(bool value)
 void MainWindow::clarifierTuneFreq(int value)
 {
     Q_UNUSED(value);
-    emit fineTuneFreq((int)ui->tuneDial->value());
+    emit fineTuneFreq((int)ui->tuneDial->value() - 500);
 }
 
 void MainWindow::tuneMainFreq(qint64 freq)
@@ -1349,7 +1348,7 @@ void MainWindow::tuneMainFreq(qint64 freq)
 
     ui->frequencyEdit->setText(QString::number(freq/1000));
     ui->txFrequencyEdit->setText(QString::number(freq/1000));
-    ui->tuneDial->setValue(0);
+    ui->tuneDial->setValue(500);
     /// rx_frequency is the center frequency of the source
     _settings->rx_frequency = freq - _settings->demod_offset - _settings->lnb_lo_freq;
     /// tx_frequency is the actual frequency
