@@ -1340,7 +1340,7 @@ void MainWindow::toggleReverseShift(bool value)
 void MainWindow::clarifierTuneFreq(int value)
 {
     Q_UNUSED(value);
-    emit fineTuneFreq((int)ui->tuneDial->value() - 500);
+    emit fineTuneFreq((int)ui->tuneDial->value());
 }
 
 void MainWindow::tuneMainFreq(qint64 freq)
@@ -1348,7 +1348,7 @@ void MainWindow::tuneMainFreq(qint64 freq)
 
     ui->frequencyEdit->setText(QString::number(freq/1000));
     ui->txFrequencyEdit->setText(QString::number(freq/1000));
-    ui->tuneDial->setValue(500);
+    ui->tuneDial->setValue(0);
     /// rx_frequency is the center frequency of the source
     _settings->rx_frequency = freq - _settings->demod_offset - _settings->lnb_lo_freq;
     /// tx_frequency is the actual frequency

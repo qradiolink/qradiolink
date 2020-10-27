@@ -37,7 +37,7 @@ SkinnedDial::SkinnedDial(QWidget *parent) : QDial(parent) {
 
     m_background      = new QPixmap(":res/dial-background.png");
     m_needle          = new QPixmap(":res/dial-needle.png");
-    m_maxDeg          = 180.0;
+    m_maxDeg          = 135.0;
     m_paintFlags      = QPainter::RenderHint(QPainter::Antialiasing | QPainter::SmoothPixmapTransform || QPainter::HighQualityAntialiasing);
     m_cacheBackground = new QPixmap;
     m_cacheNeedle     = new QPixmap;
@@ -198,6 +198,7 @@ void SkinnedDial::paintEvent(QPaintEvent *pe) {
 
     int curVal = this->value();
 
+
     QPixmap rotNeedle = *m_cacheNeedleRot;
 
         // only re-process the needle image if the position
@@ -210,7 +211,7 @@ void SkinnedDial::paintEvent(QPaintEvent *pe) {
         const float midPoint = (this->maximum() - this->minimum()) * 0.5;
 
         if( curVal < midPoint ) {
-            float pct = curVal / midPoint;
+            float pct = (curVal - this->minimum()) / midPoint;
             rotNeedle = _rotatePix(&rotNeedle, m_maxDeg - (m_maxDeg * pct), false);
         }
         else if( curVal > midPoint ) {
