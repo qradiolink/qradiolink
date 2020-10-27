@@ -43,6 +43,7 @@
 #include "src/logger.h"
 #include "src/mumblechannel.h"
 #include "src/style.h"
+#include "src/qtgui/skinneddial.h"
 
 
 typedef std::vector<std::complex<float>> complex_vector;
@@ -297,8 +298,8 @@ private:
     QList<QAudioDeviceInfo> _audio_output_devices;
     QList<QAudioDeviceInfo> _audio_input_devices;
 
-    QVector<QSlider*> _rx_gain_sliders;
-    QVector<QSlider*> _tx_gain_sliders;
+    QVector<SkinnedDial*> _rx_gain_sliders;
+    QVector<SkinnedDial*> _tx_gain_sliders;
     QMap<std::string, int> _rx_stage_gains;
     QMap<std::string, int> _tx_stage_gains;
 

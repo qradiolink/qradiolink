@@ -1745,7 +1745,7 @@ void MainWindow::setRxGainStages(gain_vector rx_gains)
 {
     for(int i=0;i < _rx_gain_sliders.size();i++)
     {
-        QSlider *slider = _rx_gain_sliders.at(i);
+        SkinnedDial *slider = _rx_gain_sliders.at(i);
         delete slider;
     }
     _rx_gain_sliders.clear();
@@ -1753,14 +1753,13 @@ void MainWindow::setRxGainStages(gain_vector rx_gains)
     while (iter != rx_gains.constEnd())
     {
         QString gain_stage_name = QString::fromStdString(iter.key());
-        QSlider *gain_slider = new QSlider(Qt::Horizontal, this);
+        SkinnedDial *gain_slider = new SkinnedDial(this);
         //gain_slider->setObjectName(gain_stage_name);
         gain_slider->setRange(iter.value().at(0), iter.value().at(1));
         //qDebug() << QString::fromStdString(iter.key()) << ": " << iter.value().at(0) << " to " << iter.value().at(1);
         gain_slider->setSingleStep(1);
-        gain_slider->setMaximumWidth(100);
-        gain_slider->setMaximumHeight(40);
-        gain_slider->setTickInterval(10);
+        gain_slider->setMinimumWidth(40);
+        gain_slider->setMinimumHeight(40);
         gain_slider->setToolTip(gain_stage_name);
         QObject::connect(gain_slider,SIGNAL(valueChanged(int)), this, SLOT(setRxStageGain(int)));
         _rx_gain_sliders.push_back(gain_slider);
@@ -1773,7 +1772,7 @@ void MainWindow::setTxGainStages(gain_vector tx_gains)
 {
     for(int i=0;i < _tx_gain_sliders.size();i++)
     {
-        QSlider *slider = _tx_gain_sliders.at(i);
+        SkinnedDial *slider = _tx_gain_sliders.at(i);
         delete slider;
     }
     _tx_gain_sliders.clear();
@@ -1781,14 +1780,13 @@ void MainWindow::setTxGainStages(gain_vector tx_gains)
     while (iter != tx_gains.constEnd())
     {
         QString gain_stage_name = QString::fromStdString(iter.key());
-        QSlider *gain_slider = new QSlider(Qt::Horizontal, this);
+        SkinnedDial *gain_slider = new SkinnedDial(this);
         //gain_slider->setObjectName(gain_stage_name);
         gain_slider->setRange(iter.value().at(0), iter.value().at(1));
         //qDebug() << QString::fromStdString(iter.key()) << ": " << iter.value().at(0) << " to " << iter.value().at(1);
         gain_slider->setSingleStep(1);
-        gain_slider->setMaximumWidth(100);
-        gain_slider->setMaximumHeight(40);
-        gain_slider->setTickInterval(10);
+        gain_slider->setMinimumWidth(40);
+        gain_slider->setMinimumHeight(40);
         gain_slider->setToolTip(gain_stage_name);
         QObject::connect(gain_slider,SIGNAL(valueChanged(int)), this, SLOT(setTxStageGain(int)));
         _tx_gain_sliders.push_back(gain_slider);
@@ -1799,14 +1797,14 @@ void MainWindow::setTxGainStages(gain_vector tx_gains)
 
 void MainWindow::setRxStageGain(int value)
 {
-    QSlider *slider = reinterpret_cast<QSlider*>(QObject::sender());
+    SkinnedDial *slider = reinterpret_cast<SkinnedDial*>(QObject::sender());
     std::string stage_name = slider->toolTip().toStdString();
     emit setRxSensitivity(value, stage_name);
 }
 
 void MainWindow::setTxStageGain(int value)
 {
-    QSlider *slider = reinterpret_cast<QSlider*>(QObject::sender());
+    SkinnedDial *slider = reinterpret_cast<SkinnedDial*>(QObject::sender());
     std::string stage_name = slider->toolTip().toStdString();
     emit setTxPower(value, stage_name);
 }
