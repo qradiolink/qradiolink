@@ -67,9 +67,9 @@ gr_demod_4fsk::gr_demod_4fsk(std::vector<int>signature, int sps, int samp_rate, 
     }
     if(sps == 10)
     {
-        _target_samp_rate = 10000;
-        _samples_per_symbol = sps;
-        decimation = 100;
+        _target_samp_rate = 5000;
+        _samples_per_symbol = sps/2;
+        decimation = 200;
         interpolation = 1;
         rs = 1000;
         bw = 2000;

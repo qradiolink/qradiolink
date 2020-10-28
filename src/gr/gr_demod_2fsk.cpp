@@ -40,7 +40,15 @@ gr_demod_2fsk::gr_demod_2fsk(std::vector<int>signature, int sps, int samp_rate, 
     float gain_mu, gain_omega;
     gain_mu = 0.05;
     gain_omega = 0.005;
-    if(sps >= 5)
+    if(sps == 10)
+    {
+        _target_samp_rate = 10000;
+        _samples_per_symbol = sps / 2;
+        decim = 100;
+        interp = 1;
+        nfilts = 35  * _samples_per_symbol;
+    }
+    else if(sps >= 5)
     {
         _target_samp_rate = 20000;
         _samples_per_symbol = sps;
