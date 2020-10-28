@@ -65,10 +65,10 @@ gr_demod_qpsk::gr_demod_qpsk(std::vector<int>signature, int sps, int samp_rate, 
     }
     else
     {
-        interpolation = 1;
-        decimation = 2;
-        _samples_per_symbol = sps;
-        _target_samp_rate = 500000;
+        interpolation = 3;
+        decimation = 4;
+        _samples_per_symbol = 3; // FIXME: this value should not be hardcoded
+        _target_samp_rate = 750000;
     }
     _samp_rate =samp_rate;
     _carrier_freq = carrier_freq;
@@ -91,7 +91,7 @@ gr_demod_qpsk::gr_demod_qpsk(std::vector<int>signature, int sps, int samp_rate, 
                 constellation->points(),pre_diff_code,4,2,2,1,1,const_map);
     */
 
-    std::vector<float> taps = gr::filter::firdes::low_pass_2(1, _samp_rate, _target_samp_rate/2,
+    std::vector<float> taps = gr::filter::firdes::low_pass_2(interpolation, _samp_rate * interpolation, _target_samp_rate/2,
                             _target_samp_rate/10, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
 
     _resampler = gr::filter::rational_resampler_base_ccf::make(interpolation, decimation, taps);
