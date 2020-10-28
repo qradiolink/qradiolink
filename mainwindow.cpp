@@ -1758,6 +1758,7 @@ void MainWindow::setRxGainStages(gain_vector rx_gains)
         gain_slider->setRange(iter.value().at(0), iter.value().at(1));
         //qDebug() << QString::fromStdString(iter.key()) << ": " << iter.value().at(0) << " to " << iter.value().at(1);
         gain_slider->setSingleStep(1);
+        gain_slider->setPageStep(1);
         gain_slider->setMinimumWidth(40);
         gain_slider->setMinimumHeight(40);
         gain_slider->setToolTip(gain_stage_name);
@@ -1785,6 +1786,7 @@ void MainWindow::setTxGainStages(gain_vector tx_gains)
         gain_slider->setRange(iter.value().at(0), iter.value().at(1));
         //qDebug() << QString::fromStdString(iter.key()) << ": " << iter.value().at(0) << " to " << iter.value().at(1);
         gain_slider->setSingleStep(1);
+        gain_slider->setPageStep(1);
         gain_slider->setMinimumWidth(40);
         gain_slider->setMinimumHeight(40);
         gain_slider->setToolTip(gain_stage_name);
