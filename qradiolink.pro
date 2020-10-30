@@ -34,8 +34,6 @@ CONFIG(opengl) {
 CONFIG(qtaudio) {
     message(Building with Qt audio support.)
     DEFINES += USE_QT_AUDIO
-    SOURCES += src/video/imagecapture.cpp
-    HEADERS += src/video/imagecapture.h
 } else {
     message(Building without Qt audio support)
     SOURCES += src/audio/audiointerface.cpp
@@ -49,7 +47,7 @@ SOURCES += main.cpp\
         src/audio/audioencoder.cpp\
         src/audio/audioprocessor.cpp \
         src/video/videoencoder.cpp \
-        src/video/videocapture.cpp \
+        src/video/imagecapture.cpp \
         src/mumbleclient.cpp\
         src/layer2.cpp \
         src/audio/audiowriter.cpp \
@@ -121,6 +119,7 @@ HEADERS  += mainwindow.h\
         src/audio/audioencoder.h\
         src/audio/audioprocessor.h \
         src/video/videoencoder.h \
+        src/video/imagecapture.h \
         src/layer2.h \
         src/audio/audiowriter.h \
         src/audio/audioreader.h \

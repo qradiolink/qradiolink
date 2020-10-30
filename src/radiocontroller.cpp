@@ -565,6 +565,7 @@ void RadioController::processVideoFrame()
 
     /// This includes V4L2 capture time as well
     _video->encode_jpeg(&(videobuffer[24]), encoded_size, max_video_frame_size - 24);
+    qDebug() << encoded_size;
     if(encoded_size > max_video_frame_size - 24)
     {
         encoded_size = max_video_frame_size - 24;
@@ -587,7 +588,7 @@ void RadioController::processVideoFrame()
     }
 
     microsec = (quint64)timer.nsecsElapsed();
-    if(microsec < 100000000)
+    if(microsec < 40000000)
     {
         struct timespec time_to_sleep = {0, (100000000 - (long)microsec)};
         nanosleep(&time_to_sleep, NULL);
@@ -1366,7 +1367,7 @@ void RadioController::receiveVideoData(unsigned char *data, int size)
     {
         return;
     }
-    QImage img (raw_output, 320,240, QImage::Format_RGB888);
+    QImage img (raw_output, 320,240, QImage::Format_Grayscale8);
     if(img.isNull())
     {
         delete[] raw_output;
