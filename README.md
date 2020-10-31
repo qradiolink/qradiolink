@@ -11,8 +11,8 @@ Supported hardware
 Requirements
 ----
 
-- Since release 0.8.5, GNU radio version is changed to 3.8 and Qt 5.14 is used for the graphical interface. Debian Bullseye is the base GNU/Linux distribution for which packages are built.
-- Build dependencies on Debian Bullseye with Qt5 and GNU radio 3.8: 
+- Since release 0.8.5, GNU radio version 3.8 is necessary and Qt 5.14 is used for the graphical interface.
+- Build dependencies on Debian 11 with Qt5 and GNU radio 3.8: 
 
 <pre>
 $ sudo apt-get install gnuradio-dev protobuf-compiler gr-osmosdr gnuradio libvolk2-dev libvolk2-bin libprotobuf23 libprotobuf-dev libopus0 libopus-dev libspeexdsp1 libspeexdsp-dev libpulse0 libpulse-dev liblog4cpp5v5 libcodec2-0.9 libcodec2-dev libasound2 libasound2-dev libjpeg62-turbo libjpeg62-turbo-dev libconfig++9v5 libconfig++-dev qt5-qmake qt5-default qtbase5-dev libqt5core5a libqt5gui5 libqt5network5 libqt5sql5 qtmultimedia5-dev libqt5multimediawidgets5 libqt5multimedia5-plugins libqt5multimedia5 libftdi-dev libftdi1 libsndfile1-dev libsndfile1
@@ -35,7 +35,7 @@ In [#67](https://github.com/qradiolink/qradiolink/issues/67) it was reported tha
 - protoc compiler (libprotoc 2.6.1 or greater, depending on which version of libprotobuf is used)
 - optionally SoapySDR and SoapyPlutoSDR, SoapyLMS7
 
-In order to build on Ubuntu 17.10 you have to install the following packages, assuming a full GNU Radio development environment is already installed. Please note these instructions are for a very old version of QRadioLink and are not guaranteed to work with newer versions. It is recommended to follow the Debian install guide and adjust for Ubuntu differences.
+In order to build on Ubuntu 17.10 you have to install the following packages, assuming a full GNU Radio development environment is already installed. Please note these instructions are for a very old version and are not guaranteed to work with newer versions. It is recommended to follow the Debian install guide and adjust for Ubuntu differences.
 
 <pre>
 $ sudo apt install libconfig++-dev libprotobuf-dev libopus-dev libpulse-dev libasound2-dev libcodec2-dev libsqlite3-dev libjpeg-dev libprotoc-dev libsndfile1 libftdi protobuf-compiler
@@ -95,9 +95,6 @@ You can add custom library search paths, custom includes paths and specify a dif
 qmake .. INSTALL_PREFIX=/usr/local/bin LIBDIR=/opt/lib INCDIR=/opt/include
 </pre>
 
-Known issues:
-- IP modems operating in burst mode experience some packet loss due to lost frames.
-- FM CTCSS decoder is not very reliable
 
 Operation
 ----
@@ -105,7 +102,7 @@ Operation
 See docs/README.md
 
 
-Credits and License
+Copyright and License
 -------------------
 - Parts of the source code are released under the GNU General Public License version 3. Please see the COPYRIGHT and AUTHORS files for details.
 - Parts of the code are licensed under the MIT license.
@@ -113,7 +110,7 @@ Credits and License
 - Some graphical resources are licensed under LGPLv3
 - Some graphical resources are distributed under the Creative Commons Non-commercial, No-derivative 4.0 license.
 - Sounds used by this project are copyright © 2020 w2sjw.com
-- [![CC NC ND 4.0](https://mirrors.creativecommons.org/presskit/buttons/88x31/png/by-nc-nd.png)](CC NC ND 4.0)
+- [!(https://mirrors.creativecommons.org/presskit/buttons/88x31/png/by-nc-nd.png)](CC NC ND 4.0)
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
