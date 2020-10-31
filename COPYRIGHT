@@ -11,7 +11,6 @@ GNU radio code from
 */
 
 PacketDataStream and Mumble utilities from umurmur project
-
 /* Copyright (C) 2009-2013, Martin Johansson <martin@fatbob.nu>
    Copyright (C) 2005-2013, Thorvald Natvig <thorvald@natvig.com>
 
@@ -43,8 +42,8 @@ PacketDataStream and Mumble utilities from umurmur project
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-GNU radio FFT code and UI plotter from the Gqrx project:
 
+GNU radio FFT code and UI plotter from the Gqrx project:
 /* -*- c++ -*- */
 /* + + +   This Software is released under the "Simplified BSD License"  + + +
  * Copyright 2010 Moe Wheatley. All rights reserved.
@@ -79,7 +78,6 @@ GNU radio FFT code and UI plotter from the Gqrx project:
 
 
 CFreqCtrl widget from the Gqrx project:
-
 //==========================================================================================
 // + + +   This Software is released under the "Simplified BSD License"  + + +
 //Copyright 2010 Moe Wheatley. All rights reserved.
@@ -109,8 +107,8 @@ CFreqCtrl widget from the Gqrx project:
 //or implied, of Moe Wheatley.
 //==========================================================================================
 
-RX FFT GNU radio block code from the Gqrx project with modifications:
 
+FFT GNU radio block code from the Gqrx project with modifications:
 /* -*- c++ -*- */
 /*
  * Gqrx SDR: Software defined radio receiver powered by GNU Radio and Qt
@@ -136,8 +134,7 @@ RX FFT GNU radio block code from the Gqrx project with modifications:
  */
  
  
-Skinned Dial UI widget from:
-
+Skinned Dial Qt UI widget:
 /*
 
   Graffik Motion Control Application
@@ -162,7 +159,6 @@ Skinned Dial UI widget from:
     */
 
 Direct Sequence Spread Spectrum blocks from the gr-dsss project:
-
 /* 
  * Copyright 2014 Eric de Groot (edegroot@email.arizona.edu).
  *
@@ -182,9 +178,7 @@ Direct Sequence Spread Spectrum blocks from the gr-dsss project:
  * Boston, MA 02110-1301, USA.
  */
  
-Audio filter from:
-
-
+Audio filter
 /*
  * FIR filter class, by Mike Perkins
  * 
@@ -224,13 +218,75 @@ Audio filter from:
  * SUCH DAMAGE.
  */
  
-End beep sound: http://www.w2sjw.com/radio_sounds.html (public domain?)
-LED images: copyright Jojo Mendoza (CC Attribution Noncommercial No Derivate 4.0) https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode
-S-meter image from Wikipedia: https://en.wikipedia.org/wiki/File:Pmeter-t.jpg (maybe public domain?)
-Icons from KDE 4 Oxygen project (LGPL)
-Liquid Crystal font copyright Chase Babb https://www.dafont.com/liquid-crystal.font (Free for personal and commercial use.)
+End beep sounds: http://www.w2sjw.com/radio_sounds.html (public domain)
+end_beep.wav
+end_beep1.raw
+end_beep2.raw
+end_beep.raw
+BeepBeep.raw
+Caution.raw
+data_rec.raw
+MDC1200_preamble.raw
+MDC1200.raw
+MODAT.raw
+StatusChange.raw
+talk_permit.raw
 
-Audio compressor code from:
+LED images: copyright Jojo Mendoza (CC Attribution Noncommercial No Derivate 4.0) https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode
+Button-Blank-Blue-icon.png
+Button-Blank-Gray-icon.png
+Button-Blank-Green-icon.png
+Button-Blank-Red-icon.png
+Button-Blank-Yellow-icon.png
+
+Photo of Ten-Tec Orion S Meter, author: Martin Ewing from Wikipedia: https://en.wikipedia.org/wiki/File:Pmeter-t.jpg (public domain)
+s-meter-bg-black.png
+s-meter-bg-black-small.png
+
+Various images copyright Adrian Musceac, public domain:
+constellation_icon_enabled.png
+constellation_icon.png
+logo.png
+transparent-bg.png
+white-bg.png
+dial-needle.png
+dial-background.png
+
+Icons from KDE 4 Oxygen project (LGPL): https://techbase.kde.org/Projects/Oxygen  http://www.kde.org/
+application-exit.png
+arrow-down.png
+arrow-left-double.png
+arrow-right-double.png
+arrow-up.png
+arrow-up-red.png
+audio-input-microphone.png
+audio-volume-high.png
+audio-volume-muted.png
+call-start.png
+call-stop.png
+dialog-close.png
+document-save.png
+go-down-arrow.png
+go-first-view.png
+go-last-view.png
+icon.png
+im-user.png
+led-screen-texture.png
+list-add.png
+list-remove.png
+media-record.png
+speaker.png
+text-speak.png
+view-conversation-balloon.png
+
+Liquid Crystal font copyright Chase Babb https://www.dafont.com/liquid-crystal.font (Free for personal and commercial use.)
+LiquidCrystal-BoldItalic.otf
+LiquidCrystal-Bold.otf
+LiquidCrystal-NormalItalic.otf
+LiquidCrystal-Normal.otf
+
+
+Audio compressor code:
 // (c) Copyright 2016, Sean Connelly (@voidqk), http://syntheti.cc
 // MIT License
 // Project Home: https://github.com/voidqk/sndfilter
