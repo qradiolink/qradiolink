@@ -113,7 +113,7 @@ Credits and License
 - Some graphical resources are licensed under LGPLv3
 - Some graphical resources are distributed under the Creative Commons Non-commercial, No-derivative 4.0 license.
 - Sounds used by this project are copyright © 2020 w2sjw.com
-[![CC NC ND 4.0](https://mirrors.creativecommons.org/presskit/buttons/88x31/png/by-nc-nd.png)](CC NC ND 4.0)
+- [![CC NC ND 4.0](https://mirrors.creativecommons.org/presskit/buttons/88x31/png/by-nc-nd.png)](CC NC ND 4.0)
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
