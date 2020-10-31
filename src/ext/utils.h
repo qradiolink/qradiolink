@@ -1,3 +1,5 @@
+// Copyright 2010, 2011, 2012
+
 #ifndef UTILS_H
 #define UTILS_H
 
