@@ -858,8 +858,7 @@ std::vector<gr_complex>* gr_demod_base::get_constellation_data()
 {
     if(!_demod_running)
     {
-        std::vector<gr_complex> *dummy = new std::vector<gr_complex>;
-        return dummy;
+        return nullptr;
     }
     std::vector<gr_complex> *data = _constellation->get_data();
     return data;
