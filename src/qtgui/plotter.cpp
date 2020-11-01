@@ -171,6 +171,7 @@ CPlotter::CPlotter(QWidget *parent) : QFrame(parent)
     m_FilterBoxEnabled = true;
     m_CenterLineEnabled = true;
     m_BookmarksEnabled = true;
+    m_TooltipsEnabled = true;
 
     m_Span = 96000;
     m_SampleFreq = 96000;
@@ -311,8 +312,8 @@ void CPlotter::mouseMoveEvent(QMouseEvent* event)
                 }
                 if (m_TooltipsEnabled)
                     QToolTip::showText(event->globalPos(),
-                       QString("F: %1 kHz \n%2 dBFS")
-                       .arg(freqFromX(pt.x())/1.e3f, 0, 'f', 3).arg(dbFromY(pt.y())),
+                       QString("F: %1 kHz \n%2 dBFS").arg(
+                                           freqFromX(pt.x())/1.e3f, 0, 'f', 3).arg(dbFromY(pt.y())),
                        this);
             }
             m_GrabPosition = 0;

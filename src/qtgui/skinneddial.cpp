@@ -85,6 +85,7 @@ SkinnedDial::~SkinnedDial() {
     delete m_needle;
     delete m_cacheBackground;
     delete m_cacheNeedle;
+    delete m_cacheNeedleRot;
 }
 
 void SkinnedDial::setBackgroundImage(QPixmap p_img) {

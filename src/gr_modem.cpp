@@ -751,8 +751,7 @@ std::vector<gr_complex>* gr_modem::getConstellation()
         return _gr_demod_base->get_constellation_data();
     else
     {
-        std::vector<std::complex<float>> *const_data = new std::vector<std::complex<float>>;
-        return const_data;
+        return nullptr;
     }
 }
 

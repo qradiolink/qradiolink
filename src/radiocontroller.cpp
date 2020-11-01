@@ -1169,6 +1169,8 @@ void RadioController::getConstellationData()
         return;
     }
     std::vector<std::complex<float>> *const_data = _modem->getConstellation();
+    if(const_data == nullptr)
+        return;
     if(const_data->size() > 1)
     {
         emit newConstellationData(const_data);
