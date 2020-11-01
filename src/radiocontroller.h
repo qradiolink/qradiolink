@@ -199,7 +199,6 @@ private:
 
 
     void updateInputAudioStream();
-    void triggerImageCapture();
     void processInputNetStream();
     void sendTxBeep(int sound=0);
     void transmitServerInfoBeacon();
