@@ -22,6 +22,7 @@
 #include <QDateTime>
 #include <iostream>
 #include "src/logger.h"
+#include "imagecapture.h"
 
 class VideoEncoder
 {
@@ -36,6 +37,7 @@ public:
 private:
     Logger *_logger;
     bool _init;
+    ImageCapture *_image_capture;
 
 };
 

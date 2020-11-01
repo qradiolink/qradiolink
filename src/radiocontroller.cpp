@@ -569,6 +569,12 @@ void RadioController::processVideoFrame()
 
     /// This includes V4L2 capture time as well
     _video->encode_jpeg(&(videobuffer[24]), encoded_size, max_video_frame_size - 24);
+    if(encoded_size < 1)
+    {
+        delete[] videobuffer;
+        _video_on = false;
+        return;
+    }
     if(encoded_size > max_video_frame_size - 24)
     {
         encoded_size = max_video_frame_size - 24;

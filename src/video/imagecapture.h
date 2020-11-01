@@ -40,6 +40,7 @@ signals:
 
 public slots:
     void process_image(int id, QImage img);
+    unsigned char* get_frame(int &len);
 
 private:
     Settings *_settings;
@@ -47,7 +48,7 @@ private:
     unsigned char *_videobuffer;
     QCamera *_camera;
     QCameraImageCapture *_capture;
-    unsigned int _max_video_frame_size;
+    int _last_frame_length;
     bool _inited;
 };
 
