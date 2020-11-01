@@ -15,7 +15,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "imagecapture.h"
-#define FRAME_SIZE 76800 // 320 x 240 x 1 (Grayscale)
+#define FRAME_SIZE 230400 // 320 x 240 x 3 (RGB)
 
 ImageCapture::ImageCapture(Settings *settings, Logger *logger, QObject *parent) : QObject(parent)
 {
@@ -65,8 +65,8 @@ void ImageCapture::deinit()
 
     QObject::disconnect(_capture, SIGNAL(imageCaptured(int,QImage)), this, SLOT(process_image(int,QImage)));
     _camera->stop();
-    delete _camera;
     delete _capture;
+    delete _camera;
     _inited = false;
 }
 
@@ -82,7 +82,7 @@ void ImageCapture::capture_image()
 void ImageCapture::process_image(int id, QImage img)
 {
     Q_UNUSED(id);
-    img = img.convertToFormat(QImage::Format_Grayscale8);
+    img = img.convertToFormat(QImage::Format_RGB888);
     unsigned char *data = (unsigned char*)img.bits();
     _last_frame_length = img.sizeInBytes();
     memcpy(_videobuffer, data, _last_frame_length);
@@ -93,7 +93,7 @@ unsigned char* ImageCapture::get_frame(int &len)
     if(!_inited)
     {
         len = 0;
-        return new unsigned char[1];
+        return nullptr;
     }
     capture_image();
     len = _last_frame_length;

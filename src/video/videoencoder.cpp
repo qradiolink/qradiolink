@@ -56,7 +56,6 @@ void VideoEncoder::encode_jpeg(unsigned char *videobuffer, unsigned long &encode
     unsigned char *frame = _image_capture->get_frame(len);
     if(len < 1)
     {
-        delete[] frame;
         encoded_size = 0;
         return;
     }
@@ -80,16 +79,16 @@ void VideoEncoder::encode_jpeg(unsigned char *videobuffer, unsigned long &encode
         // jrow is a libjpeg row of samples array of 1 row pointer
     cinfo.image_width = 320 & -1;
     cinfo.image_height = 240 & -1;
-    cinfo.input_components = 1;
-    cinfo.in_color_space = JCS_GRAYSCALE; //libJPEG expects YUV 3bytes, 24bit
-    cinfo.jpeg_color_space = JCS_GRAYSCALE;
-    cinfo.num_components = 1;
+    cinfo.input_components = 3;
+    cinfo.in_color_space = JCS_RGB; //libJPEG expects YUV 3bytes, 24bit
+    cinfo.jpeg_color_space = JCS_RGB;
+    cinfo.num_components = 3;
 
     jpeg_set_defaults(&cinfo);
     jpeg_set_quality(&cinfo, 10, TRUE);
     jpeg_start_compress(&cinfo, TRUE);
 
-    unsigned char tmprowbuf[320];
+    unsigned char tmprowbuf[320 * 3];
 
     JSAMPROW row_pointer[1];
     row_pointer[0] = &tmprowbuf[0];
@@ -106,7 +105,7 @@ void VideoEncoder::encode_jpeg(unsigned char *videobuffer, unsigned long &encode
             tmprowbuf[j + 5] = input[offset + i + 3]; // V (shared between pixels)
         }
         */
-        row_pointer[0] = &input[cinfo.next_scanline * 320];
+        row_pointer[0] = &input[cinfo.next_scanline * 320 * 3];
         jpeg_write_scanlines(&cinfo, row_pointer, 1);
     }
 
