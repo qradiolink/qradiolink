@@ -41,6 +41,10 @@ MumbleClient::MumbleClient(const Settings *settings, Logger *logger, QObject *pa
 
 MumbleClient::~MumbleClient()
 {
+    _logger->log(Logger::LogLevelInfo, QString("Shutting down Mumble client"));
+    if(_connection_in_progress)
+        disconnectFromServer();
+
     delete _socket_client;
     delete _codec;
     delete _ping_timer;
