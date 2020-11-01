@@ -976,10 +976,15 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
         }
         else
         {
-            response = QString("NOT IMPLEMENTED YET: Setting Radio channel to %1").arg(set);
+            response = QString("Setting Radio channel to %1").arg(set);
             emit tuneMemoryChannel(channels->at(set));
         }
         break;
+    }
+    case 67:
+    {
+        response = QString("Will shutdown now");
+        emit stopRadio();
     }
 
     default:
@@ -1062,4 +1067,5 @@ void CommandProcessor::buildCommandList()
     _command_list->append(new command("settxlimits", 1, "Toggle TX band limits, (1 enabled, 0 disabled)"));
     _command_list->append(new command("listradiochan", 0, "List memory channels"));
     _command_list->append(new command("setradiochan", 1, "Set radio channel (integer value)"));
+    _command_list->append(new command("shutdown", 0, "Shutdown and exit"));
 }

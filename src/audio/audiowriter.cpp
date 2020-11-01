@@ -40,6 +40,7 @@ AudioWriter::~AudioWriter()
 void AudioWriter::stop()
 {
     _working = false;
+    _logger->log(Logger::LogLevelInfo, QString("Stopping audio output thread"));
 }
 
 void AudioWriter::restart()

@@ -201,6 +201,8 @@ RadioController::~RadioController()
 
 void RadioController::stop()
 {
+    _logger->log(Logger::LogLevelInfo, QString("Stopping radio controller thread"));
+    emit terminateConnections();
     if(_settings->rx_inited)
         toggleRX(false);
     if(_settings->tx_inited)

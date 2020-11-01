@@ -33,6 +33,7 @@ AudioReader::AudioReader(const Settings *settings, Logger *logger, QObject *pare
 void AudioReader::stop()
 {
     _working = false;
+    _logger->log(Logger::LogLevelInfo, QString("Stopping audio input thread"));
 }
 
 void AudioReader::restart()

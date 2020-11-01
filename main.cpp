@@ -35,7 +35,7 @@
 #include "src/logger.h"
 
 void connectIndependentSignals(AudioWriter *audiowriter, AudioReader *audioreader,
-                               RadioController *radio_op, MumbleClient *mumbleclient);
+                               RadioController *radio_op, MumbleClient *mumbleclient, TelnetServer *telnet_server);
 void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
                        AudioReader *audioreader, MainWindow *w, MumbleClient *mumbleclient,
                        RadioController *radio_op, Logger *logger);
@@ -91,6 +91,7 @@ int main(int argc, char *argv[])
     QObject::connect(radio_op, SIGNAL(finished()), t1, SLOT(quit()));
     QObject::connect(radio_op, SIGNAL(finished()), radio_op, SLOT(deleteLater()));
     QObject::connect(t1, SIGNAL(finished()), t1, SLOT(deleteLater()));
+    QObject::connect(radio_op, SIGNAL(finished()), &a, SLOT(quit()));
     t1->start();
 
     QThread *t2 = new QThread;
@@ -138,7 +139,7 @@ int main(int argc, char *argv[])
     connectCommandSignals(telnet_server, mumbleclient, radio_op);
 
     /// Signals independent of GUI or remote interface
-    connectIndependentSignals(audiowriter, audioreader, radio_op, mumbleclient);
+    connectIndependentSignals(audiowriter, audioreader, radio_op, mumbleclient, telnet_server);
 
 
     /// Start remote command listener
@@ -163,8 +164,11 @@ int main(int argc, char *argv[])
 }
 
 void connectIndependentSignals(AudioWriter *audiowriter, AudioReader *audioreader,
-                               RadioController *radio_op, MumbleClient *mumbleclient)
+                               RadioController *radio_op, MumbleClient *mumbleclient, TelnetServer *telnet_server)
 {
+    QObject::connect(radio_op,SIGNAL(terminateConnections()),audiowriter,SLOT(stop()));
+    QObject::connect(radio_op,SIGNAL(terminateConnections()),audioreader,SLOT(stop()));
+    QObject::connect(radio_op,SIGNAL(terminateConnections()),telnet_server,SLOT(stop()));
     QObject::connect(radio_op, SIGNAL(writePCM(short*,int,bool,int)),
                      audiowriter, SLOT(writePCM(short*,int,bool, int)));
     QObject::connect(radio_op, SIGNAL(recordAudio(bool)),
@@ -197,6 +201,7 @@ void connectIndependentSignals(AudioWriter *audiowriter, AudioReader *audioreade
 void connectCommandSignals(TelnetServer *telnet_server, MumbleClient *mumbleclient,
                        RadioController *radio_op)
 {
+    QObject::connect(telnet_server->command_processor,SIGNAL(stopRadio()),radio_op,SLOT(stop()));
     QObject::connect(telnet_server->command_processor,SIGNAL(startTransmission()),
                      radio_op,SLOT(startTransmission()));
     QObject::connect(telnet_server->command_processor,SIGNAL(endTransmission()),
@@ -380,9 +385,6 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
     QObject::connect(w,SIGNAL(connectToServer(QString, unsigned)),
                      mumbleclient,SLOT(connectToServer(QString, unsigned)));
     QObject::connect(w,SIGNAL(disconnectFromServer()),mumbleclient,SLOT(disconnectFromServer()));
-    QObject::connect(w,SIGNAL(terminateConnections()),audiowriter,SLOT(stop()));
-    QObject::connect(w,SIGNAL(terminateConnections()),audioreader,SLOT(stop()));
-    QObject::connect(w,SIGNAL(terminateConnections()),telnet_server,SLOT(stop()));
     QObject::connect(w,SIGNAL(disableRemote()),telnet_server,SLOT(stop()));
     QObject::connect(w,SIGNAL(enableRemote()),telnet_server,SLOT(start()));
     QObject::connect(w,SIGNAL(setMute(bool)),mumbleclient,SLOT(setMute(bool)));

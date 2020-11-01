@@ -104,6 +104,7 @@ signals:
     void tuneToMemoryChannel(radiochannel *chan);
     void recordAudio(bool value);
     void newPageMessage(QString paged_by, QString message);
+    void terminateConnections();
 
 
 public slots:

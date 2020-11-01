@@ -613,11 +613,7 @@ void gr_modem::transmitPCMAudio(std::vector<float> *audio_data)
         delete audio_data;
         return;
     }
-    int ret = 1;
-    while(ret)
-    {
-        ret = _gr_mod_base->set_audio(audio_data);
-    }
+    _gr_mod_base->set_audio(audio_data);
 }
 
 void gr_modem::transmitVideoData(unsigned char *data, int size)
