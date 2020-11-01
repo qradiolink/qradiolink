@@ -21,6 +21,8 @@
 #include <QCamera>
 #include <QCameraInfo>
 #include <QCameraImageCapture>
+#include <QCameraViewfinder>
+#include <QApplication>
 #include "src/settings.h"
 #include "src/logger.h"
 
@@ -48,6 +50,7 @@ private:
     unsigned char *_videobuffer;
     QCamera *_camera;
     QCameraImageCapture *_capture;
+    QCameraViewfinder *_viewfinder;
     int _last_frame_length;
     bool _inited;
 };

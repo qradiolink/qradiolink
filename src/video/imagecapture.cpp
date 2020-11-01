@@ -39,6 +39,11 @@ void ImageCapture::init()
     {
         return;
     }
+    if (QCameraInfo::availableCameras().count() < 1)
+    {
+            _logger->log(Logger::LogLevelCritical, QString("No available camera found"));
+            return;
+    }
     QCameraInfo camera_info = QCameraInfo::defaultCamera();
     _camera = new QCamera(camera_info);
     _camera->setCaptureMode(QCamera::CaptureStillImage);
@@ -55,6 +60,12 @@ void ImageCapture::init()
     encoding_settings.setCodec("");
     //encoding_settings.setQuality(QMultimedia::VeryLowQuality);
     _capture->setEncodingSettings(encoding_settings);
+    //QWidget *w = QApplication::activeWindow();
+    //_viewfinder = new QCameraViewfinder(w);
+    //_viewfinder->moveToThread(QCoreApplication::instance()->thread());
+    //_camera->setViewfinder(_viewfinder);
+    //_viewfinder->show();
+    //_viewfinder->raise();
     _camera->start();
     _inited = true;
 }
@@ -63,11 +74,14 @@ void ImageCapture::deinit()
 {
     if(!_inited)
         return;
-
+    //_viewfinder->hide();
+    //delete _viewfinder;
+    _capture->cancelCapture();
     QObject::disconnect(_capture, SIGNAL(imageCaptured(int,QImage)), this, SLOT(process_image(int,QImage)));
     _camera->stop();
     delete _capture;
     delete _camera;
+
     _inited = false;
 }
 

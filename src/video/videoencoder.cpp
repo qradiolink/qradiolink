@@ -35,9 +35,10 @@ VideoEncoder::~VideoEncoder()
 
 void VideoEncoder::init(QString device_name)
 {
+    Q_UNUSED(device_name);
     if(_init)
         return;
-    _logger->log(Logger::LogLevelInfo,"Using video device: " + device_name);
+    //_logger->log(Logger::LogLevelInfo,"Using video device: " + device_name);
     _image_capture->init();
     _init = true;
 }
