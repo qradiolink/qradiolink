@@ -201,12 +201,14 @@ RadioController::~RadioController()
 
 void RadioController::stop()
 {
-    _logger->log(Logger::LogLevelInfo, QString("Stopping radio controller thread"));
-    emit terminateConnections();
     if(_settings->rx_inited)
         toggleRX(false);
     if(_settings->tx_inited)
         toggleTX(false);
+    _logger->log(Logger::LogLevelInfo, QString("Stopping radio controller thread"));
+    emit terminateConnections();
+    struct timespec time_to_sleep = {0, 200000000L };
+    nanosleep(&time_to_sleep, NULL);
     _stop_thread=true;
 }
 

@@ -359,7 +359,7 @@ void MainWindow::closeEvent (QCloseEvent *event)
     saveUiConfig();
     emit disconnectFromServer();
     emit stopRadio();
-    event->accept();
+    event->ignore();
 }
 
 
