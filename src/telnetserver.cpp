@@ -32,6 +32,7 @@ TelnetServer::TelnetServer(const Settings *settings, Logger *logger, RadioChanne
 
 TelnetServer::~TelnetServer()
 {
+    _logger->log(Logger::LogLevelInfo, QString("Shutting down remote control interface"));
     delete _server;
     delete command_processor;
 }

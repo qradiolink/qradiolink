@@ -195,7 +195,6 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
 
     QObject::connect(&_secondary_text_timer,SIGNAL(timeout()),ui->secondaryTextDisplay,SLOT(hide()));
     QObject::connect(&_video_timer,SIGNAL(timeout()),ui->videoFrame,SLOT(hide()));
-    QObject::connect(&_speech_icon_timer,SIGNAL(timeout()),this,SLOT(resetSpeechIcons()));
 
     ui->rxModemTypeComboBox->setAttribute(Qt::WA_AcceptTouchEvents);
     ui->txModemTypeComboBox->setAttribute(Qt::WA_AcceptTouchEvents);
@@ -358,12 +357,8 @@ MainWindow::~MainWindow()
 void MainWindow::closeEvent (QCloseEvent *event)
 {
     saveUiConfig();
-    emit stopRadio();
     emit disconnectFromServer();
-    emit terminateConnections();
-    // FIXME: this is the wrong way to stop the radio
-    struct timespec time_to_sleep = {0, 500000000L };
-    nanosleep(&time_to_sleep, NULL);
+    emit stopRadio();
     event->accept();
 }
 
@@ -1089,6 +1084,7 @@ void MainWindow::connectVOIPRequested()
 
 void MainWindow::disconnectVOIPRequested()
 {
+    QObject::disconnect(&_speech_icon_timer,SIGNAL(timeout()),this,SLOT(resetSpeechIcons()));
     emit disconnectFromServer();
     ui->voipTreeWidget->clear();
     ui->voipConnectButton->setDisabled(false);
@@ -1104,6 +1100,7 @@ void MainWindow::connectedToServer(QString msg)
 {
     displayVOIPText(msg, false);
     ui->voipConnectButton->setDisabled(true);
+    QObject::connect(&_speech_icon_timer,SIGNAL(timeout()),this,SLOT(resetSpeechIcons()));
 }
 
 

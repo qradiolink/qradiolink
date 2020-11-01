@@ -26,6 +26,7 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
     _mode = 9999;
     _byte_source = make_gr_byte_source();
     _audio_source = make_gr_audio_source();
+    _samp_rate = 1000000;
 
     _carrier_offset = 0;
 

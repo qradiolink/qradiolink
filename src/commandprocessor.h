@@ -107,7 +107,7 @@ signals:
     void toggleSelfMute(bool mute);
     void setAudioRecord(bool value);
 
-    //void stopRadio();
+    void stopRadio();
 
     /// GUI
     void enableGUIFFT(bool value);

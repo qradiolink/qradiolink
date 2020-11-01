@@ -613,11 +613,7 @@ void gr_modem::transmitPCMAudio(std::vector<float> *audio_data)
         delete audio_data;
         return;
     }
-    int ret = 1;
-    while(ret)
-    {
-        ret = _gr_mod_base->set_audio(audio_data);
-    }
+    _gr_mod_base->set_audio(audio_data);
 }
 
 void gr_modem::transmitVideoData(unsigned char *data, int size)
@@ -751,8 +747,7 @@ std::vector<gr_complex>* gr_modem::getConstellation()
         return _gr_demod_base->get_constellation_data();
     else
     {
-        std::vector<std::complex<float>> *const_data = new std::vector<std::complex<float>>;
-        return const_data;
+        return nullptr;
     }
 }
 

@@ -172,7 +172,6 @@ public slots:
     void displayPageMessage(QString page_user, QString page_message);
 
 signals:
-    void terminateConnections();
     void startTransmission();
     void endTransmission();
     void sendText(QString text, bool repeat);
