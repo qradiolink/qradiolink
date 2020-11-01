@@ -104,13 +104,12 @@ See docs/README.md
 
 Copyright and License
 -------------------
-- Parts of the source code are released under the GNU General Public License version 3. Please see the COPYRIGHT and AUTHORS files for details.
+- Most of the source code are released under the GNU General Public License version 3. Please see the COPYRIGHT and AUTHORS files for details.
 - Parts of the code are licensed under the MIT license.
 - Parts of the code are licensed under the BSD license.
 - Some graphical resources are licensed under LGPLv3
 - Some graphical resources are distributed under the Creative Commons Non-commercial, No-derivative 4.0 license.
 - Sounds used by this project are copyright © 2020 w2sjw.com
-- [!(https://mirrors.creativecommons.org/presskit/buttons/88x31/png/by-nc-nd.png)](CC NC ND 4.0)
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
