@@ -199,7 +199,6 @@ private:
 
 
     void updateInputAudioStream();
-    void triggerImageCapture();
     void processInputNetStream();
     void sendTxBeep(int sound=0);
     void transmitServerInfoBeacon();
@@ -243,6 +242,7 @@ private:
     QElapsedTimer *_rssi_read_timer;
     QElapsedTimer *_scan_timer;
     QElapsedTimer *_cw_timer;
+    QVector<unsigned char *> _video_audio_buffer;
     unsigned char *_rand_frame_data;
     float *_fft_data;
     QVector<short> *_to_voip_buffer;
