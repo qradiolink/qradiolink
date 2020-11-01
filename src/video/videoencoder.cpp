@@ -53,7 +53,7 @@ void VideoEncoder::deinit()
 
 void VideoEncoder::encode_jpeg(unsigned char *videobuffer, unsigned long &encoded_size, unsigned long max_video_frame_size)
 {
-    int len;
+    int len = 0;
     unsigned char *frame = _image_capture->get_frame(len);
     if(len < 1)
     {

@@ -573,10 +573,12 @@ void RadioController::processVideoFrame()
     qint64 microsec;
     timer.start();
     _mutex->lock();
-    if(_video_audio_buffer.size() >=2)
+    if(_video_audio_buffer.size() >= 2)
     {
         memcpy(&(videobuffer[24]), _video_audio_buffer.at(0), audio_size*sizeof(unsigned char));
         memcpy(&(videobuffer[24+audio_size]), _video_audio_buffer.at(1), audio_size*sizeof(unsigned char));
+        _video_audio_buffer.removeAt(0);
+        _video_audio_buffer.removeAt(0);
     }
     _mutex->unlock();
 
@@ -610,9 +612,9 @@ void RadioController::processVideoFrame()
     }
 
     microsec = (quint64)timer.nsecsElapsed();
-    if(microsec < 80000000)
+    if(microsec < 100000000)
     {
-        struct timespec time_to_sleep = {0, (80000000 - (long)microsec)};
+        struct timespec time_to_sleep = {0, (100000000 - (long)microsec)};
         nanosleep(&time_to_sleep, NULL);
     }
     u_int32_t crc = (u_int32_t)gr::digital::crc32(&(videobuffer[24+2*audio_size]), (size_t)real_size);
