@@ -29,6 +29,7 @@ ImageCapture::ImageCapture(Settings *settings, Logger *logger, QObject *parent) 
 
 ImageCapture::~ImageCapture()
 {
+    deinit();
     delete[] _videobuffer;
 }
 
