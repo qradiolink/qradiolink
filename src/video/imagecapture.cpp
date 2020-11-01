@@ -60,9 +60,12 @@ void ImageCapture::init()
     encoding_settings.setCodec("");
     //encoding_settings.setQuality(QMultimedia::VeryLowQuality);
     _capture->setEncodingSettings(encoding_settings);
-    //_viewfinder = new QCameraViewfinder(0);
+    //QWidget *w = QApplication::activeWindow();
+    //_viewfinder = new QCameraViewfinder(w);
+    //_viewfinder->moveToThread(QCoreApplication::instance()->thread());
     //_camera->setViewfinder(_viewfinder);
     //_viewfinder->show();
+    //_viewfinder->raise();
     _camera->start();
     _inited = true;
 }

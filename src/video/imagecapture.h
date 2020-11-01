@@ -22,6 +22,7 @@
 #include <QCameraInfo>
 #include <QCameraImageCapture>
 #include <QCameraViewfinder>
+#include <QApplication>
 #include "src/settings.h"
 #include "src/logger.h"
 
