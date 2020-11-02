@@ -184,11 +184,6 @@ RadioController::~RadioController()
     delete _mutex;
     delete[] _rand_frame_data;
     delete[] _fft_data;
-    for(int i=0;i<_video_audio_buffer.size();i++)
-    {
-        delete[] _video_audio_buffer.at(i);
-    }
-    _video_audio_buffer.clear();
     _to_voip_buffer->clear();
     delete _to_voip_buffer;
     delete _relay_controller;
@@ -279,8 +274,6 @@ void RadioController::run()
             if(_tx_mode == gr_modem_types::ModemTypeCW600USB)
                 updateCWK();
                 //QtConcurrent::run(this, &RadioController::updateCWK);
-            if(!_video_on)
-                QtConcurrent::run(this, &RadioController::processVideoFrame);
 
             /// if not in the process of resetting the modem read interface
             /// data will accumulate in the interface buffer...
@@ -554,9 +547,7 @@ void RadioController::txAudio(short *audiobuffer, int audiobuffer_size,
 
     if(_tx_mode == gr_modem_types::ModemTypeQPSKVideo)
     {
-        _mutex->lock();
-        _video_audio_buffer.push_back(encoded_audio);
-        _mutex->unlock();
+        QtConcurrent::run(this, &RadioController::processVideoFrame, encoded_audio, packet_size);
     }
     else
         emit audioData(encoded_audio,packet_size);
@@ -564,7 +555,7 @@ void RadioController::txAudio(short *audiobuffer, int audiobuffer_size,
 }
 
 
-void RadioController::processVideoFrame()
+void RadioController::processVideoFrame(unsigned char *audio_buffer, int audio_size)
 {
     if((_tx_mode != gr_modem_types::ModemTypeQPSKVideo) || _video_on)
         return;
@@ -572,7 +563,7 @@ void RadioController::processVideoFrame()
 
     unsigned int max_video_frame_size = 3122;
     unsigned long encoded_size;
-    unsigned int audio_size = 118; // Audio frames are 100 msec Opus
+    //audio_size = 118; // Audio frames are 100 msec Opus encoded
 
     /// Large alloc
     unsigned char *videobuffer = new unsigned char[230400];
@@ -580,13 +571,10 @@ void RadioController::processVideoFrame()
     QElapsedTimer timer;
     qint64 microsec;
     timer.start();
-    _mutex->lock();
-    if(_video_audio_buffer.size() >= 1)
-    {
-        memcpy(&(videobuffer[24]), _video_audio_buffer.at(0), audio_size*sizeof(unsigned char));
-        _video_audio_buffer.removeAt(0);
-    }
-    _mutex->unlock();
+
+    memcpy(&(videobuffer[24]), audio_buffer, audio_size*sizeof(unsigned char));
+    delete[] audio_buffer;
+
 
     /// This includes V4L2 capture time as well
     _video->encode_jpeg(&(videobuffer[24+audio_size]), encoded_size, max_video_frame_size - 24 - audio_size);
@@ -617,12 +605,8 @@ void RadioController::processVideoFrame()
         return;
     }
 
-    microsec = (quint64)timer.nsecsElapsed();
-    if(microsec < 100000000)
-    {
-        struct timespec time_to_sleep = {0, (100000000 - (long)microsec)};
-        nanosleep(&time_to_sleep, NULL);
-    }
+    /// Out to radio
+    ///
     u_int32_t crc = (u_int32_t)gr::digital::crc32(&(videobuffer[24+audio_size]), (size_t)real_size);
 
     memcpy(&(videobuffer[0]), &real_size, 4*sizeof(unsigned char));
@@ -1004,11 +988,6 @@ void RadioController::startTx()
 void RadioController::stopTx()
 {
     updateInputAudioStream();
-    for(int i=0;i<_video_audio_buffer.size();i++)
-    {
-        delete[] _video_audio_buffer.at(i);
-    }
-    _video_audio_buffer.clear();
     if(_settings->tx_inited)
     {
         int tx_tail_msec = 100;

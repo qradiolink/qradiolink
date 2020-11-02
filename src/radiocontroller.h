@@ -113,7 +113,7 @@ public slots:
     void endTransmission();
     void radioTimeout();
     void txAudio(short *audiobuffer, int audiobuffer_size, int vad, bool radio_only);
-    void processVideoFrame();
+    void processVideoFrame(unsigned char *audio_buffer, int audio_size);
     void textData(QString text, bool repeat = false);
     void textMumble(QString text, bool channel = false);
     void stop();
@@ -242,7 +242,6 @@ private:
     QElapsedTimer *_rssi_read_timer;
     QElapsedTimer *_scan_timer;
     QElapsedTimer *_cw_timer;
-    QVector<unsigned char *> _video_audio_buffer;
     unsigned char *_rand_frame_data;
     float *_fft_data;
     QVector<short> *_to_voip_buffer;
