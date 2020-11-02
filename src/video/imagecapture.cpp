@@ -79,6 +79,8 @@ void ImageCapture::deinit()
     _capture->cancelCapture();
     QObject::disconnect(_capture, SIGNAL(imageCaptured(int,QImage)), this, SLOT(process_image(int,QImage)));
     _camera->stop();
+    _camera->unload();
+    while(_camera->state() == QCamera::State::ActiveState) {}
     delete _capture;
     delete _camera;
 
