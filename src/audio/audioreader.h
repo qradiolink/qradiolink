@@ -37,7 +37,7 @@ signals:
 
 public slots:
     void run();
-    void setReadMode(bool capture, bool preprocess, int audio_mode);
+    void setReadMode(bool capture, bool preprocess, int audio_mode, int audiobuffer_size);
     void stop();
     void restart();
 
@@ -50,6 +50,7 @@ private:
     bool _capture_audio;
     bool _read_preprocess;
     int _read_audio_mode;
+    int _audiobuffer_size;
     QMutex _mutex;
 
 };

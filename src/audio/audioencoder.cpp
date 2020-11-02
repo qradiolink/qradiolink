@@ -61,6 +61,7 @@ AudioEncoder::AudioEncoder(const Settings *settings)
     //opus_encoder_ctl(_enc, OPUS_SET_PREDICTION_DISABLED(0));
     opus_encoder_ctl(_enc, OPUS_GET_BANDWIDTH(&opus_bandwidth));
     opus_encoder_ctl(_enc, OPUS_SET_INBAND_FEC(0));
+    opus_encoder_ctl(_enc, OPUS_SET_EXPERT_FRAME_DURATION(OPUS_FRAMESIZE_ARG));
     opus_decoder_ctl(_dec, OPUS_SET_GAIN(0));
 
     // VOIP
@@ -101,8 +102,8 @@ void AudioEncoder::set_voip_bitrate(int bitrate)
 
 unsigned char* AudioEncoder::encode_opus(short *audiobuffer, int audiobuffersize, int &encoded_size)
 {
-    unsigned char *encoded_audio = new unsigned char[47];
-    encoded_size = opus_encode(_enc, audiobuffer, audiobuffersize/sizeof(short), encoded_audio, 47);
+    unsigned char *encoded_audio = new unsigned char[256];
+    encoded_size = opus_encode(_enc, audiobuffer, audiobuffersize/sizeof(short), encoded_audio, 256);
     return encoded_audio;
 }
 
@@ -113,15 +114,14 @@ unsigned char* AudioEncoder::encode_opus_voip(short *audiobuffer, int audiobuffe
     return encoded_audio;
 }
 
-short* AudioEncoder::decode_opus(unsigned char *audiobuffer, int audiobuffersize, int &samples)
+short* AudioEncoder::decode_opus(unsigned char *audiobuffer, int audiobuffersize, int &samples, int fs)
 {
-    if(audiobuffersize > 47)
+    if(audiobuffersize > 256)
     {
         samples = 0;
         delete[] audiobuffer;
         return nullptr;
     }
-    int fs = 320;
     short *pcm = new short[fs];
     //memset(pcm,0,(fs)*sizeof(short));
     samples = opus_decode(_dec,audiobuffer,audiobuffersize, pcm, fs, 0);

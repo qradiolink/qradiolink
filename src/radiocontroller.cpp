@@ -184,6 +184,11 @@ RadioController::~RadioController()
     delete _mutex;
     delete[] _rand_frame_data;
     delete[] _fft_data;
+    for(int i=0;i<_video_audio_buffer.size();i++)
+    {
+        delete[] _video_audio_buffer.at(i);
+    }
+    _video_audio_buffer.clear();
     _to_voip_buffer->clear();
     delete _to_voip_buffer;
     delete _relay_controller;
@@ -325,7 +330,7 @@ void RadioController::updateInputAudioStream()
             || (_tx_mode == gr_modem_types::ModemTypeCW600USB)
             || (_text_transmit_on || _proto_transmit_on))
     {
-        emit setAudioReadMode(false, false, AudioProcessor::AUDIO_MODE_ANALOG);
+        emit setAudioReadMode(false, false, AudioProcessor::AUDIO_MODE_ANALOG, 640);
         return;
     }
 
@@ -343,20 +348,24 @@ void RadioController::updateInputAudioStream()
             (_tx_mode == gr_modem_types::ModemType4FSK1KFM))
     {
         audio_mode = AudioProcessor::AUDIO_MODE_CODEC2;
-        emit setAudioReadMode(true, (bool)_settings->audio_compressor, audio_mode);
+        emit setAudioReadMode(true, (bool)_settings->audio_compressor, audio_mode, 640);
     }
     else if((_tx_mode == gr_modem_types::ModemTypeQPSK20K) ||
             (_tx_mode == gr_modem_types::ModemType2FSK10KFM) ||
-            (_tx_mode == gr_modem_types::ModemType4FSK10KFM) ||
-            (_tx_mode == gr_modem_types::ModemTypeQPSKVideo))
+            (_tx_mode == gr_modem_types::ModemType4FSK10KFM))
     {
         audio_mode = AudioProcessor::AUDIO_MODE_OPUS;
-        emit setAudioReadMode(true, (bool)_settings->audio_compressor, audio_mode);
+        emit setAudioReadMode(true, (bool)_settings->audio_compressor, audio_mode, 640);
+    }
+    else if(_tx_mode == gr_modem_types::ModemTypeQPSKVideo)
+    {
+        audio_mode = AudioProcessor::AUDIO_MODE_OPUS;
+        emit setAudioReadMode(true, (bool)_settings->audio_compressor, audio_mode, 1600);
     }
     else
     {
         audio_mode = AudioProcessor::AUDIO_MODE_ANALOG;
-        emit setAudioReadMode(true, (bool)_settings->audio_compressor, audio_mode);
+        emit setAudioReadMode(true, (bool)_settings->audio_compressor, audio_mode, 640);
     }
 }
 
@@ -563,7 +572,7 @@ void RadioController::processVideoFrame()
 
     unsigned int max_video_frame_size = 3122;
     unsigned long encoded_size;
-    unsigned int audio_size = 47;
+    unsigned int audio_size = 118; // Audio frames are 100 msec Opus
 
     /// Large alloc
     unsigned char *videobuffer = new unsigned char[230400];
@@ -572,32 +581,30 @@ void RadioController::processVideoFrame()
     qint64 microsec;
     timer.start();
     _mutex->lock();
-    if(_video_audio_buffer.size() >= 2)
+    if(_video_audio_buffer.size() >= 1)
     {
         memcpy(&(videobuffer[24]), _video_audio_buffer.at(0), audio_size*sizeof(unsigned char));
-        memcpy(&(videobuffer[24+audio_size]), _video_audio_buffer.at(1), audio_size*sizeof(unsigned char));
-        _video_audio_buffer.removeAt(0);
         _video_audio_buffer.removeAt(0);
     }
     _mutex->unlock();
 
     /// This includes V4L2 capture time as well
-    _video->encode_jpeg(&(videobuffer[24+2*audio_size]), encoded_size, max_video_frame_size - 24 - 2*audio_size);
+    _video->encode_jpeg(&(videobuffer[24+audio_size]), encoded_size, max_video_frame_size - 24 - audio_size);
     if(encoded_size < 1)
     {
         delete[] videobuffer;
         _video_on = false;
         return;
     }
-    if(encoded_size > max_video_frame_size - 24 - 2*audio_size)
+    if(encoded_size > max_video_frame_size - 24 - audio_size)
     {
-        encoded_size = max_video_frame_size - 24 - 2*audio_size;
+        encoded_size = max_video_frame_size - 24 - audio_size;
     }
     u_int32_t real_size = (u_int32_t) encoded_size;
     if(_settings->voip_ptt_enabled && _transmitting && (real_size > 0))
     {
         unsigned char *video_frame = new unsigned char[real_size];
-        memcpy(video_frame, &(videobuffer[24+2*audio_size]), real_size*sizeof(unsigned char));
+        memcpy(video_frame, &(videobuffer[24+audio_size]), real_size*sizeof(unsigned char));
         emit voipVideoData(video_frame, real_size);
         delete[] videobuffer;
         microsec = (quint64)timer.nsecsElapsed();
@@ -616,7 +623,7 @@ void RadioController::processVideoFrame()
         struct timespec time_to_sleep = {0, (100000000 - (long)microsec)};
         nanosleep(&time_to_sleep, NULL);
     }
-    u_int32_t crc = (u_int32_t)gr::digital::crc32(&(videobuffer[24+2*audio_size]), (size_t)real_size);
+    u_int32_t crc = (u_int32_t)gr::digital::crc32(&(videobuffer[24+audio_size]), (size_t)real_size);
 
     memcpy(&(videobuffer[0]), &real_size, 4*sizeof(unsigned char));
     memcpy(&(videobuffer[4]), &real_size, 4*sizeof(unsigned char));
@@ -625,7 +632,7 @@ void RadioController::processVideoFrame()
     memcpy(&(videobuffer[16]), &crc, 4*sizeof(unsigned char));
     memcpy(&(videobuffer[20]), &crc, 4*sizeof(unsigned char));
     /// Rest of video frame filled with garbage to keep the same radio frame size
-    for(unsigned int k=real_size+24+2*audio_size,i=0;k<max_video_frame_size;k++,i++)
+    for(unsigned int k=real_size+24+audio_size,i=0;k<max_video_frame_size;k++,i++)
     {
         videobuffer[k] = _rand_frame_data[i];
     }
@@ -997,6 +1004,11 @@ void RadioController::startTx()
 void RadioController::stopTx()
 {
     updateInputAudioStream();
+    for(int i=0;i<_video_audio_buffer.size();i++)
+    {
+        delete[] _video_audio_buffer.at(i);
+    }
+    _video_audio_buffer.clear();
     if(_settings->tx_inited)
     {
         int tx_tail_msec = 100;
@@ -1222,6 +1234,8 @@ void RadioController::receiveDigitalAudio(unsigned char *data, int size)
             (_rx_mode == gr_modem_types::ModemType2FSK1K) ||
             (_rx_mode == gr_modem_types::ModemType4FSK1KFM))
         audio_out = _codec->decode_codec2_700(data, size, samples);
+    else if(_rx_mode == gr_modem_types::ModemTypeQPSKVideo)
+        audio_out = _codec->decode_opus(data, size, samples, 800);
     else
     {
         audio_out = _codec->decode_opus(data, size, samples);
@@ -1359,7 +1373,7 @@ void RadioController::receiveVideoData(unsigned char *data, int size)
 {
     Q_UNUSED(size);
     u_int32_t frame_size = getFrameLength(data);
-    unsigned int audio_size = 47;
+    unsigned int audio_size = 118;
 
     if(frame_size <= 0)
     {
@@ -1374,13 +1388,10 @@ void RadioController::receiveVideoData(unsigned char *data, int size)
         return;
     }
     unsigned char *jpeg_frame = new unsigned char[frame_size];
-    unsigned char *audio_frame1 = new unsigned char[audio_size];
-    unsigned char *audio_frame2 = new unsigned char[audio_size];
-    memcpy(audio_frame1, &(data[24]), audio_size*sizeof(unsigned char));
-    memcpy(audio_frame2, &(data[24+audio_size]), audio_size*sizeof(unsigned char));
-    receiveDigitalAudio(audio_frame1, audio_size);
-    receiveDigitalAudio(audio_frame2, audio_size);
-    memcpy(jpeg_frame, &(data[24+2*audio_size]), frame_size*sizeof(unsigned char));
+    unsigned char *audio_frame = new unsigned char[audio_size];
+    memcpy(audio_frame, &(data[24]), audio_size*sizeof(unsigned char));
+    receiveDigitalAudio(audio_frame, audio_size);
+    memcpy(jpeg_frame, &(data[24+audio_size]), frame_size*sizeof(unsigned char));
     u_int32_t crc = getFrameCRC32(data);
     delete[] data;
     u_int32_t crc_check = (u_int32_t) gr::digital::crc32(jpeg_frame, (size_t)frame_size);

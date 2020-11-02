@@ -27,6 +27,7 @@ AudioReader::AudioReader(const Settings *settings, Logger *logger, QObject *pare
     _capture_audio = false;
     _read_audio_mode = AudioProcessor::AUDIO_MODE_ANALOG;
     _read_preprocess = false;
+    _audiobuffer_size = 640; //40 ms @ 8k
 }
 
 
@@ -42,12 +43,13 @@ void AudioReader::restart()
     _restart = true;
 }
 
-void AudioReader::setReadMode(bool capture, bool preprocess, int audio_mode)
+void AudioReader::setReadMode(bool capture, bool preprocess, int audio_mode, int audiobuffer_size)
 {
     _mutex.lock();
     _capture_audio = capture;
     _read_audio_mode = audio_mode;
     _read_preprocess = preprocess;
+    _audiobuffer_size = audiobuffer_size;
     _mutex.unlock();
 }
 
@@ -56,9 +58,7 @@ void AudioReader::run()
     start:
     _working = true;
     AudioProcessor *processor = new AudioProcessor(_settings);
-    _buffer = new QByteArray;
-    // FIXME: support different frame durations
-    int audiobuffer_size = 640; //40 ms @ 8k
+    _buffer = new QByteArray; 
     QAudioFormat format;
     format.setSampleRate(8000);
     format.setChannelCount(1);
@@ -99,13 +99,13 @@ void AudioReader::run()
         if(capture)
         {
             _buffer->append(data);
-            if(_buffer->size() >= audiobuffer_size)
+            if(_buffer->size() >= _audiobuffer_size)
             {
-                short *audiobuffer = new short[audiobuffer_size/sizeof(short)];
-                memcpy(audiobuffer, (short*)_buffer->data(), audiobuffer_size);
-                int vad = processor->read_preprocess(audiobuffer, audiobuffer_size, preprocess, audio_mode);
-                emit audioPCM(audiobuffer, audiobuffer_size, vad, false);
-                _buffer->remove(0, audiobuffer_size);
+                short *audiobuffer = new short[_audiobuffer_size/sizeof(short)];
+                memcpy(audiobuffer, (short*)_buffer->data(), _audiobuffer_size);
+                int vad = processor->read_preprocess(audiobuffer, _audiobuffer_size, preprocess, audio_mode);
+                emit audioPCM(audiobuffer, _audiobuffer_size, vad, false);
+                _buffer->remove(0, _audiobuffer_size);
                 struct timespec time_to_sleep = {0, 39000000L };
                 nanosleep(&time_to_sleep, NULL);
             }

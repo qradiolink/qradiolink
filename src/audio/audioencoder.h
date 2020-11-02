@@ -32,7 +32,7 @@ public:
     ~AudioEncoder();
     void set_voip_bitrate(int bitrate);
     unsigned char *encode_opus(short *audiobuffer, int audiobuffersize, int &encoded_size);
-    short *decode_opus(unsigned char *audiobuffer, int data_length, int &samples);
+    short *decode_opus(unsigned char *audiobuffer, int data_length, int &samples, int fs=320);
     unsigned char *encode_opus_voip(short *audiobuffer, int audiobuffersize, int &encoded_size);
     short *decode_opus_voip(unsigned char *audiobuffer, int data_length, int &samples);
     unsigned char* encode_codec2_1400(short *audiobuffer, int audiobuffersize, int &length);

@@ -173,8 +173,8 @@ void connectIndependentSignals(AudioWriter *audiowriter, AudioReader *audioreade
                      audiowriter, SLOT(writePCM(short*,int,bool, int)));
     QObject::connect(radio_op, SIGNAL(recordAudio(bool)),
                      audiowriter, SLOT(recordAudio(bool)));
-    QObject::connect(radio_op, SIGNAL(setAudioReadMode(bool,bool,int)),
-                     audioreader, SLOT(setReadMode(bool,bool,int)));
+    QObject::connect(radio_op, SIGNAL(setAudioReadMode(bool, bool,int, int)),
+                     audioreader, SLOT(setReadMode(bool,bool,int, int)));
     QObject::connect(audioreader, SIGNAL(audioPCM(short*,int,int, bool)),
                      radio_op, SLOT(txAudio(short*,int,int, bool)));
     QObject::connect(radio_op, SIGNAL(voipDataOpus(unsigned char*,int)),

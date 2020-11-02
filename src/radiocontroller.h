@@ -74,7 +74,7 @@ public:
 
 signals:
     void finished();
-    void setAudioReadMode(bool capture, bool preprocess, int audio_mode);
+    void setAudioReadMode(bool capture, bool preprocess, int audio_mode, int audiobuffer_size);
     void printText(QString text, bool html);
     void printCallsign(QString text);
     void displayReceiveStatus(bool status);
