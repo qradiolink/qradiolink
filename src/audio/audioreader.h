@@ -37,7 +37,7 @@ signals:
 
 public slots:
     void run();
-    void setReadMode(bool capture, bool preprocess, int audio_mode, int audiobuffer_size);
+    void setReadMode(bool capture, bool preprocess, int audio_mode, int audiobuffer_size=640);
     void stop();
     void restart();
 
