@@ -276,7 +276,6 @@ void RadioController::run()
                 //QtConcurrent::run(this, &RadioController::updateCWK);
             if(!_video_on)
                 QtConcurrent::run(this, &RadioController::processVideoFrame);
-            //triggerImageCapture(); // only partly implemented
 
             /// if not in the process of resetting the modem read interface
             /// data will accumulate in the interface buffer...
