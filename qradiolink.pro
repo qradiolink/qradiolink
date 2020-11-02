@@ -43,7 +43,7 @@ CONFIG(qtaudio) {
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp\
+        src/mainwindow.cpp\
         src/audio/audioencoder.cpp\
         src/audio/audioprocessor.cpp \
         src/video/videoencoder.cpp \
@@ -115,7 +115,7 @@ SOURCES += main.cpp\
 
 
 
-HEADERS  += mainwindow.h\
+HEADERS  += src/mainwindow.h\
         src/audio/audioencoder.h\
         src/audio/audioprocessor.h \
         src/video/videoencoder.h \
@@ -203,7 +203,7 @@ HEADERS  += mainwindow.h\
 #CONFIG += link_pkgconfig
 #PKGCONFIG += gnuradio
 
-FORMS    += mainwindow.ui
+FORMS    += src/mainwindow.ui
 
 
 LIBS += -lgnuradio-pmt -lgnuradio-analog -lgnuradio-fft -lgnuradio-vocoder \

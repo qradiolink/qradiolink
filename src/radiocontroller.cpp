@@ -2135,7 +2135,6 @@ void RadioController::toggleTxMode(int value)
     }
     if(_tx_mode == gr_modem_types::ModemTypeQPSKVideo)
         _video->init(_settings->video_device);
-        //_camera->init();
     else
         _video->deinit();
     if((_tx_mode == gr_modem_types::ModemType4FSK100K) ||

@@ -24,7 +24,7 @@
 #include <QMetaType>
 #include <QtGlobal>
 #include <string>
-#include "mainwindow.h"
+#include "src/mainwindow.h"
 #include "src/mumbleclient.h"
 #include "src/audio/audiowriter.h"
 #include "src/audio/audioreader.h"
