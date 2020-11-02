@@ -50,7 +50,7 @@ void ImageCapture::init()
     _camera->exposure()->setAutoAperture();
     _camera->exposure()->setAutoIsoSensitivity();
     _camera->exposure()->setExposureMode(QCameraExposure::ExposureAuto);
-    _camera->exposure()->setManualShutterSpeed(0.005);
+    _camera->exposure()->setManualShutterSpeed(0.009);
     _capture = new QCameraImageCapture(_camera);
     _capture->setBufferFormat(QVideoFrame::Format_RGB24);
     _capture->setCaptureDestination(QCameraImageCapture::CaptureToBuffer);
