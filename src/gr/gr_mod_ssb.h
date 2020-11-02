@@ -31,6 +31,8 @@
 #include <gnuradio/blocks/float_to_complex.h>
 #include <gnuradio/analog/rail_ff.h>
 #include <gnuradio/blocks/delay.h>
+#include "cessb/clipper_cc.h"
+#include "cessb/stretcher_cc.h"
 
 
 class gr_mod_ssb;
@@ -57,6 +59,8 @@ private:
     gr::filter::fft_filter_ccc::sptr _filter_lsb;
     gr::blocks::float_to_complex::sptr _float_to_complex;
     gr::analog::rail_ff::sptr _rail;
+    gr::cessb::clipper_cc::sptr _clipper;
+    gr::cessb::stretcher_cc::sptr _stretcher;
 
     int _samp_rate;
     int _sps;

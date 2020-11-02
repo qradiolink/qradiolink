@@ -111,7 +111,9 @@ SOURCES += main.cpp\
     src/gr/gr_mod_dsss.cpp \
     src/gr/gr_mod_nbfm.cpp \
     src/gr/gr_mod_qpsk.cpp \
-    src/gr/gr_mod_ssb.cpp
+    src/gr/gr_mod_ssb.cpp \
+    src/gr/cessb/clipper_cc_impl.cc \
+    src/gr/cessb/stretcher_cc_impl.cc
 
 
 
@@ -188,6 +190,11 @@ HEADERS  += src/mainwindow.h\
     src/gr/gr_mod_nbfm.h \
     src/gr/gr_mod_qpsk.h \
     src/gr/gr_mod_ssb.h \
+    src/gr/cessb/api.h \
+    src/gr/cessb/clipper_cc.h \
+    src/gr/cessb/stretcher_cc.h \
+    src/gr/cessb/clipper_cc_impl.h \
+    src/gr/cessb/stretcher_cc_impl.h \
     src/style.h
 
 
