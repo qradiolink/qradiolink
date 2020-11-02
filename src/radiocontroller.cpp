@@ -558,7 +558,10 @@ void RadioController::txAudio(short *audiobuffer, int audiobuffer_size,
 void RadioController::processVideoFrame(unsigned char *audio_buffer, int audio_size)
 {
     if((_tx_mode != gr_modem_types::ModemTypeQPSKVideo) || _video_on)
+    {
+        delete[] audio_buffer;
         return;
+    }
     _video_on = true;
 
     unsigned int max_video_frame_size = 3122;
