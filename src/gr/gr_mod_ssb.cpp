@@ -49,18 +49,18 @@ gr_mod_ssb::gr_mod_ssb(int sps, int samp_rate, int carrier_freq,
 
     _resampler = gr::filter::rational_resampler_base_ccf::make(_sps,1, interp_taps);
     _feed_forward_agc = gr::analog::feedforward_agc_cc::make(640,0.5);
-    _amplify = gr::blocks::multiply_const_cc::make(1.8,1);
+    _amplify = gr::blocks::multiply_const_cc::make(0.9,1);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
     _filter_usb = gr::filter::fft_filter_ccc::make(1,gr::filter::firdes::complex_band_pass_2(
             1, target_samp_rate, 200, _filter_width, 200, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
     _filter_lsb = gr::filter::fft_filter_ccc::make(1,gr::filter::firdes::complex_band_pass_2(
             1, target_samp_rate, -_filter_width, -200, 200, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
-    _clipper = gr::cessb::clipper_cc::make(0.5);
+    _clipper = gr::cessb::clipper_cc::make(0.95);
     _stretcher = gr::cessb::stretcher_cc::make();
 
 
-    connect(self(),0,_agc,0);
-    connect(_agc,0,_audio_filter,0);
+    connect(self(),0,_audio_filter,0);
+    //connect(_agc,0,_audio_filter,0);
     //connect(_rail,0,_audio_filter,0);
     connect(_audio_filter,0,_float_to_complex,0);
     connect(_float_to_complex,0,_clipper,0);
