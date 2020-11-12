@@ -67,7 +67,7 @@ gr_demod_qpsk::gr_demod_qpsk(std::vector<int>signature, int sps, int samp_rate, 
     {
         interpolation = 3;
         decimation = 4;
-        _samples_per_symbol = 3; // FIXME: this value should not be hardcoded
+        _samples_per_symbol = 4; // FIXME: this value should not be hardcoded
         _target_samp_rate = 750000;
     }
     _samp_rate =samp_rate;
@@ -126,15 +126,16 @@ gr_demod_qpsk::gr_demod_qpsk(std::vector<int>signature, int sps, int samp_rate, 
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
 
 
-    connect(self(),0,_resampler,0);
+
     if(sps > 4)
     {
+        connect(self(),0,_resampler,0);
         connect(_resampler,0,_fll,0);
         connect(_fll,0,_shaping_filter,0);
     }
     else
     {
-        connect(_resampler,0,_shaping_filter,0);
+        connect(self(),0,_shaping_filter,0);
     }
 
     connect(_shaping_filter,0,_agc,0);
