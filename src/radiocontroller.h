@@ -268,7 +268,6 @@ private:
     bool _memory_scan_done;
     bool _data_modem_sleeping;
     bool _radio_to_voip_on;
-    bool _video_on;
     bool _text_transmit_on;
     bool _proto_transmit_on;
     bool _cw_tone;

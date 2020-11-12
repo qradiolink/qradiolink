@@ -76,7 +76,6 @@ RadioController::RadioController(Settings *settings, Logger *logger,
 
     _data_modem_sleeping = false;
     _radio_to_voip_on = false;
-    _video_on = false;
     _text_transmit_on = false;
     _proto_transmit_on = false;
     _cw_tone = false;
@@ -547,7 +546,7 @@ void RadioController::txAudio(short *audiobuffer, int audiobuffer_size,
 
     if(_tx_mode == gr_modem_types::ModemTypeQPSKVideo)
     {
-        QtConcurrent::run(this, &RadioController::processVideoFrame, encoded_audio, packet_size);
+        processVideoFrame(encoded_audio, packet_size);
     }
     else
         emit audioData(encoded_audio,packet_size);
@@ -557,12 +556,11 @@ void RadioController::txAudio(short *audiobuffer, int audiobuffer_size,
 
 void RadioController::processVideoFrame(unsigned char *audio_buffer, int audio_size)
 {
-    if((_tx_mode != gr_modem_types::ModemTypeQPSKVideo) || _video_on)
+    if(_tx_mode != gr_modem_types::ModemTypeQPSKVideo)
     {
         delete[] audio_buffer;
         return;
     }
-    _video_on = true;
 
     unsigned int max_video_frame_size = 3122;
     unsigned long encoded_size;
@@ -571,9 +569,6 @@ void RadioController::processVideoFrame(unsigned char *audio_buffer, int audio_s
     /// Large alloc
     unsigned char *videobuffer = new unsigned char[230400];
     memset(videobuffer, 0, 230400*sizeof(unsigned char));
-    QElapsedTimer timer;
-    qint64 microsec;
-    timer.start();
 
     memcpy(&(videobuffer[24]), audio_buffer, audio_size*sizeof(unsigned char));
     delete[] audio_buffer;
@@ -584,7 +579,6 @@ void RadioController::processVideoFrame(unsigned char *audio_buffer, int audio_s
     if(encoded_size < 1)
     {
         delete[] videobuffer;
-        _video_on = false;
         return;
     }
     if(encoded_size > max_video_frame_size - 24 - audio_size)
@@ -598,13 +592,6 @@ void RadioController::processVideoFrame(unsigned char *audio_buffer, int audio_s
         memcpy(video_frame, &(videobuffer[24+audio_size]), real_size*sizeof(unsigned char));
         emit voipVideoData(video_frame, real_size);
         delete[] videobuffer;
-        microsec = (quint64)timer.nsecsElapsed();
-        if(microsec < 100000000)
-        {
-            struct timespec time_to_sleep = {0, (100000000 - (long)microsec)};
-            nanosleep(&time_to_sleep, NULL);
-        }
-        _video_on = false;
         return;
     }
 
@@ -625,7 +612,6 @@ void RadioController::processVideoFrame(unsigned char *audio_buffer, int audio_s
     }
 
     emit videoData(videobuffer,max_video_frame_size);
-    _video_on = false;
 }
 
 void RadioController::processInputNetStream()
