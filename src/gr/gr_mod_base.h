@@ -30,6 +30,7 @@
 #include <gnuradio/constants.h>
 #include <gnuradio/analog/sig_source.h>
 #include <gnuradio/blocks/copy.h>
+#include <gnuradio/filter/rational_resampler_base.h>
 #include <osmosdr/sink.h>
 #include "src/modem_types.h"
 #include "gr_byte_source.h"
@@ -67,6 +68,7 @@ public slots:
     void set_carrier_offset(long carrier_offset);
     void flush_sources();
     const QMap<std::string,QVector<int>> get_gain_names() const;
+    void set_samp_rate(int samp_rate);
 
 private:
     gr::top_block_sptr _top_block;
@@ -75,6 +77,7 @@ private:
     osmosdr::sink::sptr _osmosdr_sink;
     gr::blocks::rotator_cc::sptr _rotator;
     gr::analog::sig_source_f::sptr _signal_source;
+    gr::filter::rational_resampler_base_ccf::sptr _resampler;
 
     gr_mod_2fsk_sptr _2fsk_2k_fm;
     gr_mod_2fsk_sptr _2fsk_1k_fm;

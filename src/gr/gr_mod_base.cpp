@@ -24,9 +24,9 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
     _top_block = gr::make_top_block("modulator");
     _freq_correction = freq_corr;
     _mode = 9999;
+    _samp_rate = 1000000;
     _byte_source = make_gr_byte_source();
     _audio_source = make_gr_audio_source();
-    _samp_rate = 1000000;
 
     _carrier_offset = 0;
 
@@ -41,8 +41,8 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
         _lime_specific = true;
     }
     //set_bandwidth_specific();
-    _osmosdr_sink->set_sample_rate(1000000);
-    _osmosdr_sink->set_bandwidth(1000000);
+    _osmosdr_sink->set_sample_rate(_samp_rate);
+    _osmosdr_sink->set_bandwidth(_samp_rate);
     _osmosdr_sink->set_antenna(device_antenna);
     _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
     //_osmosdr_sink->set_freq_corr(freq_corr);
@@ -54,7 +54,13 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
         _osmosdr_sink->set_gain(gain);
     }
 
+    _top_block->connect(_rotator,0,_osmosdr_sink,0);
+
     _signal_source = gr::analog::sig_source_f::make(8000, gr::analog::GR_SIN_WAVE, 600, 0.001, 1);
+
+    int tw = std::min(_samp_rate/4, 1500000);
+    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, 500000, tw, gr::filter::firdes::WIN_HAMMING);
+    _resampler = gr::filter::rational_resampler_base_ccf::make(1, 1, taps);
 
     _2fsk_2k_fm = make_gr_mod_2fsk(25, 1000000, 1700, 2700, true); // 4000 for non FM, 2700 for FM
     _2fsk_1k_fm = make_gr_mod_2fsk(50, 1000000, 1700, 1350, true);
@@ -101,6 +107,74 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
 
 }
 
+
+void gr_mod_base::set_samp_rate(int samp_rate)
+{
+    _top_block->lock();
+    _samp_rate = samp_rate;
+
+    int interpolation = (int) _samp_rate / 1000000;
+
+
+    if(_samp_rate != 1000000)
+    {
+        try
+        {
+            _top_block->disconnect(_rotator,0, _osmosdr_sink,0);
+        }
+        catch(std::invalid_argument &e)
+        {
+
+        }
+        try
+        {
+            _top_block->disconnect(_rotator,0, _resampler,0);
+            _top_block->disconnect(_resampler,0, _osmosdr_sink,0);
+        }
+        catch(std::invalid_argument &e)
+        {
+
+        }
+        _resampler.reset();
+        std::vector<float> taps;
+        //int tw = std::min(_samp_rate/4, 1500000);
+        taps = gr::filter::firdes::low_pass(interpolation, _samp_rate, 480000, 20000,
+                                            gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+
+        _resampler = gr::filter::rational_resampler_base_ccf::make(interpolation, 1, taps);
+        _resampler->set_thread_priority(75);
+        _top_block->connect(_rotator,0, _resampler,0);
+        _top_block->connect(_resampler,0, _osmosdr_sink,0);
+    }
+    else
+    {
+        try
+        {
+            _top_block->disconnect(_rotator,0, _resampler,0);
+            _top_block->disconnect(_resampler,0, _osmosdr_sink,0);
+        }
+        catch(std::invalid_argument &e)
+        {
+            _top_block->disconnect(_rotator,0, _osmosdr_sink,0);
+        }
+        try
+        {
+            _top_block->connect(_rotator,0, _osmosdr_sink,0);
+        }
+        catch(std::invalid_argument &e)
+        {
+        }
+    }
+
+
+    //_rotator->set_phase_inc(2*M_PI*-_carrier_offset/_samp_rate);
+    _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
+    _osmosdr_sink->set_sample_rate(_samp_rate);
+    set_bandwidth_specific();
+    _top_block->unlock();
+
+}
+
 const QMap<std::string,QVector<int>> gr_mod_base::get_gain_names() const
 {
     QMap<std::string,QVector<int>> gain_names;
@@ -128,151 +202,122 @@ void gr_mod_base::set_mode(int mode)
     case gr_modem_types::ModemType2FSK2KFM:
         _top_block->disconnect(_byte_source,0,_2fsk_2k_fm,0);
         _top_block->disconnect(_2fsk_2k_fm,0,_rotator,0);
-        _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemType2FSK1KFM:
         _top_block->disconnect(_byte_source,0,_2fsk_1k_fm,0);
         _top_block->disconnect(_2fsk_1k_fm,0,_rotator,0);
-        _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemType2FSK2K:
         _top_block->disconnect(_byte_source,0,_2fsk_2k,0);
         _top_block->disconnect(_2fsk_2k,0,_rotator,0);
-        _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemType2FSK1K:
         _top_block->disconnect(_byte_source,0,_2fsk_1k,0);
         _top_block->disconnect(_2fsk_1k,0,_rotator,0);
-        _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemType2FSK10KFM:
         _top_block->disconnect(_byte_source,0,_2fsk_10k,0);
         _top_block->disconnect(_2fsk_10k,0,_rotator,0);
-        _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemType4FSK2K:
         _top_block->disconnect(_byte_source,0,_4fsk_2k,0);
         _top_block->disconnect(_4fsk_2k,0,_rotator,0);
-        _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemType4FSK2KFM:
         _top_block->disconnect(_byte_source,0,_4fsk_2k_fm,0);
         _top_block->disconnect(_4fsk_2k_fm,0,_rotator,0);
-        _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemType4FSK1KFM:
         _top_block->disconnect(_byte_source,0,_4fsk_1k_fm,0);
         _top_block->disconnect(_4fsk_1k_fm,0,_rotator,0);
-        _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemType4FSK10KFM:
         _top_block->disconnect(_byte_source,0,_4fsk_10k_fm,0);
         _top_block->disconnect(_4fsk_10k_fm,0,_rotator,0);
-        _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeAM5000:
         _top_block->disconnect(_audio_source,0,_am,0);
         _top_block->disconnect(_am,0,_rotator,0);
-        _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeBPSK1K:
         _top_block->disconnect(_byte_source,0,_bpsk_1k,0);
         _top_block->disconnect(_bpsk_1k,0,_rotator,0);
-        _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeBPSK2K:
         _top_block->disconnect(_byte_source,0,_bpsk_2k,0);
         _top_block->disconnect(_bpsk_2k,0,_rotator,0);
-        _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeBPSK8:
         _top_block->disconnect(_byte_source,0,_bpsk_dsss_8,0);
         _top_block->disconnect(_bpsk_dsss_8,0,_rotator,0);
-        _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeNBFM2500:
         _top_block->disconnect(_audio_source,0,_fm_2500,0);
         _top_block->disconnect(_fm_2500,0,_rotator,0);
-        _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeNBFM5000:
         _top_block->disconnect(_audio_source,0,_fm_5000,0);
         _top_block->disconnect(_fm_5000,0,_rotator,0);
-        _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeQPSK2K:
         _top_block->disconnect(_byte_source,0,_qpsk_2k,0);
         _top_block->disconnect(_qpsk_2k,0,_rotator,0);
-        _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeQPSK20K:
         _top_block->disconnect(_byte_source,0,_qpsk_10k,0);
         _top_block->disconnect(_qpsk_10k,0,_rotator,0);
-        _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeQPSK250K:
         _carrier_offset = 0;
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
         _top_block->disconnect(_byte_source,0,_qpsk_250k,0);
         _top_block->disconnect(_qpsk_250k,0,_rotator,0);
-        _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemType4FSK100K:
         _carrier_offset = 0;
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
         _top_block->disconnect(_byte_source,0,_4fsk_96k,0);
         _top_block->disconnect(_4fsk_96k,0,_rotator,0);
-        _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeQPSKVideo:
         _top_block->disconnect(_byte_source,0,_qpsk_video,0);
         _top_block->disconnect(_qpsk_video,0,_rotator,0);
-        _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeUSB2500:
         _top_block->disconnect(_audio_source,0,_usb,0);
         _top_block->disconnect(_usb,0,_rotator,0);
-        _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeLSB2500:
         _top_block->disconnect(_audio_source,0,_lsb,0);
         _top_block->disconnect(_lsb,0,_rotator,0);
-        _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeCW600USB:
         _top_block->disconnect(_signal_source,0,_usb_cw,0);
         _top_block->disconnect(_usb_cw,0,_rotator,0);
-        _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeFREEDV1600USB:
         _top_block->disconnect(_audio_source,0,_freedv_tx1600_usb,0);
         _top_block->disconnect(_freedv_tx1600_usb,0,_rotator,0);
-        _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeFREEDV700DUSB:
         _top_block->disconnect(_audio_source,0,_freedv_tx700C_usb,0);
         _top_block->disconnect(_freedv_tx700C_usb,0,_rotator,0);
-        _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeFREEDV800XAUSB:
         _top_block->disconnect(_audio_source,0,_freedv_tx800XA_usb,0);
         _top_block->disconnect(_freedv_tx800XA_usb,0,_rotator,0);
-        _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeFREEDV1600LSB:
         _top_block->disconnect(_audio_source,0,_freedv_tx1600_lsb,0);
         _top_block->disconnect(_freedv_tx1600_lsb,0,_rotator,0);
-        _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeFREEDV700DLSB:
         _top_block->disconnect(_audio_source,0,_freedv_tx700C_lsb,0);
         _top_block->disconnect(_freedv_tx700C_lsb,0,_rotator,0);
-        _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeFREEDV800XALSB:
         _top_block->disconnect(_audio_source,0,_freedv_tx800XA_lsb,0);
         _top_block->disconnect(_freedv_tx800XA_lsb,0,_rotator,0);
-        _top_block->disconnect(_rotator,0,_osmosdr_sink,0);
         break;
     default:
         break;
@@ -284,262 +329,204 @@ void gr_mod_base::set_mode(int mode)
         _carrier_offset = 50000;
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
-        _osmosdr_sink->set_sample_rate(1000000);
         _top_block->connect(_byte_source,0,_2fsk_2k_fm,0);
         _top_block->connect(_2fsk_2k_fm,0,_rotator,0);
-        _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemType2FSK1KFM:
         _carrier_offset = 50000;
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
-        _osmosdr_sink->set_sample_rate(1000000);
         _top_block->connect(_byte_source,0,_2fsk_1k_fm,0);
         _top_block->connect(_2fsk_1k_fm,0,_rotator,0);
-        _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemType2FSK2K:
         _carrier_offset = 50000;
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
-        _osmosdr_sink->set_sample_rate(1000000);
         _top_block->connect(_byte_source,0,_2fsk_2k,0);
         _top_block->connect(_2fsk_2k,0,_rotator,0);
-        _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemType2FSK1K:
         _carrier_offset = 50000;
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
-        _osmosdr_sink->set_sample_rate(1000000);
         _top_block->connect(_byte_source,0,_2fsk_1k,0);
         _top_block->connect(_2fsk_1k,0,_rotator,0);
-        _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemType2FSK10KFM:
         _carrier_offset = 50000;
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
-        _osmosdr_sink->set_sample_rate(1000000);
         _top_block->connect(_byte_source,0,_2fsk_10k,0);
         _top_block->connect(_2fsk_10k,0,_rotator,0);
-        _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemType4FSK2K:
         _carrier_offset = 50000;
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
-        _osmosdr_sink->set_sample_rate(1000000);
         _top_block->connect(_byte_source,0,_4fsk_2k,0);
         _top_block->connect(_4fsk_2k,0,_rotator,0);
-        _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemType4FSK2KFM:
         _carrier_offset = 50000;
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
-        _osmosdr_sink->set_sample_rate(1000000);
         _top_block->connect(_byte_source,0,_4fsk_2k_fm,0);
         _top_block->connect(_4fsk_2k_fm,0,_rotator,0);
-        _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemType4FSK1KFM:
         _carrier_offset = 50000;
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
-        _osmosdr_sink->set_sample_rate(1000000);
         _top_block->connect(_byte_source,0,_4fsk_1k_fm,0);
         _top_block->connect(_4fsk_1k_fm,0,_rotator,0);
-        _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemType4FSK10KFM:
         _carrier_offset = 50000;
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
-        _osmosdr_sink->set_sample_rate(1000000);
         _top_block->connect(_byte_source,0,_4fsk_10k_fm,0);
         _top_block->connect(_4fsk_10k_fm,0,_rotator,0);
-        _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeAM5000:
         _carrier_offset = 50000;
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
-        _osmosdr_sink->set_sample_rate(1000000);
         _top_block->connect(_audio_source,0,_am,0);
         _top_block->connect(_am,0,_rotator,0);
-        _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeBPSK1K:
         _carrier_offset = 50000;
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
-        _osmosdr_sink->set_sample_rate(1000000);
         _top_block->connect(_byte_source,0,_bpsk_1k,0);
         _top_block->connect(_bpsk_1k,0,_rotator,0);
-        _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeBPSK2K:
         _carrier_offset = 50000;
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
-        _osmosdr_sink->set_sample_rate(1000000);
         _top_block->connect(_byte_source,0,_bpsk_2k,0);
         _top_block->connect(_bpsk_2k,0,_rotator,0);
-        _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeBPSK8:
         _carrier_offset = 50000;
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
-        _osmosdr_sink->set_sample_rate(1000000);
         _top_block->connect(_byte_source,0,_bpsk_dsss_8,0);
         _top_block->connect(_bpsk_dsss_8,0,_rotator,0);
-        _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeNBFM2500:
         _carrier_offset = 50000;
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
-        _osmosdr_sink->set_sample_rate(1000000);
         _top_block->connect(_audio_source,0,_fm_2500,0);
         _top_block->connect(_fm_2500,0,_rotator,0);
-        _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeNBFM5000:
         _carrier_offset = 50000;
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
-        _osmosdr_sink->set_sample_rate(1000000);
         _top_block->connect(_audio_source,0,_fm_5000,0);
         _top_block->connect(_fm_5000,0,_rotator,0);
-        _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeQPSK2K:
         _carrier_offset = 50000;
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
-        _osmosdr_sink->set_sample_rate(1000000);
         _top_block->connect(_byte_source,0,_qpsk_2k,0);
         _top_block->connect(_qpsk_2k,0,_rotator,0);
-        _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeQPSK20K:
         _carrier_offset = 50000;
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
-        _osmosdr_sink->set_sample_rate(1000000);
         _top_block->connect(_byte_source,0,_qpsk_10k,0);
         _top_block->connect(_qpsk_10k,0,_rotator,0);
-        _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeQPSK250K:
         _carrier_offset = 250000;
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
-        _osmosdr_sink->set_sample_rate(1000000);
         _top_block->connect(_byte_source,0,_qpsk_250k,0);
         _top_block->connect(_qpsk_250k,0,_rotator,0);
-        _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemType4FSK100K:
         _carrier_offset = 250000;
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
-        _osmosdr_sink->set_sample_rate(1000000);
         _top_block->connect(_byte_source,0,_4fsk_96k,0);
         _top_block->connect(_4fsk_96k,0,_rotator,0);
-        _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeQPSKVideo:
         _carrier_offset = 250000;
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
-        _osmosdr_sink->set_sample_rate(1000000);
         _top_block->connect(_byte_source,0,_qpsk_video,0);
         _top_block->connect(_qpsk_video,0,_rotator,0);
-        _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeUSB2500:
         _carrier_offset = 50000;
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
-        _osmosdr_sink->set_sample_rate(1000000);
         _top_block->connect(_audio_source,0,_usb,0);
         _top_block->connect(_usb,0,_rotator,0);
-        _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeLSB2500:
         _carrier_offset = 50000;
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
-        _osmosdr_sink->set_sample_rate(1000000);
         _top_block->connect(_audio_source,0,_lsb,0);
         _top_block->connect(_lsb,0,_rotator,0);
-        _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeCW600USB:
         _carrier_offset = 50000;
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
-        _osmosdr_sink->set_sample_rate(1000000);
         _top_block->connect(_signal_source,0,_usb_cw,0);
         _top_block->connect(_usb_cw,0,_rotator,0);
-        _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeFREEDV1600USB:
         _carrier_offset = 50000;
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
-        _osmosdr_sink->set_sample_rate(1000000);
         _top_block->connect(_audio_source,0,_freedv_tx1600_usb,0);
         _top_block->connect(_freedv_tx1600_usb,0,_rotator,0);
-        _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeFREEDV700DUSB:
         _carrier_offset = 50000;
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
-        _osmosdr_sink->set_sample_rate(1000000);
         _top_block->connect(_audio_source,0,_freedv_tx700C_usb,0);
         _top_block->connect(_freedv_tx700C_usb,0,_rotator,0);
-        _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeFREEDV800XAUSB:
         _carrier_offset = 50000;
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
-        _osmosdr_sink->set_sample_rate(1000000);
         _top_block->connect(_audio_source,0,_freedv_tx800XA_usb,0);
         _top_block->connect(_freedv_tx800XA_usb,0,_rotator,0);
-        _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeFREEDV1600LSB:
         _carrier_offset = 50000;
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
-        _osmosdr_sink->set_sample_rate(1000000);
         _top_block->connect(_audio_source,0,_freedv_tx1600_lsb,0);
         _top_block->connect(_freedv_tx1600_lsb,0,_rotator,0);
-        _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeFREEDV700DLSB:
         _carrier_offset = 50000;
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
-        _osmosdr_sink->set_sample_rate(1000000);
         _top_block->connect(_audio_source,0,_freedv_tx700C_lsb,0);
         _top_block->connect(_freedv_tx700C_lsb,0,_rotator,0);
-        _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
     case gr_modem_types::ModemTypeFREEDV800XALSB:
         _carrier_offset = 50000;
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
-        _osmosdr_sink->set_sample_rate(1000000);
         _top_block->connect(_audio_source,0,_freedv_tx800XA_lsb,0);
         _top_block->connect(_freedv_tx800XA_lsb,0,_rotator,0);
-        _top_block->connect(_rotator,0,_osmosdr_sink,0);
         break;
     default:
         break;

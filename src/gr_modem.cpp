@@ -385,6 +385,8 @@ void gr_modem::setSampRate(int samp_rate)
 {
     if(_gr_demod_base)
         _gr_demod_base->set_samp_rate(samp_rate);
+    if(_gr_mod_base)
+        _gr_mod_base->set_samp_rate(samp_rate);
 }
 
 void gr_modem::setFFTSize(int size)
