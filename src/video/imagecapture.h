@@ -53,6 +53,7 @@ private:
     QCameraViewfinder *_viewfinder;
     int _last_frame_length;
     bool _inited;
+    bool _shutdown;
 };
 
 #endif // IMAGECAPTURE_H
