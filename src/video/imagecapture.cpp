@@ -22,6 +22,7 @@ ImageCapture::ImageCapture(Settings *settings, Logger *logger, QObject *parent) 
     _settings = settings;
     _logger = logger;
     _inited = false;
+    _shutdown = false;
     _last_frame_length = 0;
     _videobuffer = new unsigned char[FRAME_SIZE];
     memset(_videobuffer, 0, FRAME_SIZE*sizeof(unsigned char));
@@ -76,6 +77,7 @@ void ImageCapture::deinit()
         return;
     //_viewfinder->hide();
     //delete _viewfinder;
+    _shutdown = true;
     _capture->cancelCapture();
     QObject::disconnect(_capture, SIGNAL(imageCaptured(int,QImage)), this, SLOT(process_image(int,QImage)));
     _camera->stop();
@@ -90,11 +92,12 @@ void ImageCapture::deinit()
     delete _camera;
 
     _inited = false;
+    _shutdown = false;
 }
 
 void ImageCapture::capture_image()
 {
-    if(!_inited)
+    if((!_inited) || (_shutdown))
         return;
     _camera->searchAndLock();
     _capture->capture();
