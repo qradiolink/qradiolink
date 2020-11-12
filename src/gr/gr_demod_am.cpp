@@ -43,7 +43,7 @@ gr_demod_am::gr_demod_am(std::vector<int>signature, int sps, int samp_rate, int 
 
     std::vector<float> taps = gr::filter::firdes::low_pass(50, _samp_rate, _target_samp_rate/2, _target_samp_rate/2,
                                                            gr::filter::firdes::WIN_BLACKMAN_HARRIS);
-    std::vector<float> audio_taps = gr::filter::firdes::low_pass(2, _target_samp_rate, 3000, 600,
+    std::vector<float> audio_taps = gr::filter::firdes::low_pass(2, _target_samp_rate, 3600, 600,
                                                                  gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1,50,taps);
     _audio_resampler = gr::filter::rational_resampler_base_fff::make(2,5, audio_taps);
@@ -62,8 +62,8 @@ gr_demod_am::gr_demod_am(std::vector<int>signature, int sps, int samp_rate, int 
     _iir_filter = gr::filter::iir_filter_ffd::make(fft,ffd);
     _audio_gain = gr::blocks::multiply_const_ff::make(0.99);
     _audio_filter = gr::filter::fft_filter_fff::make(
-                1,gr::filter::firdes::band_pass_2(
-                    1, 8000, 300, 3000, 200, 60, gr::filter::firdes::WIN_HAMMING));
+                1,gr::filter::firdes::low_pass(
+                    1, 8000, 3600, 400, gr::filter::firdes::WIN_HAMMING));
 
 
 
@@ -89,6 +89,16 @@ void gr_demod_am::set_filter_width(int filter_width)
                 1, _target_samp_rate, -_filter_width, _filter_width,1200,gr::filter::firdes::WIN_BLACKMAN_HARRIS);
 
     _filter->set_taps(filter_taps);
+}
+
+void gr_demod_am::set_agc_attack(float value)
+{
+    _agc->set_attack_rate(value);
+}
+
+void gr_demod_am::set_agc_decay(float value)
+{
+    _agc->set_decay_rate(value);
 }
 
 void gr_demod_am::set_squelch(int value)
