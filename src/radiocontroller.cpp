@@ -2020,7 +2020,7 @@ void RadioController::toggleTxMode(int value)
         break;
     case 2:
         _tx_radio_type = radio_type::RADIO_TYPE_ANALOG;
-        _tx_mode = gr_modem_types::ModemTypeWBFM;
+        _tx_mode = gr_modem_types::ModemTypeNBFM5000;
         break;
     case 3:
         _tx_radio_type = radio_type::RADIO_TYPE_ANALOG;
