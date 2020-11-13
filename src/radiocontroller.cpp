@@ -1244,7 +1244,7 @@ void RadioController::receiveDigitalAudio(unsigned char *data, int size)
             if(_settings->voip_connected || _settings->repeater_enabled)
             {
                 /// need to mix several audio channels
-                _audio_mixer_in->addSamples(audio_out, samples, -9999); // radio id hardcoded
+                _audio_mixer_in->addSamples(audio_out, samples, 9900); // radio id hardcoded
             }
             else
             {
@@ -1281,7 +1281,7 @@ void RadioController::receivePCMAudio(std::vector<float> *audio_data)
         if(_settings->voip_connected || _settings->repeater_enabled)
         {
             /// Need to mix several audio channels
-            _audio_mixer_in->addSamples(pcm, size, -9999); // radio id hardcoded
+            _audio_mixer_in->addSamples(pcm, size, 9900); // radio id hardcoded
         }
         else
         {

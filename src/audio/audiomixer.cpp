@@ -107,7 +107,7 @@ short* AudioMixer::mix_samples(float rx_volume)
                 if(i < it.value())
                 {
                     pcm[i] += (short)(float(samples_for_sid->at(i)) / float(num_channels)
-                                      * rx_volume);
+                                      * ((it.key() >= 9900) ? 1.0f : rx_volume));
                 }
                 ++it;
             }
