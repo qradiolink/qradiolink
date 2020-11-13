@@ -4877,9 +4877,9 @@ color: rgb(182, 182, 182);</string>
         <widget class="QFrame" name="rxGainsFrameMenu">
          <property name="geometry">
           <rect>
-           <x>590</x>
+           <x>660</x>
            <y>3</y>
-           <width>421</width>
+           <width>321</width>
            <height>71</height>
           </rect>
          </property>
@@ -4901,28 +4901,14 @@ color: rgb(182, 182, 182);</string>
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_11">
-          <item>
-           <widget class="QLabel" name="label_21">
-            <property name="maximumSize">
-             <size>
-              <width>60</width>
-              <height>20</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>RX Gains</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <layout class="QHBoxLayout" name="horizontalLayout_11"/>
         </widget>
         <widget class="QFrame" name="txGainsFrameMenu">
          <property name="geometry">
           <rect>
-           <x>1020</x>
+           <x>1070</x>
            <y>3</y>
-           <width>371</width>
+           <width>321</width>
            <height>71</height>
           </rect>
          </property>
@@ -4944,21 +4930,45 @@ color: rgb(182, 182, 182);</string>
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_12">
-          <item>
-           <widget class="QLabel" name="label_50">
-            <property name="maximumSize">
-             <size>
-              <width>60</width>
-              <height>20</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>TX Gains</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <layout class="QHBoxLayout" name="horizontalLayout_12"/>
+        </widget>
+        <widget class="QLabel" name="label_21">
+         <property name="geometry">
+          <rect>
+           <x>600</x>
+           <y>30</y>
+           <width>60</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>60</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>RX Gains</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_50">
+         <property name="geometry">
+          <rect>
+           <x>1000</x>
+           <y>30</y>
+           <width>60</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>60</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>TX Gains</string>
+         </property>
         </widget>
        </widget>
       </item>

@@ -221,7 +221,7 @@ LIBS += -lrt  # need to include on some distros
 LIBS += -lprotobuf -lopus -lcodec2 -ljpeg -lconfig++ -lspeexdsp -lftdi -lsndfile -llog4cpp
 
 
-RESOURCES += resources.qrc
+RESOURCES += src/resources.qrc
 
 !isEmpty(INSTALL_PREFIX) {
     target.path = $$INSTALL_PREFIX
