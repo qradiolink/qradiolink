@@ -79,6 +79,7 @@ SOURCES += main.cpp\
     src/qtgui/freqctrl.cpp \
     src/qtgui/plotter.cpp \
     src/qtgui/skinneddial.cpp \
+    src/gr/rssi_block.cpp \
     src/gr/gr_mod_base.cpp \
     src/gr/gr_demod_base.cpp \
     src/gr/gr_demod_nbfm_sdr.cpp \
@@ -157,6 +158,7 @@ HEADERS  += src/mainwindow.h\
     src/qtgui/freqctrl.h \
     src/qtgui/plotter.h \
     src/qtgui/skinneddial.h \
+    src/gr/rssi_block.h \
     src/gr/gr_mod_base.h \
     src/gr/gr_demod_base.h \
     src/gr/gr_demod_freedv.h \

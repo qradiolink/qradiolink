@@ -46,12 +46,8 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
     _const_valve->set_enabled(false);
     _demod_valve = gr::blocks::copy::make(8);
     _demod_valve->set_enabled(true);
-    _mag_squared = gr::blocks::complex_to_mag_squared::make();
-    _single_pole_filter = gr::filter::single_pole_iir_filter_ff::make(0.04);
-    _log10 = gr::blocks::nlog10_ff::make();
-    _multiply_const_ff = gr::blocks::multiply_const_ff::make(10);
-    _moving_average = gr::blocks::moving_average_ff::make(2000,1,2000);
-    _add_const = gr::blocks::add_const_ff::make(-80);
+    _rssi_block = make_rssi_block();
+
     _rotator = gr::blocks::rotator_cc::make(2*M_PI/1000000);
     std::vector<float> taps;
     int tw = std::min(_samp_rate/4, 1500000);
@@ -105,15 +101,8 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
     _top_block->connect(_osmosdr_source,0,_fft_sink,0);
 
 
-    _top_block->connect(_rssi_valve,0,_mag_squared,0);
-    _top_block->connect(_mag_squared,0,_moving_average,0);
-    _top_block->connect(_moving_average,0,_single_pole_filter,0);
-    _top_block->connect(_single_pole_filter,0,_log10,0);
-    _top_block->connect(_log10,0,_multiply_const_ff,0);
-    _top_block->connect(_multiply_const_ff,0,_add_const,0);
-    _top_block->connect(_add_const,0,_rssi,0);
-
-
+    _top_block->connect(_rssi_valve,0,_rssi_block,0);
+    _top_block->connect(_rssi_block,0,_rssi,0);
 
 
     _2fsk_2k_fm = make_gr_demod_2fsk(5,1000000,1700,2700, true); // 4000 for non FM, 2700 for FM
@@ -950,7 +939,7 @@ void gr_demod_base::set_bandwidth_specific()
 
 void gr_demod_base::calibrate_rssi(float value)
 {
-    _add_const->set_k(value);
+    _rssi_block->set_level(value);
 }
 
 void gr_demod_base::set_agc_attack(float value)

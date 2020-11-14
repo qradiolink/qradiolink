@@ -27,12 +27,6 @@
 #include <gnuradio/filter/freq_xlating_fir_filter.h>
 #include <gnuradio/blocks/multiply.h>
 #include <gnuradio/analog/agc2_ff.h>
-#include <gnuradio/blocks/complex_to_mag_squared.h>
-#include <gnuradio/blocks/nlog10_ff.h>
-#include <gnuradio/blocks/multiply_const.h>
-#include <gnuradio/filter/single_pole_iir_filter_ff.h>
-#include <gnuradio/blocks/moving_average.h>
-#include <gnuradio/blocks/add_const_ff.h>
 #include <gnuradio/blocks/delay.h>
 #include <gnuradio/blocks/copy.h>
 #include <gnuradio/blocks/rotator_cc.h>
@@ -57,6 +51,7 @@
 #include "gr_demod_freedv.h"
 #include "gr_demod_dsss.h"
 #include "src/modem_types.h"
+#include "rssi_block.h"
 
 class gr_demod_base : public QObject
 {
@@ -111,15 +106,11 @@ private:
     gr::blocks::copy::sptr _demod_valve;
     gr::blocks::probe_signal_f::sptr _rssi;
     gr_const_sink_sptr _constellation;
-    gr::blocks::complex_to_mag_squared::sptr _mag_squared;
-    gr::blocks::nlog10_ff::sptr _log10;
-    gr::filter::single_pole_iir_filter_ff::sptr _single_pole_filter;
-    gr::blocks::multiply_const_ff::sptr _multiply_const_ff;
-    gr::blocks::moving_average_ff::sptr _moving_average;
-    gr::blocks::add_const_ff::sptr _add_const;
+
     gr::blocks::rotator_cc::sptr _rotator;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
 
+    rssi_block_sptr _rssi_block;
     gr_deframer_bb_sptr _deframer1;
     gr_deframer_bb_sptr _deframer2;
     gr_deframer_bb_sptr _deframer_700_1;
