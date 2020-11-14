@@ -2019,8 +2019,7 @@ void RadioController::toggleTxMode(int value)
         _tx_mode = gr_modem_types::ModemTypeNBFM2500;
         break;
     case 2:
-        _tx_radio_type = radio_type::RADIO_TYPE_ANALOG;
-        _tx_mode = gr_modem_types::ModemTypeNBFM5000;
+        _tx_mode = gr_modem_types::ModemTypeBPSK2K; // safeguard for WBFM
         break;
     case 3:
         _tx_radio_type = radio_type::RADIO_TYPE_ANALOG;
@@ -2128,7 +2127,6 @@ void RadioController::toggleTxMode(int value)
         _net_device->set_mtu(580);
     if(_tx_mode == gr_modem_types::ModemTypeQPSK250K)
         _net_device->set_mtu(1480);
-        //_camera->init();
 
     _mutex->lock();
     if(_settings->tx_inited)
