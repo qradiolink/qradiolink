@@ -65,10 +65,10 @@ gr_demod_qpsk::gr_demod_qpsk(std::vector<int>signature, int sps, int samp_rate, 
     }
     else
     {
-        interpolation = 3;
-        decimation = 4;
-        _samples_per_symbol = 4; // FIXME: this value should not be hardcoded
-        _target_samp_rate = 750000;
+        interpolation = 1;
+        decimation = 2;
+        _samples_per_symbol = sps; // FIXME: this value should not be hardcoded
+        _target_samp_rate = 500000;
     }
     _samp_rate =samp_rate;
     _carrier_freq = carrier_freq;
@@ -110,7 +110,7 @@ gr_demod_qpsk::gr_demod_qpsk(std::vector<int>signature, int sps, int samp_rate, 
     _clock_sync = gr::digital::pfb_clock_sync_ccf::make(_samples_per_symbol,
                                                     2*M_PI/100,pfb_taps,flt_size, flt_size / 2, 1.5, 1);
     _costas_loop = gr::digital::costas_loop_cc::make(M_PI/200,4,true);
-    _equalizer = gr::digital::cma_equalizer_cc::make(8,2,0.00001,1);
+    _equalizer = gr::digital::cma_equalizer_cc::make(8,2,0.000005,1);
 
     _diff_phasor = gr::digital::diff_phasor_cc::make();
     const std::complex<float> i(0, 1);
@@ -126,16 +126,15 @@ gr_demod_qpsk::gr_demod_qpsk(std::vector<int>signature, int sps, int samp_rate, 
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
 
 
-
+    connect(self(),0,_resampler,0);
     if(sps > 4)
     {
-        connect(self(),0,_resampler,0);
         connect(_resampler,0,_fll,0);
         connect(_fll,0,_shaping_filter,0);
     }
     else
     {
-        connect(self(),0,_shaping_filter,0);
+        connect(_resampler,0,_shaping_filter,0);
     }
 
     connect(_shaping_filter,0,_agc,0);
