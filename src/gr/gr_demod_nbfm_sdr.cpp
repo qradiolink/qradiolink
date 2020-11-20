@@ -58,7 +58,7 @@ gr_demod_nbfm::gr_demod_nbfm(std::vector<int>signature, int sps, int samp_rate, 
     _audio_resampler = gr::filter::rational_resampler_base_fff::make(2,5, audio_taps);
 
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass_2(
-            1, _target_samp_rate, _filter_width, 1200, 60 ,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
+            1, _target_samp_rate, _filter_width, 200, 90 ,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
 
     _fm_demod = gr::analog::quadrature_demod_cf::make(_target_samp_rate/(4*M_PI* _filter_width));
     _squelch = gr::analog::pwr_squelch_cc::make(-140,0.01,0,true);
@@ -66,7 +66,7 @@ gr_demod_nbfm::gr_demod_nbfm(std::vector<int>signature, int sps, int samp_rate, 
     _level_control = gr::blocks::multiply_const_ff::make(2.0);
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::band_pass_2(
-                    1, 8000, 300, 3500, 200, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+                    1, 8000, 300, 3500, 200, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
     _float_to_short = gr::blocks::float_to_short::make();
 
 

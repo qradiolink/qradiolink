@@ -51,8 +51,8 @@ gr_demod_wbfm::gr_demod_wbfm(std::vector<int>signature, int sps, int samp_rate, 
     _resampler = gr::filter::rational_resampler_base_ccf::make(1,5,taps);
     _audio_resampler = gr::filter::rational_resampler_base_fff::make(1,25, audio_taps);
 
-    _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
-            1, _target_samp_rate, _filter_width,600,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
+    _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass_2(
+            1, _target_samp_rate, _filter_width, 600, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
 
     _fm_demod = gr::analog::quadrature_demod_cf::make(_target_samp_rate/(2*M_PI* _filter_width));
     _squelch = gr::analog::pwr_squelch_cc::make(-140,0.01,0,true);
