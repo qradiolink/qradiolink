@@ -98,6 +98,8 @@ public:
     int window_height;
     int relay_sequence;
     long long lnb_lo_freq;
+    float panadapter_min_db;
+    float panadapter_max_db;
 
     /// Not saved to config:
 

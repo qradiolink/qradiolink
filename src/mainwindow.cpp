@@ -171,6 +171,8 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     QObject::connect(ui->frameCtrlFreq,SIGNAL(newFrequency(qint64)),this,SLOT(tuneMainFreq(qint64)));
     QObject::connect(ui->plotterFrame,SIGNAL(pandapterRangeChanged(float,float)),
                      ui->plotterFrame,SLOT(setWaterfallRange(float,float)));
+    QObject::connect(ui->plotterFrame,SIGNAL(pandapterRangeChanged(float,float)),
+                     this,SLOT(updatePanadapterRange(float,float)));
     QObject::connect(ui->plotterFrame,SIGNAL(newCenterFreq(qint64)),
                      this,SLOT(tuneFreqPlotter(qint64)));
     QObject::connect(ui->plotterFrame,SIGNAL(newFilterFreq(qint64, qint64)),
@@ -507,6 +509,8 @@ void MainWindow::setConfig()
     ui->frameCtrlFreq->setFrequency(_settings->rx_frequency + _settings->demod_offset + _settings->lnb_lo_freq);
     ui->plotterFrame->setSampleRate(_settings->rx_sample_rate);
     ui->plotterFrame->setSpanFreq((quint32)_settings->rx_sample_rate);
+    ui->plotterFrame->setPandapterRange(_settings->panadapter_min_db, _settings->panadapter_max_db);
+    ui->plotterFrame->setWaterfallRange(_settings->panadapter_min_db, _settings->panadapter_max_db);
     ui->sampleRateBox->setCurrentIndex(ui->sampleRateBox->findText
                                        (QString::number(_settings->rx_sample_rate)));
     ui->averagingSlider->setValue((int)(1.0f/_settings->fft_averaging));
@@ -1646,6 +1650,12 @@ void MainWindow::setFFTRange(int value)
         _rssi = -80.0;
     ui->plotterFrame->setPandapterRange(_rssi - 20 / (float)value , _rssi + 70 / (float)value);
     ui->plotterFrame->setWaterfallRange(_rssi - 20 / (float)value , _rssi + 70 / (float)value);
+}
+
+void MainWindow::updatePanadapterRange(float min, float max)
+{
+    _settings->panadapter_min_db = min;
+    _settings->panadapter_max_db = max;
 }
 
 void MainWindow::autoSquelch()

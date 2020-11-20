@@ -170,6 +170,7 @@ public slots:
     void setTxStageGain(int value);
     void pageUserRequested();
     void displayPageMessage(QString page_user, QString page_message);
+    void updatePanadapterRange(float min, float max);
 
 signals:
     void startTransmission();

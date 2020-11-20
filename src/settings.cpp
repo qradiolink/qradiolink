@@ -617,6 +617,22 @@ void Settings::readConfig()
     {
         lnb_lo_freq = 0;
     }
+    try
+    {
+        panadapter_min_db = cfg.lookup("panadapter_min_db");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        panadapter_min_db = -120.0;
+    }
+    try
+    {
+        panadapter_max_db = cfg.lookup("panadapter_max_db");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        panadapter_max_db = -30.0;
+    }
 
 }
 
@@ -686,6 +702,8 @@ void Settings::saveConfig()
     root.add("window_height",libconfig::Setting::TypeInt) = window_height;
     root.add("relay_sequence",libconfig::Setting::TypeInt) = relay_sequence;
     root.add("lnb_lo_freq",libconfig::Setting::TypeInt64) = lnb_lo_freq;
+    root.add("panadapter_min_db",libconfig::Setting::TypeFloat) = panadapter_min_db;
+    root.add("panadapter_max_db",libconfig::Setting::TypeFloat) = panadapter_max_db;
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());
