@@ -1016,7 +1016,7 @@ void CPlotter::draw()
         QPainter painter2(&m_2DPixmap);
         // solid background
         QLinearGradient gradient(w/2, 0, w/2, h);
-        gradient.setColorAt(0, QColor("#0f2b4a")); // #053856
+        gradient.setColorAt(0, QColor("#0f2b4a")); // #0f2b4a
         gradient.setColorAt(1, QColor("#607468")); // #607468 #4b5b51
 
         painter2.fillRect(0, 0, w, h, QBrush(gradient));

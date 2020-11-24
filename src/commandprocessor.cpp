@@ -342,9 +342,10 @@ bool CommandProcessor::processStatusCommands(int command_index, QString &respons
         {
             radiochannel *channel = channels->at(i);
             response.append(QString::number(i) + ": " + QString::fromStdString(channel->name) +
-                            " | " + QString::number(channel->rx_frequency) + "|" +
-                            " | " + QString::number(channel->tx_frequency) + "|" +
-                            " | " + QString::number(channel->tx_shift) + "|" +"\n");
+                            " | Freq: " + QString::number(channel->rx_frequency) + " | RX mode: " +
+                            _mode_list->at(channel->rx_mode) + " | TX mode: " +
+                            _mode_list->at(channel->tx_mode) +
+                            " | Shift: " + QString::number(channel->tx_shift) + "|" +"\n");
         }
     }
         break;
