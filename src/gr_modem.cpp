@@ -1044,7 +1044,6 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
             {
                 memcpy(codec2_data, received_data, _rx_frame_length);
                 emit digitalAudio(codec2_data,_rx_frame_length);
-                emit audioFrameReceived();
             }
             else
             {
@@ -1058,7 +1057,6 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
         {
             memcpy(codec2_data, received_data+1, _rx_frame_length);
             emit digitalAudio(codec2_data,_rx_frame_length);
-            emit audioFrameReceived();
         }
 
     }

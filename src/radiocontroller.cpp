@@ -1252,6 +1252,7 @@ void RadioController::receiveDigitalAudio(unsigned char *data, int size)
                               (bool)_settings->audio_compressor, audio_mode);
             }
         }
+        dataFrameReceived();
     }
 }
 
