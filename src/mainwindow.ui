@@ -4878,9 +4878,9 @@ color: rgb(182, 182, 182);</string>
          <property name="geometry">
           <rect>
            <x>660</x>
-           <y>3</y>
+           <y>23</y>
            <width>321</width>
-           <height>71</height>
+           <height>51</height>
           </rect>
          </property>
          <property name="sizePolicy">
@@ -4907,9 +4907,9 @@ color: rgb(182, 182, 182);</string>
          <property name="geometry">
           <rect>
            <x>1070</x>
-           <y>3</y>
+           <y>23</y>
            <width>321</width>
-           <height>71</height>
+           <height>51</height>
           </rect>
          </property>
          <property name="sizePolicy">
@@ -4935,8 +4935,8 @@ color: rgb(182, 182, 182);</string>
         <widget class="QLabel" name="label_21">
          <property name="geometry">
           <rect>
-           <x>600</x>
-           <y>30</y>
+           <x>663</x>
+           <y>2</y>
            <width>60</width>
            <height>20</height>
           </rect>
@@ -4954,8 +4954,8 @@ color: rgb(182, 182, 182);</string>
         <widget class="QLabel" name="label_50">
          <property name="geometry">
           <rect>
-           <x>1000</x>
-           <y>30</y>
+           <x>1080</x>
+           <y>1</y>
            <width>60</width>
            <height>20</height>
           </rect>
