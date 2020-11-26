@@ -122,6 +122,8 @@ unsigned char* ImageCapture::get_frame(int &len)
     }
     capture_image();
     len = _last_frame_length;
+    if(len == 0)
+        return nullptr;
     unsigned char* frame = new unsigned char[FRAME_SIZE];
     memcpy(frame, _videobuffer, FRAME_SIZE*sizeof(unsigned char));
     return frame;
