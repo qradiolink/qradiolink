@@ -44,8 +44,8 @@ public:
     int bb_gain;
     int if_gain;
     int rx_sensitivity;
-    int rx_freq_corr;
-    int tx_freq_corr;
+    unsigned int rx_freq_corr;
+    unsigned int tx_freq_corr;
     int squelch;
     int rx_volume;
     int tx_volume;

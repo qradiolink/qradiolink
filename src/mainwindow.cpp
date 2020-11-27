@@ -565,8 +565,8 @@ void MainWindow::saveUiConfig()
     _settings->tx_device_args = ui->lineEditTXDev->text();
     _settings->rx_antenna = ui->lineEditRXAntenna->text();
     _settings->tx_antenna = ui->lineEditTXAntenna->text();
-    _settings->rx_freq_corr = ui->lineEditRXFreqCorrection->text().toInt();
-    _settings->tx_freq_corr = ui->lineEditTXFreqCorrection->text().toInt();    
+    _settings->rx_freq_corr = (unsigned int)(ui->lineEditRXFreqCorrection->text().toInt() < 0 ? 0 : ui->lineEditRXFreqCorrection->text().toInt());
+    _settings->tx_freq_corr = (unsigned int)(ui->lineEditTXFreqCorrection->text().toInt() < 0 ? 0 : ui->lineEditTXFreqCorrection->text().toInt());
     _settings->callsign = ui->lineEditCallsign->text();
     _settings->video_device = ui->lineEditVideoDevice->text();
     _settings->audio_input_device = ui->audioInputComboBox->currentText();

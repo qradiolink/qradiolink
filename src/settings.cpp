@@ -644,8 +644,8 @@ void Settings::saveConfig()
     root.add("tx_device_args",libconfig::Setting::TypeString) = tx_device_args.toStdString();
     root.add("rx_antenna",libconfig::Setting::TypeString) = rx_antenna.toStdString();
     root.add("tx_antenna",libconfig::Setting::TypeString) = tx_antenna.toStdString();
-    root.add("rx_freq_corr",libconfig::Setting::TypeInt) = rx_freq_corr;
-    root.add("tx_freq_corr",libconfig::Setting::TypeInt) = tx_freq_corr;
+    root.add("rx_freq_corr",libconfig::Setting::TypeInt) = (int)rx_freq_corr;
+    root.add("tx_freq_corr",libconfig::Setting::TypeInt) = (int)tx_freq_corr;
     root.add("callsign",libconfig::Setting::TypeString) = callsign.toStdString();
     root.add("video_device",libconfig::Setting::TypeString) = video_device.toStdString();
     root.add("audio_input_device",libconfig::Setting::TypeString) = audio_input_device.toStdString();
