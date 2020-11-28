@@ -21,7 +21,7 @@
 #include <gnuradio/sync_block.h>
 #include <gnuradio/sync_interpolator.h>
 #include <gnuradio/io_signature.h>
-#include <stdio.h>
+
 
 class gr_bit_sink;
 typedef boost::shared_ptr<gr_bit_sink> gr_bit_sink_sptr;
@@ -44,7 +44,6 @@ private:
     std::vector<unsigned char> *_data;
     gr::thread::condition_variable _cond_wait;
     gr::thread::mutex _mutex;
-    boost::mutex _boost_mutex;
 };
 
 #endif // GR_BIT_SINK_H

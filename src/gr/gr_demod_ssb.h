@@ -60,7 +60,6 @@ private:
     gr::blocks::complex_to_real::sptr _complex_to_real;
     gr::blocks::multiply_const_cc::sptr _if_gain;
     gr::blocks::multiply_const_ff::sptr _level_control;
-    gr::analog::rail_ff::sptr _rail;
 
     int _samples_per_symbol;
     int _samp_rate;

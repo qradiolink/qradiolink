@@ -52,14 +52,12 @@ gr_demod_ssb::gr_demod_ssb(std::vector<int>signature, int sps, int samp_rate, in
             1, _target_samp_rate, -_filter_width, -200,200, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
     _squelch = gr::analog::pwr_squelch_cc::make(-140,0.01,0,true);
     _feed_forward_agc = gr::analog::feedforward_agc_cc::make(320,1);
-    _agc = gr::analog::agc2_cc::make(1e-2, 1e-4, 0.8, 1);
-    _agc->set_max_gain(0.9);
-    _rail = gr::analog::rail_ff::make(-1.0, 1.0);
+    _agc = gr::analog::agc2_cc::make(1e-1, 1e-1, 1.0, 1);
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::band_pass_2(
-                    2, _target_samp_rate, 200, _filter_width, 200, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+                    1, _target_samp_rate, 200, _filter_width, 200, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
     _complex_to_real = gr::blocks::complex_to_real::make();
-    _level_control = gr::blocks::multiply_const_ff::make(0.99);
+    _level_control = gr::blocks::multiply_const_ff::make(0.8);
 
 
     connect(self(),0,_resampler,0);
@@ -78,8 +76,7 @@ gr_demod_ssb::gr_demod_ssb(std::vector<int>signature, int sps, int samp_rate, in
     }
     connect(_squelch,0,_agc,0);
     connect(_agc,0,_complex_to_real,0);
-    connect(_complex_to_real,0,_rail,0);
-    connect(_rail,0,_level_control,0);
+    connect(_complex_to_real,0,_level_control,0);
     connect(_level_control,0,_audio_filter,0);
     connect(_audio_filter,0,self(),1);
 

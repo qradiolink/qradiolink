@@ -1696,6 +1696,8 @@ void RadioController::toggleRX(bool value)
         _modem->setSquelch(_settings->squelch);
         _modem->setGain(_settings->if_gain);
         _modem->setRxCTCSS(_settings->rx_ctcss);
+        _modem->setAgcAttack(_settings->agc_attack);
+        _modem->setAgcDecay(_settings->agc_decay);
         _modem->setCarrierOffset(_settings->demod_offset);
         _modem->setSampRate(_settings->rx_sample_rate);
         _modem->tune(_settings->rx_frequency);
@@ -2269,11 +2271,13 @@ void RadioController::setIfGain(int value)
 
 void RadioController::setAgcAttack(float value)
 {
+    _settings->agc_attack = value;
     _modem->setAgcAttack(value);
 }
 
 void RadioController::setAgcDecay(float value)
 {
+    _settings->agc_decay = value;
     _modem->setAgcDecay(value);
 }
 

@@ -231,7 +231,7 @@ void Settings::readConfig()
     }
     catch(const libconfig::SettingNotFoundException &nfex)
     {
-        agc_attack = 2;
+        agc_attack = 1;
     }
     try
     {
@@ -239,7 +239,7 @@ void Settings::readConfig()
     }
     catch(const libconfig::SettingNotFoundException &nfex)
     {
-        agc_decay = 4;
+        agc_decay = 1;
     }
     try
     {

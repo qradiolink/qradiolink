@@ -21,7 +21,7 @@
 #include <gnuradio/sync_block.h>
 #include <gnuradio/sync_interpolator.h>
 #include <gnuradio/io_signature.h>
-#include <stdio.h>
+
 
 class gr_audio_sink;
 typedef boost::shared_ptr<gr_audio_sink> gr_audio_sink_sptr;
@@ -46,7 +46,6 @@ private:
     std::vector<float> *_data;
     gr::thread::condition_variable _cond_wait;
     gr::thread::mutex _mutex;
-    boost::mutex _boost_mutex;
 };
 
 #endif // GR_AUDIO_SINK_H

@@ -20,7 +20,7 @@
 #include <gnuradio/sync_block.h>
 #include <gnuradio/sync_interpolator.h>
 #include <gnuradio/io_signature.h>
-#include <stdio.h>
+
 
 class gr_byte_source;
 

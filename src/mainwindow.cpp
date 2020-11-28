@@ -1737,15 +1737,13 @@ void MainWindow::setRxDigitalGain(int value)
 void MainWindow::updateAgcAttack(int value)
 {
     _settings->agc_attack = value;
-    float attack = (float)pow(10, -value);
-    emit setAgcAttack(attack);
+    emit setAgcAttack(value);
 }
 
 void MainWindow::updateAgcDecay(int value)
 {
     _settings->agc_decay = value;
-    float decay = (float)pow(10, -value);
-    emit setAgcDecay(decay);
+    emit setAgcDecay(value);
 }
 
 void MainWindow::setRxGainStages(gain_vector rx_gains)

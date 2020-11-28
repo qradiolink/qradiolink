@@ -430,12 +430,18 @@ void gr_modem::setRxSensitivity(double value, std::string gain_stage)
 void gr_modem::setAgcAttack(float value)
 {
     if(_gr_demod_base)
-        _gr_demod_base->set_agc_attack(value);
+    {
+        float attack = (float)pow(10, -value);
+        _gr_demod_base->set_agc_attack(attack);
+    }
 }
 void gr_modem::setAgcDecay(float value)
 {
     if(_gr_demod_base)
-        _gr_demod_base->set_agc_decay(value);
+    {
+        float decay = (float)pow(10, -value);
+        _gr_demod_base->set_agc_decay(decay);
+    }
 }
 
 void gr_modem::setSquelch(int value)

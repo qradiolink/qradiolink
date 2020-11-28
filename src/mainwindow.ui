@@ -2923,13 +2923,13 @@ font: 10pt &quot;Sans Serif&quot;;
                     </sizepolicy>
                    </property>
                    <property name="minimum">
-                    <number>1</number>
+                    <number>0</number>
                    </property>
                    <property name="maximum">
-                    <number>8</number>
+                    <number>6</number>
                    </property>
                    <property name="value">
-                    <number>3</number>
+                    <number>1</number>
                    </property>
                   </widget>
                  </item>
@@ -3410,10 +3410,10 @@ and S-meter (dBm)</string>
                     </sizepolicy>
                    </property>
                    <property name="minimum">
-                    <number>1</number>
+                    <number>0</number>
                    </property>
                    <property name="maximum">
-                    <number>8</number>
+                    <number>6</number>
                    </property>
                   </widget>
                  </item>
