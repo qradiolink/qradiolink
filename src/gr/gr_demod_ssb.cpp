@@ -40,7 +40,7 @@ gr_demod_ssb::gr_demod_ssb(std::vector<int>signature, int sps, int samp_rate, in
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(_sps, _samp_rate, _target_samp_rate/2,
+    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _target_samp_rate/2,
                             _target_samp_rate/2, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1,_sps,taps);
 

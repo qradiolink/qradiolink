@@ -50,7 +50,7 @@ gr_demod_nbfm::gr_demod_nbfm(std::vector<int>signature, int sps, int samp_rate, 
 
     _de_emph_filter = gr::filter::iir_filter_ffd::make(_btaps, _ataps, false);
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(50, _samp_rate, _target_samp_rate/2,
+    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _target_samp_rate/2,
                                 _target_samp_rate/2, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     std::vector<float> audio_taps = gr::filter::firdes::low_pass_2(2, 2*_target_samp_rate, 3600, 250, 60,
                                                     gr::filter::firdes::WIN_BLACKMAN_HARRIS);
