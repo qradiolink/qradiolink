@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta content="en-us" http-equiv="Content-Language">
+<meta content="text/html; charset=windows-1252" http-equiv="Content-Type">
+<style>
+	pre{font-family:monospace,monospace;font-size:1em;overflow-x:auto;width:100%;scroll}
+</style>
+<title>Installing the SDRplay RSP1A and QRadioLink on a Raspberry Pi</title>
+</head>
+
+<body style="font-size:1em">
+
+<h1>Installing drivers and support for the SDRplay RSP1A with QRadioLink on a Raspberry Pi</h1>
+<p>There seems to be little Linux support for SDRplay devices outside of the 
+convenient images from SDRplay with preinstalled software. That software was 
+limited and out of date as of this writing. I have spent quite a bit of time 
+getting an up to date system on which to install the latest Linux SDR software. 
+In addition, many of the packages supplied by Raspberry Pi are not current. Here 
+is what I did to get mine to work. I hope this helps you.</p>
+<p>On a 32 GB SD card, install 2020-08-20-raspios-buster-armhf.img from 
+Raspberry Pi. Other SD card sizes and newer OS versions may work. If the Qt5 
+version is ver. 5.12 or later or if GNU Radio is ver. 3.8, you can use those 
+instead. Allow it to boot, go through the setup procedure and update itself to 
+the latest version.</p>
+<p>I suggest turning off screen blanking as this will halt your SDR reception.</p>
+<p>I basically included prerequisites that were not found on my system. However, 
+there may be a few packages listed that are already installed. This is OK. </p>
+<h2>Uninstall:</h2>
+<ul>
+	<li>Qt 5.11.3<ul>
+		<li>Using Add / Remove Software, uncheck all QT5 items 
+that refer to version 5.11</li>
+	</ul>
+	</li>
+	<li>GNU Radio 3.7<ul>
+		<li>Using Add / Remove Software, uncheck 
+all items that refer to version 3.7</li>
+	</ul>
+	</li>
+</ul>
+<h2>Install:</h2>
+<ul>
+	<li>cmake<ul>
+		<li>sudo apt-get install cmake</li>
+	</ul>
+	</li>
+	<li>Qt 5 5.12.5<ul>
+		<li>Download
+		<a href="https://github.com/koendv/qt5-opengl-raspberrypi/releases/download/v5.12.5-1/qt5-opengl-dev_5.12.5_armhf.deb">
+		qt5-opengl-dev_5.12.5_armhf.deb</a></li>
+		<li>Set View and Execute permissions to Anyone<br>
+<pre># Change to the directory containing the downloads
+cd ~/
+sudo apt install ./qt5-opengl-dev_5.12.5_armhf.deb # This installs Qt5 in /usr/lib/qt5.12/
+export QT_SELECT=qt5-opengl
+sudo ldconfig
+/usr/lib/qt5.12/bin/qmake --version # Check version
+
+sudo mousepad /etc/ld.so.conf.d/Qt5.conf</pre>
+		</li>
+		<li>Insert into the new file: /usr/lib/qt5.12/lib</li>
+		<li>Save the file.
+<pre>sudo mousepad ~/.profile
+# Add these lines to the end of the file and save.
+PATH=/usr/lib/qt5.12/bin:$PATH
+export PATH</pre>
+		</ul>
+	</li>
+	<li>Qt Creator for Qt 5.12</li>
+	<ul>
+		<li>Download
+		<a href="https://github.com/koendv/qt5-opengl-raspberrypi/releases/download/v5.12.5-1/qt5-opengl-qtcreator_4.9.1_armhf.deb">
+		qt5-opengl-qtcreator_4.9.1_armhf.deb</a></li>
+		<li>Set View and Execute permissions to Anyone</li>
+<pre>sudo apt install ./qt5-opengl-qtcreator_4.9.1_armhf.deb # This installs qtcreator in /usr/lib/qt5.12/bin/
+sudo ldconfig
+</pre>
+		<li>reboot</li>
+		</ul>
+	<li>SDRplay API Installation<ul>
+		<li>Using Add /Remove Software, install the libusb and libudev-dev packages.</li>
+<pre># Add the following SUBSYSTEM line to the file in the command below:
+sudo mousepad /etc/udev/rules.d/66-mirics.rules
+SUBSYSTEM=="usb",ENV{DEVTYPE}=="usb_device",ATTRS{idVendor}=="1df7",ATTRS{idProduct}=="2500",MODE:="0666"
+# Save the file. Once this file is in place you should reset the udev system by typing:
+sudo service udev restart
+</pre>
+		<li>Download API 3.07 or later, RSP Control Library + Driver from 
+		<a href="https://www.sdrplay.com/downloads/">https://www.sdrplay.com/downloads/</a></li>
+<pre>cd /home/pi/Downloads # or wherever you downloaded the file
+chmod 755 SDRplay_RSP_API-ARM32-3.07.2.run
+sudo ./SDRplay_RSP_API-ARM32-3.07.2.run
+sudo ldconfig
+</pre>
+		<li>To start and stop the API service, use the following commands...</li>
+<pre>sudo systemctl stop sdrplay
+sudo systemctl start sdrplay</pre>
+	</ul>
+	</li>
+	<li>GNU Radio 3.8.2<ul>
+		<li>Prerequisites<ul>
+			<li>Open Add / Remove Software and ensure that volk, 
+			libvolk 1.4 or newer along with the bin and dev packages are checked. If 
+			necessary, check them and click Apply.</li>
+			<li>In Add / Remove Software ensure that libcodec2, libcodec2-dev, libfftw3 
+			and libfftw3-dev 
+			are installed.</li>
+			<li>If you install the list of prerequisites listed on the GNU Radio 
+			web site, be careful not to install the Qt5 packages as they will be 
+			the old ver. 5.11<br>Install these prerequisites (some may already 
+			be installed)</li>
+<pre>sudo apt install libboost-all-dev libgmp-dev swig python3-requests python3-ruamel.yaml python3-setuptools python3-numpy python3-mako python3-sphinx python3-lxml doxygen libsdl1.2-dev libgsl-dev libzmq3-dev python3-yaml python3-click python3-click-plugins python3-zmq python3-scipy libusb-1.0-0 libusb-1.0-0-dev python-docutils liborc-0.4-0 liborc-0.4-dev python3-gi-cairo liblog4cpp5-dev liblog4cpp5v5
+# Check that FreeDV and Codec2 are installed.
+# For soapySDR, etc.:
+sudo apt install osspd osspd-pulseaudio sudo osspd-alsa libcppunit-dev
+</pre>
+			<li>Install UHD</li><br>You probably can use the UHD packages in Add 
+			/ Remove Software. Building this from source will take a long time.
+<pre>cd ~/
+git clone git://github.com/EttusResearch/uhd.git
+cd ~/uhd
+# git tag -l # list versions available
+git checkout v3.15.0.0
+cd host
+mkdir build
+cd build
+cmake -DNEON_SIMD_ENABLE=OFF -DCMAKE_INSTALL_PREFIX=/usr/local ../
+make -j4
+make test
+sudo make install
+sudo ldconfig
+</pre>
+			<li>Install UHD FPGA images</li>
+<pre>sudo uhd_images_downloader
+cd ~/uhd/host/utils
+sudo cp uhd-usrp.rules /etc/udev/rules.d/
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+# The installation of UHD is now complete. At this point, connect the USRP to the host computer and run:
+uhd_usrp_probe
+</pre>
+			</ul>
+		</li>
+		<li>Installing the latest GNU Radio 3.8 version, 3.8.2 as of 8/21/2020<ul>
+			<li>The next steps will take two or more hours. Be patient. The 
+			terminal does show the progress.<br>These steps are based on the 
+			install instructions at
+			<a href="https://wiki.gnuradio.org/index.php/InstallingGR#From_Source">https://wiki.gnuradio.org/index.php/InstallingGR#From_Source</a></li>
+	<pre>cd ~/
+git clone https://github.com/gnuradio/gnuradio.git
+cd gnuradio
+# In the following command, change maint-3.8 to some other branch or tag if you want to build a different version of GNU Radio;
+git checkout maint-3.8
+git submodule update --init --recursive
+mkdir build
+cd build
+cmake -DCMAKE_BUILD_TYPE=Release -DPYTHON_EXECUTABLE=/usr/bin/python3 ../
+
+# check cmake the output for codec2/freedv entries - freedv_api.h
+# For the make command, if you want to use 4 CPU cores during the build add the -j4 flag. To use 8 do -j8, to use 1 leave out the -j flag.
+make -j4
+sudo make install
+sudo ldconfig
+
+# Show version
+/usr/local/bin/gnuradio-config-info -v
+
+sudo mousepad ~/.profile
+#add this  export command to the end of the file or to any existing PYTHONPATH line. Save changes to make the variables permanent.
+export PYTHONPATH=/usr/local/lib/python3/dist-packages:$PYTHONPATH
+</pre>
+			<li>Create a file named /etc/ld.so.conf.d/gnuradio.conf containing: /usr/local/lib</li>
+<pre>sudo mousepad /etc/ld.so.conf.d/gnuradio.conf
+# insert the line: /usr/local/lib
+# Save the file
+
+sudo ldconfig</pre>
+			<li>reboot</li>
+		</ul>
+	</ul>
+	</li>
+	<li>Build SoapySDR<ul>
+		<pre>cd ~/
+git clone https://github.com/pothosware/SoapySDR.git
+cd SoapySDR
+mkdir build
+cd build
+cmake ..
+make -j4
+sudo make install
+sudo ldconfig
+</pre>
+	</ul>
+	</li>
+	<li>Install the Soapy SDR module for SDRPlay<ul>
+<pre>cd ~/
+git clone https://github.com/SDRplay/SoapySDRPlay.git
+
+cd SoapySDRPlay
+# git checkout master # default
+mkdir build
+cd build
+cmake ..
+make -j4
+sudo make install
+sudo ldconfig
+
+# Type this command. If your SDR is listed, the hardest work is done!
+SoapySDRUtil --info
+SoapySDRUtil --probe="driver=sdrplay"
+</pre>
+	</ul>
+	</li>
+	<li>Alternate gr-osmosdr module for SDRplay API 3.x - supports RSPduo (all modes) and RSPdx<br>
+	Please note that this code is still experimental. The installer does find SDRplay and Soapy. OsmoSDR does appear in GNU Radio Companion, no reference to SDRplay or Soapy.<ul>
+<pre>cd ~/
+git clone https://github.com/fventuri/gr-osmosdr.git
+cd gr-osmosdr/
+mkdir build
+cd build
+cmake .. -DENABLE_NONFREE=TRUE
+</pre>
+	<li>Under Gnuradio enabled components, check that SDRplay RSP (NONFREE) and SoapySDR support are listed.</li>
+<pre>
+make -j4
+sudo make install
+sudo ldconfig
+</pre>
+	</ul>
+	</li>
+	<li>Install QRadioLink<ul>
+		<li>Prerequisites
+		- CHECK during trial run
+		<ul>
+			<li>Install using Add / Remove Software:<ul>
+				<li>mumble</li>
+				<li>FreeDV</li>
+			</ul>
+			</li>
+			<pre>sudo apt-get install protobuf-compiler libopus-dev libspeexdsp1 libspeexdsp-dev libjpeg62-turbo-dev libconfig++9v5 libconfig++-dev libftdi1 libftdi-dev libsndfile1-dev libsndfile1 libjpeg-dev libprotoc-dev
+</pre>
+			</ul>
+		<li>Install<ul>
+<pre>cd ~/
+git clone https://github.com/qradiolink/qradiolink
+cd qradiolink/
+git checkout master
+# To get the latest version with recent changes (instead of git checkout master):
+# git checkout next
+# git pull
+sh ./build_debian.sh
+</pre>
+			<li>To run </li>
+<pre>build/qradiolink
+# or from anywhere
+/home/pi/qradiolink/build/qradiolink
+</pre>
+			<li>Click the Setup tab</li>
+			<li>Click General Settings</li>
+			<li>In RX device args, enter <span style="font-family:monospace,monospace;">soapy=0,driver=sdrplay</span></li>
+			<li>In RX antenna, enter <span style="font-family:monospace,monospace;">0</span></li>
+			<li>Under Radio settings, change Output audio device to pulse</li>
+			<li>Click the Spectrum tab</li>
+			<li>Click RX to start the SDR receiver.</li>
+		</ul>
+		</li>
+	</ul>
+	</li>
+	<li>Run GNU Radio Companion and check that OsmoSDR is in the tree on the 
+	right side of the window.</li>
+	<li>If Qt5 5.11 reappears in Add / Remove Software, remove all, including 
+	5.12 and reinstall 5.12 as above.</li>
+	<li>If you find that the operatng system only has mono audio:</li>
+<pre>sudo mousepad /usr/share/pulseaudio/alsa-mixer/profile-sets/default.conf
+</pre>
+	<li>Comment out each line in the [Mapping analog-mono] section with a &quot;;&quot; at the beginning of the line.</li>
+	<li>Save the file and reboot.</li>
+	<li>VLC media player is broken by this installation and will not run.</li>
+</ul>
+
+</body>
+
+</html>
