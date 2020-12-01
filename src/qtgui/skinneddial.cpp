@@ -211,11 +211,11 @@ void SkinnedDial::paintEvent(QPaintEvent *pe) {
 
         const float midPoint = (this->maximum() - this->minimum()) * 0.5;
 
-        if( curVal < midPoint ) {
+        if( (curVal - this->minimum()) < midPoint ) {
             float pct = (curVal - this->minimum()) / midPoint;
             rotNeedle = _rotatePix(&rotNeedle, m_maxDeg - (m_maxDeg * std::abs(pct)), false);
         }
-        else if( curVal >= midPoint ) {
+        else if( (curVal - this->minimum()) >= midPoint ) {
             float pct = (curVal - this->minimum() - midPoint) / midPoint ;
             rotNeedle = _rotatePix(&rotNeedle, m_maxDeg * std::abs(pct), true);
         }
