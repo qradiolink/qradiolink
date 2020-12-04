@@ -23,6 +23,7 @@
 #include <QCameraImageCapture>
 #include <QCameraViewfinder>
 #include <QApplication>
+#include <QMutex>
 #include "src/settings.h"
 #include "src/logger.h"
 
@@ -54,6 +55,8 @@ private:
     int _last_frame_length;
     bool _inited;
     bool _shutdown;
+    bool _capturing;
+    QMutex _mutex;
 };
 
 #endif // IMAGECAPTURE_H

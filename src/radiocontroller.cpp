@@ -32,7 +32,6 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     _layer2 = new Layer2Protocol(logger);
     _relay_controller = new RelayController(logger);
     _video = new VideoEncoder(logger);
-    //_camera = new ImageCapture(settings, logger);
     _net_device = new NetDevice(logger, 0, _settings->ip_address);
     _mutex = new QMutex;
 
@@ -137,8 +136,6 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     QObject::connect(_layer2,SIGNAL(havePageMessage(QString,QString,QString)),this,
                      SLOT(receivedPageMessage(QString,QString,QString)));
 
-    //QObject::connect(_camera,SIGNAL(imageCaptured(unsigned char*,int)),this,
-    //                 SLOT(processVideoFrame(unsigned char*,int)));
 
     /// Garbage to fill unused video and net frames with
     for (int j = 0;j<4000;j++)
@@ -556,7 +553,7 @@ void RadioController::txAudio(short *audiobuffer, int audiobuffer_size,
 
 void RadioController::processVideoFrame(unsigned char *audio_buffer, int audio_size)
 {
-    if(_tx_mode != gr_modem_types::ModemTypeQPSKVideo)
+    if((_tx_mode != gr_modem_types::ModemTypeQPSKVideo) || (!_settings->tx_started))
     {
         delete[] audio_buffer;
         return;
@@ -1752,11 +1749,6 @@ void RadioController::toggleTX(bool value)
             emit initError("Could not init TX device, check settings");
             return;
         }
-        if(_tx_mode == gr_modem_types::ModemTypeQPSKVideo)
-            _video->init(_settings->video_device);
-            //_camera->init();
-        else
-            _video->deinit();
 
         _mutex->lock();
         _modem->setBbGain(_settings->bb_gain);
@@ -1790,7 +1782,6 @@ void RadioController::toggleTX(bool value)
 
         _modem->deinitTX(_tx_mode);
         _mutex->unlock();
-        _video->deinit();
 
         _settings->tx_inited = false;
     }

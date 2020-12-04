@@ -23,6 +23,7 @@ ImageCapture::ImageCapture(Settings *settings, Logger *logger, QObject *parent) 
     _logger = logger;
     _inited = false;
     _shutdown = false;
+    _capturing = false;
     _last_frame_length = 0;
     _videobuffer = new unsigned char[FRAME_SIZE];
     memset(_videobuffer, 0, FRAME_SIZE*sizeof(unsigned char));
@@ -36,10 +37,13 @@ ImageCapture::~ImageCapture()
 
 void ImageCapture::init()
 {
+    _mutex.lock();
     if(_inited)
     {
+        _mutex.unlock();
         return;
     }
+    _mutex.unlock();
     if (QCameraInfo::availableCameras().count() < 1)
     {
             _logger->log(Logger::LogLevelCritical, QString("No available camera found"));
@@ -68,19 +72,36 @@ void ImageCapture::init()
     //_viewfinder->show();
     //_viewfinder->raise();
     _camera->start();
+    _mutex.lock();
     _inited = true;
+    _mutex.unlock();
 }
 
 void ImageCapture::deinit()
 {
+    _mutex.lock();
     if(!_inited)
+    {
+        _mutex.unlock();
         return;
+    }
     //_viewfinder->hide();
     //delete _viewfinder;
     _shutdown = true;
+    while(_capturing)
+    {
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 1);
+    }
+
     _capture->cancelCapture();
     QObject::disconnect(_capture, SIGNAL(imageCaptured(int,QImage)), this, SLOT(process_image(int,QImage)));
     _camera->stop();
+    while(1)
+    {
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 1);
+        if(_camera->state() != QCamera::State::ActiveState)
+            break;
+    }
     _camera->unload();
     while(1)
     {
@@ -93,15 +114,24 @@ void ImageCapture::deinit()
 
     _inited = false;
     _shutdown = false;
+    _mutex.unlock();
 }
 
 void ImageCapture::capture_image()
 {
-    if((!_inited) || (_shutdown))
+    _mutex.lock();
+    if((!_inited) || (_shutdown) || (_capturing))
+    {
+        _mutex.unlock();
         return;
+    }
+
+    _capturing = true;
     _camera->searchAndLock();
     _capture->capture();
     _camera->unlock();
+    _capturing = false;
+    _mutex.unlock();
 }
 
 void ImageCapture::process_image(int id, QImage img)
