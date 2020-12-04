@@ -88,9 +88,8 @@ void ImageCapture::deinit()
         if(_camera->state() == QCamera::State::UnloadedState)
             break;
     }
-
-    delete _camera;
     delete _capture;
+    delete _camera;
 
     _inited = false;
     _shutdown = false;
