@@ -106,6 +106,7 @@ See docs/README.md
 These audio sinks and sources should look like this:
 - alsa_input.pci-0000_04_00.6.analog-stereo
 - alsa_output.pci-0000_04_00.6.analog-stereo
+
 **The audio should be completely artefact and interruptions free. If you experience either, the Pulseaudio configuration is probably not correct**
 
 
