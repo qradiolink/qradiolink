@@ -35,7 +35,7 @@ Features
 - FreeDV digital voice modulator and demodulator (currently supports only 1600, 700C `and 800XA modes)
 - Digital modulations: **FreeDV 1600**, **FreeDV 700C**, **FreeDV 800XA**, **BPSK**, **DQPSK**, **2FSK**, **4FSK**
 - Digital voice modem bitrates over the air from 1 kbit/s to 10 kbit/s
-- Video bitrate below 250 kbit/s at 10 frames/second (currently no sound with video)
+- Video bitrate below 250 kbit/s at 10 frames/second with sound using the Opus codec at 9400 kbit/s
 - Analog modulations: FM (12.5 kHz), narrow FM (6.25 kHz), SSB, AM, Wide FM (broadcast, receive-only)
 - Configurable filter widths for analog modes
 - CTCSS encoder and decoder for analog FM
@@ -43,7 +43,6 @@ Features
 - Analog and digital mode repeater - in full duplex mode only, same mode or mixed mode repeater (e.g. FM to Codec2 and viceversa, or FM to Opus and viceversa)
 - Repeater linking via VOIP and Mumble - a group of repeaters can be linked duplex by sharing the same Mumble channel. This feature is still experimental and WIP.
 - Internal audio mixing of audio from VOIP server and audio from radio
-- USB FTDI (FT232) relay control support (for RF switches, power amplifier and filter control)
+- USB FTDI (FT232) relay control support (for RF switches, power amplifier and filter control). Boards with up to 8 relays are supported.
 - Full duplex DQPSK 250 kbit/s and 4FSK 96 kbit/s IP radio modems with configurable TX/RX offsets
-- User paging
 - Automatic carrier tracking and Doppler effect correction for all digital modes except FreeDV modes. The system can track Doppler shifts of 5-10 kHz, depending on mode. It requires a CNR of at least 10-12 dB, more for FSK modes than for PSK modes. 

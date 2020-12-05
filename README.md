@@ -12,6 +12,7 @@ Requirements
 ----
 
 - Since release 0.8.5, GNU radio version 3.8 is necessary and Qt 5.14 is used for the graphical interface.
+- Also since release 0.8.5 the video mode requires gstreamer and libgstreamer-plugins-bad1.0-0
 - Build dependencies on Debian 11 with Qt5 and GNU radio 3.8: 
 
 <pre>
@@ -33,7 +34,7 @@ In [#67](https://github.com/qradiolink/qradiolink/issues/67) it was reported tha
 - libgnuradio-osmosdr (gr-osmosdr) built with UHD, RTL-SDR, SoapySDR, HackRF, RedPitaya or BladeRF support
 - libprotobuf, libopus, libspeexdsp, libpulse-simple, libpulse, libasound, libcodec2, libsqlite3, libjpeg, libconfig++, libvolk, libftdi, libsndfile1, qtmultimedia5-dev, libqt5multimediawidgets5, libqt5multimedia5, libqt5multimedia5 (gstreamer1.0-plugins-bad for Qt video)
 - protoc compiler (libprotoc 2.6.1 or greater, depending on which version of libprotobuf is used)
-- optionally SoapySDR and SoapyPlutoSDR, SoapyLMS7
+- SoapySDR and SoapyPlutoSDR, SoapyLMS7 are recommended as Soapy has support for many devices
 
 In order to build on Ubuntu 17.10 you have to install the following packages, assuming a full GNU Radio development environment is already installed. Please note these instructions are for a very old version and are not guaranteed to work with newer versions. It is recommended to follow the Debian install guide and adjust for Ubuntu differences.
 
