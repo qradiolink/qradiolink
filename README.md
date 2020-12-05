@@ -1,6 +1,7 @@
 README
 ==========
 
+[![Packaging status](https://repology.org/badge/vertical-allrepos/qradiolink.svg)](https://repology.org/project/qradiolink/versions)
 
 Supported hardware
 ---
