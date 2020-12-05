@@ -26,7 +26,7 @@ TelnetServer::TelnetServer(const Settings *settings, Logger *logger, RadioChanne
     _logger = logger;
     command_processor = new CommandProcessor(settings, logger, radio_channels);
     _server = new QTcpServer;
-    _hostaddr = QHostAddress::Any;
+    _hostaddr = QHostAddress::LocalHost;
     _stop = false;
 }
 
