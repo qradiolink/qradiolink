@@ -103,9 +103,9 @@ See docs/README.md
 
 **Important note to Pulseaudio users: please use the Pulseaudio provided sinks and sources in the configuration dropdown, not the default device (or pulse)**
 
-These audio sinks and sources will look like this:
-alsa_input.pci-0000_04_00.6.analog-stereo
-alsa_output.pci-0000_04_00.6.analog-stereo
+These audio sinks and sources should look like this:
+- alsa_input.pci-0000_04_00.6.analog-stereo
+- alsa_output.pci-0000_04_00.6.analog-stereo
 **The audio should be completely artefact and interruptions free. If you experience either, the Pulseaudio configuration is probably not correct**
 
 
