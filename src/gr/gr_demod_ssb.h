@@ -29,6 +29,8 @@
 #include <gnuradio/blocks/multiply_const.h>
 #include <gnuradio/blocks/multiply_const.h>
 #include <gnuradio/analog/rail_ff.h>
+#include "cessb/clipper_cc.h"
+#include "cessb/stretcher_cc.h"
 
 
 class gr_demod_ssb;
@@ -60,6 +62,8 @@ private:
     gr::blocks::complex_to_real::sptr _complex_to_real;
     gr::blocks::multiply_const_cc::sptr _if_gain;
     gr::blocks::multiply_const_ff::sptr _level_control;
+    gr::cessb::clipper_cc::sptr _clipper;
+    gr::cessb::stretcher_cc::sptr _stretcher;
 
     int _samples_per_symbol;
     int _samp_rate;

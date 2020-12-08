@@ -42,24 +42,24 @@ gr_mod_nbfm::gr_mod_nbfm(int sps, int samp_rate, int carrier_freq,
     _audio_amplify = gr::blocks::multiply_const_ff::make(0.99,1);
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::band_pass_2(
-                    1, target_samp_rate, 300, 3000, 200, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+                    1, target_samp_rate, 300, 3500, 200, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
 
     _pre_emph_filter = gr::filter::iir_filter_ffd::make(_btaps, _ataps, false);
 
     std::vector<float> if_taps = gr::filter::firdes::low_pass_2(25, if_samp_rate * 4,
-                        _filter_width, 1200, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+                        _filter_width, 1200, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     _if_resampler = gr::filter::rational_resampler_base_fff::make(25,4, if_taps);
 
     _tone_source = gr::analog::sig_source_f::make(target_samp_rate,gr::analog::GR_COS_WAVE,88.5,0.15);
     _add = gr::blocks::add_ff::make();
 
     std::vector<float> interp_taps = gr::filter::firdes::low_pass_2(_sps, _samp_rate,
-                        _filter_width, 1200, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+                        _filter_width, 1200, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     _resampler = gr::filter::rational_resampler_base_ccf::make(_sps,1, interp_taps);
     _amplify = gr::blocks::multiply_const_cc::make(0.8,1);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
     _filter = gr::filter::fft_filter_ccf::make(1,gr::filter::firdes::low_pass_2(
-                1, if_samp_rate, _filter_width, 1200, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+                1, if_samp_rate, _filter_width, 1200, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
 
 
     connect(self(),0,_audio_filter,0);

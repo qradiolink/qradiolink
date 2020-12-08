@@ -90,7 +90,7 @@
          </font>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>3</number>
         </property>
         <property name="iconSize">
          <size>
@@ -2923,7 +2923,7 @@ font: 10pt &quot;Sans Serif&quot;;
                     </sizepolicy>
                    </property>
                    <property name="minimum">
-                    <number>-1</number>
+                    <number>-2</number>
                    </property>
                    <property name="maximum">
                     <number>6</number>
@@ -3410,7 +3410,7 @@ and S-meter (dBm)</string>
                     </sizepolicy>
                    </property>
                    <property name="minimum">
-                    <number>-1</number>
+                    <number>-2</number>
                    </property>
                    <property name="maximum">
                     <number>6</number>
