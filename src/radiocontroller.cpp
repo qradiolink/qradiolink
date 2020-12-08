@@ -1999,8 +1999,15 @@ void RadioController::toggleRxMode(int value)
 
 void RadioController::toggleTxMode(int value)
 {
+
     if((_settings->tx_mode == value) && _settings->tx_inited)
         return;
+    if(_settings->tx_inited && _transmitting)
+    {
+        _logger->log(Logger::LogLevelWarning, "Cannot change mode while transmitting");
+        return;
+    }
+
     _tx_radio_type = radio_type::RADIO_TYPE_DIGITAL;
     switch(value)
     {
@@ -2624,6 +2631,11 @@ void RadioController::memoryScan(bool receiving, bool wait_for_timer)
 
 void RadioController::tuneMemoryChannel(radiochannel *chan)
 {
+    if(_settings->tx_inited && _transmitting)
+    {
+        _logger->log(Logger::LogLevelWarning, "Cannot change memory channel while transmitting");
+        return;
+    }
     _settings->rx_frequency = chan->rx_frequency - _settings->demod_offset;
     tuneFreq(_settings->rx_frequency);
     struct timespec time_to_sleep;

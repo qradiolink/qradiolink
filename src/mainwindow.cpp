@@ -766,6 +766,8 @@ void MainWindow::tuneToMemoryChannel(int row, int col)
 
 void MainWindow::tuneToMemoryChannel(radiochannel *chan)
 {
+    if(_ptt_activated)
+        return;
     ui->frameCtrlFreq->setFrequency(chan->rx_frequency);
     tuneMainFreq(chan->rx_frequency);
     _settings->tx_shift = chan->tx_shift;

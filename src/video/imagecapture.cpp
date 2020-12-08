@@ -90,7 +90,7 @@ void ImageCapture::deinit()
     _shutdown = true;
     while(_capturing)
     {
-        QCoreApplication::processEvents(QEventLoop::AllEvents);
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 1);
     }
 
     _capture->cancelCapture();
@@ -98,14 +98,14 @@ void ImageCapture::deinit()
     _camera->stop();
     while(1)
     {
-        QCoreApplication::processEvents(QEventLoop::AllEvents);
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 1);
         if(_camera->state() != QCamera::State::ActiveState)
             break;
     }
     _camera->unload();
     while(1)
     {
-        QCoreApplication::processEvents(QEventLoop::AllEvents);
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 1);
         if(_camera->state() == QCamera::State::UnloadedState)
             break;
     }
