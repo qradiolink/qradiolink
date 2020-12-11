@@ -1,0 +1,2 @@
+version=4
+https://github.com/qradiolink/qradiolink/releases .*/(\d.*).tar.gz

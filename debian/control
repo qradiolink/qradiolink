@@ -1,0 +1,64 @@
+Source: qradiolink
+Maintainer: Adrian Musceac <kantooon@gmail.com>
+Section: misc
+Priority: optional
+Standards-Version: 3.9.2
+Build-Depends: debhelper (>= 10),
+      gnuradio-dev,
+      libvolk2-dev,
+      protobuf-compiler,
+      gr-osmosdr,
+      libftdi-dev,
+      libsndfile1-dev,
+      libprotobuf-dev,
+      libopus-dev,
+      libspeexdsp-dev,
+      libpulse-dev,
+      libcodec2-dev,
+      libasound2-dev,
+      libjpeg62-turbo-dev,
+      libconfig++-dev,
+      qt5-qmake,
+      qt5-default,
+      qtbase5-dev,
+      qtmultimedia5-dev,
+      libqt5multimedia5-plugins
+
+Package: qradiolink
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends},
+      gr-osmosdr,
+      gnuradio,
+      libvolk2-bin,
+      libftdi1,
+      libprotobuf23,
+      libopus0,
+      libspeexdsp1,
+      libpulse0,
+      libcodec2-0.9,
+      libasound2,
+      libsndfile1,
+      libjpeg62-turbo,
+      libconfig++9v5,
+      liblog4cpp5v5,
+      qt5-default,
+      libqt5core5a,
+      libqt5gui5,
+      libqt5network5,
+      libqt5sql5,
+      libqt5multimediawidgets5,
+      libqt5multimedia5-plugins,
+      libqt5multimedia5,
+      qtgstreamer-plugins-qt5,
+      libgstreamer-plugins-bad1.0-0
+Description: Multimode SDR transceiver for GNU radio
+    QRadioLink is a GNU/Linux software defined radio VOIP (radio over IP)
+    transceiver application using Internet for communication, built on
+    top of GNU radio, which allows experimenting with software defined
+    radio hardware using different digital and analog radio signals and a
+    Qt5 user interface.
+    .
+    Its primary purpose is educational, but it can also be customized for
+    low power data communications on various ISM frequency bands. It can
+    also be used as a low power amateur radio SDR transceiver for
+    demonstrating radio communications to children at schools.

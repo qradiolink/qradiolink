@@ -1,0 +1,21 @@
+name: Build
+
+on: [push, pull_request]
+
+jobs:
+  ubuntu-build:
+    name: Ubuntu CI build
+    strategy:
+      matrix:
+        os: [ubuntu-20.04]
+    runs:
+      using: 'docker'
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Configure
+        run: mkdir build && cd build
+      - name: Compile
+        working-directory: build
+        run: sh ci/script.sh
