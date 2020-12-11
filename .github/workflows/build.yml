@@ -16,4 +16,4 @@ jobs:
         run: mkdir build && cd build
       - name: Compile
         working-directory: build
-        run: sh ci/script.sh
+        run: sh ../ci/script.sh
