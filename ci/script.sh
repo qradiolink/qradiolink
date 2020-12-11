@@ -292,13 +292,13 @@ fi
 
 ## Git setup #################################################################
 
-git config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'
-git fetch
+#git config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'
+#git fetch
 
-for X in $(git branch -r | grep -v HEAD)
-do
-	git branch --track "$(echo "${X}" | sed -e 's@.*/@@g')" "${X}" || true
-done
+#for X in $(git branch -r | grep -v HEAD)
+#do
+#	git branch --track "$(echo "${X}" | sed -e 's@.*/@@g')" "${X}" || true
+#done
 
 ## Build ######################################################################
 
