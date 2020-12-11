@@ -134,6 +134,8 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
     ///int version = atoi(gr::minor_version().c_str());
     _freedv_rx700C_usb = make_gr_demod_freedv(125, 1000000, 1700, 2300, 600,
                                                   gr::vocoder::freedv_api::MODE_700C, 0);
+    _freedv_rx700D_usb = make_gr_demod_freedv(125, 1000000, 1700, 2300, 600,
+                                                  gr::vocoder::freedv_api::MODE_700D, 0);
 
     _freedv_rx800XA_usb = make_gr_demod_freedv(125, 1000000, 1700, 2500, 0,
                                                gr::vocoder::freedv_api::MODE_800XA, 0);
@@ -143,6 +145,8 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
 
     _freedv_rx700C_lsb = make_gr_demod_freedv(125, 1000000, 1700, 2300, 600,
                                                   gr::vocoder::freedv_api::MODE_700C, 1);
+    _freedv_rx700D_lsb = make_gr_demod_freedv(125, 1000000, 1700, 2300, 600,
+                                                  gr::vocoder::freedv_api::MODE_700D, 1);
     _freedv_rx800XA_lsb = make_gr_demod_freedv(125, 1000000, 1700, 2500, 0,
                                                gr::vocoder::freedv_api::MODE_800XA, 1);
 
@@ -345,10 +349,15 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
             _top_block->disconnect(_freedv_rx1600_usb,0,_rssi_valve,0);
             _top_block->disconnect(_freedv_rx1600_usb,1,_audio_sink,0);
             break;
-        case gr_modem_types::ModemTypeFREEDV700DUSB:
+        case gr_modem_types::ModemTypeFREEDV700CUSB:
             _top_block->disconnect(_demod_valve,0,_freedv_rx700C_usb,0);
             _top_block->disconnect(_freedv_rx700C_usb,0,_rssi_valve,0);
             _top_block->disconnect(_freedv_rx700C_usb,1,_audio_sink,0);
+            break;
+        case gr_modem_types::ModemTypeFREEDV700DUSB:
+            _top_block->disconnect(_demod_valve,0,_freedv_rx700D_usb,0);
+            _top_block->disconnect(_freedv_rx700D_usb,0,_rssi_valve,0);
+            _top_block->disconnect(_freedv_rx700D_usb,1,_audio_sink,0);
             break;
         case gr_modem_types::ModemTypeFREEDV800XAUSB:
             _top_block->disconnect(_demod_valve,0,_freedv_rx800XA_usb,0);
@@ -360,10 +369,15 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
             _top_block->disconnect(_freedv_rx1600_lsb,0,_rssi_valve,0);
             _top_block->disconnect(_freedv_rx1600_lsb,1,_audio_sink,0);
             break;
-        case gr_modem_types::ModemTypeFREEDV700DLSB:
+        case gr_modem_types::ModemTypeFREEDV700CLSB:
             _top_block->disconnect(_demod_valve,0,_freedv_rx700C_lsb,0);
             _top_block->disconnect(_freedv_rx700C_lsb,0,_rssi_valve,0);
             _top_block->disconnect(_freedv_rx700C_lsb,1,_audio_sink,0);
+            break;
+        case gr_modem_types::ModemTypeFREEDV700DLSB:
+            _top_block->disconnect(_demod_valve,0,_freedv_rx700D_lsb,0);
+            _top_block->disconnect(_freedv_rx700D_lsb,0,_rssi_valve,0);
+            _top_block->disconnect(_freedv_rx700D_lsb,1,_audio_sink,0);
             break;
         case gr_modem_types::ModemTypeFREEDV800XALSB:
             _top_block->disconnect(_demod_valve,0,_freedv_rx800XA_lsb,0);
@@ -541,10 +555,15 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
             _top_block->connect(_freedv_rx1600_usb,0,_rssi_valve,0);
             _top_block->connect(_freedv_rx1600_usb,1,_audio_sink,0);
             break;
-        case gr_modem_types::ModemTypeFREEDV700DUSB:
+        case gr_modem_types::ModemTypeFREEDV700CUSB:
             _top_block->connect(_demod_valve,0,_freedv_rx700C_usb,0);
             _top_block->connect(_freedv_rx700C_usb,0,_rssi_valve,0);
             _top_block->connect(_freedv_rx700C_usb,1,_audio_sink,0);
+            break;
+        case gr_modem_types::ModemTypeFREEDV700DUSB:
+            _top_block->connect(_demod_valve,0,_freedv_rx700D_usb,0);
+            _top_block->connect(_freedv_rx700D_usb,0,_rssi_valve,0);
+            _top_block->connect(_freedv_rx700D_usb,1,_audio_sink,0);
             break;
         case gr_modem_types::ModemTypeFREEDV800XAUSB:
             _top_block->connect(_demod_valve,0,_freedv_rx800XA_usb,0);
@@ -556,10 +575,15 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
             _top_block->connect(_freedv_rx1600_lsb,0,_rssi_valve,0);
             _top_block->connect(_freedv_rx1600_lsb,1,_audio_sink,0);
             break;
-        case gr_modem_types::ModemTypeFREEDV700DLSB:
+        case gr_modem_types::ModemTypeFREEDV700CLSB:
             _top_block->connect(_demod_valve,0,_freedv_rx700C_lsb,0);
             _top_block->connect(_freedv_rx700C_lsb,0,_rssi_valve,0);
             _top_block->connect(_freedv_rx700C_lsb,1,_audio_sink,0);
+            break;
+        case gr_modem_types::ModemTypeFREEDV700DLSB:
+            _top_block->connect(_demod_valve,0,_freedv_rx700D_lsb,0);
+            _top_block->connect(_freedv_rx700D_lsb,0,_rssi_valve,0);
+            _top_block->connect(_freedv_rx700D_lsb,1,_audio_sink,0);
             break;
         case gr_modem_types::ModemTypeFREEDV800XALSB:
             _top_block->connect(_demod_valve,0,_freedv_rx800XA_lsb,0);
