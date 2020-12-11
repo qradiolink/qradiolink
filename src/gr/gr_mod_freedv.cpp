@@ -56,14 +56,14 @@ gr_mod_freedv_sdr::gr_mod_freedv_sdr(int sps, int samp_rate, int carrier_freq,
     {
         _filter = gr::filter::fft_filter_ccc::make(
                     1,gr::filter::firdes::complex_band_pass_2(
-                        1, target_samp_rate, low_cutoff, _filter_width, 250, 120,
+                        1, target_samp_rate, low_cutoff, _filter_width, 250, 90,
                         gr::filter::firdes::WIN_BLACKMAN_HARRIS));
     }
     else
     {
         _filter = gr::filter::fft_filter_ccc::make(
                     1,gr::filter::firdes::complex_band_pass_2(
-                        1, target_samp_rate, -_filter_width, -low_cutoff, 250, 120,
+                        1, target_samp_rate, -_filter_width, -low_cutoff, 250, 90,
                         gr::filter::firdes::WIN_BLACKMAN_HARRIS));
     }
 
