@@ -78,7 +78,7 @@ Info "Starting build of ${SOURCE} using travis.debian.net"
 
 TAG="travis.debian.net/${SOURCE}"
 TRAVIS_DEBIAN_LINTIAN="${TRAVIS_DEBIAN_LINTIAN:-true}"
-TRAVIS_DEBIAN_BUILD_DIR="${TRAVIS_DEBIAN_BUILD_DIR:-/build}"
+TRAVIS_DEBIAN_BUILD_DIR="${TRAVIS_DEBIAN_BUILD_DIR:-build}"
 TRAVIS_DEBIAN_TARGET_DIR="${TRAVIS_DEBIAN_TARGET_DIR:-../}"
 TRAVIS_DEBIAN_NETWORK_ENABLED="${TRAVIS_DEBIAN_NETWORK_ENABLED:-false}"
 TRAVIS_DEBIAN_INCREMENT_VERSION_NUMBER="${TRAVIS_DEBIAN_INCREMENT_VERSION_NUMBER:-false}"
@@ -426,7 +426,7 @@ cat >>Dockerfile <<EOF
 RUN env DEBIAN_FRONTEND=noninteractive DEB_BUILD_PROFILES="${DEB_BUILD_PROFILES:-}" mk-build-deps --install --remove --tool 'apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends --yes' debian/control
 
 RUN rm -f Dockerfile
-RUN git checkout Dockerfile .travis.yml || true
+RUN git checkout Dockerfile || true
 RUN mkdir -p ${TRAVIS_DEBIAN_BUILD_DIR}
 
 CMD ${TRAVIS_DEBIAN_GIT_BUILDPACKAGE} ${TRAVIS_DEBIAN_GIT_BUILDPACKAGE_OPTIONS} --git-ignore-branch --git-ignore-new --git-export-dir=${TRAVIS_DEBIAN_BUILD_DIR} -uc -us -sa
