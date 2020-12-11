@@ -10,5 +10,7 @@ jobs:
         os: [ubuntu-20.04]
     runs-on: ${{ matrix.os }}
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
       - name: Compile
         run: sh ci/script.sh
