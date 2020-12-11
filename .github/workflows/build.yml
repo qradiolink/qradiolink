@@ -13,7 +13,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Configure
-        run: mkdir build && cd build
+        run: mkdir build
       - name: Compile
-        working-directory: build
-        run: sh ../ci/script.sh
+        run: sh ci/script.sh
