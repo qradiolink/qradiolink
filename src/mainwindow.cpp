@@ -213,6 +213,8 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     ui->constellationDisplay->setWindowFlags(Qt::Window | Qt::WindowStaysOnTopHint
                                              | Qt::WindowCloseButtonHint);
     ui->constellationDisplay->setAttribute(Qt::WA_TranslucentBackground);
+    ui->constellationDisplay->setWindowTitle("Constellation display");
+    ui->constellationDisplay->setWindowIcon(QIcon(":/res/constellation_icon.png"));
     ui->videoFrame->hide();
     ui->menuBar->hide();
     ui->statusBar->hide();
@@ -400,11 +402,19 @@ void MainWindow::changeEvent(QEvent *event)
             _controls_active = (bool)_settings->show_controls;
             emit enableGUIFFT(false);
             emit enableRSSI(false);
+            if(_settings->show_constellation)
+                ui->constellationDisplay->showMinimized();
         }
         else if (!isMinimized())
         {
             emit enableGUIFFT(_fft_active);
             emit enableRSSI(true);
+            showConstellation(_settings->show_constellation);
+            if(_settings->show_constellation)
+            {
+                ui->constellationDisplay->showNormal();
+                ui->constellationDisplay->raise();
+            }
         }
     }
 
