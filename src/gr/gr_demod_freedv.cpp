@@ -54,7 +54,7 @@ gr_demod_freedv::gr_demod_freedv(std::vector<int>signature, int sps, int samp_ra
     }
 
     _feed_forward_agc = gr::analog::feedforward_agc_cc::make(512,1);
-    _agc = gr::analog::agc2_ff::make(1e-1, 1e-3, 0.95, 1);
+    _agc = gr::analog::agc2_ff::make(1e-1, 1e-3, 0.5, 1);
     _complex_to_real = gr::blocks::complex_to_real::make();
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::band_pass_2(
@@ -71,8 +71,8 @@ gr_demod_freedv::gr_demod_freedv(std::vector<int>signature, int sps, int samp_ra
     connect(_resampler,0,_filter,0);
     connect(_filter,0,self(),0);
     connect(_filter,0,_complex_to_real,0);
-    //connect(_feed_forward_agc,0,_complex_to_real,0);
-    connect(_complex_to_real,0, _audio_filter,0);
+    connect(_complex_to_real,0,_agc,0);
+    connect(_agc,0, _audio_filter,0);
     connect(_audio_filter,0, _freedv_gain,0);
     connect(_freedv_gain,0, _float_to_short,0);
     connect(_float_to_short, 0, _freedv, 0);
@@ -83,6 +83,15 @@ gr_demod_freedv::gr_demod_freedv(std::vector<int>signature, int sps, int samp_ra
 
 }
 
+void gr_demod_freedv::set_agc_attack(float value)
+{
+    _agc->set_attack_rate(value);
+}
+
+void gr_demod_freedv::set_agc_decay(float value)
+{
+    _agc->set_decay_rate(value);
+}
 
 void gr_demod_freedv::set_squelch(int value)
 {

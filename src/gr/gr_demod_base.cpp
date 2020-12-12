@@ -971,6 +971,14 @@ void gr_demod_base::set_agc_attack(float value)
     _usb->set_agc_attack(value);
     _lsb->set_agc_attack(value);
     _am->set_agc_attack(value);
+    _freedv_rx1600_usb->set_agc_attack(value);
+    _freedv_rx1600_lsb->set_agc_attack(value);
+    _freedv_rx700C_usb->set_agc_attack(value);
+    _freedv_rx700C_lsb->set_agc_attack(value);
+    _freedv_rx700D_usb->set_agc_attack(value);
+    _freedv_rx700D_lsb->set_agc_attack(value);
+    _freedv_rx800XA_usb->set_agc_attack(value);
+    _freedv_rx800XA_lsb->set_agc_attack(value);
 }
 
 void gr_demod_base::set_agc_decay(float value)
@@ -978,4 +986,12 @@ void gr_demod_base::set_agc_decay(float value)
     _usb->set_agc_decay(value);
     _lsb->set_agc_decay(value);
     _am->set_agc_decay(value);
+    _freedv_rx1600_usb->set_agc_decay(value);
+    _freedv_rx1600_lsb->set_agc_decay(value);
+    _freedv_rx700C_usb->set_agc_decay(value);
+    _freedv_rx700C_lsb->set_agc_decay(value);
+    _freedv_rx700D_usb->set_agc_decay(value);
+    _freedv_rx700D_lsb->set_agc_decay(value);
+    _freedv_rx800XA_usb->set_agc_decay(value);
+    _freedv_rx800XA_lsb->set_agc_decay(value);
 }
