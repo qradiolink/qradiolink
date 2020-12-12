@@ -128,13 +128,13 @@ void buildFilterWidthList(std::vector<std::complex<int>>* filter_widths, std::ve
     filter_widths->push_back(std::complex<int>(-100000, 100000));  // WFM
     filter_widths->push_back(std::complex<int>(100, 2700)); // USB
     filter_widths->push_back(std::complex<int>(-2700, -100)); // LSB
-    filter_widths->push_back(std::complex<int>(-1, 2500)); // FreeDV1600 USB
-    filter_widths->push_back(std::complex<int>(-1, 2500)); // FreeDV700C USB
-    filter_widths->push_back(std::complex<int>(-1, 2500)); // FreeDV700D USB
+    filter_widths->push_back(std::complex<int>(800, 2200)); // FreeDV1600 USB
+    filter_widths->push_back(std::complex<int>(700, 2300)); // FreeDV700C USB
+    filter_widths->push_back(std::complex<int>(900, 2100)); // FreeDV700D USB
     filter_widths->push_back(std::complex<int>(-1, 2500)); // FreeDV800XA USB
-    filter_widths->push_back(std::complex<int>(-2500, 1)); // FreeDV1600 LSB
-    filter_widths->push_back(std::complex<int>(-2500, 1)); // FreeDV700C LSB
-    filter_widths->push_back(std::complex<int>(-2500, 1)); // FreeDV700D LSB
+    filter_widths->push_back(std::complex<int>(-2200, -800)); // FreeDV1600 LSB
+    filter_widths->push_back(std::complex<int>(-2300, -700)); // FreeDV700C LSB
+    filter_widths->push_back(std::complex<int>(-2100, -900)); // FreeDV700D LSB
     filter_widths->push_back(std::complex<int>(-2500, 1)); // FreeDV800XA LSB
     filter_widths->push_back(std::complex<int>(-5000, 5000));  // AM
     filter_widths->push_back(std::complex<int>(-2800, 2800)); // BPSK 2K
@@ -162,13 +162,13 @@ void buildFilterWidthList(std::vector<std::complex<int>>* filter_widths, std::ve
     ranges->push_back(std::complex<int>(-100000, 100000));  // WFM
     ranges->push_back(std::complex<int>(200, 3800)); // USB
     ranges->push_back(std::complex<int>(-3800, -200)); // LSB
-    ranges->push_back(std::complex<int>(200, 2500)); // FreeDV1600 USB
-    ranges->push_back(std::complex<int>(200, 2500)); // FreeDV700C USB
-    ranges->push_back(std::complex<int>(200, 2500)); // FreeDV700D USB
+    ranges->push_back(std::complex<int>(800, 2200)); // FreeDV1600 USB
+    ranges->push_back(std::complex<int>(700, 2300)); // FreeDV700C USB
+    ranges->push_back(std::complex<int>(900, 2100)); // FreeDV700D USB
     ranges->push_back(std::complex<int>(200, 2500)); // FreeDV800XA USB
-    ranges->push_back(std::complex<int>(-2500, -200)); // FreeDV1600 LSB
-    ranges->push_back(std::complex<int>(-2500, -200)); // FreeDV700C LSB
-    ranges->push_back(std::complex<int>(-2500, -200)); // FreeDV700D LSB
+    ranges->push_back(std::complex<int>(-2200, -800)); // FreeDV1600 LSB
+    ranges->push_back(std::complex<int>(-2300, -700)); // FreeDV700C LSB
+    ranges->push_back(std::complex<int>(-2100, -900)); // FreeDV700D LSB
     ranges->push_back(std::complex<int>(-2500, -200)); // FreeDV800XA LSB
     ranges->push_back(std::complex<int>(-9000, 9000));  // AM
     ranges->push_back(std::complex<int>(-2800, 2800)); // BPSK 2K
