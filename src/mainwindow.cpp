@@ -210,6 +210,9 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     ui->secondaryTextDisplay->hide();
     ui->videoFrame->setWindowFlags(Qt::Window | Qt::WindowStaysOnTopHint
                                    | Qt::WindowCloseButtonHint);
+    ui->constellationDisplay->setWindowFlags(Qt::Window | Qt::WindowStaysOnTopHint
+                                             | Qt::WindowCloseButtonHint);
+    ui->constellationDisplay->setAttribute(Qt::WA_TranslucentBackground);
     ui->videoFrame->hide();
     ui->menuBar->hide();
     ui->statusBar->hide();
@@ -250,7 +253,7 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     _eff_freq->setOpacity(0.6);
     ui->frameCtrlFreq->setGraphicsEffect(_eff_freq);
     _eff_const = new QGraphicsOpacityEffect(this);
-    _eff_const->setOpacity(0.5);
+    _eff_const->setOpacity(0.6);
     ui->constellationDisplay->setGraphicsEffect(_eff_const);
     _constellation_painter = new QPainter(_constellation_img);
     _constellation_painter->end();
