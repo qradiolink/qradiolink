@@ -19,4 +19,4 @@ jobs:
         run: |
           export TRAVIS_DEBIAN_GIT_BUILDPACKAGE_OPTIONS=---git-ignore-new
           export TRAVIS_DEBIAN_TARGET_DIR="$PWD"
-          sh ci/script.sh
+          sh ci/release.sh
