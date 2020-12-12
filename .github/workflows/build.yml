@@ -16,4 +16,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Compile
-        run: sh ci/script.sh
+        run: |
+          export TRAVIS_DEBIAN_GIT_BUILDPACKAGE_OPTIONS=---git-ignore-new
+          export TRAVIS_DEBIAN_TARGET_DIR="$PWD"
+          sh ci/script.sh
