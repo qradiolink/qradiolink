@@ -50,7 +50,7 @@ void logMessage(QtMsgType type, const char *msg)
     QFile outFile("qradiolink.log");
     outFile.open(QIODevice::WriteOnly | QIODevice::Append);
     QTextStream ts(&outFile);
-    ts << txt << endl;
+    ts << txt << Qt::endl;
     outFile.close();
 }
 
@@ -136,7 +136,7 @@ void Logger::log(int type, QString msg)
         emit applicationLog(txt);
     }
 
-    *_stream << txt << endl;
+    *_stream << txt << Qt::endl;
     _mutex.unlock();
 
 }

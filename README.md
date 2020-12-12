@@ -101,8 +101,6 @@ qmake .. INSTALL_PREFIX=/usr/local/bin LIBDIR=/opt/lib INCDIR=/opt/include
 Known issues
 ----
 
-- Crash when starting application with Video mode selected for transmit, transmitting and then changing TX mode
-- Gstreamer camera-bin errors in console when switching from Video TX mode to other modes
 - Some issues around AGC attack and decay time
 - Broken user paging and CW beacon
 
