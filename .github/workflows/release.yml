@@ -1,6 +1,9 @@
 name: Build
 
-on: [push, pull_request]
+on:
+  push:
+    tags:
+      - '*'
 
 jobs:
   ubuntu-build:
@@ -16,4 +19,4 @@ jobs:
         run: |
           export TRAVIS_DEBIAN_GIT_BUILDPACKAGE_OPTIONS=---git-ignore-new
           export TRAVIS_DEBIAN_TARGET_DIR="$PWD"
-          sh ci/build.sh
+          sh ci/release.sh
