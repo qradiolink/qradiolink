@@ -1,10 +1,13 @@
-qradiolink (0.8.5-test1) UNRELEASED; urgency=medium
+qradiolink (0.8.5-rc5) UNRELEASED; urgency=medium
 
   [ Adrian Musceac ]
-  * test AppImage
+  * Added FreeDV mode 700D
+  * Added AGC dials to main menu and improved AGC range
+  * Fixed crashes in Gstreamer backend for video mode
+  * Fixed crash when switching memory channels while transmitting
 
 
- -- Adrian Musceac <kantooon@gmail.com>  Wed, 28 Oct 2020 20:14:00 +0300
+ -- Adrian Musceac <kantooon@gmail.com>  Sun, 13 Dec 2020 19:39:00 +0300
 
 
 qradiolink (0.8.5-rc4) UNRELEASED; urgency=medium
