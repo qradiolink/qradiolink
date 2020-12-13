@@ -397,7 +397,7 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
     case 20:
     {
         int set = param1.toInt();
-        if(set < 0 || set >= _mode_list->size())
+        if((set < 0) || (set >= _mode_list->size()))
         {
             response = "Operating mode not found";
             success = false;
@@ -427,7 +427,7 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
     case 22:
     {
         int set = param1.toFloat();
-        if(set < 0.0 || set > 250.0)
+        if((set < 0.0) || (set > 250.0))
         {
             response = "Parameter value is not supported";
             success = false;
@@ -442,7 +442,7 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
     case 23:
     {
         int set = param1.toFloat();
-        if(set < 0.0 || set > 250.0)
+        if((set < 0.0) || (set > 250.0))
         {
             response = "Parameter value is not supported";
             success = false;
@@ -457,7 +457,7 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
     case 24:
     {
         int set = param1.toInt();
-        if(set < -150 || set > 10)
+        if((set < -150) || (set > 10))
         {
             response = "Parameter value is not supported";
             success = false;
@@ -472,7 +472,7 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
     case 25:
     {
         int set = param1.toInt();
-        if(set < 0 || set > 100)
+        if((set < 0) || (set > 100))
         {
             response = "Parameter value is not supported";
             success = false;
@@ -487,7 +487,7 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
     case 26:
     {
         int set = param1.toInt();
-        if(set < 0 || set > 100)
+        if((set < 0) || (set > 100))
         {
             response = "Parameter value is not supported";
             success = false;
@@ -502,7 +502,7 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
     case 27:
     {
         int set = param1.toInt();
-        if(set < 0 || set > 100)
+        if((set < 0) || (set > 100))
         {
             response = "Parameter value is not supported";
             success = false;
@@ -517,7 +517,7 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
     case 28:
     {
         int set = param1.toInt();
-        if(set < 0 || set > 100)
+        if((set < 0) || (set > 100))
         {
             response = "Parameter value is not supported";
             success = false;
@@ -683,7 +683,7 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
     case 40:
     {
         int set = param1.toInt();
-        if(set < -180 || set > 30)
+        if((set < -180) || (set > 30))
         {
             response = "Parameter value is not supported";
             success = false;
@@ -909,7 +909,7 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
     case 58:
     {
         int set = param1.toInt();
-        if(set < 0 || set > 100)
+        if((set < 0) || (set > 100))
         {
             response = "Parameter value is not supported";
             success = false;
@@ -924,7 +924,7 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
     case 60:
     {
         int set = param1.toInt();
-        if(set < 9400 || set > 50000)
+        if((set < 9400) || (set > 50000))
         {
             response = "Parameter value is not supported";
             success = false;
