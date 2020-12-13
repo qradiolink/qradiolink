@@ -2916,6 +2916,9 @@ font: 10pt &quot;Sans Serif&quot;;
                  </item>
                  <item row="9" column="3">
                   <widget class="QSpinBox" name="agcDecaySpinBox">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                      <horstretch>0</horstretch>
@@ -3093,7 +3096,7 @@ font: 10pt &quot;Sans Serif&quot;;
                    </property>
                    <property name="text">
                     <string>Agc decay rate
-(higher is slower)</string>
+(Deprecated))</string>
                    </property>
                   </widget>
                  </item>
@@ -3397,7 +3400,7 @@ and S-meter (dBm)</string>
                    </property>
                    <property name="text">
                     <string>Agc attack rate
-(lower is faster)</string>
+(lDeprecated)</string>
                    </property>
                   </widget>
                  </item>
@@ -3555,6 +3558,9 @@ and S-meter (dBm)</string>
                  </item>
                  <item row="7" column="3">
                   <widget class="QSpinBox" name="agcAttackSpinBox">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                      <horstretch>0</horstretch>
