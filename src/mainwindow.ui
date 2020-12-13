@@ -4986,10 +4986,10 @@ color: rgb(182, 182, 182);</string>
           </rect>
          </property>
          <property name="minimum">
-          <number>-500</number>
+          <number>-25</number>
          </property>
          <property name="maximum">
-          <number>500</number>
+          <number>25</number>
          </property>
         </widget>
         <widget class="SkinnedDial" name="agcDecayDial">
@@ -5002,10 +5002,10 @@ color: rgb(182, 182, 182);</string>
           </rect>
          </property>
          <property name="minimum">
-          <number>-500</number>
+          <number>-25</number>
          </property>
          <property name="maximum">
-          <number>500</number>
+          <number>25</number>
          </property>
         </widget>
         <widget class="QLabel" name="label_51">
