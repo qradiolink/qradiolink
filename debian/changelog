@@ -1,3 +1,12 @@
+qradiolink (0.8.5-test1) UNRELEASED; urgency=medium
+
+  [ Adrian Musceac ]
+  * test AppImage
+
+
+ -- Adrian Musceac <kantooon@gmail.com>  Wed, 28 Oct 2020 20:14:00 +0300
+
+
 qradiolink (0.8.5-rc4) UNRELEASED; urgency=medium
 
   [ Adrian Musceac ]
