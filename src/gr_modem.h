@@ -95,8 +95,8 @@ public slots:
     void setSquelch(int value);
     void setFilterWidth(int filter_width);
     void setRxSensitivity(double value, std::string gain_stage="");
-    void setAgcAttack(float value);
-    void setAgcDecay(float value);
+    void setAgcAttack(int value);
+    void setAgcDecay(int value);
     void setRxCTCSS(float value);
     void setTxCTCSS(float value);
     void enableGUIConst(bool value);

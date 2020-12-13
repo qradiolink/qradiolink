@@ -145,8 +145,8 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
                      this,SLOT(updateTxLimits(bool)));
     QObject::connect(ui->rssiCalibrateButton,SIGNAL(clicked()),this,SLOT(setRSSICalibration()));
     QObject::connect(ui->saveChannelsButton,SIGNAL(clicked()),this,SLOT(saveMemoryChannels()));
-    QObject::connect(ui->agcAttackSpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateAgcAttack(int)));
-    QObject::connect(ui->agcDecaySpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateAgcDecay(int)));
+    QObject::connect(ui->agcAttackDial,SIGNAL(valueChanged(int)),this,SLOT(updateAgcAttack(int)));
+    QObject::connect(ui->agcDecayDial,SIGNAL(valueChanged(int)),this,SLOT(updateAgcDecay(int)));
     QObject::connect(ui->timeoutTimerSpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateTotTimer(int)));
     QObject::connect(ui->mumbleTextMessageButton,SIGNAL(clicked()),this,SLOT(sendMumbleTextMessage()));
     QObject::connect(ui->mumbleTextMessageEdit,SIGNAL(returnPressed()),
@@ -549,8 +549,8 @@ void MainWindow::setConfig()
         ui->comboBoxTxCTCSS->setCurrentText(QString::number(_settings->tx_ctcss));
     else
         ui->comboBoxTxCTCSS->setCurrentText("CTCSS");
-    ui->agcAttackSpinBox->setValue(_settings->agc_attack);
-    ui->agcDecaySpinBox->setValue(_settings->agc_decay);
+    ui->agcAttackDial->setValue(_settings->agc_attack);
+    ui->agcDecayDial->setValue(_settings->agc_decay);
     ui->scanTimerSpinBox->setValue(_settings->scan_resume_time);
     ui->timeoutTimerSpinBox->setValue(_settings->radio_tot);
     ui->lineEditRecordPath->setText(_settings->audio_record_path);

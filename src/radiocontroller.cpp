@@ -2287,13 +2287,13 @@ void RadioController::setIfGain(int value)
     _modem->setGain(_settings->if_gain);
 }
 
-void RadioController::setAgcAttack(float value)
+void RadioController::setAgcAttack(int value)
 {
     _settings->agc_attack = value;
     _modem->setAgcAttack(value);
 }
 
-void RadioController::setAgcDecay(float value)
+void RadioController::setAgcDecay(int value)
 {
     _settings->agc_decay = value;
     _modem->setAgcDecay(value);

@@ -3401,22 +3401,6 @@ and S-meter (dBm)</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="7" column="3">
-                  <widget class="QSpinBox" name="agcAttackSpinBox">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimum">
-                    <number>-2</number>
-                   </property>
-                   <property name="maximum">
-                    <number>6</number>
-                   </property>
-                  </widget>
-                 </item>
                  <item row="6" column="2">
                   <widget class="QLabel" name="label_40">
                    <property name="sizePolicy">
@@ -3566,6 +3550,22 @@ and S-meter (dBm)</string>
                   <widget class="QCheckBox" name="fftHistoryCheckBox">
                    <property name="text">
                     <string>FFT history effect</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="7" column="3">
+                  <widget class="QSpinBox" name="agcAttackSpinBox">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimum">
+                    <number>-2</number>
+                   </property>
+                   <property name="maximum">
+                    <number>6</number>
                    </property>
                   </widget>
                  </item>
@@ -4877,9 +4877,9 @@ color: rgb(182, 182, 182);</string>
         <widget class="QFrame" name="rxGainsFrameMenu">
          <property name="geometry">
           <rect>
-           <x>721</x>
+           <x>779</x>
            <y>23</y>
-           <width>321</width>
+           <width>301</width>
            <height>51</height>
           </rect>
          </property>
@@ -4906,9 +4906,9 @@ color: rgb(182, 182, 182);</string>
         <widget class="QFrame" name="txGainsFrameMenu">
          <property name="geometry">
           <rect>
-           <x>1070</x>
+           <x>1090</x>
            <y>23</y>
-           <width>321</width>
+           <width>301</width>
            <height>51</height>
           </rect>
          </property>
@@ -4935,7 +4935,7 @@ color: rgb(182, 182, 182);</string>
         <widget class="QLabel" name="label_21">
          <property name="geometry">
           <rect>
-           <x>731</x>
+           <x>794</x>
            <y>2</y>
            <width>60</width>
            <height>20</height>
@@ -4954,7 +4954,7 @@ color: rgb(182, 182, 182);</string>
         <widget class="QLabel" name="label_50">
          <property name="geometry">
           <rect>
-           <x>1080</x>
+           <x>1104</x>
            <y>1</y>
            <width>60</width>
            <height>20</height>
@@ -4968,6 +4968,64 @@ color: rgb(182, 182, 182);</string>
          </property>
          <property name="text">
           <string>TX Gains</string>
+         </property>
+        </widget>
+        <widget class="SkinnedDial" name="agcAttackDial">
+         <property name="geometry">
+          <rect>
+           <x>634</x>
+           <y>8</y>
+           <width>50</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="minimum">
+          <number>-500</number>
+         </property>
+         <property name="maximum">
+          <number>500</number>
+         </property>
+        </widget>
+        <widget class="SkinnedDial" name="agcDecayDial">
+         <property name="geometry">
+          <rect>
+           <x>708</x>
+           <y>7</y>
+           <width>50</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="minimum">
+          <number>-500</number>
+         </property>
+         <property name="maximum">
+          <number>500</number>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_51">
+         <property name="geometry">
+          <rect>
+           <x>624</x>
+           <y>57</y>
+           <width>71</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>AGC attack</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_52">
+         <property name="geometry">
+          <rect>
+           <x>700</x>
+           <y>58</y>
+           <width>71</width>
+           <height>18</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>AGC decay</string>
          </property>
         </widget>
        </widget>

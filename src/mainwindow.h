@@ -222,8 +222,8 @@ signals:
     void calibrateRSSI(float value);
     void setBbGain(int value);
     void setIfGain(int value);
-    void setAgcAttack(float value);
-    void setAgcDecay(float value);
+    void setAgcAttack(int value);
+    void setAgcDecay(int value);
     void newMumbleMessage(QString text);
     void enableRemote();
     void disableRemote();

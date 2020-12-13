@@ -65,8 +65,8 @@ signals:
     void enableRelays(bool value);
     void enableDuplex(bool value);
     void calibrateRSSI(float value);
-    void setAgcAttack(float value);
-    void setAgcDecay(float value);
+    void setAgcAttack(int value);
+    void setAgcDecay(int value);
     void setSampleRate(int);
     void newFilterWidth(int);
     void setVoxLevel(int);

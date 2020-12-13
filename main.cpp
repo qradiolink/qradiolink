@@ -228,10 +228,10 @@ void connectCommandSignals(TelnetServer *telnet_server, MumbleClient *mumbleclie
                      SLOT(fineTuneFreq(long long)));
     QObject::connect(telnet_server->command_processor,SIGNAL(setTxPower(int, std::string)),radio_op,
                      SLOT(setTxPower(int, std::string)));
-    QObject::connect(telnet_server->command_processor,SIGNAL(setAgcAttack(float)),
-                     radio_op,SLOT(setAgcAttack(float)));
-    QObject::connect(telnet_server->command_processor,SIGNAL(setAgcDecay(float)),
-                     radio_op,SLOT(setAgcDecay(float)));
+    QObject::connect(telnet_server->command_processor,SIGNAL(setAgcAttack(int)),
+                     radio_op,SLOT(setAgcAttack(int)));
+    QObject::connect(telnet_server->command_processor,SIGNAL(setAgcDecay(int)),
+                     radio_op,SLOT(setAgcDecay(int)));
     QObject::connect(telnet_server->command_processor,SIGNAL(setRxSensitivity(int)),
                      radio_op,SLOT(setRxSensitivity(int)));
     QObject::connect(telnet_server->command_processor,SIGNAL(setSquelch(int)),
@@ -335,8 +335,8 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
                      radio_op,SLOT(setTxPower(int, std::string)));
     QObject::connect(w,SIGNAL(setBbGain(int)),radio_op,SLOT(setBbGain(int)));
     QObject::connect(w,SIGNAL(setIfGain(int)),radio_op,SLOT(setIfGain(int)));
-    QObject::connect(w,SIGNAL(setAgcAttack(float)),radio_op,SLOT(setAgcAttack(float)));
-    QObject::connect(w,SIGNAL(setAgcDecay(float)),radio_op,SLOT(setAgcDecay(float)));
+    QObject::connect(w,SIGNAL(setAgcAttack(int)),radio_op,SLOT(setAgcAttack(int)));
+    QObject::connect(w,SIGNAL(setAgcDecay(int)),radio_op,SLOT(setAgcDecay(int)));
     QObject::connect(w,SIGNAL(setRxSensitivity(int, std::string)),radio_op,SLOT(setRxSensitivity(int, std::string)));
     QObject::connect(w,SIGNAL(setSquelch(int)),radio_op,SLOT(setSquelch(int)));
     QObject::connect(w,SIGNAL(setVolume(int)),radio_op,SLOT(setVolume(int)));
