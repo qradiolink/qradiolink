@@ -13,10 +13,36 @@ jobs:
         os: [ubuntu-20.04]
     runs-on: ${{ matrix.os }}
     steps:
+      - name: Get the version (git tag)
+        id: get_version
+        run: |
+          echo ${GITHUB_REF/refs\/tags\//}
+          echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Compile
         run: |
+          export VER_INFO=${{ steps.get_version.outputs.VERSION }}
           export TRAVIS_DEBIAN_GIT_BUILDPACKAGE_OPTIONS=---git-ignore-new
           export TRAVIS_DEBIAN_TARGET_DIR="$PWD"
           sh ci/release.sh
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1.0.0
+        env:
+         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: true
+          prerelease: false
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./qradiolink_${{ steps.get_version.outputs.VERSION }}_amd64.deb
+          asset_name: my-artifact.zip
+          asset_content_type: application/zip
