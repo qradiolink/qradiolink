@@ -42,7 +42,7 @@ CONFIG(qtaudio) {
 }
 
 
-SOURCES += main.cpp\
+SOURCES += src/main.cpp\
         src/mainwindow.cpp\
         src/audio/audioencoder.cpp\
         src/audio/audioprocessor.cpp \
