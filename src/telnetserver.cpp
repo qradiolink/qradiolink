@@ -183,7 +183,7 @@ void TelnetServer::getCommandList(QByteArray &response)
     response.append("Available commands are: \n");
     for(int i=0;i<available_commands.length();i++)
     {
-        response.append(available_commands.at(i).toLatin1());
+        response.append(available_commands.at(i));
     }
     response.append("\n\n");
 }
