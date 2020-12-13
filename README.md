@@ -108,7 +108,7 @@ Known issues
 Operation
 ----
 
-See docs/README.md
+See docs/OPERATION.md
 
 **Important note to Pulseaudio users: please use the Pulseaudio provided sinks and sources in the configuration dropdown, not the default device (or pulse)**
 

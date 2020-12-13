@@ -69,9 +69,9 @@ then
 fi
 
 # download linuxdeploy and its Qt plugin
-#wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
-#wget https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
-#chmod +x linuxdeploy*.AppImage
+wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+wget https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
+chmod +x linuxdeploy*.AppImage
 
 
 Info "Starting build of ${SOURCE} using travis.debian.net"
@@ -293,13 +293,13 @@ fi
 
 ## Git setup #################################################################
 
-#git config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'
-#git fetch
+git config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'
+git fetch
 
-#for X in $(git branch -r | grep -v HEAD)
-#do
-#	git branch --track "$(echo "${X}" | sed -e 's@.*/@@g')" "${X}" || true
-#done
+for X in $(git branch -r | grep -v HEAD)
+do
+	git branch --track "$(echo "${X}" | sed -e 's@.*/@@g')" "${X}" || true
+done
 
 ## Build ######################################################################
 
@@ -509,15 +509,15 @@ rm -f "${DEBC}"
 VER_INFO=$(grep "upstream-tag" "${TRAVIS_DEBIAN_TARGET_DIR}"/debian/gbp.conf | awk -F' ' {'print $3'})
 
 docker exec "$(cat "${CIDFILE}")" dpkg-deb -x "${TRAVIS_DEBIAN_BUILD_DIR}/qradiolink_${VER_INFO}_amd64.deb" ${TRAVIS_DEBIAN_BUILD_DIR}
-#docker exec --env VERSION=${VER_INFO} "$(cat "${CIDFILE}")" ./linuxdeploy-x86_64.AppImage --appdir AppDir -e ${TRAVIS_DEBIAN_BUILD_DIR}/usr/bin/qradiolink -i ${BUILD_PATH}/res/icon.png -d ${BUILD_PATH}/qradiolink.desktop --plugin qt --output appimage
-#docker cp "$(cat "${CIDFILE}")":"${TRAVIS_DEBIAN_TARGET_DIR}"/QRadioLink-${VER_INFO}-x86_64.AppImage "${TRAVIS_DEBIAN_TARGET_DIR}"
+docker exec --env VERSION=${VER_INFO} "$(cat "${CIDFILE}")" ./linuxdeploy-x86_64.AppImage --appdir AppDir -e ${TRAVIS_DEBIAN_BUILD_DIR}/usr/bin/qradiolink -i ${BUILD_PATH}/src/res/icon.png -d ${BUILD_PATH}/qradiolink.desktop --plugin qt --output appimage
+docker cp "$(cat "${CIDFILE}")":"${TRAVIS_DEBIAN_TARGET_DIR}"/QRadioLink-${VER_INFO}-x86_64.AppImage "${TRAVIS_DEBIAN_TARGET_DIR}"
 
 Info "Removing container"
 docker rm -f "$(cat "${CIDFILE}")" >/dev/null
 rm -f "${CIDFILE}"
 
-#rm -f ./linuxdeploy-x86_64.AppImage
-#rm -f ./linuxdeploy-plugin-qt-x86_64.AppImage
+rm -f ./linuxdeploy-x86_64.AppImage
+rm -f ./linuxdeploy-plugin-qt-x86_64.AppImage
 
 
 #  _                   _          _      _     _                          _
