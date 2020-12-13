@@ -4,7 +4,7 @@ on: [pull_request]
 
 jobs:
   ubuntu-build:
-    name: Ubuntu CI build
+    name: Debian Travis CI build
     strategy:
       matrix:
         os: [ubuntu-20.04]

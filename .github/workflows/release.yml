@@ -7,7 +7,7 @@ on:
 
 jobs:
   ubuntu-build:
-    name: Ubuntu CI build
+    name: Debian Travis release build
     strategy:
       matrix:
         os: [ubuntu-20.04]
@@ -34,7 +34,7 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
           body: ${{ github.event.head_commit.message }}
-          draft: true
+          draft: false
           prerelease: false
       - name: Upload Release Package
         id: upload-release-asset
