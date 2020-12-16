@@ -51,7 +51,7 @@ $ sudo apt install libjpeg-turbo8-dev libjpeg-dev
 [Downloads](https://github.com/qradiolink/qradiolink/releases "Downloads")
 ----
 
-Debian 11 Bullseye x86_64 packages are no longer provided via Travis CI automated builds due to support for open source projects being discontinued. For the time being only source packages can be provided. An AppImage for running the application on other Linux distributions with glibc >= 2.27 without installing it is also provided for older releases based on GNU radio 3.7. The AppImage is based on Debian 10 Buster packages.
+Debian 11 Bullseye x86_64 packages are provided via automated builds. An AppImage for running the application on other Linux distributions with glibc >= 2.27 without installing it is also provided. The AppImage is based on Debian 11 Buster packages.
 Please see the [Github releases page](https://github.com/qradiolink/qradiolink/releases) for binary downloads.
 
 Opensuse packages are available from [Opensuse build server](https://build.opensuse.org/package/show/hardware:sdr/qradiolink)
@@ -97,12 +97,6 @@ You can add custom library search paths, custom includes paths and specify a dif
 qmake .. INSTALL_PREFIX=/usr/local/bin LIBDIR=/opt/lib INCDIR=/opt/include
 </pre>
 
-
-Known issues
-----
-
-- Some issues around AGC attack and decay time
-- Broken user paging
 
 
 Operation
