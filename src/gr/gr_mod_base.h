@@ -103,14 +103,14 @@ private:
     gr_mod_ssb_sptr _usb;
     gr_mod_ssb_sptr _lsb;
     gr_mod_ssb_sptr _usb_cw;
-    gr_mod_freedv_sdr_sptr _freedv_tx1600_usb;
-    gr_mod_freedv_sdr_sptr _freedv_tx700C_usb;
-    gr_mod_freedv_sdr_sptr _freedv_tx700D_usb;
-    gr_mod_freedv_sdr_sptr _freedv_tx1600_lsb;
-    gr_mod_freedv_sdr_sptr _freedv_tx700C_lsb;
-    gr_mod_freedv_sdr_sptr _freedv_tx700D_lsb;
-    gr_mod_freedv_sdr_sptr _freedv_tx800XA_usb;
-    gr_mod_freedv_sdr_sptr _freedv_tx800XA_lsb;
+    gr_mod_freedv_sptr _freedv_tx1600_usb;
+    gr_mod_freedv_sptr _freedv_tx700C_usb;
+    gr_mod_freedv_sptr _freedv_tx700D_usb;
+    gr_mod_freedv_sptr _freedv_tx1600_lsb;
+    gr_mod_freedv_sptr _freedv_tx700C_lsb;
+    gr_mod_freedv_sptr _freedv_tx700D_lsb;
+    gr_mod_freedv_sptr _freedv_tx800XA_usb;
+    gr_mod_freedv_sptr _freedv_tx800XA_lsb;
 
     int _samples_per_symbol;
     int _samp_rate;

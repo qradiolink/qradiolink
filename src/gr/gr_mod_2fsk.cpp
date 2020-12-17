@@ -25,7 +25,7 @@ gr_mod_2fsk_sptr make_gr_mod_2fsk(int sps, int samp_rate, int carrier_freq,
 
 gr_mod_2fsk::gr_mod_2fsk(int sps, int samp_rate, int carrier_freq,
                                  int filter_width, bool fm) :
-    gr::hier_block2 ("gr_mod_2fsk_sdr",
+    gr::hier_block2 ("gr_mod_2fsk",
                       gr::io_signature::make (1, 1, sizeof (char)),
                       gr::io_signature::make (1, 1, sizeof (gr_complex)))
 {

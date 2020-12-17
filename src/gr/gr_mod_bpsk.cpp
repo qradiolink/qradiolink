@@ -26,7 +26,7 @@ gr_mod_bpsk_sptr make_gr_mod_bpsk(int sps, int samp_rate, int carrier_freq,
 
 gr_mod_bpsk::gr_mod_bpsk(int sps, int samp_rate, int carrier_freq,
                                  int filter_width) :
-    gr::hier_block2 ("gr_mod_bpsk_sdr",
+    gr::hier_block2 ("gr_mod_bpsk",
                       gr::io_signature::make (1, 1, sizeof (char)),
                       gr::io_signature::make (1, 1, sizeof (gr_complex)))
 {

@@ -30,7 +30,7 @@ gr_demod_ssb_sptr make_gr_demod_ssb(int sps, int samp_rate, int carrier_freq,
 
 gr_demod_ssb::gr_demod_ssb(std::vector<int>signature, int sps, int samp_rate, int carrier_freq,
                                  int filter_width, int sb) :
-    gr::hier_block2 ("gr_demod_ssb_sdr",
+    gr::hier_block2 ("gr_demod_ssb",
                       gr::io_signature::make (1, 1, sizeof (gr_complex)),
                       gr::io_signature::makev (2, 2, signature))
 {

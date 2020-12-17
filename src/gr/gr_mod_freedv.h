@@ -33,16 +33,16 @@
 #include <gnuradio/vocoder/freedv_api.h>
 
 
-class gr_mod_freedv_sdr;
+class gr_mod_freedv;
 
-typedef boost::shared_ptr<gr_mod_freedv_sdr> gr_mod_freedv_sdr_sptr;
-gr_mod_freedv_sdr_sptr make_gr_mod_freedv_sdr(int sps=125, int samp_rate=8000, int carrier_freq=1700,
+typedef boost::shared_ptr<gr_mod_freedv> gr_mod_freedv_sptr;
+gr_mod_freedv_sptr make_gr_mod_freedv(int sps=125, int samp_rate=8000, int carrier_freq=1700,
                                           int filter_width=2000, int low_cutoff=200, int mode=gr::vocoder::freedv_api::MODE_1600, int sb=0);
 
-class gr_mod_freedv_sdr : public gr::hier_block2
+class gr_mod_freedv : public gr::hier_block2
 {
 public:
-    explicit gr_mod_freedv_sdr(int sps=125, int samp_rate=8000, int carrier_freq=1700,
+    explicit gr_mod_freedv(int sps=125, int samp_rate=8000, int carrier_freq=1700,
                              int filter_width=2000, int low_cutoff=200, int mode=gr::vocoder::freedv_api::MODE_1600, int sb=0);
     void set_bb_gain(float value);
 private:

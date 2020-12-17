@@ -16,16 +16,16 @@
 
 #include "gr_mod_freedv.h"
 
-gr_mod_freedv_sdr_sptr make_gr_mod_freedv_sdr(int sps, int samp_rate, int carrier_freq,
+gr_mod_freedv_sptr make_gr_mod_freedv(int sps, int samp_rate, int carrier_freq,
                                           int filter_width, int low_cutoff, int mode, int sb)
 {
-    return gnuradio::get_initial_sptr(new gr_mod_freedv_sdr(sps, samp_rate, carrier_freq,
+    return gnuradio::get_initial_sptr(new gr_mod_freedv(sps, samp_rate, carrier_freq,
                                                       filter_width, low_cutoff, mode, sb));
 }
 
-gr_mod_freedv_sdr::gr_mod_freedv_sdr(int sps, int samp_rate, int carrier_freq,
+gr_mod_freedv::gr_mod_freedv(int sps, int samp_rate, int carrier_freq,
                                  int filter_width, int low_cutoff, int mode, int sb) :
-    gr::hier_block2 ("gr_mod_freedv_sdr",
+    gr::hier_block2 ("gr_mod_freedv",
                       gr::io_signature::make (1, 1, sizeof (float)),
                       gr::io_signature::make (1, 1, sizeof (gr_complex)))
 {
@@ -85,7 +85,7 @@ gr_mod_freedv_sdr::gr_mod_freedv_sdr(int sps, int samp_rate, int carrier_freq,
     connect(_bb_gain,0,self(),0);
 }
 
-void gr_mod_freedv_sdr::set_bb_gain(float value)
+void gr_mod_freedv::set_bb_gain(float value)
 {
     _bb_gain->set_k(value);
 }

@@ -31,7 +31,7 @@ gr_demod_4fsk_sptr make_gr_demod_4fsk(int sps, int samp_rate, int carrier_freq,
 
 gr_demod_4fsk::gr_demod_4fsk(std::vector<int>signature, int sps, int samp_rate, int carrier_freq,
                                  int filter_width, bool fm) :
-    gr::hier_block2 ("gr_demod_4fsk_sdr",
+    gr::hier_block2 ("gr_demod_4fsk",
                       gr::io_signature::make (1, 1, sizeof (gr_complex)),
                       gr::io_signature::makev (3, 3, signature))
 {

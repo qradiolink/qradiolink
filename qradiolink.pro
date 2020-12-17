@@ -82,7 +82,6 @@ SOURCES += src/main.cpp\
     src/gr/rssi_block.cpp \
     src/gr/gr_mod_base.cpp \
     src/gr/gr_demod_base.cpp \
-    src/gr/gr_demod_nbfm_sdr.cpp \
     src/gr/gr_demod_freedv.cpp \
     src/gr/gr_mod_freedv.cpp \
     src/gr/gr_deframer_bb.cpp \
@@ -100,6 +99,7 @@ SOURCES += src/main.cpp\
     src/gr/gr_demod_2fsk.cpp \
     src/gr/gr_demod_4fsk.cpp \
     src/gr/gr_demod_am.cpp \
+    src/gr/gr_demod_nbfm.cpp \
     src/gr/gr_demod_bpsk.cpp \
     src/gr/gr_demod_dsss.cpp \
     src/gr/gr_demod_qpsk.cpp \

@@ -32,7 +32,7 @@ gr_demod_bpsk_sptr make_gr_demod_bpsk(int sps, int samp_rate, int carrier_freq,
 
 gr_demod_bpsk::gr_demod_bpsk(std::vector<int>signature, int sps, int samp_rate, int carrier_freq,
                                  int filter_width) :
-    gr::hier_block2 ("gr_demod_bpsk_sdr",
+    gr::hier_block2 ("gr_demod_bpsk",
                       gr::io_signature::make (1, 1, sizeof (gr_complex)),
                       gr::io_signature::makev (4, 4, signature))
 {

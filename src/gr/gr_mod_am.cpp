@@ -25,7 +25,7 @@ gr_mod_am_sptr make_gr_mod_am(int sps, int samp_rate, int carrier_freq,
 
 gr_mod_am::gr_mod_am(int sps, int samp_rate, int carrier_freq,
                                  int filter_width) :
-    gr::hier_block2 ("gr_mod_am_sdr",
+    gr::hier_block2 ("gr_mod_am",
                       gr::io_signature::make (1, 1, sizeof (float)),
                       gr::io_signature::make (1, 1, sizeof (gr_complex)))
 {
