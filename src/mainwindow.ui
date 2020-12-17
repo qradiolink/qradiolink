@@ -90,7 +90,7 @@
          </font>
         </property>
         <property name="currentIndex">
-         <number>3</number>
+         <number>0</number>
         </property>
         <property name="iconSize">
          <size>
@@ -4349,9 +4349,9 @@ and S-meter (dBm)</string>
         <widget class="QLabel" name="label">
          <property name="geometry">
           <rect>
-           <x>290</x>
+           <x>280</x>
            <y>54</y>
-           <width>51</width>
+           <width>61</width>
            <height>20</height>
           </rect>
          </property>
@@ -4380,10 +4380,10 @@ and S-meter (dBm)</string>
         <widget class="QLabel" name="label_14">
          <property name="geometry">
           <rect>
-           <x>166</x>
+           <x>156</x>
            <y>56</y>
-           <width>51</width>
-           <height>16</height>
+           <width>61</width>
+           <height>20</height>
           </rect>
          </property>
          <property name="sizePolicy">
@@ -4404,7 +4404,7 @@ and S-meter (dBm)</string>
           <rect>
            <x>32</x>
            <y>55</y>
-           <width>51</width>
+           <width>61</width>
            <height>20</height>
           </rect>
          </property>
@@ -4642,10 +4642,10 @@ color: rgb(182, 182, 182);</string>
         <widget class="QLabel" name="label_9">
          <property name="geometry">
           <rect>
-           <x>425</x>
-           <y>57</y>
-           <width>51</width>
-           <height>16</height>
+           <x>405</x>
+           <y>56</y>
+           <width>71</width>
+           <height>20</height>
           </rect>
          </property>
          <property name="sizePolicy">
@@ -4870,10 +4870,10 @@ color: rgb(182, 182, 182);</string>
         <widget class="QLabel" name="label_20">
          <property name="geometry">
           <rect>
-           <x>540</x>
-           <y>58</y>
-           <width>51</width>
-           <height>16</height>
+           <x>510</x>
+           <y>56</y>
+           <width>61</width>
+           <height>20</height>
           </rect>
          </property>
          <property name="text">
@@ -4883,7 +4883,7 @@ color: rgb(182, 182, 182);</string>
         <widget class="QFrame" name="rxGainsFrameMenu">
          <property name="geometry">
           <rect>
-           <x>779</x>
+           <x>781</x>
            <y>23</y>
            <width>301</width>
            <height>51</height>
@@ -4943,13 +4943,13 @@ color: rgb(182, 182, 182);</string>
           <rect>
            <x>794</x>
            <y>2</y>
-           <width>60</width>
+           <width>70</width>
            <height>20</height>
           </rect>
          </property>
          <property name="maximumSize">
           <size>
-           <width>60</width>
+           <width>70</width>
            <height>20</height>
           </size>
          </property>
@@ -4962,13 +4962,13 @@ color: rgb(182, 182, 182);</string>
           <rect>
            <x>1104</x>
            <y>1</y>
-           <width>60</width>
+           <width>70</width>
            <height>20</height>
           </rect>
          </property>
          <property name="maximumSize">
           <size>
-           <width>60</width>
+           <width>70</width>
            <height>20</height>
           </size>
          </property>
@@ -4979,7 +4979,7 @@ color: rgb(182, 182, 182);</string>
         <widget class="SkinnedDial" name="agcAttackDial">
          <property name="geometry">
           <rect>
-           <x>634</x>
+           <x>625</x>
            <y>8</y>
            <width>50</width>
            <height>51</height>
@@ -4995,7 +4995,7 @@ color: rgb(182, 182, 182);</string>
         <widget class="SkinnedDial" name="agcDecayDial">
          <property name="geometry">
           <rect>
-           <x>708</x>
+           <x>704</x>
            <y>7</y>
            <width>50</width>
            <height>51</height>
@@ -5011,9 +5011,9 @@ color: rgb(182, 182, 182);</string>
         <widget class="QLabel" name="label_51">
          <property name="geometry">
           <rect>
-           <x>624</x>
-           <y>57</y>
-           <width>71</width>
+           <x>614</x>
+           <y>56</y>
+           <width>81</width>
            <height>20</height>
           </rect>
          </property>
@@ -5024,10 +5024,10 @@ color: rgb(182, 182, 182);</string>
         <widget class="QLabel" name="label_52">
          <property name="geometry">
           <rect>
-           <x>700</x>
-           <y>58</y>
-           <width>71</width>
-           <height>18</height>
+           <x>696</x>
+           <y>55</y>
+           <width>81</width>
+           <height>20</height>
           </rect>
          </property>
          <property name="text">
