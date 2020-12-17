@@ -51,7 +51,6 @@ gr_demod_am::gr_demod_am(std::vector<int>signature, int sps, int samp_rate, int 
                             1, _target_samp_rate, -_filter_width, _filter_width, 200, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     _squelch = gr::analog::pwr_squelch_cc::make(-140,0.01,0,true);
     _agc = gr::analog::agc2_ff::make(1e-1, 1e-1, 1.0, 1.0);
-    //_agc->set_max_gain(2.0);
     _complex_to_mag = gr::blocks::complex_to_mag::make();
     std::vector<double> fft;
     fft.push_back(1);
@@ -63,7 +62,7 @@ gr_demod_am::gr_demod_am(std::vector<int>signature, int sps, int samp_rate, int 
     _audio_gain = gr::blocks::multiply_const_ff::make(0.99);
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::low_pass(
-                    1, 8000, 3600, 400, gr::filter::firdes::WIN_HAMMING));
+                    1, 8000, 3600, 300, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
 
 
 

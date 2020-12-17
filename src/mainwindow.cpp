@@ -443,7 +443,6 @@ void MainWindow::showControls(bool value)
         _settings->show_controls = 0;
         _controls_active = false;
     }
-    //emit enableRSSI(value);
 }
 
 void MainWindow::showConstellation(bool value)

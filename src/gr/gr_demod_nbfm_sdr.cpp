@@ -42,12 +42,6 @@ gr_demod_nbfm::gr_demod_nbfm(std::vector<int>signature, int sps, int samp_rate, 
     _filter_width = filter_width;
     gr::calculate_deemph_taps(_target_samp_rate, 50e-6, _ataps, _btaps);
 
-    /* unused
-    static const float coeff[] = {0.06306464970111847, 0.4777590036392212, 0.9183526635169983,
-                                  0.4777590036392212, 0.06306464970111847};
-    std::vector<float> deemph_taps(coeff, coeff + sizeof(coeff) / sizeof(coeff[0]) );
-    */
-
     _de_emph_filter = gr::filter::iir_filter_ffd::make(_btaps, _ataps, false);
 
     std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _target_samp_rate/2,

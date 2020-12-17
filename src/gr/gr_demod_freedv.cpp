@@ -79,7 +79,6 @@ gr_demod_freedv::gr_demod_freedv(std::vector<int>signature, int sps, int samp_ra
     connect(_freedv, 0 , _short_to_float, 0);
     connect(_short_to_float,0,_audio_gain,0);
     connect(_audio_gain,0,self(),1);
-    //connect(_agc,0,self(),1);
 
 }
 

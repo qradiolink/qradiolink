@@ -51,7 +51,6 @@ gr_demod_ssb::gr_demod_ssb(std::vector<int>signature, int sps, int samp_rate, in
     _filter_lsb = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass_2(
             1, _target_samp_rate, -_filter_width, -200,200, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
     _squelch = gr::analog::pwr_squelch_cc::make(-140,0.01,0,true);
-    _feed_forward_agc = gr::analog::feedforward_agc_cc::make(320,1);
     _agc = gr::analog::agc2_cc::make(1e-1, 1e-1, 0.25, 1);
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::band_pass_2(
