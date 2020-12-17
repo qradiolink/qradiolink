@@ -52,12 +52,13 @@ gr_demod_bpsk::gr_demod_bpsk(std::vector<int>signature, int sps, int samp_rate, 
                                                            gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1, 50, taps);
     _resampler->set_thread_priority(99);
-    _agc = gr::analog::agc2_cc::make(1e-1, 1e-1, 1, 10);
-    float gain_mu = 0.025;
+    _agc = gr::analog::agc2_cc::make(1e-1, 1e-1, 1, 1);
+    float gain_mu = 0.05;
+    float gain_omega = 0.005;
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol,
-                                                              0.025*gain_mu*gain_mu, 0.5, gain_mu,
+                                                              gain_omega*gain_omega, 0.5, gain_mu,
                                                               0.001);
-    _costas_loop = gr::digital::costas_loop_cc::make(2*M_PI/100,2);
+    _costas_loop = gr::digital::costas_loop_cc::make(2*M_PI/200,2);
     _equalizer = gr::digital::cma_equalizer_cc::make(8,1,0.000005,1);
     _fll = gr::digital::fll_band_edge_cc::make(_samples_per_symbol, 0.35, 32, 8*M_PI/100);
     _shaping_filter = gr::filter::fft_filter_ccf::make(
