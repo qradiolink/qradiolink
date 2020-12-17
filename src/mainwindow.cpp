@@ -409,7 +409,6 @@ void MainWindow::changeEvent(QEvent *event)
         {
             emit enableGUIFFT(_fft_active);
             emit enableRSSI(true);
-            showConstellation(_settings->show_constellation);
             if(_settings->show_constellation)
             {
                 ui->constellationDisplay->showNormal();
@@ -452,6 +451,8 @@ void MainWindow::showConstellation(bool value)
     _settings->show_constellation = (int) value;
     if(value)
     {
+        ui->constellationDisplay->move(QWidget::mapToGlobal(QPoint(
+                    ui->plotterFrame->geometry().topLeft().x(), ui->plotterContainer->geometry().topLeft().y()+50)));
         ui->constellationDisplay->show();
     }
     else
