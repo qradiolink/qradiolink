@@ -347,7 +347,13 @@ bool CommandProcessor::processStatusCommands(int command_index, QString &respons
                             _mode_list->at(channel->tx_mode) +
                             " | Shift: " + QString::number(channel->tx_shift) + "|" +"\n");
         }
+        break;
     }
+    case 68:
+        response.append(QString("Current AGC attack is %1.").arg(_settings->agc_attack));
+        break;
+    case 69:
+        response.append(QString("Current AGC decay is %1.").arg(_settings->agc_decay));
         break;
 
     default:
@@ -986,6 +992,37 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
     {
         response = QString("Will shutdown now");
         emit stopRadio();
+        break;
+    }
+    case 70:
+    {
+        int set = param1.toInt();
+        if((set < -25) || (set > 25))
+        {
+            response = "Parameter value is not supported";
+            success = false;
+        }
+        else
+        {
+            response = QString("Setting AGC attack level to %1").arg(set);
+            emit setAgcAttack(set);
+        }
+        break;
+    }
+    case 71:
+    {
+        int set = param1.toInt();
+        if((set < -25) || (set > 25))
+        {
+            response = "Parameter value is not supported";
+            success = false;
+        }
+        else
+        {
+            response = QString("Setting AGC decay level to %1").arg(set);
+            emit setAgcDecay(set);
+        }
+        break;
     }
 
     default:
@@ -1069,4 +1106,8 @@ void CommandProcessor::buildCommandList()
     _command_list->append(new command("listradiochan", 0, "List memory channels"));
     _command_list->append(new command("setradiochan", 1, "Set radio channel (integer value)"));
     _command_list->append(new command("shutdown", 0, "Shutdown and exit"));
+    _command_list->append(new command("agcattack", 0, "Get AGC attack value"));
+    _command_list->append(new command("agcdecay", 0, "Get AGC decay value"));
+    _command_list->append(new command("setagcattack", 1, "Set AGC attack value"));
+    _command_list->append(new command("setagcdecay", 1, "Set AGC decay value"));
 }
