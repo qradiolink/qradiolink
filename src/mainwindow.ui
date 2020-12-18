@@ -2914,28 +2914,6 @@ font: 10pt &quot;Sans Serif&quot;;
                    </property>
                   </widget>
                  </item>
-                 <item row="9" column="3">
-                  <widget class="QSpinBox" name="agcDecaySpinBox">
-                   <property name="enabled">
-                    <bool>false</bool>
-                   </property>
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimum">
-                    <number>-2</number>
-                   </property>
-                   <property name="maximum">
-                    <number>6</number>
-                   </property>
-                   <property name="value">
-                    <number>1</number>
-                   </property>
-                  </widget>
-                 </item>
                  <item row="7" column="0">
                   <widget class="QLabel" name="label_48">
                    <property name="text">
@@ -3083,20 +3061,6 @@ font: 10pt &quot;Sans Serif&quot;;
                    </property>
                    <property name="text">
                     <string>Digital gain (TX)</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="9" column="2">
-                  <widget class="QLabel" name="label_37">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="text">
-                    <string>Agc decay rate
-(Deprecated))</string>
                    </property>
                   </widget>
                  </item>
@@ -3390,20 +3354,6 @@ and S-meter (dBm)</string>
                    </item>
                   </widget>
                  </item>
-                 <item row="7" column="2">
-                  <widget class="QLabel" name="label_19">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="text">
-                    <string>Agc attack rate
-(lDeprecated)</string>
-                   </property>
-                  </widget>
-                 </item>
                  <item row="6" column="2">
                   <widget class="QLabel" name="label_40">
                    <property name="sizePolicy">
@@ -3553,25 +3503,6 @@ and S-meter (dBm)</string>
                   <widget class="QCheckBox" name="fftHistoryCheckBox">
                    <property name="text">
                     <string>FFT history effect</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="7" column="3">
-                  <widget class="QSpinBox" name="agcAttackSpinBox">
-                   <property name="enabled">
-                    <bool>false</bool>
-                   </property>
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimum">
-                    <number>-2</number>
-                   </property>
-                   <property name="maximum">
-                    <number>6</number>
                    </property>
                   </widget>
                  </item>
