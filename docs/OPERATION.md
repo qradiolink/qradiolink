@@ -27,11 +27,12 @@ These audio sinks and sources should look like this:
 - alsa_input.pci-0000_04_00.6.analog-stereo
 - alsa_output.pci-0000_04_00.6.analog-stereo
 
-**The audio should be completely artefact and interruptions free. If you experience either, the Pulseaudio configuration is probably not correct**
+**The audio should generally be completely artefact and interruptions free. If you experience either while not changing any settings, the Pulseaudio configuration is probably not correct. It is possible however to experience audio issues when changing frequency rapidly, which is an application bug.**
 
-- **New**: You may now transmit at all supported sample rates, not just 1 Msps. This feature is still undergoing testing. Transmitting at higher sample rates will use more CPU cycles and be less efficient.
+- **New**: You may now transmit at all supported sample rates, not just 1 Msps. This feature is still experimental. Transmitting at higher sample rates will use more CPU cycles and be less efficient.
 - Filter widths for reception and transmission of the analog modes (FM, SSB, AM) are configurable. To increase or decrease them, drag the margins of the filter box on the spectrum display. For SSB upper sideband, only the upper filter limit can be configured. For SSB lower sideband, only the lower filter limit is configurable.
 - You can change the FFT reference display level by hovering with the mouse on the left sidebar where the dB numbers are displayed and dragging this bar up and down. You can also zoom on this axis by hovering with the mouse and using the scroll whell. The levels will be saved in the settings and will remain the same at the next restart. You can also drag the frequency bar below the FFT display to the left and right, and you can zoom in and out with the mouse wheel on both of the number bars. Right clicking the frequency bar resets the frequency zoom to the normal default value.
+- The FFT history setting allows the display of the two previous FFT bins in addition to the current one, which may be useful for the display of short bursts transmissions.
 - VOIP uses [umurmur](https://github.com/umurmur/umurmur) as a server. A version known to work with qradiolink is mirrored at [qradiolink](https://github.com/qradiolink/umurmur)  You can use QRadioLink as a pure VOIP client without using the radio by selecting "Use PTT for VOIP". For radio over IP operation, you need to toggle "Forward radio" to send the digital or analog radio voice to the VOIP server and viceversa. Any voice packets coming from the server will be transmitted directly after transcoding in this case. Full duplex audio from more than one VOIP client at the same time can now be transmitted. The **Mumble** application is now also compatible with QRadioLink. It is recommended to enable **Push To Talk** in Mumble and maximize the network robustness and latency settings. Text messages from Mumble are displayed inside the application, but no action is taken for channel-wide messages. Text messages can also be sent to the current Mumble channel. If remote control is enabled, private Mumble text messages will control the radio.
 The Mumble VOIP connection uses the Opus codec at a higher bitrate, so ensure the server can handle bitrates up to 50 kbit/s per client. The VOIP bitrate can be configured in the **Setup** page. On Android phones, the **Plumble** application can be used as a client.
 - The VOIP username will be your callsign, plus a number of 4 random characters allowing you to use multiple clients on the same server. The server password is stored in plain text inside the config file. You can use chmod to set this file readable by your user only.
@@ -60,8 +61,8 @@ Bus 002 Device 003: ID 0403:6001 Future Technology Devices International, Ltd FT
 Do note that the identifier digits are the most important: **0403:6001**. 
 At the moment, such USB relays can be sourced on Amazon and Ebay and can be identified by the light silver-blue colour of the board. Other types of relays may be supported in the future.
 - QRadioLink can control a maximum of 8 relays, and the used relays can be configured in the Setup page. The setting called **relay_sequence** is an 8 bit char bitmask that can take values from 0 to 255 and each bit controls the relay with the bit+1 number, starting with bit 0 and relay number 1. The order in which relays are activated and deactivated during a transmission cycle is always as follows: activation starting with relay 1 to relay 8, deactivation in reverse order (relay 8 to relay 1). A Python script **( ext/ftdi.py )** is included to help you determine the order of relays on the board.
-- Video will be displayed in the upper right corner. There is a V4L2 guide in the docs/ directory for troubleshooting camera settings for advanced users in case of issues.
-- **New**: starting with version 0.8.5-rc4, the video transmission also has sound, using the Opus audio codec. There is a known issue with a crash caused by gstreamer when the application has the video mode selected at startup, and after a video transmission the user attempts to switch to another mode. As a workaround, only switch to the video mode after starting the TX flowgraph, and switch to another mode before exiting the application. Since the video mode now uses the Qt backend with gstreamer, there are still some small issues around it which may be solved with future Qt versions.
+- Video will be displayed in the upper right corner. Currently the system default camera is used for capturing the images.
+- **New**: starting with version 0.8.5-rc4, the video transmission also has sound, using the Opus audio codec.
 - IP radio modem operation mode requires net administration priviledges (NET_ADMIN capabilities) to be granted to the application. An error message will be output at startup if these priviledges are not present. You can safely ignore this message if you don't need to use the IP modem facility.
 <pre>$ sudo setcap "cap_net_raw,cap_net_admin+eip" ./qradiolink</pre>
 - VOX mode requires careful setup of system microphone gain to avoid getting stuck on transmit. The VOX activation level can be configured in the **Setup** page.
@@ -77,6 +78,4 @@ At the moment, such USB relays can be sourced on Amazon and Ebay and can be iden
 telnet localhost 4939
 qradiolink> help
 qradiolink> quit
-Bye!
-Connection closed by foreign host.
 <pre>
