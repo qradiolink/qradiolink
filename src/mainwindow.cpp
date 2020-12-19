@@ -74,8 +74,10 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     //ui->frameCtrlFreq->setDigitColor(QColor(0,0,133,0xFF));
     ui->frameCtrlFreq->setDigitColor(QColor(0,205,0,0xFF));
     ui->frameCtrlFreq->setUnitsColor(QColor(254,254,254,0xFF));
+    _full_screen_shortcut = new QShortcut(QKeySequence::FullScreen, this);
+    _full_screen_shortcut->setContext(Qt::ApplicationShortcut);
 
-
+    QObject::connect(_full_screen_shortcut, SIGNAL(activated()),this, SLOT(makeFullScreen()));
     QObject::connect(ui->buttonTransmit,SIGNAL(toggled(bool)),this,SLOT(startTx()));
     QObject::connect(ui->sendTextButton,SIGNAL(clicked()),this,SLOT(sendTextRequested()));
     QObject::connect(ui->voipConnectButton,SIGNAL(clicked()),this,SLOT(connectVOIPRequested()));
@@ -358,6 +360,7 @@ MainWindow::~MainWindow()
     delete _eff_text_display;
     delete _eff_mem_display;
     delete _s_meter_bg;
+    delete _full_screen_shortcut;
     delete ui;
 }
 
@@ -418,6 +421,18 @@ void MainWindow::changeEvent(QEvent *event)
     }
 
     event->accept();
+}
+
+void MainWindow::makeFullScreen()
+{
+    if(isFullScreen())
+    {
+        showNormal();
+    }
+    else
+    {
+        showFullScreen();
+    }
 }
 
 void MainWindow::showControls(bool value)

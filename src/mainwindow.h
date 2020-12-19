@@ -30,6 +30,7 @@
 #include <QPropertyAnimation>
 #include <QPainter>
 #include <QToolTip>
+#include <QShortcut>
 #include <QAudioDeviceInfo>
 #include <math.h>
 #include <complex>
@@ -171,6 +172,7 @@ public slots:
     void pageUserRequested();
     void displayPageMessage(QString page_user, QString page_message);
     void updatePanadapterRange(float min, float max);
+    void makeFullScreen();
 
 signals:
     void startTransmission();
@@ -274,6 +276,7 @@ private:
     std::vector<std::complex<int>> *_filter_ranges;
     std::vector<bool> *_filter_symmetric;
     QVector<QString> *_mode_list;
+    QShortcut *_full_screen_shortcut;
     float *_realFftData;
     float *_iirFftData;
 

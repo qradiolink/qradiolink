@@ -37,6 +37,7 @@ These audio sinks and sources should look like this:
 The Mumble VOIP connection uses the Opus codec at a higher bitrate, so ensure the server can handle bitrates up to 50 kbit/s per client. The VOIP bitrate can be configured in the **Setup** page. On Android phones, the **Plumble** application can be used as a client.
 - The VOIP username will be your callsign, plus a number of 4 random characters allowing you to use multiple clients on the same server. The server password is stored in plain text inside the config file. You can use chmod to set this file readable by your user only.
 - Remote control via Mumble private text messages requires enabling remote control in settings, and using the Mumble client (either desktop or Android) to send text messages to the QRadioLink username. Text messages sent to the channel will be ignored by the application. Authentication of the user who is sending the commands is not yet implemented.
+- To display the application in fullscreen mode, use the system shortcut for fullscreen (F11 and Ctrl+Shift+F in KDE, Ctrl+F11 in Gnome)
 - Running headless (no graphical user interface) for usage on embedded platforms like the Raspberry Pi or similar boards requires starting QRadioLink from the command line with the **--headless** option; example:
 <pre>
 $ qradiolink --headless  >> $HOME/.config/qradiolink/qradiolink.log 2>&1
