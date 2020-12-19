@@ -111,6 +111,13 @@ These audio sinks and sources should look like this:
 - alsa_output.pci-0000_04_00.6.analog-stereo
 
 
+Known issues
+----
+
+- When tuning rapidly for a prolonged time (for example by dragging the filter box across the screen), the audio may experience slowdowns and other glitches. As a workaround, click at the desired location on the waterfall instead of dragging.
+- Due to an issue in libvolk / GNU radio 3.8, digital modes are broken unless the workaround documented in docs/OPERATION.md is applied.
+
+
 Copyright and License
 -------------------
 - Most of the source code are released under the GNU General Public License version 3. Please see the COPYRIGHT and AUTHORS files for details.
