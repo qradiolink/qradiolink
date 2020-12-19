@@ -974,7 +974,7 @@ void gr_demod_base::set_agc_attack(int value)
     if(value < 0)
         attack = 1.0f / (float) -value;
     if(value > 0)
-        attack = (float) value;
+        attack = (float) value * 20.0f;
     _usb->set_agc_attack(attack);
     _lsb->set_agc_attack(attack);
     _am->set_agc_attack(attack);
