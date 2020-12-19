@@ -5169,6 +5169,9 @@ border-radius: 0px;</string>
             <height>60</height>
            </size>
           </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
           <property name="toolTip">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Push to talk (Space key)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
