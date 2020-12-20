@@ -1,4 +1,4 @@
-qradiolink (0.8.5) RELEASED; urgency=medium
+qradiolink (0.8.5-1) RELEASED; urgency=medium
 
   [ Adrian Musceac ]
   * Fixed some graphical issues in Gnome and LXDE
@@ -7,7 +7,7 @@ qradiolink (0.8.5) RELEASED; urgency=medium
   * Reduced minimum AGC attack time
 
 
- -- Adrian Musceac <kantooon@gmail.com>  Sun, 20 Dec 2020 14:04:00 +0300
+ -- Adrian Musceac <kantooon@gmail.com>  Sun, 20 Dec 2020 14:14:00 +0300
 
 
 qradiolink (0.8.5-rc5) UNRELEASED; urgency=medium
