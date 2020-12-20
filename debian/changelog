@@ -1,3 +1,15 @@
+qradiolink (0.8.5) RELEASED; urgency=medium
+
+  [ Adrian Musceac ]
+  * Fixed some graphical issues in Gnome and LXDE
+  * Added full screen shortcut (Ctrl+Shift+F in KDE)
+  * Fixed PTT shortcut (Space) triggering twice
+  * Reduced minimum AGC attack time
+
+
+ -- Adrian Musceac <kantooon@gmail.com>  Sun, 20 Dec 2020 14:04:00 +0300
+
+
 qradiolink (0.8.5-rc5) UNRELEASED; urgency=medium
 
   [ Adrian Musceac ]
