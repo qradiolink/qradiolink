@@ -831,6 +831,13 @@ void gr_demod_base::set_squelch(int value)
     _usb->set_squelch(value);
     _lsb->set_squelch(value);
     _freedv_rx1600_usb->set_squelch(value);
+    _freedv_rx1600_lsb->set_squelch(value);
+    _freedv_rx700C_usb->set_squelch(value);
+    _freedv_rx700C_lsb->set_squelch(value);
+    _freedv_rx700D_usb->set_squelch(value);
+    _freedv_rx700D_lsb->set_squelch(value);
+    _freedv_rx800XA_usb->set_squelch(value);
+    _freedv_rx800XA_lsb->set_squelch(value);
     _wfm->set_squelch(value);
 }
 
