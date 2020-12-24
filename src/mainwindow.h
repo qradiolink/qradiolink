@@ -272,6 +272,7 @@ private:
     QGraphicsOpacityEffect *_eff_video;
     QGraphicsOpacityEffect *_eff_text_display;
     QGraphicsOpacityEffect *_eff_mem_display;
+    QGraphicsDropShadowEffect *_eff_glow_ptt_button;
     std::vector<std::complex<int>> *_filter_widths;
     std::vector<std::complex<int>> *_filter_ranges;
     std::vector<bool> *_filter_symmetric;

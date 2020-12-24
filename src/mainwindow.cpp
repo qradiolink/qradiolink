@@ -272,6 +272,11 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     ui->memoriesFrame->setGraphicsEffect(_eff_mem_display);
     ui->memoryControlsFrame->setGraphicsEffect(_eff_mem_display);
     ui->memoriesTableWidget->setGraphicsEffect(_eff_mem_display);
+    _eff_glow_ptt_button = new QGraphicsDropShadowEffect(this);
+    _eff_glow_ptt_button->setOffset(0, 0);
+    _eff_glow_ptt_button->setColor(QColor("#FF5A72"));
+    _eff_glow_ptt_button->setBlurRadius(0);
+    ui->buttonTransmit->setGraphicsEffect(_eff_glow_ptt_button);
 
     _speech_icon_timer.setSingleShot(true);
     _secondary_text_timer.setSingleShot(true);
@@ -359,6 +364,7 @@ MainWindow::~MainWindow()
     delete _eff_video;
     delete _eff_text_display;
     delete _eff_mem_display;
+    delete _eff_glow_ptt_button;
     delete _s_meter_bg;
     delete _full_screen_shortcut;
     delete ui;
@@ -897,12 +903,14 @@ void MainWindow::startTx()
             _settings->rx_frequency + _settings->demod_offset + _settings->tx_shift + _settings->lnb_lo_freq,
             false);
         _ptt_activated=true;
+        _eff_glow_ptt_button->setBlurRadius(30);
     }
     else
     {
         ui->frameCtrlFreq->setFrequency(
             _settings->rx_frequency + _settings->demod_offset + _settings->lnb_lo_freq, false);
         _ptt_activated=false;
+        _eff_glow_ptt_button->setBlurRadius(0);
         endTx();
     }
 }
