@@ -36,7 +36,6 @@ gr_modem::gr_modem(const Settings *settings, Logger *logger, QObject *parent) :
     _current_frame_type = FrameTypeNone;
     _gr_mod_base = 0;
     _gr_demod_base = 0;
-    _burst_ip_modem = false;
     _modem_sync = 0;
 }
 
@@ -643,7 +642,7 @@ void gr_modem::transmitNetData(unsigned char *data, int size)
 std::vector<unsigned char>* gr_modem::frame(unsigned char *encoded_audio, int data_size, int frame_type)
 {
     std::vector<unsigned char> *data = new std::vector<unsigned char>;
-    if(frame_type == FrameTypeIP && _burst_ip_modem)
+    if(frame_type == FrameTypeIP && _settings->burst_ip_modem)
     {
         int preamble_size = 10; // increase ramp-up symbols to 20
         for(int i = 0;i < preamble_size;i++)

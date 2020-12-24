@@ -661,12 +661,9 @@ void RadioController::processInputNetStream()
         memcpy(&(netbuffer[12]), &crc, 4);
         memcpy(&(netbuffer[16]), buffer, nread);
 
-        if(!_settings->burst_ip_modem)
+        for(int k=nread+16,i=0;k<max_frame_size;k++,i++)
         {
-            for(int k=nread+16,i=0;k<max_frame_size;k++,i++)
-            {
-                netbuffer[k] = _rand_frame_data[i];
-            }
+            netbuffer[k] = _rand_frame_data[i];
         }
 
         emit netData(netbuffer,max_frame_size);
