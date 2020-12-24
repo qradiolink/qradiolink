@@ -124,7 +124,6 @@ Copyright and License
 - Parts of the code are licensed under the MIT license.
 - Parts of the code are licensed under the BSD license.
 - Some graphical resources are licensed under LGPLv3
-- Some graphical resources are distributed under the Creative Commons Non-commercial, No-derivative 4.0 license.
 - Sounds used by this project are copyright © 2020 w2sjw.com
 
 This program is free software; you can redistribute it and/or
