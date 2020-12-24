@@ -312,7 +312,7 @@ void MainWindow::setTheme(bool value)
          setStyleSheet(night_stylesheet);
          ui->frameCtrlFreq->setBkColor(QColor(0x1F, 0x1D, 0x1D,0xFF));
          ui->frameCtrlFreq->setHighlightColor(QColor(127,55,55,0xFF));
-         ui->frameCtrlFreq->setDigitColor(QColor(0,175,0,0xFF));
+         ui->frameCtrlFreq->setDigitColor(QColor(0,175,0,0xCF));
          ui->frameCtrlFreq->setUnitsColor(QColor(160,160,160,0xFF));
     }
     else
@@ -321,7 +321,7 @@ void MainWindow::setTheme(bool value)
         setStyleSheet(day_stylesheet);
         ui->frameCtrlFreq->setBkColor(QColor(0x1F, 0x1D, 0x1D,0xFF));
         ui->frameCtrlFreq->setHighlightColor(QColor(127,55,55,0xFF));
-        ui->frameCtrlFreq->setDigitColor(QColor(0,225,0,0xFF));
+        ui->frameCtrlFreq->setDigitColor(QColor(0,225,0,0xCF));
         ui->frameCtrlFreq->setUnitsColor(QColor(254,254,254,0xFF));
     }
 

@@ -5334,10 +5334,7 @@ background-color: rgb(150, 150, 150);
             </rect>
            </property>
            <property name="styleSheet">
-            <string notr="true">background-color: rgba(0, 0, 0, 125);
-color: rgb(85, 255, 0);
-border: 0px solid white;
-font: 11px &quot;Sans Serif&quot;;</string>
+            <string notr="true"/>
            </property>
            <property name="frameShape">
             <enum>QFrame::Panel</enum>
