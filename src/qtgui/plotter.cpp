@@ -1792,9 +1792,9 @@ void CPlotter::calcDivSize (qint64 low, qint64 high, int divswanted, qint64 &adj
 QBrush CPlotter::getFFTGradient(int w, int h)
 {
     QLinearGradient gradient(w/2, 0, w/2, h);
-    for (int i = 256; i > 0; i--)
+    for (int i = 255; i >= 0; i--)
     {
-        gradient.setColorAt(((256 - i) / 256.0f), QColor(m_ColorTbl[i])); // #0f2b4a
+        gradient.setColorAt(((255 - i) / 255.0f), QColor(m_ColorTbl[i]));
     }
     QBrush brush(gradient);
     return brush;
