@@ -3509,6 +3509,13 @@ and S-meter (dBm)</string>
                    </property>
                   </widget>
                  </item>
+                 <item row="14" column="4">
+                  <widget class="QCheckBox" name="colouredFFTCheckBox">
+                   <property name="text">
+                    <string>Coloured FFT</string>
+                   </property>
+                  </widget>
+                 </item>
                 </layout>
                </widget>
               </item>

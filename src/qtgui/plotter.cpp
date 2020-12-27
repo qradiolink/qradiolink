@@ -112,6 +112,7 @@ static inline quint64 time_ms(void)
     "Drag and scroll X and Y axes for pan and zoom. " \
     "Drag filter edges to adjust filter."
 
+
 CPlotter::CPlotter(QWidget *parent) : QFrame(parent)
 {
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -126,27 +127,8 @@ CPlotter::CPlotter(QWidget *parent) : QFrame(parent)
     setStatusTip(tr(STATUS_TIP));
 
     // default waterfall color scheme
-    for (int i = 0; i < 256; i++)
-    {
-        // level 0: black background
-        if (i < 20)
-            m_ColorTbl[i].setRgb(0, 0, 0);
-        // level 1: black -> blue
-        else if ((i >= 20) && (i < 70))
-            m_ColorTbl[i].setRgb(0, 0, 140*(i-20)/50);
-        // level 2: blue -> light-blue / greenish
-        else if ((i >= 70) && (i < 100))
-            m_ColorTbl[i].setRgb(60*(i-70)/30, 125*(i-70)/30, 115*(i-70)/30 + 140);
-        // level 3: light blue -> yellow
-        else if ((i >= 100) && (i < 150))
-            m_ColorTbl[i].setRgb(195*(i-100)/50 + 60, 130*(i-100)/50 + 125, 255-(255*(i-100)/50));
-        // level 4: yellow -> red
-        else if ((i >= 150) && (i < 250))
-            m_ColorTbl[i].setRgb(255, 255-255*(i-150)/100, 0);
-        // level 5: red -> white
-        else if (i >= 250)
-            m_ColorTbl[i].setRgb(255, 255*(i-250)/5, 255*(i-250)/5);
-    }
+    setWaterfallColorScheme();
+
 
     m_PeakHoldActive = false;
     m_PeakHoldValid = false;
@@ -202,6 +184,8 @@ CPlotter::CPlotter(QWidget *parent) : QFrame(parent)
 
     setFftPlotColor(QColor(0xFF,0xFF,0xFF,0xFF));
     setFftFill(false);
+    m_ColourFFT = false;
+
 
     // always update waterfall
     tlast_wf_ms = 0;
@@ -209,6 +193,31 @@ CPlotter::CPlotter(QWidget *parent) : QFrame(parent)
     wf_span = 0;
     fft_rate = 15;
     memset(m_wfbuf, 255, MAX_SCREENSIZE);
+}
+
+void CPlotter::setWaterfallColorScheme()
+{
+    for (int i = 0; i < 256; i++)
+    {
+        // level 0: black background
+        if (i < 20)
+            m_ColorTbl[i].setRgb(0, 0, 0);
+        // level 1: black -> blue
+        else if ((i >= 20) && (i < 70))
+            m_ColorTbl[i].setRgb(0, 0, 140*(i-20)/50);
+        // level 2: blue -> light-blue / greenish
+        else if ((i >= 70) && (i < 100))
+            m_ColorTbl[i].setRgb(60*(i-70)/30, 125*(i-70)/30, 115*(i-70)/30 + 140);
+        // level 3: light blue -> yellow
+        else if ((i >= 100) && (i < 150))
+            m_ColorTbl[i].setRgb(195*(i-100)/50 + 60, 130*(i-100)/50 + 125, 255-(255*(i-100)/50));
+        // level 4: yellow -> red
+        else if ((i >= 150) && (i < 250))
+            m_ColorTbl[i].setRgb(255, 255-255*(i-150)/100, 0);
+        // level 5: red -> white
+        else if (i >= 250)
+            m_ColorTbl[i].setRgb(255, 255*(i-250)/5, 255*(i-250)/5);
+    }
 }
 
 CPlotter::~CPlotter()
@@ -868,6 +877,7 @@ void CPlotter::resizeEvent(QResizeEvent* )
 
         m_Size = size();
         fft_plot_height = m_Percent2DScreen * m_Size.height() / 100;
+        m_fftBrush = getFFTGradient(m_Size.width(), fft_plot_height);
         m_OverlayPixmap = QPixmap(m_Size.width(), fft_plot_height);
         m_OverlayPixmap.fill(Qt::black);
         m_2DPixmap = QPixmap(m_Size.width(), fft_plot_height);
@@ -1050,7 +1060,10 @@ void CPlotter::draw()
 
         if (m_FftFill)
         {
-            painter2.setBrush(QBrush(m_FftFillCol, Qt::SolidPattern));
+            if(m_ColourFFT)
+                painter2.setBrush(m_fftBrush);
+            else
+                painter2.setBrush(QBrush(m_FftFillCol, Qt::SolidPattern));
             if (n < MAX_SCREENSIZE-2)
             {
                 LineBuf[n].setX(xmax-1);
@@ -1730,6 +1743,11 @@ void CPlotter::setFFTHistory(bool enabled)
     }
 }
 
+void CPlotter::setColourFFT(bool enabled)
+{
+    m_ColourFFT = enabled;
+}
+
 void CPlotter::calcDivSize (qint64 low, qint64 high, int divswanted, qint64 &adjlow, qint64 &step, int& divs)
 {
 #ifdef PLOTTER_DEBUG
@@ -1769,4 +1787,15 @@ void CPlotter::calcDivSize (qint64 low, qint64 high, int divswanted, qint64 &adj
     qDebug() << "step: " << step;
     qDebug() << "divs: " << divs;
 #endif
+}
+
+QBrush CPlotter::getFFTGradient(int w, int h)
+{
+    QLinearGradient gradient(w/2, 0, w/2, h);
+    for (int i = 256; i > 0; i--)
+    {
+        gradient.setColorAt(((256 - i) / 256.0f), QColor(m_ColorTbl[i])); // #0f2b4a
+    }
+    QBrush brush(gradient);
+    return brush;
 }

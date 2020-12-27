@@ -141,6 +141,7 @@ public slots:
     void setFftFill(bool enabled);
     void setPeakHold(bool enabled);
     void setFFTHistory(bool enabled);
+    void setColourFFT(bool enabled);
     void setFftRange(float min, float max);
     void setPandapterRange(float min, float max);
     void setWaterfallRange(float min, float max);
@@ -193,6 +194,8 @@ private:
                                  float *inBuf, qint32 *outBuf,
                                  qint32 *maxbin, qint32 *minbin);
     void calcDivSize (qint64 low, qint64 high, int divswanted, qint64 &adjlow, qint64 &step, int& divs);
+    QBrush getFFTGradient(int w, int h);
+    void setWaterfallColorScheme();
 
     bool        m_PeakHoldActive;
     bool        m_PeakHoldValid;
@@ -281,6 +284,8 @@ private:
     quint64     wf_span;            // waterfall span in milliseconds (0 = auto)
     int         fft_rate;           // expected FFT rate (needed when WF span is auto)
     QPoint      LineBuf[MAX_SCREENSIZE];
+    QBrush      m_fftBrush;
+    bool        m_ColourFFT;
 
 };
 

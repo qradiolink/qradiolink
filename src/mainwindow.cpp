@@ -137,6 +137,7 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     QObject::connect(ui->burstIPCheckBox,SIGNAL(toggled(bool)),this,SLOT(setBurstIPMode(bool)));
     QObject::connect(ui->nightModeCheckBox,SIGNAL(toggled(bool)),this,SLOT(setTheme(bool)));
     QObject::connect(ui->fftHistoryCheckBox,SIGNAL(toggled(bool)),this,SLOT(setFFTHistory(bool)));
+    QObject::connect(ui->colouredFFTCheckBox,SIGNAL(toggled(bool)),this,SLOT(setColouredFFT(bool)));
     QObject::connect(ui->remoteControlCheckBox,SIGNAL(toggled(bool)),
                      this,SLOT(setRemoteControl(bool)));
     QObject::connect(ui->muteForwardedAudioCheckBox,SIGNAL(toggled(bool)),
@@ -288,6 +289,7 @@ void MainWindow::initSettings()
     updateRSSI(9999);
     setEnabledFFT((bool)_settings->show_fft);
     setFFTHistory((bool)_settings->fft_history);
+    setColouredFFT((bool)_settings->coloured_fft);
     setEnabledDuplex((bool) _settings->enable_duplex);
     setAudioCompressor((bool) _settings->audio_compressor);
     ui->showConstellationButton->setChecked(_settings->show_constellation);
@@ -554,6 +556,7 @@ void MainWindow::setConfig()
     ui->remoteControlCheckBox->setChecked((bool)_settings->remote_control);
     ui->nightModeCheckBox->setChecked((bool)_settings->night_mode);
     ui->fftHistoryCheckBox->setChecked((bool)_settings->fft_history);
+    ui->colouredFFTCheckBox->setChecked((bool)_settings->coloured_fft);
     ui->muteForwardedAudioCheckBox->setChecked((bool)_settings->mute_forwarded_audio);
     ui->rssiCalibrateEdit->setText(QString::number(_settings->rssi_calibration_value));
     if(_settings->rx_ctcss > 0.0)
@@ -1617,6 +1620,12 @@ void MainWindow::setFFTHistory(bool value)
         ui->plotterFrame->setFftPlotColor(QColor(0x77CCCCCC));
     }
     _settings->fft_history = (int)value;
+}
+
+void MainWindow::setColouredFFT(bool value)
+{
+    ui->plotterFrame->setColourFFT(value);
+    _settings->coloured_fft = (int)value;
 }
 
 void MainWindow::updateRSSI(float value)

@@ -419,6 +419,14 @@ void Settings::readConfig()
     }
     try
     {
+        coloured_fft = cfg.lookup("coloured_fft");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        coloured_fft = 0;
+    }
+    try
+    {
         fft_size = cfg.lookup("fft_size");
     }
     catch(const libconfig::SettingNotFoundException &nfex)
@@ -675,6 +683,7 @@ void Settings::saveConfig()
     root.add("show_constellation",libconfig::Setting::TypeInt) = show_constellation;
     root.add("show_fft",libconfig::Setting::TypeInt) = show_fft;
     root.add("fft_history",libconfig::Setting::TypeInt) = fft_history;
+    root.add("coloured_fft",libconfig::Setting::TypeInt) = coloured_fft;
     root.add("enable_duplex",libconfig::Setting::TypeInt) = enable_duplex;
     root.add("fft_size",libconfig::Setting::TypeInt) = fft_size;
     root.add("fft_averaging",libconfig::Setting::TypeFloat) = fft_averaging;

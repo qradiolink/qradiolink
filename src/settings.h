@@ -73,6 +73,7 @@ public:
     int waterfall_fps;
     int show_fft;
     int fft_history;
+    int coloured_fft;
     int audio_compressor;
     int enable_relays;
     int mute_forwarded_audio;

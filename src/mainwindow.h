@@ -153,6 +153,7 @@ public slots:
     void setBurstIPMode(bool value);
     void setTheme(bool value);
     void setFFTHistory(bool value);
+    void setColouredFFT(bool value);
     void updateScanResumeTime(int value);
     void updateAudioOutput(int value);
     void updateAudioInput(int value);
