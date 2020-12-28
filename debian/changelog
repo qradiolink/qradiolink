@@ -1,3 +1,14 @@
+qradiolink (0.8.5-2) RELEASED; urgency=medium
+
+  [ Adrian Musceac ]
+  * Replaced some artwork not compatible with GPL3
+  * Added coloured FFT display option
+  * Fixed callsign display in Mumble
+
+
+ -- Adrian Musceac <kantooon@gmail.com>  Mon, 28 Dec 2020 15:28:00 +0300
+
+
 qradiolink (0.8.5-1) RELEASED; urgency=medium
 
   [ Adrian Musceac ]
