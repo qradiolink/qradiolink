@@ -132,11 +132,7 @@ void MumbleClient::authenticate()
 {
     emit textMessage("Authenticating\n", false);
     MumbleProto::Authenticate *auth = new MumbleProto::Authenticate;
-    int rand_len = 4;
-    char rand[4];
-    genRandomStr(rand,rand_len);
     QString username = _settings->callsign;
-    username += "-" + QString::fromLocal8Bit(rand, rand_len);
     auth->set_username(username.toStdString());
     auth->set_password(_settings->voip_password.toStdString());
     auth->set_opus(true);
