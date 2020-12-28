@@ -49,10 +49,9 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
     _rssi_block = make_rssi_block();
 
     _rotator = gr::blocks::rotator_cc::make(2*M_PI/1000000);
-    std::vector<float> taps;
     int tw = std::min(_samp_rate/4, 1500000);
-    taps = gr::filter::firdes::low_pass(1, _samp_rate, 500000, tw, gr::filter::firdes::WIN_HAMMING);
-    _resampler = gr::filter::rational_resampler_base_ccf::make(1, 1, taps);
+    _resampler = gr::filter::rational_resampler_base_ccf::make(1, 1,
+                gr::filter::firdes::low_pass(1, _samp_rate, 500000, tw, gr::filter::firdes::WIN_HAMMING));
 
     // FIXME: LimeSDR bandwidth set to higher value for lower freq
     _lime_specific = false;
