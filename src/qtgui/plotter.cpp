@@ -916,7 +916,7 @@ void CPlotter::resizeEvent(QResizeEvent* )
 void CPlotter::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
-
+    m_drawMutex.lock();
     painter.setOpacity(1.0);
     painter.drawPixmap(0, 0, m_2DPixmap);
     painter.setOpacity(0.75);
@@ -925,6 +925,7 @@ void CPlotter::paintEvent(QPaintEvent *)
     painter.setOpacity(1.0);
     painter.drawPixmap(0, m_Percent2DScreen * m_Size.height() / 100,
                        m_WaterfallPixmap);
+    m_drawMutex.unlock();
 }
 
 // Called to update spectrum data for displaying on the screen
