@@ -94,7 +94,7 @@ static inline bool out_of_range(float min, float max)
 {
     return (val_is_out_of_range(min, FFT_MIN_DB, FFT_MAX_DB) ||
             val_is_out_of_range(max, FFT_MIN_DB, FFT_MAX_DB) ||
-            max < min + 10.f);
+            max < min + 2.0f);
 }
 
 /** Current time in milliseconds since Epoch */
@@ -822,7 +822,7 @@ void CPlotter::wheelEvent(QWheelEvent * event)
         float db_per_pix = db_range / y_range;
         float fixed_db = m_PandMaxdB - pt.y() * db_per_pix;
 
-        db_range = qBound(10.f, db_range * zoom_fac, FFT_MAX_DB - FFT_MIN_DB);
+        db_range = qBound(2.0f, db_range * zoom_fac, FFT_MAX_DB - FFT_MIN_DB);
         m_PandMaxdB = fixed_db + ratio * db_range;
         if (m_PandMaxdB > FFT_MAX_DB)
             m_PandMaxdB = FFT_MAX_DB;
