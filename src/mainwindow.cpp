@@ -138,6 +138,7 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     QObject::connect(ui->nightModeCheckBox,SIGNAL(toggled(bool)),this,SLOT(setTheme(bool)));
     QObject::connect(ui->fftHistoryCheckBox,SIGNAL(toggled(bool)),this,SLOT(setFFTHistory(bool)));
     QObject::connect(ui->colouredFFTCheckBox,SIGNAL(toggled(bool)),this,SLOT(setColouredFFT(bool)));
+    QObject::connect(ui->waterfallAveragingCheckBox,SIGNAL(toggled(bool)),this,SLOT(setWaterfallAveraging(bool)));
     QObject::connect(ui->remoteControlCheckBox,SIGNAL(toggled(bool)),
                      this,SLOT(setRemoteControl(bool)));
     QObject::connect(ui->muteForwardedAudioCheckBox,SIGNAL(toggled(bool)),
@@ -290,6 +291,7 @@ void MainWindow::initSettings()
     setEnabledFFT((bool)_settings->show_fft);
     setFFTHistory((bool)_settings->fft_history);
     setColouredFFT((bool)_settings->coloured_fft);
+    setWaterfallAveraging((bool)_settings->wf_averaging);
     setEnabledDuplex((bool) _settings->enable_duplex);
     setAudioCompressor((bool) _settings->audio_compressor);
     ui->showConstellationButton->setChecked(_settings->show_constellation);
@@ -557,6 +559,7 @@ void MainWindow::setConfig()
     ui->nightModeCheckBox->setChecked((bool)_settings->night_mode);
     ui->fftHistoryCheckBox->setChecked((bool)_settings->fft_history);
     ui->colouredFFTCheckBox->setChecked((bool)_settings->coloured_fft);
+    ui->waterfallAveragingCheckBox->setChecked((bool)_settings->wf_averaging);
     ui->muteForwardedAudioCheckBox->setChecked((bool)_settings->mute_forwarded_audio);
     ui->rssiCalibrateEdit->setText(QString::number(_settings->rssi_calibration_value));
     if(_settings->rx_ctcss > 0.0)
@@ -937,12 +940,25 @@ void MainWindow::newFFTData(float *fft_data, int fftsize)
 
     for (int i = 0; i < fftsize; i++)
     {
-        _realFftData[i] = fft_data[i];
+
         /// FFT averaging
         if(_settings->fft_averaging < 0.99f)
-            _iirFftData[i] += _settings->fft_averaging * (_realFftData[i] - _iirFftData[i]);
+        {
+            _iirFftData[i] += _settings->fft_averaging * (fft_data[i] - _iirFftData[i]);
+        }
         else
-            _iirFftData[i] = _realFftData[i];
+        {
+            _iirFftData[i] = fft_data[i];
+        }
+        /// Waterfall averaging
+        if(! (bool)_settings->wf_averaging)
+        {
+            _realFftData[i] = fft_data[i];
+        }
+        else
+        {
+            _realFftData[i] = _iirFftData[i];
+        }
 
     }
     ui->plotterFrame->setNewFftData(_iirFftData, _realFftData, fftsize);
@@ -1626,6 +1642,11 @@ void MainWindow::setColouredFFT(bool value)
 {
     ui->plotterFrame->setColourFFT(value);
     _settings->coloured_fft = (int)value;
+}
+
+void MainWindow::setWaterfallAveraging(bool value)
+{
+    _settings->wf_averaging = (int) value;
 }
 
 void MainWindow::updateRSSI(float value)
