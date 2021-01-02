@@ -961,7 +961,9 @@ void MainWindow::newFFTData(float *fft_data, int fftsize)
         }
 
     }
-    ui->plotterFrame->setNewFftData(_iirFftData, _realFftData, fftsize);
+    //ui->plotterFrame->setNewFftData(_iirFftData, _realFftData, fftsize);
+
+    QtConcurrent::run(ui->plotterFrame, &CPlotter::setNewFftData, _iirFftData, _realFftData, fftsize);
 }
 
 

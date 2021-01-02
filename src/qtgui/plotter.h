@@ -128,6 +128,7 @@ signals:
     void newFilterFreq(qint64 low, qint64 high);  /* substitute for NewLow / NewHigh */
     void pandapterRangeChanged(float min, float max);
     void newZoomLevel(float level);
+    void updatePlotter();
 
 public slots:
     // zoom functions
@@ -286,6 +287,7 @@ private:
     QPoint      LineBuf[MAX_SCREENSIZE];
     QBrush      m_fftBrush;
     bool        m_ColourFFT;
+    QMutex      m_drawMutex;
 
 };
 

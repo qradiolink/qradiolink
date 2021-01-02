@@ -32,6 +32,7 @@
 #include <QToolTip>
 #include <QShortcut>
 #include <QAudioDeviceInfo>
+#include <QtConcurrent/QtConcurrent>
 #include <math.h>
 #include <complex>
 #include <libconfig.h++>

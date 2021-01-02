@@ -128,6 +128,7 @@ CPlotter::CPlotter(QWidget *parent) : QFrame(parent)
 
     // default waterfall color scheme
     setWaterfallColorScheme();
+    QObject::connect(this, SIGNAL(updatePlotter()), this, SLOT(update()), Qt::QueuedConnection);
 
 
     m_PeakHoldActive = false;
@@ -869,7 +870,7 @@ void CPlotter::resizeEvent(QResizeEvent* )
 {
     if (!size().isValid())
         return;
-
+    m_drawMutex.lock();
     if (m_Size != size())
     {
         // if changed, resize pixmaps to new screensize
@@ -908,6 +909,7 @@ void CPlotter::resizeEvent(QResizeEvent* )
     }
 
     drawOverlay();
+    m_drawMutex.unlock();
 }
 
 // Called by QT when screen needs to be redrawn
@@ -1172,7 +1174,7 @@ void CPlotter::draw()
     }
 
     // trigger a new paintEvent
-    update();
+    emit updatePlotter();
 }
 
 /**
@@ -1208,6 +1210,8 @@ void CPlotter::setNewFftData(float *fftData, int size)
 
 void CPlotter::setNewFftData(float *fftData, float *wfData, int size)
 {
+    if(!m_drawMutex.tryLock())
+        return;
     /** FIXME **/
     if (!m_Running)
         m_Running = true;
@@ -1217,6 +1221,7 @@ void CPlotter::setNewFftData(float *fftData, float *wfData, int size)
     m_fftDataSize = size;
 
     draw();
+    m_drawMutex.unlock();
 }
 
 void CPlotter::getScreenIntegerFFTData(qint32 plotHeight, qint32 plotWidth,
@@ -1492,7 +1497,7 @@ void CPlotter::drawOverlay()
         m_2DPixmap = m_OverlayPixmap.copy(0,0,w,h);
 
         // trigger a new paintEvent
-        update();
+        emit updatePlotter();
     }
 
     painter.end();
