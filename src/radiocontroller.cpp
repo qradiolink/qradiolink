@@ -78,6 +78,7 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     _text_transmit_on = false;
     _proto_transmit_on = false;
     _cw_tone = false;
+    _enable_rssi = true;
     _transmitting = false;
     _process_text = false;
     _process_data = false;
@@ -228,15 +229,16 @@ void RadioController::run()
             QtConcurrent::run(this, &RadioController::flushRadioToVoipBuffer);
         buffers_filling = processMixerQueue();
 
-        int time = QDateTime::currentDateTime().toTime_t();
-        if((time - last_channel_broadcast_time) > 30)
+        if(voip_forwarding && !transmitting && !ptt_activated &&
+                (_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL))
         {
-            last_channel_broadcast_time = time;
-            if(voip_forwarding && !transmitting && !ptt_activated &&
-                    (_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL))
+            int time = QDateTime::currentDateTime().toTime_t();
+            if((time - last_channel_broadcast_time) > 30)
             {
-                // FIXME: poke repeater to VOIP logic here
-                //transmitServerInfoBeacon();
+                last_channel_broadcast_time = time;
+
+                    // FIXME: poke repeater to VOIP logic here
+                    //transmitServerInfoBeacon();
             }
         }
 
@@ -1114,15 +1116,14 @@ bool RadioController::getDemodulatorData()
 void RadioController::getRSSI()
 {
     qint64 msec = (quint64)_rssi_read_timer->nsecsElapsed() / 1000000;
-    if(msec < _fft_poll_time)
+    if((msec < _fft_poll_time) || !_enable_rssi)
     {
         return;
     }
     float rssi = _modem->getRSSI();
     _rssi_read_timer->restart();
     _settings->rssi = rssi;
-    //if(!_settings->show_controls)
-    //    return;
+
     if(rssi < 99.0f)
         emit newRSSIValue(rssi);
 }
@@ -2416,6 +2417,7 @@ void RadioController::enableGUIConst(bool value)
 void RadioController::enableRSSI(bool value)
 {
     _modem->enableRSSI(value);
+    _enable_rssi = value;
 }
 
 void RadioController::enableGUIFFT(bool value)

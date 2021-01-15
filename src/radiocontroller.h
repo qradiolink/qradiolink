@@ -271,6 +271,7 @@ private:
     bool _text_transmit_on;
     bool _proto_transmit_on;
     bool _cw_tone;
+    bool _enable_rssi;
 
     int _rx_mode;
     int _tx_mode;
