@@ -1,21 +1,14 @@
 README
 ==========
 
-[![Packaging status](https://repology.org/badge/vertical-allrepos/qradiolink.svg)](https://repology.org/project/qradiolink/versions)
 
 About
 -----
 
 *QRadioLink* is a VOIP (radio over IP) GNU/Linux SDR (software defined radio) transceiver application using Internet protocols for communication,
 built on top of [GNU radio](https://www.gnuradio.org/), 
-which allows experimenting with software defined radio hardware using different digital and analog radio signals and a Qt5 user interface.
+which allows experimenting with some software defined radio hardware devices.
 
-Its primary purpose is educational, but it can also be customized for low power data communications on various ISM frequency bands.
-It can also be used as a low power amateur radio SDR transceiver for demonstrating radio communications to children at schools.
-
-The application was originally inspired from the [Codec2 GMSK modem](https://github.com/on1arf/gmsk) project by Kristoff Bonne.
-
-[![Screenshot](http://qradiolink.org/images/qradiolink73.png)](http://qradiolink.org)
 
 Supported hardware
 ---
@@ -118,12 +111,6 @@ Operation
 
 See docs/OPERATION.md
 
-**Important note to Pulseaudio users: please use the Pulseaudio provided sinks and sources in the configuration dropdown, not the default device (or pulse)**
-
-These audio sinks and sources should look like this:
-- alsa_input.pci-0000_04_00.6.analog-stereo
-- alsa_output.pci-0000_04_00.6.analog-stereo
-
 
 Known issues
 ----
@@ -134,7 +121,7 @@ Known issues
 
 Copyright and License
 -------------------
-- Most of the source code are released under the GNU General Public License version 3. Please see the COPYRIGHT and AUTHORS files for details.
+- The program is released under the GNU General Public License version 3. Please see the COPYRIGHT and AUTHORS files for details.
 - Parts of the code are licensed under the MIT license.
 - Parts of the code are licensed under the BSD license.
 - Some graphical resources are licensed under LGPLv3
