@@ -756,6 +756,32 @@ void MainWindow::addMemoryChannel()
     _new_mem_index++;
 }
 
+
+void MainWindow::updateMemoryChannel()
+{
+    int current_channel = _radio_channels->getCurrentChannel();
+    if(current_channel < 0)
+        return;
+    QVector<radiochannel*> *channels = _radio_channels->getChannels();
+    radiochannel *chan = channels->at(current_channel);
+    chan->rx_frequency = _settings->rx_frequency + _settings->demod_offset;
+    chan->tx_frequency = _settings->tx_frequency;
+    chan->tx_shift = _settings->tx_shift;
+    chan->rx_mode = _settings->rx_mode;
+    chan->tx_mode = _settings->tx_mode;
+    chan->squelch = _settings->squelch;
+    chan->rx_volume = _settings->rx_volume;
+    chan->tx_power = _settings->tx_power;
+    chan->rx_sensitivity = _settings->rx_sensitivity;
+    chan->rx_ctcss = _settings->rx_ctcss;
+    chan->tx_ctcss = _settings->tx_ctcss;
+}
+
+void MainWindow::clearMemoryChannel()
+{
+    _radio_channels->setCurrentChannel(-1);
+}
+
 void MainWindow::removeMemoryChannel()
 {
     QVector<radiochannel*> *channels = _radio_channels->getChannels();
@@ -794,6 +820,7 @@ void MainWindow::tuneToMemoryChannel(int row, int col)
     */
 
     QVector<radiochannel*> *channels = _radio_channels->getChannels();
+    _radio_channels->setCurrentChannel(row);
     radiochannel *chan = channels->at(row);
     tuneToMemoryChannel(chan);
 }

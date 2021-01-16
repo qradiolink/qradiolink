@@ -22,6 +22,7 @@ RadioChannels::RadioChannels(Logger *logger, QObject *parent) :
     _logger = logger;
     _memories_file = setupConfig();
     _channels = new QVector<radiochannel*>;
+    _current_channel = -1;
 }
 
 RadioChannels::~RadioChannels()
@@ -38,6 +39,16 @@ RadioChannels::~RadioChannels()
 QVector<radiochannel *> *RadioChannels::getChannels()
 {
     return _channels;
+}
+
+int RadioChannels::getCurrentChannel()
+{
+    return _current_channel;
+}
+
+void RadioChannels::setCurrentChannel(int channel_nr)
+{
+    _current_channel = channel_nr;
 }
 
 QFileInfo *RadioChannels::setupConfig()

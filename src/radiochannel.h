@@ -58,6 +58,8 @@ public:
     void readConfig();
     void saveConfig();
     QVector<radiochannel*>* getChannels();
+    int getCurrentChannel();
+    void setCurrentChannel(int channel_nr);
 
 signals:
 
@@ -67,6 +69,7 @@ private:
     Logger *_logger;
     QFileInfo *_memories_file;
     QVector<radiochannel*> *_channels;
+    int _current_channel;
 
 };
 

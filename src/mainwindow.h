@@ -176,6 +176,8 @@ public slots:
     void displayPageMessage(QString page_user, QString page_message);
     void updatePanadapterRange(float min, float max);
     void makeFullScreen();
+    void updateMemoryChannel();
+    void clearMemoryChannel();
 
 signals:
     void startTransmission();
