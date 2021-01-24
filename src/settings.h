@@ -102,6 +102,7 @@ public:
     long long lnb_lo_freq;
     float panadapter_min_db;
     float panadapter_max_db;
+    int gpredict_control;
 
     /// Not saved to config:
 

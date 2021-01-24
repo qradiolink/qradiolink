@@ -649,6 +649,14 @@ void Settings::readConfig()
     {
         panadapter_max_db = -30.0;
     }
+    try
+    {
+        gpredict_control = cfg.lookup("gpredict_control");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        gpredict_control = 0;
+    }
 
 }
 
@@ -722,6 +730,7 @@ void Settings::saveConfig()
     root.add("lnb_lo_freq",libconfig::Setting::TypeInt64) = lnb_lo_freq;
     root.add("panadapter_min_db",libconfig::Setting::TypeFloat) = panadapter_min_db;
     root.add("panadapter_max_db",libconfig::Setting::TypeFloat) = panadapter_max_db;
+    root.add("gpredict_control",libconfig::Setting::TypeInt) = gpredict_control;
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());

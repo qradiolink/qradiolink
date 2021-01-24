@@ -80,3 +80,4 @@ telnet localhost 4939
 qradiolink> help
 qradiolink> quit
 <pre>
+- GPredict radio tuning: early integration with GPredict satellite tracking allows it to control both RX and TX frequencies and compensate for the Doppler effect of sattelite passes. In order to enable it, you will need to also enable Remote Control, and then configure a new radio in GPredict (full duplex, with no PTT status support, same port as configured in QRadioLink for remote control, LO set to zero for both downlink and uplink). While GPredict control is active, you will not be able to issue normal remote control commands. Warning: this feature is still in early development. GPredict can issue tune request to unsupported frequencies if it is set to track a sattelite with no transponder, which can crash QRadioLink.

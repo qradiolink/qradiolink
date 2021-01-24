@@ -41,6 +41,7 @@ public:
     bool validateCommand(QString message);
     QString runCommand(QString message, bool mumble=false);
     void buildCommandList();
+    QString processGPredictMessages(QString message);
 
 signals:
     // FIXME: duplicates main window signals
@@ -140,6 +141,7 @@ private:
     bool processStatusCommands(int command_index, QString &response);
     bool processActionCommands(int command_index, QString &response,
                                QString param1, QString param2, QString param3);
+
 };
 
 #endif // COMMANDPROCESSOR_H

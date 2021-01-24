@@ -46,3 +46,4 @@ Features
 - USB FTDI (FT232) relay control support (for RF switches, power amplifier and filter control). Boards with up to 8 relays are supported.
 - Full duplex DQPSK 250 kbit/s and 4FSK 96 kbit/s IP radio modems with configurable TX/RX offsets
 - Automatic carrier tracking and Doppler effect correction for all digital modes except FreeDV modes. The system can track Doppler shifts of 5-10 kHz, depending on mode. It requires a CNR of at least 10-12 dB, more for FSK modes than for PSK modes. 
+- Experimental GPredict radio control integration.

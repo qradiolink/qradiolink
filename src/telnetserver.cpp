@@ -82,12 +82,15 @@ void TelnetServer::getConnection()
     if(socket->state() == QTcpSocket::ConnectedState)
     {
         _logger->log(Logger::LogLevelInfo, "Connection established");
-        QByteArray response;
-        response.append("Welcome! ");
-        getCommandList(response);
-        response.append("qradiolink> ");
-        socket->write(response);
-        socket->flush();
+        if(!_settings->gpredict_control)
+        {
+            QByteArray response;
+            response.append("Welcome! ");
+            getCommandList(response);
+            response.append("qradiolink> ");
+            socket->write(response);
+            socket->flush();
+        }
     }
 
     QObject::connect(socket,SIGNAL(error(QAbstractSocket::SocketError )),
@@ -165,9 +168,19 @@ void TelnetServer::processData()
     }
     _logger->log(Logger::LogLevelDebug, QString("Command message from %1 - %2").arg(
                      socket->peerAddress().toString()).arg(QString(data)));
+
     QByteArray response = processCommand(data, socket);
+
+    if(_settings->gpredict_control)
+    {
+        socket->write(response.data(),response.size());
+        socket->flush();
+        return;
+    }
+
     if(response == "EOF")
         return;
+
     response.append("qradiolink> ");
     if(response.length() > 0)
     {
@@ -190,6 +203,7 @@ void TelnetServer::getCommandList(QByteArray &response)
 
 QByteArray TelnetServer::processCommand(QByteArray data, QTcpSocket *socket)
 {
+
     /// sanity checks:
     if(data.length() > 1080) // not expecting novels
     {
@@ -208,6 +222,16 @@ QByteArray TelnetServer::processCommand(QByteArray data, QTcpSocket *socket)
     }
 
     QString message = QString::fromLocal8Bit(data);
+
+    /// GPredict control logic:
+    if(_settings->gpredict_control)
+    {
+        QString gpredict_result = command_processor->processGPredictMessages(message);
+        QByteArray response;
+        response.append(gpredict_result.toStdString().c_str());
+        return response;
+    }
+
     if(message == "\r\n")
     {
         QByteArray response("\n");
@@ -229,6 +253,8 @@ QByteArray TelnetServer::processCommand(QByteArray data, QTcpSocket *socket)
         getCommandList(response);
         return response;
     }
+
+
 
     /// poked processor logic:
 

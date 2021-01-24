@@ -141,6 +141,8 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     QObject::connect(ui->waterfallAveragingCheckBox,SIGNAL(toggled(bool)),this,SLOT(setWaterfallAveraging(bool)));
     QObject::connect(ui->remoteControlCheckBox,SIGNAL(toggled(bool)),
                      this,SLOT(setRemoteControl(bool)));
+    QObject::connect(ui->gpredictCheckBox,SIGNAL(toggled(bool)),
+                     this,SLOT(setGPredictControl(bool)));
     QObject::connect(ui->muteForwardedAudioCheckBox,SIGNAL(toggled(bool)),
                      this,SLOT(updateMuteForwardedAudio(bool)));
     QObject::connect(ui->totStopTxCheckBox,SIGNAL(toggled(bool)),
@@ -556,6 +558,7 @@ void MainWindow::setConfig()
     ui->checkBoxTxLimits->setChecked((bool)_settings->tx_band_limits);
     ui->burstIPCheckBox->setChecked((bool)_settings->burst_ip_modem);
     ui->remoteControlCheckBox->setChecked((bool)_settings->remote_control);
+    ui->gpredictCheckBox->setChecked((bool)_settings->gpredict_control);
     ui->nightModeCheckBox->setChecked((bool)_settings->night_mode);
     ui->fftHistoryCheckBox->setChecked((bool)_settings->fft_history);
     ui->colouredFFTCheckBox->setChecked((bool)_settings->coloured_fft);
@@ -619,7 +622,7 @@ void MainWindow::saveUiConfig()
     _settings->rx_mode = ui->rxModemTypeComboBox->currentIndex();
     _settings->tx_mode = ui->txModemTypeComboBox->currentIndex();
     _settings->ip_address = ui->lineEditIPaddress->text();
-    _settings->rx_sample_rate = (long long)(ui->sampleRateBox->currentText().toLongLong());
+    _settings->rx_sample_rate = (long long)(ui->sampleRateBox->currentText().toLong());
     _settings->fft_size = (ui->fftSizeBox->currentText().toInt());
     _settings->scan_step = (int)ui->lineEditScanStep->text().toInt();
     _settings->waterfall_fps = (int)ui->fpsBox->currentText().toInt();
@@ -638,7 +641,7 @@ void MainWindow::saveUiConfig()
     relay_sequence |= (int)ui->relay7CheckBox->isChecked() << 6;
     relay_sequence |= (int)ui->relay8CheckBox->isChecked() << 7;
     _settings->relay_sequence = relay_sequence;
-    _settings->lnb_lo_freq = (long long)(ui->lnbLOEdit->text().toLongLong() * 1000);
+    _settings->lnb_lo_freq = (long long)(ui->lnbLOEdit->text().toLong() * 1000);
     _settings->saveConfig();
 }
 
@@ -866,13 +869,13 @@ void MainWindow::editMemoryChannel(QTableWidgetItem* item)
     switch(col)
     {
     case 0:
-        chan->rx_frequency = (long long)(item->text().replace(",", "").toLongLong());
+        chan->rx_frequency = (long long)(item->text().replace(",", "").toLong());
         break;
     case 1:
         chan->name = item->text().toStdString();
         break;
     case 2:
-        chan->tx_shift = item->text().toLongLong() * 1000;
+        chan->tx_shift = item->text().toLong() * 1000;
         break;
     case 3:
         idx = _mode_list->indexOf(item->text());
@@ -1440,6 +1443,11 @@ void MainWindow::tuneMainFreq(qint64 freq)
     emit tuneTxFreq(freq);
 }
 
+void MainWindow::updateGUIFreq(qint64 freq)
+{
+    ui->frameCtrlFreq->setFrequency(freq + _settings->demod_offset + _settings->lnb_lo_freq);
+}
+
 
 // this happens on middle mouse click
 void MainWindow::tuneFreqPlotter(qint64 freq)
@@ -1461,7 +1469,7 @@ void MainWindow::carrierOffsetChanged(qint64 freq, qint64 offset)
 
 void MainWindow::enterFreq()
 {
-    long long new_freq = ui->frequencyEdit->text().toLongLong();
+    long long new_freq = ui->frequencyEdit->text().toLong();
     ui->frameCtrlFreq->setFrequency(new_freq * 1000);
     _settings->rx_frequency = new_freq * 1000 - _settings->demod_offset - _settings->lnb_lo_freq;
     emit tuneFreq(_settings->rx_frequency);
@@ -1469,13 +1477,13 @@ void MainWindow::enterFreq()
 
 void MainWindow::enterShift()
 {
-    _settings->tx_shift = ui->shiftEdit->text().toLongLong()*1000;
+    _settings->tx_shift = ui->shiftEdit->text().toLong()*1000;
     emit changeTxShift(_settings->tx_shift);
 }
 
 void MainWindow::calculateShiftFromTxFreq()
 {
-    long long actual_tx_freq = ui->txFrequencyEdit->text().toLongLong() * 1000;
+    long long actual_tx_freq = ui->txFrequencyEdit->text().toLong() * 1000;
     long long actual_rx_freq = _settings->rx_frequency + _settings->demod_offset + _settings->lnb_lo_freq;
     _settings->tx_shift = (actual_tx_freq - actual_rx_freq);
     ui->shiftEdit->setText(QString::number(_settings->tx_shift / 1000));
@@ -1802,6 +1810,11 @@ void MainWindow::setRemoteControl(bool value)
         emit enableRemote();
     else
         emit disableRemote();
+}
+
+void MainWindow::setGPredictControl(bool value)
+{
+    _settings->gpredict_control = (int) value;
 }
 
 void MainWindow::setRSSICalibration()

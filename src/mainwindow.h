@@ -178,6 +178,8 @@ public slots:
     void makeFullScreen();
     void updateMemoryChannel();
     void clearMemoryChannel();
+    void setGPredictControl(bool value);
+    void updateGUIFreq(qint64 freq);
 
 signals:
     void startTransmission();

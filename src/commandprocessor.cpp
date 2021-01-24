@@ -117,6 +117,48 @@ QStringList CommandProcessor::listAvailableCommands(bool mumble_text)
     return list;
 }
 
+QString CommandProcessor::processGPredictMessages(QString message)
+{
+    QStringList messages = message.split("\n", QString::SkipEmptyParts);
+
+    bool reply = false;
+    for(int i=0; i< messages.size();i++)
+    {
+        QString msg = messages.at(i);
+        if(msg.startsWith("f", Qt::CaseSensitive))
+        {
+            return QString("f: %1\n").arg(_settings->rx_frequency + _settings->demod_offset + _settings->lnb_lo_freq);
+        }
+        if(msg.startsWith("i", Qt::CaseSensitive))
+        {
+            return QString("i: %1\n").arg(_settings->tx_frequency + _settings->lnb_lo_freq);
+        }
+        if(msg.startsWith("F ", Qt::CaseSensitive))
+        {
+            QString freq_string = msg.mid(1).trimmed();
+            _logger->log(Logger::LogLevelDebug, QString("GPredict requested RX frequency %1").arg(freq_string));
+            qint64 freq = freq_string.toLong() - _settings->demod_offset - _settings->lnb_lo_freq;
+            emit tuneFreq(freq);
+            reply = true;
+        }
+        if(msg.startsWith("I ", Qt::CaseSensitive))
+        {
+            QString freq_string = msg.mid(1).trimmed();
+            _logger->log(Logger::LogLevelDebug, QString("GPredict requested TX frequency %1").arg(freq_string));
+            qint64 freq = freq_string.toLong() - _settings->lnb_lo_freq;
+            emit tuneTxFreq(freq);
+            reply = true;
+        }
+        if(msg.startsWith("S ", Qt::CaseSensitive))
+        {
+            return QString("RPRT 0\n");
+        }
+        if(reply)
+            return QString("RPRT 0\n");
+    }
+    return QString("RPRT 0\n");
+}
+
 QStringList CommandProcessor::getCommand(QString message, int &command_index)
 {
     command_index = -1;
@@ -538,7 +580,7 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
     }
     case 29:
     {
-        int set = param1.toLongLong();
+        int set = param1.toLong();
         if(set < 1)
         {
             response = "Parameter value is not supported";
@@ -557,7 +599,7 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
     }
     case 31:
     {
-        int set = param1.toLongLong();
+        int set = param1.toLong();
         if(set < -_settings->rx_sample_rate/2 || set > _settings->rx_sample_rate/2)
         {
             response = "Carrier offset must be less than rx_sample_rate/2";
@@ -571,7 +613,7 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
     }
     case 32:
     {
-        int set = param1.toLongLong();
+        int set = param1.toLong();
         response = QString("Setting TX shift to to %L1 Hz").arg(set);
         emit changeTxShift(set);
         break;
