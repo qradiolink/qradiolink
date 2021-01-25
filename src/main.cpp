@@ -224,8 +224,8 @@ void connectCommandSignals(TelnetServer *telnet_server, MumbleClient *mumbleclie
                      radio_op,SLOT(startScan(int, int)));
     QObject::connect(telnet_server->command_processor,SIGNAL(stopAutoTuneFreq()),
                      radio_op,SLOT(stopScan()));
-    QObject::connect(telnet_server->command_processor,SIGNAL(fineTuneFreq(long long)),radio_op,
-                     SLOT(fineTuneFreq(long long)));
+    QObject::connect(telnet_server->command_processor,SIGNAL(fineTuneFreq(long)),radio_op,
+                     SLOT(fineTuneFreq(long)));
     QObject::connect(telnet_server->command_processor,SIGNAL(setTxPower(int, std::string)),radio_op,
                      SLOT(setTxPower(int, std::string)));
     QObject::connect(telnet_server->command_processor,SIGNAL(setAgcAttack(int)),
@@ -330,7 +330,7 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
     QObject::connect(w,SIGNAL(stopAutoTuneFreq()),radio_op,SLOT(stopScan()));
     QObject::connect(w,SIGNAL(startMemoryTune(int)), radio_op,SLOT(startMemoryScan(int)));
     QObject::connect(w,SIGNAL(stopMemoryTune()),radio_op,SLOT(stopMemoryScan()));
-    QObject::connect(w,SIGNAL(fineTuneFreq(long long)),radio_op,SLOT(fineTuneFreq(long long)));
+    QObject::connect(w,SIGNAL(fineTuneFreq(long)),radio_op,SLOT(fineTuneFreq(long)));
     QObject::connect(w,SIGNAL(setTxPower(int, std::string)),
                      radio_op,SLOT(setTxPower(int, std::string)));
     QObject::connect(w,SIGNAL(setBbGain(int)),radio_op,SLOT(setBbGain(int)));
@@ -410,8 +410,8 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
                      w, SLOT(displayTransmitStatus(bool)));
     QObject::connect(radio_op, SIGNAL(displayDataReceiveStatus(bool)),
                      w, SLOT(displayDataReceiveStatus(bool)));
-    QObject::connect(radio_op, SIGNAL(freqToGUI(long long, long long)),
-                     w, SLOT(updateFreqGUI(long long, long long)));
+    QObject::connect(radio_op, SIGNAL(freqToGUI(long, long)),
+                     w, SLOT(updateFreqGUI(long, long)));
     QObject::connect(radio_op, SIGNAL(newFFTData(float*,int)),
                      w, SLOT(newFFTData(float*,int)));
     QObject::connect(radio_op, SIGNAL(newRSSIValue(float)), w, SLOT(updateRSSI(float)));

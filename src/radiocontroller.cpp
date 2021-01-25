@@ -2199,7 +2199,7 @@ void RadioController::toggleRepeat(bool value)
     }
 }
 
-void RadioController::fineTuneFreq(long long center_freq)
+void RadioController::fineTuneFreq(long center_freq)
 {
     _modem->setCarrierOffset(_settings->demod_offset + center_freq*_step_hz);
 }

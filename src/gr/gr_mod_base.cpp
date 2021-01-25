@@ -588,9 +588,16 @@ int gr_mod_base::set_audio(std::vector<float> *data)
 
 }
 
-void gr_mod_base::tune(long long center_freq)
+void gr_mod_base::set_carrier_offset(long carrier_offset)
 {
-    long long steps = center_freq / 1000000;
+    _carrier_offset = carrier_offset;
+    _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
+
+}
+
+void gr_mod_base::tune(long center_freq)
+{
+    long steps = center_freq / 1000000;
     _device_frequency = double(center_freq) + double(steps * _freq_correction);
     double tx_freq = _device_frequency - _carrier_offset;
     _osmosdr_sink->set_center_freq(tx_freq);
@@ -691,12 +698,6 @@ void gr_mod_base::set_cw_k(bool value)
     _signal_source->set_amplitude(a);
 }
 
-/// unused because of fixed sample rate
-void gr_mod_base::set_carrier_offset(long carrier_offset)
-{
-    _carrier_offset = carrier_offset;
-    _rotator->set_phase_inc(2*M_PI*-_carrier_offset/_samp_rate);
-}
 
 void gr_mod_base::flush_sources()
 {

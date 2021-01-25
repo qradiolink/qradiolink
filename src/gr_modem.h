@@ -82,8 +82,8 @@ public slots:
     void deinitRX(int modem_type);
     void toggleRxMode(int modem_type);
     void toggleTxMode(int modem_type);
-    void tune(long long center_freq);
-    void tuneTx(long long center_freq);
+    void tune(long center_freq);
+    void tuneTx(long center_freq);
     void startRX(int buffer_size=0);
     void stopRX();
     void startTX(int buffer_size=0);
@@ -106,8 +106,8 @@ public slots:
     void enableDemod(bool value);
     double getFreqGUI();
     void getFFTData(float *data, unsigned int &size);
-    void setCarrierOffset(long long offset);
-    void setTxCarrierOffset(long long offset);
+    void setCarrierOffset(long offset);
+    void setTxCarrierOffset(long offset);
     void setSampRate(int samp_rate);
     void setFFTSize(int size);
     float getRSSI();
@@ -142,7 +142,7 @@ private:
     int _last_frame_type;
     bool _sync_found;
     int _current_frame_type;
-    unsigned long long _shift_reg;
+    unsigned long _shift_reg;
     int _modem_sync;
 
 };

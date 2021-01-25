@@ -45,7 +45,7 @@ private:
     bool _sync_found;
     int _bit_buf_index;
     int _bit_buf_len;
-    unsigned long long _shift_reg;
+    unsigned long _shift_reg;
     unsigned int _offset;
     bool _finished;
     std::vector<unsigned char> *_data;

@@ -52,8 +52,8 @@ public:
     int voip_volume;
     float rx_ctcss;
     float tx_ctcss;
-    long long rx_frequency;
-    long long tx_shift;
+    long rx_frequency;
+    long tx_shift;
     QString callsign;
     QString video_device;
     QString voip_server;
@@ -62,8 +62,8 @@ public:
     int rx_mode;
     int tx_mode;
     QString ip_address;
-    long long demod_offset;
-    long long rx_sample_rate;
+    long demod_offset;
+    long rx_sample_rate;
     int scan_step;
     int show_controls;
     int show_constellation;
@@ -99,7 +99,7 @@ public:
     int window_width;
     int window_height;
     int relay_sequence;
-    long long lnb_lo_freq;
+    long lnb_lo_freq;
     float panadapter_min_db;
     float panadapter_max_db;
     int gpredict_control;

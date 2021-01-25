@@ -25,10 +25,10 @@ class Limits
 {
 public:
     Limits();
-    bool checkLimit(long long tx_freq);
+    bool checkLimit(long tx_freq);
 
 private:
-    std::vector<std::complex<long long>> _tx_limits;
+    std::vector<std::complex<long>> _tx_limits;
     std::string _allocation_name;
 };
 
