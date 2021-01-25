@@ -111,6 +111,7 @@ public:
     bool tx_inited;
     bool tx_started;
     qint64 tx_frequency;
+    qint64 tx_carrier_offset; // is changed by Doppler correction
     float rssi;
     bool voip_connected;
     bool vox_enabled;

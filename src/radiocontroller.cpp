@@ -2222,10 +2222,15 @@ void RadioController::tuneTxFreq(qint64 actual_freq)
 void RadioController::setCarrierOffset(qint64 offset)
 {
     _settings->demod_offset = offset;
-    /// we don't use carrier_offset for TX, fixed sample rate and carrier offset
     _modem->setCarrierOffset(offset);
 }
 
+void RadioController::setTxCarrierOffset(qint64 offset)
+{
+    _settings->tx_carrier_offset = offset;
+    /// we don't use carrier_offset for normal TX operation, fixed sample rate and carrier offset
+    _modem->setTxCarrierOffset(offset);
+}
 
 void RadioController::changeTxShift(qint64 shift_freq)
 {

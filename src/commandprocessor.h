@@ -77,6 +77,7 @@ signals:
 
     /// Tuning the radio
     void setCarrierOffset(qint64 offset);
+    void setTxCarrierOffset(qint64 offset);
     void tuneFreq(qint64 center_freq);
     void tuneTxFreq(qint64 freq);
     void changeTxShift(qint64 center_freq);

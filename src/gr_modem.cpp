@@ -376,7 +376,6 @@ void gr_modem::setCarrierOffset(long offset)
 
 void gr_modem::setTxCarrierOffset(long offset)
 {
-    // we don't use carrier_offset for TX, fixed sample rate
     if(_gr_mod_base)
         _gr_mod_base->set_carrier_offset(offset);
 }

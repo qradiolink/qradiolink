@@ -172,6 +172,7 @@ public slots:
     void setStations(StationList list);
     void setVox(bool value);
     void setCarrierOffset(qint64 offset);
+    void setTxCarrierOffset(qint64 offset);
     void setFFTSize(int size);
     void setFFTPollTime(int fps);
     void setRxSampleRate(int samp_rate);

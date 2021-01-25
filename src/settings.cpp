@@ -32,6 +32,7 @@ Settings::Settings(Logger *logger)
     repeater_enabled = false;
     current_voip_channel = -1;
     rssi = 0.0;
+    tx_carrier_offset = 50000;
 
     /// saved to config
     demod_offset = 0;

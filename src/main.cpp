@@ -262,6 +262,8 @@ void connectCommandSignals(TelnetServer *telnet_server, MumbleClient *mumbleclie
                      radio_op,SLOT(toggleRepeat(bool)));
     QObject::connect(telnet_server->command_processor,SIGNAL(setCarrierOffset(qint64)),
                      radio_op,SLOT(setCarrierOffset(qint64)));
+    QObject::connect(telnet_server->command_processor,SIGNAL(setTxCarrierOffset(qint64)),
+                     radio_op,SLOT(setTxCarrierOffset(qint64)));
     QObject::connect(telnet_server->command_processor,SIGNAL(newFFTSize(int)),
                      radio_op,SLOT(setFFTSize(int)));
     QObject::connect(telnet_server->command_processor,SIGNAL(setWaterfallFPS(int)),
