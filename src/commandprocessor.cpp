@@ -138,7 +138,8 @@ QString CommandProcessor::processGPredictMessages(QString message)
             QString freq_string = msg.mid(1).trimmed();
             _logger->log(Logger::LogLevelDebug, QString("GPredict requested RX frequency %1").arg(freq_string));
             qint64 freq = freq_string.toLong() - _settings->demod_offset - _settings->lnb_lo_freq;
-            emit tuneFreq(freq);
+            if(freq >= 50000000)
+                emit tuneFreq(freq);
             reply = true;
         }
         if(msg.startsWith("I ", Qt::CaseSensitive))
@@ -146,7 +147,8 @@ QString CommandProcessor::processGPredictMessages(QString message)
             QString freq_string = msg.mid(1).trimmed();
             _logger->log(Logger::LogLevelDebug, QString("GPredict requested TX frequency %1").arg(freq_string));
             qint64 freq = freq_string.toLong() - _settings->lnb_lo_freq;
-            emit tuneTxFreq(freq);
+            if(freq >= 50000000)
+                emit tuneTxFreq(freq);
             reply = true;
         }
         if(msg.startsWith("S ", Qt::CaseSensitive))
