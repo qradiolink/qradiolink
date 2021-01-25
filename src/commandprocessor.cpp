@@ -138,7 +138,7 @@ QString CommandProcessor::processGPredictMessages(QString message)
             QString freq_string = msg.mid(1).trimmed();
             _logger->log(Logger::LogLevelDebug, QString("GPredict requested RX frequency %1").arg(freq_string));
             qint64 freq = freq_string.toLong() - _settings->demod_offset - _settings->lnb_lo_freq;
-            if(freq >= 50000000)
+            if(freq >= 28000000)
                 emit tuneFreq(freq);
             reply = true;
         }
@@ -147,7 +147,7 @@ QString CommandProcessor::processGPredictMessages(QString message)
             QString freq_string = msg.mid(1).trimmed();
             _logger->log(Logger::LogLevelDebug, QString("GPredict requested TX frequency %1").arg(freq_string));
             qint64 freq = freq_string.toLong() - _settings->lnb_lo_freq;
-            if(freq >= 50000000)
+            if(freq >= 28000000)
                 emit tuneTxFreq(freq);
             reply = true;
         }
