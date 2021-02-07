@@ -57,7 +57,7 @@ public slots:
     void start(int buffer_size=0);
     void stop();
     int set_data(std::vector<u_int8_t> *data);
-    void tune(long center_freq);
+    void tune(int64_t center_freq);
     void set_power(float value, std::string gain_stage="");
     void set_filter_width(int filter_width, int mode);
     void set_ctcss(float value);
@@ -65,7 +65,7 @@ public slots:
     int set_audio(std::vector<float> *data);
     void set_bb_gain(float value);
     void set_cw_k(bool value);
-    void set_carrier_offset(long carrier_offset);
+    void set_carrier_offset(int64_t carrier_offset);
     void flush_sources();
     const QMap<std::string,QVector<int>> get_gain_names() const;
     void set_samp_rate(int samp_rate);

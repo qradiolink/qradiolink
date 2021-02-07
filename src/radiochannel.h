@@ -33,9 +33,9 @@ struct radiochannel
         tx_shift(0), rx_mode(0), tx_mode(0), squelch(0), rx_volume(0),
         tx_power(0), rx_sensitivity(0),rx_ctcss(0), tx_ctcss(0), name(""), skip(0) {}
     int id;
-    long rx_frequency;
-    long tx_frequency;
-    long tx_shift;
+    int64_t rx_frequency;
+    int64_t tx_frequency;
+    int64_t tx_shift;
     int rx_mode;
     int tx_mode;
     int squelch;

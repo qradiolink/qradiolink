@@ -339,13 +339,13 @@ double gr_modem::getFreqGUI()
     return 0;
 }
 
-void gr_modem::tune(long center_freq)
+void gr_modem::tune(int64_t center_freq)
 {
     if(_gr_demod_base)
         _gr_demod_base->tune(center_freq);
 }
 
-void gr_modem::tuneTx(long center_freq)
+void gr_modem::tuneTx(int64_t center_freq)
 {
     if(_gr_mod_base)
     {
@@ -368,13 +368,13 @@ void gr_modem::tuneTx(long center_freq)
     }
 }
 
-void gr_modem::setCarrierOffset(long offset)
+void gr_modem::setCarrierOffset(int64_t offset)
 {
     if(_gr_demod_base)
         _gr_demod_base->set_carrier_offset(offset);
 }
 
-void gr_modem::setTxCarrierOffset(long offset)
+void gr_modem::setTxCarrierOffset(int64_t offset)
 {
     if(_gr_mod_base)
         _gr_mod_base->set_carrier_offset(offset);

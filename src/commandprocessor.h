@@ -81,7 +81,7 @@ signals:
     void tuneFreq(qint64 center_freq);
     void tuneTxFreq(qint64 freq);
     void changeTxShift(qint64 center_freq);
-    void fineTuneFreq(long center_freq);
+    void fineTuneFreq(int64_t center_freq);
 
     /// Transmit
     void startTransmission();

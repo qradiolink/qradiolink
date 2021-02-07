@@ -588,16 +588,16 @@ int gr_mod_base::set_audio(std::vector<float> *data)
 
 }
 
-void gr_mod_base::set_carrier_offset(long carrier_offset)
+void gr_mod_base::set_carrier_offset(int64_t carrier_offset)
 {
     _carrier_offset = carrier_offset;
     _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
 
 }
 
-void gr_mod_base::tune(long center_freq)
+void gr_mod_base::tune(int64_t center_freq)
 {
-    long steps = center_freq / 1000000;
+    int64_t steps = center_freq / 1000000;
     _device_frequency = double(center_freq) + double(steps * _freq_correction);
     double tx_freq = _device_frequency - _carrier_offset;
     _osmosdr_sink->set_center_freq(tx_freq);

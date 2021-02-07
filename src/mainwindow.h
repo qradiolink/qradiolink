@@ -103,7 +103,7 @@ public slots:
     void updateMemories();
     void mainTabChanged(int value);
     void clearTextArea();
-    void updateFreqGUI(long center_freq, long carrier_offset);
+    void updateFreqGUI(int64_t center_freq, int64_t carrier_offset);
     void enterShift();
     void updateRxCTCSS(int value);
     void updateTxCTCSS(int value);
@@ -190,7 +190,7 @@ signals:
     void tuneFreq(qint64 center_freq);
     void tuneTxFreq(qint64 freq);
     void changeTxShift(qint64 center_freq);
-    void fineTuneFreq(long center_freq);
+    void fineTuneFreq(int64_t center_freq);
     void toggleWidebandMode(bool value);
     void toggleRxModemMode(int value);
     void toggleTxModemMode(int value);

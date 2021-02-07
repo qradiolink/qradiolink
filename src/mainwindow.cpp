@@ -622,7 +622,7 @@ void MainWindow::saveUiConfig()
     _settings->rx_mode = ui->rxModemTypeComboBox->currentIndex();
     _settings->tx_mode = ui->txModemTypeComboBox->currentIndex();
     _settings->ip_address = ui->lineEditIPaddress->text();
-    _settings->rx_sample_rate = (long)(ui->sampleRateBox->currentText().toLong());
+    _settings->rx_sample_rate = (int64_t)(ui->sampleRateBox->currentText().toLong());
     _settings->fft_size = (ui->fftSizeBox->currentText().toInt());
     _settings->scan_step = (int)ui->lineEditScanStep->text().toInt();
     _settings->waterfall_fps = (int)ui->fpsBox->currentText().toInt();
@@ -641,7 +641,7 @@ void MainWindow::saveUiConfig()
     relay_sequence |= (int)ui->relay7CheckBox->isChecked() << 6;
     relay_sequence |= (int)ui->relay8CheckBox->isChecked() << 7;
     _settings->relay_sequence = relay_sequence;
-    _settings->lnb_lo_freq = (long)(ui->lnbLOEdit->text().toLong() * 1000);
+    _settings->lnb_lo_freq = (int64_t)(ui->lnbLOEdit->text().toLong() * 1000);
     _settings->saveConfig();
 }
 
@@ -869,7 +869,7 @@ void MainWindow::editMemoryChannel(QTableWidgetItem* item)
     switch(col)
     {
     case 0:
-        chan->rx_frequency = (long)(item->text().replace(",", "").toLong());
+        chan->rx_frequency = (int64_t)(item->text().replace(",", "").toLong());
         break;
     case 1:
         chan->name = item->text().toStdString();
@@ -1411,7 +1411,7 @@ void MainWindow::toggleRepeater(bool value)
 
 void MainWindow::toggleReverseShift(bool value)
 {
-    long freq = _settings->rx_frequency + _settings->demod_offset + _settings->tx_shift;
+    int64_t freq = _settings->rx_frequency + _settings->demod_offset + _settings->tx_shift;
     ui->frameCtrlFreq->setFrequency(freq, false);
     ui->plotterFrame->setCenterFreq(_settings->rx_frequency + _settings->tx_shift);
     ui->plotterFrame->setDemodCenterFreq(freq);
@@ -1469,7 +1469,7 @@ void MainWindow::carrierOffsetChanged(qint64 freq, qint64 offset)
 
 void MainWindow::enterFreq()
 {
-    long new_freq = ui->frequencyEdit->text().toLong();
+    int64_t new_freq = ui->frequencyEdit->text().toLong();
     ui->frameCtrlFreq->setFrequency(new_freq * 1000);
     _settings->rx_frequency = new_freq * 1000 - _settings->demod_offset - _settings->lnb_lo_freq;
     emit tuneFreq(_settings->rx_frequency);
@@ -1483,8 +1483,8 @@ void MainWindow::enterShift()
 
 void MainWindow::calculateShiftFromTxFreq()
 {
-    long actual_tx_freq = ui->txFrequencyEdit->text().toLong() * 1000;
-    long actual_rx_freq = _settings->rx_frequency + _settings->demod_offset + _settings->lnb_lo_freq;
+    int64_t actual_tx_freq = ui->txFrequencyEdit->text().toLong() * 1000;
+    int64_t actual_rx_freq = _settings->rx_frequency + _settings->demod_offset + _settings->lnb_lo_freq;
     _settings->tx_shift = (actual_tx_freq - actual_rx_freq);
     ui->shiftEdit->setText(QString::number(_settings->tx_shift / 1000));
     emit changeTxShift(_settings->tx_shift);
@@ -1616,7 +1616,7 @@ void MainWindow::mainTabChanged(int value)
     Q_UNUSED(value);
 }
 
-void MainWindow::updateFreqGUI(long center_freq, long carrier_offset)
+void MainWindow::updateFreqGUI(int64_t center_freq, int64_t carrier_offset)
 {
     // Lots of signals flowing around
     _settings->demod_offset = carrier_offset;

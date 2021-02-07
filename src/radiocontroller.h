@@ -88,7 +88,7 @@ signals:
     void videoImage(QImage img);
     void endAudio(int secs);
     void startAudio();
-    void freqToGUI(long center_freq, long carrier_offset);
+    void freqToGUI(int64_t center_freq, int64_t carrier_offset);
     void voipDataPCM(short *pcm, int samples);
     void voipDataOpus(unsigned char *pcm, int packet_size);
     void newFFTData(float*, int);
@@ -131,7 +131,7 @@ public slots:
     void toggleTX(bool value);
     void toggleRxMode(int value);
     void toggleTxMode(int value);
-    void fineTuneFreq(long center_freq);
+    void fineTuneFreq(int64_t center_freq);
     void tuneFreq(qint64 center_freq);
     void tuneTxFreq(qint64 actual_freq);
     void changeTxShift(qint64 shift_freq);
@@ -278,8 +278,8 @@ private:
     int _tx_mode;
     int _rx_radio_type;
     int _tx_radio_type;
-    long _tx_frequency;
-    long _autotune_freq;
+    int64_t _tx_frequency;
+    int64_t _autotune_freq;
     int _step_hz;
     int _scan_step_hz;
     int _tune_limit_lower;
