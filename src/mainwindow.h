@@ -180,6 +180,8 @@ public slots:
     void clearMemoryChannel();
     void setGPredictControl(bool value);
     void updateGUIFreq(qint64 freq);
+    void tuneDopplerRxFreq(qint64 freq_delta);
+    void tuneDopplerTxFreq(qint64 freq_delta);
 
 signals:
     void startTransmission();
@@ -249,6 +251,7 @@ signals:
     void setTotTxEnd(bool value);
     void setTxLimits(bool value);
     void pageUser(QString user, QString text);
+    void setTxCarrierOffset(qint64 offset);
 
 public:
     explicit MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_channels, QWidget *parent = 0);

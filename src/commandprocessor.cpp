@@ -25,6 +25,7 @@ CommandProcessor::CommandProcessor(const Settings *settings, Logger *logger,
     _command_list = new QVector<command*>;
     buildCommandList();
     _mode_list = new QVector<QString>;
+    _gpredict_controller = new GPredictControl(settings, logger);
     _radio_channels = radio_channels;
     buildModeList(_mode_list);
 }
@@ -39,6 +40,7 @@ CommandProcessor::~CommandProcessor()
     delete _command_list;
     _mode_list->clear();
     delete _mode_list;
+    delete _gpredict_controller;
 }
 
 
@@ -119,6 +121,35 @@ QStringList CommandProcessor::listAvailableCommands(bool mumble_text)
 
 QString CommandProcessor::processGPredictMessages(QString message)
 {
+    int action = GPredictControl::RadioAction::NoAction;
+    qint64 rx_freq = 0;
+    qint64 tx_freq = 0;
+    qint64 rx_freq_delta = 0;
+    qint64 tx_freq_delta = 0;
+    QString ret_msg = _gpredict_controller->processMessages(message, action, rx_freq, tx_freq,
+                                                 rx_freq_delta, tx_freq_delta);
+    switch(action)
+    {
+    case GPredictControl::RadioAction::TuneRX:
+        emit tuneFreq(rx_freq);
+        break;
+    case GPredictControl::RadioAction::TuneTX:
+        emit tuneTxFreq(tx_freq);
+        break;
+    case GPredictControl::RadioAction::OffsetRX:
+        emit tuneDopplerRxFreq(rx_freq_delta);
+        break;
+    case GPredictControl::RadioAction::OffsetTX:
+        //emit tuneDopplerTxFreq(tx_freq_delta);
+        break;
+    case GPredictControl::RadioAction::NoAction:
+        break;
+    default:
+        break;
+    }
+    return ret_msg;
+
+
     QStringList messages = message.split("\n", QString::SkipEmptyParts);
 
     bool reply = false;
@@ -137,9 +168,19 @@ QString CommandProcessor::processGPredictMessages(QString message)
         {
             QString freq_string = msg.mid(1).trimmed();
             _logger->log(Logger::LogLevelDebug, QString("GPredict requested RX frequency %1").arg(freq_string));
-            qint64 freq = freq_string.toLong() - _settings->demod_offset - _settings->lnb_lo_freq;
-            if(freq >= 28000000)
-                emit tuneFreq(freq);
+            qint64 local_freq = _settings->rx_frequency + _settings->demod_offset + _settings->lnb_lo_freq;
+            qint64 new_freq = freq_string.toLong();
+            qint64 freq_delta = new_freq - local_freq;
+            if(std::abs(freq_delta) > 50000)
+            {
+                qint64 freq = new_freq - _settings->demod_offset - _settings->lnb_lo_freq;
+                if(freq >= 28000000)
+                    emit tuneFreq(freq);
+            }
+            else
+            {
+                emit tuneDopplerRxFreq(freq_delta);
+            }
             reply = true;
         }
         if(msg.startsWith("I ", Qt::CaseSensitive))

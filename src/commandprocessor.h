@@ -28,6 +28,7 @@
 #include "settings.h"
 #include "logger.h"
 #include "radiochannel.h"
+#include "gpredictcontrol.h"
 #include "ext/utils.h"
 
 class CommandProcessor : public QObject
@@ -115,8 +116,10 @@ signals:
     void enableGUIFFT(bool value);
     void enableRSSI(bool value);
     void enableGUIConst(bool value);
-    void newFFTSize(int);
-    void setWaterfallFPS(int);
+    void newFFTSize(int value);
+    void setWaterfallFPS(int value);
+    void tuneDopplerRxFreq(qint64 freq_delta);
+    void tuneDopplerTxFreq(qint64 tx_freq_delta);
 
 
 public slots:
@@ -137,6 +140,7 @@ private:
     QVector<command*> *_command_list;
     QVector<QString> *_mode_list;
     RadioChannels *_radio_channels;
+    GPredictControl *_gpredict_controller;
 
     QStringList getCommand(QString message, int &command_index);
     bool processStatusCommands(int command_index, QString &response);

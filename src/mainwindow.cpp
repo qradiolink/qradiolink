@@ -1443,6 +1443,26 @@ void MainWindow::tuneMainFreq(qint64 freq)
     emit tuneTxFreq(freq);
 }
 
+void MainWindow::tuneDopplerRxFreq(qint64 freq_delta)
+{
+
+    ui->tuneDial->setValue(0);
+    /// rx_frequency is the center frequency of the source
+    _settings->demod_offset = _settings->demod_offset + freq_delta;
+    /// tx_frequency is the actual frequency
+    ui->plotterFrame->setFilterOffset(_settings->demod_offset);
+    ui->frameCtrlFreq->setFrequency(_settings->rx_frequency + _settings->demod_offset + _settings->lnb_lo_freq, false);
+    ui->frequencyEdit->setText(QString::number((_settings->rx_frequency +
+                                                _settings->demod_offset + _settings->lnb_lo_freq)/1000));
+    emit setCarrierOffset(_settings->demod_offset);
+}
+
+void MainWindow::tuneDopplerTxFreq(qint64 freq_delta)
+{
+    _settings->tx_carrier_offset = _settings->tx_carrier_offset + freq_delta;
+    emit setTxCarrierOffset(_settings->tx_carrier_offset);
+}
+
 void MainWindow::updateGUIFreq(qint64 freq)
 {
     ui->frameCtrlFreq->setFrequency(freq + _settings->demod_offset + _settings->lnb_lo_freq);
