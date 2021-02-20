@@ -1,3 +1,19 @@
+// Written by Adrian Musceac YO8RZZ , started Jan 2021.
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License as
+// published by the Free Software Foundation; either version 3 of the
+// License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 #include "gpredictcontrol.h"
 
 GPredictControl::GPredictControl(const Settings* settings, Logger *logger,  QObject *parent) : QObject(parent)
@@ -32,8 +48,11 @@ QString GPredictControl::processMessages(QString message, int &action, qint64 &r
             _logger->log(Logger::LogLevelDebug, QString("GPredict requested RX frequency %1").arg(freq_string));
             qint64 local_freq = _settings->rx_frequency + _settings->demod_offset + _settings->lnb_lo_freq;
             qint64 new_freq = freq_string.toLong();
-            qint64 freq_delta = new_freq - local_freq;
-            if(std::abs(freq_delta) > 50000)
+            qint64 new_freq_delta = _last_rx_frequency - new_freq;
+            qint64 local_freq_delta = new_freq - local_freq;
+            _last_rx_frequency = new_freq;
+
+            if(std::abs(local_freq_delta) > 50000)
             {
                 qint64 freq = new_freq - _settings->demod_offset - _settings->lnb_lo_freq;
                 if(freq >= 28000000)
@@ -42,10 +61,15 @@ QString GPredictControl::processMessages(QString message, int &action, qint64 &r
                     rx_freq = freq;
                 }
             }
+            else if(std::abs(new_freq_delta) > 50000)
+            {
+                action = RadioAction::OffsetRX;
+                rx_freq_delta = local_freq_delta;
+            }
             else
             {
                 action = RadioAction::OffsetRX;
-                rx_freq_delta = freq_delta;
+                rx_freq_delta = new_freq_delta;
             }
             reply = true;
         }
