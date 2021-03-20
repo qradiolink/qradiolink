@@ -915,8 +915,8 @@ void CPlotter::resizeEvent(QResizeEvent* )
 // Called by QT when screen needs to be redrawn
 void CPlotter::paintEvent(QPaintEvent *)
 {
-    QPainter painter(this);
     m_drawMutex.lock();
+    QPainter painter(this);
     painter.setOpacity(1.0);
     painter.drawPixmap(0, 0, m_2DPixmap);
     painter.setOpacity(0.75);
