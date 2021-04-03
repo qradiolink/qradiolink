@@ -376,7 +376,9 @@ void CPlotter::mouseMoveEvent(QMouseEvent* event)
                 if (m_Running)
                     m_DrawOverlay = true;
                 else
+                {
                     drawOverlay();
+                }
 
                 m_PeakHoldValid = false;
 
@@ -430,7 +432,9 @@ void CPlotter::mouseMoveEvent(QMouseEvent* event)
                 if (m_Running)
                     m_DrawOverlay = true;
                 else
+                {
                     drawOverlay();
+                }
             }
             else
             {
@@ -907,9 +911,9 @@ void CPlotter::resizeEvent(QResizeEvent* )
             msec_per_wfline = wf_span / height;
         memset(m_wfbuf, 255, MAX_SCREENSIZE);
     }
-
-    drawOverlay();
     m_drawMutex.unlock();
+    drawOverlay();
+
 }
 
 // Called by QT when screen needs to be redrawn
@@ -938,7 +942,9 @@ void CPlotter::draw()
 
     if (m_DrawOverlay)
     {
+        m_drawMutex.unlock();
         drawOverlay();
+        m_drawMutex.lock();
         m_DrawOverlay = false;
     }
 
@@ -1354,7 +1360,7 @@ void CPlotter::drawOverlay()
 {
     if (m_OverlayPixmap.isNull())
         return;
-
+    m_drawMutex.lock();
     qint64     w = m_OverlayPixmap.width();
     qint64     h = m_OverlayPixmap.height();
     qint64     x,y;
@@ -1368,7 +1374,7 @@ void CPlotter::drawOverlay()
     painter.setRenderHint(QPainter::HighQualityAntialiasing);
 
     if(!painter.isActive())
-        painter.begin(this);
+        painter.begin(&m_OverlayPixmap);
     painter.setFont(m_Font);
 
     painter.setBrush(Qt::SolidPattern);
@@ -1502,6 +1508,7 @@ void CPlotter::drawOverlay()
     }
 
     painter.end();
+    m_drawMutex.unlock();
 }
 
 // Create frequency division strings based on start frequency, span frequency,
@@ -1663,7 +1670,9 @@ void CPlotter::updateOverlay()
     if (m_Running)
         m_DrawOverlay = true;
     else
+    {
         drawOverlay();
+    }
 }
 
 /** Reset horizontal zoom to 100% and centered around 0. */
