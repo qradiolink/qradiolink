@@ -139,6 +139,7 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     QObject::connect(ui->fftHistoryCheckBox,SIGNAL(toggled(bool)),this,SLOT(setFFTHistory(bool)));
     QObject::connect(ui->colouredFFTCheckBox,SIGNAL(toggled(bool)),this,SLOT(setColouredFFT(bool)));
     QObject::connect(ui->waterfallAveragingCheckBox,SIGNAL(toggled(bool)),this,SLOT(setWaterfallAveraging(bool)));
+    QObject::connect(ui->drawConstellationEyeCheckBox,SIGNAL(toggled(bool)),this,SLOT(setDrawConstellationEye(bool)));
     QObject::connect(ui->remoteControlCheckBox,SIGNAL(toggled(bool)),
                      this,SLOT(setRemoteControl(bool)));
     QObject::connect(ui->gpredictCheckBox,SIGNAL(toggled(bool)),
@@ -294,6 +295,7 @@ void MainWindow::initSettings()
     setFFTHistory((bool)_settings->fft_history);
     setColouredFFT((bool)_settings->coloured_fft);
     setWaterfallAveraging((bool)_settings->wf_averaging);
+    setDrawConstellationEye((bool)_settings->draw_constellation_eye);
     setEnabledDuplex((bool) _settings->enable_duplex);
     setAudioCompressor((bool) _settings->audio_compressor);
     ui->showConstellationButton->setChecked(_settings->show_constellation);
@@ -563,6 +565,7 @@ void MainWindow::setConfig()
     ui->fftHistoryCheckBox->setChecked((bool)_settings->fft_history);
     ui->colouredFFTCheckBox->setChecked((bool)_settings->coloured_fft);
     ui->waterfallAveragingCheckBox->setChecked((bool)_settings->wf_averaging);
+    ui->drawConstellationEyeCheckBox->setChecked((bool)_settings->draw_constellation_eye);
     ui->muteForwardedAudioCheckBox->setChecked((bool)_settings->mute_forwarded_audio);
     ui->rssiCalibrateEdit->setText(QString::number(_settings->rssi_calibration_value));
     if(_settings->rx_ctcss > 0.0)
@@ -1025,6 +1028,13 @@ void MainWindow::updateConstellation(complex_vector *constellation_data)
     _mutex.lock();
     _constellation_img->fill(QColor("transparent"));
     QPen pen(QColor(0,255,0,255), 4, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen_green(QColor(0,255,0,255), 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen_red(QColor(255,0,0,125), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen_blue(QColor(0,0,255,255), 4, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QList<QPen> pen_list;
+    pen_list.append(pen_red);
+    pen_list.append(pen_green);
+    pen_list.append(pen_blue);
     QPen pen2(QColor(180,180,180,180), 1, Qt::SolidLine, Qt::SquareCap, Qt::RoundJoin);
 
     _constellation_painter->begin(_constellation_img);
@@ -1033,12 +1043,25 @@ void MainWindow::updateConstellation(complex_vector *constellation_data)
     _constellation_painter->drawLine(150, 0, 150, 300);
     _constellation_painter->drawLine(0, 150, 300, 150);
     _constellation_painter->setPen(pen);
+    std::complex<float> prev_pt(0.0, 0.0);
     for(int i = 0;i < (int)constellation_data->size();i++)
     {
+        _constellation_painter->setPen(pen_green);
         std::complex<float> pt = constellation_data->at(i);
         int x = (int)(floor((std::min(pt.real(), 2.0f) * 75)) + 150);
         int y = (int)(floor((std::min(pt.imag(), 2.0f) * 75)) + 150);
         _constellation_painter->drawPoint(x, y);
+        if(_settings->draw_constellation_eye)
+        {
+            if((prev_pt.real() != 0.0) && (prev_pt.imag() != 0.0))
+            {
+                _constellation_painter->setPen(pen_red);
+                int x1 = (int)(floor((std::min(prev_pt.real(), 2.0f) * 75)) + 150);
+                int y1 = (int)(floor((std::min(prev_pt.imag(), 2.0f) * 75)) + 150);
+                _constellation_painter->drawLine(x, y, x1, y1);
+            }
+            prev_pt = pt;
+        }
     }
     _constellation_painter->end();
 
@@ -1704,6 +1727,11 @@ void MainWindow::setColouredFFT(bool value)
 void MainWindow::setWaterfallAveraging(bool value)
 {
     _settings->wf_averaging = (int) value;
+}
+
+void MainWindow::setDrawConstellationEye(bool value)
+{
+    _settings->draw_constellation_eye = (int) value;
 }
 
 void MainWindow::updateRSSI(float value)

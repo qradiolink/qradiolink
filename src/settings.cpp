@@ -452,6 +452,14 @@ void Settings::readConfig()
     }
     try
     {
+        draw_constellation_eye = cfg.lookup("draw_constellation_eye");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        draw_constellation_eye = 0;
+    }
+    try
+    {
         waterfall_fps = cfg.lookup("waterfall_fps");
     }
     catch(const libconfig::SettingNotFoundException &nfex)
@@ -705,6 +713,7 @@ void Settings::saveConfig()
     root.add("fft_size",libconfig::Setting::TypeInt) = fft_size;
     root.add("fft_averaging",libconfig::Setting::TypeFloat) = fft_averaging;
     root.add("wf_averaging",libconfig::Setting::TypeInt) = wf_averaging;
+    root.add("draw_constellation_eye",libconfig::Setting::TypeInt) = draw_constellation_eye;
     root.add("waterfall_fps",libconfig::Setting::TypeInt) = waterfall_fps;
     root.add("audio_compressor",libconfig::Setting::TypeInt) = audio_compressor;
     root.add("enable_relays",libconfig::Setting::TypeInt) = enable_relays;

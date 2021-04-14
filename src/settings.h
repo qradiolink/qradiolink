@@ -71,6 +71,7 @@ public:
     int fft_size;
     float fft_averaging;
     int wf_averaging;
+    int draw_constellation_eye;
     int waterfall_fps;
     int show_fft;
     int fft_history;

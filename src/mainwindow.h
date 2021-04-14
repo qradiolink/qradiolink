@@ -156,6 +156,7 @@ public slots:
     void setFFTHistory(bool value);
     void setColouredFFT(bool value);
     void setWaterfallAveraging(bool value);
+    void setDrawConstellationEye(bool value);
     void updateScanResumeTime(int value);
     void updateAudioOutput(int value);
     void updateAudioInput(int value);
