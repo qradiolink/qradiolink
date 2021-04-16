@@ -166,9 +166,10 @@ int AudioProcessor::read_preprocess(short *buf, int bufsize, bool preprocess, in
 float AudioProcessor::calc_audio_power(short *buf, short samples)
 {
     float power = 0.0;
+    float volume = 1e-3*exp(((float)_settings->tx_volume/50.0)*6.908);
     for (int i = 0; i < samples; i++)
     {
-        float a = abs(((float)buf[i]) / 32768.0f);
+        float a = abs(((float)buf[i] * volume) / 32768.0f);
         power += a * a;
     }
     float mag_squared_average = sqrt(power / ((float) samples));

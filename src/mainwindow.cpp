@@ -231,7 +231,7 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
 
     _video_img = new QPixmap;
     _constellation_img = new QPixmap(300,300);
-    _vu_meter_img = new QPixmap(100,10);
+    _vu_meter_img = new QPixmap(300,20);
     _realFftData = new float[1048576];
     _iirFftData = new float[1048576];
     _s_meter_bg = new QPixmap(":/res/s-meter-bg-black-small.png");
@@ -1075,8 +1075,13 @@ void MainWindow::updateConstellation(complex_vector *constellation_data)
 
 void MainWindow::displayAudioLevel(float level)
 {
-    int pixels = (int)level + 50;
-    _constellation_img->fill(QColor("transparent"));
+    int pixels = ((int)level + 50) * 6;
+    _vu_meter_img->fill(QColor("transparent"));
+    QPainter painter(_vu_meter_img);
+    painter.setBrush(QBrush(QColor("#009900"), Qt::SolidPattern));
+    painter.drawRect(QRect(0, 0, pixels, 20));
+    painter.end();
+    ui->vuMeterLabel->setPixmap(*_vu_meter_img);
 }
 
 void MainWindow::displayText(QString text, bool html)

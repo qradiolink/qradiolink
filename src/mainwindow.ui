@@ -3537,6 +3537,38 @@ and S-meter (dBm)</string>
                    </property>
                   </widget>
                  </item>
+                 <item row="12" column="1">
+                  <widget class="QLabel" name="vuMeterLabel">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>300</width>
+                     <height>10</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>300</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="12" column="0">
+                  <widget class="QLabel" name="label_19">
+                   <property name="text">
+                    <string>Audio level meter</string>
+                   </property>
+                  </widget>
+                 </item>
                 </layout>
                </widget>
               </item>
