@@ -105,6 +105,7 @@ void AudioReader::run()
                 short *audiobuffer = new short[_audiobuffer_size/sizeof(short)];
                 memcpy(audiobuffer, (short*)_buffer->data(), _audiobuffer_size);
                 int vad = processor->read_preprocess(audiobuffer, _audiobuffer_size, preprocess, audio_mode);
+                emit audioLevel(processor->audio_level);
                 emit audioPCM(audiobuffer, _audiobuffer_size, vad, false);
                 _buffer->remove(0, _audiobuffer_size);
                 struct timespec time_to_sleep = {0, sleep_time - 1000000L };

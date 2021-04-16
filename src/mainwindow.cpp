@@ -231,6 +231,7 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
 
     _video_img = new QPixmap;
     _constellation_img = new QPixmap(300,300);
+    _vu_meter_img = new QPixmap(100,10);
     _realFftData = new float[1048576];
     _iirFftData = new float[1048576];
     _s_meter_bg = new QPixmap(":/res/s-meter-bg-black-small.png");
@@ -359,6 +360,7 @@ MainWindow::~MainWindow()
     if(_constellation_painter->isActive())
         _constellation_painter->end();
     delete _constellation_img;
+    delete _vu_meter_img;
     delete _constellation_painter;
     delete[] _realFftData;
     delete[] _iirFftData;
@@ -1069,6 +1071,12 @@ void MainWindow::updateConstellation(complex_vector *constellation_data)
     _mutex.unlock();
     constellation_data->clear();
     delete constellation_data;
+}
+
+void MainWindow::displayAudioLevel(float level)
+{
+    int pixels = (int)level + 50;
+    _constellation_img->fill(QColor("transparent"));
 }
 
 void MainWindow::displayText(QString text, bool html)

@@ -52,6 +52,7 @@ public:
 
     void filter_audio(short *audiobuffer, int audiobuffersize,
                       bool pre_emphasis=false, bool de_emphasis=false, int mode=0);
+    float audio_level;
 
 signals:
 

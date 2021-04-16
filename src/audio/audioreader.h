@@ -34,6 +34,7 @@ public:
 signals:
     void finished();
     void audioPCM(short *pcm, int bytes, int vad, bool radio_only);
+    void audioLevel(float level);
 
 public slots:
     void run();

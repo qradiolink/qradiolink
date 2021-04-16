@@ -74,6 +74,7 @@ public slots:
     void chooseFile();
     void displayText(QString text, bool html);
     void displayVOIPText(QString text, bool html);
+    void displayAudioLevel(float level);
     void applicationLog(QString msg);
     void displayCallsign(QString callsign);
     void displayReceiveStatus(bool status);
@@ -275,6 +276,7 @@ private:
     RadioChannels *_radio_channels;
     QPixmap *_video_img;
     QPixmap *_constellation_img;
+    QPixmap *_vu_meter_img;
     QFileInfo *_config_file;
     QPainter *_constellation_painter;
     QPixmap *_s_meter_bg;

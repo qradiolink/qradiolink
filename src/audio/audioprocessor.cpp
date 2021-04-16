@@ -20,6 +20,7 @@ AudioProcessor::AudioProcessor(const Settings *settings, QObject *parent) : QObj
 {
     _settings = settings;
     _error=0;
+    audio_level = 0.0f;
     /*
     _speex_preprocess = speex_preprocess_state_init(320, 8000);
 
@@ -170,7 +171,10 @@ float AudioProcessor::calc_audio_power(short *buf, short samples)
         float a = abs(((float)buf[i]) / 32768.0f);
         power += a * a;
     }
-    float rms = 32768.0f * sqrt(power / ((float) samples));
+    float mag_squared_average = sqrt(power / ((float) samples));
+    float rms = 32768.0f * mag_squared_average;
+    float log_power = std::max(-50.0f, std::min(10.0f * log10(mag_squared_average), 0.0f));
+    audio_level = log_power;
     return rms;
 }
 
