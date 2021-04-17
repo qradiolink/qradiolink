@@ -174,7 +174,8 @@ float AudioProcessor::calc_audio_power(short *buf, short samples)
     }
     float mag_squared_average = sqrt(power / ((float) samples));
     float rms = 32768.0f * mag_squared_average;
-    float log_power = std::max(-50.0f, std::min(10.0f * log10(mag_squared_average), 0.0f));
+    // https://ccrma.stanford.edu/~jos/st/VU_Meters_DBu_ScaleF_3.html
+    float log_power = std::max(-100.0f, std::min(20.0f * log10(mag_squared_average/0.775f), 20.0f));
     audio_level = log_power;
     return rms;
 }

@@ -1075,11 +1075,15 @@ void MainWindow::updateConstellation(complex_vector *constellation_data)
 
 void MainWindow::displayAudioLevel(float level)
 {
-    int pixels = ((int)level + 50) * 6;
+    int full_scale = (((int)level + 100) * 25) / 10;
+    int red_zone = std::max((full_scale - 220), 0);
+    int green_zone = std::min(full_scale, 220);
     _vu_meter_img->fill(QColor("transparent"));
     QPainter painter(_vu_meter_img);
     painter.setBrush(QBrush(QColor("#009900"), Qt::SolidPattern));
-    painter.drawRect(QRect(0, 0, pixels, 20));
+    painter.drawRect(QRect(0, 0, green_zone, 20));
+    painter.setBrush(QBrush(QColor("#990000"), Qt::SolidPattern));
+    painter.drawRect(QRect(220, 0, red_zone, 20));
     painter.end();
     ui->vuMeterLabel->setPixmap(*_vu_meter_img);
 }
