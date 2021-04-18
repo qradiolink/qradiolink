@@ -1048,7 +1048,7 @@ void MainWindow::updateConstellation(complex_vector *constellation_data)
     std::complex<float> prev_pt(0.0, 0.0);
     for(int i = 0;i < (int)constellation_data->size();i++)
     {
-        _constellation_painter->setPen(pen_green);
+        _constellation_painter->setPen(pen);
         std::complex<float> pt = constellation_data->at(i);
         int x = (int)(floor((std::min(pt.real(), 2.0f) * 75)) + 150);
         int y = (int)(floor((std::min(pt.imag(), 2.0f) * 75)) + 150);
