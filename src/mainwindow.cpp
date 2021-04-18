@@ -1075,6 +1075,9 @@ void MainWindow::updateConstellation(complex_vector *constellation_data)
 
 void MainWindow::displayAudioLevel(float level)
 {
+    if(!ui->vuMeterLabel->isVisible())
+        return;
+
     int full_scale = (((int)level + 100) * 25) / 10;
     int red_zone = std::max((full_scale - 220), 0);
     int green_zone = std::min(full_scale, 220);
