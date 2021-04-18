@@ -21,6 +21,8 @@ AudioProcessor::AudioProcessor(const Settings *settings, QObject *parent) : QObj
     _settings = settings;
     _error=0;
     audio_level = 0.0f;
+    _mag_squared_sum = 0.0f;
+    _sample_count = 0;
     /*
     _speex_preprocess = speex_preprocess_state_init(320, 8000);
 
@@ -171,12 +173,24 @@ float AudioProcessor::calc_audio_power(short *buf, short samples)
     {
         float a = abs(((float)buf[i] * volume) / 32768.0f);
         power += a * a;
+        _mag_squared_sum += a * a;
     }
+    _sample_count += samples;
     float mag_squared_average = sqrt(power / ((float) samples));
     float rms = 32768.0f * mag_squared_average;
-    // https://ccrma.stanford.edu/~jos/st/VU_Meters_DBu_ScaleF_3.html
-    float log_power = std::max(-100.0f, std::min(20.0f * log10(mag_squared_average/0.775f), 20.0f));
-    audio_level = log_power;
+    if(_sample_count >= 960)
+    {
+        // https://ccrma.stanford.edu/~jos/st/VU_Meters_DBu_ScaleF_3.html
+        float average = sqrt(_mag_squared_sum / ((float) _sample_count));
+        float log_power = std::max(-100.0f, std::min(20.0f * log10(average/0.775f), 20.0f));
+        audio_level = log_power;
+        _mag_squared_sum = 0.0f;
+        _sample_count = 0;
+    }
+    else
+    {
+        audio_level = 10000.0f;
+    }
     return rms;
 }
 

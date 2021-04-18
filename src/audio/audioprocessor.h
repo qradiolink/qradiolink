@@ -75,6 +75,8 @@ private:
     Filter *_audio_filter2_700;
     double _emph_last_input;
     int _error;
+    float _mag_squared_sum;
+    int _sample_count;
 };
 
 #endif // AUDIOPROCESSOR_H
