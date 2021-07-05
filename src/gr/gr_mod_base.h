@@ -30,8 +30,8 @@
 #include <gnuradio/constants.h>
 #include <gnuradio/analog/sig_source.h>
 #include <gnuradio/blocks/copy.h>
+#include <gnuradio/zeromq/pull_source.h>
 #include <gnuradio/filter/rational_resampler_base.h>
-#include <gnuradio/blocks/udp_source.h>
 #include <osmosdr/sink.h>
 #include "src/modem_types.h"
 #include "gr_byte_source.h"
@@ -80,7 +80,7 @@ private:
     gr::blocks::rotator_cc::sptr _rotator;
     gr::analog::sig_source_f::sptr _signal_source;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
-    gr::blocks::udp_source::sptr _udp_source;
+    gr::zeromq::pull_source::sptr _zmq_source;
 
     gr_mod_2fsk_sptr _2fsk_2k_fm;
     gr_mod_2fsk_sptr _2fsk_1k_fm;

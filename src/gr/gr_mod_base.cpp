@@ -57,7 +57,7 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
     _top_block->connect(_rotator,0,_osmosdr_sink,0);
 
     _signal_source = gr::analog::sig_source_f::make(8000, gr::analog::GR_SIN_WAVE, 600, 0.001, 1);
-    _udp_source = gr::blocks::udp_source::make(sizeof(int16_t), "127.0.0.1", 5990, 1472, false);
+    _zmq_source = gr::zeromq::pull_source::make(sizeof(short), 1, "tcp://127.0.0.1:5990");
 
 
     int tw = std::min(_samp_rate/4, 1500000);
@@ -331,7 +331,7 @@ void gr_mod_base::set_mode(int mode)
         _top_block->disconnect(_freedv_tx800XA_lsb,0,_rotator,0);
         break;
     case gr_modem_types::ModemTypeMMDVM:
-        _top_block->disconnect(_udp_source,0,_mmdvm_mod,0);
+        _top_block->disconnect(_zmq_source,0,_mmdvm_mod,0);
         _top_block->disconnect(_mmdvm_mod,0,_rotator,0);
         break;
     default:
@@ -560,7 +560,7 @@ void gr_mod_base::set_mode(int mode)
     case gr_modem_types::ModemTypeMMDVM:
         _carrier_offset = 50000;
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
-        _top_block->connect(_udp_source,0,_mmdvm_mod,0);
+        _top_block->connect(_zmq_source,0,_mmdvm_mod,0);
         _top_block->connect(_mmdvm_mod,0,_rotator,0);
         break;
     default:

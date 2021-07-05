@@ -219,7 +219,7 @@ HEADERS  += src/mainwindow.h\
 FORMS    += src/mainwindow.ui
 
 
-LIBS += -lgnuradio-pmt -lgnuradio-analog -lgnuradio-fft -lgnuradio-vocoder \
+LIBS += -lgnuradio-pmt -lgnuradio-analog -lgnuradio-fft -lgnuradio-vocoder -lgnuradio-zeromq \
         -lgnuradio-osmosdr -lvolk \
         -lgnuradio-blocks -lgnuradio-filter -lgnuradio-digital -lgnuradio-runtime -lgnuradio-fec \
         -lboost_system$$BOOST_SUFFIX
