@@ -57,6 +57,8 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
     _top_block->connect(_rotator,0,_osmosdr_sink,0);
 
     _signal_source = gr::analog::sig_source_f::make(8000, gr::analog::GR_SIN_WAVE, 600, 0.001, 1);
+    _udp_source = gr::blocks::udp_source::make(sizeof(int16_t), "127.0.0.1", 5990, 1472, false);
+
 
     int tw = std::min(_samp_rate/4, 1500000);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1, 1,
@@ -108,6 +110,7 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
 
     _freedv_tx800XA_lsb = make_gr_mod_freedv(125, 1000000, 1700, 2500, 200,
                                                  gr::vocoder::freedv_api::MODE_800XA, 1);
+    _mmdvm_mod = make_gr_mod_mmdvm();
 
 }
 
@@ -326,6 +329,10 @@ void gr_mod_base::set_mode(int mode)
     case gr_modem_types::ModemTypeFREEDV800XALSB:
         _top_block->disconnect(_audio_source,0,_freedv_tx800XA_lsb,0);
         _top_block->disconnect(_freedv_tx800XA_lsb,0,_rotator,0);
+        break;
+    case gr_modem_types::ModemTypeMMDVM:
+        _top_block->disconnect(_udp_source,0,_mmdvm_mod,0);
+        _top_block->disconnect(_mmdvm_mod,0,_rotator,0);
         break;
     default:
         break;
@@ -550,6 +557,12 @@ void gr_mod_base::set_mode(int mode)
         _top_block->connect(_audio_source,0,_freedv_tx800XA_lsb,0);
         _top_block->connect(_freedv_tx800XA_lsb,0,_rotator,0);
         break;
+    case gr_modem_types::ModemTypeMMDVM:
+        _carrier_offset = 50000;
+        _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
+        _top_block->connect(_udp_source,0,_mmdvm_mod,0);
+        _top_block->connect(_mmdvm_mod,0,_rotator,0);
+        break;
     default:
         break;
     }
@@ -686,6 +699,7 @@ void gr_mod_base::set_bb_gain(float value)
     _freedv_tx700C_lsb->set_bb_gain(value);
     _freedv_tx800XA_usb->set_bb_gain(value);
     _freedv_tx800XA_lsb->set_bb_gain(value);
+    _mmdvm_mod->set_bb_gain(value);
 }
 
 void gr_mod_base::set_cw_k(bool value)

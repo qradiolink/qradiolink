@@ -1978,6 +1978,12 @@ void RadioController::toggleRxMode(int value)
         _step_hz = 5;
         _scan_step_hz = 500;
         break;
+    case 32:
+        _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
+        _rx_mode = gr_modem_types::ModemTypeNBFM5000;
+        _step_hz = 10;
+        _scan_step_hz = 6250;
+        break;
     default:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _rx_mode = gr_modem_types::ModemTypeUSB2500;
@@ -2130,6 +2136,9 @@ void RadioController::toggleTxMode(int value)
         break;
     case 31:
         _tx_mode = gr_modem_types::ModemTypeBPSK8;
+        break;
+    case 32:
+        _tx_mode = gr_modem_types::ModemTypeMMDVM;
         break;
     default:
         _tx_mode = gr_modem_types::ModemTypeBPSK2K;

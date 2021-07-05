@@ -39,6 +39,7 @@ namespace gr_modem_types {
         ModemTypeFREEDV700DLSB,
         ModemTypeFREEDV800XALSB,
         ModemTypeFREEDV2400ALSB,
+        ModemTypeMMDVM,
     };
 }
 

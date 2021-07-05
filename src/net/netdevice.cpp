@@ -1,4 +1,5 @@
 // Written by Adrian Musceac YO8RZZ , started March 2016.
+// based on https://www.kernel.org/doc/html/latest/networking/tuntap.html
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License as

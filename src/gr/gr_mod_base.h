@@ -31,6 +31,7 @@
 #include <gnuradio/analog/sig_source.h>
 #include <gnuradio/blocks/copy.h>
 #include <gnuradio/filter/rational_resampler_base.h>
+#include <gnuradio/blocks/udp_source.h>
 #include <osmosdr/sink.h>
 #include "src/modem_types.h"
 #include "gr_byte_source.h"
@@ -44,6 +45,7 @@
 #include "gr_mod_ssb.h"
 #include "gr_mod_freedv.h"
 #include "gr_mod_dsss.h"
+#include "gr_mod_mmdvm.h"
 
 
 class gr_mod_base : public QObject
@@ -78,6 +80,7 @@ private:
     gr::blocks::rotator_cc::sptr _rotator;
     gr::analog::sig_source_f::sptr _signal_source;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
+    gr::blocks::udp_source::sptr _udp_source;
 
     gr_mod_2fsk_sptr _2fsk_2k_fm;
     gr_mod_2fsk_sptr _2fsk_1k_fm;
@@ -111,6 +114,8 @@ private:
     gr_mod_freedv_sptr _freedv_tx700D_lsb;
     gr_mod_freedv_sptr _freedv_tx800XA_usb;
     gr_mod_freedv_sptr _freedv_tx800XA_lsb;
+    gr_mod_mmdvm_sptr _mmdvm_mod;
+
 
     int _samples_per_symbol;
     int _samp_rate;

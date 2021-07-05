@@ -44,6 +44,7 @@ CONFIG(qtaudio) {
 
 SOURCES += src/main.cpp\
     src/gpredictcontrol.cpp \
+    src/gr/gr_mod_mmdvm.cpp \
         src/mainwindow.cpp\
         src/audio/audioencoder.cpp\
         src/audio/audioprocessor.cpp \
@@ -123,6 +124,7 @@ HEADERS  += src/mainwindow.h\
         src/audio/audioencoder.h\
         src/audio/audioprocessor.h \
     src/gpredictcontrol.h \
+    src/gr/gr_mod_mmdvm.h \
         src/video/videoencoder.h \
         src/video/imagecapture.h \
         src/layer2.h \
