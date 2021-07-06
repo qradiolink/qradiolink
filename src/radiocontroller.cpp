@@ -1021,6 +1021,8 @@ void RadioController::endTx()
 
 void RadioController::radioTimeout()
 {
+    if(_tx_mode == gr_modem_types::ModemTypeMMDVM)
+        return;
     QString time= QDateTime::currentDateTime().toString("d/MMM/yyyy hh:mm:ss");
     emit printText("<br/><b>" + time +
                    "</b> <font color=\"#77FF77\">Radio timeout</font><br/>\n",true);
