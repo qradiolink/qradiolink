@@ -61,7 +61,6 @@ gr_demod_nbfm::gr_demod_nbfm(std::vector<int>signature, int sps, int samp_rate, 
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::band_pass_2(
                     1, 8000, 300, 3500, 200, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
-    _float_to_short = gr::blocks::float_to_short::make();
 
 
     connect(self(),0,_resampler,0);

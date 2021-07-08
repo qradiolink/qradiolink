@@ -36,7 +36,7 @@ gr_mod_mmdvm::gr_mod_mmdvm(int sps, int samp_rate, int carrier_freq,
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
 
-    _short_to_float = gr::blocks::short_to_float::make(1, 32768.0);
+    _short_to_float = gr::blocks::short_to_float::make(1, 32767.0);
     _fm_modulator = gr::analog::frequency_modulator_fc::make(4*M_PI*_filter_width/target_samp_rate);
     _audio_amplify = gr::blocks::multiply_const_ff::make(0.9,1);
 

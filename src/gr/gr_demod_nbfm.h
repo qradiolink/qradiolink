@@ -27,7 +27,6 @@
 #include <gnuradio/analog/ctcss_squelch_ff.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/filter/fft_filter_fff.h>
-#include <gnuradio/blocks/float_to_short.h>
 #include <gnuradio/blocks/multiply_const.h>
 #include <gnuradio/filter/iir_filter_ffd.h>
 #include "emphasis.h"
@@ -51,7 +50,6 @@ public:
 
 
 private:
-    gr::blocks::float_to_short::sptr _float_to_short;
     gr::analog::quadrature_demod_cf::sptr _fm_demod;
     gr::filter::iir_filter_ffd::sptr _de_emph_filter;
     gr::analog::pwr_squelch_cc::sptr _squelch;
