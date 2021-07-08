@@ -1982,7 +1982,7 @@ void RadioController::toggleRxMode(int value)
         break;
     case 32:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
-        _rx_mode = gr_modem_types::ModemTypeNBFM5000;
+        _rx_mode = gr_modem_types::ModemTypeMMDVM;
         _step_hz = 10;
         _scan_step_hz = 6250;
         break;

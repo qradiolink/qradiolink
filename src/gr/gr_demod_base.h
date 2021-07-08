@@ -32,6 +32,7 @@
 #include <gnuradio/blocks/rotator_cc.h>
 #include <gnuradio/blocks/message_debug.h>
 #include <gnuradio/blocks/probe_signal.h>
+#include <gnuradio/zeromq/push_sink.h>
 #include <gnuradio/constants.h>
 #include <osmosdr/source.h>
 #include <vector>
@@ -50,6 +51,7 @@
 #include "gr_demod_wbfm.h"
 #include "gr_demod_freedv.h"
 #include "gr_demod_dsss.h"
+#include "gr_demod_mmdvm.h"
 #include "src/modem_types.h"
 #include "rssi_block.h"
 
@@ -109,6 +111,7 @@ private:
 
     gr::blocks::rotator_cc::sptr _rotator;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
+    gr::zeromq::push_sink::sptr _zeromq_sink;
 
     rssi_block_sptr _rssi_block;
     gr_deframer_bb_sptr _deframer1;
@@ -149,6 +152,7 @@ private:
     gr_demod_freedv_sptr _freedv_rx700C_lsb;
     gr_demod_freedv_sptr _freedv_rx700D_lsb;
     gr_demod_freedv_sptr _freedv_rx800XA_lsb;
+    gr_demod_mmdvm_sptr _mmdvm_demod;
 
     osmosdr::source::sptr _osmosdr_source;
 

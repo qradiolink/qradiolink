@@ -1,3 +1,19 @@
+// Written by Adrian Musceac YO8RZZ , started July 2021.
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License as
+// published by the Free Software Foundation; either version 3 of the
+// License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 #include "gr_mod_mmdvm.h"
 
 gr_mod_mmdvm_sptr make_gr_mod_mmdvm(int sps, int samp_rate, int carrier_freq,
@@ -9,7 +25,7 @@ gr_mod_mmdvm_sptr make_gr_mod_mmdvm(int sps, int samp_rate, int carrier_freq,
 
 gr_mod_mmdvm::gr_mod_mmdvm(int sps, int samp_rate, int carrier_freq,
                                  int filter_width) :
-    gr::hier_block2 ("gr_mod_nbfm",
+    gr::hier_block2 ("gr_mod_mmdvm",
                       gr::io_signature::make (1, 1, sizeof (short)),
                       gr::io_signature::make (1, 1, sizeof (gr_complex)))
 {
@@ -22,7 +38,7 @@ gr_mod_mmdvm::gr_mod_mmdvm(int sps, int samp_rate, int carrier_freq,
 
     _short_to_float = gr::blocks::short_to_float::make(1, 32768.0);
     _fm_modulator = gr::analog::frequency_modulator_fc::make(4*M_PI*_filter_width/target_samp_rate);
-    _audio_amplify = gr::blocks::multiply_const_ff::make(0.7,1);
+    _audio_amplify = gr::blocks::multiply_const_ff::make(0.9,1);
 
 
     std::vector<float> interp_taps = gr::filter::firdes::low_pass_2(_sps, _samp_rate*3,

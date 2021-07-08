@@ -84,6 +84,7 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
     }
 
     _fft_sink = make_rx_fft_c(32768, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+    _zeromq_sink = gr::zeromq::push_sink::make(sizeof(short), 1, "tcp://127.0.0.1:5991");
 
     _deframer1 = make_gr_deframer_bb(1);
     _deframer2 = make_gr_deframer_bb(1);
@@ -148,6 +149,7 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
                                                   gr::vocoder::freedv_api::MODE_700D, 1);
     _freedv_rx800XA_lsb = make_gr_demod_freedv(125, 1000000, 1700, 2500, 0,
                                                gr::vocoder::freedv_api::MODE_800XA, 1);
+    _mmdvm_demod = make_gr_demod_mmdvm();
 
 }
 
@@ -388,6 +390,12 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
             _top_block->disconnect(_wfm,0,_rssi_valve,0);
             _top_block->disconnect(_wfm,1,_audio_sink,0);
             break;
+        case gr_modem_types::ModemTypeMMDVM:
+            _top_block->disconnect(_demod_valve,0,_mmdvm_demod,0);
+            _top_block->disconnect(_mmdvm_demod,0,_rssi_valve,0);
+            _top_block->disconnect(_mmdvm_demod,1,_audio_sink,0);
+            _top_block->disconnect(_mmdvm_demod,2,_zeromq_sink,0);
+            break;
         default:
             break;
         }
@@ -593,6 +601,13 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
             _top_block->connect(_demod_valve,0,_wfm,0);
             _top_block->connect(_wfm,0,_rssi_valve,0);
             _top_block->connect(_wfm,1,_audio_sink,0);
+            break;
+        case gr_modem_types::ModemTypeMMDVM:
+            _top_block->connect(_demod_valve,0,_mmdvm_demod,0);
+            _top_block->connect(_mmdvm_demod,0,_rssi_valve,0);
+            _top_block->connect(_mmdvm_demod,1,_audio_sink,0);
+            _top_block->connect(_mmdvm_demod,2,_zeromq_sink,0);
+            break;
         break;
         default:
             break;
@@ -838,6 +853,7 @@ void gr_demod_base::set_squelch(int value)
     _freedv_rx800XA_usb->set_squelch(value);
     _freedv_rx800XA_lsb->set_squelch(value);
     _wfm->set_squelch(value);
+    _mmdvm_demod->set_squelch(value);
 }
 
 void gr_demod_base::set_gain(float value)
