@@ -1,12 +1,14 @@
-qradiolink (0.8.5-2) RELEASED; urgency=medium
+qradiolink (0.8.5-2) experimental; urgency=medium
 
   [ Adrian Musceac ]
   * Replaced some artwork not compatible with GPL3
   * Added coloured FFT display option
   * Fixed callsign display in Mumble
 
+  [ A. Maitland Bottoms ]
+  * Fixup packaging, upload to experimental until bullseye release
 
- -- Adrian Musceac <kantooon@gmail.com>  Mon, 28 Dec 2020 15:28:00 +0300
+ -- A. Maitland Bottoms <bottoms@debian.org>  Mon, 05 Jul 2021 12:00:52 -0400
 
 
 qradiolink (0.8.5-1) RELEASED; urgency=medium
@@ -456,7 +458,7 @@ qradiolink (0.5.0-1) UNRELEASED; urgency=medium
 
  -- Adrian Musceac <kantooon@gmail.com>  Wed, 25 Jul 2018 23:00:00 +0300
 
-
+Old Changelog:
 qradiolink (0.3.21-1) UNRELEASED; urgency=medium
 
   [ Adrian Musceac ]
