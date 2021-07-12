@@ -53,7 +53,7 @@ gr_demod_mmdvm::gr_demod_mmdvm(std::vector<int>signature, int sps, int samp_rate
                                                     gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     _audio_resampler = gr::filter::rational_resampler_base_fff::make(1, 3, audio_taps);
     _squelch = gr::analog::pwr_squelch_cc::make(-140,0.01,0,true);
-    _level_control = gr::blocks::multiply_const_ff::make(0.1);
+    _level_control = gr::blocks::multiply_const_ff::make(0.7);
     _float_to_short = gr::blocks::float_to_short::make(1, 32767.0);
 
 
