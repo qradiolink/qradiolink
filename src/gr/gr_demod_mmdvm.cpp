@@ -67,7 +67,6 @@ gr_demod_mmdvm::gr_demod_mmdvm(std::vector<int>signature, int sps, int samp_rate
     connect(_level_control,0,_float_to_short,0);
     connect(_level_control,0,_audio_resampler,0);
     connect(_audio_resampler,0,self(),1);
-    //connect(_float_to_short,0,_throttle,0);
     connect(_float_to_short,0,self(),2);
 
 

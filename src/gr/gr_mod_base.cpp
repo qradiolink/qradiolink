@@ -57,7 +57,7 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
     _top_block->connect(_rotator,0,_osmosdr_sink,0);
 
     _signal_source = gr::analog::sig_source_f::make(8000, gr::analog::GR_SIN_WAVE, 600, 0.001, 1);
-    _zmq_source = gr::zeromq::pull_source::make(sizeof(short), 1, "tcp://127.0.0.1:5990");
+    _zmq_source = gr::zeromq::pull_source::make(sizeof(short), 1, "ipc:///tmp/mmdvm-tx.ipc");
 
 
     int tw = std::min(_samp_rate/4, 1500000);

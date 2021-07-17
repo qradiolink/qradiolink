@@ -84,7 +84,7 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
     }
 
     _fft_sink = make_rx_fft_c(32768, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
-    _zeromq_sink = gr::zeromq::push_sink::make(sizeof(short), 1, "tcp://127.0.0.1:5991");
+    _zeromq_sink = gr::zeromq::push_sink::make(sizeof(short), 1, "ipc:///tmp/mmdvm-rx.ipc");
 
     _deframer1 = make_gr_deframer_bb(1);
     _deframer2 = make_gr_deframer_bb(1);

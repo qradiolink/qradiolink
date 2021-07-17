@@ -32,13 +32,13 @@ class gr_mod_mmdvm;
 
 typedef boost::shared_ptr<gr_mod_mmdvm> gr_mod_mmdvm_sptr;
 gr_mod_mmdvm_sptr make_gr_mod_mmdvm(int sps=125, int samp_rate=1000000, int carrier_freq=1700,
-                                          int filter_width=5000);
+                                          int filter_width=6250);
 
 class gr_mod_mmdvm : public gr::hier_block2
 {
 public:
     explicit gr_mod_mmdvm(int sps=125, int samp_rate=1000000, int carrier_freq=1700,
-                             int filter_width=5000);
+                             int filter_width=6250);
     void set_bb_gain(float value);
 
 private:
