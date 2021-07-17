@@ -2,5 +2,5 @@
 %:
 	QT_SELECT=qt5 dh $@
 override_dh_auto_clean:
-	protoc --proto_path=${PWD}/src/ext --cpp_out=${PWD}/src/ext ${PWD}/src/ext/Mumble.proto
-	protoc --proto_path=${PWD}/src/ext --cpp_out=${PWD}/src/ext ${PWD}/src/ext/QRadioLink.proto
+	protoc --proto_path=${CURDIR}/src/ext --cpp_out=${CURDIR}/src/ext ${CURDIR}/src/ext/Mumble.proto
+	protoc --proto_path=${CURDIR}/src/ext --cpp_out=${CURDIR}/src/ext ${CURDIR}/src/ext/QRadioLink.proto
