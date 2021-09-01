@@ -73,6 +73,7 @@ CFreqCtrl::CFreqCtrl(QWidget *parent) :
     m_LRMouseFreqSel = false;
     m_ActiveEditDigit = -1;
     m_ResetLowerDigits = false;
+    m_Enabled = true;
     m_UnitsFont = QFont("Arial", 15, QFont::Normal);
     m_DigitFont = QFont("Liquid Crystal", 15, QFont::Bold, QFont::StyleNormal);
 }
@@ -472,6 +473,8 @@ QPoint pt = event->pos();
 //////////////////////////////////////////////////////////////////////////////
 void CFreqCtrl::mousePressEvent(QMouseEvent * event)
 {
+    if(!m_Enabled) return;
+
     QPoint pt = event->pos();
     if (event->button() == Qt::LeftButton)
     {
@@ -520,6 +523,8 @@ void CFreqCtrl::mousePressEvent(QMouseEvent * event)
 /////////////////////////////////////////////////////////////////////
 void CFreqCtrl::wheelEvent(QWheelEvent * event)
 {
+    if(!m_Enabled) return;
+
     QPoint pt = event->pos();
     int numDegrees = event->delta() / 8;
     int numSteps = numDegrees / 15;
@@ -542,6 +547,8 @@ void CFreqCtrl::wheelEvent(QWheelEvent * event)
 /////////////////////////////////////////////////////////////////////
 void CFreqCtrl::keyPressEvent( QKeyEvent * event )
 {
+    if(!m_Enabled) return;
+
     //call base class if dont over ride key
     bool fSkipMsg = false;
     qint64 tmp;

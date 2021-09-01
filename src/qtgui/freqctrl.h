@@ -59,6 +59,7 @@ public:
     void setUnitsColor(QColor cr);
     void setHighlightColor(QColor cr);
     qint64 getFrequency() { return m_freq; }
+    void setEnabled(bool enable) { m_Enabled = enable; }
 
 signals:
     void newFrequency(qint64 freq); //emitted when frequency has changed
@@ -88,6 +89,7 @@ private:
     void moveCursorRight();
     bool inRect(QRect &rect, QPoint &point);
 
+    bool m_Enabled;
     bool m_UpdateAll;
     bool m_ExternalKeyActive;
     bool m_LRMouseFreqSel;    /*! Use left/right mouse buttons. If FALSE click area determines up/down. */

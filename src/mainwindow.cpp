@@ -938,6 +938,8 @@ void MainWindow::startTx()
             _settings->rx_frequency + _settings->demod_offset + _settings->tx_shift + _settings->lnb_lo_freq,
             false);
         _ptt_activated=true;
+        if(_settings->tx_shift != 0)
+            ui->frameCtrlFreq->setEnabled(false);
     }
     else
     {
@@ -945,6 +947,7 @@ void MainWindow::startTx()
             _settings->rx_frequency + _settings->demod_offset + _settings->lnb_lo_freq, false);
         _ptt_activated=false;
         endTx();
+        ui->frameCtrlFreq->setEnabled(true);
     }
 }
 
