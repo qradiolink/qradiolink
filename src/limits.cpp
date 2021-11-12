@@ -42,6 +42,11 @@ Limits::Limits()
     _tx_limits.push_back(std::complex<int64_t>(10000000000, 10300000000));
 }
 
+Limits::~Limits()
+{
+
+}
+
 bool Limits::checkLimit(int64_t tx_freq)
 {
     /// this doesn't take into account the width of the signal,

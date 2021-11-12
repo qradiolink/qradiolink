@@ -33,6 +33,8 @@ private:
     rfe_boardState _board_state;
     bool _duplex_mode;
     bool _transmit_on;
+    int _current_rx_band;
+    int _current_tx_band;
 
 };
 

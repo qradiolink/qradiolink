@@ -25,6 +25,7 @@ class Limits
 {
 public:
     Limits();
+    ~Limits();
     bool checkLimit(int64_t tx_freq);
     int getBand(int64_t frequency);
 

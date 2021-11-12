@@ -8,6 +8,8 @@ LimeRFEController::LimeRFEController(const Settings *settings, Logger *logger, Q
     _lime_rfe_inited = false;
     _duplex_mode = false;
     _transmit_on = false;
+    _current_rx_band = 12;
+    _current_tx_band = 12;
     _limits = new Limits();
     // board defaults
     _board_state.selPortRX = RFE_PORT_1;
@@ -50,7 +52,9 @@ void LimeRFEController::init()
         return;
     }
     // configure defaults
-    RFE_ConfigureState(_lime_rfe, _board_state);
+    int res = RFE_ConfigureState(_lime_rfe, _board_state);
+    if(res != RFE_SUCCESS)
+        _logger->log(Logger::LogLevelWarning, QString("LimeRFE failed configuration %1").arg(res));
     _lime_rfe_inited = true;
 }
 
@@ -78,18 +82,25 @@ void LimeRFEController::setTransmit(bool tx_on)
         if(_duplex_mode)
         {
             _board_state.mode = RFE_MODE_TXRX;
+            int res = RFE_Mode(_lime_rfe, RFE_MODE_TXRX);
+            if(res != RFE_SUCCESS)
+                _logger->log(Logger::LogLevelWarning, QString("LimeRFE failed configuration %1").arg(res));
         }
         else
         {
             _board_state.mode = RFE_MODE_TX;
-            RFE_Mode(_lime_rfe, RFE_MODE_TX);
+            int res = RFE_Mode(_lime_rfe, RFE_MODE_TX);
+            if(res != RFE_SUCCESS)
+                _logger->log(Logger::LogLevelWarning, QString("LimeRFE failed configuration %1").arg(res));
         }
 
     }
     else
     {
         _board_state.mode = RFE_MODE_RX;
-        RFE_Mode(_lime_rfe, RFE_MODE_RX);
+        int res = RFE_Mode(_lime_rfe, RFE_MODE_RX);
+        if(res != RFE_SUCCESS)
+            _logger->log(Logger::LogLevelWarning, QString("LimeRFE failed configuration %1").arg(res));
     }
     _transmit_on = tx_on;
 }
@@ -106,13 +117,17 @@ void LimeRFEController::setDuplex(bool duplex_mode)
     if(duplex_mode && !_duplex_mode)
     {
         _board_state.selPortTX = RFE_PORT_2;
-        RFE_ConfigureState(_lime_rfe, _board_state);
+        int res = RFE_ConfigureState(_lime_rfe, _board_state);
+        if(res != RFE_SUCCESS)
+            _logger->log(Logger::LogLevelWarning, QString("LimeRFE failed configuration %1").arg(res));
     }
     if(!duplex_mode && _duplex_mode)
     {
         // duplex mode only > 144 MHz for now
         _board_state.selPortTX = RFE_PORT_1;
-        RFE_ConfigureState(_lime_rfe, _board_state);
+        int res = RFE_ConfigureState(_lime_rfe, _board_state);
+        if(res != RFE_SUCCESS)
+            _logger->log(Logger::LogLevelWarning, QString("LimeRFE failed configuration %1").arg(res));
     }
     _duplex_mode = duplex_mode;
 }
@@ -123,6 +138,9 @@ void LimeRFEController::setRXBand(int64_t rx_frequency)
         return;
 
     int rx_band = _limits->getBand(rx_frequency);
+    if(_current_rx_band == rx_band)
+        return;
+    _current_rx_band = rx_band;
     switch(rx_band)
     {
     case -1:
@@ -156,6 +174,7 @@ void LimeRFEController::setRXBand(int64_t rx_frequency)
         _board_state.channelIDRX = RFE_CID_HAM_0030;
         break;
     }
+
     if(rx_frequency < 72000000)
     {
         _board_state.selPortRX = RFE_PORT_3;
@@ -165,7 +184,9 @@ void LimeRFEController::setRXBand(int64_t rx_frequency)
         _board_state.selPortRX = RFE_PORT_1;
     }
 
-    RFE_ConfigureState(_lime_rfe, _board_state);
+    int res = RFE_ConfigureState(_lime_rfe, _board_state);
+    if(res != RFE_SUCCESS)
+        _logger->log(Logger::LogLevelWarning, QString("LimeRFE failed configuration %1").arg(res));
 }
 
 void LimeRFEController::setTXBand(int64_t tx_frequency)
@@ -174,6 +195,9 @@ void LimeRFEController::setTXBand(int64_t tx_frequency)
         return;
 
     int tx_band = _limits->getBand(tx_frequency);
+    if(_current_tx_band == tx_band)
+        return;
+    _current_tx_band = tx_band;
 
     switch(tx_band)
     {
@@ -222,5 +246,7 @@ void LimeRFEController::setTXBand(int64_t tx_frequency)
         else
             _board_state.selPortTX = RFE_PORT_1;
     }
-    RFE_ConfigureState(_lime_rfe, _board_state);
+    int res = RFE_ConfigureState(_lime_rfe, _board_state);
+    if(res != RFE_SUCCESS)
+        _logger->log(Logger::LogLevelWarning, QString("LimeRFE failed configuration %1").arg(res));
 }

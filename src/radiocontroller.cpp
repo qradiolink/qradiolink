@@ -2491,6 +2491,7 @@ void RadioController::enableLimeRFE(bool value)
     if(_settings->enable_lime_rfe)
     {
         _lime_rfe_controller->init();
+        _lime_rfe_controller->setRXBand(_settings->rx_frequency + _settings->demod_offset);
     }
     else
     {
