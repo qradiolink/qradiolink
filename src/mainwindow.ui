@@ -3569,6 +3569,13 @@ and S-meter (dBm)</string>
                    </property>
                   </widget>
                  </item>
+                 <item row="7" column="5">
+                  <widget class="QCheckBox" name="checkBoxLimeRFE">
+                   <property name="text">
+                    <string>Enable LimeRFE</string>
+                   </property>
+                  </widget>
+                 </item>
                 </layout>
                </widget>
               </item>

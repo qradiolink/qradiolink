@@ -140,6 +140,7 @@ public slots:
     void changeFilterWidth(qint64 low, qint64 up);
     void setAudioCompressor(bool value);
     void setRelays(bool value);
+    void setLimeRFE(bool value);
     void setRemoteControl(bool value);
     void setRSSICalibration();
     void setDigitalGain(int value);
@@ -232,6 +233,7 @@ signals:
     void newFilterWidth(int);
     void enableAudioCompressor(bool value);
     void enableRelays(bool value);
+    void enableLimeRFE(bool value);
     void calibrateRSSI(float value);
     void setBbGain(int value);
     void setIfGain(int value);

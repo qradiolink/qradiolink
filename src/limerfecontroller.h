@@ -12,7 +12,8 @@ class LimeRFEController : public QObject
 public:
     explicit LimeRFEController(const Settings *settings, Logger *logger, QObject *parent = nullptr);
     ~LimeRFEController();
-    void setBands(int64_t rx_frequency, int64_t tx_frequency);
+    void setRXBand(int64_t rx_frequency);
+    void setTXBand(int64_t tx_frequency);
     void setDuplex(bool duplex_mode);
     void setTransmit(bool tx_on);
 

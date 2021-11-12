@@ -38,6 +38,7 @@
 #include "layer2.h"
 #include "radiochannel.h"
 #include "relaycontroller.h"
+#include "limerfecontroller.h"
 #include "station.h"
 #include "audio/audiomixer.h"
 #include "audio/audioencoder.h"
@@ -178,6 +179,7 @@ public slots:
     void setRxSampleRate(int samp_rate);
     void enableAudioCompressor(bool value);
     void enableRelays(bool value);
+    void enableLimeRFE(bool value);
     void calibrateRSSI(float value);
     void setCallsign();
     void setScanResumeTime(int value);
@@ -220,6 +222,7 @@ private:
     Logger *_logger;
     RadioChannels *_radio_channels;
     RelayController *_relay_controller;
+    LimeRFEController *_lime_rfe_controller;
     AudioEncoder *_codec;
     AudioMixer *_audio_mixer_in;
     AudioMixer *_audio_mixer_out;

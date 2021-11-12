@@ -134,6 +134,7 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     QObject::connect(ui->checkBoxAudioCompressor,SIGNAL(toggled(bool)),
                      this,SLOT(setAudioCompressor(bool)));
     QObject::connect(ui->checkBoxRelays,SIGNAL(toggled(bool)),this,SLOT(setRelays(bool)));
+    QObject::connect(ui->checkBoxLimeRFE,SIGNAL(toggled(bool)),this,SLOT(setLimeRFE(bool)));
     QObject::connect(ui->burstIPCheckBox,SIGNAL(toggled(bool)),this,SLOT(setBurstIPMode(bool)));
     QObject::connect(ui->nightModeCheckBox,SIGNAL(toggled(bool)),this,SLOT(setTheme(bool)));
     QObject::connect(ui->fftHistoryCheckBox,SIGNAL(toggled(bool)),this,SLOT(setFFTHistory(bool)));
@@ -559,6 +560,7 @@ void MainWindow::setConfig()
     ui->duplexOpButton->setChecked((bool) _settings->enable_duplex);
     ui->checkBoxAudioCompressor->setChecked((bool)_settings->audio_compressor);
     ui->checkBoxRelays->setChecked((bool)_settings->enable_relays);
+    ui->checkBoxLimeRFE->setChecked((bool)_settings->enable_lime_rfe);
     ui->checkBoxTxLimits->setChecked((bool)_settings->tx_band_limits);
     ui->burstIPCheckBox->setChecked((bool)_settings->burst_ip_modem);
     ui->remoteControlCheckBox->setChecked((bool)_settings->remote_control);
@@ -1872,6 +1874,12 @@ void MainWindow::setRelays(bool value)
 {
     _settings->enable_relays = (int) value;
     emit enableRelays(value);
+}
+
+void MainWindow::setLimeRFE(bool value)
+{
+    _settings->enable_lime_rfe = (int) value;
+    emit enableLimeRFE(value);
 }
 
 void MainWindow::setRemoteControl(bool value)

@@ -31,6 +31,7 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     _audio_mixer_in = new AudioMixer;
     _layer2 = new Layer2Protocol(logger);
     _relay_controller = new RelayController(logger);
+    _lime_rfe_controller = new LimeRFEController(_settings, _logger);
     _video = new VideoEncoder(logger);
     _net_device = new NetDevice(logger, 0, _settings->ip_address);
     _mutex = new QMutex;
@@ -184,6 +185,7 @@ RadioController::~RadioController()
     _to_voip_buffer->clear();
     delete _to_voip_buffer;
     delete _relay_controller;
+    delete _lime_rfe_controller;
     delete _end_rec_sound;
     delete _data_rec_sound;
     delete _timeout_sound;
@@ -2219,6 +2221,8 @@ void RadioController::tuneFreq(qint64 center_freq)
 {
     /// rx_frequency is the source center frequency
     _settings->rx_frequency = center_freq;
+    if(_settings->enable_lime_rfe)
+        _lime_rfe_controller->setRXBand(_settings->rx_frequency + _settings->demod_offset);
     _modem->tune(_settings->rx_frequency);
 }
 
@@ -2226,6 +2230,8 @@ void RadioController::tuneTxFreq(qint64 actual_freq)
 {
     _tx_frequency = actual_freq;
     /// LimeSDR mini tune requests are blocking
+    if(_settings->enable_lime_rfe)
+        _lime_rfe_controller->setTXBand(_tx_frequency + _settings->tx_shift);
     _modem->tuneTx(_tx_frequency + _settings->tx_shift);
 
 }
@@ -2467,6 +2473,19 @@ void RadioController::enableRelays(bool value)
     else
     {
         _relay_controller->deinit();
+    }
+}
+
+void RadioController::enableLimeRFE(bool value)
+{
+    _settings->enable_lime_rfe = (int)value;
+    if(_settings->enable_lime_rfe)
+    {
+        _lime_rfe_controller->init();
+    }
+    else
+    {
+        _lime_rfe_controller->deinit();
     }
 }
 

@@ -110,13 +110,12 @@ void LimeRFEController::setDuplex(bool duplex_mode)
     _duplex_mode = duplex_mode;
 }
 
-void LimeRFEController::setBands(int64_t rx_frequency, int64_t tx_frequency)
+void LimeRFEController::setRXBand(int64_t rx_frequency)
 {
     if(!_lime_rfe_inited)
         return;
 
     int rx_band = _limits->getBand(rx_frequency);
-    int tx_band = _limits->getBand(tx_frequency);
     switch(rx_band)
     {
     case -1:
@@ -150,6 +149,25 @@ void LimeRFEController::setBands(int64_t rx_frequency, int64_t tx_frequency)
         _board_state.channelIDRX = RFE_CID_HAM_0030;
         break;
     }
+    if(rx_frequency < 72000000)
+    {
+        _board_state.selPortRX = RFE_PORT_3;
+    }
+    else
+    {
+        _board_state.selPortRX = RFE_PORT_1;
+    }
+
+    RFE_ConfigureState(_lime_rfe, _board_state);
+}
+
+void LimeRFEController::setTXBand(int64_t tx_frequency)
+{
+    if(!_lime_rfe_inited)
+        return;
+
+    int tx_band = _limits->getBand(tx_frequency);
+
     switch(tx_band)
     {
     case -1:
@@ -182,14 +200,6 @@ void LimeRFEController::setBands(int64_t rx_frequency, int64_t tx_frequency)
     default:
         _board_state.channelIDTX = RFE_CID_HAM_0030;
         break;
-    }
-    if(rx_frequency < 72000000)
-    {
-        _board_state.selPortRX = RFE_PORT_3;
-    }
-    else
-    {
-        _board_state.selPortRX = RFE_PORT_1;
     }
     if(tx_frequency < 72000000)
     {
