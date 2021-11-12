@@ -36,7 +36,6 @@ Limits::Limits()
     _tx_limits.push_back(std::complex<int64_t>(430000000, 440000000));
     _tx_limits.push_back(std::complex<int64_t>(1240000000, 1300000000));
     _tx_limits.push_back(std::complex<int64_t>(2300000000, 2450000000));
-    _tx_limits.push_back(std::complex<int64_t>(2300000000, 2450000000));
     _tx_limits.push_back(std::complex<int64_t>(3400000000, 3410000000));
     _tx_limits.push_back(std::complex<int64_t>(5660000000, 5670000000));
     _tx_limits.push_back(std::complex<int64_t>(5725000000, 5850000000));
@@ -54,4 +53,21 @@ bool Limits::checkLimit(int64_t tx_freq)
             return true;
     }
     return false;
+}
+
+int Limits::getBand(int64_t frequency)
+{
+    /// this doesn't take into account the width of the signal,
+    /// just the carrier center check
+    for(unsigned int i=0;i<_tx_limits.size();i++)
+    {
+        std::complex<int64_t> band = _tx_limits.at(i);
+        if(frequency > band.real() && frequency < band.imag())
+            return i;
+    }
+    if(frequency < 1000000000)
+        return -1;
+    else
+        return -2;
+
 }

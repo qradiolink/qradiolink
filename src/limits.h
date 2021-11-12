@@ -26,6 +26,7 @@ class Limits
 public:
     Limits();
     bool checkLimit(int64_t tx_freq);
+    int getBand(int64_t frequency);
 
 private:
     std::vector<std::complex<int64_t>> _tx_limits;
