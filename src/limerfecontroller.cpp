@@ -75,8 +75,16 @@ void LimeRFEController::setTransmit(bool tx_on)
     }
     if(tx_on)
     {
-        _board_state.mode = RFE_MODE_TX;
-        RFE_Mode(_lime_rfe, RFE_MODE_TX);
+        if(_duplex_mode)
+        {
+            _board_state.mode = RFE_MODE_TXRX;
+        }
+        else
+        {
+            _board_state.mode = RFE_MODE_TX;
+            RFE_Mode(_lime_rfe, RFE_MODE_TX);
+        }
+
     }
     else
     {
@@ -98,14 +106,13 @@ void LimeRFEController::setDuplex(bool duplex_mode)
     if(duplex_mode && !_duplex_mode)
     {
         _board_state.selPortTX = RFE_PORT_2;
-        _board_state.mode = RFE_MODE_TXRX;
-        RFE_Mode(_lime_rfe, RFE_MODE_TXRX);
+        RFE_ConfigureState(_lime_rfe, _board_state);
     }
     if(!duplex_mode && _duplex_mode)
     {
+        // duplex mode only > 144 MHz for now
         _board_state.selPortTX = RFE_PORT_1;
-        _board_state.mode = RFE_MODE_RX;
-        RFE_Mode(_lime_rfe, RFE_MODE_RX);
+        RFE_ConfigureState(_lime_rfe, _board_state);
     }
     _duplex_mode = duplex_mode;
 }

@@ -958,6 +958,11 @@ void RadioController::startTx()
         }
 
         setRelays(true);
+        if(_settings->enable_lime_rfe)
+        {
+            _lime_rfe_controller->setTXBand(_tx_frequency + _settings->tx_shift);
+            _lime_rfe_controller->setTransmit(true);
+        }
         _modem->tuneTx(_tx_frequency + _settings->tx_shift);
         _modem->setTxPower((float)_settings->tx_power/100);
 
@@ -1012,6 +1017,10 @@ void RadioController::endTx()
     _modem->flushSources();
     /// On the LimeSDR mini, whenever I call setTxPower I get a brief spike of the LO
     setRelays(false);
+    if(_settings->enable_lime_rfe)
+    {
+        _lime_rfe_controller->setTransmit(false);
+    }
     if(!_settings->enable_duplex)
     {
         _modem->enableDemod(true);
