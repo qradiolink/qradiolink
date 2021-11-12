@@ -46,6 +46,7 @@ SOURCES += src/main.cpp\
     src/gpredictcontrol.cpp \
     src/gr/gr_demod_mmdvm.cpp \
     src/gr/gr_mod_mmdvm.cpp \
+    src/limerfecontroller.cpp \
         src/mainwindow.cpp\
         src/audio/audioencoder.cpp\
         src/audio/audioprocessor.cpp \
@@ -127,6 +128,7 @@ HEADERS  += src/mainwindow.h\
     src/gpredictcontrol.h \
     src/gr/gr_demod_mmdvm.h \
     src/gr/gr_mod_mmdvm.h \
+    src/limerfecontroller.h \
         src/video/videoencoder.h \
         src/video/imagecapture.h \
         src/layer2.h \
@@ -226,7 +228,7 @@ LIBS += -lgnuradio-pmt -lgnuradio-analog -lgnuradio-fft -lgnuradio-vocoder -lgnu
         -lgnuradio-blocks -lgnuradio-filter -lgnuradio-digital -lgnuradio-runtime -lgnuradio-fec \
         -lboost_system$$BOOST_SUFFIX
 LIBS += -lrt  # need to include on some distros
-LIBS += -lprotobuf -lopus -lcodec2 -ljpeg -lconfig++ -lspeexdsp -lftdi -lsndfile -llog4cpp
+LIBS += -lprotobuf -lopus -lcodec2 -ljpeg -lconfig++ -lspeexdsp -lftdi -lsndfile -llog4cpp -lLimeSuite
 
 
 RESOURCES += src/resources.qrc

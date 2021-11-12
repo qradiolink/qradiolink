@@ -54,6 +54,8 @@ Settings::Settings(Logger *logger)
     bb_gain = 1;
     night_mode = 0;
     tx_band_limits = 0;
+    lime_rfe_device = "/dev/ttyUSB0";
+    enable_lime_rfe = 0;
 
     /// old stuff, not used
     _mumble_tcp = 1; // used
@@ -666,6 +668,22 @@ void Settings::readConfig()
     {
         gpredict_control = 0;
     }
+    try
+    {
+        lime_rfe_device = QString(cfg.lookup("lime_rfe_device"));
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        lime_rfe_device = "/dev/ttyUSB0";
+    }
+    try
+    {
+        enable_lime_rfe = cfg.lookup("enable_lime_rfe");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        enable_lime_rfe = 0;
+    }
 
 }
 
@@ -741,6 +759,8 @@ void Settings::saveConfig()
     root.add("panadapter_min_db",libconfig::Setting::TypeFloat) = panadapter_min_db;
     root.add("panadapter_max_db",libconfig::Setting::TypeFloat) = panadapter_max_db;
     root.add("gpredict_control",libconfig::Setting::TypeInt) = gpredict_control;
+    root.add("lime_rfe_device",libconfig::Setting::TypeString) = lime_rfe_device.toStdString();
+    root.add("enable_lime_rfe",libconfig::Setting::TypeInt) = enable_lime_rfe;
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());
