@@ -62,6 +62,7 @@ Bus 002 Device 003: ID 0403:6001 Future Technology Devices International, Ltd FT
 Do note that the identifier digits are the most important: **0403:6001**. 
 At the moment, such USB relays can be sourced on Amazon and Ebay and can be identified by the light silver-blue colour of the board. Other types of relays may be supported in the future.
 - QRadioLink can control a maximum of 8 relays, and the used relays can be configured in the Setup page. The setting called **relay_sequence** is an 8 bit char bitmask that can take values from 0 to 255 and each bit controls the relay with the bit+1 number, starting with bit 0 and relay number 1. The order in which relays are activated and deactivated during a transmission cycle is always as follows: activation starting with relay 1 to relay 8, deactivation in reverse order (relay 8 to relay 1). A Python script **( ext/ftdi.py )** is included to help you determine the order of relays on the board.
+- The LimeRFE frontend is supported in simplex and full duplex mode. Control of the LimeRFE is via the USB connection. The default device is /dev/ttyUSB0, however you can change this device in the Setup -> General Settings page in case your device is asigned a different tty when plugging it in.
 - Video will be displayed in the upper right corner. Currently the system default camera is used for capturing the images.
 - **New**: starting with version 0.8.5-rc4, the video transmission also has sound, using the Opus audio codec.
 - IP radio modem operation mode requires net administration priviledges (NET_ADMIN capabilities) to be granted to the application. An error message will be output at startup if these priviledges are not present. You can safely ignore this message if you don't need to use the IP modem facility.
@@ -79,5 +80,5 @@ At the moment, such USB relays can be sourced on Amazon and Ebay and can be iden
 telnet localhost 4939
 qradiolink> help
 qradiolink> quit
-<pre>
+</pre>
 - GPredict radio tuning: early integration with GPredict satellite tracking allows it to control both RX and TX frequencies and compensate for the Doppler effect of sattelite passes. In order to enable it, you will need to also enable Remote Control, and then configure a new radio in GPredict (full duplex, with no PTT status support, same port as configured in QRadioLink for remote control, LO set to zero for both downlink and uplink). While GPredict control is active, you will not be able to issue normal remote control commands. Warning: this feature is still in early development. GPredict can issue tune request to unsupported frequencies if it is set to track a sattelite with no transponder, which can crash QRadioLink.
