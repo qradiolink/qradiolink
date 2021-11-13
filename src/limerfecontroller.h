@@ -25,6 +25,7 @@ public slots:
     void deinit();
 
 private:
+    QString getError(int res);
     Logger *_logger;
     Limits *_limits;
     const Settings *_settings;

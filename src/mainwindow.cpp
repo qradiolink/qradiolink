@@ -601,6 +601,7 @@ void MainWindow::setConfig()
     ui->relay7CheckBox->setChecked(bool((_settings->relay_sequence >> 6) & 0x1));
     ui->relay8CheckBox->setChecked(bool((_settings->relay_sequence >> 7) & 0x1));
     ui->lnbLOEdit->setText(QString::number(_settings->lnb_lo_freq/1000));
+    ui->lineEditLimeRFEDevice->setText(_settings->lime_rfe_device);
 }
 
 void MainWindow::saveUiConfig()
@@ -649,6 +650,7 @@ void MainWindow::saveUiConfig()
     relay_sequence |= (int)ui->relay8CheckBox->isChecked() << 7;
     _settings->relay_sequence = relay_sequence;
     _settings->lnb_lo_freq = (int64_t)(ui->lnbLOEdit->text().toLong() * 1000);
+    _settings->lime_rfe_device = ui->lineEditLimeRFEDevice->text();
     _settings->saveConfig();
 }
 
