@@ -141,7 +141,10 @@ void LimeRFEController::setDuplex(bool duplex_mode)
     if(!_lime_rfe_inited)
         return;
     if(_transmit_on) // Cannot set Duplex on or off during transmission to avoid getting into a bad state
+    {
+        _logger->log(Logger::LogLevelWarning, QString("LimeRFE was not set to Duplex mode because it was in TX mode."));
         return;
+    }
     if(duplex_mode && _duplex_mode)
         return;
     if(!duplex_mode && !_duplex_mode)
