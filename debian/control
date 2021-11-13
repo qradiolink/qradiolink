@@ -24,7 +24,8 @@ Build-Depends: debhelper-compat (= 13),
                protobuf-compiler,
                qt5-qmake,
                qtbase5-dev,
-               qtmultimedia5-dev
+               qtmultimedia5-dev,
+               liblimesuite-dev
 
 Package: qradiolink
 Architecture: any
