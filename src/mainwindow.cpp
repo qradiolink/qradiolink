@@ -557,10 +557,10 @@ void MainWindow::setConfig()
     ui->fpsBox->setCurrentIndex(ui->fpsBox->findText(QString::number(_settings->waterfall_fps)));
     ui->lineEditScanStep->setText(QString::number(_settings->scan_step));
     ui->fftEnableCheckBox->setChecked((bool)_settings->show_fft);
-    ui->duplexOpButton->setChecked((bool) _settings->enable_duplex);
     ui->checkBoxAudioCompressor->setChecked((bool)_settings->audio_compressor);
     ui->checkBoxRelays->setChecked((bool)_settings->enable_relays);
     ui->checkBoxLimeRFE->setChecked((bool)_settings->enable_lime_rfe);
+    ui->duplexOpButton->setChecked((bool) _settings->enable_duplex);
     ui->checkBoxTxLimits->setChecked((bool)_settings->tx_band_limits);
     ui->burstIPCheckBox->setChecked((bool)_settings->burst_ip_modem);
     ui->remoteControlCheckBox->setChecked((bool)_settings->remote_control);
@@ -944,6 +944,7 @@ void MainWindow::startTx()
         _ptt_activated=true;
         if(_settings->tx_shift != 0)
             ui->frameCtrlFreq->setEnabled(false);
+        ui->duplexOpButton->setEnabled(false);
     }
     else
     {
@@ -952,6 +953,7 @@ void MainWindow::startTx()
         _ptt_activated=false;
         endTx();
         ui->frameCtrlFreq->setEnabled(true);
+        ui->duplexOpButton->setEnabled(true);
     }
 }
 

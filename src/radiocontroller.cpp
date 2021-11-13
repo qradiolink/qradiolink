@@ -26,6 +26,7 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     _logger = logger;
     _radio_channels = radio_channels;
 
+    /// Local to RadioController
     _modem = new gr_modem(settings, logger);
     _codec = new AudioEncoder(settings);
     _audio_mixer_in = new AudioMixer;

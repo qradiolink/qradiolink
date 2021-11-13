@@ -16,6 +16,8 @@ public:
     void setTXBand(int64_t tx_frequency);
     void setDuplex(bool duplex_mode);
     void setTransmit(bool tx_on);
+    void setAttenuator(int value);
+    void setNotchFilter(bool enable);
 
 
 signals:
@@ -36,6 +38,7 @@ private:
     bool _transmit_on;
     int _current_rx_band;
     int _current_tx_band;
+    bool _low_band_tx; // used only for TX port when switching RF paths in duplex mode
 
 };
 

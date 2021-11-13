@@ -8,10 +8,12 @@ LimeRFEController::LimeRFEController(const Settings *settings, Logger *logger, Q
     _lime_rfe_inited = false;
     _duplex_mode = false;
     _transmit_on = false;
+    _low_band_tx = false;
     _current_rx_band = 12;
     _current_tx_band = 12;
     _limits = new Limits();
-    // board defaults
+
+    /// board defaults
     _board_state.selPortRX = RFE_PORT_1;
     _board_state.selPortTX = RFE_PORT_1;
     _board_state.channelIDRX = RFE_CID_HAM_0145;
@@ -102,11 +104,6 @@ void LimeRFEController::setTransmit(bool tx_on)
 {
     if(!_lime_rfe_inited)
         return;
-    if(_duplex_mode)
-    {
-        _logger->log(Logger::LogLevelWarning, "LimeRFE is in duplex mode and switches cannot be toggled");
-        return;
-    }
     if(tx_on)
     {
         if(_duplex_mode)
@@ -158,8 +155,14 @@ void LimeRFEController::setDuplex(bool duplex_mode)
     }
     if(!duplex_mode && _duplex_mode)
     {
-        // duplex mode only > 144 MHz for now
-        _board_state.selPortTX = RFE_PORT_1;
+        if(!_low_band_tx)
+        {
+            _board_state.selPortTX = RFE_PORT_1;
+        }
+        else
+        {
+            _board_state.selPortTX = RFE_PORT_3;
+        }
         int res = RFE_ConfigureState(_lime_rfe, _board_state);
         if(res != RFE_SUCCESS)
             _logger->log(Logger::LogLevelWarning, QString("LimeRFE failed configuration %1").arg(getError(res)));
@@ -297,6 +300,7 @@ void LimeRFEController::setTXBand(int64_t tx_frequency)
             _board_state.selPortTX = RFE_PORT_2;
         else
             _board_state.selPortTX = RFE_PORT_3;
+        _low_band_tx = true;
     }
     else
     {
@@ -304,6 +308,40 @@ void LimeRFEController::setTXBand(int64_t tx_frequency)
             _board_state.selPortTX = RFE_PORT_2;
         else
             _board_state.selPortTX = RFE_PORT_1;
+        _low_band_tx = false;
+    }
+    int res = RFE_ConfigureState(_lime_rfe, _board_state);
+    if(res != RFE_SUCCESS)
+        _logger->log(Logger::LogLevelWarning, QString("LimeRFE failed configuration %1").arg(getError(res)));
+}
+
+void LimeRFEController::setAttenuator(int value)
+{
+    if(!_lime_rfe_inited)
+        return;
+    if((value < 0) || (value > 10))
+    {
+        _logger->log(Logger::LogLevelWarning, QString("LimeRFE attenuator value %1 not supported").arg(value));
+        return;
+    }
+    _board_state.attValue = value;
+    int res = RFE_ConfigureState(_lime_rfe, _board_state);
+    if(res != RFE_SUCCESS)
+        _logger->log(Logger::LogLevelWarning, QString("LimeRFE failed configuration %1").arg(getError(res)));
+}
+
+void LimeRFEController::setNotchFilter(bool enable)
+{
+    if(!_lime_rfe_inited)
+        return;
+
+    if(enable)
+    {
+        _board_state.notchOnOff = RFE_NOTCH_ON;
+    }
+    else
+    {
+        _board_state.notchOnOff = RFE_NOTCH_OFF;
     }
     int res = RFE_ConfigureState(_lime_rfe, _board_state);
     if(res != RFE_SUCCESS)
