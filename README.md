@@ -14,7 +14,7 @@ Supported hardware
 ---
 
 -  [**Ettus USRP bus devices**](https://ettus.com), [**RTL-SDR**](https://osmocom.org/projects/sdr/wiki/rtl-sdr), [**ADALM-Pluto (PlutoSDR)**](https://www.analog.com/en/design-center/evaluation-hardware-and-software/evaluation-boards-kits/adalm-pluto.html), (supported with SoapySDR and [**SoapyPlutoSDR**](https://github.com/pothosware/SoapyPlutoSDR)), [**LimeSDR-mini**](https://www.crowdsupply.com/lime-micro/limesdr-mini), [**LimeNET-Micro**](https://wiki.myriadrf.org/LimeNET_Micro) (both through SoapySDR), BladeRF, other devices supported by [**gr-osmosdr**](https://osmocom.org/projects/sdr/wiki/GrOsmoSDR) like HackRF and RedPitaya (not tested)
-- [**LimeRFE RF frontend**](https://www.crowdsupply.com/lime-micro/limerfe)
+- [**LimeRFE RF frontend**](https://www.crowdsupply.com/lime-micro/limerfe). Control of the LimeRFE is via the USB connection with automatic tuning based on SDR frequency. Only amateur radio bands are supported, cellular paths are not used.
 - FTDI FT232 USB relay boards for RF path switching and external power amplifier control
  
 
@@ -45,6 +45,7 @@ In [#67](https://github.com/qradiolink/qradiolink/issues/67) it was reported tha
 - libprotobuf, libopus, libspeexdsp, libpulse-simple, libpulse, libasound, libcodec2, libsqlite3, libjpeg, libconfig++, libvolk, libftdi, libsndfile1, qtmultimedia5-dev, libqt5multimediawidgets5, libqt5multimedia5, libqt5multimedia5 (gstreamer1.0-plugins-bad for Qt video)
 - protoc compiler (libprotoc 2.6.1 or greater, depending on which version of libprotobuf is used)
 - SoapySDR and SoapyPlutoSDR, SoapyLMS7 are recommended as Soapy has support for many devices
+- LimeSuite: liblimesuite-dev liblimesuite20.10-1 used for LimeRFE control
 
 In order to build on Ubuntu 17.10 you have to install the following packages, assuming a full GNU Radio development environment is already installed. Please note these instructions are for a very old version and are not guaranteed to work with newer versions. It is recommended to follow the Debian install guide and adjust for Ubuntu differences.
 
