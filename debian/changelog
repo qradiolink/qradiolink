@@ -1,3 +1,14 @@
+qradiolink (0.8.6-1) experimental; urgency=medium
+
+  [ Adrian Musceac ]
+  * Added support for the LimeRFE RF frontend
+  * Integration with MMDVM-SDR, digital hotspot bridge
+  * Some FFT rendering improvements
+
+
+ -- Adrian Musceac <kantooon@gmail.com>  Sun, 14 nov 2020 19:10:05 +0300
+
+
 qradiolink (0.8.5-2) experimental; urgency=medium
 
   [ Adrian Musceac ]
