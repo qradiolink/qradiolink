@@ -14,7 +14,7 @@ Supported hardware
 ---
 
 -  [**Ettus USRP bus devices**](https://ettus.com), [**RTL-SDR**](https://osmocom.org/projects/sdr/wiki/rtl-sdr), [**ADALM-Pluto (PlutoSDR)**](https://www.analog.com/en/design-center/evaluation-hardware-and-software/evaluation-boards-kits/adalm-pluto.html), (supported with SoapySDR and [**SoapyPlutoSDR**](https://github.com/pothosware/SoapyPlutoSDR)), [**LimeSDR-mini**](https://www.crowdsupply.com/lime-micro/limesdr-mini), [**LimeNET-Micro**](https://wiki.myriadrf.org/LimeNET_Micro) (both through SoapySDR), BladeRF, other devices supported by [**gr-osmosdr**](https://osmocom.org/projects/sdr/wiki/GrOsmoSDR) like HackRF and RedPitaya (not tested)
-- [**LimeRFE RF frontend**](https://www.crowdsupply.com/lime-micro/limerfe). Control of the LimeRFE is via the USB connection with automatic tuning based on SDR frequency. Only amateur radio bands are supported, cellular paths are not used.
+- [**LimeRFE RF frontend**](https://www.crowdsupply.com/lime-micro/limerfe). Control of the LimeRFE is via the USB connection with automatic tuning based on SDR frequency. Only amateur radio bands are supported, cellular paths are not used. Both simplex and duplex mode are supprted.
 - FTDI FT232 USB relay boards for RF path switching and external power amplifier control
  
 
@@ -112,7 +112,7 @@ qmake .. INSTALL_PREFIX=/usr/local/bin LIBDIR=/opt/lib INCDIR=/opt/include
 Operation
 ----
 
-See docs/OPERATION.md
+- See docs/OPERATION.md
 
 
 Known issues
