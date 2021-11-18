@@ -122,7 +122,7 @@ void LimeRFEController::setTransmit(bool tx_on)
         return;
     if(tx_on)
     {
-        if(_duplex_mode)
+        if(_duplex_mode && !_low_band_tx)
         {
             _board_state.mode = RFE_MODE_TXRX;
             int res = RFE_Mode(_lime_rfe, RFE_MODE_TXRX);
@@ -164,24 +164,23 @@ void LimeRFEController::setDuplex(bool duplex_mode)
         return;
     if(duplex_mode && !_duplex_mode)
     {
-        _board_state.selPortTX = RFE_PORT_2;
-        int res = RFE_ConfigureState(_lime_rfe, _board_state);
-        if(res != RFE_SUCCESS)
-            _logger->log(Logger::LogLevelWarning, QString("LimeRFE failed configuration %1").arg(getError(res)));
+        if(!_low_band_tx)
+        {
+            _board_state.selPortTX = RFE_PORT_2;
+            int res = RFE_ConfigureState(_lime_rfe, _board_state);
+            if(res != RFE_SUCCESS)
+                _logger->log(Logger::LogLevelWarning, QString("LimeRFE failed configuration %1").arg(getError(res)));
+        }
     }
     if(!duplex_mode && _duplex_mode)
     {
         if(!_low_band_tx)
         {
             _board_state.selPortTX = RFE_PORT_1;
+            int res = RFE_ConfigureState(_lime_rfe, _board_state);
+            if(res != RFE_SUCCESS)
+                _logger->log(Logger::LogLevelWarning, QString("LimeRFE failed configuration %1").arg(getError(res)));
         }
-        else
-        {
-            _board_state.selPortTX = RFE_PORT_3;
-        }
-        int res = RFE_ConfigureState(_lime_rfe, _board_state);
-        if(res != RFE_SUCCESS)
-            _logger->log(Logger::LogLevelWarning, QString("LimeRFE failed configuration %1").arg(getError(res)));
     }
     _duplex_mode = duplex_mode;
 }
@@ -312,10 +311,7 @@ void LimeRFEController::setTXBand(int64_t tx_frequency)
     }
     if(tx_frequency < 72000000)
     {
-        if(_duplex_mode)
-            _board_state.selPortTX = RFE_PORT_2;
-        else
-            _board_state.selPortTX = RFE_PORT_3;
+        _board_state.selPortTX = RFE_PORT_3;
         _low_band_tx = true;
     }
     else
