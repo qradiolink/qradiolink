@@ -99,6 +99,7 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     QObject::connect(ui->rxVolumeDial,SIGNAL(valueChanged(int)),this,SLOT(setVolumeDisplay(int)));
     QObject::connect(ui->micGainSlider,SIGNAL(valueChanged(int)),this,SLOT(setTxVolumeDisplay(int)));
     QObject::connect(ui->digitalGainSlider,SIGNAL(valueChanged(int)),this,SLOT(setDigitalGain(int)));
+    QObject::connect(ui->limeRFEAttenuatorSlider,SIGNAL(valueChanged(int)),this,SLOT(updateLimeRFEAttenuation(int)));
     QObject::connect(ui->rxGainSlider,SIGNAL(valueChanged(int)),this,SLOT(setRxDigitalGain(int)));
     QObject::connect(ui->voipGainSlider,SIGNAL(valueChanged(int)),this,SLOT(changeVoipVolume(int)));
     QObject::connect(ui->rxModemTypeComboBox,SIGNAL(currentIndexChanged(int)),
@@ -135,6 +136,7 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
                      this,SLOT(setAudioCompressor(bool)));
     QObject::connect(ui->checkBoxRelays,SIGNAL(toggled(bool)),this,SLOT(setRelays(bool)));
     QObject::connect(ui->checkBoxLimeRFE,SIGNAL(toggled(bool)),this,SLOT(setLimeRFE(bool)));
+    QObject::connect(ui->checkBoxLimeRFENotch,SIGNAL(toggled(bool)),this,SLOT(toggleLimeRFENotch(bool)));
     QObject::connect(ui->burstIPCheckBox,SIGNAL(toggled(bool)),this,SLOT(setBurstIPMode(bool)));
     QObject::connect(ui->nightModeCheckBox,SIGNAL(toggled(bool)),this,SLOT(setTheme(bool)));
     QObject::connect(ui->fftHistoryCheckBox,SIGNAL(toggled(bool)),this,SLOT(setFFTHistory(bool)));
@@ -560,6 +562,8 @@ void MainWindow::setConfig()
     ui->checkBoxAudioCompressor->setChecked((bool)_settings->audio_compressor);
     ui->checkBoxRelays->setChecked((bool)_settings->enable_relays);
     ui->checkBoxLimeRFE->setChecked((bool)_settings->enable_lime_rfe);
+    ui->limeRFEAttenuatorSlider->setValue(_settings->lime_rfe_attenuation);
+    ui->checkBoxLimeRFENotch->setChecked((bool)_settings->lime_rfe_notch);
     ui->duplexOpButton->setChecked((bool) _settings->enable_duplex);
     ui->checkBoxTxLimits->setChecked((bool)_settings->tx_band_limits);
     ui->burstIPCheckBox->setChecked((bool)_settings->burst_ip_modem);
@@ -619,6 +623,8 @@ void MainWindow::saveUiConfig()
     _settings->tx_power = (int)ui->txGainDial->value();
     _settings->bb_gain = (int)ui->digitalGainSlider->value();
     _settings->if_gain = (int)ui->rxGainSlider->value();
+    _settings->lime_rfe_attenuation = (int)ui->limeRFEAttenuatorSlider->value();
+    _settings->lime_rfe_notch = (int)ui->checkBoxLimeRFENotch->isChecked();
     _settings->rx_sensitivity = (int)ui->rxGainDial->value();
     _settings->squelch = (int)ui->rxSquelchDial->value();
     _settings->rx_volume = (int)ui->rxVolumeDial->value();
@@ -1885,6 +1891,19 @@ void MainWindow::setLimeRFE(bool value)
     _settings->enable_lime_rfe = (int) value;
     emit enableLimeRFE(value);
 }
+
+void MainWindow::updateLimeRFEAttenuation(int value)
+{
+    _settings->lime_rfe_attenuation = value;
+    emit setLimeRFEAttenuation(value);
+}
+
+void MainWindow::toggleLimeRFENotch(bool value)
+{
+    _settings->lime_rfe_notch = (int) value;
+    emit setLimeRFENotch(value);
+}
+
 
 void MainWindow::setRemoteControl(bool value)
 {

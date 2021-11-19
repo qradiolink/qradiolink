@@ -2311,6 +2311,18 @@ void RadioController::setBbGain(int value)
     _modem->setBbGain(_settings->bb_gain);
 }
 
+void RadioController::setLimeRFEAttenuation(int value)
+{
+    _settings->lime_rfe_attenuation = value;
+    _lime_rfe_controller->setAttenuator(value);
+}
+
+void RadioController::setLimeRFENotch(bool value)
+{
+    _settings->lime_rfe_notch = (int)value;
+    _lime_rfe_controller->setNotchFilter(value);
+}
+
 void RadioController::setIfGain(int value)
 {
     _settings->if_gain = value;

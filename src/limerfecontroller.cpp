@@ -331,7 +331,7 @@ void LimeRFEController::setAttenuator(int value)
 {
     if(!_lime_rfe_inited)
         return;
-    if((value < 0) || (value > 10))
+    if((value < 0) || (value > 5))
     {
         _logger->log(Logger::LogLevelWarning, QString("LimeRFE attenuator value %1 not supported").arg(value));
         return;

@@ -141,6 +141,7 @@ public slots:
     void setAudioCompressor(bool value);
     void setRelays(bool value);
     void setLimeRFE(bool value);
+    void toggleLimeRFENotch(bool value);
     void setRemoteControl(bool value);
     void setRSSICalibration();
     void setDigitalGain(int value);
@@ -172,6 +173,7 @@ public slots:
     void updateTotTimer(int value);
     void updateTotTxEnd(bool value);
     void updateTxLimits(bool value);
+    void updateLimeRFEAttenuation(int value);
     void calculateShiftFromTxFreq();
     void setRxStageGain(int value);
     void setTxStageGain(int value);
@@ -237,6 +239,8 @@ signals:
     void calibrateRSSI(float value);
     void setBbGain(int value);
     void setIfGain(int value);
+    void setLimeRFEAttenuation(int value);
+    void setLimeRFENotch(bool value);
     void setAgcAttack(int value);
     void setAgcDecay(int value);
     void newMumbleMessage(QString text);

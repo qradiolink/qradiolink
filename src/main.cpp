@@ -337,6 +337,8 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
                      radio_op,SLOT(setTxPower(int, std::string)));
     QObject::connect(w,SIGNAL(setBbGain(int)),radio_op,SLOT(setBbGain(int)));
     QObject::connect(w,SIGNAL(setIfGain(int)),radio_op,SLOT(setIfGain(int)));
+    QObject::connect(w,SIGNAL(setLimeRFEAttenuation(int)),radio_op,SLOT(setLimeRFEAttenuation(int)));
+    QObject::connect(w,SIGNAL(setLimeRFENotch(bool)),radio_op,SLOT(setLimeRFENotch(bool)));
     QObject::connect(w,SIGNAL(setAgcAttack(int)),radio_op,SLOT(setAgcAttack(int)));
     QObject::connect(w,SIGNAL(setAgcDecay(int)),radio_op,SLOT(setAgcDecay(int)));
     QObject::connect(w,SIGNAL(setRxSensitivity(int, std::string)),radio_op,SLOT(setRxSensitivity(int, std::string)));

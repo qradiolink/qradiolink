@@ -106,6 +106,8 @@ public:
     int gpredict_control;
     QString lime_rfe_device;
     int enable_lime_rfe;
+    int lime_rfe_attenuation;
+    int lime_rfe_notch;
 
     /// Not saved to config:
 

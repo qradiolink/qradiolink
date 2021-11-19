@@ -149,6 +149,7 @@ public slots:
     void setRxCTCSS(float value);
     void setTxCTCSS(float value);
     void setFilterWidth(int width);
+    void setLimeRFEAttenuation(int value);
     void enableGUIConst(bool value);
     void enableGUIFFT(bool value);
     void enableRSSI(bool value);
@@ -180,6 +181,7 @@ public slots:
     void enableAudioCompressor(bool value);
     void enableRelays(bool value);
     void enableLimeRFE(bool value);
+    void setLimeRFENotch(bool value);
     void calibrateRSSI(float value);
     void setCallsign();
     void setScanResumeTime(int value);

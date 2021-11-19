@@ -44,8 +44,6 @@ CONFIG(qtaudio) {
 
 SOURCES += src/main.cpp\
     src/gpredictcontrol.cpp \
-    src/gr/gr_demod_mmdvm.cpp \
-    src/gr/gr_mod_mmdvm.cpp \
     src/limerfecontroller.cpp \
         src/mainwindow.cpp\
         src/audio/audioencoder.cpp\
@@ -86,6 +84,8 @@ SOURCES += src/main.cpp\
     src/gr/rssi_block.cpp \
     src/gr/gr_mod_base.cpp \
     src/gr/gr_demod_base.cpp \
+    src/gr/gr_demod_mmdvm.cpp \
+    src/gr/gr_mod_mmdvm.cpp \
     src/gr/gr_demod_freedv.cpp \
     src/gr/gr_mod_freedv.cpp \
     src/gr/gr_deframer_bb.cpp \
@@ -126,8 +126,6 @@ HEADERS  += src/mainwindow.h\
         src/audio/audioencoder.h\
         src/audio/audioprocessor.h \
     src/gpredictcontrol.h \
-    src/gr/gr_demod_mmdvm.h \
-    src/gr/gr_mod_mmdvm.h \
     src/limerfecontroller.h \
         src/video/videoencoder.h \
         src/video/imagecapture.h \
@@ -169,6 +167,8 @@ HEADERS  += src/mainwindow.h\
     src/gr/rssi_block.h \
     src/gr/gr_mod_base.h \
     src/gr/gr_demod_base.h \
+    src/gr/gr_demod_mmdvm.h \
+    src/gr/gr_mod_mmdvm.h \
     src/gr/gr_demod_freedv.h \
     src/gr/gr_mod_freedv.h \
     src/gr/rx_fft.h \

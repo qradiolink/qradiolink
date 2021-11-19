@@ -56,6 +56,8 @@ Settings::Settings(Logger *logger)
     tx_band_limits = 0;
     lime_rfe_device = "/dev/ttyUSB0";
     enable_lime_rfe = 0;
+    lime_rfe_attenuation = 0;
+    lime_rfe_notch = 0;
 
     /// old stuff, not used
     _mumble_tcp = 1; // used
@@ -684,6 +686,22 @@ void Settings::readConfig()
     {
         enable_lime_rfe = 0;
     }
+    try
+    {
+        lime_rfe_attenuation = cfg.lookup("lime_rfe_attenuation");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        lime_rfe_attenuation = 2;
+    }
+    try
+    {
+        lime_rfe_notch = cfg.lookup("lime_rfe_notch");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        lime_rfe_notch = 2;
+    }
 
 }
 
@@ -761,6 +779,8 @@ void Settings::saveConfig()
     root.add("gpredict_control",libconfig::Setting::TypeInt) = gpredict_control;
     root.add("lime_rfe_device",libconfig::Setting::TypeString) = lime_rfe_device.toStdString();
     root.add("enable_lime_rfe",libconfig::Setting::TypeInt) = enable_lime_rfe;
+    root.add("lime_rfe_attenuation",libconfig::Setting::TypeInt) = lime_rfe_attenuation;
+    root.add("lime_rfe_notch",libconfig::Setting::TypeInt) = lime_rfe_notch;
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());
