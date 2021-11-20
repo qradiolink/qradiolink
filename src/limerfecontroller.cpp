@@ -309,7 +309,8 @@ void LimeRFEController::setTXBand(int64_t tx_frequency)
         _board_state.channelIDTX = RFE_CID_HAM_0030;
         break;
     }
-    if(tx_frequency < 72000000)
+
+    if((tx_frequency < 72000000) && (tx_band >= 0))
     {
         _board_state.selPortTX = RFE_PORT_3;
         _low_band_tx = true;
