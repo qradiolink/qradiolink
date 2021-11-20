@@ -170,6 +170,7 @@ void LimeRFEController::setDuplex(bool duplex_mode)
             int res = RFE_ConfigureState(_lime_rfe, _board_state);
             if(res != RFE_SUCCESS)
                 _logger->log(Logger::LogLevelWarning, QString("LimeRFE failed configuration %1").arg(getError(res)));
+            _logger->log(Logger::LogLevelInfo, QString("TX port is now TX (J4)"));
         }
     }
     if(!duplex_mode && _duplex_mode)
@@ -180,6 +181,7 @@ void LimeRFEController::setDuplex(bool duplex_mode)
             int res = RFE_ConfigureState(_lime_rfe, _board_state);
             if(res != RFE_SUCCESS)
                 _logger->log(Logger::LogLevelWarning, QString("LimeRFE failed configuration %1").arg(getError(res)));
+            _logger->log(Logger::LogLevelInfo, QString("TX port is now TX/RX (J3)"));
         }
     }
     _duplex_mode = duplex_mode;
@@ -313,14 +315,21 @@ void LimeRFEController::setTXBand(int64_t tx_frequency)
     if((tx_frequency < 72000000) && (tx_band >= 0))
     {
         _board_state.selPortTX = RFE_PORT_3;
+        _logger->log(Logger::LogLevelInfo, QString("TX port is now 70 MHz (J5)"));
         _low_band_tx = true;
     }
     else
     {
         if(_duplex_mode)
+        {
             _board_state.selPortTX = RFE_PORT_2;
+            _logger->log(Logger::LogLevelInfo, QString("TX port is now TX (J4)"));
+        }
         else
+        {
             _board_state.selPortTX = RFE_PORT_1;
+            _logger->log(Logger::LogLevelInfo, QString("TX port is now TX/RX (J3)"));
+        }
         _low_band_tx = false;
     }
     int res = RFE_ConfigureState(_lime_rfe, _board_state);
