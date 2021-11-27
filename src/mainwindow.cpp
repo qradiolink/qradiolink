@@ -710,8 +710,8 @@ void MainWindow::addDisplayChannel(radiochannel *chan, int r)
     ui->memoriesTableWidget->setItem(r, 0, rx_freq_display);
     ui->memoriesTableWidget->setItem(r, 1, name_display);
     ui->memoriesTableWidget->setItem(r, 2, tx_shift_display);
-    ui->memoriesTableWidget->setItem(r, 3, tx_mode_display);
-    ui->memoriesTableWidget->setItem(r, 4, rx_mode_display);
+    ui->memoriesTableWidget->setItem(r, 3, rx_mode_display);
+    ui->memoriesTableWidget->setItem(r, 4, tx_mode_display);
     ui->memoriesTableWidget->setItem(r, 5, squelch_display);
     ui->memoriesTableWidget->setItem(r, 6, rx_volume_display);
     ui->memoriesTableWidget->setItem(r, 7, tx_power_display);
