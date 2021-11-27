@@ -884,7 +884,7 @@ void MainWindow::editMemoryChannel(QTableWidgetItem* item)
     switch(col)
     {
     case 0:
-        chan->rx_frequency = (int64_t)(item->text().replace(",", "").toLong());
+        chan->rx_frequency = (int64_t)(item->text().replace(".", "").replace(",", "").toLong());
         break;
     case 1:
         chan->name = item->text().toStdString();
