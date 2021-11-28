@@ -16,67 +16,86 @@
 
 #include "gr_mod_gmsk.h"
 
-gr_mod_gmsk::gr_mod_gmsk(QObject *parent, int sps, int samp_rate, int carrier_freq, int filter_width, float mod_index) :
-    QObject(parent)
+gr_mod_gmsk_sptr make_gr_mod_gmsk(int sps, int samp_rate, int carrier_freq,
+                                          int filter_width)
+{
+    return gnuradio::get_initial_sptr(new gr_mod_gmsk(sps, samp_rate, carrier_freq,
+                                                      filter_width));
+}
+
+gr_mod_gmsk::gr_mod_gmsk(int sps, int samp_rate, int carrier_freq,
+                                 int filter_width) :
+    gr::hier_block2 ("gr_mod_gmsk",
+                      gr::io_signature::make (1, 1, sizeof (char)),
+                      gr::io_signature::make (1, 1, sizeof (gr_complex)))
 {
     std::vector<float> constellation;
     constellation.push_back(-1);
     constellation.push_back(1);
+    std::vector<int> polys;
+    polys.push_back(109);
+    polys.push_back(79);
+
+    std::vector<int> map;
+    map.push_back(0);
+    map.push_back(1);
+
     _samples_per_symbol = sps;
     _samp_rate =samp_rate;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
-    _modulation_index = mod_index;
-    _top_block = gr::make_top_block("gmsk_modulator");
-    _vector_source = make_gr_vector_source();
+    int nfilts = 15 * _samples_per_symbol;
+    float amplif = 0.9f;
+
+    int second_interp = 10;
+    int if_samp_rate = 100000;
+    if(_samples_per_symbol == 5)
+    {
+        nfilts = nfilts * 5;
+    }
+    if((nfilts % 2) == 0)
+        nfilts += 1;
+
     _packed_to_unpacked = gr::blocks::packed_to_unpacked_bb::make(1,gr::GR_MSB_FIRST);
-    _diff_encoder = gr::digital::diff_encoder_bb::make(2);
-    _chunks_to_symbols = gr::digital::chunks_to_symbols_bf::make(constellation,1);
-    _repeat = gr::blocks::repeat::make(4,_samples_per_symbol);
-    _interp_gaussian_filter = gr::filter::interp_fir_filter_fff::make(
-                1,gr::filter::firdes::gaussian(1, _samples_per_symbol, 0.25, 2));
-    _frequency_modulator = gr::analog::frequency_modulator_fc::make((M_PI/2*_modulation_index) / _samples_per_symbol);
-    _multiply = gr::blocks::multiply_cc::make(1);
-    _signal_source = gr::analog::sig_source_c::make(_samp_rate,gr::analog::GR_COS_WAVE,_carrier_freq,1);
-    _amplify = gr::blocks::multiply_const_cc::make(0.5,1);
-    _band_pass_filter_1 = gr::filter::fir_filter_ccf::make(
-                1,gr::filter::firdes::band_pass(
-                    1, _samp_rate, _carrier_freq - _filter_width,_carrier_freq + _filter_width,600));
-    _band_pass_filter_2 = gr::filter::fir_filter_ccf::make(
-                1,gr::filter::firdes::band_pass(
-                    1, _samp_rate, _carrier_freq - _filter_width,_carrier_freq + _filter_width,600));
-    _complex_to_real = gr::blocks::complex_to_real::make();
-    _audio_sink = gr::audio::sink::make(_samp_rate);
+    _scrambler = gr::digital::scrambler_bb::make(0x8A, 0x7F ,7);
+    _map = gr::digital::map_bb::make(map);
 
-    _top_block->connect(_vector_source,0,_packed_to_unpacked,0);
-    _top_block->connect(_packed_to_unpacked,0,_diff_encoder,0);
-    _top_block->connect(_diff_encoder,0,_chunks_to_symbols,0);
-    _top_block->connect(_chunks_to_symbols,0,_repeat,0);
-    _top_block->connect(_repeat,0,_interp_gaussian_filter,0);
-    _top_block->connect(_interp_gaussian_filter,0,_frequency_modulator,0);
-    _top_block->connect(_frequency_modulator,0,_multiply,0);
-    _top_block->connect(_signal_source,0,_multiply,1);
-    _top_block->connect(_multiply,0,_amplify,0);
-    _top_block->connect(_amplify,0,_band_pass_filter_1,0);
-    //_top_block->connect(_band_pass_filter_1,0,_band_pass_filter_2,0);
-    _top_block->connect(_band_pass_filter_1,0,_complex_to_real,0);
-    _top_block->connect(_complex_to_real,0,_audio_sink,0);
+     gr::fec::code::cc_encoder::sptr encoder = gr::fec::code::cc_encoder::make(80, 7, 2, polys);
+    _encode_ccsds = gr::fec::encoder::make(encoder, 1, 1);
 
+    _chunks_to_symbols = gr::digital::chunks_to_symbols_bf::make(constellation);
+    _freq_modulator = gr::analog::frequency_modulator_fc::make((M_PI/2)/(_samples_per_symbol));
+    _resampler = gr::filter::rational_resampler_base_fff::make(_samples_per_symbol, 1,
+                    gr::filter::firdes::gaussian(_samples_per_symbol,
+                                _samples_per_symbol,0.5,nfilts));
+    _amplify = gr::blocks::multiply_const_cc::make(amplif,1);
+    _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
+    _filter = gr::filter::fft_filter_ccf::make(1,gr::filter::firdes::low_pass_2(
+            1, if_samp_rate, _filter_width, 1200, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+    _resampler2 = gr::filter::rational_resampler_base_ccf::make(second_interp, 1,
+                gr::filter::firdes::low_pass(second_interp,_samp_rate,_filter_width,_filter_width*5));
+
+    connect(self(),0,_packed_to_unpacked,0);
+    connect(_packed_to_unpacked,0,_scrambler,0);
+    connect(_scrambler,0,_encode_ccsds,0);
+    connect(_encode_ccsds,0,_map,0);
+    connect(_map,0,_chunks_to_symbols,0);
+
+    connect(_chunks_to_symbols,0,_resampler,0);
+    connect(_resampler,0,_freq_modulator,0);
+
+    connect(_freq_modulator,0,_filter,0);
+    connect(_filter,0,_amplify,0);
+    connect(_amplify,0,_bb_gain,0);
+    connect(_bb_gain,0,_resampler2,0);
+    connect(_resampler2,0,self(),0);
 }
 
-void gr_mod_gmsk::start()
+void gr_mod_gmsk::set_bb_gain(float value)
 {
-    _top_block->start();
+    _bb_gain->set_k(value);
 }
 
-void gr_mod_gmsk::stop()
-{
-    _top_block->stop();
-    _top_block->wait();
-}
 
-int gr_mod_gmsk::setData(std::vector<u_int8_t> *data)
-{
-    return _vector_source->set_data(data);
 
-}
+

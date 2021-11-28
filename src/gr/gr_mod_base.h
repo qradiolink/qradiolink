@@ -37,6 +37,7 @@
 #include "gr_byte_source.h"
 #include "gr_audio_source.h"
 #include "gr_mod_2fsk.h"
+#include "gr_mod_gmsk.h"
 #include "gr_mod_4fsk.h"
 #include "gr_mod_am.h"
 #include "gr_mod_bpsk.h"
@@ -87,6 +88,9 @@ private:
     gr_mod_2fsk_sptr _2fsk_2k;
     gr_mod_2fsk_sptr _2fsk_1k;
     gr_mod_2fsk_sptr _2fsk_10k;
+    gr_mod_gmsk_sptr _gmsk_2k;
+    gr_mod_gmsk_sptr _gmsk_1k;
+    gr_mod_gmsk_sptr _gmsk_10k;
     gr_mod_4fsk_sptr _4fsk_2k;
     gr_mod_4fsk_sptr _4fsk_1k;
     gr_mod_4fsk_sptr _4fsk_2k_fm;

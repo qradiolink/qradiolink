@@ -101,6 +101,7 @@ SOURCES += src/main.cpp\
     src/gr/gr_bit_sink.cpp \
     src/gr/gr_sample_sink.cpp \
     src/gr/gr_demod_2fsk.cpp \
+    src/gr/gr_demod_gmsk.cpp \
     src/gr/gr_demod_4fsk.cpp \
     src/gr/gr_demod_am.cpp \
     src/gr/gr_demod_nbfm.cpp \
@@ -110,6 +111,7 @@ SOURCES += src/main.cpp\
     src/gr/gr_demod_ssb.cpp \
     src/gr/gr_demod_wbfm.cpp \
     src/gr/gr_mod_2fsk.cpp \
+    src/gr/gr_mod_gmsk.cpp \
     src/gr/gr_mod_4fsk.cpp \
     src/gr/gr_mod_am.cpp \
     src/gr/gr_mod_bpsk.cpp \
@@ -184,6 +186,7 @@ HEADERS  += src/mainwindow.h\
     src/gr/gr_bit_sink.h \
     src/gr/gr_sample_sink.h \
     src/gr/gr_demod_2fsk.h \
+    src/gr/gr_demod_gmsk.h \
     src/gr/gr_demod_4fsk.h \
     src/gr/gr_demod_am.h \
     src/gr/gr_demod_bpsk.h \
@@ -193,6 +196,7 @@ HEADERS  += src/mainwindow.h\
     src/gr/gr_demod_ssb.h \
     src/gr/gr_demod_wbfm.h \
     src/gr/gr_mod_2fsk.h \
+    src/gr/gr_mod_gmsk.h \
     src/gr/gr_mod_4fsk.h \
     src/gr/gr_mod_am.h \
     src/gr/gr_mod_bpsk.h \

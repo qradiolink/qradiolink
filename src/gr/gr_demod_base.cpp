@@ -84,7 +84,8 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
     }
 
     _fft_sink = make_rx_fft_c(32768, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
-    _zeromq_sink = gr::zeromq::push_sink::make(sizeof(short), 1, "ipc:///tmp/mmdvm-rx.ipc");
+    std::string zmq_endpoint = "ipc:///tmp/mmdvm-rx.ipc";
+    _zeromq_sink = gr::zeromq::push_sink::make(sizeof(short), 1, (char*)zmq_endpoint.c_str());
 
     _deframer1 = make_gr_deframer_bb(1);
     _deframer2 = make_gr_deframer_bb(1);
@@ -110,6 +111,9 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
     _2fsk_2k = make_gr_demod_2fsk(5,1000000,1700,4000, false);
     _2fsk_1k = make_gr_demod_2fsk(10,1000000,1700,2000, false);
     _2fsk_10k = make_gr_demod_2fsk(1,1000000,1700,13500, true);
+    _gmsk_2k = make_gr_demod_gmsk(5,1000000,1700,3000);
+    _gmsk_1k = make_gr_demod_gmsk(10,1000000,1700,1500);
+    _gmsk_10k = make_gr_demod_gmsk(1,1000000,1700,15000);
     _4fsk_2k = make_gr_demod_4fsk(5,1000000,1700,4000, false);
     _4fsk_2k_fm = make_gr_demod_4fsk(5,1000000,1700,2500, true);
     _4fsk_1k_fm = make_gr_demod_4fsk(10,1000000,1700,1250, true);
@@ -230,6 +234,30 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
             _top_block->disconnect(_const_valve,0,_constellation,0);
             _top_block->disconnect(_2fsk_10k,2,_deframer1_10k,0);
             _top_block->disconnect(_2fsk_10k,3,_deframer2_10k,0);
+            break;
+        case gr_modem_types::ModemTypeGMSK2K:
+            _top_block->disconnect(_demod_valve,0,_gmsk_2k,0);
+            _top_block->disconnect(_gmsk_2k,0,_rssi_valve,0);
+            _top_block->disconnect(_gmsk_2k,1,_const_valve,0);
+            _top_block->disconnect(_const_valve,0,_constellation,0);
+            _top_block->disconnect(_gmsk_2k,2,_deframer1,0);
+            _top_block->disconnect(_gmsk_2k,3,_deframer2,0);
+            break;
+        case gr_modem_types::ModemTypeGMSK1K:
+            _top_block->disconnect(_demod_valve,0,_gmsk_1k,0);
+            _top_block->disconnect(_gmsk_1k,0,_rssi_valve,0);
+            _top_block->disconnect(_gmsk_1k,1,_const_valve,0);
+            _top_block->disconnect(_const_valve,0,_constellation,0);
+            _top_block->disconnect(_gmsk_1k,2,_deframer_700_1,0);
+            _top_block->disconnect(_gmsk_1k,3,_deframer_700_2,0);
+            break;
+        case gr_modem_types::ModemTypeGMSK10K:
+            _top_block->disconnect(_demod_valve,0,_gmsk_10k,0);
+            _top_block->disconnect(_gmsk_10k,0,_rssi_valve,0);
+            _top_block->disconnect(_gmsk_10k,1,_const_valve,0);
+            _top_block->disconnect(_const_valve,0,_constellation,0);
+            _top_block->disconnect(_gmsk_10k,2,_deframer1_10k,0);
+            _top_block->disconnect(_gmsk_10k,3,_deframer2_10k,0);
             break;
         case gr_modem_types::ModemType4FSK2K:
             _top_block->disconnect(_demod_valve,0,_4fsk_2k,0);
@@ -444,6 +472,30 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
             _top_block->connect(_const_valve,0,_constellation,0);
             _top_block->connect(_2fsk_10k,2,_deframer1_10k,0);
             _top_block->connect(_2fsk_10k,3,_deframer2_10k,0);
+            break;
+        case gr_modem_types::ModemTypeGMSK2K:
+            _top_block->connect(_demod_valve,0,_gmsk_2k,0);
+            _top_block->connect(_gmsk_2k,0,_rssi_valve,0);
+            _top_block->connect(_gmsk_2k,1,_const_valve,0);
+            _top_block->connect(_const_valve,0,_constellation,0);
+            _top_block->connect(_gmsk_2k,2,_deframer1,0);
+            _top_block->connect(_gmsk_2k,3,_deframer2,0);
+            break;
+        case gr_modem_types::ModemTypeGMSK1K:
+            _top_block->connect(_demod_valve,0,_gmsk_1k,0);
+            _top_block->connect(_gmsk_1k,0,_rssi_valve,0);
+            _top_block->connect(_gmsk_1k,1,_const_valve,0);
+            _top_block->connect(_const_valve,0,_constellation,0);
+            _top_block->connect(_gmsk_1k,2,_deframer_700_1,0);
+            _top_block->connect(_gmsk_1k,3,_deframer_700_2,0);
+            break;
+        case gr_modem_types::ModemTypeGMSK10K:
+            _top_block->connect(_demod_valve,0,_gmsk_10k,0);
+            _top_block->connect(_gmsk_10k,0,_rssi_valve,0);
+            _top_block->connect(_gmsk_10k,1,_const_valve,0);
+            _top_block->connect(_const_valve,0,_constellation,0);
+            _top_block->connect(_gmsk_10k,2,_deframer1_10k,0);
+            _top_block->connect(_gmsk_10k,3,_deframer2_10k,0);
             break;
         case gr_modem_types::ModemType4FSK2K:
             _top_block->connect(_demod_valve,0,_4fsk_2k,0);
@@ -664,6 +716,15 @@ std::vector<unsigned char>* gr_demod_base::getData(int nr)
         case gr_modem_types::ModemType2FSK10KFM:
             data = _deframer1_10k->get_data();
             break;
+        case gr_modem_types::ModemTypeGMSK2K:
+            data = _deframer1->get_data();
+            break;
+        case gr_modem_types::ModemTypeGMSK1K:
+            data = _deframer_700_1->get_data();
+            break;
+        case gr_modem_types::ModemTypeGMSK10K:
+            data = _deframer1_10k->get_data();
+            break;
         case gr_modem_types::ModemTypeBPSK1K:
             data = _deframer_700_1->get_data();
             break;
@@ -692,6 +753,15 @@ std::vector<unsigned char>* gr_demod_base::getData(int nr)
             data = _deframer_700_2->get_data();
             break;
         case gr_modem_types::ModemType2FSK10KFM:
+            data = _deframer2_10k->get_data();
+            break;
+        case gr_modem_types::ModemTypeGMSK2K:
+            data = _deframer2->get_data();
+            break;
+        case gr_modem_types::ModemTypeGMSK1K:
+            data = _deframer_700_2->get_data();
+            break;
+        case gr_modem_types::ModemTypeGMSK10K:
             data = _deframer2_10k->get_data();
             break;
         case gr_modem_types::ModemTypeBPSK1K:

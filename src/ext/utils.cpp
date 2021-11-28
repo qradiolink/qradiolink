@@ -109,6 +109,9 @@ void buildModeList(QVector<QString> *operating_modes)
     operating_modes->push_back("2FSK 2K");
     operating_modes->push_back("2FSK 1K");
     operating_modes->push_back("2FSK RRC 10K");
+    operating_modes->push_back("GMSK 2K");
+    operating_modes->push_back("GMSK 1K");
+    operating_modes->push_back("GMSK 10K");
     operating_modes->push_back("4FSK 2K");
     //operating_modes->push_back("4FSK 10K");
     operating_modes->push_back("4FSK RRC 2K");
@@ -147,6 +150,9 @@ void buildFilterWidthList(std::vector<std::complex<int>>* filter_widths, std::ve
     filter_widths->push_back(std::complex<int>(-4000, 4000));  // 2FSK 2K
     filter_widths->push_back(std::complex<int>(-2000, 2000));  // 2FSK 1K
     filter_widths->push_back(std::complex<int>(-15000, 15000));  // 2FSK 10K RRC
+    filter_widths->push_back(std::complex<int>(-3000, 3000));  // GMSK 2K
+    filter_widths->push_back(std::complex<int>(-1500, 1500));  // GMSK 1K
+    filter_widths->push_back(std::complex<int>(-15000, 15000));  // GMSK 10K
     filter_widths->push_back(std::complex<int>(-4400, 4400));  // 4FSK 2K
     //filter_widths->push_back(std::complex<int>(-25000, 25000));    // 4FSK 10K
     filter_widths->push_back(std::complex<int>(-2500, 2500));  // 4FSK 2K RRC
@@ -182,6 +188,9 @@ void buildFilterWidthList(std::vector<std::complex<int>>* filter_widths, std::ve
     ranges->push_back(std::complex<int>(-4000, 4000));  // 2FSK 2K
     ranges->push_back(std::complex<int>(-2000, 2000));  // 2FSK 1K
     ranges->push_back(std::complex<int>(-15000, 15000));  // 2FSK 10K
+    ranges->push_back(std::complex<int>(-3000, 3000));  // GMSK 2K
+    ranges->push_back(std::complex<int>(-1500, 1500));  // GMSK 1K
+    ranges->push_back(std::complex<int>(-15000, 15000));  // GMSK 10K
     ranges->push_back(std::complex<int>(-4400, 4400));  // 4FSK 2K
     //ranges->push_back(std::complex<int>(-25000, 25000));    // 4FSK 10K
     ranges->push_back(std::complex<int>(-2000, 2000));  // 4FSK 2K RRC
@@ -217,6 +226,9 @@ void buildFilterWidthList(std::vector<std::complex<int>>* filter_widths, std::ve
     symmetric->push_back(true);  // 2FSK 2K FM
     symmetric->push_back(true);  // 2FSK 1K FM
     symmetric->push_back(true);  // 2FSK 10K
+    symmetric->push_back(true);  // GMSK 2K
+    symmetric->push_back(true);  // GMSK 1K
+    symmetric->push_back(true);  // GMSK 10K
     symmetric->push_back(true);  // 4FSK 2K
     //symmetric->push_back(true);    // 4FSK 10K
     symmetric->push_back(true);  // 4FSK 2K RRC

@@ -165,6 +165,18 @@ void gr_modem::toggleTxMode(int modem_type)
         {
             _tx_frame_length = 622;
         }
+        else if(modem_type == gr_modem_types::ModemTypeGMSK1K)
+        {
+            _tx_frame_length = 4;
+        }
+        else if(modem_type == gr_modem_types::ModemTypeGMSK2K)
+        {
+            _tx_frame_length = 7;
+        }
+        else if(modem_type == gr_modem_types::ModemTypeGMSK10K)
+        {
+            _tx_frame_length = 47;
+        }
     }
 
 }
@@ -259,6 +271,21 @@ void gr_modem::toggleRxMode(int modem_type)
         {
             _bit_buf_len = 623 *8;
             _rx_frame_length = 622;
+        }
+        else if(modem_type == gr_modem_types::ModemTypeGMSK1K)
+        {
+            _bit_buf_len = 4 *8;
+            _rx_frame_length = 4;
+        }
+        else if(modem_type == gr_modem_types::ModemTypeGMSK2K)
+        {
+            _bit_buf_len = 8 *8;
+            _rx_frame_length = 7;
+        }
+        else if (modem_type == gr_modem_types::ModemTypeGMSK10K)
+        {
+            _bit_buf_len = 48 *8;
+            _rx_frame_length = 47;
         }
         delete[] _bit_buf;
         _bit_buf = new unsigned char[_bit_buf_len];
@@ -653,6 +680,7 @@ std::vector<unsigned char>* gr_modem::frame(unsigned char *encoded_audio, int da
         if((_modem_type_tx == gr_modem_types::ModemTypeBPSK1K)
                 || (_modem_type_tx == gr_modem_types::ModemType2FSK1KFM)
                 || (_modem_type_tx == gr_modem_types::ModemType2FSK1K)
+                || (_modem_type_tx == gr_modem_types::ModemTypeGMSK1K)
                 || (_modem_type_tx == gr_modem_types::ModemType4FSK1KFM))
         {
             data->push_back(0xB5);
@@ -687,6 +715,7 @@ std::vector<unsigned char>* gr_modem::frame(unsigned char *encoded_audio, int da
     if((_modem_type_tx != gr_modem_types::ModemTypeBPSK1K) &&
             (_modem_type_tx != gr_modem_types::ModemType2FSK1KFM) &&
             (_modem_type_tx != gr_modem_types::ModemType2FSK1K) &&
+            (_modem_type_tx != gr_modem_types::ModemTypeGMSK1K) &&
             (_modem_type_tx != gr_modem_types::ModemType4FSK1KFM))
         data->push_back(0xAA); // frame start
     for(int i=0;i< data_size;i++)
@@ -793,6 +822,9 @@ bool gr_modem::demodulate()
             || (_modem_type_rx == gr_modem_types::ModemType2FSK2KFM)
             || (_modem_type_rx == gr_modem_types::ModemType2FSK2K)
             || (_modem_type_rx == gr_modem_types::ModemType2FSK10KFM)
+            || (_modem_type_rx == gr_modem_types::ModemTypeGMSK2K)
+            || (_modem_type_rx == gr_modem_types::ModemTypeGMSK1K)
+            || (_modem_type_rx == gr_modem_types::ModemTypeGMSK10K)
             || (_modem_type_rx == gr_modem_types::ModemTypeBPSK1K)
             || (_modem_type_rx == gr_modem_types::ModemTypeBPSK8)
             || (_modem_type_rx == gr_modem_types::ModemType2FSK1KFM)
@@ -818,7 +850,10 @@ bool gr_modem::demodulate()
             || (_modem_type_rx == gr_modem_types::ModemType2FSK2KFM)
             || (_modem_type_rx == gr_modem_types::ModemType2FSK2K)
             || (_modem_type_rx == gr_modem_types::ModemType2FSK1KFM)
-            || (_modem_type_rx == gr_modem_types::ModemType2FSK1K))
+            || (_modem_type_rx == gr_modem_types::ModemType2FSK1K)
+            || (_modem_type_rx == gr_modem_types::ModemTypeGMSK10K)
+            || (_modem_type_rx == gr_modem_types::ModemTypeGMSK2K)
+            || (_modem_type_rx == gr_modem_types::ModemTypeGMSK1K))
     {
         if(demod_data->size() >= demod_data2->size())
         {
@@ -847,7 +882,10 @@ bool gr_modem::demodulate()
             || (_modem_type_rx == gr_modem_types::ModemType2FSK2KFM)
             || (_modem_type_rx == gr_modem_types::ModemType2FSK2K)
             || (_modem_type_rx == gr_modem_types::ModemType2FSK1KFM)
-            || (_modem_type_rx == gr_modem_types::ModemType2FSK1K))
+            || (_modem_type_rx == gr_modem_types::ModemType2FSK1K)
+            || (_modem_type_rx == gr_modem_types::ModemTypeGMSK10K)
+            || (_modem_type_rx == gr_modem_types::ModemTypeGMSK2K)
+            || (_modem_type_rx == gr_modem_types::ModemTypeGMSK1K))
     {
         demod_data2->clear();
         delete demod_data2;
@@ -888,6 +926,7 @@ bool gr_modem::synchronize(int v_size, std::vector<unsigned char> *data)
                     && (_modem_type_rx != gr_modem_types::ModemType2FSK1KFM)
                     && (_modem_type_rx != gr_modem_types::ModemType2FSK1K)
                     && (_modem_type_rx != gr_modem_types::ModemType4FSK1KFM)
+                    && (_modem_type_rx != gr_modem_types::ModemTypeGMSK1K)
                     && (_current_frame_type == FrameTypeVoice))
             {
                 frame_length++; // reserved data
@@ -896,6 +935,7 @@ bool gr_modem::synchronize(int v_size, std::vector<unsigned char> *data)
                     && (_modem_type_rx != gr_modem_types::ModemType2FSK1KFM)
                     && (_modem_type_rx != gr_modem_types::ModemType4FSK1KFM)
                     && (_modem_type_rx != gr_modem_types::ModemType2FSK1K)
+                    && (_modem_type_rx != gr_modem_types::ModemTypeGMSK1K)
                     && (_current_frame_type != FrameTypeVoice))
             {
                 bit_buf_len = _bit_buf_len - 8;
@@ -921,6 +961,7 @@ int gr_modem::findSync(unsigned char bit)
     if((_modem_type_rx == gr_modem_types::ModemTypeBPSK1K) ||
             (_modem_type_rx == gr_modem_types::ModemType2FSK1KFM) ||
             (_modem_type_rx == gr_modem_types::ModemType2FSK1K) ||
+            (_modem_type_rx == gr_modem_types::ModemTypeGMSK1K) ||
             (_modem_type_rx == gr_modem_types::ModemType4FSK1KFM))
     {
         temp = _shift_reg & 0xFF;
@@ -1041,6 +1082,7 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
         if(((_modem_type_rx == gr_modem_types::ModemTypeBPSK1K) ||
             (_modem_type_rx == gr_modem_types::ModemType2FSK1KFM) ||
             (_modem_type_rx == gr_modem_types::ModemType2FSK1K) ||
+            (_modem_type_rx == gr_modem_types::ModemTypeGMSK1K) ||
             (_modem_type_rx == gr_modem_types::ModemType4FSK1KFM)))
         {
             if(_modem_sync >= 16)
@@ -1056,6 +1098,7 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
         else if((_modem_type_rx != gr_modem_types::ModemTypeBPSK1K) &&
                 (_modem_type_rx != gr_modem_types::ModemType2FSK1KFM) &&
                 (_modem_type_rx != gr_modem_types::ModemType2FSK1K) &&
+                (_modem_type_rx != gr_modem_types::ModemTypeGMSK1K) &&
                 (_modem_type_rx != gr_modem_types::ModemType4FSK1KFM))
         {
             memcpy(codec2_data, received_data+1, _rx_frame_length);

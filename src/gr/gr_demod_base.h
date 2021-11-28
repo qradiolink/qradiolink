@@ -42,6 +42,7 @@
 #include "rx_fft.h"
 #include "gr_deframer_bb.h"
 #include "gr_demod_2fsk.h"
+#include "gr_demod_gmsk.h"
 #include "gr_demod_4fsk.h"
 #include "gr_demod_am.h"
 #include "gr_demod_bpsk.h"
@@ -126,6 +127,9 @@ private:
     gr_demod_2fsk_sptr _2fsk_2k;
     gr_demod_2fsk_sptr _2fsk_1k;
     gr_demod_2fsk_sptr _2fsk_10k;
+    gr_demod_gmsk_sptr _gmsk_2k;
+    gr_demod_gmsk_sptr _gmsk_1k;
+    gr_demod_gmsk_sptr _gmsk_10k;
     gr_demod_4fsk_sptr _4fsk_2k;
     gr_demod_4fsk_sptr _4fsk_2k_fm;
     gr_demod_4fsk_sptr _4fsk_1k_fm;

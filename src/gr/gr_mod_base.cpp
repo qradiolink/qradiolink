@@ -57,7 +57,8 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
     _top_block->connect(_rotator,0,_osmosdr_sink,0);
 
     _signal_source = gr::analog::sig_source_f::make(8000, gr::analog::GR_SIN_WAVE, 600, 0.001, 1);
-    _zmq_source = gr::zeromq::pull_source::make(sizeof(short), 1, "ipc:///tmp/mmdvm-tx.ipc");
+    std::string zmq_endpoint = "ipc:///tmp/mmdvm-tx.ipc";
+    _zmq_source = gr::zeromq::pull_source::make(sizeof(short), 1, (char*)zmq_endpoint.c_str());
 
 
     int tw = std::min(_samp_rate/4, 1500000);
@@ -69,6 +70,9 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
     _2fsk_2k = make_gr_mod_2fsk(25, 1000000, 1700, 4000, false);
     _2fsk_1k = make_gr_mod_2fsk(50, 1000000, 1700, 2000, false);
     _2fsk_10k = make_gr_mod_2fsk(5, 1000000, 1700, 13500, true);
+    _gmsk_2k = make_gr_mod_gmsk(25, 1000000, 1700, 3000);
+    _gmsk_1k = make_gr_mod_gmsk(50, 1000000, 1700, 1500);
+    _gmsk_10k = make_gr_mod_gmsk(5, 1000000, 1700, 15000);
     _4fsk_2k = make_gr_mod_4fsk(25, 1000000, 1700, 4000, false);
     _4fsk_2k_fm = make_gr_mod_4fsk(25, 1000000, 1700, 2500, true);
     _4fsk_1k_fm = make_gr_mod_4fsk(50, 1000000, 1700, 1250, true);
@@ -222,6 +226,18 @@ void gr_mod_base::set_mode(int mode)
         _top_block->disconnect(_byte_source,0,_2fsk_10k,0);
         _top_block->disconnect(_2fsk_10k,0,_rotator,0);
         break;
+    case gr_modem_types::ModemTypeGMSK2K:
+        _top_block->disconnect(_byte_source,0,_gmsk_2k,0);
+        _top_block->disconnect(_gmsk_2k,0,_rotator,0);
+        break;
+    case gr_modem_types::ModemTypeGMSK1K:
+        _top_block->disconnect(_byte_source,0,_gmsk_1k,0);
+        _top_block->disconnect(_gmsk_1k,0,_rotator,0);
+        break;
+    case gr_modem_types::ModemTypeGMSK10K:
+        _top_block->disconnect(_byte_source,0,_gmsk_10k,0);
+        _top_block->disconnect(_gmsk_10k,0,_rotator,0);
+        break;
     case gr_modem_types::ModemType4FSK2K:
         _top_block->disconnect(_byte_source,0,_4fsk_2k,0);
         _top_block->disconnect(_4fsk_2k,0,_rotator,0);
@@ -374,6 +390,27 @@ void gr_mod_base::set_mode(int mode)
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
         _top_block->connect(_byte_source,0,_2fsk_10k,0);
         _top_block->connect(_2fsk_10k,0,_rotator,0);
+        break;
+    case gr_modem_types::ModemTypeGMSK2K:
+        _carrier_offset = 50000;
+        _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
+        _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
+        _top_block->connect(_byte_source,0,_gmsk_2k,0);
+        _top_block->connect(_gmsk_2k,0,_rotator,0);
+        break;
+    case gr_modem_types::ModemTypeGMSK1K:
+        _carrier_offset = 50000;
+        _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
+        _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
+        _top_block->connect(_byte_source,0,_gmsk_1k,0);
+        _top_block->connect(_gmsk_1k,0,_rotator,0);
+        break;
+    case gr_modem_types::ModemTypeGMSK10K:
+        _carrier_offset = 50000;
+        _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
+        _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
+        _top_block->connect(_byte_source,0,_gmsk_10k,0);
+        _top_block->connect(_gmsk_10k,0,_rotator,0);
         break;
     case gr_modem_types::ModemType4FSK2K:
         _carrier_offset = 50000;
@@ -675,6 +712,9 @@ void gr_mod_base::set_bb_gain(float value)
     _2fsk_2k->set_bb_gain(value);
     _2fsk_1k->set_bb_gain(value);
     _2fsk_10k->set_bb_gain(value);
+    _gmsk_2k->set_bb_gain(value);
+    _gmsk_1k->set_bb_gain(value);
+    _gmsk_10k->set_bb_gain(value);
     _4fsk_2k->set_bb_gain(value);
     _4fsk_2k_fm->set_bb_gain(value);
     _4fsk_1k_fm->set_bb_gain(value);
