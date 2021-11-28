@@ -1,3 +1,16 @@
+qradiolink (0.8.6-2) experimental; urgency=medium
+
+  [ Adrian Musceac ]
+  * Bugfix: LimeRFE does not support Duplex for ham bands below 144 MHz
+  * Bugfix: displayed mode of memory channel reversed between RX and TX
+  * Bugfix: rx frequency truncated if regional settings are not set to English
+  * LimeRFE: Both WIDEBAND_1000 and WIDEBAND_4000 support duplex mode with J4
+  * Add support for LimeRFE attenuator and notch filter
+
+
+ -- Adrian Musceac <kantooon@gmail.com>  Sun, 28 nov 2020 13:55:25 +0300
+
+
 qradiolink (0.8.6-1) experimental; urgency=medium
 
   [ Adrian Musceac ]
