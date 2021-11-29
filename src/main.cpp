@@ -451,6 +451,8 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
     /// Command to GUI
     QObject::connect(telnet_server->command_processor,SIGNAL(tuneDopplerRxFreq(qint64)),
                      w,SLOT(tuneDopplerRxFreq(qint64)));
+    QObject::connect(telnet_server->command_processor,SIGNAL(tuneDopplerTxFreq(qint64)),
+                     w,SLOT(tuneDopplerTxFreq(qint64)));
 
     /// Audio threads to GUI
     QObject::connect(audioreader,SIGNAL(audioLevel(float)),

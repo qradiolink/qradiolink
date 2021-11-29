@@ -140,7 +140,7 @@ QString CommandProcessor::processGPredictMessages(QString message)
         emit tuneDopplerRxFreq(rx_freq_delta);
         break;
     case GPredictControl::RadioAction::OffsetTX:
-        //emit tuneDopplerTxFreq(tx_freq_delta);
+        emit tuneDopplerTxFreq(tx_freq_delta);
         break;
     case GPredictControl::RadioAction::NoAction:
         break;
