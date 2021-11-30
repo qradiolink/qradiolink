@@ -9,6 +9,8 @@ About
 built on top of [GNU radio](https://www.gnuradio.org/), 
 which allows experimenting with some software defined radio hardware devices.
 
+Mailing list for discussions: https://groups.io/g/qradiolink
+
 
 Supported hardware
 ---
@@ -61,7 +63,7 @@ $ sudo apt install libjpeg-turbo8-dev libjpeg-dev
 [Downloads](https://github.com/qradiolink/qradiolink/releases "Downloads")
 ----
 
-Debian 11 Bullseye x86_64 packages are provided via automated builds. An AppImage for running the application on other Linux distributions with glibc >= 2.27 without installing it is also provided. The AppImage is based on Debian 11 Buster packages.
+Debian 11 Bullseye x86_64 packages are provided via automated builds. An AppImage for running the application on other Linux distributions with glibc >= 2.27 without installing it is also provided. The AppImage is based on Debian 11 Bullseye packages.
 Please see the [Github releases page](https://github.com/qradiolink/qradiolink/releases) for binary downloads.
 
 Opensuse packages are available from [Opensuse build server](https://build.opensuse.org/package/show/hardware:sdr/qradiolink)
