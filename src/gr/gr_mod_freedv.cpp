@@ -70,9 +70,9 @@ gr_mod_freedv::gr_mod_freedv(int sps, int samp_rate, int carrier_freq,
 
 
     connect(self(),0,_audio_filter,0);
-    connect(_audio_filter,0,_agc,0);
-    connect(_agc,0,_audio_gain,0);
-    connect(_audio_gain,0,_float_to_short,0);
+    //connect(_audio_filter,0,_agc,0);
+    //connect(_agc,0,_audio_gain,0);
+    connect(_audio_filter,0,_float_to_short,0);
     connect(_float_to_short,0,_freedv,0);
     connect(_freedv,0,_short_to_float,0);
     connect(_short_to_float,0,_float_to_complex,0);
