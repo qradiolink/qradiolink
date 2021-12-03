@@ -191,8 +191,10 @@ void LimeRFEController::setRXBand(int64_t rx_frequency)
 {
     if(!_lime_rfe_inited)
         return;
+    if(rx_frequency < 10000)
+        return;
 
-    int rx_band = _limits->getBand(rx_frequency);
+    int rx_band = _limits->getRFEBand(rx_frequency);
     if(_current_rx_band == rx_band)
         return;
     _current_rx_band = rx_band;
@@ -205,36 +207,30 @@ void LimeRFEController::setRXBand(int64_t rx_frequency)
         _board_state.channelIDRX = RFE_CID_WB_4000;
         break;
     case 0:
-    case 1:
-    case 2:
-    case 3:
-    case 4:
-    case 5:
-    case 6:
-    case 7:
-    case 8:
-    case 9:
         _board_state.channelIDRX = RFE_CID_HAM_0030;
         break;
-    case 10:
+    case 1:
         _board_state.channelIDRX = RFE_CID_HAM_0070;
         break;
-    case 11:
-        _board_state.channelIDRX = RFE_CID_HAM_0070;
-        break;
-    case 12:
+    case 2:
         _board_state.channelIDRX = RFE_CID_HAM_0145;
         break;
-    case 13:
+    case 3:
+        _board_state.channelIDRX = RFE_CID_HAM_0220;
+        break;
+    case 4:
         _board_state.channelIDRX = RFE_CID_HAM_0435;
         break;
-    case 14:
+    case 5:
+        _board_state.channelIDRX = RFE_CID_HAM_0920;
+        break;
+    case 6:
         _board_state.channelIDRX = RFE_CID_HAM_1280;
         break;
-    case 15:
+    case 7:
         _board_state.channelIDRX = RFE_CID_HAM_2400;
         break;
-    case 16:
+    case 8:
         _board_state.channelIDRX = RFE_CID_HAM_3500;
         break;
     default:
@@ -260,8 +256,10 @@ void LimeRFEController::setTXBand(int64_t tx_frequency)
 {
     if(!_lime_rfe_inited)
         return;
+    if(tx_frequency < 10000)
+        return;
 
-    int tx_band = _limits->getBand(tx_frequency);
+    int tx_band = _limits->getRFEBand(tx_frequency);
     if(_current_tx_band == tx_band)
         return;
     _current_tx_band = tx_band;
@@ -275,36 +273,30 @@ void LimeRFEController::setTXBand(int64_t tx_frequency)
         _board_state.channelIDTX = RFE_CID_WB_4000;
         break;
     case 0:
-    case 1:
-    case 2:
-    case 3:
-    case 4:
-    case 5:
-    case 6:
-    case 7:
-    case 8:
-    case 9:
         _board_state.channelIDTX = RFE_CID_HAM_0030;
         break;
-    case 10:
+    case 1:
         _board_state.channelIDTX = RFE_CID_HAM_0070;
         break;
-    case 11:
-        _board_state.channelIDTX = RFE_CID_HAM_0070;
-        break;
-    case 12:
+    case 2:
         _board_state.channelIDTX = RFE_CID_HAM_0145;
         break;
-    case 13:
+    case 3:
+        _board_state.channelIDTX = RFE_CID_HAM_0220;
+        break;
+    case 4:
         _board_state.channelIDTX = RFE_CID_HAM_0435;
         break;
-    case 14:
+    case 5:
+        _board_state.channelIDTX = RFE_CID_HAM_0920;
+        break;
+    case 6:
         _board_state.channelIDTX = RFE_CID_HAM_1280;
         break;
-    case 15:
+    case 7:
         _board_state.channelIDTX = RFE_CID_HAM_2400;
         break;
-    case 16:
+    case 8:
         _board_state.channelIDTX = RFE_CID_HAM_3500;
         break;
     default:
