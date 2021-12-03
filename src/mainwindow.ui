@@ -3606,6 +3606,13 @@ and S-meter (dBm)</string>
                    </property>
                   </widget>
                  </item>
+                 <item row="12" column="4">
+                  <widget class="QCheckBox" name="checkBoxTxLimits">
+                   <property name="text">
+                    <string>TX limits</string>
+                   </property>
+                  </widget>
+                 </item>
                 </layout>
                </widget>
               </item>
@@ -3950,13 +3957,6 @@ and S-meter (dBm)</string>
                    </property>
                    <property name="text">
                     <string>TX Freq Correction (ppm)</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="4" column="3">
-                  <widget class="QCheckBox" name="checkBoxTxLimits">
-                   <property name="text">
-                    <string>TX limits</string>
                    </property>
                   </widget>
                  </item>
