@@ -9,7 +9,7 @@ About
 built on top of [GNU radio](https://www.gnuradio.org/), 
 which allows experimenting with some software defined radio hardware devices.
 
-http://qradiolink.org/images/qpsk_example.mp4
+[![DQPSK example with Codec2 and Opus](http://qradiolink.org/images/qpsk_example.mp4)](http://qradiolink.org/images/qpsk_example.mp4)
 
 Mailing list for discussions: https://groups.io/g/qradiolink
 
