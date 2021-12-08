@@ -88,7 +88,7 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     QObject::connect(ui->txStatusButton,SIGNAL(toggled(bool)),this,SLOT(toggleTXwin(bool)));
     QObject::connect(ui->tuneDial,SIGNAL(valueChanged(int)),this,SLOT(clarifierTuneFreq(int)));
     QObject::connect(ui->frequencyEdit,SIGNAL(returnPressed()),this,SLOT(enterFreq()));
-    QObject::connect(ui->txFrequencyEdit,SIGNAL(returnPressed()),this,SLOT(calculateShiftFromTxFreq()));
+    QObject::connect(ui->txFrequencyEdit,SIGNAL(returnPressed()),this,SLOT(calculateShiftFromTxFreqField()));
     QObject::connect(ui->shiftEdit,SIGNAL(returnPressed()),this,SLOT(enterShift()));
     QObject::connect(ui->shiftEdit,SIGNAL(editingFinished()),this,SLOT(enterShift()));
     QObject::connect(ui->txGainDial,SIGNAL(valueChanged(int)),this,SLOT(setTxPowerDisplay(int)));
@@ -242,6 +242,8 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     _ptt_activated = false;
     _fft_active = (bool)_settings->show_fft;
     _controls_active = (bool)_settings->show_controls;
+
+    _tx_frequency = _settings->rx_frequency + _settings->demod_offset + _settings->tx_shift;
 
     _rssi = 0;
     QRect xy = this->geometry();
@@ -1509,7 +1511,10 @@ void MainWindow::tuneDopplerRxFreq(qint64 freq_delta)
     _settings->demod_offset = _settings->demod_offset + freq_delta;
     /// tx_frequency is the actual frequency
     ui->plotterFrame->setFilterOffset(_settings->demod_offset);
-    ui->frameCtrlFreq->setFrequency(_settings->rx_frequency + _settings->demod_offset + _settings->lnb_lo_freq, false);
+    if(!_ptt_activated)
+    {
+        ui->frameCtrlFreq->setFrequency(_settings->rx_frequency + _settings->demod_offset + _settings->lnb_lo_freq, false);
+    }
     ui->frequencyEdit->setText(QString::number((_settings->rx_frequency +
                                                 _settings->demod_offset + _settings->lnb_lo_freq)/1000));
     emit setCarrierOffset(_settings->demod_offset);
@@ -1518,6 +1523,11 @@ void MainWindow::tuneDopplerRxFreq(qint64 freq_delta)
 void MainWindow::tuneDopplerTxFreq(qint64 freq_delta)
 {
     _settings->tx_carrier_offset = _settings->tx_carrier_offset + freq_delta;
+    _tx_frequency += freq_delta;
+    if(_ptt_activated)
+    {
+        ui->frameCtrlFreq->setFrequency(_tx_frequency, false);
+    }
     emit setTxCarrierOffset(_settings->tx_carrier_offset);
 }
 
@@ -1559,7 +1569,17 @@ void MainWindow::enterShift()
     emit changeTxShift(_settings->tx_shift);
 }
 
-void MainWindow::calculateShiftFromTxFreq()
+/// Used for Doppler initial frequency setup
+void MainWindow::setShiftFromTxFreq(qint64 tx_freq)
+{
+    int64_t actual_rx_freq = _settings->rx_frequency + _settings->demod_offset + _settings->lnb_lo_freq;
+    _settings->tx_shift = (tx_freq - actual_rx_freq);
+    _tx_frequency = _settings->rx_frequency + _settings->demod_offset + _settings->tx_shift + _settings->lnb_lo_freq;
+    ui->shiftEdit->setText(QString::number(_settings->tx_shift / 1000));
+    emit changeTxShift(_settings->tx_shift);
+}
+
+void MainWindow::calculateShiftFromTxFreqField()
 {
     int64_t actual_tx_freq = ui->txFrequencyEdit->text().toLong() * 1000;
     int64_t actual_rx_freq = _settings->rx_frequency + _settings->demod_offset + _settings->lnb_lo_freq;

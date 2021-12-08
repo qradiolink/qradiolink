@@ -106,6 +106,7 @@ public slots:
     void clearTextArea();
     void updateFreqGUI(int64_t center_freq, int64_t carrier_offset);
     void enterShift();
+    void setShiftFromTxFreq(qint64 tx_freq);
     void updateRxCTCSS(int value);
     void updateTxCTCSS(int value);
     void togglePTTVOIP(bool value);
@@ -174,7 +175,7 @@ public slots:
     void updateTotTxEnd(bool value);
     void updateTxLimits(bool value);
     void updateLimeRFEAttenuation(int value);
-    void calculateShiftFromTxFreq();
+    void calculateShiftFromTxFreqField();
     void setRxStageGain(int value);
     void setTxStageGain(int value);
     void pageUserRequested();
@@ -308,6 +309,7 @@ private:
     bool _fft_active;
     bool _controls_active;
     int _current_voip_channel;
+    qint64 _tx_frequency;
 
     StationList _user_list;
 

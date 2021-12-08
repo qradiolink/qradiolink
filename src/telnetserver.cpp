@@ -166,8 +166,11 @@ void TelnetServer::processData()
             break;
         }
     }
-    _logger->log(Logger::LogLevelDebug, QString("Command message from %1 - %2").arg(
+    if(!_settings->gpredict_control)
+    {
+        _logger->log(Logger::LogLevelDebug, QString("Command message from %1 - %2").arg(
                      socket->peerAddress().toString()).arg(QString(data)));
+    }
 
     QByteArray response = processCommand(data, socket);
 

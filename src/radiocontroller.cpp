@@ -2264,6 +2264,8 @@ void RadioController::setTxCarrierOffset(qint64 offset)
 void RadioController::changeTxShift(qint64 shift_freq)
 {
     _settings->tx_shift = shift_freq;
+    if(_settings->enable_lime_rfe)
+        _lime_rfe_controller->setTXBand(_tx_frequency + _settings->tx_shift);
     _modem->tuneTx(_tx_frequency + _settings->tx_shift);
 }
 

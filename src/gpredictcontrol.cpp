@@ -45,7 +45,7 @@ QString GPredictControl::processMessages(QString message, int &action, qint64 &r
         if(msg.startsWith("F ", Qt::CaseSensitive))
         {
             QString freq_string = msg.mid(1).trimmed();
-            _logger->log(Logger::LogLevelDebug, QString("GPredict requested RX frequency %1").arg(freq_string));
+            //_logger->log(Logger::LogLevelDebug, QString("GPredict requested RX frequency %1").arg(freq_string));
             qint64 local_freq = _settings->rx_frequency + _settings->demod_offset + _settings->lnb_lo_freq;
             qint64 new_freq = freq_string.toLong();
             qint64 new_freq_delta = new_freq - _last_rx_frequency;
@@ -76,8 +76,8 @@ QString GPredictControl::processMessages(QString message, int &action, qint64 &r
         if(msg.startsWith("I ", Qt::CaseSensitive))
         {
             QString freq_string = msg.mid(1).trimmed();
-            _logger->log(Logger::LogLevelDebug, QString("GPredict requested TX frequency %1").arg(freq_string));
-            qint64 local_freq = _settings->tx_frequency + _settings->lnb_lo_freq;
+            //_logger->log(Logger::LogLevelDebug, QString("GPredict requested TX frequency %1").arg(freq_string));
+            qint64 local_freq = _settings->tx_frequency + _settings->tx_shift;
             qint64 new_freq = freq_string.toLong();
             qint64 new_freq_delta = new_freq - _last_tx_frequency;
             qint64 local_freq_delta = new_freq - local_freq;

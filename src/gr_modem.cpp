@@ -349,6 +349,7 @@ void gr_modem::tuneTx(int64_t center_freq)
 {
     if(_gr_mod_base)
     {
+        qDebug() << center_freq;
         if(_limits->checkLimit(center_freq))
             _gr_mod_base->tune(center_freq);
         else

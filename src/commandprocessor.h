@@ -120,6 +120,7 @@ signals:
     void setWaterfallFPS(int value);
     void tuneDopplerRxFreq(qint64 freq_delta);
     void tuneDopplerTxFreq(qint64 tx_freq_delta);
+    void setShiftFromTxFreq(qint64 tx_freq);
 
 
 public slots:

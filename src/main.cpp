@@ -445,10 +445,13 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
     QObject::connect(mumbleclient,SIGNAL(joinedChannel(quint64)),w,SLOT(joinedChannel(quint64)));
     QObject::connect(mumbleclient,SIGNAL(disconnected()),w,SLOT(disconnectedFromServer()));
     QObject::connect(logger,SIGNAL(applicationLog(QString)),w,SLOT(applicationLog(QString)));
-    QObject::connect(telnet_server->command_processor,SIGNAL(tuneFreq(qint64)),
-                     w,SLOT(updateGUIFreq(qint64)));
+
 
     /// Command to GUI
+    QObject::connect(telnet_server->command_processor,SIGNAL(tuneFreq(qint64)),
+                     w,SLOT(updateGUIFreq(qint64)));
+    QObject::connect(telnet_server->command_processor,SIGNAL(setShiftFromTxFreq(qint64)),
+                     w,SLOT(setShiftFromTxFreq(qint64)));
     QObject::connect(telnet_server->command_processor,SIGNAL(tuneDopplerRxFreq(qint64)),
                      w,SLOT(tuneDopplerRxFreq(qint64)));
     QObject::connect(telnet_server->command_processor,SIGNAL(tuneDopplerTxFreq(qint64)),
