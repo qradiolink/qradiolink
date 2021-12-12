@@ -29,6 +29,7 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
     _audio_source = make_gr_audio_source();
 
     _carrier_offset = 50000;
+    _preserve_carrier_offset = _carrier_offset;
 
     _rotator = gr::blocks::rotator_cc::make(2*M_PI*_carrier_offset/1000000);
     _osmosdr_sink = osmosdr::sink::make(device_args);
@@ -573,6 +574,7 @@ void gr_mod_base::set_carrier_offset(int64_t carrier_offset)
             && (_carrier_offset != 50000) && (_carrier_offset != 250000))
     {
             // preserve current doppler tracking
+        _preserve_carrier_offset = carrier_offset;
     }
     else
     {
@@ -580,6 +582,13 @@ void gr_mod_base::set_carrier_offset(int64_t carrier_offset)
         _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
     }
 
+}
+
+int64_t gr_mod_base::reset_carrier_offset()
+{
+    _carrier_offset = _preserve_carrier_offset;
+    _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
+    return _carrier_offset;
 }
 
 void gr_mod_base::tune(int64_t center_freq)

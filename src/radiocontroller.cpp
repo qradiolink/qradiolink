@@ -2261,6 +2261,11 @@ void RadioController::setTxCarrierOffset(qint64 offset)
     _modem->setTxCarrierOffset(offset);
 }
 
+void RadioController::resetTxCarrierOffset()
+{
+    _settings->tx_carrier_offset = _modem->resetTxCarrierOffset();
+}
+
 void RadioController::changeTxShift(qint64 shift_freq)
 {
     _settings->tx_shift = shift_freq;

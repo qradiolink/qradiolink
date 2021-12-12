@@ -152,7 +152,7 @@ QString CommandProcessor::processGPredictMessages(QString message)
 
 void CommandProcessor::endGPredictControl()
 {
-    emit setTxCarrierOffset(50000);
+    emit resetTxCarrierOffset();
 }
 
 QStringList CommandProcessor::getCommand(QString message, int &command_index)
