@@ -108,6 +108,7 @@ public slots:
     void getFFTData(float *data, unsigned int &size);
     void setCarrierOffset(int64_t offset);
     void setTxCarrierOffset(int64_t offset);
+    qint64 resetTxCarrierOffset();
     void setSampRate(int samp_rate);
     void setFFTSize(int size);
     float getRSSI();

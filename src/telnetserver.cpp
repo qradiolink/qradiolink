@@ -110,6 +110,10 @@ void TelnetServer::connectionFailed(QAbstractSocket::SocketError error)
     _logger->log(Logger::LogLevelInfo, "Connection status: " + socket->errorString());
     int i = _connected_clients.indexOf(socket);
     _connected_clients.remove(i);
+    if(_settings->gpredict_control)
+    {
+        command_processor->endGPredictControl();
+    }
 
 }
 
@@ -166,8 +170,11 @@ void TelnetServer::processData()
             break;
         }
     }
-    _logger->log(Logger::LogLevelDebug, QString("Command message from %1 - %2").arg(
+    if(!_settings->gpredict_control)
+    {
+        _logger->log(Logger::LogLevelDebug, QString("Command message from %1 - %2").arg(
                      socket->peerAddress().toString()).arg(QString(data)));
+    }
 
     QByteArray response = processCommand(data, socket);
 

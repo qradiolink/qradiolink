@@ -2288,6 +2288,8 @@ void RadioController::setCarrierOffset(qint64 offset)
 {
     _settings->demod_offset = offset;
     _modem->setCarrierOffset(offset);
+    if(_settings->enable_lime_rfe)
+        _lime_rfe_controller->setRXBand(_settings->rx_frequency + _settings->demod_offset);
 }
 
 void RadioController::setTxCarrierOffset(qint64 offset)
@@ -2297,9 +2299,16 @@ void RadioController::setTxCarrierOffset(qint64 offset)
     _modem->setTxCarrierOffset(offset);
 }
 
+void RadioController::resetTxCarrierOffset()
+{
+    _settings->tx_carrier_offset = _modem->resetTxCarrierOffset();
+}
+
 void RadioController::changeTxShift(qint64 shift_freq)
 {
     _settings->tx_shift = shift_freq;
+    if(_settings->enable_lime_rfe)
+        _lime_rfe_controller->setTXBand(_tx_frequency + _settings->tx_shift);
     _modem->tuneTx(_tx_frequency + _settings->tx_shift);
 }
 

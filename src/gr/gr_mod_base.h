@@ -69,6 +69,7 @@ public slots:
     void set_bb_gain(float value);
     void set_cw_k(bool value);
     void set_carrier_offset(int64_t carrier_offset);
+    int64_t reset_carrier_offset();
     void flush_sources();
     const QMap<std::string,QVector<int>> get_gain_names() const;
     void set_samp_rate(int samp_rate);
@@ -128,6 +129,7 @@ private:
     double _device_frequency;
     int _freq_correction;
     int _carrier_offset;
+    int _preserve_carrier_offset;
     int _mode;
     bool _lime_specific; // FIXME: ugly hack
     double _osmo_filter_bw;

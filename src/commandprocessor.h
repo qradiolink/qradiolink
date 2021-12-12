@@ -43,6 +43,7 @@ public:
     QString runCommand(QString message, bool mumble=false);
     void buildCommandList();
     QString processGPredictMessages(QString message);
+    void endGPredictControl();
 
 signals:
     // FIXME: duplicates main window signals
@@ -79,6 +80,7 @@ signals:
     /// Tuning the radio
     void setCarrierOffset(qint64 offset);
     void setTxCarrierOffset(qint64 offset);
+    void resetTxCarrierOffset();
     void tuneFreq(qint64 center_freq);
     void tuneTxFreq(qint64 freq);
     void changeTxShift(qint64 center_freq);
@@ -120,6 +122,7 @@ signals:
     void setWaterfallFPS(int value);
     void tuneDopplerRxFreq(qint64 freq_delta);
     void tuneDopplerTxFreq(qint64 tx_freq_delta);
+    void setShiftFromTxFreq(qint64 tx_freq);
 
 
 public slots:

@@ -40,6 +40,22 @@ Limits::Limits()
     _tx_limits.push_back(std::complex<int64_t>(5660000000, 5670000000));
     _tx_limits.push_back(std::complex<int64_t>(5725000000, 5850000000));
     _tx_limits.push_back(std::complex<int64_t>(10000000000, 10300000000));
+
+
+    // LimeRFE band limits
+    /** Values according to:
+     *  https://github.com/myriadrf/LimeRFE/blob/master/hardware/1v31/docs/LimeRFE_1v31_Measurements.pdf
+     *  *
+     */
+    _rfe_limits.push_back(std::complex<int64_t>(0, 45000000));
+    _rfe_limits.push_back(std::complex<int64_t>(45000000, 80000000));
+    _rfe_limits.push_back(std::complex<int64_t>(136000000, 155000000));
+    _rfe_limits.push_back(std::complex<int64_t>(200000000, 250000000));
+    _rfe_limits.push_back(std::complex<int64_t>(390000000, 500000000));
+    _rfe_limits.push_back(std::complex<int64_t>(900000000, 930000000));
+    _rfe_limits.push_back(std::complex<int64_t>(1200000000, 1500000000));
+    _rfe_limits.push_back(std::complex<int64_t>(2200000000, 2500000000));
+    _rfe_limits.push_back(std::complex<int64_t>(3200000000, 3500000000));
 }
 
 Limits::~Limits()
@@ -60,13 +76,13 @@ bool Limits::checkLimit(int64_t tx_freq)
     return false;
 }
 
-int Limits::getBand(int64_t frequency)
+int Limits::getRFEBand(int64_t frequency)
 {
     /// this doesn't take into account the width of the signal,
     /// just the carrier center check
-    for(unsigned int i=0;i<_tx_limits.size();i++)
+    for(unsigned int i=0;i<_rfe_limits.size();i++)
     {
-        std::complex<int64_t> band = _tx_limits.at(i);
+        std::complex<int64_t> band = _rfe_limits.at(i);
         if(frequency > band.real() && frequency < band.imag())
             return i;
     }

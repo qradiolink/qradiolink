@@ -134,13 +134,13 @@ QString CommandProcessor::processGPredictMessages(QString message)
         emit tuneFreq(rx_freq);
         break;
     case GPredictControl::RadioAction::TuneTX:
-        emit tuneTxFreq(tx_freq);
+        emit setShiftFromTxFreq(tx_freq);
         break;
     case GPredictControl::RadioAction::OffsetRX:
         emit tuneDopplerRxFreq(rx_freq_delta);
         break;
     case GPredictControl::RadioAction::OffsetTX:
-        //emit tuneDopplerTxFreq(tx_freq_delta);
+        emit tuneDopplerTxFreq(tx_freq_delta);
         break;
     case GPredictControl::RadioAction::NoAction:
         break;
@@ -148,6 +148,11 @@ QString CommandProcessor::processGPredictMessages(QString message)
         break;
     }
     return ret_msg;
+}
+
+void CommandProcessor::endGPredictControl()
+{
+    emit resetTxCarrierOffset();
 }
 
 QStringList CommandProcessor::getCommand(QString message, int &command_index)

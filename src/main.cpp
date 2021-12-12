@@ -264,6 +264,8 @@ void connectCommandSignals(TelnetServer *telnet_server, MumbleClient *mumbleclie
                      radio_op,SLOT(setCarrierOffset(qint64)));
     QObject::connect(telnet_server->command_processor,SIGNAL(setTxCarrierOffset(qint64)),
                      radio_op,SLOT(setTxCarrierOffset(qint64)));
+    QObject::connect(telnet_server->command_processor,SIGNAL(resetTxCarrierOffset()),
+                     radio_op,SLOT(resetTxCarrierOffset()));
     QObject::connect(telnet_server->command_processor,SIGNAL(newFFTSize(int)),
                      radio_op,SLOT(setFFTSize(int)));
     QObject::connect(telnet_server->command_processor,SIGNAL(setWaterfallFPS(int)),
@@ -431,6 +433,8 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
                      w, SLOT(tuneToMemoryChannel(radiochannel*)));
     QObject::connect(radio_op, SIGNAL(newPageMessage(QString,QString)),
                      w, SLOT(displayPageMessage(QString,QString)));
+    QObject::connect(w, SIGNAL(setTxCarrierOffset(qint64)),
+                     radio_op,SLOT(setTxCarrierOffset(qint64)));
 
     /// Mumble to GUI
     QObject::connect(mumbleclient,SIGNAL(onlineStations(StationList)),
@@ -445,12 +449,17 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
     QObject::connect(mumbleclient,SIGNAL(joinedChannel(quint64)),w,SLOT(joinedChannel(quint64)));
     QObject::connect(mumbleclient,SIGNAL(disconnected()),w,SLOT(disconnectedFromServer()));
     QObject::connect(logger,SIGNAL(applicationLog(QString)),w,SLOT(applicationLog(QString)));
-    QObject::connect(telnet_server->command_processor,SIGNAL(tuneFreq(qint64)),
-                     w,SLOT(updateGUIFreq(qint64)));
+
 
     /// Command to GUI
+    QObject::connect(telnet_server->command_processor,SIGNAL(tuneFreq(qint64)),
+                     w,SLOT(updateGUIFreq(qint64)));
+    QObject::connect(telnet_server->command_processor,SIGNAL(setShiftFromTxFreq(qint64)),
+                     w,SLOT(setShiftFromTxFreq(qint64)));
     QObject::connect(telnet_server->command_processor,SIGNAL(tuneDopplerRxFreq(qint64)),
                      w,SLOT(tuneDopplerRxFreq(qint64)));
+    QObject::connect(telnet_server->command_processor,SIGNAL(tuneDopplerTxFreq(qint64)),
+                     w,SLOT(tuneDopplerTxFreq(qint64)));
 
     /// Audio threads to GUI
     QObject::connect(audioreader,SIGNAL(audioLevel(float)),

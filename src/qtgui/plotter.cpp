@@ -1038,7 +1038,7 @@ void CPlotter::draw()
         gradient.setColorAt(0, QColor("#0f2b4a")); // #0f2b4a
         gradient.setColorAt(1, QColor("#607468")); // #607468 #4b5b51
 
-        painter2.fillRect(0, 0, w, h, QBrush(gradient));
+        painter2.fillRect(0, 0, w, h, QBrush(QColor("#111111")));
         painter2.setBrush(Qt::SolidPattern);
         painter2.setRenderHint(QPainter::Antialiasing);
 
@@ -1487,14 +1487,21 @@ void CPlotter::drawOverlay()
 
         int dw = m_DemodHiCutFreqX - m_DemodLowCutFreqX;
 
-        painter.setOpacity(0.25);
+        painter.setOpacity(0.35);
         painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
         painter.fillRect(m_DemodLowCutFreqX, 0, dw, h,
                          QColor(PLOTTER_FILTER_BOX_COLOR));
+        painter.setOpacity(0.5);
+        painter.setPen(QPen(QColor("#93ff41"), 2, Qt::SolidLine, Qt::SquareCap, Qt::RoundJoin));
+        painter.drawLine(m_DemodLowCutFreqX, 0, m_DemodLowCutFreqX, h);
+        painter.drawLine(m_DemodHiCutFreqX, 0, m_DemodHiCutFreqX, h);
+        painter.drawLine(m_DemodLowCutFreqX, 1, m_DemodHiCutFreqX, 1);
+        painter.drawLine(m_DemodLowCutFreqX, h, m_DemodHiCutFreqX, h);
 
         painter.setOpacity(1.0);
         painter.setPen(QPen(QColor(PLOTTER_FILTER_LINE_COLOR), 1, Qt::SolidLine, Qt::SquareCap, Qt::RoundJoin));
         painter.drawLine(m_DemodFreqX, 0, m_DemodFreqX, h);
+
     }
 
     if (!m_Running)
