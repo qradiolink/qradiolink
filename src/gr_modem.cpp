@@ -349,7 +349,7 @@ void gr_modem::tuneTx(int64_t center_freq)
 {
     if(_gr_mod_base)
     {
-        qDebug() << center_freq;
+        qDebug() << "TX center frequency: " << center_freq;
         if(_limits->checkLimit(center_freq))
             _gr_mod_base->tune(center_freq);
         else
@@ -377,6 +377,7 @@ void gr_modem::setCarrierOffset(int64_t offset)
 
 void gr_modem::setTxCarrierOffset(int64_t offset)
 {
+    qDebug() << "TX carrier offset: " << offset;
     if(_gr_mod_base)
         _gr_mod_base->set_carrier_offset(offset);
 }

@@ -110,6 +110,10 @@ void TelnetServer::connectionFailed(QAbstractSocket::SocketError error)
     _logger->log(Logger::LogLevelInfo, "Connection status: " + socket->errorString());
     int i = _connected_clients.indexOf(socket);
     _connected_clients.remove(i);
+    if(_settings->gpredict_control)
+    {
+        command_processor->endGPredictControl();
+    }
 
 }
 

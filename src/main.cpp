@@ -431,6 +431,8 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
                      w, SLOT(tuneToMemoryChannel(radiochannel*)));
     QObject::connect(radio_op, SIGNAL(newPageMessage(QString,QString)),
                      w, SLOT(displayPageMessage(QString,QString)));
+    QObject::connect(w, SIGNAL(setTxCarrierOffset(qint64)),
+                     radio_op,SLOT(setTxCarrierOffset(qint64)));
 
     /// Mumble to GUI
     QObject::connect(mumbleclient,SIGNAL(onlineStations(StationList)),

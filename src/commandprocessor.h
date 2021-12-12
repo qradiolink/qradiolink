@@ -43,6 +43,7 @@ public:
     QString runCommand(QString message, bool mumble=false);
     void buildCommandList();
     QString processGPredictMessages(QString message);
+    void endGPredictControl();
 
 signals:
     // FIXME: duplicates main window signals

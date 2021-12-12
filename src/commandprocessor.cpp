@@ -150,6 +150,11 @@ QString CommandProcessor::processGPredictMessages(QString message)
     return ret_msg;
 }
 
+void CommandProcessor::endGPredictControl()
+{
+    emit setTxCarrierOffset(50000);
+}
+
 QStringList CommandProcessor::getCommand(QString message, int &command_index)
 {
     command_index = -1;
