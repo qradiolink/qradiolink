@@ -30,6 +30,7 @@
 #include <gnuradio/digital/fll_band_edge_cc.h>
 #include <gnuradio/filter/rational_resampler_base.h>
 #include <gnuradio/digital/constellation.h>
+#include <gnuradio/digital/symbol_sync_ff.h>
 #include <gnuradio/digital/constellation_decoder_cb.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/filter/fft_filter_ccc.h>
@@ -82,6 +83,7 @@ private:
     gr::digital::clock_recovery_mm_ff::sptr _clock_recovery_f;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
     gr::digital::constellation_decoder_cb::sptr _constellation_receiver;
+    gr::digital::symbol_sync_ff::sptr _symbol_sync;
     gr::filter::fft_filter_ccf::sptr _filter;
     gr::digital::descrambler_bb::sptr _descrambler;
     gr::blocks::multiply_const_ff::sptr _multiply_const_fec;

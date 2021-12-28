@@ -80,7 +80,7 @@ gr_mod_4fsk::gr_mod_4fsk(int sps, int samp_rate, int carrier_freq,
     _chunks_to_symbols = gr::digital::chunks_to_symbols_bf::make(constellation);
     _resampler = gr::filter::rational_resampler_base_fff::make(_samples_per_symbol, 1,
                     gr::filter::firdes::root_raised_cosine(_samples_per_symbol,
-                                _samples_per_symbol,1,0.5,nfilts));
+                                _samples_per_symbol,1,0.2,nfilts));
     _freq_modulator = gr::analog::frequency_modulator_fc::make((spacing*M_PI)/(_samples_per_symbol));
     _repeat = gr::blocks::repeat::make(4, _samples_per_symbol);
     _amplify = gr::blocks::multiply_const_cc::make(amplif, 1);

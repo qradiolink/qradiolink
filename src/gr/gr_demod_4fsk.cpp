@@ -89,6 +89,14 @@ gr_demod_4fsk::gr_demod_4fsk(std::vector<int>signature, int sps, int samp_rate, 
     std::vector<int> polys;
     polys.push_back(109);
     polys.push_back(79);
+    std::vector<gr_complex> constellation_points;
+    constellation_points.push_back(1.5f+0j);
+    constellation_points.push_back(0.5+0j);
+    constellation_points.push_back(-0.5+0j);
+    constellation_points.push_back(-1.5+0j);
+    std::vector<int> pre_diff;
+
+    gr::digital::constellation_rect::sptr constellation_4fsk = gr::digital::constellation_rect::make(constellation_points, pre_diff, 1, 4, 1, 1.0, 1.0);
 
     int spacing = 1;
 
@@ -125,12 +133,14 @@ gr_demod_4fsk::gr_demod_4fsk(std::vector<int>signature, int sps, int samp_rate, 
     _freq_demod = gr::analog::quadrature_demod_cf::make(_samples_per_symbol/(spacing * M_PI));
     _shaping_filter = gr::filter::fft_filter_fff::make(
                 1, gr::filter::firdes::root_raised_cosine(1.5,_target_samp_rate,
-                                    _target_samp_rate/_samples_per_symbol,0.5,nfilts));
+                                    _target_samp_rate/_samples_per_symbol,0.2,nfilts));
     _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_omega*gain_omega, 0.5, gain_omega,
                                                               omega_rel_limit);
     _clock_recovery_f = gr::digital::clock_recovery_mm_ff::make(_samples_per_symbol,
                                                                 0.025*gain_omega*gain_omega, 0.5, gain_mu,
                                                               omega_rel_limit);
+    _symbol_sync = gr::digital::symbol_sync_ff::make(gr::digital::TED_MOD_MUELLER_AND_MULLER, _samples_per_symbol,
+                                                     M_PI * 0.0001, 1.2, 0.0025, 1.005, 1, constellation_4fsk);
     _float_to_complex = gr::blocks::float_to_complex::make();
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
 
@@ -159,8 +169,8 @@ gr_demod_4fsk::gr_demod_4fsk(std::vector<int>signature, int sps, int samp_rate, 
     {
         connect(_filter,0,_freq_demod,0);
         connect(_freq_demod,0,_shaping_filter,0);
-        connect(_shaping_filter,0,_clock_recovery_f,0);
-        connect(_clock_recovery_f,0,_phase_mod,0);
+        connect(_shaping_filter,0,_symbol_sync,0);
+        connect(_symbol_sync,0,_phase_mod,0);
         connect(_phase_mod,0,self(),1);
         connect(_phase_mod,0,_complex_to_float,0);
     }

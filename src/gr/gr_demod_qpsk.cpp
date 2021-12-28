@@ -108,7 +108,7 @@ gr_demod_qpsk::gr_demod_qpsk(std::vector<int>signature, int sps, int samp_rate, 
                 gain_omega*gain_omega, 0.5, gain_mu, omega_rel_limit);
     std::vector<float> pfb_taps = gr::filter::firdes::root_raised_cosine(flt_size * _samples_per_symbol,
                                        flt_size * _samples_per_symbol, 1, 0.35, flt_size * 11 * _samples_per_symbol);
-    _costas_pll = gr::digital::costas_loop_cc::make(2*M_PI/100/_samples_per_symbol,4,true);
+    _costas_pll = gr::digital::costas_loop_cc::make(M_PI/200/_samples_per_symbol,4,true);
     _clock_sync = gr::digital::pfb_clock_sync_ccf::make(_samples_per_symbol,
                                                     2*M_PI/100,pfb_taps,flt_size, flt_size / 2, 1.5, 1);
     _costas_loop = gr::digital::costas_loop_cc::make(costas_bw,4,true);
