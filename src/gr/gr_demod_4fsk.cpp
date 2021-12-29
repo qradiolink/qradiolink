@@ -139,8 +139,9 @@ gr_demod_4fsk::gr_demod_4fsk(std::vector<int>signature, int sps, int samp_rate, 
     _clock_recovery_f = gr::digital::clock_recovery_mm_ff::make(_samples_per_symbol,
                                                                 0.025*gain_omega*gain_omega, 0.5, gain_mu,
                                                               omega_rel_limit);
+    float sps_deviation = 200.0f / ((float)_target_samp_rate / (float)_samples_per_symbol);
     _symbol_sync = gr::digital::symbol_sync_ff::make(gr::digital::TED_MOD_MUELLER_AND_MULLER, _samples_per_symbol,
-                                                     M_PI * 0.0001, 1.2, 0.0025, 1.005, 1, constellation_4fsk);
+                                                    2 * M_PI * 0.01, 1.0, 1.0, sps_deviation, 1, constellation_4fsk);
     _float_to_complex = gr::blocks::float_to_complex::make();
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
 
@@ -154,15 +155,9 @@ gr_demod_4fsk::gr_demod_4fsk(std::vector<int>signature, int sps, int samp_rate, 
 
 
     connect(self(),0,_resampler,0);
-    if(sps != 2)
-    {
-        connect(_resampler,0,_fll,0);
-        connect(_fll,0,_filter,0);
-    }
-    else
-    {
-        connect(_resampler,0,_filter,0);
-    }
+
+    connect(_resampler,0,_filter,0);
+
 
     connect(_filter,0,self(),0);
     if(fm)
