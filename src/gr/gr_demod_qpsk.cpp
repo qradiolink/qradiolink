@@ -39,12 +39,9 @@ gr_demod_qpsk::gr_demod_qpsk(std::vector<int>signature, int sps, int samp_rate, 
 
     int decimation;
     int interpolation;
-    float gain_omega, gain_mu, omega_rel_limit, costas_bw;
+    float costas_bw;
     int fll_bw;
     fll_bw = 2;
-    gain_omega = 0.005;
-    gain_mu = 0.05;
-    omega_rel_limit = 0.001;
     costas_bw = M_PI/200;
 
 
@@ -87,7 +84,6 @@ gr_demod_qpsk::gr_demod_qpsk(std::vector<int>signature, int sps, int samp_rate, 
     polys.push_back(79);
 
 
-    unsigned int flt_size = 32;
     /*
     gr::digital::constellation_expl_rect::sptr constellation = gr::digital::constellation_expl_rect::make(
                 constellation->points(),pre_diff_code,4,2,2,1,1,const_map);
@@ -105,18 +101,14 @@ gr_demod_qpsk::gr_demod_qpsk(std::vector<int>signature, int sps, int samp_rate, 
                                                                          _samples_per_symbol,1,0.35, 11 * _samples_per_symbol);
     _shaping_filter = gr::filter::fft_filter_ccf::make(
                 1, rrc_taps);
-    _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol,
-                gain_omega*gain_omega, 0.5, gain_mu, omega_rel_limit);
+
     float symbol_rate = (float)_target_samp_rate / (float)_samples_per_symbol;
     float sps_deviation = 200.0f / symbol_rate;
     _symbol_sync = gr::digital::symbol_sync_cc::make(gr::digital::TED_MOD_MUELLER_AND_MULLER, _samples_per_symbol,
                                                     2* M_PI * 0.001, 1.0, 1.0, sps_deviation, 1,
                                                      gr::digital::constellation_dqpsk::make(), gr::digital::IR_MMSE_8TAP);
-    std::vector<float> pfb_taps = gr::filter::firdes::root_raised_cosine(flt_size * _samples_per_symbol,
-                                       flt_size * _samples_per_symbol, 1, 0.35, flt_size * 11 * _samples_per_symbol);
     _costas_pll = gr::digital::costas_loop_cc::make(M_PI/200/_samples_per_symbol,4,true);
-    _clock_sync = gr::digital::pfb_clock_sync_ccf::make(_samples_per_symbol,
-                                                    2*M_PI/100,pfb_taps,flt_size, flt_size / 2, 1.5, 1);
+
     _costas_loop = gr::digital::costas_loop_cc::make(costas_bw,4,true);
     _equalizer = gr::digital::cma_equalizer_cc::make(8,1,0.005,2);
 

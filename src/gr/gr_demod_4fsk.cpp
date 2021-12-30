@@ -90,13 +90,14 @@ gr_demod_4fsk::gr_demod_4fsk(std::vector<int>signature, int sps, int samp_rate, 
     polys.push_back(109);
     polys.push_back(79);
     std::vector<gr_complex> constellation_points;
-    constellation_points.push_back(1.5f+0j);
-    constellation_points.push_back(0.5+0j);
-    constellation_points.push_back(-0.5+0j);
     constellation_points.push_back(-1.5+0j);
+    constellation_points.push_back(-0.5+0j);
+    constellation_points.push_back(0.5+0j);
+    constellation_points.push_back(1.5f+0j);
+
     std::vector<int> pre_diff;
 
-    gr::digital::constellation_rect::sptr constellation_4fsk = gr::digital::constellation_rect::make(constellation_points, pre_diff, 1, 4, 1, 1.0, 1.0);
+    gr::digital::constellation_rect::sptr constellation_4fsk = gr::digital::constellation_rect::make(constellation_points, pre_diff, 2, 4, 1, 1.0, 1.0);
 
     int spacing = 1;
 
