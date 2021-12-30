@@ -21,6 +21,7 @@
 #include <gnuradio/endianness.h>
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/digital/clock_recovery_mm_cc.h>
+#include <gnuradio/digital/symbol_sync_ff.h>
 #include <gnuradio/blocks/unpack_k_bits_bb.h>
 #include <gnuradio/blocks/float_to_complex.h>
 #include <gnuradio/blocks/multiply_const.h>
@@ -31,6 +32,7 @@
 #include <gnuradio/analog/rail_ff.h>
 #include <gnuradio/blocks/complex_to_real.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
+#include <gnuradio/filter/fft_filter_fff.h>
 #include <gnuradio/filter/fft_filter_ccc.h>
 #include <gnuradio/digital/descrambler_bb.h>
 #include <gnuradio/fec/decoder.h>
@@ -58,8 +60,9 @@ public:
 private:
     gr::blocks::multiply_const_cc::sptr _multiply_symbols;
     gr::blocks::float_to_complex::sptr _float_to_complex;
-    gr::filter::fft_filter_ccf::sptr _symbol_filter;
+    gr::filter::fft_filter_fff::sptr _symbol_filter;
     gr::digital::clock_recovery_mm_cc::sptr _clock_recovery;
+    gr::digital::symbol_sync_ff::sptr _symbol_sync;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
     gr::filter::fft_filter_ccf::sptr _filter;
     gr::digital::fll_band_edge_cc::sptr _fll;
@@ -81,7 +84,7 @@ private:
     gr::fec::decoder::sptr _cc_decoder;
     gr::fec::decoder::sptr _cc_decoder2;
     gr::analog::quadrature_demod_cf::sptr _freq_demod;
-    gr::filter::fft_filter_ccf::sptr _shaping_filter;
+    gr::filter::fft_filter_fff::sptr _shaping_filter;
 
 
     int _samples_per_symbol;

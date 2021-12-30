@@ -37,9 +37,6 @@ gr_demod_2fsk::gr_demod_2fsk(std::vector<int>signature, int sps, int samp_rate, 
                       gr::io_signature::makev (4, 4, signature))
 {
     int decim, interp, nfilts;
-    float gain_mu, gain_omega;
-    gain_mu = 0.05;
-    gain_omega = 0.005;
     if(sps == 10)
     {
         _target_samp_rate = 10000;
@@ -86,7 +83,7 @@ gr_demod_2fsk::gr_demod_2fsk(std::vector<int>signature, int sps, int samp_rate, 
                                                            gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     std::vector<float> symbol_filter_taps = gr::filter::firdes::low_pass(1.0,
                                  _target_samp_rate, _target_samp_rate/_samples_per_symbol,
-                                                                         _target_samp_rate/_samples_per_symbol/4,
+                                                                         _target_samp_rate/_samples_per_symbol/2,
                                                                          gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     _resampler = gr::filter::rational_resampler_base_ccf::make(interp, decim, taps);
     _resampler->set_thread_priority(99);
@@ -104,16 +101,16 @@ gr_demod_2fsk::gr_demod_2fsk(std::vector<int>signature, int sps, int samp_rate, 
     _add = gr::blocks::add_const_ff::make(-1);
     _rail = gr::analog::rail_ff::make(0,2);
     _float_to_complex = gr::blocks::float_to_complex::make();
-    _symbol_filter = gr::filter::fft_filter_ccf::make(1,symbol_filter_taps);
+    _symbol_filter = gr::filter::fft_filter_fff::make(1,symbol_filter_taps);
 
-    _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol,
-                                                              gain_omega*gain_omega, 0.5, gain_mu,
-                                                              0.001);
+    float sps_deviation = 200.0f / ((float)_target_samp_rate / (float)_samples_per_symbol);
+    _symbol_sync = gr::digital::symbol_sync_ff::make(gr::digital::TED_MOD_MUELLER_AND_MULLER, _samples_per_symbol,
+                                                    2 * M_PI * 0.01, 1.0, 1.0, sps_deviation, 1, gr::digital::constellation_bpsk::make());
 
     _freq_demod = gr::analog::quadrature_demod_cf::make(_samples_per_symbol/(spacing * M_PI/2));
-    _shaping_filter = gr::filter::fft_filter_ccf::make(
+    _shaping_filter = gr::filter::fft_filter_fff::make(
                 1, gr::filter::firdes::root_raised_cosine(1,_target_samp_rate,
-                                    _target_samp_rate/_samples_per_symbol,0.35,nfilts));
+                                    _target_samp_rate/_samples_per_symbol,0.2,nfilts));
     _multiply_const_fec = gr::blocks::multiply_const_ff::make(128);
     _float_to_uchar = gr::blocks::float_to_uchar::make();
     _add_const_fec = gr::blocks::add_const_ff::make(128.0);
@@ -137,9 +134,8 @@ gr_demod_2fsk::gr_demod_2fsk(std::vector<int>signature, int sps, int samp_rate, 
     if(fm)
     {
         connect(_filter,0,_freq_demod,0);
-        connect(_freq_demod,0,_float_to_complex,0);
-        connect(_float_to_complex,0,_shaping_filter,0);
-        connect(_shaping_filter,0,_clock_recovery,0);
+        connect(_freq_demod,0,_shaping_filter,0);
+        connect(_shaping_filter,0,_symbol_sync,0);
     }
     else
     {
@@ -151,13 +147,12 @@ gr_demod_2fsk::gr_demod_2fsk(std::vector<int>signature, int sps, int samp_rate, 
         connect(_mag_upper,0,_divide,0);
         connect(_divide,0,_rail,0);
         connect(_rail,0,_add,0);
-        connect(_add,0,_float_to_complex,0);
-        connect(_float_to_complex,0,_symbol_filter,0);
-        connect(_symbol_filter,0,_clock_recovery,0);
+        connect(_add,0,_symbol_filter,0);
+        connect(_symbol_filter,0,_symbol_sync,0);
     }
-    connect(_clock_recovery,0,self(),1);
-    connect(_clock_recovery,0,_complex_to_real,0);
-    connect(_complex_to_real,0,_multiply_const_fec,0);
+    connect(_symbol_sync,0,_float_to_complex,0);
+    connect(_float_to_complex,0,self(),1);
+    connect(_symbol_sync,0,_multiply_const_fec,0);
     connect(_multiply_const_fec,0,_add_const_fec,0);
     connect(_add_const_fec,0,_float_to_uchar,0);
     connect(_float_to_uchar,0,_cc_decoder,0);
