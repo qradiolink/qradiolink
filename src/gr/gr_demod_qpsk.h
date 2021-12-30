@@ -31,6 +31,7 @@
 #include <gnuradio/fec/cc_decoder.h>
 #include <gnuradio/digital/costas_loop_cc.h>
 #include <gnuradio/digital/cma_equalizer_cc.h>
+#include <gnuradio/digital/symbol_sync_cc.h>
 #include <gnuradio/analog/agc2_cc.h>
 #include <gnuradio/digital/fll_band_edge_cc.h>
 #include <gnuradio/filter/rational_resampler_base.h>
@@ -62,6 +63,7 @@ private:
     gr::digital::fll_band_edge_cc::sptr _fll;
     gr::digital::clock_recovery_mm_cc::sptr _clock_recovery;
     gr::digital::pfb_clock_sync_ccf::sptr _clock_sync;
+    gr::digital::symbol_sync_cc::sptr _symbol_sync;
     gr::digital::costas_loop_cc::sptr _costas_loop;
     gr::digital::costas_loop_cc::sptr _costas_pll;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
