@@ -20,16 +20,14 @@
 #include <gnuradio/hier_block2.h>
 #include <gnuradio/endianness.h>
 #include <gnuradio/filter/firdes.h>
-#include <gnuradio/digital/clock_recovery_mm_cc.h>
+#include <gnuradio/digital/symbol_sync_ff.h>
 #include <gnuradio/blocks/unpack_k_bits_bb.h>
 #include <gnuradio/blocks/float_to_complex.h>
 #include <gnuradio/blocks/multiply_const.h>
 #include <gnuradio/filter/rational_resampler_base.h>
 #include <gnuradio/digital/binary_slicer_fb.h>
-#include <gnuradio/digital/fll_band_edge_cc.h>
 #include <gnuradio/blocks/divide.h>
 #include <gnuradio/analog/rail_ff.h>
-#include <gnuradio/blocks/complex_to_real.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/filter/fft_filter_ccc.h>
 #include <gnuradio/digital/descrambler_bb.h>
@@ -58,12 +56,10 @@ public:
 private:
     gr::blocks::multiply_const_cc::sptr _multiply_symbols;
     gr::blocks::float_to_complex::sptr _float_to_complex;
-    gr::digital::clock_recovery_mm_cc::sptr _clock_recovery;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
+    gr::digital::symbol_sync_ff::sptr _symbol_sync;
     gr::filter::fft_filter_ccf::sptr _filter;
-    gr::digital::fll_band_edge_cc::sptr _fll;
     gr::digital::binary_slicer_fb::sptr _binary_slicer;
-    gr::blocks::complex_to_real::sptr _complex_to_real;
     gr::digital::descrambler_bb::sptr _descrambler;
     gr::digital::descrambler_bb::sptr _descrambler2;
     gr::blocks::delay::sptr _delay;

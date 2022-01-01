@@ -30,7 +30,6 @@
 #include <gnuradio/digital/fll_band_edge_cc.h>
 #include <gnuradio/blocks/divide.h>
 #include <gnuradio/analog/rail_ff.h>
-#include <gnuradio/blocks/complex_to_real.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/filter/fft_filter_fff.h>
 #include <gnuradio/filter/fft_filter_ccc.h>
@@ -61,7 +60,6 @@ private:
     gr::blocks::multiply_const_cc::sptr _multiply_symbols;
     gr::blocks::float_to_complex::sptr _float_to_complex;
     gr::filter::fft_filter_fff::sptr _symbol_filter;
-    gr::digital::clock_recovery_mm_cc::sptr _clock_recovery;
     gr::digital::symbol_sync_ff::sptr _symbol_sync;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
     gr::filter::fft_filter_ccf::sptr _filter;
@@ -73,7 +71,6 @@ private:
     gr::blocks::divide_ff::sptr _divide;
     gr::analog::rail_ff::sptr _rail;
     gr::digital::binary_slicer_fb::sptr _binary_slicer;
-    gr::blocks::complex_to_real::sptr _complex_to_real;
     gr::digital::descrambler_bb::sptr _descrambler;
     gr::digital::descrambler_bb::sptr _descrambler2;
     gr::blocks::delay::sptr _delay;

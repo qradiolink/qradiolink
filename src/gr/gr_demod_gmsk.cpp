@@ -37,9 +37,6 @@ gr_demod_gmsk::gr_demod_gmsk(std::vector<int>signature, int sps, int samp_rate, 
                       gr::io_signature::makev (4, 4, signature))
 {
     int decim, interp, nfilts;
-    float gain_mu, gain_omega;
-    gain_mu = 0.05;
-    gain_omega = 0.005;
     if(sps == 10)
     {
         _target_samp_rate = 10000;
@@ -84,15 +81,15 @@ gr_demod_gmsk::gr_demod_gmsk(std::vector<int>signature, int sps, int samp_rate, 
                                                            gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     _resampler = gr::filter::rational_resampler_base_ccf::make(interp, decim, taps);
     _resampler->set_thread_priority(99);
-    _fll = gr::digital::fll_band_edge_cc::make(_samples_per_symbol, 0.1, 16, 24*M_PI/100);
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
                                 1, _target_samp_rate, _filter_width,_filter_width/2,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
 
     _float_to_complex = gr::blocks::float_to_complex::make();
+    float sps_deviation = 200.0f / ((float)_target_samp_rate / (float)_samples_per_symbol);
+    _symbol_sync = gr::digital::symbol_sync_ff::make(gr::digital::TED_MOD_MUELLER_AND_MULLER, _samples_per_symbol,
+                                                    2 * M_PI * 0.01, 1.0, 1.0, sps_deviation, 1,
+                                                     gr::digital::constellation_bpsk::make());
 
-    _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol,
-                                                              gain_omega*gain_omega, 0.5, gain_mu,
-                                                              0.001);
 
     _freq_demod = gr::analog::quadrature_demod_cf::make(_samples_per_symbol/(M_PI/2));
     _multiply_const_fec = gr::blocks::multiply_const_ff::make(128);
@@ -104,7 +101,6 @@ gr_demod_gmsk::gr_demod_gmsk(std::vector<int>signature, int sps, int samp_rate, 
     _cc_decoder = gr::fec::decoder::make(decoder, 1, 1);
     _cc_decoder2 = gr::fec::decoder::make(decoder2, 1, 1);
 
-    _complex_to_real = gr::blocks::complex_to_real::make();
 
     _delay = gr::blocks::delay::make(1,1);
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
@@ -112,15 +108,13 @@ gr_demod_gmsk::gr_demod_gmsk(std::vector<int>signature, int sps, int samp_rate, 
 
 
     connect(self(),0,_resampler,0);
-    connect(_resampler,0,_fll,0);
-    connect(_fll,0,_filter,0);
+    connect(_resampler,0,_filter,0);
     connect(_filter,0,self(),0);
     connect(_filter,0,_freq_demod,0);
-    connect(_freq_demod,0,_float_to_complex,0);
-    connect(_float_to_complex,0,_clock_recovery,0);
-    connect(_clock_recovery,0,self(),1);
-    connect(_clock_recovery,0,_complex_to_real,0);
-    connect(_complex_to_real,0,_multiply_const_fec,0);
+    connect(_freq_demod,0,_symbol_sync,0);
+    connect(_symbol_sync,0,_float_to_complex,0);
+    connect(_float_to_complex,0,self(),1);
+    connect(_symbol_sync,0,_multiply_const_fec,0);
     connect(_multiply_const_fec,0,_add_const_fec,0);
     connect(_add_const_fec,0,_float_to_uchar,0);
     connect(_float_to_uchar,0,_cc_decoder,0);

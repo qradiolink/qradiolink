@@ -20,7 +20,6 @@
 #include <gnuradio/hier_block2.h>
 #include <gnuradio/endianness.h>
 #include <gnuradio/filter/firdes.h>
-#include <gnuradio/digital/clock_recovery_mm_cc.h>
 #include <gnuradio/blocks/float_to_complex.h>
 #include <gnuradio/blocks/complex_to_float.h>
 #include <gnuradio/blocks/multiply_const.h>
@@ -61,7 +60,6 @@ private:
     gr::digital::cma_equalizer_cc::sptr _equalizer;
     gr::analog::agc2_cc::sptr _agc;
     gr::digital::fll_band_edge_cc::sptr _fll;
-    gr::digital::clock_recovery_mm_cc::sptr _clock_recovery;
     gr::digital::pfb_clock_sync_ccf::sptr _clock_sync;
     gr::digital::symbol_sync_cc::sptr _symbol_sync;
     gr::digital::costas_loop_cc::sptr _costas_loop;

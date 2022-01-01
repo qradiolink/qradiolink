@@ -83,8 +83,8 @@ gr_demod_2fsk::gr_demod_2fsk(std::vector<int>signature, int sps, int samp_rate, 
                                                            gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     std::vector<float> symbol_filter_taps = gr::filter::firdes::low_pass(1.0,
                                  _target_samp_rate, _target_samp_rate/_samples_per_symbol,
-                                                                         _target_samp_rate/_samples_per_symbol/2,
-                                                                         gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+                                                                         _target_samp_rate/_samples_per_symbol,
+                                                                         gr::filter::firdes::WIN_HAMMING);
     _resampler = gr::filter::rational_resampler_base_ccf::make(interp, decim, taps);
     _resampler->set_thread_priority(99);
     _fll = gr::digital::fll_band_edge_cc::make(_samples_per_symbol, 0.1, 16, 24*M_PI/100);
@@ -105,7 +105,8 @@ gr_demod_2fsk::gr_demod_2fsk(std::vector<int>signature, int sps, int samp_rate, 
 
     float sps_deviation = 200.0f / ((float)_target_samp_rate / (float)_samples_per_symbol);
     _symbol_sync = gr::digital::symbol_sync_ff::make(gr::digital::TED_MOD_MUELLER_AND_MULLER, _samples_per_symbol,
-                                                    2 * M_PI * 0.01, 1.0, 1.0, sps_deviation, 1, gr::digital::constellation_bpsk::make());
+                                                    2 * M_PI * 0.01, 1.0, 1.0, sps_deviation, 1,
+                                                     gr::digital::constellation_bpsk::make());
 
     _freq_demod = gr::analog::quadrature_demod_cf::make(_samples_per_symbol/(spacing * M_PI/2));
     _shaping_filter = gr::filter::fft_filter_fff::make(
@@ -119,8 +120,6 @@ gr_demod_2fsk::gr_demod_2fsk(std::vector<int>signature, int sps, int samp_rate, 
     gr::fec::code::cc_decoder::sptr decoder2 = gr::fec::code::cc_decoder::make(80, 7, 2, polys);
     _cc_decoder = gr::fec::decoder::make(decoder, 1, 1);
     _cc_decoder2 = gr::fec::decoder::make(decoder2, 1, 1);
-
-    _complex_to_real = gr::blocks::complex_to_real::make();
 
     _delay = gr::blocks::delay::make(1,1);
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);

@@ -41,10 +41,7 @@ gr_demod_4fsk::gr_demod_4fsk(std::vector<int>signature, int sps, int samp_rate, 
     _filter_width = filter_width;
 
     int rs, bw, decimation, interpolation, nfilts;
-    float gain_omega, gain_mu, omega_rel_limit;
-    gain_omega = 0.005;
-    gain_mu = 0.025;
-    omega_rel_limit = 0.001;
+
     if(sps == 1)
     {
         _target_samp_rate = 80000;
@@ -108,7 +105,6 @@ gr_demod_4fsk::gr_demod_4fsk(std::vector<int>signature, int sps, int samp_rate, 
                                                                          gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     _resampler = gr::filter::rational_resampler_base_ccf::make(interpolation, decimation, taps);
     _resampler->set_thread_priority(99);
-    _fll = gr::digital::fll_band_edge_cc::make(_samples_per_symbol, 0.25, 32, 8*M_PI/100);
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
                                 1, _target_samp_rate, _filter_width,_filter_width/2,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
     if(!fm)
@@ -135,13 +131,10 @@ gr_demod_4fsk::gr_demod_4fsk(std::vector<int>signature, int sps, int samp_rate, 
     _shaping_filter = gr::filter::fft_filter_fff::make(
                 1, gr::filter::firdes::root_raised_cosine(1.5,_target_samp_rate,
                                     _target_samp_rate/_samples_per_symbol,0.2,nfilts));
-    _clock_recovery = gr::digital::clock_recovery_mm_cc::make(_samples_per_symbol, 0.025*gain_omega*gain_omega, 0.5, gain_omega,
-                                                              omega_rel_limit);
-    _clock_recovery_f = gr::digital::clock_recovery_mm_ff::make(_samples_per_symbol,
-                                                                0.025*gain_omega*gain_omega, 0.5, gain_mu,
-                                                              omega_rel_limit);
     float sps_deviation = 200.0f / ((float)_target_samp_rate / (float)_samples_per_symbol);
     _symbol_sync = gr::digital::symbol_sync_ff::make(gr::digital::TED_MOD_MUELLER_AND_MULLER, _samples_per_symbol,
+                                                    2 * M_PI * 0.01, 1.0, 1.0, sps_deviation, 1, constellation_4fsk);
+    _symbol_sync_complex = gr::digital::symbol_sync_cc::make(gr::digital::TED_MOD_MUELLER_AND_MULLER, _samples_per_symbol,
                                                     2 * M_PI * 0.01, 1.0, 1.0, sps_deviation, 1, constellation_4fsk);
     _float_to_complex = gr::blocks::float_to_complex::make();
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
@@ -185,9 +178,9 @@ gr_demod_4fsk::gr_demod_4fsk(std::vector<int>signature, int sps, int samp_rate, 
         connect(_mag3,0,_discriminator,2);
         connect(_mag4,0,_discriminator,3);
         connect(_discriminator,0,_symbol_filter,0);
-        connect(_symbol_filter,0,_clock_recovery,0);
-        connect(_clock_recovery,0,self(),1);
-        connect(_clock_recovery,0,_complex_to_float,0);
+        connect(_symbol_filter,0,_symbol_sync_complex,0);
+        connect(_symbol_sync_complex,0,self(),1);
+        connect(_symbol_sync_complex,0,_complex_to_float,0);
     }
     if(fm)
     {

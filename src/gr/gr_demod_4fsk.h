@@ -20,17 +20,15 @@
 #include <gnuradio/hier_block2.h>
 #include <gnuradio/endianness.h>
 #include <gnuradio/filter/firdes.h>
-#include <gnuradio/digital/clock_recovery_mm_cc.h>
-#include <gnuradio/digital/clock_recovery_mm_ff.h>
 #include <gnuradio/blocks/unpack_k_bits_bb.h>
 #include <gnuradio/blocks/float_to_complex.h>
 #include <gnuradio/analog/quadrature_demod_cf.h>
 #include <gnuradio/blocks/multiply_const.h>
 #include <gnuradio/blocks/complex_to_mag.h>
-#include <gnuradio/digital/fll_band_edge_cc.h>
 #include <gnuradio/filter/rational_resampler_base.h>
 #include <gnuradio/digital/constellation.h>
 #include <gnuradio/digital/symbol_sync_ff.h>
+#include <gnuradio/digital/symbol_sync_cc.h>
 #include <gnuradio/digital/constellation_decoder_cb.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/filter/fft_filter_ccc.h>
@@ -78,12 +76,10 @@ private:
     gr::analog::quadrature_demod_cf::sptr _freq_demod;
     gr::blocks::float_to_complex::sptr _float_to_complex;
     gr::filter::fft_filter_ccf::sptr _symbol_filter;
-    gr::digital::fll_band_edge_cc::sptr _fll;
-    gr::digital::clock_recovery_mm_cc::sptr _clock_recovery;
-    gr::digital::clock_recovery_mm_ff::sptr _clock_recovery_f;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
     gr::digital::constellation_decoder_cb::sptr _constellation_receiver;
     gr::digital::symbol_sync_ff::sptr _symbol_sync;
+    gr::digital::symbol_sync_cc::sptr _symbol_sync_complex;
     gr::filter::fft_filter_ccf::sptr _filter;
     gr::digital::descrambler_bb::sptr _descrambler;
     gr::blocks::multiply_const_ff::sptr _multiply_const_fec;
