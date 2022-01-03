@@ -105,7 +105,7 @@ gr_demod_qpsk::gr_demod_qpsk(std::vector<int>signature, int sps, int samp_rate, 
     float symbol_rate = (float)_target_samp_rate / (float)_samples_per_symbol;
     float sps_deviation = 200.0f / symbol_rate;
     _symbol_sync = gr::digital::symbol_sync_cc::make(gr::digital::TED_MOD_MUELLER_AND_MULLER, _samples_per_symbol,
-                                                    2* M_PI * 0.001, 1.0, 1.0, sps_deviation, 1,
+                                                    2* M_PI * 0.005, 1.0, 1.0, sps_deviation, 1,
                                                      gr::digital::constellation_dqpsk::make(), gr::digital::IR_MMSE_8TAP);
     _costas_pll = gr::digital::costas_loop_cc::make(M_PI/200/_samples_per_symbol,4,true);
 
