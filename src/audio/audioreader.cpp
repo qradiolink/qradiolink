@@ -89,17 +89,17 @@ void AudioReader::run()
     QAudioInput *audio_reader = new QAudioInput(device,format, this);
     audio_reader->setBufferSize(4096);
     QIODevice *audio_dev = audio_reader->start();
+    long sleep_time = 1000000L * (1000L / (8000 / (_audiobuffer_size/2)));
     while(_working)
     {
         QCoreApplication::processEvents();
         bool capture = _capture_audio;
         bool preprocess = _read_preprocess;
         int audio_mode = _read_audio_mode;
-        long sleep_time = 1000000L * (1000L / (8000 / (_audiobuffer_size/2)));
         QByteArray data = audio_dev->readAll();
+        _buffer->append(data);
         if(capture)
         {
-            _buffer->append(data);
             if(_buffer->size() >= _audiobuffer_size)
             {
                 short *audiobuffer = new short[_audiobuffer_size/sizeof(short)];
@@ -115,7 +115,11 @@ void AudioReader::run()
         }
         else
         {
-            struct timespec time_to_sleep = {0, sleep_time };
+            if(_buffer->size() >= _audiobuffer_size * 2)
+            {
+                _buffer->remove(0, _audiobuffer_size);
+            }
+            struct timespec time_to_sleep = {0, sleep_time - 1000000L };
             nanosleep(&time_to_sleep, NULL);
         }
 
