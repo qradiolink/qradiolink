@@ -131,11 +131,12 @@ gr_demod_4fsk::gr_demod_4fsk(std::vector<int>signature, int sps, int samp_rate, 
     _shaping_filter = gr::filter::fft_filter_fff::make(
                 1, gr::filter::firdes::root_raised_cosine(1.5,_target_samp_rate,
                                     _target_samp_rate/_samples_per_symbol,0.2,nfilts));
-    float sps_deviation = 200.0f / ((float)_target_samp_rate / (float)_samples_per_symbol);
+    float symbol_rate ((float)_target_samp_rate / (float)_samples_per_symbol);
+    float sps_deviation = 500.0f / symbol_rate;
     _symbol_sync = gr::digital::symbol_sync_ff::make(gr::digital::TED_MOD_MUELLER_AND_MULLER, _samples_per_symbol,
-                                                    2 * M_PI * 0.01, 1.0, 1.0, sps_deviation, 1, constellation_4fsk);
+                                                    2 * M_PI / (symbol_rate / 50), 1.0, 0.2869, sps_deviation, 1, constellation_4fsk);
     _symbol_sync_complex = gr::digital::symbol_sync_cc::make(gr::digital::TED_MOD_MUELLER_AND_MULLER, _samples_per_symbol,
-                                                    2 * M_PI * 0.01, 1.0, 1.0, sps_deviation, 1, constellation_4fsk);
+                                                    2 * M_PI / (symbol_rate / 50), 1.0, 0.2869, sps_deviation, 1, constellation_4fsk);
     _float_to_complex = gr::blocks::float_to_complex::make();
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
 

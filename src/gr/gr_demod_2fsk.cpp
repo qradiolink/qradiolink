@@ -103,9 +103,10 @@ gr_demod_2fsk::gr_demod_2fsk(std::vector<int>signature, int sps, int samp_rate, 
     _float_to_complex = gr::blocks::float_to_complex::make();
     _symbol_filter = gr::filter::fft_filter_fff::make(1,symbol_filter_taps);
 
-    float sps_deviation = 200.0f / ((float)_target_samp_rate / (float)_samples_per_symbol);
+    float symbol_rate ((float)_target_samp_rate / (float)_samples_per_symbol);
+    float sps_deviation = 200.0f / symbol_rate;
     _symbol_sync = gr::digital::symbol_sync_ff::make(gr::digital::TED_MOD_MUELLER_AND_MULLER, _samples_per_symbol,
-                                                    2 * M_PI * 0.01, 1.0, 1.0, sps_deviation, 1,
+                                                    2 * M_PI / (symbol_rate / 10), 1.0, 0.2869, sps_deviation, 1,
                                                      gr::digital::constellation_bpsk::make());
 
     _freq_demod = gr::analog::quadrature_demod_cf::make(_samples_per_symbol/(spacing * M_PI/2));
