@@ -132,7 +132,7 @@ public slots:
     void toggleTX(bool value);
     void toggleRxMode(int value);
     void toggleTxMode(int value);
-    void fineTuneFreq(int64_t center_freq);
+    void fineTuneFreq(qint64 center_freq);
     void tuneFreq(qint64 center_freq);
     void tuneTxFreq(qint64 actual_freq);
     void changeTxShift(qint64 shift_freq);

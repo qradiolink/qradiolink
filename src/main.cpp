@@ -224,8 +224,8 @@ void connectCommandSignals(TelnetServer *telnet_server, MumbleClient *mumbleclie
                      radio_op,SLOT(startScan(int, int)));
     QObject::connect(telnet_server->command_processor,SIGNAL(stopAutoTuneFreq()),
                      radio_op,SLOT(stopScan()));
-    QObject::connect(telnet_server->command_processor,SIGNAL(fineTuneFreq(int64_t)),radio_op,
-                     SLOT(fineTuneFreq(int64_t)));
+    QObject::connect(telnet_server->command_processor,SIGNAL(fineTuneFreq(qint64)),radio_op,
+                     SLOT(fineTuneFreq(qint64)));
     QObject::connect(telnet_server->command_processor,SIGNAL(setTxPower(int, std::string)),radio_op,
                      SLOT(setTxPower(int, std::string)));
     QObject::connect(telnet_server->command_processor,SIGNAL(setAgcAttack(int)),
@@ -334,7 +334,7 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
     QObject::connect(w,SIGNAL(stopAutoTuneFreq()),radio_op,SLOT(stopScan()));
     QObject::connect(w,SIGNAL(startMemoryTune(int)), radio_op,SLOT(startMemoryScan(int)));
     QObject::connect(w,SIGNAL(stopMemoryTune()),radio_op,SLOT(stopMemoryScan()));
-    QObject::connect(w,SIGNAL(fineTuneFreq(int64_t)),radio_op,SLOT(fineTuneFreq(int64_t)));
+    QObject::connect(w,SIGNAL(fineTuneFreq(qint64)),radio_op,SLOT(fineTuneFreq(qint64)));
     QObject::connect(w,SIGNAL(setTxPower(int, std::string)),
                      radio_op,SLOT(setTxPower(int, std::string)));
     QObject::connect(w,SIGNAL(setBbGain(int)),radio_op,SLOT(setBbGain(int)));

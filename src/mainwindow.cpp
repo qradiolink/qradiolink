@@ -1482,7 +1482,7 @@ void MainWindow::toggleReverseShift(bool value)
 void MainWindow::clarifierTuneFreq(int value)
 {
     Q_UNUSED(value);
-    emit fineTuneFreq((int)ui->tuneDial->value());
+    emit fineTuneFreq((qint64)ui->tuneDial->value());
 }
 
 void MainWindow::tuneMainFreq(qint64 freq)
