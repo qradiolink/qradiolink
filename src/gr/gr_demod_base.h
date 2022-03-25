@@ -35,6 +35,7 @@
 #include <gnuradio/zeromq/push_sink.h>
 #include <gnuradio/constants.h>
 #include <osmosdr/source.h>
+#include <limesdr/source.h>
 #include <vector>
 #include "gr_audio_sink.h"
 #include "gr_bit_sink.h"
@@ -159,6 +160,7 @@ private:
     gr_demod_mmdvm_sptr _mmdvm_demod;
 
     osmosdr::source::sptr _osmosdr_source;
+    gr::limesdr::source::sptr _limesdr_source;
 
     float _device_frequency;
     int _freq_correction;
