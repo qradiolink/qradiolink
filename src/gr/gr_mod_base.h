@@ -33,6 +33,7 @@
 #include <gnuradio/zeromq/pull_source.h>
 #include <gnuradio/filter/rational_resampler_base.h>
 #include <osmosdr/sink.h>
+#include <limesdr/sink.h>
 #include "src/modem_types.h"
 #include "gr_byte_source.h"
 #include "gr_audio_source.h"
@@ -79,6 +80,7 @@ private:
     gr_byte_source_sptr _byte_source;
     gr_audio_source_sptr _audio_source;
     osmosdr::sink::sptr _osmosdr_sink;
+    gr::limesdr::sink::sptr _limesdr_sink;
     gr::blocks::rotator_cc::sptr _rotator;
     gr::analog::sig_source_f::sptr _signal_source;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
@@ -134,6 +136,7 @@ private:
     bool _lime_specific; // FIXME: ugly hack
     double _osmo_filter_bw;
     void set_bandwidth_specific();
+    void set_center_freq(double freq);
     osmosdr::gain_range_t _gain_range;
     std::vector<std::string> _gain_names;
 
