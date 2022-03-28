@@ -34,7 +34,8 @@ void BurstTimer::add_slot(uint8_t slot_no, uint64_t slot_time)
 void BurstTimer::pop_slot()
 {
     boost::unique_lock<boost::mutex> guard(_timing_mutex);
-    _slot_times.removeFirst();
+    if(_slot_times.size() > 0)
+        _slot_times.removeFirst();
 }
 
 int BurstTimer::check_time(uint64_t arrival_time)

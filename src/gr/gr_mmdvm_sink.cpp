@@ -1,5 +1,8 @@
 #include "gr_mmdvm_sink.h"
 #include <QDebug>
+#include "src/bursttimer.h"
+#define RPI
+#include "Globals.h"
 
 
 gr_mmdvm_sink_sptr
@@ -29,6 +32,15 @@ int gr_mmdvm_sink::general_work(int noutput_items, gr_vector_int &ninput_items,
        gr_vector_void_star &output_items)
 {
     (void) output_items;
+    short *in = (short*)(input_items[0]);
+    ::pthread_mutex_lock(&m_RXlock);
+    for(int i = 0;i < noutput_items; i++)
+    {
+        uint8_t control = MARK_NONE;
+        m_rxBuffer.put((uint16_t)in[i], control);
+        //burst_timer.check_time(time);
+    }
+    ::pthread_mutex_unlock(&m_RXlock);
 
     pmt::pmt_t TIME_TAG = pmt::string_to_symbol("rx_time");
     gr::thread::scoped_lock guard(_mutex);
@@ -46,8 +58,8 @@ int gr_mmdvm_sink::general_work(int noutput_items, gr_vector_int &ninput_items,
                 uint64_t secs = pmt::to_uint64(pmt::tuple_ref(cTag.value, 0));
                 double fracs = pmt::to_double(pmt::tuple_ref(cTag.value, 1));
                 qDebug() << "Secs: " << secs << " Fracs: " << QString::number(fracs, 'f', 20);
-                uint64_t time = secs + uint64_t(fracs * 1000000000.0d);
-                burst_timer.check_time(time);
+                //uint64_t time = secs + uint64_t(fracs * 1000000000.0d);
+
             }
         }
     }
