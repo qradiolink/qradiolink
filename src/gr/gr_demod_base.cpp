@@ -108,6 +108,7 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
     _fft_sink = make_rx_fft_c(32768, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     std::string zmq_endpoint = "ipc:///tmp/mmdvm-rx.ipc";
     _zeromq_sink = gr::zeromq::push_sink::make(sizeof(short), 1, (char*)zmq_endpoint.c_str());
+    _mmdvm_sink = make_gr_mmdvm_sink();
 
     _deframer1 = make_gr_deframer_bb(1);
     _deframer2 = make_gr_deframer_bb(1);
@@ -117,7 +118,6 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
 
     _deframer1_10k = make_gr_deframer_bb(3);
     _deframer2_10k = make_gr_deframer_bb(3);
-
 
     _top_block->connect(_rotator,0,_demod_valve,0);
     if(!_lime_specific)
@@ -457,7 +457,7 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
             _top_block->disconnect(_demod_valve,0,_mmdvm_demod,0);
             _top_block->disconnect(_mmdvm_demod,0,_rssi_valve,0);
             _top_block->disconnect(_mmdvm_demod,1,_audio_sink,0);
-            _top_block->disconnect(_mmdvm_demod,2,_zeromq_sink,0);
+            _top_block->disconnect(_mmdvm_demod,2,_mmdvm_sink,0);
             break;
         default:
             break;
@@ -693,7 +693,7 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
             _top_block->connect(_demod_valve,0,_mmdvm_demod,0);
             _top_block->connect(_mmdvm_demod,0,_rssi_valve,0);
             _top_block->connect(_mmdvm_demod,1,_audio_sink,0);
-            _top_block->connect(_mmdvm_demod,2,_zeromq_sink,0);
+            _top_block->connect(_mmdvm_demod,2,_mmdvm_sink,0);
             break;
         break;
         default:

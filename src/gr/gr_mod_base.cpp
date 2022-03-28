@@ -85,7 +85,7 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
     _signal_source = gr::analog::sig_source_f::make(8000, gr::analog::GR_SIN_WAVE, 600, 0.001, 1);
     std::string zmq_endpoint = "ipc:///tmp/mmdvm-tx.ipc";
     _zmq_source = gr::zeromq::pull_source::make(sizeof(short), 1, (char*)zmq_endpoint.c_str());
-
+    _mmdvm_source = make_gr_mmdvm_source();
 
     int tw = std::min(_samp_rate/4, 1500000);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1, 1,
@@ -399,7 +399,7 @@ void gr_mod_base::set_mode(int mode)
         _top_block->disconnect(_freedv_tx800XA_lsb,0,_rotator,0);
         break;
     case gr_modem_types::ModemTypeMMDVM:
-        _top_block->disconnect(_zmq_source,0,_mmdvm_mod,0);
+        _top_block->disconnect(_mmdvm_source,0,_mmdvm_mod,0);
         _top_block->disconnect(_mmdvm_mod,0,_rotator,0);
         break;
     default:
@@ -617,7 +617,7 @@ void gr_mod_base::set_mode(int mode)
         break;
     case gr_modem_types::ModemTypeMMDVM:
         set_carrier_offset(50000);
-        _top_block->connect(_zmq_source,0,_mmdvm_mod,0);
+        _top_block->connect(_mmdvm_source,0,_mmdvm_mod,0);
         _top_block->connect(_mmdvm_mod,0,_rotator,0);
         break;
     default:

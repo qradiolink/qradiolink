@@ -43,7 +43,10 @@ CONFIG(qtaudio) {
 
 
 SOURCES += src/main.cpp\
+    src/bursttimer.cpp \
     src/gpredictcontrol.cpp \
+    src/gr/gr_mmdvm_sink.cpp \
+    src/gr/gr_mmdvm_source.cpp \
     src/limerfecontroller.cpp \
         src/mainwindow.cpp\
         src/audio/audioencoder.cpp\
@@ -120,14 +123,20 @@ SOURCES += src/main.cpp\
     src/gr/gr_mod_qpsk.cpp \
     src/gr/gr_mod_ssb.cpp \
     src/gr/cessb/clipper_cc_impl.cc \
-    src/gr/cessb/stretcher_cc_impl.cc
+    src/gr/cessb/stretcher_cc_impl.cc \
+    src/gr/limesdr/common/device_handler.cc \
+    src/gr/limesdr/source_impl.cc \
+    src/gr/limesdr/sink_impl.cc \
 
 
 
 HEADERS  += src/mainwindow.h\
         src/audio/audioencoder.h\
         src/audio/audioprocessor.h \
+    src/bursttimer.h \
     src/gpredictcontrol.h \
+    src/gr/gr_mmdvm_sink.h \
+    src/gr/gr_mmdvm_source.h \
     src/limerfecontroller.h \
         src/video/videoencoder.h \
         src/video/imagecapture.h \
@@ -209,6 +218,12 @@ HEADERS  += src/mainwindow.h\
     src/gr/cessb/stretcher_cc.h \
     src/gr/cessb/clipper_cc_impl.h \
     src/gr/cessb/stretcher_cc_impl.h \
+    src/gr/limesdr/common/device_handler.h \
+    src/gr/limesdr/source.h \
+    src/gr/limesdr/sink.h \
+    src/gr/limesdr/source_impl.h \
+    src/gr/limesdr/sink_impl.h \
+    src/gr/limesdr/api.h \
     src/style.h
 
 
@@ -219,6 +234,9 @@ HEADERS  += src/mainwindow.h\
 !isEmpty(INCDIR) {
     INCLUDEPATH += $$INCDIR
 }
+
+INCLUDEPATH += /home/adrian/projects/c++/mmdvm-sdr
+LIBS += -L/home/adrian/projects/c++/mmdvm-sdr/buildlib -lmmdvm
 
 
 #CONFIG += link_pkgconfig
@@ -231,7 +249,7 @@ LIBS += -lgnuradio-pmt -lgnuradio-analog -lgnuradio-fft -lgnuradio-vocoder -lgnu
         -lgnuradio-osmosdr -lgnuradio-limesdr -lvolk \
         -lgnuradio-blocks -lgnuradio-filter -lgnuradio-digital -lgnuradio-runtime -lgnuradio-fec \
         -lboost_system$$BOOST_SUFFIX
-LIBS += -lrt  # need to include on some distros
+LIBS += -lrt -lpthread # need to include on some distros
 LIBS += -lprotobuf -lopus -lcodec2 -ljpeg -lconfig++ -lspeexdsp -lftdi -lsndfile -llog4cpp -lLimeSuite
 
 

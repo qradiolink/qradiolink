@@ -35,7 +35,7 @@
 #include <gnuradio/zeromq/push_sink.h>
 #include <gnuradio/constants.h>
 #include <osmosdr/source.h>
-#include <limesdr/source.h>
+#include "limesdr/source.h"
 #include <vector>
 #include "gr_audio_sink.h"
 #include "gr_bit_sink.h"
@@ -54,6 +54,7 @@
 #include "gr_demod_freedv.h"
 #include "gr_demod_dsss.h"
 #include "gr_demod_mmdvm.h"
+#include "gr_mmdvm_sink.h"
 #include "src/modem_types.h"
 #include "rssi_block.h"
 
@@ -158,6 +159,7 @@ private:
     gr_demod_freedv_sptr _freedv_rx700D_lsb;
     gr_demod_freedv_sptr _freedv_rx800XA_lsb;
     gr_demod_mmdvm_sptr _mmdvm_demod;
+    gr_mmdvm_sink_sptr _mmdvm_sink;
 
     osmosdr::source::sptr _osmosdr_source;
     gr::limesdr::source::sptr _limesdr_source;
