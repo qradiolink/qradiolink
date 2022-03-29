@@ -1,11 +1,11 @@
 #include "bursttimer.h"
 #include <QDebug>
 
-static const uint64_t BURST_DELAY = 400000; // microseconds
+static const uint64_t BURST_DELAY = 100000; // microseconds
 
 BurstTimer::BurstTimer()
 {
-
+    _sample_counter = 0;
 }
 
 void BurstTimer::reset_timer()
@@ -24,9 +24,9 @@ void BurstTimer::increment_sample_counter()
 
 void BurstTimer::add_slot(uint8_t slot_no, uint64_t slot_time)
 {
-    slot s;
-    s.slot_no = slot_no;
-    s.slot_time = slot_time;
+    slot *s = new slot;
+    s->slot_no = slot_no;
+    s->slot_time = slot_time;
     boost::unique_lock<boost::mutex> guard(_timing_mutex);
     _slot_times.append(s);
 }
@@ -38,25 +38,42 @@ void BurstTimer::pop_slot()
         _slot_times.removeFirst();
 }
 
-int BurstTimer::check_time(uint64_t arrival_time)
+int BurstTimer::check_time()
 {
     boost::unique_lock<boost::mutex> guard(_timing_mutex);
-    slot s = _slot_times.at(0);
-    if(arrival_time >= s.slot_time && _slot_times.size() > 0)
+    uint64_t sample_time = _sample_counter * 41666 / 1000;
+    if(_slot_times.size() < 1)
+        return 0;
+    slot *s = _slot_times[0];
+    if(sample_time >= s->slot_time && s->slot_sample_counter == 0)
     {
-        _slot_times.removeFirst();
-        return s.slot_no;
+        s->slot_sample_counter++;
+        return s->slot_no;
+    }
+    else if(sample_time >= s->slot_time)
+    {
+        if(s->slot_sample_counter >= 720)
+        {
+            delete _slot_times[0];
+            _slot_times.removeFirst();
+            return 0;
+        }
+        s->slot_sample_counter++;
     }
     return 0;
 }
 
-void BurstTimer::allocate_slot(int slot_no)
+uint64_t BurstTimer::allocate_slot(int slot_no)
 {
+
     boost::unique_lock<boost::mutex> guard(_timing_mutex);
-    slot s;
-    s.slot_no = slot_no;
-    s.slot_time = _burst_timer.nsecsElapsed() / 1000 + BURST_DELAY;
+    uint64_t usec = (_burst_timer.nsecsElapsed() / 1000) + BURST_DELAY;
+    slot *s = new slot;
+    s->slot_no = (uint8_t)slot_no;
+    s->slot_time = usec;
+    s->slot_sample_counter = 0;
     _slot_times.append(s);
+    return usec;
 }
 
 BurstTimer burst_timer;

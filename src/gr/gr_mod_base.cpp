@@ -86,6 +86,7 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
     std::string zmq_endpoint = "ipc:///tmp/mmdvm-tx.ipc";
     _zmq_source = gr::zeromq::pull_source::make(sizeof(short), 1, (char*)zmq_endpoint.c_str());
     _mmdvm_source = make_gr_mmdvm_source();
+    _mmdvm_source->set_samp_rate(_samp_rate);
 
     int tw = std::min(_samp_rate/4, 1500000);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1, 1,
@@ -227,6 +228,7 @@ void gr_mod_base::set_samp_rate(int samp_rate)
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
         _osmosdr_sink->set_sample_rate(_samp_rate);
     }
+    _mmdvm_source->set_samp_rate(_samp_rate);
     set_bandwidth_specific();
     _top_block->unlock();
 

@@ -215,6 +215,7 @@ void sink_impl::work_tags(int noutput_items) {
                     u_rate * secs + llround(secs * f_rate + fracs * stored.samp_rate);
 
                 if (cTag.offset == current_sample) {
+                    //std::cerr << "Timestamp: " << timestamp << std::endl;
                     tx_meta.waitForTimestamp = true;
                     tx_meta.timestamp = timestamp;
                 } else {

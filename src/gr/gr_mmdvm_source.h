@@ -37,11 +37,14 @@ public:
     int work(int noutput_items,
            gr_vector_const_void_star &input_items,
            gr_vector_void_star &output_items);
+    void set_samp_rate(int samp_rate);
 
 private:
     unsigned _offset;
     bool _finished;
     gr::thread::mutex _mutex;
+    double _samp_rate;
+    void add_time_tag(uint64_t usec, int offset);
 };
 
 

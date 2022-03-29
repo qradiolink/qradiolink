@@ -25,7 +25,7 @@ public:
 
 
 private:
-    gr::thread::mutex _mutex;
+
 };
 
 

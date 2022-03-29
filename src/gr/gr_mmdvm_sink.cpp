@@ -11,6 +11,7 @@ make_gr_mmdvm_sink ()
     return gnuradio::get_initial_sptr(new gr_mmdvm_sink);
 }
 
+static const pmt::pmt_t TIME_TAG = pmt::string_to_symbol("rx_time");
 
 gr_mmdvm_sink::gr_mmdvm_sink() :
         gr::block("gr_mmdvm_sink",
@@ -33,18 +34,8 @@ int gr_mmdvm_sink::general_work(int noutput_items, gr_vector_int &ninput_items,
 {
     (void) output_items;
     short *in = (short*)(input_items[0]);
-    ::pthread_mutex_lock(&m_RXlock);
-    for(int i = 0;i < noutput_items; i++)
-    {
-        uint8_t control = MARK_NONE;
-        m_rxBuffer.put((uint16_t)in[i], control);
-        //burst_timer.check_time(time);
-    }
-    ::pthread_mutex_unlock(&m_RXlock);
-
-    pmt::pmt_t TIME_TAG = pmt::string_to_symbol("rx_time");
-    gr::thread::scoped_lock guard(_mutex);
     std::vector<gr::tag_t> tags;
+    /*
     get_tags_in_window(tags, 0, 0, noutput_items);
     if (!tags.empty()) {
 
@@ -59,10 +50,37 @@ int gr_mmdvm_sink::general_work(int noutput_items, gr_vector_int &ninput_items,
                 double fracs = pmt::to_double(pmt::tuple_ref(cTag.value, 1));
                 qDebug() << "Secs: " << secs << " Fracs: " << QString::number(fracs, 'f', 20);
                 //uint64_t time = secs + uint64_t(fracs * 1000000000.0d);
+                if(secs == 0 && fracs == 0.0d)
+                {
+                    //burst_timer.reset_timer();
+                }
 
             }
         }
     }
+    */
+    ::pthread_mutex_lock(&m_RXlock);
+    for(int i = 0;i < noutput_items; i++)
+    {
+        uint8_t control = MARK_NONE;
+        int slot_no = 0;
+        burst_timer.increment_sample_counter();
+        slot_no = burst_timer.check_time();
+
+        if(slot_no == 1)
+        {
+            control = MARK_SLOT1;
+            //qDebug() << "RX slot 1";
+        }
+        if(slot_no == 2)
+        {
+            control = MARK_SLOT2;
+            //qDebug() << "RX slot 2";
+        }
+        m_rxBuffer.put((uint16_t)in[i], control);
+
+    }
+    ::pthread_mutex_unlock(&m_RXlock);
 
 
     consume(0, noutput_items);
