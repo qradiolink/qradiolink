@@ -58,14 +58,12 @@ int gr_mmdvm_source::work(int noutput_items,
     if(buf_size < 1)
     {
         ::pthread_mutex_unlock(&m_TXlock);
-        struct timespec time_to_sleep = {0, 100000L };
+        struct timespec time_to_sleep = {0, 10000L };
         nanosleep(&time_to_sleep, NULL);
         return 0;
     }
     unsigned int n = std::min((unsigned int)buf_size,
                                   (unsigned int)noutput_items);
-    unsigned int blocksize = 128;
-    unsigned int ns = std::min(n, blocksize);
     for(unsigned int i = 0;i < n; i++)
     {
         uint16_t sample = 0;
@@ -74,13 +72,18 @@ int gr_mmdvm_source::work(int noutput_items,
         sample *= 5;		// amplify by 12dB
         short signed_sample = (short)sample;
         out[i] = signed_sample;
+        bool add_tag = false;
         if(control == MARK_SLOT1)
         {
-            add_time_tag(burst_timer.allocate_slot(1), i);
+            uint64_t time = burst_timer.allocate_slot(1, add_tag);
+            if(add_tag)
+                add_time_tag(time, i);
         }
         else if(control == MARK_SLOT2)
         {
-            add_time_tag(burst_timer.allocate_slot(2), i);
+            uint64_t time = burst_timer.allocate_slot(2, add_tag);
+            if(add_tag)
+                add_time_tag(time, i);
         }
     }
     ::pthread_mutex_unlock(&m_TXlock);
@@ -103,6 +106,6 @@ void gr_mmdvm_source::add_time_tag(uint64_t usec, int offset) {
     const pmt::pmt_t b_val = pmt::from_long(30000);
     //qDebug() << "Intpart: " << intpart << " Fracpart: " << fracpart << " Usec: " << usec;
     this->add_item_tag(0, nitems_written(0) + offset, TIME_TAG, t_val);
-    this->add_item_tag(0, nitems_written(0) + offset, LENGTH_TAG, b_val);
+    //this->add_item_tag(0, nitems_written(0) + offset, LENGTH_TAG, b_val);
 }
 

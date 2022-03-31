@@ -16,7 +16,7 @@ public:
     void add_slot(uint8_t slot_no, uint64_t slot_time);
     void pop_slot();
     int check_time();
-    uint64_t allocate_slot(int slot_no);
+    uint64_t allocate_slot(int slot_no, bool &add_tag);
 
 private:
     boost::mutex _timing_mutex;
@@ -27,6 +27,7 @@ private:
         uint64_t slot_sample_counter;
     };
     uint64_t _sample_counter;
+    uint64_t _last_slot;
     QElapsedTimer _burst_timer;
     QVector<slot*> _slot_times;
 };
