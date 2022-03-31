@@ -33,7 +33,7 @@ class sink_impl : public sink {
     private:
     lms_stream_t streamId[2];
 
-    bool stream_analyzer = false;
+    bool stream_analyzer = true;
 
     int sink_block = 2;
 

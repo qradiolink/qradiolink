@@ -38,7 +38,7 @@ gr_mmdvm_source::gr_mmdvm_source() :
     _offset = 0;
     _finished = true;
     _samp_rate = 1000000;
-    set_output_multiple(720);
+    //set_output_multiple(720);
 }
 
 gr_mmdvm_source::~gr_mmdvm_source()
@@ -58,12 +58,14 @@ int gr_mmdvm_source::work(int noutput_items,
     if(buf_size < 1)
     {
         ::pthread_mutex_unlock(&m_TXlock);
-        //struct timespec time_to_sleep = {0, 20000L };
-        //nanosleep(&time_to_sleep, NULL);
+        struct timespec time_to_sleep = {0, 100000L };
+        nanosleep(&time_to_sleep, NULL);
         return 0;
     }
     unsigned int n = std::min((unsigned int)buf_size,
                                   (unsigned int)noutput_items);
+    unsigned int blocksize = 128;
+    unsigned int ns = std::min(n, blocksize);
     for(unsigned int i = 0;i < n; i++)
     {
         uint16_t sample = 0;
@@ -94,11 +96,11 @@ void gr_mmdvm_source::set_samp_rate(int samp_rate)
 // Add rx_time tag to stream
 void gr_mmdvm_source::add_time_tag(uint64_t usec, int offset) {
 
-    uint64_t intpart = usec / 1000000;
-    double fracpart = ((double)usec / 1000000.0d) - (double)intpart;
+    uint64_t intpart = usec / 1000000000;
+    double fracpart = ((double)usec / 1000000000.0d) - (double)intpart;
 
     const pmt::pmt_t t_val = pmt::make_tuple(pmt::from_uint64(intpart), pmt::from_double(fracpart));
-    const pmt::pmt_t b_val = pmt::from_long(720);
+    const pmt::pmt_t b_val = pmt::from_long(30000);
     //qDebug() << "Intpart: " << intpart << " Fracpart: " << fracpart << " Usec: " << usec;
     this->add_item_tag(0, nitems_written(0) + offset, TIME_TAG, t_val);
     this->add_item_tag(0, nitems_written(0) + offset, LENGTH_TAG, b_val);

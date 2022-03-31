@@ -11,6 +11,7 @@ public:
     BurstTimer();
 
     void reset_timer();
+    void set_timer(uint64_t value);
     void increment_sample_counter();
     void add_slot(uint8_t slot_no, uint64_t slot_time);
     void pop_slot();
@@ -19,6 +20,7 @@ public:
 
 private:
     boost::mutex _timing_mutex;
+    boost::mutex _slot_mutex;
     struct slot {
         uint8_t slot_no;
         uint64_t slot_time;

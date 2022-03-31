@@ -64,7 +64,7 @@ int gr_mmdvm_sink::general_work(int noutput_items, gr_vector_int &ninput_items,
     {
         uint8_t control = MARK_NONE;
         int slot_no = 0;
-        burst_timer.increment_sample_counter();
+
         slot_no = burst_timer.check_time();
 
         if(slot_no == 1)
@@ -78,6 +78,7 @@ int gr_mmdvm_sink::general_work(int noutput_items, gr_vector_int &ninput_items,
             //qDebug() << "RX slot 2";
         }
         m_rxBuffer.put((uint16_t)in[i], control);
+        burst_timer.increment_sample_counter();
 
     }
     ::pthread_mutex_unlock(&m_RXlock);
