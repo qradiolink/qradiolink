@@ -38,11 +38,11 @@ long long SoapySDR_ticksToTimeNs(const long long ticks, const double rate)
 
 namespace gr {
 namespace limesdr {
-source::sptr source::make(std::string serial, int channel_mode, const std::string& filename) {
-    return gnuradio::get_initial_sptr(new source_impl(serial, channel_mode, filename));
+source::sptr source::make(std::string serial, int channel_mode, const std::string& filename, BurstTimer *burst_timer) {
+    return gnuradio::get_initial_sptr(new source_impl(serial, channel_mode, filename, burst_timer));
 }
 
-source_impl::source_impl(std::string serial, int channel_mode, const std::string& filename)
+source_impl::source_impl(std::string serial, int channel_mode, const std::string& filename, BurstTimer *burst_timer)
     : gr::block("source",
                 gr::io_signature::make(
                     0, 0, 0), // Based on channel_mode SISO/MIMO use appropriate output signature
@@ -50,6 +50,7 @@ source_impl::source_impl(std::string serial, int channel_mode, const std::string
     std::cout << "---------------------------------------------------------------" << std::endl;
     std::cout << "LimeSuite Source (RX) info" << std::endl;
     std::cout << std::endl;
+    _burst_timer = burst_timer;
 
     // 1. Store private variables upon implementation to protect from changing them later
     stored.serial = serial;
@@ -159,7 +160,7 @@ int source_impl::general_work(int noutput_items,
 
         LMS_GetStreamStatus(&streamId[stored.channel_mode], &status);
         if(rx_metadata.timestamp == 0)
-            burst_timer.reset_timer();
+            _burst_timer->reset_timer();
 
         if (add_tag || (status.droppedPackets > 0)) {
             pktLoss += status.droppedPackets;

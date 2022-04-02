@@ -24,6 +24,7 @@ gr_modem::gr_modem(const Settings *settings, Logger *logger, QObject *parent) :
     _limits = new Limits;
     _bit_buf_len = 8 *8;
     _bit_buf = new unsigned char[_bit_buf_len];
+    _burst_timer = new BurstTimer();
     _modem_type_rx = gr_modem_types::ModemTypeBPSK2K;
     _modem_type_tx = gr_modem_types::ModemTypeBPSK2K;
     _rx_frame_length = 7;
@@ -47,12 +48,13 @@ gr_modem::~gr_modem()
         deinitTX(_modem_type_tx);
     delete[] _bit_buf;
     delete _limits;
+    delete _burst_timer;
 }
 
 void gr_modem::initTX(int modem_type, std::string device_args, std::string device_antenna, int freq_corr)
 {
     _modem_type_tx = modem_type;
-    _gr_mod_base = new gr_mod_base(
+    _gr_mod_base = new gr_mod_base(_burst_timer,
                 0, 433500000, 1.0, device_args, device_antenna, freq_corr);
     toggleTxMode(modem_type);
 
@@ -61,7 +63,7 @@ void gr_modem::initTX(int modem_type, std::string device_args, std::string devic
 void gr_modem::initRX(int modem_type, std::string device_args, std::string device_antenna, int freq_corr)
 {
     _modem_type_rx = modem_type;
-    _gr_demod_base = new gr_demod_base(
+    _gr_demod_base = new gr_demod_base(_burst_timer,
                 0, 433500000, 0.9, device_args, device_antenna, freq_corr);
     toggleRxMode(modem_type);
 

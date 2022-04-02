@@ -18,7 +18,7 @@
 
 
 
-gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
+gr_demod_base::gr_demod_base(BurstTimer *burst_timer, QObject *parent, float device_frequency,
                              float rf_gain, std::string device_args, std::string device_antenna,
                               int freq_corr) :
     QObject(parent)
@@ -72,7 +72,7 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
     }
     if(_lime_specific && serial.size() > 0)
     {
-        _limesdr_source = gr::limesdr::source::make(serial.toStdString(), 0, "");
+        _limesdr_source = gr::limesdr::source::make(serial.toStdString(), 0, "", burst_timer);
         _limesdr_source->set_center_freq(_device_frequency);
         _limesdr_source->set_sample_rate(1000000);
         _limesdr_source->set_antenna(255);
@@ -108,7 +108,7 @@ gr_demod_base::gr_demod_base(QObject *parent, float device_frequency,
     _fft_sink = make_rx_fft_c(32768, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     std::string zmq_endpoint = "ipc:///tmp/mmdvm-rx.ipc";
     _zeromq_sink = gr::zeromq::push_sink::make(sizeof(short), 1, (char*)zmq_endpoint.c_str());
-    _mmdvm_sink = make_gr_mmdvm_sink();
+    _mmdvm_sink = make_gr_mmdvm_sink(burst_timer);
 
     _deframer1 = make_gr_deframer_bb(1);
     _deframer2 = make_gr_deframer_bb(1);

@@ -1,26 +1,28 @@
 #ifndef BURSTTIMER_H
 #define BURSTTIMER_H
 
-#include <boost/thread/mutex.hpp>
-#include <QElapsedTimer>
+#include <mutex>
+#include <chrono>
 #include <QVector>
 
 class BurstTimer
 {
 public:
     BurstTimer();
+    ~BurstTimer();
 
     void reset_timer();
+    uint64_t get_time_delta();
     void set_timer(uint64_t value);
     void increment_sample_counter();
     void add_slot(uint8_t slot_no, uint64_t slot_time);
     void pop_slot();
     int check_time();
-    uint64_t allocate_slot(int slot_no, bool &add_tag);
+    uint64_t allocate_slot(int slot_no);
 
 private:
-    boost::mutex _timing_mutex;
-    boost::mutex _slot_mutex;
+    std::mutex _timing_mutex;
+    std::mutex _slot_mutex;
     struct slot {
         uint8_t slot_no;
         uint64_t slot_time;
@@ -28,10 +30,11 @@ private:
     };
     uint64_t _sample_counter;
     uint64_t _last_slot;
-    QElapsedTimer _burst_timer;
+    std::chrono::high_resolution_clock::time_point t1;
+    std::chrono::high_resolution_clock::time_point t2;
     QVector<slot*> _slot_times;
+    uint64_t _time_base;
 };
 
-extern BurstTimer burst_timer;
 
 #endif // BURSTTIMER_H

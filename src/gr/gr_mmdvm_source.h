@@ -20,18 +20,19 @@
 #include <gnuradio/sync_block.h>
 #include <gnuradio/sync_interpolator.h>
 #include <gnuradio/io_signature.h>
+#include "src/bursttimer.h"
 
 
 class gr_mmdvm_source;
 
 typedef boost::shared_ptr<gr_mmdvm_source> gr_mmdvm_source_sptr;
 
-gr_mmdvm_source_sptr make_gr_mmdvm_source();
+gr_mmdvm_source_sptr make_gr_mmdvm_source(BurstTimer *burst_timer);
 
 class gr_mmdvm_source : public gr::sync_block
 {
 public:
-    gr_mmdvm_source();
+    gr_mmdvm_source(BurstTimer *burst_timer);
     ~gr_mmdvm_source();
 
     int work(int noutput_items,
@@ -45,6 +46,7 @@ private:
     gr::thread::mutex _mutex;
     double _samp_rate;
     void add_time_tag(uint64_t usec, int offset);
+    BurstTimer *_burst_timer;
 };
 
 

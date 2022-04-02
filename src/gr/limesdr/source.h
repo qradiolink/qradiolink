@@ -23,6 +23,7 @@
 
 #include <gnuradio/block.h>
 #include "api.h"
+#include "src/bursttimer.h"
 
 namespace gr {
 namespace limesdr {
@@ -45,7 +46,7 @@ class LIMESDR_API source : virtual public gr::block {
      *
      * @return a new limesdr source block object
      */
-    static sptr make(std::string serial, int channel_mode, const std::string& filename);
+    static sptr make(std::string serial, int channel_mode, const std::string& filename, BurstTimer *burst_timer);
 
     /**
      * Set center frequency

@@ -16,7 +16,7 @@
 
 #include "gr_mod_base.h"
 
-gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
+gr_mod_base::gr_mod_base(BurstTimer *burst_timer, QObject *parent, float device_frequency, float rf_gain,
                            std::string device_args, std::string device_antenna, int freq_corr) :
     QObject(parent)
 {
@@ -85,7 +85,7 @@ gr_mod_base::gr_mod_base(QObject *parent, float device_frequency, float rf_gain,
     _signal_source = gr::analog::sig_source_f::make(8000, gr::analog::GR_SIN_WAVE, 600, 0.001, 1);
     std::string zmq_endpoint = "ipc:///tmp/mmdvm-tx.ipc";
     _zmq_source = gr::zeromq::pull_source::make(sizeof(short), 1, (char*)zmq_endpoint.c_str());
-    _mmdvm_source = make_gr_mmdvm_source();
+    _mmdvm_source = make_gr_mmdvm_source(burst_timer);
     _mmdvm_source->set_samp_rate(_samp_rate);
 
     int tw = std::min(_samp_rate/4, 1500000);

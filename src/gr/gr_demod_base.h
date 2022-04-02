@@ -56,13 +56,14 @@
 #include "gr_demod_mmdvm.h"
 #include "gr_mmdvm_sink.h"
 #include "src/modem_types.h"
+#include "src/bursttimer.h"
 #include "rssi_block.h"
 
 class gr_demod_base : public QObject
 {
     Q_OBJECT
 public:
-    explicit gr_demod_base(QObject *parent = 0, float device_frequency=434000000,
+    explicit gr_demod_base(BurstTimer *burst_timer, QObject *parent = 0, float device_frequency=434000000,
                                float rf_gain=50, std::string device_args="rtl=0", std::string device_antenna="RX2",
                                 int freq_corr=0);
     ~gr_demod_base();

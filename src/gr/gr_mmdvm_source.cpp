@@ -16,21 +16,20 @@
 
 #include <QDebug>
 #include "gr_mmdvm_source.h"
-#include "src/bursttimer.h"
 #define RPI
 #include <Globals.h>
 
 
 gr_mmdvm_source_sptr
-make_gr_mmdvm_source ()
+make_gr_mmdvm_source (BurstTimer *burst_timer)
 {
-    return gnuradio::get_initial_sptr(new gr_mmdvm_source);
+    return gnuradio::get_initial_sptr(new gr_mmdvm_source(burst_timer));
 }
 
 static const pmt::pmt_t TIME_TAG = pmt::string_to_symbol("tx_time");
 static const pmt::pmt_t LENGTH_TAG = pmt::string_to_symbol("burst_length");
 
-gr_mmdvm_source::gr_mmdvm_source() :
+gr_mmdvm_source::gr_mmdvm_source(BurstTimer *burst_timer) :
         gr::sync_block("gr_mmdvm_source",
                        gr::io_signature::make (0, 0, 0),
                        gr::io_signature::make (1, 1, sizeof (short)))
@@ -38,6 +37,7 @@ gr_mmdvm_source::gr_mmdvm_source() :
     _offset = 0;
     _finished = true;
     _samp_rate = 1000000;
+    _burst_timer = burst_timer;
     //set_output_multiple(720);
 }
 
@@ -72,18 +72,17 @@ int gr_mmdvm_source::work(int noutput_items,
         sample *= 5;		// amplify by 12dB
         short signed_sample = (short)sample;
         out[i] = signed_sample;
-        bool add_tag = false;
         if(control == MARK_SLOT1)
         {
-            uint64_t time = burst_timer.allocate_slot(1, add_tag);
-            if(add_tag)
-                add_time_tag(time, i);
+            uint64_t time = _burst_timer->allocate_slot(1);
+            add_time_tag(time, i);
+            //qDebug() << "Burst timer timestamp: " << time << " Offset: " << i << " Control: " << control;
         }
-        else if(control == MARK_SLOT2)
+        if(control == MARK_SLOT2)
         {
-            uint64_t time = burst_timer.allocate_slot(2, add_tag);
-            if(add_tag)
-                add_time_tag(time, i);
+            uint64_t time = _burst_timer->allocate_slot(2);
+            add_time_tag(time, i);
+            //qDebug() << "Burst timer timestamp: " << time << " Offset: " << i << " Control: " << control;
         }
     }
     ::pthread_mutex_unlock(&m_TXlock);
@@ -97,10 +96,10 @@ void gr_mmdvm_source::set_samp_rate(int samp_rate)
 }
 
 // Add rx_time tag to stream
-void gr_mmdvm_source::add_time_tag(uint64_t usec, int offset) {
-
-    uint64_t intpart = usec / 1000000000;
-    double fracpart = ((double)usec / 1000000000.0d) - (double)intpart;
+void gr_mmdvm_source::add_time_tag(uint64_t usec, int offset)
+{
+    uint64_t intpart = usec / 1000000;
+    double fracpart = ((double)usec / 1000000.0d) - (double)intpart;
 
     const pmt::pmt_t t_val = pmt::make_tuple(pmt::from_uint64(intpart), pmt::from_double(fracpart));
     const pmt::pmt_t b_val = pmt::from_long(30000);

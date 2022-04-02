@@ -35,6 +35,7 @@
 #include "src/modem_types.h"
 #include "src/gr/gr_mod_base.h"
 #include "src/gr/gr_demod_base.h"
+#include "src/bursttimer.h"
 
 #include <math.h>
 
@@ -145,6 +146,7 @@ private:
     int _current_frame_type;
     unsigned long _shift_reg;
     int _modem_sync;
+    BurstTimer *_burst_timer;
 
 };
 

@@ -35,6 +35,7 @@
 #include <osmosdr/sink.h>
 #include "limesdr/sink.h"
 #include "src/modem_types.h"
+#include "src/bursttimer.h"
 #include "gr_byte_source.h"
 #include "gr_audio_source.h"
 #include "gr_mod_2fsk.h"
@@ -55,7 +56,7 @@ class gr_mod_base : public QObject
 {
     Q_OBJECT
 public:
-    explicit gr_mod_base(QObject *parent = 0, float device_frequency=434000000,
+    explicit gr_mod_base(BurstTimer *burst_timer, QObject *parent = 0, float device_frequency=434000000,
                 float rf_gain=0.5, std::string device_args="uhd", std::string device_antenna="TX/RX", int freq_corr=0);
 
 public slots:
