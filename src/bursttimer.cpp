@@ -1,8 +1,9 @@
 #include "bursttimer.h"
 #include <QDebug>
 
-static const uint64_t BURST_DELAY = 300000000L; // nanosec
+static const uint64_t BURST_DELAY = 100000000L; // nanosec
 static const uint64_t SLOT_TIME = 30000000L;
+static const uint64_t PHY_DELAY = 293L; // nanosec (B20X: 293000L)
 
 BurstTimer::BurstTimer()
 {
@@ -31,13 +32,14 @@ void BurstTimer::reset_timer()
     t1 = std::chrono::high_resolution_clock::now();
     _burst_timer.restart();
     //_last_slot = _time_base + _burst_timer.nsecsElapsed();
-    qDebug() << "Restarted burst timer";
+    //qDebug() << "================= Restarted burst timer =======================";
 }
 
 void BurstTimer::set_timer(uint64_t value)
 {
     std::unique_lock<std::mutex> guard(_slot_mutex);
-    qDebug() << "Set timer: " << value;
+    //qDebug() << "================= Set timer: " << value << " ===================";
+    _sample_counter = 0;
     _time_base = value;
     _burst_timer.restart();
     t1 = std::chrono::high_resolution_clock::now();
@@ -71,7 +73,7 @@ int BurstTimer::check_time()
     if(_slot_times.size() < 1)
         return 0;
     slot *s = _slot_times[0];
-    uint64_t sample_time = _sample_counter * 41667L;
+    uint64_t sample_time = _time_base + _sample_counter * 41666L;
     if(sample_time >= s->slot_time && s->slot_sample_counter == 0)
     {
         s->slot_sample_counter++;
@@ -107,14 +109,14 @@ uint64_t BurstTimer::allocate_slot(int slot_no)
     }
     else if((elapsed - _last_slot) > (5L * SLOT_TIME))
     {
-        qDebug() << "Greater that 52 slots";
+        qDebug() << "Greater that 5 slots";
         _last_slot = elapsed;
     }
     else
     {
         _last_slot = _last_slot + SLOT_TIME;
     }
-    uint64_t nsec = _last_slot + BURST_DELAY;
+    uint64_t nsec = _last_slot + BURST_DELAY + PHY_DELAY;
     s->slot_time = nsec;
     s->slot_sample_counter = 0;
     _slot_times.append(s);

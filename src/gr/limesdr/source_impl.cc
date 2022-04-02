@@ -164,7 +164,7 @@ int source_impl::general_work(int noutput_items,
 
         if (add_tag || (status.droppedPackets > 0)) {
             pktLoss += status.droppedPackets;
-            add_tag = false;
+            add_tag = true;
             this->add_time_tag(0, rx_metadata);
 
         }
@@ -196,7 +196,7 @@ int source_impl::general_work(int noutput_items,
         if (add_tag || status[0].droppedPackets > 0 || status[1].droppedPackets > 0) {
             pktLoss += status[0].droppedPackets; // because every time GetStreamStatus is called,
                                                  // packet loss is reset
-            add_tag = false;
+            add_tag = true;
             this->add_time_tag(LMS_CH_0, rx_metadata[0]);
             this->add_time_tag(LMS_CH_1, rx_metadata[1]);
         }
