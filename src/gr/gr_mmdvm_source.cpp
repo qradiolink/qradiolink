@@ -96,10 +96,11 @@ void gr_mmdvm_source::set_samp_rate(int samp_rate)
 }
 
 // Add rx_time tag to stream
-void gr_mmdvm_source::add_time_tag(uint64_t usec, int offset)
+void gr_mmdvm_source::add_time_tag(uint64_t nsec, int offset)
 {
-    uint64_t intpart = usec / 1000000;
-    double fracpart = ((double)usec / 1000000.0d) - (double)intpart;
+    //std::cerr << "MMDVM timestamp: " << usec << std::endl;
+    uint64_t intpart = nsec / 1000000000L;
+    double fracpart = ((double)nsec / 1000000000.0d) - (double)intpart;
 
     const pmt::pmt_t t_val = pmt::make_tuple(pmt::from_uint64(intpart), pmt::from_double(fracpart));
     const pmt::pmt_t b_val = pmt::from_long(30000);

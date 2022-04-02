@@ -216,10 +216,9 @@ void sink_impl::work_tags(int noutput_items) {
 
 
                 if (cTag.offset == current_sample) {
-                    //std::cerr << "Timestamp: " << timestamp << std::endl;
                     tx_meta.waitForTimestamp = true;
                     tx_meta.timestamp = timestamp;
-                    //std::cerr << "LSM sink timestamp: " << timestamp << std::endl;
+                    //std::cerr << "LMS sink timestamp: " << timestamp << std::endl;
                 } else {
                     nitems_send = cTag.offset - current_sample;
                     break;

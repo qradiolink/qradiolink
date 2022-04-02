@@ -45,7 +45,7 @@ private:
     bool _finished;
     gr::thread::mutex _mutex;
     double _samp_rate;
-    void add_time_tag(uint64_t usec, int offset);
+    void add_time_tag(uint64_t nsec, int offset);
     BurstTimer *_burst_timer;
 };
 

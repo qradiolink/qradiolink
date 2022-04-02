@@ -19,7 +19,8 @@ BurstTimer::~BurstTimer()
 uint64_t BurstTimer::get_time_delta()
 {
     t2 = std::chrono::high_resolution_clock::now();
-    return std::chrono::duration_cast<std::chrono::nanoseconds>(t2-t1).count();
+    //return _time_base + std::chrono::duration_cast<std::chrono::nanoseconds>(t2-t1).count();
+    return _time_base + _burst_timer.nsecsElapsed();
 }
 
 void BurstTimer::reset_timer()
@@ -28,6 +29,7 @@ void BurstTimer::reset_timer()
     _sample_counter = 0;
     _time_base = 0;
     t1 = std::chrono::high_resolution_clock::now();
+    _burst_timer.restart();
     //_last_slot = _time_base + _burst_timer.nsecsElapsed();
     qDebug() << "Restarted burst timer";
 }
@@ -37,6 +39,7 @@ void BurstTimer::set_timer(uint64_t value)
     std::unique_lock<std::mutex> guard(_slot_mutex);
     qDebug() << "Set timer: " << value;
     _time_base = value;
+    _burst_timer.restart();
     t1 = std::chrono::high_resolution_clock::now();
 }
 
@@ -68,7 +71,7 @@ int BurstTimer::check_time()
     if(_slot_times.size() < 1)
         return 0;
     slot *s = _slot_times[0];
-    uint64_t sample_time = (_sample_counter * 41667L) / 1000L;
+    uint64_t sample_time = _sample_counter * 41667L;
     if(sample_time >= s->slot_time && s->slot_sample_counter == 0)
     {
         s->slot_sample_counter++;
@@ -94,7 +97,7 @@ uint64_t BurstTimer::allocate_slot(int slot_no)
     slot *s = new slot;
     s->slot_no = (uint8_t)slot_no;
     uint64_t elapsed = get_time_delta();
-    if(elapsed < _last_slot)
+    if(elapsed <= _last_slot)
     {
         _last_slot = _last_slot + SLOT_TIME;
     }
@@ -102,20 +105,20 @@ uint64_t BurstTimer::allocate_slot(int slot_no)
     {
         _last_slot = elapsed;
     }
-    else if((elapsed - _last_slot) > (10L * SLOT_TIME))
+    else if((elapsed - _last_slot) > (5L * SLOT_TIME))
     {
-
+        qDebug() << "Greater that 52 slots";
         _last_slot = elapsed;
     }
     else
     {
         _last_slot = _last_slot + SLOT_TIME;
     }
-    uint64_t usec = (_last_slot + BURST_DELAY) / 1000L;
-    s->slot_time = usec;
+    uint64_t nsec = _last_slot + BURST_DELAY;
+    s->slot_time = nsec;
     s->slot_sample_counter = 0;
     _slot_times.append(s);
-    return usec;
+    return nsec;
 }
 
 

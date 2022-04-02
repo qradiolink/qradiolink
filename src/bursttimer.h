@@ -3,6 +3,7 @@
 
 #include <mutex>
 #include <chrono>
+#include <QElapsedTimer>
 #include <QVector>
 
 class BurstTimer
@@ -34,6 +35,7 @@ private:
     std::chrono::high_resolution_clock::time_point t2;
     QVector<slot*> _slot_times;
     uint64_t _time_base;
+    QElapsedTimer _burst_timer;
 };
 
 
