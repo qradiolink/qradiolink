@@ -145,7 +145,6 @@ int source_impl::general_work(int noutput_items,
         if (ret0 < 0) {
             return 0;
         }
-        //std::cerr << "Ts: " << SoapySDR_ticksToTimeNs(rx_metadata.timestamp, stored.samp_rate) << std::endl;
 
         LMS_GetStreamStatus(&streamId[stored.channel_mode], &status);
 

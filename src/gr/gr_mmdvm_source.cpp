@@ -64,6 +64,7 @@ int gr_mmdvm_source::work(int noutput_items,
     }
     unsigned int n = std::min((unsigned int)buf_size,
                                   (unsigned int)noutput_items);
+
     for(unsigned int i = 0;i < n; i++)
     {
         uint16_t sample = 0;

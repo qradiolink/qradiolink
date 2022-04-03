@@ -1,9 +1,12 @@
 #include "bursttimer.h"
 #include <QDebug>
 
-static const uint64_t BURST_DELAY = 400000000L; // nanosec
+static const uint64_t BURST_DELAY = 200000000L; // nanosec
 static const uint64_t SLOT_TIME = 30000000L;
-static const uint64_t PHY_DELAY = 0L; // nanosec (B20X: 293000L)
+
+/// Delay between FPGA timestamping logic and antenna
+/// Seems to also depend on sample rate, the higher the sample rate the smaller the delay
+static const uint64_t PHY_DELAY = 300000L; // nanosec (B20X: 293000L)
 
 BurstTimer::BurstTimer()
 {
@@ -67,7 +70,7 @@ int BurstTimer::check_time()
         {
             delete _slot_times[0];
             _slot_times.removeFirst();
-            //qDebug() << "Slots: " << _slot_times.size();
+            //qDebug() << "============= Slots remaining: " << _slot_times.size();
             return 0;
         }
         s->slot_sample_counter++;
@@ -97,12 +100,14 @@ uint64_t BurstTimer::allocate_slot(int slot_no)
     {
         _last_slot = _last_slot + SLOT_TIME;
     }
-    uint64_t nsec = _last_slot + BURST_DELAY + PHY_DELAY;
+    uint64_t nsec = _last_slot + BURST_DELAY;
     s->slot_time = nsec;
     s->slot_sample_counter = 0;
     std::unique_lock<std::mutex> guard(_slot_mutex);
     _slot_times.append(s);
-    return nsec;
+    /// send with timestamp in advance with X nanoseconds
+    /// this accounts for delay in RF stage
+    return nsec - PHY_DELAY;
 }
 
 
