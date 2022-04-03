@@ -51,7 +51,7 @@ int device_handler::open_device(std::string& serial) {
         if (device_count < 1) {
             std::cout << "ERROR: device_handler::open_device(): No Lime devices found."
                       << std::endl;
-            exit(0);
+            throw std::runtime_error("No supported devices found (check the connection and/or udev rules).");
         }
         std::cout << "Device list:" << std::endl;
 
@@ -99,7 +99,7 @@ int device_handler::open_device(std::string& serial) {
     if (device_vector[device_number].address == NULL) {
         if (LMS_Open(&device_vector[device_number].address, list[device_number], NULL) !=
             LMS_SUCCESS)
-            exit(0);
+            throw std::runtime_error("No supported devices found (check the connection and/or udev rules).");
         LMS_Init(device_vector[device_number].address);
         const lms_dev_info_t* info = LMS_GetDeviceInfo(device_vector[device_number].address);
         std::cout << "Using device: " << info->deviceName << "(" << serial
@@ -161,7 +161,7 @@ void device_handler::close_all_devices() {
             }
         }
         close_flag = true;
-        exit(0);
+        throw std::runtime_error("No supported devices found (check the connection and/or udev rules).");
     }
 }
 

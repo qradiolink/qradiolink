@@ -49,7 +49,7 @@ source_impl::source_impl(std::string serial, int channel_mode, const std::string
         std::cout
             << "ERROR: source_impl::source_impl(): Channel must be A(0), B(1) or (A+B) MIMO(2)"
             << std::endl;
-        exit(0);
+        throw std::runtime_error("No supported devices found (check the connection and/or udev rules).");
     }
 
     // 2. Open device if not opened
@@ -262,7 +262,7 @@ inline gr::io_signature::sptr source_impl::args_to_io_signature(int channel_numb
     } else {
         std::cout << "ERROR: source_impl::args_to_io_signature(): channel_number must be 0,1 or 2."
                   << std::endl;
-        exit(0);
+        throw std::runtime_error("No supported devices found (check the connection and/or udev rules).");
     }
 }
 double source_impl::set_center_freq(double freq, size_t chan) {

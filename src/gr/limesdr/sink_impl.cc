@@ -56,7 +56,7 @@ sink_impl::sink_impl(std::string serial,
     if (stored.channel_mode < 0 && stored.channel_mode > 2) {
         std::cout << "ERROR: sink_impl::sink_impl(): Channel must be A(1), B(2) or (A+B) MIMO(3)"
                   << std::endl;
-        exit(0);
+        throw std::runtime_error("No supported devices found (check the connection and/or udev rules).");
     }
 
     // 2. Open device if not opened
@@ -289,7 +289,7 @@ inline gr::io_signature::sptr sink_impl::args_to_io_signature(int channel_number
     } else {
         std::cout << "ERROR: sink_impl::args_to_io_signature(): channel_number must be 0,1 or 2."
                   << std::endl;
-        exit(0);
+        throw std::runtime_error("No supported devices found (check the connection and/or udev rules).");
     }
 }
 
