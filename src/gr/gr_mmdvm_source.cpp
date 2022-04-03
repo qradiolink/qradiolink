@@ -58,8 +58,8 @@ int gr_mmdvm_source::work(int noutput_items,
     if(buf_size < 1)
     {
         ::pthread_mutex_unlock(&m_TXlock);
-        struct timespec time_to_sleep = {0, 10000L };
-        nanosleep(&time_to_sleep, NULL);
+        //struct timespec time_to_sleep = {0, 10000L };
+        //nanosleep(&time_to_sleep, NULL);
         return 0;
     }
     unsigned int n = std::min((unsigned int)buf_size,

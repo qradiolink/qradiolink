@@ -23,7 +23,6 @@
 
 #include "common/device_handler.h"
 #include "source.h"
-#include "src/bursttimer.h"
 
 
 static const pmt::pmt_t TIME_TAG = pmt::string_to_symbol("rx_time");
@@ -32,7 +31,6 @@ namespace gr {
 namespace limesdr {
 class source_impl : public source {
     private:
-    BurstTimer *_burst_timer;
     lms_stream_t streamId[2];
 
     bool stream_analyzer = false;
@@ -57,7 +55,7 @@ class source_impl : public source {
     void add_time_tag(int channel, lms_stream_meta_t meta);
 
     public:
-    source_impl(std::string serial, int channel_mode, const std::string& filename, BurstTimer *burst_timer);
+    source_impl(std::string serial, int channel_mode, const std::string& filename);
     ~source_impl();
 
     int general_work(int noutput_items,

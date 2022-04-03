@@ -72,7 +72,7 @@ gr_demod_base::gr_demod_base(BurstTimer *burst_timer, QObject *parent, float dev
     }
     if(_lime_specific && serial.size() > 0)
     {
-        _limesdr_source = gr::limesdr::source::make(serial.toStdString(), 0, "", burst_timer);
+        _limesdr_source = gr::limesdr::source::make(serial.toStdString(), 0, "");
         _limesdr_source->set_center_freq(_device_frequency);
         _limesdr_source->set_sample_rate(1000000);
         _limesdr_source->set_antenna(255);
