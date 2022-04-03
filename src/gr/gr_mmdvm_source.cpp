@@ -38,7 +38,7 @@ gr_mmdvm_source::gr_mmdvm_source(BurstTimer *burst_timer) :
     _finished = true;
     _samp_rate = 1000000;
     _burst_timer = burst_timer;
-    //set_output_multiple(720);
+    set_output_multiple(720);
 }
 
 gr_mmdvm_source::~gr_mmdvm_source()

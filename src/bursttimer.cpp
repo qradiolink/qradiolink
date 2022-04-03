@@ -1,7 +1,7 @@
 #include "bursttimer.h"
 #include <QDebug>
 
-static const uint64_t BURST_DELAY = 200000000L; // nanosec
+static const uint64_t BURST_DELAY = 400000000L; // nanosec
 static const uint64_t SLOT_TIME = 30000000L;
 static const uint64_t PHY_DELAY = 0L; // nanosec (B20X: 293000L)
 
