@@ -30,7 +30,6 @@ void BurstTimer::reset_timer()
     _sample_counter = 0;
     _time_base = 0;
     t1 = std::chrono::high_resolution_clock::now();
-    //_last_slot = _time_base + t1;
     //qDebug() << "================= Restarted burst timer =======================";
 }
 
