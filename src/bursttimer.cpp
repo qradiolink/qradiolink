@@ -1,7 +1,7 @@
 #include "bursttimer.h"
 #include <QDebug>
 
-static const uint64_t BURST_DELAY = 200000000L; // nanosec
+static const uint64_t BURST_DELAY = 50000000L; // nanosec
 static const uint64_t SLOT_TIME = 30000000L;
 
 /// Delay between FPGA timestamping logic and antenna

@@ -35,44 +35,39 @@ int gr_mmdvm_sink::general_work(int noutput_items, gr_vector_int &ninput_items,
     (void) output_items;
     short *in = (short*)(input_items[0]);
     std::vector<gr::tag_t> tags;
+    uint64_t nitems = nitems_read(0);
 
-    get_tags_in_window(tags, 0, 0, noutput_items);
+
+    get_tags_in_window(tags, 0, 0, noutput_items, TIME_TAG);
     if (!tags.empty()) {
 
-        //std::sort(tags.begin(), tags.end(), gr::tag_t::offset_compare);
-        // Go through the tags
-        for (gr::tag_t cTag : tags) {
-            //std::cout << "Tag: " << pmt::symbol_to_string(cTag.key) << std::endl;
-            // Found tx_time tag
-            if (pmt::eq(cTag.key, TIME_TAG)) {
-                // Convert time to sample timestamp
-                uint64_t secs = pmt::to_uint64(pmt::tuple_ref(cTag.value, 0));
-                double fracs = pmt::to_double(pmt::tuple_ref(cTag.value, 1));
-                //qDebug() << "Secs: " << secs << " Fracs: " << QString::number(fracs, 'f', 20);
-                uint64_t time = uint64_t((double)secs * 1000000000.0d) + uint64_t(fracs * 1000000000.0d);
-                _burst_timer->set_timer(time);
-
-            }
-        }
+        std::sort(tags.begin(), tags.end(), gr::tag_t::offset_compare);
     }
 
     ::pthread_mutex_lock(&m_RXlock);
     for(int i = 0;i < noutput_items; i++)
     {
+        for (gr::tag_t tag : tags)
+        {
+            if(tag.offset == nitems + (uint64_t)i)
+            {
+                uint64_t secs = pmt::to_uint64(pmt::tuple_ref(tag.value, 0));
+                double fracs = pmt::to_double(pmt::tuple_ref(tag.value, 1));
+                // nanoseconds
+                uint64_t time = uint64_t((double)secs * 1000000000.0d) + uint64_t(fracs * 1000000000.0d);
+                _burst_timer->set_timer(time);
+            }
+        }
         uint8_t control = MARK_NONE;
-        int slot_no = 0;
-
-        slot_no = _burst_timer->check_time();
+        int slot_no = _burst_timer->check_time();
 
         if(slot_no == 1)
         {
             control = MARK_SLOT1;
-            //qDebug() << "RX slot 1";
         }
         if(slot_no == 2)
         {
             control = MARK_SLOT2;
-            //qDebug() << "RX slot 2";
         }
         m_rxBuffer.put((uint16_t)in[i], control);
         _burst_timer->increment_sample_counter();
