@@ -1,12 +1,12 @@
 #include "bursttimer.h"
 #include <QDebug>
 
-static const uint64_t BURST_DELAY = 50000000L; // nanosec
+static const uint64_t BURST_DELAY = 100000000L; // nanosec
 static const uint64_t SLOT_TIME = 30000000L;
 
 /// Delay between FPGA timestamping logic and antenna
 /// Seems to also depend on sample rate, the higher the sample rate the smaller the delay
-static const uint64_t PHY_DELAY = 300000L; // nanosec (B20X: 293000L)
+static const uint64_t PHY_DELAY = 50000L; // nanosec (B20X: 293000L)
 
 BurstTimer::BurstTimer()
 {
@@ -58,7 +58,7 @@ int BurstTimer::check_time()
     if(_slot_times.size() < 1)
         return 0;
     slot *s = _slot_times[0];
-    uint64_t sample_time = _time_base + _sample_counter * 41666L;
+    uint64_t sample_time = _time_base + _sample_counter * 41667L;
     if(sample_time >= s->slot_time && s->slot_sample_counter == 0)
     {
         s->slot_sample_counter++;
@@ -92,7 +92,7 @@ uint64_t BurstTimer::allocate_slot(int slot_no)
     {
         _last_slot = elapsed;
     }
-    else if((elapsed - _last_slot) > (1L * SLOT_TIME))
+    else if((elapsed - _last_slot) >= (2L * SLOT_TIME))
     {
         _last_slot = elapsed;
     }

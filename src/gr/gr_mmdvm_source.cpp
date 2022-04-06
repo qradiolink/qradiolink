@@ -38,7 +38,8 @@ gr_mmdvm_source::gr_mmdvm_source(BurstTimer *burst_timer) :
     _finished = true;
     _samp_rate = 1000000;
     _burst_timer = burst_timer;
-    set_output_multiple(720);
+    //set_output_multiple(720);
+    //set_max_noutput_items(1);
 }
 
 gr_mmdvm_source::~gr_mmdvm_source()
@@ -77,13 +78,11 @@ int gr_mmdvm_source::work(int noutput_items,
         {
             uint64_t time = _burst_timer->allocate_slot(1);
             add_time_tag(time, i);
-            //qDebug() << "Burst timer timestamp: " << time << " Offset: " << i << " Control: " << control;
         }
         if(control == MARK_SLOT2)
         {
             uint64_t time = _burst_timer->allocate_slot(2);
             add_time_tag(time, i);
-            //qDebug() << "Burst timer timestamp: " << time << " Offset: " << i << " Control: " << control;
         }
     }
     ::pthread_mutex_unlock(&m_TXlock);
@@ -104,9 +103,9 @@ void gr_mmdvm_source::add_time_tag(uint64_t nsec, int offset)
     double fracpart = ((double)nsec / 1000000000.0d) - (double)intpart;
 
     const pmt::pmt_t t_val = pmt::make_tuple(pmt::from_uint64(intpart), pmt::from_double(fracpart));
-    const pmt::pmt_t b_val = pmt::from_long(30000);
-    //qDebug() << "Intpart: " << intpart << " Fracpart: " << fracpart << " Usec: " << usec;
-    this->add_item_tag(0, nitems_written(0) + offset, TIME_TAG, t_val);
+    this->add_item_tag(0, nitems_written(0) + (uint64_t)offset, TIME_TAG, t_val);
+    //const pmt::pmt_t b_val = pmt::from_long(30000);
     //this->add_item_tag(0, nitems_written(0) + offset, LENGTH_TAG, b_val);
+
 }
 

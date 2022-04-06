@@ -260,7 +260,7 @@ void sink_impl::init_stream(int device_number, int channel) {
     streamId[channel].channel = channel;
     streamId[channel].fifoSize =
         (stored.FIFO_size == 0) ? (int)stored.samp_rate / 10 : stored.FIFO_size;
-    streamId[channel].throughputVsLatency = 0.0;
+    streamId[channel].throughputVsLatency = 0.5;
     streamId[channel].isTx = LMS_CH_TX;
     streamId[channel].dataFmt = lms_stream_t::LMS_FMT_F32;
 
