@@ -1,15 +1,28 @@
+// Written by Adrian Musceac YO8RZZ , started March 2021.
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License as
+// published by the Free Software Foundation; either version 3 of the
+// License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 #include "bursttimer.h"
 #include <QDebug>
 
-static const uint64_t BURST_DELAY = 100000000L; // nanosec
-static const uint64_t SLOT_TIME = 30000000L;
 
-/// Delay between FPGA timestamping logic and antenna
-/// Seems to also depend on sample rate, the higher the sample rate the smaller the delay
-static const uint64_t PHY_DELAY = 50000L; // nanosec (B20X: 293000L)
-
-BurstTimer::BurstTimer()
+BurstTimer::BurstTimer(uint64_t samples_per_slot, uint64_t time_per_sample, uint64_t slot_time)
 {
+    _samples_per_slot = samples_per_slot;
+    _time_per_sample = time_per_sample;
+    _slot_time = slot_time;
     _sample_counter = 0;
     _last_slot = 0;
     _time_base = 0;
@@ -58,7 +71,7 @@ int BurstTimer::check_time()
     if(_slot_times.size() < 1)
         return 0;
     slot *s = _slot_times[0];
-    uint64_t sample_time = _time_base + _sample_counter * 41667L;
+    uint64_t sample_time = _time_base + _sample_counter * _time_per_sample;
     if(sample_time >= s->slot_time && s->slot_sample_counter == 0)
     {
         s->slot_sample_counter++;
@@ -66,7 +79,7 @@ int BurstTimer::check_time()
     }
     else if(sample_time >= s->slot_time)
     {
-        if(s->slot_sample_counter >= 719)
+        if(s->slot_sample_counter >= (_samples_per_slot - 1))
         {
             delete _slot_times[0];
             _slot_times.removeFirst();
@@ -86,19 +99,19 @@ uint64_t BurstTimer::allocate_slot(int slot_no)
     uint64_t elapsed = get_time_delta();
     if(elapsed <= _last_slot)
     {
-        _last_slot = _last_slot + SLOT_TIME;
+        _last_slot = _last_slot + _slot_time;
     }
     else if(_last_slot == 0)
     {
         _last_slot = elapsed;
     }
-    else if((elapsed - _last_slot) >= (2L * SLOT_TIME))
+    else if((elapsed - _last_slot) >= (2L * _slot_time))
     {
         _last_slot = elapsed;
     }
     else
     {
-        _last_slot = _last_slot + SLOT_TIME;
+        _last_slot = _last_slot + _slot_time;
     }
     uint64_t nsec = _last_slot + BURST_DELAY;
     s->slot_time = nsec;

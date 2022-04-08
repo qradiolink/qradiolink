@@ -1,4 +1,4 @@
-// Written by Adrian Musceac YO8RZZ , started March 2016.
+// Written by Adrian Musceac YO8RZZ , started March 2021.
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License as
@@ -39,7 +39,7 @@ gr_mmdvm_source::gr_mmdvm_source(BurstTimer *burst_timer) :
     _samp_rate = 1000000;
     _burst_timer = burst_timer;
     //set_output_multiple(720);
-    //set_max_noutput_items(1);
+    //set_max_noutput_items(72);
 }
 
 gr_mmdvm_source::~gr_mmdvm_source()
