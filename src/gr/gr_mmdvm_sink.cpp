@@ -91,10 +91,18 @@ int gr_mmdvm_sink::general_work(int noutput_items, gr_vector_int &ninput_items,
             control = MARK_SLOT2;
         }
         control_buf.push_back(control);
-        data_buf.push_back((uint16_t)in[i]);
+        data_buf.push_back((int16_t)in[i]);
         _burst_timer->increment_sample_counter();
 
     }
+    uint32_t num_items = (uint32_t)noutput_items;
+    int buf_size = sizeof(uint32_t) + num_items * sizeof(uint8_t) + num_items * sizeof(int16_t);
+    zmq::message_t reply (buf_size);
+    memcpy (reply.data (), &num_items, sizeof(uint32_t));
+    memcpy ((unsigned char *)reply.data () + sizeof(uint32_t), (unsigned char *)control_buf.data(), num_items * sizeof(uint8_t));
+    memcpy ((unsigned char *)reply.data () + sizeof(uint32_t) + num_items * sizeof(uint8_t),
+            (unsigned char *)data_buf.data(), num_items*sizeof(int16_t));
+    _zmqsocket.send (reply, zmq::send_flags::dontwait);
 
 
     consume(0, noutput_items);
