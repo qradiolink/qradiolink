@@ -33,8 +33,6 @@
 #include "src/radiocontroller.h"
 #include "src/telnetserver.h"
 #include "src/logger.h"
-#define RPI
-#include <MMDVM.h>
 
 
 void connectIndependentSignals(AudioWriter *audiowriter, AudioReader *audioreader,
@@ -136,7 +134,7 @@ int main(int argc, char *argv[])
         w->activateWindow();
         w->raise();
     }
-    QtConcurrent::run(&mmdvm_main_thread);
+
 
     /// Connect non-GUI signals
     ///
@@ -151,7 +149,6 @@ int main(int argc, char *argv[])
         telnet_server->start();
 
     int ret = a.exec();
-    stop_mmdvm_thread();
 
     /// Cleanup on exit
     ///

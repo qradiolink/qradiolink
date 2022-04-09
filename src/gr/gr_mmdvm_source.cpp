@@ -16,8 +16,6 @@
 
 #include <QDebug>
 #include "gr_mmdvm_source.h"
-#define RPI
-#include <Globals.h>
 
 
 gr_mmdvm_source_sptr
@@ -38,6 +36,9 @@ gr_mmdvm_source::gr_mmdvm_source(BurstTimer *burst_timer) :
     _finished = true;
     _samp_rate = 1000000;
     _burst_timer = burst_timer;
+    _zmqcontext = zmq::context_t(1);
+    _zmqsocket = zmq::socket_t(_zmqcontext, ZMQ_PULL);
+    _zmqsocket.bind ("ipc:///tmp/mmdvm-tx.ipc");
     //set_output_multiple(720);
     //set_max_noutput_items(72);
 }
@@ -46,7 +47,26 @@ gr_mmdvm_source::~gr_mmdvm_source()
 {
 }
 
-
+int gr_mmdvm_source::get_zmq_message(std::vector<uint8_t> &control, std::vector<uint16_t> data)
+{
+    zmq::message_t mq_message;
+    zmq::recv_result_t recv_result = _zmqsocket.recv(mq_message, zmq::recv_flags::none);
+    //usleep(500); // RX buffer overflows without the block_size change in IO::process()
+    int size = mq_message.size();
+    if(size < 1)
+        return 0;
+    uint32_t buf_size = 0;
+    memcpy(&buf_size, (uint8_t*)mq_message.data(), sizeof(uint32_t));
+    if(buf_size > 0)
+    {
+        control.resize(buf_size);
+        memcpy(control.data(), (uint8_t*)mq_message.data() + sizeof(uint32_t), buf_size * sizeof(uint8_t));
+        data.resize(buf_size);
+        memcpy(data.data(), (uint8_t*)mq_message.data() + sizeof(uint32_t) + buf_size * sizeof(uint8_t),
+               buf_size * sizeof(uint16_t));
+    }
+    return size;
+}
 
 int gr_mmdvm_source::work(int noutput_items,
        gr_vector_const_void_star &input_items,
@@ -54,11 +74,11 @@ int gr_mmdvm_source::work(int noutput_items,
 {
     (void) input_items;
     short *out = (short*)(output_items[0]);
-    ::pthread_mutex_lock(&m_TXlock);
-    unsigned int buf_size = m_txBuffer.getData();
+    std::vector<uint8_t> control_buf;
+    std::vector<int16_t> data_buf;
+    int buf_size = get_zmq_message(control_buf, data_buf);
     if(buf_size < 1)
     {
-        ::pthread_mutex_unlock(&m_TXlock);
         //struct timespec time_to_sleep = {0, 10000L };
         //nanosleep(&time_to_sleep, NULL);
         return 0;
@@ -68,9 +88,9 @@ int gr_mmdvm_source::work(int noutput_items,
 
     for(unsigned int i = 0;i < n; i++)
     {
-        uint16_t sample = 0;
-        uint8_t control = MARK_NONE;
-        m_txBuffer.get(sample, control);
+        uint16_t sample = data_buf.at(i);
+        uint8_t control = control_buf.at(i);
+
         sample *= 5;		// amplify by 12dB
         short signed_sample = (short)sample;
         out[i] = signed_sample;
@@ -85,7 +105,6 @@ int gr_mmdvm_source::work(int noutput_items,
             add_time_tag(time, i);
         }
     }
-    ::pthread_mutex_unlock(&m_TXlock);
 
     return n;
 }

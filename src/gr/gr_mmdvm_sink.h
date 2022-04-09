@@ -42,6 +42,8 @@ public:
 
 private:
     BurstTimer *_burst_timer;
+    zmq::context_t _zmqcontext;
+    zmq::socket_t _zmqsocket;
 
 };
 

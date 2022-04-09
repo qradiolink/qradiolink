@@ -16,8 +16,6 @@
 
 #include "gr_mmdvm_sink.h"
 #include <QDebug>
-#define RPI
-#include "Globals.h"
 
 
 gr_mmdvm_sink_sptr
@@ -35,6 +33,9 @@ gr_mmdvm_sink::gr_mmdvm_sink(BurstTimer *burst_timer) :
 {
     set_tag_propagation_policy(TPP_ALL_TO_ALL);
     _burst_timer = burst_timer;
+    _zmqcontext = zmq::context_t(1);
+    _zmqsocket = zmq::socket_t(_zmqcontext, ZMQ_PUSH);
+    _zmqsocket.bind ("ipc:///tmp/mmdvm-rx.ipc");
 }
 
 gr_mmdvm_sink::~gr_mmdvm_sink()

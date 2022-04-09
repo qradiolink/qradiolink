@@ -21,7 +21,12 @@
 #include <gnuradio/sync_interpolator.h>
 #include <gnuradio/io_signature.h>
 #include "src/bursttimer.h"
+#include <zmq.hpp>
 
+
+const uint8_t  MARK_SLOT1 = 0x08U;
+const uint8_t  MARK_SLOT2 = 0x04U;
+const uint8_t  MARK_NONE  = 0x00U;
 
 class gr_mmdvm_source;
 
@@ -39,6 +44,7 @@ public:
            gr_vector_const_void_star &input_items,
            gr_vector_void_star &output_items);
     void set_samp_rate(int samp_rate);
+    int get_zmq_message(std::vector<uint8_t> &control, std::vector<uint16_t> data);
 
 private:
     unsigned _offset;
@@ -47,6 +53,8 @@ private:
     double _samp_rate;
     void add_time_tag(uint64_t nsec, int offset);
     BurstTimer *_burst_timer;
+    zmq::context_t _zmqcontext;
+    zmq::socket_t _zmqsocket;
 };
 
 
