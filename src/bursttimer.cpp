@@ -18,11 +18,13 @@
 #include <QDebug>
 
 
-BurstTimer::BurstTimer(uint64_t samples_per_slot, uint64_t time_per_sample, uint64_t slot_time)
+BurstTimer::BurstTimer(uint64_t samples_per_slot, uint64_t time_per_sample,
+                       uint64_t slot_time, uint64_t burst_delay)
 {
     _samples_per_slot = samples_per_slot;
     _time_per_sample = time_per_sample;
     _slot_time = slot_time;
+    _burst_delay = burst_delay;
     _sample_counter = 0;
     _last_slot = 0;
     _time_base = 0;
@@ -31,6 +33,15 @@ BurstTimer::BurstTimer(uint64_t samples_per_slot, uint64_t time_per_sample, uint
 BurstTimer::~BurstTimer()
 {
 
+}
+
+void BurstTimer::set_params(uint64_t samples_per_slot, uint64_t time_per_sample,
+                            uint64_t slot_time, uint64_t burst_delay)
+{
+    _samples_per_slot = samples_per_slot;
+    _time_per_sample = time_per_sample;
+    _slot_time = slot_time;
+    _burst_delay = burst_delay;
 }
 
 uint64_t BurstTimer::get_time_delta()
@@ -113,7 +124,7 @@ uint64_t BurstTimer::allocate_slot(int slot_no)
     {
         _last_slot = _last_slot + _slot_time;
     }
-    uint64_t nsec = _last_slot + BURST_DELAY;
+    uint64_t nsec = _last_slot + _burst_delay;
     s->slot_time = nsec;
     s->slot_sample_counter = 0;
     std::unique_lock<std::mutex> guard(_slot_mutex);

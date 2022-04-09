@@ -31,9 +31,10 @@ static const uint64_t PHY_DELAY = 50000L; // nanosec (B20X: 293000L)
 class BurstTimer
 {
 public:
-    BurstTimer(uint64_t samples_per_slot=720, uint64_t time_per_sample=41667L, uint64_t slot_time=SLOT_TIME);
+    BurstTimer(uint64_t samples_per_slot=720, uint64_t time_per_sample=41667L,
+               uint64_t slot_time=SLOT_TIME, uint64_t burst_delay=BURST_DELAY);
     ~BurstTimer();
-
+    void set_params(uint64_t samples_per_slot, uint64_t time_per_sample, uint64_t slot_time, uint64_t burst_delay);
     void reset_timer();
     uint64_t get_time_delta();
     void set_timer(uint64_t value);
@@ -52,6 +53,7 @@ private:
     uint64_t _samples_per_slot;
     uint64_t _time_per_sample;
     uint64_t _slot_time;
+    uint64_t _burst_delay;
     uint64_t _sample_counter;
     uint64_t _last_slot;
     std::chrono::high_resolution_clock::time_point t1;

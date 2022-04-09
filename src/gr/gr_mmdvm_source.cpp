@@ -42,8 +42,6 @@ gr_mmdvm_source::gr_mmdvm_source(BurstTimer *burst_timer) :
     _zmqcontext = zmq::context_t(1);
     _zmqsocket = zmq::socket_t(_zmqcontext, ZMQ_PULL);
     _zmqsocket.connect ("ipc:///tmp/mmdvm-tx.ipc");
-    //set_output_multiple(720);
-    //set_max_noutput_items(72);
 }
 
 gr_mmdvm_source::~gr_mmdvm_source()
@@ -54,7 +52,6 @@ int gr_mmdvm_source::get_zmq_message()
 {
     zmq::message_t mq_message;
     zmq::recv_result_t recv_result = _zmqsocket.recv(mq_message, zmq::recv_flags::dontwait);
-    //usleep(500); // RX buffer overflows without the block_size change in IO::process()
     int size = mq_message.size();
     if(size < 1)
         return 0;
@@ -70,7 +67,7 @@ int gr_mmdvm_source::get_zmq_message()
         memcpy(&data, (uint8_t*)mq_message.data() + sizeof(uint32_t) + buf_size * sizeof(uint8_t),
                buf_size * sizeof(int16_t));
     }
-    for(int i=0;i<buf_size;i++)
+    for(uint32_t i=0;i<buf_size;i++)
     {
         control_buf.push_back(control[i]);
         data_buf.push_back(data[i]);
@@ -85,7 +82,7 @@ int gr_mmdvm_source::work(int noutput_items,
     (void) input_items;
     short *out = (short*)(output_items[0]);
 
-    int buf_size = get_zmq_message();
+    get_zmq_message();
     if(data_buf.size() < 1)
     {
         //struct timespec time_to_sleep = {0, 10000L };
@@ -113,8 +110,6 @@ int gr_mmdvm_source::work(int noutput_items,
     }
     data_buf.erase(data_buf.begin(), data_buf.begin() + n);
     control_buf.erase(control_buf.begin(), control_buf.begin() + n);
-
-
     return n;
 }
 
@@ -126,12 +121,12 @@ void gr_mmdvm_source::set_samp_rate(int samp_rate)
 // Add rx_time tag to stream
 void gr_mmdvm_source::add_time_tag(uint64_t nsec, int offset)
 {
-    //std::cerr << "MMDVM timestamp: " << usec << std::endl;
     uint64_t intpart = nsec / 1000000000L;
     double fracpart = ((double)nsec / 1000000000.0d) - (double)intpart;
 
     const pmt::pmt_t t_val = pmt::make_tuple(pmt::from_uint64(intpart), pmt::from_double(fracpart));
     this->add_item_tag(0, nitems_written(0) + (uint64_t)offset, TIME_TAG, t_val);
+    /// length tag doesn't seem to be necessary
     //const pmt::pmt_t b_val = pmt::from_long(30000);
     //this->add_item_tag(0, nitems_written(0) + offset, LENGTH_TAG, b_val);
 
