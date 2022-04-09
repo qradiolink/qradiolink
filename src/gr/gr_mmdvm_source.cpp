@@ -17,6 +17,9 @@
 #include <QDebug>
 #include "gr_mmdvm_source.h"
 
+const uint8_t  MARK_SLOT1 = 0x08U;
+const uint8_t  MARK_SLOT2 = 0x04U;
+const uint8_t  MARK_NONE  = 0x00U;
 
 gr_mmdvm_source_sptr
 make_gr_mmdvm_source (BurstTimer *burst_timer)
@@ -38,7 +41,7 @@ gr_mmdvm_source::gr_mmdvm_source(BurstTimer *burst_timer) :
     _burst_timer = burst_timer;
     _zmqcontext = zmq::context_t(1);
     _zmqsocket = zmq::socket_t(_zmqcontext, ZMQ_PULL);
-    _zmqsocket.bind ("ipc:///tmp/mmdvm-tx.ipc");
+    _zmqsocket.connect ("ipc:///tmp/mmdvm-tx.ipc");
     //set_output_multiple(720);
     //set_max_noutput_items(72);
 }
@@ -47,25 +50,32 @@ gr_mmdvm_source::~gr_mmdvm_source()
 {
 }
 
-int gr_mmdvm_source::get_zmq_message(std::vector<uint8_t> &control, std::vector<uint16_t> data)
+int gr_mmdvm_source::get_zmq_message()
 {
     zmq::message_t mq_message;
-    zmq::recv_result_t recv_result = _zmqsocket.recv(mq_message, zmq::recv_flags::none);
+    zmq::recv_result_t recv_result = _zmqsocket.recv(mq_message, zmq::recv_flags::dontwait);
     //usleep(500); // RX buffer overflows without the block_size change in IO::process()
     int size = mq_message.size();
     if(size < 1)
         return 0;
     uint32_t buf_size = 0;
     memcpy(&buf_size, (uint8_t*)mq_message.data(), sizeof(uint32_t));
+    uint8_t control[buf_size];
+    int16_t data[buf_size];
     if(buf_size > 0)
     {
-        control.resize(buf_size);
-        memcpy(control.data(), (uint8_t*)mq_message.data() + sizeof(uint32_t), buf_size * sizeof(uint8_t));
-        data.resize(buf_size);
-        memcpy(data.data(), (uint8_t*)mq_message.data() + sizeof(uint32_t) + buf_size * sizeof(uint8_t),
-               buf_size * sizeof(uint16_t));
+
+        memcpy(&control, (uint8_t*)mq_message.data() + sizeof(uint32_t), buf_size * sizeof(uint8_t));
+
+        memcpy(&data, (uint8_t*)mq_message.data() + sizeof(uint32_t) + buf_size * sizeof(uint8_t),
+               buf_size * sizeof(int16_t));
     }
-    return size;
+    for(int i=0;i<buf_size;i++)
+    {
+        control_buf.push_back(control[i]);
+        data_buf.push_back(data[i]);
+    }
+    return buf_size;
 }
 
 int gr_mmdvm_source::work(int noutput_items,
@@ -74,26 +84,22 @@ int gr_mmdvm_source::work(int noutput_items,
 {
     (void) input_items;
     short *out = (short*)(output_items[0]);
-    std::vector<uint8_t> control_buf;
-    std::vector<int16_t> data_buf;
-    int buf_size = get_zmq_message(control_buf, data_buf);
-    if(buf_size < 1)
+
+    int buf_size = get_zmq_message();
+    if(data_buf.size() < 1)
     {
         //struct timespec time_to_sleep = {0, 10000L };
         //nanosleep(&time_to_sleep, NULL);
         return 0;
     }
-    unsigned int n = std::min((unsigned int)buf_size,
+    unsigned int n = std::min((unsigned int)data_buf.size(),
                                   (unsigned int)noutput_items);
 
     for(unsigned int i = 0;i < n; i++)
     {
-        uint16_t sample = data_buf.at(i);
+        short sample = data_buf.at(i);
         uint8_t control = control_buf.at(i);
-
-        sample *= 5;		// amplify by 12dB
-        short signed_sample = (short)sample;
-        out[i] = signed_sample;
+        out[i] = sample;
         if(control == MARK_SLOT1)
         {
             uint64_t time = _burst_timer->allocate_slot(1);
@@ -105,6 +111,9 @@ int gr_mmdvm_source::work(int noutput_items,
             add_time_tag(time, i);
         }
     }
+    data_buf.erase(data_buf.begin(), data_buf.begin() + n);
+    control_buf.erase(control_buf.begin(), control_buf.begin() + n);
+
 
     return n;
 }

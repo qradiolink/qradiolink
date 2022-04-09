@@ -106,8 +106,8 @@ gr_demod_base::gr_demod_base(BurstTimer *burst_timer, QObject *parent, float dev
     }
 
     _fft_sink = make_rx_fft_c(32768, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
-    std::string zmq_endpoint = "ipc:///tmp/mmdvm-rx.ipc";
-    _zeromq_sink = gr::zeromq::push_sink::make(sizeof(short), 1, (char*)zmq_endpoint.c_str());
+    //std::string zmq_endpoint = "ipc:///tmp/mmdvm-rx.ipc";
+    //_zeromq_sink = gr::zeromq::push_sink::make(sizeof(short), 1, (char*)zmq_endpoint.c_str());
     _mmdvm_sink = make_gr_mmdvm_sink(burst_timer);
 
     _deframer1 = make_gr_deframer_bb(1);

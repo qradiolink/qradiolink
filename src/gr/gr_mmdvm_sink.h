@@ -21,7 +21,9 @@
 #include <gnuradio/sync_interpolator.h>
 #include <gnuradio/io_signature.h>
 #include <gnuradio/tags.h>
+#include <zmq.hpp>
 #include "src/bursttimer.h"
+
 
 
 class gr_mmdvm_sink;

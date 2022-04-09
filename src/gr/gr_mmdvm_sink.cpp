@@ -17,6 +17,9 @@
 #include "gr_mmdvm_sink.h"
 #include <QDebug>
 
+const uint8_t  MARK_SLOT1 = 0x08U;
+const uint8_t  MARK_SLOT2 = 0x04U;
+const uint8_t  MARK_NONE  = 0x00U;
 
 gr_mmdvm_sink_sptr
 make_gr_mmdvm_sink (BurstTimer *burst_timer)
@@ -53,6 +56,8 @@ int gr_mmdvm_sink::general_work(int noutput_items, gr_vector_int &ninput_items,
     short *in = (short*)(input_items[0]);
     std::vector<gr::tag_t> tags;
     uint64_t nitems = nitems_read(0);
+    std::vector<uint8_t> control_buf;
+    std::vector<int16_t> data_buf;
 
 
     get_tags_in_window(tags, 0, 0, noutput_items, TIME_TAG);
@@ -61,7 +66,6 @@ int gr_mmdvm_sink::general_work(int noutput_items, gr_vector_int &ninput_items,
         std::sort(tags.begin(), tags.end(), gr::tag_t::offset_compare);
     }
 
-    ::pthread_mutex_lock(&m_RXlock);
     for(int i = 0;i < noutput_items; i++)
     {
         for (gr::tag_t tag : tags)
@@ -86,11 +90,11 @@ int gr_mmdvm_sink::general_work(int noutput_items, gr_vector_int &ninput_items,
         {
             control = MARK_SLOT2;
         }
-        m_rxBuffer.put((uint16_t)in[i], control);
+        control_buf.push_back(control);
+        data_buf.push_back((uint16_t)in[i]);
         _burst_timer->increment_sample_counter();
 
     }
-    ::pthread_mutex_unlock(&m_RXlock);
 
 
     consume(0, noutput_items);

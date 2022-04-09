@@ -24,10 +24,6 @@
 #include <zmq.hpp>
 
 
-const uint8_t  MARK_SLOT1 = 0x08U;
-const uint8_t  MARK_SLOT2 = 0x04U;
-const uint8_t  MARK_NONE  = 0x00U;
-
 class gr_mmdvm_source;
 
 typedef boost::shared_ptr<gr_mmdvm_source> gr_mmdvm_source_sptr;
@@ -44,7 +40,7 @@ public:
            gr_vector_const_void_star &input_items,
            gr_vector_void_star &output_items);
     void set_samp_rate(int samp_rate);
-    int get_zmq_message(std::vector<uint8_t> &control, std::vector<uint16_t> data);
+    int get_zmq_message();
 
 private:
     unsigned _offset;
@@ -55,6 +51,8 @@ private:
     BurstTimer *_burst_timer;
     zmq::context_t _zmqcontext;
     zmq::socket_t _zmqsocket;
+    std::vector<uint8_t> control_buf;
+    std::vector<int16_t> data_buf;
 };
 
 
