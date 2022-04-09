@@ -235,8 +235,6 @@ HEADERS  += src/mainwindow.h\
     INCLUDEPATH += $$INCDIR
 }
 
-INCLUDEPATH += /home/adrian/projects/c++/mmdvm-sdr
-LIBS += -L/home/adrian/projects/c++/mmdvm-sdr/buildlib -lmmdvm
 
 
 #CONFIG += link_pkgconfig
