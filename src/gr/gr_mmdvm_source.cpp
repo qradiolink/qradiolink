@@ -51,7 +51,7 @@ gr_mmdvm_source::~gr_mmdvm_source()
 int gr_mmdvm_source::get_zmq_message()
 {
     zmq::message_t mq_message;
-    zmq::recv_result_t recv_result = _zmqsocket.recv(mq_message, zmq::recv_flags::dontwait);
+    zmq::recv_result_t recv_result = _zmqsocket.recv(mq_message, zmq::recv_flags::none);
     int size = mq_message.size();
     if(size < 1)
         return 0;

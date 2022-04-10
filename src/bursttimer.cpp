@@ -21,6 +21,7 @@
 BurstTimer::BurstTimer(uint64_t samples_per_slot, uint64_t time_per_sample,
                        uint64_t slot_time, uint64_t burst_delay)
 {
+    _enabled = true;
     _samples_per_slot = samples_per_slot;
     _time_per_sample = time_per_sample;
     _slot_time = slot_time;
@@ -33,6 +34,11 @@ BurstTimer::BurstTimer(uint64_t samples_per_slot, uint64_t time_per_sample,
 BurstTimer::~BurstTimer()
 {
 
+}
+
+void BurstTimer::set_enabled(bool value)
+{
+    _enabled = value;
 }
 
 void BurstTimer::set_params(uint64_t samples_per_slot, uint64_t time_per_sample,
@@ -78,6 +84,8 @@ void BurstTimer::increment_sample_counter()
 
 int BurstTimer::check_time()
 {
+    if(!_enabled)
+        return 0;
     std::unique_lock<std::mutex> guard(_slot_mutex);
     if(_slot_times.size() < 1)
         return 0;
@@ -104,7 +112,8 @@ int BurstTimer::check_time()
 
 uint64_t BurstTimer::allocate_slot(int slot_no)
 {
-
+    if(!_enabled)
+        return 0L;
     slot *s = new slot;
     s->slot_no = (uint8_t)slot_no;
     uint64_t elapsed = get_time_delta();

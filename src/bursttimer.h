@@ -34,6 +34,7 @@ public:
     BurstTimer(uint64_t samples_per_slot=720, uint64_t time_per_sample=41667L,
                uint64_t slot_time=SLOT_TIME, uint64_t burst_delay=BURST_DELAY);
     ~BurstTimer();
+    void set_enabled(bool value);
     void set_params(uint64_t samples_per_slot, uint64_t time_per_sample, uint64_t slot_time, uint64_t burst_delay);
     void reset_timer();
     uint64_t get_time_delta();
@@ -43,6 +44,7 @@ public:
     uint64_t allocate_slot(int slot_no);
 
 private:
+    bool _enabled;
     std::mutex _timing_mutex;
     std::mutex _slot_mutex;
     struct slot {
