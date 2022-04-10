@@ -57,21 +57,22 @@ int gr_mmdvm_source::get_zmq_message()
         return 0;
     uint32_t buf_size = 0;
     memcpy(&buf_size, (uint8_t*)mq_message.data(), sizeof(uint32_t));
-    uint8_t control[buf_size];
-    int16_t data[buf_size];
+
     if(buf_size > 0)
     {
-
+        uint8_t control[buf_size];
+        int16_t data[buf_size];
         memcpy(&control, (uint8_t*)mq_message.data() + sizeof(uint32_t), buf_size * sizeof(uint8_t));
 
         memcpy(&data, (uint8_t*)mq_message.data() + sizeof(uint32_t) + buf_size * sizeof(uint8_t),
                buf_size * sizeof(int16_t));
+        for(uint32_t i=0;i<buf_size;i++)
+        {
+            control_buf.push_back(control[i]);
+            data_buf.push_back(data[i]);
+        }
     }
-    for(uint32_t i=0;i<buf_size;i++)
-    {
-        control_buf.push_back(control[i]);
-        data_buf.push_back(data[i]);
-    }
+
     return buf_size;
 }
 
