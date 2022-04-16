@@ -39,6 +39,7 @@ gr_mmdvm_sink::gr_mmdvm_sink(BurstTimer *burst_timer) :
     _zmqcontext = zmq::context_t(1);
     _zmqsocket = zmq::socket_t(_zmqcontext, ZMQ_PUSH);
     _zmqsocket.bind ("ipc:///tmp/mmdvm-rx.ipc");
+    _zmqsocket.setsockopt(ZMQ_SNDHWM, 5);
 }
 
 gr_mmdvm_sink::~gr_mmdvm_sink()

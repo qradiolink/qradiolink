@@ -29,6 +29,7 @@ BurstTimer::BurstTimer(uint64_t samples_per_slot, uint64_t time_per_sample,
     _sample_counter = 0;
     _last_slot = 0;
     _time_base = 0;
+    t1 = std::chrono::high_resolution_clock::now();
 }
 
 BurstTimer::~BurstTimer()

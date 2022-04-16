@@ -51,7 +51,7 @@ gr_mmdvm_source::~gr_mmdvm_source()
 int gr_mmdvm_source::get_zmq_message()
 {
     zmq::message_t mq_message;
-    zmq::recv_result_t recv_result = _zmqsocket.recv(mq_message, zmq::recv_flags::none);
+    zmq::recv_result_t recv_result = _zmqsocket.recv(mq_message, zmq::recv_flags::dontwait);
     int size = mq_message.size();
     if(size < 1)
         return 0;
@@ -101,12 +101,18 @@ int gr_mmdvm_source::work(int noutput_items,
         if(control == MARK_SLOT1)
         {
             uint64_t time = _burst_timer->allocate_slot(1);
-            add_time_tag(time, i);
+            if(time > 0L)
+            {
+                add_time_tag(time, i);
+            }
         }
         if(control == MARK_SLOT2)
         {
             uint64_t time = _burst_timer->allocate_slot(2);
-            add_time_tag(time, i);
+            if(time > 0L)
+            {
+                add_time_tag(time, i);
+            }
         }
     }
     data_buf.erase(data_buf.begin(), data_buf.begin() + n);

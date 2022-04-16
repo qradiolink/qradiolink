@@ -53,6 +53,7 @@ gr_mod_base::gr_mod_base(BurstTimer *burst_timer, QObject *parent, float device_
     }
     if(_lime_specific && serial.size() > 0)
     {
+        burst_timer->set_enabled(true);
         _limesdr_sink = gr::limesdr::sink::make(serial.toStdString(), 0, "", "burst_length");
         _limesdr_sink->set_center_freq(_device_frequency - _carrier_offset);
         _limesdr_sink->set_sample_rate(_samp_rate);
@@ -64,6 +65,7 @@ gr_mod_base::gr_mod_base(BurstTimer *burst_timer, QObject *parent, float device_
     }
     else
     {
+        burst_timer->set_enabled(false);
         _osmosdr_sink = osmosdr::sink::make(device_args);
         //set_bandwidth_specific();
         _osmosdr_sink->set_sample_rate(_samp_rate);
