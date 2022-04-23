@@ -15,7 +15,6 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "gr_mmdvm_sink.h"
-#include <QDebug>
 
 const uint8_t  MARK_SLOT1 = 0x08U;
 const uint8_t  MARK_SLOT2 = 0x04U;
@@ -30,11 +29,10 @@ make_gr_mmdvm_sink (BurstTimer *burst_timer)
 static const pmt::pmt_t TIME_TAG = pmt::string_to_symbol("rx_time");
 
 gr_mmdvm_sink::gr_mmdvm_sink(BurstTimer *burst_timer) :
-        gr::block("gr_mmdvm_sink",
+        gr::sync_block("gr_mmdvm_sink",
                        gr::io_signature::make (1, 1, sizeof (short)),
                        gr::io_signature::make (0, 0, 0))
 {
-    set_tag_propagation_policy(TPP_ALL_TO_ALL);
     _burst_timer = burst_timer;
     _zmqcontext = zmq::context_t(1);
     _zmqsocket = zmq::socket_t(_zmqcontext, ZMQ_PUSH);
@@ -47,13 +45,10 @@ gr_mmdvm_sink::~gr_mmdvm_sink()
 
 }
 
-
-
-int gr_mmdvm_sink::general_work(int noutput_items, gr_vector_int &ninput_items,
+int gr_mmdvm_sink::work(int noutput_items,
        gr_vector_const_void_star &input_items,
        gr_vector_void_star &output_items)
 {
-    (void) ninput_items;
     (void) output_items;
     short *in = (short*)(input_items[0]);
     std::vector<gr::tag_t> tags;
@@ -79,6 +74,7 @@ int gr_mmdvm_sink::general_work(int noutput_items, gr_vector_int &ninput_items,
                 // nanoseconds
                 uint64_t time = uint64_t((double)secs * 1000000000.0d) + uint64_t(fracs * 1000000000.0d);
                 _burst_timer->set_timer(time);
+                break;
             }
         }
         uint8_t control = MARK_NONE;
@@ -106,7 +102,5 @@ int gr_mmdvm_sink::general_work(int noutput_items, gr_vector_int &ninput_items,
             (unsigned char *)data_buf.data(), num_items*sizeof(int16_t));
     _zmqsocket.send (reply, zmq::send_flags::dontwait);
 
-
-    consume(0, noutput_items);
     return noutput_items;
 }
