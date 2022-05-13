@@ -52,7 +52,7 @@ gr_demod_mmdvm::gr_demod_mmdvm(std::vector<int>signature, int sps, int samp_rate
     std::vector<float> audio_taps = gr::filter::firdes::low_pass(1, _target_samp_rate, 3500, 500,
                                                     gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     _audio_resampler = gr::filter::rational_resampler_base_fff::make(1, 3, audio_taps);
-    _squelch = gr::analog::pwr_squelch_cc::make(-140,0.01,0,true);
+    _squelch = gr::analog::pwr_squelch_ff::make(-140,0.01,0,true);
     _level_control = gr::blocks::multiply_const_ff::make(0.7);
     _float_to_short = gr::blocks::float_to_short::make(1, 32767.0);
 
@@ -61,11 +61,11 @@ gr_demod_mmdvm::gr_demod_mmdvm(std::vector<int>signature, int sps, int samp_rate
 
     connect(_resampler,0,_filter,0);
     connect(_filter,0,self(),0);
-    connect(_filter,0,_squelch,0);
-    connect(_squelch,0,_fm_demod,0);
+    connect(_filter,0,_fm_demod,0);
     connect(_fm_demod,0,_level_control,0);
     connect(_level_control,0,_float_to_short,0);
-    connect(_level_control,0,_audio_resampler,0);
+    connect(_level_control,0,_squelch,0);
+    connect(_squelch,0,_audio_resampler,0);
     connect(_audio_resampler,0,self(),1);
     connect(_float_to_short,0,self(),2);
 

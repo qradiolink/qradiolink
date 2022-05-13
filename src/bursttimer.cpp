@@ -34,6 +34,10 @@ BurstTimer::BurstTimer(uint64_t samples_per_slot, uint64_t time_per_sample,
 
 BurstTimer::~BurstTimer()
 {
+    for(int i=0;i<_slot_times.size();i++)
+    {
+        delete _slot_times.at(i);
+    }
 
 }
 
@@ -126,7 +130,7 @@ uint64_t BurstTimer::allocate_slot(int slot_no)
     {
         _last_slot = elapsed;
     }
-    else if((elapsed - _last_slot) >= (2L * _slot_time))
+    else if((elapsed - _last_slot) >= (10L * _slot_time))
     {
         _last_slot = elapsed;
     }

@@ -22,7 +22,7 @@
 #include <gnuradio/filter/rational_resampler_base.h>
 #include <gnuradio/filter/rational_resampler_base.h>
 #include <gnuradio/analog/quadrature_demod_cf.h>
-#include <gnuradio/analog/pwr_squelch_cc.h>
+#include <gnuradio/analog/pwr_squelch_ff.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/filter/fft_filter_fff.h>
 #include <gnuradio/blocks/float_to_short.h>
@@ -47,7 +47,7 @@ public:
 private:
     gr::blocks::float_to_short::sptr _float_to_short;
     gr::analog::quadrature_demod_cf::sptr _fm_demod;
-    gr::analog::pwr_squelch_cc::sptr _squelch;
+    gr::analog::pwr_squelch_ff::sptr _squelch;
     gr::blocks::multiply_const_ff::sptr _level_control;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
     gr::filter::rational_resampler_base_fff::sptr _audio_resampler;
