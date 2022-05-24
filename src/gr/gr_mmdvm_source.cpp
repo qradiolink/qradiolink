@@ -37,7 +37,6 @@ gr_mmdvm_source::gr_mmdvm_source(BurstTimer *burst_timer) :
 {
     _offset = 0;
     _finished = true;
-    _samp_rate = 1000000;
     _burst_timer = burst_timer;
     _zmqcontext = zmq::context_t(1);
     _zmqsocket = zmq::socket_t(_zmqcontext, ZMQ_PULL);
@@ -120,10 +119,6 @@ int gr_mmdvm_source::work(int noutput_items,
     return n;
 }
 
-void gr_mmdvm_source::set_samp_rate(int samp_rate)
-{
-    _samp_rate = (double)samp_rate;
-}
 
 // Add rx_time tag to stream
 void gr_mmdvm_source::add_time_tag(uint64_t nsec, int offset)

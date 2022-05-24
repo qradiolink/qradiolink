@@ -138,6 +138,7 @@ private:
     int _mode;
     bool _lime_specific; // FIXME: ugly hack
     double _osmo_filter_bw;
+    bool _use_tdma;
     void set_bandwidth_specific();
     void set_center_freq(double freq);
     osmosdr::gain_range_t _gain_range;

@@ -31,6 +31,7 @@ gr_demod_base::gr_demod_base(BurstTimer *burst_timer, QObject *parent, float dev
     _mode = 9999;
     _carrier_offset = 0;
     _samp_rate = 1000000;
+    _use_tdma = false;
     _freq_correction = freq_corr;
 
     _audio_sink = make_gr_audio_sink();
@@ -72,6 +73,7 @@ gr_demod_base::gr_demod_base(BurstTimer *burst_timer, QObject *parent, float dev
     }
     if(_lime_specific && serial.size() > 0)
     {
+        _use_tdma = true;
         _limesdr_source = gr::limesdr::source::make(serial.toStdString(), 0, "");
         _limesdr_source->set_center_freq(_device_frequency);
         _limesdr_source->set_sample_rate(1000000);
@@ -81,6 +83,7 @@ gr_demod_base::gr_demod_base(BurstTimer *burst_timer, QObject *parent, float dev
     }
     else
     {
+        _lime_specific = false;
         _osmosdr_source = osmosdr::source::make(device_args);
         _osmosdr_source->set_center_freq(_device_frequency);
         set_bandwidth_specific();
@@ -106,9 +109,15 @@ gr_demod_base::gr_demod_base(BurstTimer *burst_timer, QObject *parent, float dev
     }
 
     _fft_sink = make_rx_fft_c(32768, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
-    //std::string zmq_endpoint = "ipc:///tmp/mmdvm-rx.ipc";
-    //_zeromq_sink = gr::zeromq::push_sink::make(sizeof(short), 1, (char*)zmq_endpoint.c_str());
-    _mmdvm_sink = make_gr_mmdvm_sink(burst_timer);
+    if(!_use_tdma)
+    {
+        std::string zmq_endpoint = "ipc:///tmp/mmdvm-rx.ipc";
+        _zeromq_sink = gr::zeromq::push_sink::make(sizeof(short), 1, (char*)zmq_endpoint.c_str());
+    }
+    else
+    {
+        _mmdvm_sink = make_gr_mmdvm_sink(burst_timer);
+    }
 
     _deframer1 = make_gr_deframer_bb(1);
     _deframer2 = make_gr_deframer_bb(1);
@@ -457,7 +466,14 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
             _top_block->disconnect(_demod_valve,0,_mmdvm_demod,0);
             _top_block->disconnect(_mmdvm_demod,0,_rssi_valve,0);
             _top_block->disconnect(_mmdvm_demod,1,_audio_sink,0);
-            _top_block->disconnect(_mmdvm_demod,2,_mmdvm_sink,0);
+            if(_use_tdma)
+            {
+                _top_block->disconnect(_mmdvm_demod,2,_mmdvm_sink,0);
+            }
+            else
+            {
+                _top_block->disconnect(_mmdvm_demod,2,_zeromq_sink,0);
+            }
             break;
         default:
             break;
@@ -693,7 +709,14 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
             _top_block->connect(_demod_valve,0,_mmdvm_demod,0);
             _top_block->connect(_mmdvm_demod,0,_rssi_valve,0);
             _top_block->connect(_mmdvm_demod,1,_audio_sink,0);
-            _top_block->connect(_mmdvm_demod,2,_mmdvm_sink,0);
+            if(_use_tdma)
+            {
+                _top_block->connect(_mmdvm_demod,2,_mmdvm_sink,0);
+            }
+            else
+            {
+                _top_block->connect(_mmdvm_demod,2,_zeromq_sink,0);
+            }
             break;
         break;
         default:

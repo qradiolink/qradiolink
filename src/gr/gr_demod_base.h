@@ -174,6 +174,7 @@ private:
     int _samp_rate;
     bool _locked;
     bool _lime_specific; // LimeSDR specific
+    bool _use_tdma;
     double _osmo_filter_bw;
     osmosdr::gain_range_t _gain_range;
     std::vector<std::string> _gain_names;

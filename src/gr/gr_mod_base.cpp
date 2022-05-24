@@ -25,6 +25,7 @@ gr_mod_base::gr_mod_base(BurstTimer *burst_timer, QObject *parent, float device_
     _freq_correction = freq_corr;
     _mode = 9999;
     _samp_rate = 1000000;
+    _use_tdma = false;
     _byte_source = make_gr_byte_source();
     _audio_source = make_gr_audio_source();
 
@@ -62,9 +63,11 @@ gr_mod_base::gr_mod_base(BurstTimer *burst_timer, QObject *parent, float device_
         _limesdr_sink->set_gain(int(rf_gain * 60.0f));
         ///_limesdr_sink->set_buffer_size(32768);
         _top_block->connect(_rotator,0,_limesdr_sink,0);
+        _use_tdma = true;
     }
     else
     {
+        _lime_specific = false;
         burst_timer->set_enabled(false);
         _osmosdr_sink = osmosdr::sink::make(device_args);
         //set_bandwidth_specific();
@@ -86,10 +89,15 @@ gr_mod_base::gr_mod_base(BurstTimer *burst_timer, QObject *parent, float device_
 
 
     _signal_source = gr::analog::sig_source_f::make(8000, gr::analog::GR_SIN_WAVE, 600, 0.001, 1);
-    //std::string zmq_endpoint = "ipc:///tmp/mmdvm-tx.ipc";
-    //_zmq_source = gr::zeromq::pull_source::make(sizeof(short), 1, (char*)zmq_endpoint.c_str());
-    _mmdvm_source = make_gr_mmdvm_source(burst_timer);
-    _mmdvm_source->set_samp_rate(_samp_rate);
+    if(!_use_tdma)
+    {
+        std::string zmq_endpoint = "ipc:///tmp/mmdvm-tx.ipc";
+        _zmq_source = gr::zeromq::pull_source::make(sizeof(short), 1, (char*)zmq_endpoint.c_str());
+    }
+    else
+    {
+        _mmdvm_source = make_gr_mmdvm_source(burst_timer);
+    }
 
     int tw = std::min(_samp_rate/4, 1500000);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1, 1,
@@ -231,7 +239,6 @@ void gr_mod_base::set_samp_rate(int samp_rate)
         _osmosdr_sink->set_center_freq(_device_frequency - _carrier_offset);
         _osmosdr_sink->set_sample_rate(_samp_rate);
     }
-    _mmdvm_source->set_samp_rate(_samp_rate);
     set_bandwidth_specific();
     _top_block->unlock();
 
@@ -404,7 +411,14 @@ void gr_mod_base::set_mode(int mode)
         _top_block->disconnect(_freedv_tx800XA_lsb,0,_rotator,0);
         break;
     case gr_modem_types::ModemTypeMMDVM:
-        _top_block->disconnect(_mmdvm_source,0,_mmdvm_mod,0);
+        if(_use_tdma)
+        {
+            _top_block->disconnect(_mmdvm_source,0,_mmdvm_mod,0);
+        }
+        else
+        {
+            _top_block->disconnect(_zmq_source,0,_mmdvm_mod,0);
+        }
         _top_block->disconnect(_mmdvm_mod,0,_rotator,0);
         break;
     default:
@@ -622,7 +636,14 @@ void gr_mod_base::set_mode(int mode)
         break;
     case gr_modem_types::ModemTypeMMDVM:
         set_carrier_offset(50000);
-        _top_block->connect(_mmdvm_source,0,_mmdvm_mod,0);
+        if(_use_tdma)
+        {
+            _top_block->connect(_mmdvm_source,0,_mmdvm_mod,0);
+        }
+        else
+        {
+            _top_block->connect(_zmq_source,0,_mmdvm_mod,0);
+        }
         _top_block->connect(_mmdvm_mod,0,_rotator,0);
         break;
     default:
