@@ -130,7 +130,7 @@ uint64_t BurstTimer::allocate_slot(int slot_no)
     {
         _last_slot = elapsed;
     }
-    else if((elapsed - _last_slot) >= (2L * _slot_time))
+    else if((elapsed - _last_slot) >= (5L * _slot_time))
     {
         _last_slot = elapsed;
     }
