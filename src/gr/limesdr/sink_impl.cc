@@ -197,7 +197,7 @@ int sink_impl::general_work(int noutput_items,
 }
 void sink_impl::work_tags(int noutput_items) {
     std::vector<tag_t> tags;
-    int current_sample = nitems_read(0);
+    uint64_t current_sample = nitems_read(0);
     get_tags_in_range(tags, 0, current_sample, current_sample + noutput_items);
 
     if (!tags.empty()) {
@@ -220,7 +220,7 @@ void sink_impl::work_tags(int noutput_items) {
                     tx_meta.timestamp = timestamp;
                     //std::cerr << "LMS sink timestamp: " << timestamp << std::endl;
                 } else {
-                    nitems_send = cTag.offset - current_sample;
+                    nitems_send = int(cTag.offset - current_sample);
                     break;
                 }
             }
