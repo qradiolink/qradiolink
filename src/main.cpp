@@ -61,13 +61,25 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     QStringList arguments = QCoreApplication::arguments();
     bool headless = false;
+    bool start_transceiver = false;
+    bool set_ptt_on = false;
 
     Logger *logger = new Logger;
     if((arguments.length() > 1) && (arguments.indexOf("--headless") != -1))
     {
-        logger->set_console_log(false);
         headless = true;
+        if((arguments.length() > 2) && (arguments.indexOf("--start-trx") != -1))
+        {
+            start_transceiver = true;
+            if((arguments.length() > 3) && (arguments.indexOf("--ptt") != -1))
+            {
+                set_ptt_on = true;
+            }
+        }
+
     }
+
+
 
     /// Init main logic
     ///
@@ -146,7 +158,18 @@ int main(int argc, char *argv[])
 
     /// Start remote command listener
     if(headless)
+    {
         telnet_server->start();
+        if(start_transceiver)
+        {
+            radio_op->toggleRX(true);
+            radio_op->toggleTX(true);
+            if(set_ptt_on)
+            {
+                radio_op->startTransmission();
+            }
+        }
+    }
 
     int ret = a.exec();
 
