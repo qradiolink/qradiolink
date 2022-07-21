@@ -24,6 +24,7 @@
 #include <QMetaType>
 #include <QtGlobal>
 #include <string>
+#include <csignal>
 #include "src/mainwindow.h"
 #include "src/mumbleclient.h"
 #include "src/audio/audiowriter.h"
@@ -43,6 +44,12 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
 void connectCommandSignals(TelnetServer *telnet_server, MumbleClient *mumbleclient,
                        RadioController *radio_op);
 class Station;
+
+void signal_handler(int signal)
+{
+    std::cout << "Received signal " << signal << std::endl;
+    QApplication::quit();
+}
 
 int main(int argc, char *argv[])
 {
@@ -67,6 +74,7 @@ int main(int argc, char *argv[])
     Logger *logger = new Logger;
     if((arguments.length() > 1) && (arguments.indexOf("--headless") != -1))
     {
+        logger->set_console_log(true);
         headless = true;
         if((arguments.length() > 2) && (arguments.indexOf("--start-trx") != -1))
         {
@@ -155,7 +163,6 @@ int main(int argc, char *argv[])
     /// Signals independent of GUI or remote interface
     connectIndependentSignals(audiowriter, audioreader, radio_op, mumbleclient, telnet_server);
 
-
     /// Start remote command listener
     if(headless)
     {
@@ -169,6 +176,9 @@ int main(int argc, char *argv[])
                 radio_op->startTransmission();
             }
         }
+        std::signal(SIGINT, signal_handler);
+        std::signal(SIGTERM, signal_handler);
+        std::signal(SIGHUP, signal_handler);
     }
 
     int ret = a.exec();
@@ -177,6 +187,20 @@ int main(int argc, char *argv[])
     ///
     if(!headless)
         delete w;
+    if(headless)
+    {
+        if(start_transceiver)
+        {
+            if(set_ptt_on)
+            {
+                radio_op->endTransmission();
+                logger->log(Logger::LogLevelInfo, "Set PTT off");
+            }
+        }
+        logger->log(Logger::LogLevelInfo, "Stopping receiver");
+        logger->log(Logger::LogLevelInfo, "Stopping transmitter");
+        radio_op->stop();
+    }
     delete telnet_server;
     delete mumbleclient;
     radio_channels->saveConfig();
