@@ -30,7 +30,8 @@ BurstTimer::BurstTimer(uint64_t samples_per_slot, uint64_t time_per_sample,
     _last_slot[0] = 0;
     _last_slot[1] = 0;
     _time_base = 0;
-    _last_timestamp = 0;
+    _last_timestamp[0] = 0;
+    _last_timestamp[1] = 0;
 
     t1 = std::chrono::high_resolution_clock::now();
 }
@@ -56,13 +57,13 @@ void BurstTimer::set_enabled(bool value)
 void BurstTimer::set_last_timestamp(int cn, uint64_t value)
 {
     std::unique_lock<std::mutex> guard(_last_timestamp_mutex);
-    _last_timestamp = value;
+    _last_timestamp[cn] = value;
 }
 
 uint64_t BurstTimer::get_last_timestamp(int cn)
 {
     std::unique_lock<std::mutex> guard(_last_timestamp_mutex);
-    return _last_timestamp;
+    return _last_timestamp[1 - cn];
 
 }
 
@@ -168,7 +169,7 @@ uint64_t BurstTimer::allocate_slot(int slot_no, int cn)
     {
         _last_slot[cn] = elapsed;
     }
-    else if((elapsed - _last_slot[cn]) >= (1L * _slot_time))
+    else if((elapsed - _last_slot[cn]) >= (5L * _slot_time))
     {
         _last_slot[cn] = elapsed;
     }

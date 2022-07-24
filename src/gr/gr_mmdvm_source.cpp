@@ -87,16 +87,14 @@ int gr_mmdvm_source::work(int noutput_items,
     get_zmq_message();
     if(data_buf.size() < 1)
     {
-        //struct timespec time_to_sleep = {0, 29900000L };
-        //nanosleep(&time_to_sleep, NULL);
-        /*
+        struct timespec time_to_sleep = {0, 2990000L };
+        nanosleep(&time_to_sleep, NULL);
         for(int i = 0;i < noutput_items;i++)
         {
             out[i] = 0;
         }
-        */
 
-        return 0;
+        return noutput_items;
     }
     unsigned int n = std::min((unsigned int)data_buf.size(),
                                   (unsigned int)noutput_items);
@@ -109,7 +107,7 @@ int gr_mmdvm_source::work(int noutput_items,
         if(control == MARK_SLOT1)
         {
             uint64_t time = _burst_timer->allocate_slot(1, _channel_number);
-            if(time > 0L)
+            if(time > 0L && (time - _burst_timer->get_last_timestamp(_channel_number) > SLOT_TIME))
             {
                 add_time_tag(time, i);
             }
@@ -117,7 +115,7 @@ int gr_mmdvm_source::work(int noutput_items,
         if(control == MARK_SLOT2)
         {
             uint64_t time = _burst_timer->allocate_slot(2, _channel_number);
-            if(time > 0L)
+            if(time > 0L && (time - _burst_timer->get_last_timestamp(_channel_number) > SLOT_TIME))
             {
                 add_time_tag(time, i);
             }

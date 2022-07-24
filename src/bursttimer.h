@@ -21,7 +21,7 @@
 #include <chrono>
 #include <QVector>
 
-static const uint64_t BURST_DELAY = 100000000L; // nanosec
+static const uint64_t BURST_DELAY = 300000000L; // nanosec
 static const uint64_t SLOT_TIME = 30000000L;
 
 /// Delay between FPGA timestamping logic and antenna
@@ -66,7 +66,7 @@ private:
     QVector<slot*> _slot_times1;
     QVector<slot*> _slot_times2;
     uint64_t _time_base;
-    uint64_t _last_timestamp;
+    uint64_t _last_timestamp[2];
 };
 
 
