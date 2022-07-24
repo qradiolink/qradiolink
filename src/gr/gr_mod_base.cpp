@@ -153,6 +153,7 @@ gr_mod_base::gr_mod_base(BurstTimer *burst_timer, QObject *parent, float device_
     _freedv_tx800XA_lsb = make_gr_mod_freedv(125, 1000000, 1700, 2700, 200,
                                                  gr::vocoder::freedv_api::MODE_800XA, 1);
     _mmdvm_mod = make_gr_mod_mmdvm();
+    _mmdvm_mod_multi = make_gr_mod_mmdvm_multi(burst_timer);
 
 }
 
@@ -413,13 +414,13 @@ void gr_mod_base::set_mode(int mode)
     case gr_modem_types::ModemTypeMMDVM:
         if(_use_tdma)
         {
-            _top_block->disconnect(_mmdvm_source,0,_mmdvm_mod,0);
+            //_top_block->disconnect(_mmdvm_source,0,_mmdvm_mod,0);
         }
         else
         {
             _top_block->disconnect(_zmq_source,0,_mmdvm_mod,0);
         }
-        _top_block->disconnect(_mmdvm_mod,0,_rotator,0);
+        _top_block->disconnect(_mmdvm_mod_multi,0,_rotator,0);
         break;
     default:
         break;
@@ -638,13 +639,13 @@ void gr_mod_base::set_mode(int mode)
         set_carrier_offset(50000);
         if(_use_tdma)
         {
-            _top_block->connect(_mmdvm_source,0,_mmdvm_mod,0);
+            //_top_block->connect(_mmdvm_source,0,_mmdvm_mod,0);
         }
         else
         {
             _top_block->connect(_zmq_source,0,_mmdvm_mod,0);
         }
-        _top_block->connect(_mmdvm_mod,0,_rotator,0);
+        _top_block->connect(_mmdvm_mod_multi,0,_rotator,0);
         break;
     default:
         break;
@@ -810,6 +811,7 @@ void gr_mod_base::set_bb_gain(float value)
     _freedv_tx800XA_usb->set_bb_gain(value);
     _freedv_tx800XA_lsb->set_bb_gain(value);
     _mmdvm_mod->set_bb_gain(value);
+    _mmdvm_mod_multi->set_bb_gain(value);
 }
 
 void gr_mod_base::set_cw_k(bool value)

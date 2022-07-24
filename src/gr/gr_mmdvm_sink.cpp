@@ -21,22 +21,23 @@ const uint8_t  MARK_SLOT2 = 0x04U;
 const uint8_t  MARK_NONE  = 0x00U;
 
 gr_mmdvm_sink_sptr
-make_gr_mmdvm_sink (BurstTimer *burst_timer)
+make_gr_mmdvm_sink (BurstTimer *burst_timer, uint8_t cn)
 {
-    return gnuradio::get_initial_sptr(new gr_mmdvm_sink(burst_timer));
+    return gnuradio::get_initial_sptr(new gr_mmdvm_sink(burst_timer, cn));
 }
 
 static const pmt::pmt_t TIME_TAG = pmt::string_to_symbol("rx_time");
 
-gr_mmdvm_sink::gr_mmdvm_sink(BurstTimer *burst_timer) :
+gr_mmdvm_sink::gr_mmdvm_sink(BurstTimer *burst_timer, uint8_t cn) :
         gr::sync_block("gr_mmdvm_sink",
                        gr::io_signature::make (1, 1, sizeof (short)),
                        gr::io_signature::make (0, 0, 0))
 {
     _burst_timer = burst_timer;
+    _channel_number = cn;
     _zmqcontext = zmq::context_t(1);
     _zmqsocket = zmq::socket_t(_zmqcontext, ZMQ_PUSH);
-    _zmqsocket.bind ("ipc:///tmp/mmdvm-rx.ipc");
+    _zmqsocket.bind ("ipc:///tmp/mmdvm-rx" + std::to_string(cn) + ".ipc");
     _zmqsocket.setsockopt(ZMQ_SNDHWM, 5);
 }
 
@@ -73,12 +74,13 @@ int gr_mmdvm_sink::work(int noutput_items,
                 double fracs = pmt::to_double(pmt::tuple_ref(tag.value, 1));
                 // nanoseconds
                 uint64_t time = uint64_t((double)secs * 1000000000.0d) + uint64_t(fracs * 1000000000.0d);
-                _burst_timer->set_timer(time);
+                if(_channel_number == 0)
+                    _burst_timer->set_timer(time);
                 break;
             }
         }
         uint8_t control = MARK_NONE;
-        int slot_no = _burst_timer->check_time();
+        int slot_no = _burst_timer->check_time(_channel_number);
 
         if(slot_no == 1)
         {
@@ -90,7 +92,8 @@ int gr_mmdvm_sink::work(int noutput_items,
         }
         control_buf.push_back(control);
         data_buf.push_back((int16_t)in[i]);
-        _burst_timer->increment_sample_counter();
+        if(_channel_number == 0)
+            _burst_timer->increment_sample_counter();
 
     }
     uint32_t num_items = (uint32_t)noutput_items;

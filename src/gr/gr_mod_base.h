@@ -49,6 +49,7 @@
 #include "gr_mod_freedv.h"
 #include "gr_mod_dsss.h"
 #include "gr_mod_mmdvm.h"
+#include "gr_mod_mmdvm_multi.h"
 #include "gr_mmdvm_source.h"
 
 
@@ -125,6 +126,7 @@ private:
     gr_mod_freedv_sptr _freedv_tx800XA_usb;
     gr_mod_freedv_sptr _freedv_tx800XA_lsb;
     gr_mod_mmdvm_sptr _mmdvm_mod;
+    gr_mod_mmdvm_multi_sptr _mmdvm_mod_multi;
 
 
     int _samples_per_symbol;

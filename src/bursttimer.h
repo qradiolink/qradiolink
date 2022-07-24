@@ -40,13 +40,16 @@ public:
     uint64_t get_time_delta();
     void set_timer(uint64_t value);
     void increment_sample_counter();
-    int check_time();
-    uint64_t allocate_slot(int slot_no);
+    int check_time(int cn=0);
+    uint64_t allocate_slot(int slot_no, int cn=0);
+    uint64_t get_last_timestamp(int cn);
+    void set_last_timestamp(int cn, uint64_t value);
 
 private:
     bool _enabled;
     std::mutex _timing_mutex;
     std::mutex _slot_mutex;
+    std::mutex _last_timestamp_mutex;
     struct slot {
         uint8_t slot_no;
         uint64_t slot_time;
@@ -57,11 +60,13 @@ private:
     uint64_t _slot_time;
     uint64_t _burst_delay;
     uint64_t _sample_counter;
-    uint64_t _last_slot;
+    uint64_t _last_slot[2];
     std::chrono::high_resolution_clock::time_point t1;
     std::chrono::high_resolution_clock::time_point t2;
-    QVector<slot*> _slot_times;
+    QVector<slot*> _slot_times1;
+    QVector<slot*> _slot_times2;
     uint64_t _time_base;
+    uint64_t _last_timestamp;
 };
 
 

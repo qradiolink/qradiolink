@@ -45,8 +45,11 @@ CONFIG(qtaudio) {
 SOURCES += src/main.cpp\
     src/bursttimer.cpp \
     src/gpredictcontrol.cpp \
+    src/gr/gr_demod_mmdvm_multi.cpp \
+    src/gr/gr_mmdvm_flow_pad.cpp \
     src/gr/gr_mmdvm_sink.cpp \
     src/gr/gr_mmdvm_source.cpp \
+    src/gr/gr_mod_mmdvm_multi.cpp \
     src/limerfecontroller.cpp \
         src/mainwindow.cpp\
         src/audio/audioencoder.cpp\
@@ -135,8 +138,11 @@ HEADERS  += src/mainwindow.h\
         src/audio/audioprocessor.h \
     src/bursttimer.h \
     src/gpredictcontrol.h \
+    src/gr/gr_demod_mmdvm_multi.h \
+    src/gr/gr_mmdvm_flow_pad.h \
     src/gr/gr_mmdvm_sink.h \
     src/gr/gr_mmdvm_source.h \
+    src/gr/gr_mod_mmdvm_multi.h \
     src/limerfecontroller.h \
         src/video/videoencoder.h \
         src/video/imagecapture.h \

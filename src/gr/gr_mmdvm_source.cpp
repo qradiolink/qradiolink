@@ -22,15 +22,15 @@ const uint8_t  MARK_SLOT2 = 0x04U;
 const uint8_t  MARK_NONE  = 0x00U;
 
 gr_mmdvm_source_sptr
-make_gr_mmdvm_source (BurstTimer *burst_timer)
+make_gr_mmdvm_source (BurstTimer *burst_timer, uint8_t cn)
 {
-    return gnuradio::get_initial_sptr(new gr_mmdvm_source(burst_timer));
+    return gnuradio::get_initial_sptr(new gr_mmdvm_source(burst_timer, cn));
 }
 
 static const pmt::pmt_t TIME_TAG = pmt::string_to_symbol("tx_time");
 static const pmt::pmt_t LENGTH_TAG = pmt::string_to_symbol("burst_length");
 
-gr_mmdvm_source::gr_mmdvm_source(BurstTimer *burst_timer) :
+gr_mmdvm_source::gr_mmdvm_source(BurstTimer *burst_timer, uint8_t cn) :
         gr::sync_block("gr_mmdvm_source",
                        gr::io_signature::make (0, 0, 0),
                        gr::io_signature::make (1, 1, sizeof (short)))
@@ -38,9 +38,10 @@ gr_mmdvm_source::gr_mmdvm_source(BurstTimer *burst_timer) :
     _offset = 0;
     _finished = true;
     _burst_timer = burst_timer;
+    _channel_number = cn;
     _zmqcontext = zmq::context_t(1);
     _zmqsocket = zmq::socket_t(_zmqcontext, ZMQ_PULL);
-    _zmqsocket.connect ("ipc:///tmp/mmdvm-tx.ipc");
+    _zmqsocket.connect ("ipc:///tmp/mmdvm-tx" + std::to_string(cn) + ".ipc");
 }
 
 gr_mmdvm_source::~gr_mmdvm_source()
@@ -49,6 +50,7 @@ gr_mmdvm_source::~gr_mmdvm_source()
 
 int gr_mmdvm_source::get_zmq_message()
 {
+
     zmq::message_t mq_message;
     zmq::recv_result_t recv_result = _zmqsocket.recv(mq_message, zmq::recv_flags::dontwait);
     int size = mq_message.size();
@@ -72,7 +74,7 @@ int gr_mmdvm_source::get_zmq_message()
         }
     }
 
-    return buf_size;
+    return 0;
 }
 
 int gr_mmdvm_source::work(int noutput_items,
@@ -85,8 +87,15 @@ int gr_mmdvm_source::work(int noutput_items,
     get_zmq_message();
     if(data_buf.size() < 1)
     {
-        //struct timespec time_to_sleep = {0, 10000L };
+        //struct timespec time_to_sleep = {0, 29900000L };
         //nanosleep(&time_to_sleep, NULL);
+        /*
+        for(int i = 0;i < noutput_items;i++)
+        {
+            out[i] = 0;
+        }
+        */
+
         return 0;
     }
     unsigned int n = std::min((unsigned int)data_buf.size(),
@@ -99,7 +108,7 @@ int gr_mmdvm_source::work(int noutput_items,
         out[i] = sample;
         if(control == MARK_SLOT1)
         {
-            uint64_t time = _burst_timer->allocate_slot(1);
+            uint64_t time = _burst_timer->allocate_slot(1, _channel_number);
             if(time > 0L)
             {
                 add_time_tag(time, i);
@@ -107,7 +116,7 @@ int gr_mmdvm_source::work(int noutput_items,
         }
         if(control == MARK_SLOT2)
         {
-            uint64_t time = _burst_timer->allocate_slot(2);
+            uint64_t time = _burst_timer->allocate_slot(2, _channel_number);
             if(time > 0L)
             {
                 add_time_tag(time, i);
@@ -127,6 +136,7 @@ void gr_mmdvm_source::add_time_tag(uint64_t nsec, int offset)
     double fracpart = ((double)nsec / 1000000000.0d) - (double)intpart;
 
     const pmt::pmt_t t_val = pmt::make_tuple(pmt::from_uint64(intpart), pmt::from_double(fracpart));
+    _burst_timer->set_last_timestamp(_channel_number, nsec);
     this->add_item_tag(0, nitems_written(0) + (uint64_t)offset, TIME_TAG, t_val);
     /// length tag doesn't seem to be necessary
     //const pmt::pmt_t b_val = pmt::from_long(30000);
