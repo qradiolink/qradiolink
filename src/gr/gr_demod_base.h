@@ -55,6 +55,7 @@
 #include "gr_demod_dsss.h"
 #include "gr_demod_mmdvm.h"
 #include "gr_mmdvm_sink.h"
+#include "gr_demod_mmdvm_multi.h"
 #include "src/modem_types.h"
 #include "src/bursttimer.h"
 #include "rssi_block.h"
@@ -160,6 +161,7 @@ private:
     gr_demod_freedv_sptr _freedv_rx700D_lsb;
     gr_demod_freedv_sptr _freedv_rx800XA_lsb;
     gr_demod_mmdvm_sptr _mmdvm_demod;
+    gr_demod_mmdvm_multi_sptr _mmdvm_demod_multi;
     gr_mmdvm_sink_sptr _mmdvm_sink;
 
     osmosdr::source::sptr _osmosdr_source;

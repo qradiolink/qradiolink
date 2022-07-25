@@ -42,7 +42,6 @@ gr_mod_mmdvm_multi::gr_mod_mmdvm_multi(BurstTimer *burst_timer, int sps, int sam
     float carrier_offset1 = 0;
     float carrier_offset2 = 25000;
 
-    //_mmdvm_flow_pad = make_gr_mmdvm_flow_pad();
 
     _short_to_float1 = gr::blocks::short_to_float::make(1, 32767.0);
     _short_to_float2 = gr::blocks::short_to_float::make(1, 32767.0);

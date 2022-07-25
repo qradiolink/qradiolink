@@ -21,7 +21,9 @@
 #include <chrono>
 #include <QVector>
 
-static const uint64_t BURST_DELAY = 200000000L; // nanosec
+#define MAX_MMDVM_CHANNELS 2
+
+static const uint64_t BURST_DELAY = 100000000L; // nanosec
 static const uint64_t SLOT_TIME = 30000000L;
 
 /// Delay between FPGA timestamping logic and antenna
@@ -36,16 +38,16 @@ public:
     ~BurstTimer();
     void set_enabled(bool value);
     void set_params(uint64_t samples_per_slot, uint64_t time_per_sample, uint64_t slot_time, uint64_t burst_delay);
-    void reset_timer();
-    uint64_t get_time_delta();
-    void set_timer(uint64_t value);
-    void increment_sample_counter();
+    void reset_timer(int cn=0);
+    uint64_t get_time_delta(int cn=0);
+    void set_timer(uint64_t value, int cn=0);
+    void increment_sample_counter(int cn=0);
     int check_time(int cn=0);
     uint64_t allocate_slot(int slot_no, int cn=0);
-    uint64_t get_last_timestamp(int cn);
+    uint64_t get_last_timestamp(int cn=0);
     void set_last_timestamp(int cn, uint64_t value);
     void set_tx(int cn, bool value);
-    bool get_tx(int cn);
+    bool get_tx(int cn=0);
 
 private:
     bool _enabled;
@@ -63,14 +65,14 @@ private:
     uint64_t _time_per_sample;
     uint64_t _slot_time;
     uint64_t _burst_delay;
-    uint64_t _sample_counter;
-    uint64_t _last_slot[2];
-    std::chrono::high_resolution_clock::time_point t1;
-    std::chrono::high_resolution_clock::time_point t2;
-    QVector<slot*> _slot_times1;
-    QVector<slot*> _slot_times2;
-    uint64_t _time_base;
-    uint64_t _last_timestamp[2];
+    uint64_t _sample_counter[MAX_MMDVM_CHANNELS];
+    uint64_t _last_slot[MAX_MMDVM_CHANNELS];
+    uint64_t _time_base[MAX_MMDVM_CHANNELS];
+    uint64_t _last_timestamp[MAX_MMDVM_CHANNELS];
+    std::chrono::high_resolution_clock::time_point t1[MAX_MMDVM_CHANNELS];
+    std::chrono::high_resolution_clock::time_point t2[MAX_MMDVM_CHANNELS];
+    QVector<slot*> _slot_times[MAX_MMDVM_CHANNELS];
+
 };
 
 

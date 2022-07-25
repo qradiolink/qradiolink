@@ -24,10 +24,11 @@
 #include <gnuradio/analog/quadrature_demod_cf.h>
 #include <gnuradio/analog/pwr_squelch_ff.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
-#include <gnuradio/filter/fft_filter_fff.h>
 #include <gnuradio/blocks/float_to_short.h>
 #include <gnuradio/blocks/multiply_const.h>
+#include <gnuradio/blocks/rotator_cc.h>
 #include "src/bursttimer.h"
+#include "gr_mmdvm_sink.h"
 
 class gr_demod_mmdvm_multi;
 
@@ -38,27 +39,32 @@ gr_demod_mmdvm_multi_sptr make_gr_demod_mmdvm_multi(BurstTimer *burst_timer, int
 class gr_demod_mmdvm_multi : public gr::hier_block2
 {
 public:
-    explicit gr_demod_mmdvm_multi(BurstTimer *burst_timer, std::vector<int> signature, int sps=125, int samp_rate=1000000, int carrier_freq=1600,
+    explicit gr_demod_mmdvm_multi(BurstTimer *burst_timer, int sps=125, int samp_rate=1000000, int carrier_freq=1600,
                                int filter_width=6250);
 
-    void set_squelch(int value);
     void set_filter_width(int filter_width);
 
 
 private:
-    gr::blocks::float_to_short::sptr _float_to_short;
-    gr::analog::quadrature_demod_cf::sptr _fm_demod;
-    gr::analog::pwr_squelch_ff::sptr _squelch;
-    gr::blocks::multiply_const_ff::sptr _level_control;
-    gr::filter::rational_resampler_base_ccf::sptr _resampler;
-    gr::filter::rational_resampler_base_fff::sptr _audio_resampler;
-    gr::filter::fft_filter_ccf::sptr _filter;
+    gr::blocks::float_to_short::sptr _float_to_short1;
+    gr::blocks::float_to_short::sptr _float_to_short2;
+    gr::analog::quadrature_demod_cf::sptr _fm_demod1;
+    gr::analog::quadrature_demod_cf::sptr _fm_demod2;
+    gr::blocks::multiply_const_ff::sptr _level_control1;
+    gr::blocks::multiply_const_ff::sptr _level_control2;
+    gr::filter::rational_resampler_base_ccf::sptr _first_resampler;
+    gr::filter::rational_resampler_base_ccf::sptr _resampler1;
+    gr::filter::rational_resampler_base_ccf::sptr _resampler2;
+    gr::filter::fft_filter_ccf::sptr _filter1;
+    gr::filter::fft_filter_ccf::sptr _filter2;
+    gr_mmdvm_sink_sptr _mmdvm_sink1;
+    gr_mmdvm_sink_sptr _mmdvm_sink2;
+    gr::blocks::rotator_cc::sptr _rotator2;
 
     int _samples_per_symbol;
     int _samp_rate;
     int _carrier_freq;
     int _filter_width;
-    float _target_samp_rate;
 
 
 };

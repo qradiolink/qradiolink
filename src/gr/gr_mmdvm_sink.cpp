@@ -35,7 +35,7 @@ gr_mmdvm_sink::gr_mmdvm_sink(BurstTimer *burst_timer, uint8_t cn) :
 {
     _burst_timer = burst_timer;
     _channel_number = cn;
-    _zmqcontext = zmq::context_t(1);
+    _zmqcontext = zmq::context_t(cn+1);
     _zmqsocket = zmq::socket_t(_zmqcontext, ZMQ_PUSH);
     _zmqsocket.bind ("ipc:///tmp/mmdvm-rx" + std::to_string(cn) + ".ipc");
     _zmqsocket.setsockopt(ZMQ_SNDHWM, 5);
@@ -74,8 +74,7 @@ int gr_mmdvm_sink::work(int noutput_items,
                 double fracs = pmt::to_double(pmt::tuple_ref(tag.value, 1));
                 // nanoseconds
                 uint64_t time = uint64_t((double)secs * 1000000000.0d) + uint64_t(fracs * 1000000000.0d);
-                if(_channel_number == 0)
-                    _burst_timer->set_timer(time);
+                _burst_timer->set_timer(time, _channel_number);
                 break;
             }
         }
@@ -92,8 +91,7 @@ int gr_mmdvm_sink::work(int noutput_items,
         }
         control_buf.push_back(control);
         data_buf.push_back((int16_t)in[i]);
-        if(_channel_number == 0)
-            _burst_timer->increment_sample_counter();
+        _burst_timer->increment_sample_counter(_channel_number);
 
     }
     uint32_t num_items = (uint32_t)noutput_items;

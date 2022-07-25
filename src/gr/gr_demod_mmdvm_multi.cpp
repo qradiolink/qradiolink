@@ -19,64 +19,74 @@
 gr_demod_mmdvm_multi_sptr make_gr_demod_mmdvm_multi(BurstTimer *burst_timer, int sps, int samp_rate, int carrier_freq,
                                           int filter_width)
 {
-    std::vector<int> signature;
-    signature.push_back(sizeof (gr_complex));
-    signature.push_back(sizeof (float));
-    signature.push_back(sizeof (short));
-    return gnuradio::get_initial_sptr(new gr_demod_mmdvm_multi(burst_timer, signature, sps, samp_rate, carrier_freq,
+
+    return gnuradio::get_initial_sptr(new gr_demod_mmdvm_multi(burst_timer, sps, samp_rate, carrier_freq,
                                                       filter_width));
 }
 
 
 
-gr_demod_mmdvm_multi::gr_demod_mmdvm_multi(BurstTimer *burst_timer, std::vector<int>signature, int sps, int samp_rate, int carrier_freq,
+gr_demod_mmdvm_multi::gr_demod_mmdvm_multi(BurstTimer *burst_timer, int sps, int samp_rate, int carrier_freq,
                                  int filter_width) :
     gr::hier_block2 ("gr_demod_mmdvm_multi",
                       gr::io_signature::make (1, 1, sizeof (gr_complex)),
-                      gr::io_signature::makev (3, 3, signature))
+                      gr::io_signature::make (0, 0, sizeof (short)))
 {
     (void) sps;
-    _target_samp_rate = 24000;
     _samp_rate = samp_rate;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
+    _samp_rate =samp_rate;
+    float target_samp_rate = 24000;
+    float intermediate_samp_rate = 120000;
+    _carrier_freq = carrier_freq;
+    _filter_width = filter_width;
+    int resamp_filter_width = 35000;
+    int resamp_filter_slope = 5000;
+    float carrier_offset1 = 0.0f;
+    float carrier_offset2 = -25000.0f;
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(3, 3*_samp_rate, _filter_width,
-                                _filter_width, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
-    _resampler = gr::filter::rational_resampler_base_ccf::make(3,125, taps);
+    std::vector<float> taps = gr::filter::firdes::low_pass(3, 3*_samp_rate, resamp_filter_width,
+                                resamp_filter_slope, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+    std::vector<float> intermediate_interp_taps = gr::filter::firdes::low_pass_2(1, intermediate_samp_rate,
+                        _filter_width, _filter_width/5, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+    _first_resampler = gr::filter::rational_resampler_base_ccf::make(3,25, taps);
+    _resampler1 = gr::filter::rational_resampler_base_ccf::make(1,5, intermediate_interp_taps);
+    _resampler2 = gr::filter::rational_resampler_base_ccf::make(1,5, intermediate_interp_taps);
 
-    _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass_2(
-            1, _target_samp_rate, _filter_width, _filter_width, 90 ,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
+    _filter1 = gr::filter::fft_filter_ccf::make(1,gr::filter::firdes::low_pass_2(
+                1, target_samp_rate, _filter_width, _filter_width/5, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+    _filter2 = gr::filter::fft_filter_ccf::make(1,gr::filter::firdes::low_pass_2(
+                1, target_samp_rate, _filter_width, _filter_width/5, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
 
-    _fm_demod = gr::analog::quadrature_demod_cf::make(float(_target_samp_rate)/(4*M_PI* float(_filter_width)));
-    std::vector<float> audio_taps = gr::filter::firdes::low_pass(1, _target_samp_rate, 3500, 500,
-                                                    gr::filter::firdes::WIN_BLACKMAN_HARRIS);
-    _audio_resampler = gr::filter::rational_resampler_base_fff::make(1, 3, audio_taps);
-    _squelch = gr::analog::pwr_squelch_ff::make(-140,0.01,0,true);
-    _level_control = gr::blocks::multiply_const_ff::make(0.7);
-    _float_to_short = gr::blocks::float_to_short::make(1, 32767.0);
-
-
-    connect(self(),0,_resampler,0);
-
-    connect(_resampler,0,_filter,0);
-    connect(_filter,0,self(),0);
-    connect(_filter,0,_fm_demod,0);
-    connect(_fm_demod,0,_level_control,0);
-    connect(_level_control,0,_float_to_short,0);
-    connect(_level_control,0,_squelch,0);
-    connect(_squelch,0,_audio_resampler,0);
-    connect(_audio_resampler,0,self(),1);
-    connect(_float_to_short,0,self(),2);
+    _fm_demod1 = gr::analog::quadrature_demod_cf::make(float(target_samp_rate)/(4*M_PI* float(_filter_width)));
+    _fm_demod2 = gr::analog::quadrature_demod_cf::make(float(target_samp_rate)/(4*M_PI* float(_filter_width)));
+    _level_control1 = gr::blocks::multiply_const_ff::make(0.7);
+    _level_control2 = gr::blocks::multiply_const_ff::make(0.7);
+    _float_to_short1 = gr::blocks::float_to_short::make(1, 32767.0);
+    _float_to_short2 = gr::blocks::float_to_short::make(1, 32767.0);
+    _rotator2 = gr::blocks::rotator_cc::make(2*M_PI*carrier_offset2/intermediate_samp_rate);
+    _mmdvm_sink1 = make_gr_mmdvm_sink(burst_timer, 0);
+    _mmdvm_sink2 = make_gr_mmdvm_sink(burst_timer, 1);
 
 
+    connect(self(),0,_first_resampler,0);
+    connect(_first_resampler,0,_resampler1,0);
+    connect(_first_resampler,0,_rotator2,0);
+    connect(_rotator2,0,_resampler2,0);
+    connect(_resampler1,0,_filter1,0);
+    connect(_resampler2,0,_filter2,0);
+    connect(_filter1,0,_fm_demod1,0);
+    connect(_filter2,0,_fm_demod2,0);
+    connect(_fm_demod1,0,_level_control1,0);
+    connect(_fm_demod2,0,_level_control2,0);
+    connect(_level_control1,0,_float_to_short1,0);
+    connect(_level_control2,0,_float_to_short2,0);
+    connect(_float_to_short1,0,_mmdvm_sink1,0);
+    connect(_float_to_short2,0,_mmdvm_sink2,0);
 }
 
 
-void gr_demod_mmdvm_multi::set_squelch(int value)
-{
-    _squelch->set_threshold(value);
-}
 
 
 

@@ -28,7 +28,6 @@
 #include <gnuradio/blocks/multiply_const.h>
 #include <gnuradio/blocks/rotator_cc.h>
 #include "gr_mmdvm_source.h"
-#include "gr_mmdvm_flow_pad.h"
 #include "src/bursttimer.h"
 
 
@@ -66,7 +65,6 @@ private:
     gr_mmdvm_source_sptr _mmdvm_source1;
     gr_mmdvm_source_sptr _mmdvm_source2;
     gr::blocks::multiply_const_cc::sptr _divide_level;
-    gr_mmdvm_flow_pad_sptr _mmdvm_flow_pad;
 
 
     int _samp_rate;

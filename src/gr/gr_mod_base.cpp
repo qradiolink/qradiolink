@@ -96,7 +96,7 @@ gr_mod_base::gr_mod_base(BurstTimer *burst_timer, QObject *parent, float device_
     }
     else
     {
-        _mmdvm_source = make_gr_mmdvm_source(burst_timer);
+        //_mmdvm_source = make_gr_mmdvm_source(burst_timer);
     }
 
     int tw = std::min(_samp_rate/4, 1500000);
