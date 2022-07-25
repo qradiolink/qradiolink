@@ -37,9 +37,10 @@ gr_mod_mmdvm_multi::gr_mod_mmdvm_multi(BurstTimer *burst_timer, int sps, int sam
     float intermediate_samp_rate = 120000;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
-    int resamp_filter_width = 60000;
-    int resamp_filter_slope = 10000;
-    float carrier_offset2 = 50000;
+    int resamp_filter_width = 35000;
+    int resamp_filter_slope = 5000;
+    float carrier_offset1 = 0;
+    float carrier_offset2 = 25000;
 
     //_mmdvm_flow_pad = make_gr_mmdvm_flow_pad();
 
@@ -70,11 +71,8 @@ gr_mod_mmdvm_multi::gr_mod_mmdvm_multi(BurstTimer *burst_timer, int sps, int sam
 
 
 
-    //connect(self(),0,_short_to_float,0);
     connect(_mmdvm_source1,0,_short_to_float1,0);
     connect(_mmdvm_source2,0,_short_to_float2,0);
-    //connect(_mmdvm_flow_pad,0,_short_to_float1,0);
-    //connect(_mmdvm_flow_pad,1,_short_to_float1,0);
     connect(_short_to_float1,0,_audio_amplify1,0);
     connect(_short_to_float2,0,_audio_amplify2,0);
     connect(_audio_amplify1,0,_fm_modulator1,0);

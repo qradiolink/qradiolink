@@ -42,6 +42,8 @@ gr_mmdvm_source::gr_mmdvm_source(BurstTimer *burst_timer, uint8_t cn) :
     _zmqcontext = zmq::context_t(1);
     _zmqsocket = zmq::socket_t(_zmqcontext, ZMQ_PULL);
     _zmqsocket.connect ("ipc:///tmp/mmdvm-tx" + std::to_string(cn) + ".ipc");
+    //set_min_noutput_items(721);
+    //set_max_noutput_items(721);
 }
 
 gr_mmdvm_source::~gr_mmdvm_source()
@@ -50,27 +52,29 @@ gr_mmdvm_source::~gr_mmdvm_source()
 
 int gr_mmdvm_source::get_zmq_message()
 {
-
-    zmq::message_t mq_message;
-    zmq::recv_result_t recv_result = _zmqsocket.recv(mq_message, zmq::recv_flags::dontwait);
-    int size = mq_message.size();
-    if(size < 1)
-        return 0;
-    uint32_t buf_size = 0;
-    memcpy(&buf_size, (uint8_t*)mq_message.data(), sizeof(uint32_t));
-
-    if(buf_size > 0)
+    while(true)
     {
-        uint8_t control[buf_size];
-        int16_t data[buf_size];
-        memcpy(&control, (uint8_t*)mq_message.data() + sizeof(uint32_t), buf_size * sizeof(uint8_t));
+        zmq::message_t mq_message;
+        zmq::recv_result_t recv_result = _zmqsocket.recv(mq_message, zmq::recv_flags::dontwait);
+        int size = mq_message.size();
+        if(size < 1)
+            return 0;
+        uint32_t buf_size = 0;
+        memcpy(&buf_size, (uint8_t*)mq_message.data(), sizeof(uint32_t));
 
-        memcpy(&data, (uint8_t*)mq_message.data() + sizeof(uint32_t) + buf_size * sizeof(uint8_t),
-               buf_size * sizeof(int16_t));
-        for(uint32_t i=0;i<buf_size;i++)
+        if(buf_size > 0)
         {
-            control_buf.push_back(control[i]);
-            data_buf.push_back(data[i]);
+            uint8_t control[buf_size];
+            int16_t data[buf_size];
+            memcpy(&control, (uint8_t*)mq_message.data() + sizeof(uint32_t), buf_size * sizeof(uint8_t));
+
+            memcpy(&data, (uint8_t*)mq_message.data() + sizeof(uint32_t) + buf_size * sizeof(uint8_t),
+                   buf_size * sizeof(int16_t));
+            for(uint32_t i=0;i<buf_size;i++)
+            {
+                control_buf.push_back(control[i]);
+                data_buf.push_back(data[i]);
+            }
         }
     }
 
@@ -87,12 +91,8 @@ int gr_mmdvm_source::work(int noutput_items,
     get_zmq_message();
     if(data_buf.size() < 1)
     {
-        struct timespec time_to_sleep = {0, 2990000L };
+        struct timespec time_to_sleep = {0, 29000L };
         nanosleep(&time_to_sleep, NULL);
-        for(int i = 0;i < noutput_items;i++)
-        {
-            out[i] = 0;
-        }
 
         return noutput_items;
     }
@@ -107,7 +107,7 @@ int gr_mmdvm_source::work(int noutput_items,
         if(control == MARK_SLOT1)
         {
             uint64_t time = _burst_timer->allocate_slot(1, _channel_number);
-            if(time > 0L && (time - _burst_timer->get_last_timestamp(_channel_number) > SLOT_TIME))
+            if(time > 0L)
             {
                 add_time_tag(time, i);
             }
@@ -115,7 +115,7 @@ int gr_mmdvm_source::work(int noutput_items,
         if(control == MARK_SLOT2)
         {
             uint64_t time = _burst_timer->allocate_slot(2, _channel_number);
-            if(time > 0L && (time - _burst_timer->get_last_timestamp(_channel_number) > SLOT_TIME))
+            if(time > 0L)
             {
                 add_time_tag(time, i);
             }
