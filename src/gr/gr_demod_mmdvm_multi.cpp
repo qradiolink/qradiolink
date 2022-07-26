@@ -41,10 +41,10 @@ gr_demod_mmdvm_multi::gr_demod_mmdvm_multi(BurstTimer *burst_timer, int sps, int
     float intermediate_samp_rate = 120000;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
-    int resamp_filter_width = 35000;
-    int resamp_filter_slope = 5000;
+    int resamp_filter_width = 65000;
+    int resamp_filter_slope = 10000;
     float carrier_offset1 = 0.0f;
-    float carrier_offset2 = -25000.0f;
+    float carrier_offset2 = -50000;
 
     std::vector<float> taps = gr::filter::firdes::low_pass(3, 3*_samp_rate, resamp_filter_width,
                                 resamp_filter_slope, gr::filter::firdes::WIN_BLACKMAN_HARRIS);

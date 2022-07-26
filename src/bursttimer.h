@@ -23,8 +23,9 @@
 
 #define MAX_MMDVM_CHANNELS 2
 
-static const uint64_t BURST_DELAY = 100000000L; // nanosec
+static const uint64_t BURST_DELAY = 200000000L; // nanosec
 static const uint64_t SLOT_TIME = 30000000L;
+static const uint64_t TX_TIMEOUT = 3000000000L;
 
 /// Delay between FPGA timestamping logic and antenna
 /// Seems to also depend on sample rate, the higher the sample rate the smaller the delay
@@ -48,14 +49,15 @@ public:
     void set_last_timestamp(int cn, uint64_t value);
     void set_tx(int cn, bool value);
     bool get_tx(int cn=0);
+    bool get_global_tx_status();
 
 private:
     bool _enabled;
-    bool _tx[2];
-    std::mutex _timing_mutex;
-    std::mutex _slot_mutex;
-    std::mutex _last_timestamp_mutex;
-    std::mutex _tx_mutex;
+    bool _tx[MAX_MMDVM_CHANNELS];
+    std::mutex _timing_mutex[MAX_MMDVM_CHANNELS];
+    std::mutex _slot_mutex[MAX_MMDVM_CHANNELS];
+    std::mutex _last_timestamp_mutex[MAX_MMDVM_CHANNELS];
+    std::mutex _tx_mutex[MAX_MMDVM_CHANNELS];
     struct slot {
         uint8_t slot_no;
         uint64_t slot_time;
@@ -71,6 +73,8 @@ private:
     uint64_t _last_timestamp[MAX_MMDVM_CHANNELS];
     std::chrono::high_resolution_clock::time_point t1[MAX_MMDVM_CHANNELS];
     std::chrono::high_resolution_clock::time_point t2[MAX_MMDVM_CHANNELS];
+    std::chrono::high_resolution_clock::time_point tx1[MAX_MMDVM_CHANNELS];
+    std::chrono::high_resolution_clock::time_point tx2[MAX_MMDVM_CHANNELS];
     QVector<slot*> _slot_times[MAX_MMDVM_CHANNELS];
 
 };

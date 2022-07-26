@@ -37,10 +37,10 @@ gr_mod_mmdvm_multi::gr_mod_mmdvm_multi(BurstTimer *burst_timer, int sps, int sam
     float intermediate_samp_rate = 120000;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
-    int resamp_filter_width = 35000;
-    int resamp_filter_slope = 5000;
+    int resamp_filter_width = 65000;
+    int resamp_filter_slope = 10000;
     float carrier_offset1 = 0;
-    float carrier_offset2 = 25000;
+    float carrier_offset2 = 50000;
 
 
     _short_to_float1 = gr::blocks::short_to_float::make(1, 32767.0);

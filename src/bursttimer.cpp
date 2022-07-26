@@ -38,6 +38,8 @@ BurstTimer::BurstTimer(uint64_t samples_per_slot, uint64_t time_per_sample,
         _tx[i] = false;
     for(uint8_t i = 0;i < MAX_MMDVM_CHANNELS;i++)
         t1[i] = std::chrono::high_resolution_clock::now();
+    for(uint8_t i = 0;i < MAX_MMDVM_CHANNELS;i++)
+        tx1[i] = std::chrono::high_resolution_clock::now();
 }
 
 BurstTimer::~BurstTimer()
@@ -58,26 +60,49 @@ void BurstTimer::set_enabled(bool value)
 
 void BurstTimer::set_tx(int cn, bool value)
 {
-    std::unique_lock<std::mutex> guard(_tx_mutex);
-    _tx[cn] = value;
+    std::unique_lock<std::mutex> guard(_tx_mutex[cn]);
+    if(value)
+    {
+        tx1[cn] = std::chrono::high_resolution_clock::now();
+        _tx[cn] = value;
+    }
+    else
+    {
+        tx2[cn] = std::chrono::high_resolution_clock::now();
+        if(std::chrono::duration_cast<std::chrono::nanoseconds>(tx2[cn]-tx1[cn]).count() > TX_TIMEOUT)
+            _tx[cn] = value;
+    }
 }
 
 bool BurstTimer::get_tx(int cn)
 {
-    std::unique_lock<std::mutex> guard(_tx_mutex);
+    std::unique_lock<std::mutex> guard(_tx_mutex[cn]);
     return _tx[cn];
+}
+
+bool BurstTimer::get_global_tx_status()
+{
+    bool tx_status = false;
+    for(int i = 0;i < MAX_MMDVM_CHANNELS;i++)
+    {
+        std::unique_lock<std::mutex> guard(_tx_mutex[i]);
+        if(_tx[i])
+            tx_status = true;
+        guard.unlock();
+    }
+    return tx_status;
 }
 
 void BurstTimer::set_last_timestamp(int cn, uint64_t value)
 {
-    std::unique_lock<std::mutex> guard(_last_timestamp_mutex);
+    std::unique_lock<std::mutex> guard(_last_timestamp_mutex[cn]);
     _last_timestamp[cn] = value;
 }
 
 uint64_t BurstTimer::get_last_timestamp(int cn)
 {
-    std::unique_lock<std::mutex> guard(_last_timestamp_mutex);
-    return _last_timestamp[1 - cn];
+    std::unique_lock<std::mutex> guard(_last_timestamp_mutex[cn]);
+    return _last_timestamp[cn];
 
 }
 
@@ -92,15 +117,15 @@ void BurstTimer::set_params(uint64_t samples_per_slot, uint64_t time_per_sample,
 
 uint64_t BurstTimer::get_time_delta(int cn)
 {
-    std::unique_lock<std::mutex> guard(_timing_mutex);
+    std::unique_lock<std::mutex> guard(_timing_mutex[cn]);
 
     t2[cn] = std::chrono::high_resolution_clock::now();
-    return _time_base[cn] + std::chrono::duration_cast<std::chrono::nanoseconds>(t2[cn]-t1[cn]).count();
+    return _time_base[cn] + (uint64_t) std::chrono::duration_cast<std::chrono::nanoseconds>(t2[cn]-t1[cn]).count();
 }
 
 void BurstTimer::reset_timer(int cn)
 {
-    std::unique_lock<std::mutex> guard(_timing_mutex);
+    std::unique_lock<std::mutex> guard(_timing_mutex[cn]);
     _sample_counter[cn] = 0;
     _time_base[cn] = 0;
     t1[cn]= std::chrono::high_resolution_clock::now();
@@ -109,7 +134,7 @@ void BurstTimer::reset_timer(int cn)
 
 void BurstTimer::set_timer(uint64_t value, int cn)
 {
-    std::unique_lock<std::mutex> guard(_timing_mutex);
+    std::unique_lock<std::mutex> guard(_timing_mutex[cn]);
     //qDebug() << "================= Set timer: " << value << " ===================";
     _sample_counter[cn] = 0;
     _time_base[cn] = value;
@@ -118,7 +143,7 @@ void BurstTimer::set_timer(uint64_t value, int cn)
 
 void BurstTimer::increment_sample_counter(int cn)
 {
-    std::unique_lock<std::mutex> guard(_timing_mutex);
+    std::unique_lock<std::mutex> guard(_timing_mutex[cn]);
     _sample_counter[cn]++;
 }
 
@@ -128,7 +153,7 @@ int BurstTimer::check_time(int cn)
     if(!_enabled)
         return 0;
     slot *s;
-    std::unique_lock<std::mutex> guard(_slot_mutex);
+    std::unique_lock<std::mutex> guard(_slot_mutex[cn]);
     if(_slot_times[cn].size() < 1)
         return 0;
     s = _slot_times[cn][0];
@@ -167,7 +192,7 @@ uint64_t BurstTimer::allocate_slot(int slot_no, int cn)
     {
         _last_slot[cn] = elapsed;
     }
-    else if((elapsed - _last_slot[cn]) >= (1L * _slot_time))
+    else if((elapsed - _last_slot[cn]) >= (2L * _slot_time))
     {
         _last_slot[cn] = elapsed;
     }
@@ -178,7 +203,7 @@ uint64_t BurstTimer::allocate_slot(int slot_no, int cn)
     uint64_t nsec = _last_slot[cn] + _burst_delay;
     s->slot_time = nsec;
     s->slot_sample_counter = 0;
-    std::unique_lock<std::mutex> guard(_slot_mutex);
+    std::unique_lock<std::mutex> guard(_slot_mutex[cn]);
     _slot_times[cn].append(s);
 
     /// send with timestamp in advance with X nanoseconds
