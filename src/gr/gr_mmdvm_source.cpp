@@ -50,7 +50,7 @@ gr_mmdvm_source::~gr_mmdvm_source()
 {
 }
 
-int gr_mmdvm_source::get_zmq_message()
+void gr_mmdvm_source::get_zmq_message()
 {
     while(true)
     {
@@ -58,7 +58,7 @@ int gr_mmdvm_source::get_zmq_message()
         zmq::recv_result_t recv_result = _zmqsocket.recv(mq_message, zmq::recv_flags::dontwait);
         int size = mq_message.size();
         if(size < 1)
-            return 0;
+            return;
         uint32_t buf_size = 0;
         memcpy(&buf_size, (uint8_t*)mq_message.data(), sizeof(uint32_t));
 
@@ -77,9 +77,6 @@ int gr_mmdvm_source::get_zmq_message()
             }
         }
     }
-
-
-    return 1;
 }
 
 int gr_mmdvm_source::work(int noutput_items,
@@ -92,7 +89,7 @@ int gr_mmdvm_source::work(int noutput_items,
     get_zmq_message();
     if((data_buf.size() < 1) && _burst_timer->get_tx(_channel_number))
     {
-        _burst_timer->set_tx(_channel_number, false, false);
+        _burst_timer->set_tx(_channel_number, false, true);
         struct timespec time_to_sleep = {0, 1000000L };
         nanosleep(&time_to_sleep, NULL);
         return 0;
@@ -108,6 +105,7 @@ int gr_mmdvm_source::work(int noutput_items,
         return noutput_items;
     }
     _burst_timer->set_tx(_channel_number, true);
+    bool other_tx_on = _burst_timer->get_other_tx_status(_channel_number);
     unsigned int n = std::min((unsigned int)data_buf.size(),
                                   (unsigned int)noutput_items);
 

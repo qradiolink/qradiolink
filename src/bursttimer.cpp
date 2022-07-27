@@ -87,6 +87,21 @@ bool BurstTimer::get_tx(int cn)
     return _tx[cn];
 }
 
+bool BurstTimer::get_other_tx_status(int cn)
+{
+    bool tx_status = false;
+    for(int i = 0;i < MAX_MMDVM_CHANNELS;i++)
+    {
+        if(i == cn)
+            continue;
+        std::unique_lock<std::mutex> guard(_tx_mutex[i]);
+        if(_tx[i])
+            tx_status = true;
+        guard.unlock();
+    }
+    return tx_status;
+}
+
 bool BurstTimer::get_global_tx_status()
 {
     bool tx_status = false;
@@ -213,7 +228,7 @@ uint64_t BurstTimer::allocate_slot(int slot_no, int cn)
     {
         _last_slot[cn] = elapsed;
     }
-    else if((elapsed - _last_slot[cn]) >= (2L * _slot_time))
+    else if((elapsed - _last_slot[cn]) >= (1L * _slot_time))
     {
         _last_slot[cn] = elapsed;
     }

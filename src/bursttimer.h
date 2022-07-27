@@ -23,7 +23,7 @@
 
 #define MAX_MMDVM_CHANNELS 2
 
-static const uint64_t BURST_DELAY = 100000000L; // nanosec
+static const uint64_t BURST_DELAY = 200000000L; // nanosec
 static const uint64_t SLOT_TIME = 30000000L;
 static const uint64_t TX_TIMEOUT = 600000000L;
 
@@ -50,6 +50,7 @@ public:
     void set_last_timestamp(int cn, uint64_t value);
     void set_tx(int cn, bool value, bool wait_timeout=true);
     bool get_tx(int cn=0);
+    bool get_other_tx_status(int cn);
     bool get_global_tx_status();
 
 private:
