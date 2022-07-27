@@ -58,7 +58,7 @@ void BurstTimer::set_enabled(bool value)
     _enabled = value;
 }
 
-void BurstTimer::set_tx(int cn, bool value)
+void BurstTimer::set_tx(int cn, bool value, bool wait_timeout)
 {
     std::unique_lock<std::mutex> guard(_tx_mutex[cn]);
     if(value)
@@ -68,9 +68,16 @@ void BurstTimer::set_tx(int cn, bool value)
     }
     else
     {
-        tx2[cn] = std::chrono::high_resolution_clock::now();
-        if(std::chrono::duration_cast<std::chrono::nanoseconds>(tx2[cn]-tx1[cn]).count() > TX_TIMEOUT)
+        if(wait_timeout)
+        {
+            tx2[cn] = std::chrono::high_resolution_clock::now();
+            if(std::chrono::duration_cast<std::chrono::nanoseconds>(tx2[cn]-tx1[cn]).count() > TX_TIMEOUT)
+                _tx[cn] = value;
+        }
+        else
+        {
             _tx[cn] = value;
+        }
     }
 }
 
@@ -103,6 +110,20 @@ uint64_t BurstTimer::get_last_timestamp(int cn)
 {
     std::unique_lock<std::mutex> guard(_last_timestamp_mutex[cn]);
     return _last_timestamp[cn];
+
+}
+
+uint64_t BurstTimer::get_last_timestamp_global()
+{
+    uint64_t last_timestamp = 0;
+    for(int i = 0;i < MAX_MMDVM_CHANNELS;i++)
+    {
+        std::unique_lock<std::mutex> guard(_last_timestamp_mutex[i]);
+        if(_last_timestamp[i] > last_timestamp)
+            last_timestamp = _last_timestamp[i];
+    }
+
+    return last_timestamp;
 
 }
 

@@ -42,8 +42,8 @@ gr_mmdvm_source::gr_mmdvm_source(BurstTimer *burst_timer, uint8_t cn) :
     _zmqcontext = zmq::context_t(1);
     _zmqsocket = zmq::socket_t(_zmqcontext, ZMQ_PULL);
     _zmqsocket.connect ("ipc:///tmp/mmdvm-tx" + std::to_string(cn) + ".ipc");
-    //set_min_noutput_items(1200);
-    //set_max_noutput_items(1200);
+    set_min_noutput_items(720);
+    set_max_noutput_items(720);
 }
 
 gr_mmdvm_source::~gr_mmdvm_source()
@@ -90,13 +90,20 @@ int gr_mmdvm_source::work(int noutput_items,
     short *out = (short*)(output_items[0]);
 
     get_zmq_message();
-    if(data_buf.size() < 1)
+    if((data_buf.size() < 1) && _burst_timer->get_tx(_channel_number))
     {
-        _burst_timer->set_tx(_channel_number, false);
-        struct timespec time_to_sleep = {0, 29000L };
+        _burst_timer->set_tx(_channel_number, false, false);
+        struct timespec time_to_sleep = {0, 1000000L };
         nanosleep(&time_to_sleep, NULL);
-        if(!_burst_timer->get_global_tx_status())
-            return 0;
+        return 0;
+    }
+    else if(data_buf.size() < 1)
+    {
+        _burst_timer->set_tx(_channel_number, false, true);
+        struct timespec time_to_sleep = {0, 29900000L };
+        nanosleep(&time_to_sleep, NULL);
+        //if(!_burst_timer->get_global_tx_status())
+        //    return 0;
 
         return noutput_items;
     }

@@ -46,8 +46,9 @@ public:
     int check_time(int cn=0);
     uint64_t allocate_slot(int slot_no, int cn=0);
     uint64_t get_last_timestamp(int cn=0);
+    uint64_t get_last_timestamp_global();
     void set_last_timestamp(int cn, uint64_t value);
-    void set_tx(int cn, bool value);
+    void set_tx(int cn, bool value, bool wait_timeout=true);
     bool get_tx(int cn=0);
     bool get_global_tx_status();
 
