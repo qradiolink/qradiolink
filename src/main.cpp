@@ -86,6 +86,13 @@ int main(int argc, char *argv[])
         }
 
     }
+    if((arguments.length() > 1) && (arguments.indexOf("--mmdvm") != -1))
+    {
+        logger->set_console_log(true);
+        headless = true;
+        start_transceiver = true;
+        set_ptt_on = true;
+    }
 
 
 
@@ -169,12 +176,15 @@ int main(int argc, char *argv[])
         telnet_server->start();
         if(start_transceiver)
         {
-            radio_op->toggleRX(true);
+
             radio_op->toggleTX(true);
+            logger->log(Logger::LogLevelInfo, "Started transmitter");
             if(set_ptt_on)
             {
                 radio_op->startTransmission();
             }
+            radio_op->toggleRX(true);
+            logger->log(Logger::LogLevelInfo, "Started receiver");
         }
         std::signal(SIGINT, signal_handler);
         std::signal(SIGTERM, signal_handler);
