@@ -38,7 +38,6 @@ gr_mod_mmdvm_multi::gr_mod_mmdvm_multi(BurstTimer *burst_timer, int sps, int sam
     _filter_width = filter_width;
     int resamp_filter_width = 65000;
     int resamp_filter_slope = 5000;
-    float carrier_offset1 = 0;
     float carrier_offset2 = 25000;
     float carrier_offset3 = 50000;
 
