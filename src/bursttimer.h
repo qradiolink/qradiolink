@@ -21,15 +21,18 @@
 #include <chrono>
 #include <QVector>
 
-#define MAX_MMDVM_CHANNELS 2
+#define MAX_MMDVM_CHANNELS 3
 
 static const uint64_t BURST_DELAY = 200000000L; // nanosec
 static const uint64_t SLOT_TIME = 30000000L;
-static const uint64_t TX_TIMEOUT = 600000000L;
+static const uint64_t TX_TIMEOUT = 50000L;
 
 /// Delay between FPGA timestamping logic and antenna
 /// Seems to also depend on sample rate, the higher the sample rate the smaller the delay
 static const uint64_t PHY_DELAY = 50000L; // nanosec (B20X: 293000L)
+
+// FIFO fill count
+extern int lime_fifo_fill_count;
 
 class BurstTimer
 {
@@ -43,6 +46,7 @@ public:
     uint64_t get_time_delta(int cn=0);
     void set_timer(uint64_t value, int cn=0);
     void increment_sample_counter(int cn=0);
+    uint64_t get_sample_counter(int cn);
     int check_time(int cn=0);
     uint64_t allocate_slot(int slot_no, int cn=0);
     uint64_t get_last_timestamp(int cn=0);

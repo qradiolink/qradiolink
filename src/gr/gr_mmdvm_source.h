@@ -22,6 +22,7 @@
 #include <gnuradio/io_signature.h>
 #include "src/bursttimer.h"
 #include <zmq.hpp>
+#include <chrono>
 
 
 class gr_mmdvm_source;
@@ -39,19 +40,27 @@ public:
     int work(int noutput_items,
            gr_vector_const_void_star &input_items,
            gr_vector_void_star &output_items);
+    bool start();
     void get_zmq_message();
 
 private:
-    unsigned _offset;
-    bool _finished;
-    gr::thread::mutex _mutex;
+
     void add_time_tag(uint64_t nsec, int offset);
+    void handle_idle_time(int timing_adjust, short *out, int noutput_items);
+    int handle_data_bursts(short *out, unsigned int n);
+    void alternate_slots();
     BurstTimer *_burst_timer;
     zmq::context_t _zmqcontext;
     zmq::socket_t _zmqsocket;
     std::vector<uint8_t> control_buf;
     std::vector<int16_t> data_buf;
+    gr::thread::mutex _mutex;
     int _channel_number;
+    std::chrono::high_resolution_clock::time_point t1;
+    std::chrono::high_resolution_clock::time_point t2;
+    int _sn;
+    int64_t _correction_time;
+
 };
 
 

@@ -35,10 +35,12 @@ gr_mmdvm_sink::gr_mmdvm_sink(BurstTimer *burst_timer, uint8_t cn) :
 {
     _burst_timer = burst_timer;
     _channel_number = cn;
-    _zmqcontext = zmq::context_t(cn+1);
+    _zmqcontext = zmq::context_t(1);
     _zmqsocket = zmq::socket_t(_zmqcontext, ZMQ_PUSH);
     _zmqsocket.bind ("ipc:///tmp/mmdvm-rx" + std::to_string(cn) + ".ipc");
     _zmqsocket.setsockopt(ZMQ_SNDHWM, 5);
+    set_min_noutput_items(72);
+    set_max_noutput_items(72);
 }
 
 gr_mmdvm_sink::~gr_mmdvm_sink()
@@ -52,6 +54,7 @@ int gr_mmdvm_sink::work(int noutput_items,
 {
     (void) output_items;
     short *in = (short*)(input_items[0]);
+    t1 = std::chrono::high_resolution_clock::now();
     std::vector<gr::tag_t> tags;
     uint64_t nitems = nitems_read(0);
     std::vector<uint8_t> control_buf;

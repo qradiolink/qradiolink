@@ -23,6 +23,7 @@
 
 #include "common/device_handler.h"
 #include "sink.h"
+#include "src/bursttimer.h"
 
 
 static const pmt::pmt_t TIME_TAG = pmt::string_to_symbol("tx_time");

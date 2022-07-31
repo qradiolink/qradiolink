@@ -246,12 +246,14 @@ void sink_impl::print_stream_stats(int channel) {
     if (timePeriod >= 1000) {
         lms_stream_status_t status;
         LMS_GetStreamStatus(&streamId[channel], &status);
+        int fifo_fill_count = 100 * status.fifoFilledCount / status.fifoSize;
         std::cout << std::endl;
         std::cout << "TX";
         std::cout << "|rate: " << status.linkRate / 1e6 << " MB/s ";
         std::cout << "|dropped packets: " << status.droppedPackets << " ";
-        std::cout << "|FIFO: " << 100 * status.fifoFilledCount / status.fifoSize << "%"
+        std::cout << "|FIFO: " << fifo_fill_count << "%"
                   << std::endl;
+        lime_fifo_fill_count = fifo_fill_count;
         t1 = t2;
     }
 }

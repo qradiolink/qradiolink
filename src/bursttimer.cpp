@@ -17,6 +17,7 @@
 #include "bursttimer.h"
 #include <QDebug>
 
+int lime_fifo_fill_count = 70;
 
 BurstTimer::BurstTimer(uint64_t samples_per_slot, uint64_t time_per_sample,
                        uint64_t slot_time, uint64_t burst_delay)
@@ -154,7 +155,6 @@ void BurstTimer::set_params(uint64_t samples_per_slot, uint64_t time_per_sample,
 uint64_t BurstTimer::get_time_delta(int cn)
 {
     std::unique_lock<std::mutex> guard(_timing_mutex[cn]);
-
     t2[cn] = std::chrono::high_resolution_clock::now();
     return _time_base[cn] + (uint64_t) std::chrono::duration_cast<std::chrono::nanoseconds>(t2[cn]-t1[cn]).count();
 }
@@ -181,6 +181,12 @@ void BurstTimer::increment_sample_counter(int cn)
 {
     std::unique_lock<std::mutex> guard(_timing_mutex[cn]);
     _sample_counter[cn]++;
+}
+
+uint64_t BurstTimer::get_sample_counter(int cn)
+{
+    std::unique_lock<std::mutex> guard(_timing_mutex[cn]);
+    return _time_base[cn] + _sample_counter[cn];
 }
 
 
@@ -220,17 +226,21 @@ uint64_t BurstTimer::allocate_slot(int slot_no, int cn)
     slot *s = new slot;
     s->slot_no = (uint8_t)slot_no;
     uint64_t elapsed = get_time_delta(cn);
+
+    //uint64_t elapsed = _time_base[cn] + _sample_counter[cn] * _time_per_sample;
     if(elapsed <= _last_slot[cn])
     {
         _last_slot[cn] = _last_slot[cn] + _slot_time;
     }
     else if(_last_slot[cn] == 0)
     {
-        _last_slot[cn] = elapsed;
+        uint64_t td = elapsed / _slot_time;
+        _last_slot[cn] = elapsed;//td * _slot_time + _slot_time;
     }
-    else if((elapsed - _last_slot[cn]) >= (1L * _slot_time))
+    else if((elapsed - _last_slot[cn]) >= (2L * _slot_time))
     {
-        _last_slot[cn] = elapsed;
+        uint64_t td = (elapsed - _last_slot[cn]) / _slot_time;
+        _last_slot[cn] = elapsed;//_last_slot[cn] + td * _slot_time + _slot_time;
     }
     else
     {

@@ -48,22 +48,30 @@ private:
 
     gr::analog::frequency_modulator_fc::sptr _fm_modulator1;
     gr::analog::frequency_modulator_fc::sptr _fm_modulator2;
+    gr::analog::frequency_modulator_fc::sptr _fm_modulator3;
     gr::filter::rational_resampler_base_ccf::sptr _resampler1;
     gr::filter::rational_resampler_base_ccf::sptr _resampler2;
+    gr::filter::rational_resampler_base_ccf::sptr _resampler3;
     gr::filter::rational_resampler_base_ccf::sptr _final_resampler;
     gr::blocks::multiply_const_cc::sptr _amplify1;
     gr::blocks::multiply_const_cc::sptr _amplify2;
+    gr::blocks::multiply_const_cc::sptr _amplify3;
     gr::blocks::multiply_const_cc::sptr _bb_gain;
     gr::blocks::multiply_const_ff::sptr _audio_amplify1;
     gr::blocks::multiply_const_ff::sptr _audio_amplify2;
+    gr::blocks::multiply_const_ff::sptr _audio_amplify3;
     gr::filter::fft_filter_ccf::sptr _filter1;
     gr::filter::fft_filter_ccf::sptr _filter2;
+    gr::filter::fft_filter_ccf::sptr _filter3;
     gr::blocks::short_to_float::sptr _short_to_float1;
     gr::blocks::short_to_float::sptr _short_to_float2;
+    gr::blocks::short_to_float::sptr _short_to_float3;
     gr::blocks::rotator_cc::sptr _rotator2;
+    gr::blocks::rotator_cc::sptr _rotator3;
     gr::blocks::add_cc::sptr _add;
     gr_mmdvm_source_sptr _mmdvm_source1;
     gr_mmdvm_source_sptr _mmdvm_source2;
+    gr_mmdvm_source_sptr _mmdvm_source3;
     gr::blocks::multiply_const_cc::sptr _divide_level;
 
 

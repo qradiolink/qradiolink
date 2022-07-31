@@ -48,18 +48,25 @@ public:
 private:
     gr::blocks::float_to_short::sptr _float_to_short1;
     gr::blocks::float_to_short::sptr _float_to_short2;
+    gr::blocks::float_to_short::sptr _float_to_short3;
     gr::analog::quadrature_demod_cf::sptr _fm_demod1;
     gr::analog::quadrature_demod_cf::sptr _fm_demod2;
+    gr::analog::quadrature_demod_cf::sptr _fm_demod3;
     gr::blocks::multiply_const_ff::sptr _level_control1;
     gr::blocks::multiply_const_ff::sptr _level_control2;
+    gr::blocks::multiply_const_ff::sptr _level_control3;
     gr::filter::rational_resampler_base_ccf::sptr _first_resampler;
     gr::filter::rational_resampler_base_ccf::sptr _resampler1;
     gr::filter::rational_resampler_base_ccf::sptr _resampler2;
+    gr::filter::rational_resampler_base_ccf::sptr _resampler3;
     gr::filter::fft_filter_ccf::sptr _filter1;
     gr::filter::fft_filter_ccf::sptr _filter2;
+    gr::filter::fft_filter_ccf::sptr _filter3;
     gr_mmdvm_sink_sptr _mmdvm_sink1;
     gr_mmdvm_sink_sptr _mmdvm_sink2;
+    gr_mmdvm_sink_sptr _mmdvm_sink3;
     gr::blocks::rotator_cc::sptr _rotator2;
+    gr::blocks::rotator_cc::sptr _rotator3;
 
     int _samples_per_symbol;
     int _samp_rate;

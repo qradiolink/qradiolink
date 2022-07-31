@@ -46,6 +46,9 @@ private:
     zmq::context_t _zmqcontext;
     zmq::socket_t _zmqsocket;
     int _channel_number;
+    std::chrono::high_resolution_clock::time_point t1;
+    std::chrono::high_resolution_clock::time_point t2;
+    int64_t _correction_time;
 
 };
 
