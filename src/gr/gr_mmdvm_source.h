@@ -60,6 +60,7 @@ private:
     std::chrono::high_resolution_clock::time_point t2;
     int _sn;
     int64_t _correction_time;
+    bool _add_time_tag;
 
 };
 

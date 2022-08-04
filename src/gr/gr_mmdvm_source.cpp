@@ -39,6 +39,7 @@ gr_mmdvm_source::gr_mmdvm_source(BurstTimer *burst_timer, uint8_t cn) :
     _channel_number = cn;
     _sn = 2;
     _correction_time = 0;
+    _add_time_tag = false;
     _zmqcontext = zmq::context_t(1);
     _zmqsocket = zmq::socket_t(_zmqcontext, ZMQ_PULL);
     _zmqsocket.connect ("ipc:///tmp/mmdvm-tx" + std::to_string(cn) + ".ipc");
@@ -191,13 +192,16 @@ int gr_mmdvm_source::work(int noutput_items,
                                   (unsigned int)noutput_items);
 
     int num_tags_added = handle_data_bursts(out, n);
+
     if(num_tags_added < 1)
     {
-        data_buf.clear();
-        control_buf.clear();
+        data_buf.erase(data_buf.begin(), data_buf.begin() + n);
+        control_buf.erase(control_buf.begin(), control_buf.begin() + n);
+        std::cerr << "Found DMR burst with zero timeslot marks" << std::endl;
         handle_idle_time(timing_adjust, out, noutput_items);
         return noutput_items;
     }
+
     data_buf.erase(data_buf.begin(), data_buf.begin() + n);
     control_buf.erase(control_buf.begin(), control_buf.begin() + n);
     struct timespec time_to_sleep = {0, SLOT_TIME - _correction_time + timing_adjust};
