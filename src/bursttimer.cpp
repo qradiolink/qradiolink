@@ -234,13 +234,11 @@ uint64_t BurstTimer::allocate_slot(int slot_no, int cn)
     }
     else if(_last_slot[cn] == 0)
     {
-        uint64_t td = elapsed / _slot_time;
-        _last_slot[cn] = elapsed;//td * _slot_time + _slot_time;
+        _last_slot[cn] = elapsed;
     }
     else if((elapsed - _last_slot[cn]) >= (2L * _slot_time))
     {
-        uint64_t td = (elapsed - _last_slot[cn]) / _slot_time;
-        _last_slot[cn] = elapsed;//_last_slot[cn] + td * _slot_time + _slot_time;
+        _last_slot[cn] = elapsed;
     }
     else
     {
