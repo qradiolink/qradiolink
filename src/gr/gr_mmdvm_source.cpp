@@ -29,6 +29,7 @@ make_gr_mmdvm_source (BurstTimer *burst_timer, uint8_t cn)
 
 static const pmt::pmt_t TIME_TAG = pmt::string_to_symbol("tx_time");
 static const pmt::pmt_t LENGTH_TAG = pmt::string_to_symbol("burst_length");
+static const pmt::pmt_t ZERO_TAG = pmt::string_to_symbol("zero_samples");
 
 gr_mmdvm_source::gr_mmdvm_source(BurstTimer *burst_timer, uint8_t cn) :
         gr::sync_block("gr_mmdvm_source",
@@ -84,6 +85,7 @@ void gr_mmdvm_source::get_zmq_message()
 void gr_mmdvm_source::handle_idle_time(uint64_t timing_adjust, short *out, int noutput_items)
 {
     alternate_slots();
+    add_zero_tag(0, noutput_items);
     for(int i = 0;i < noutput_items; i++)
     {
         out[i] = 0;
@@ -221,5 +223,12 @@ void gr_mmdvm_source::add_time_tag(uint64_t nsec, int offset)
     //const pmt::pmt_t b_val = pmt::from_long(30000);
     //this->add_item_tag(0, nitems_written(0) + offset, LENGTH_TAG, b_val);
 
+}
+
+// Add rx_time tag to stream
+void gr_mmdvm_source::add_zero_tag(int offset, int num_samples)
+{
+    const pmt::pmt_t t_val = pmt::from_long((long)num_samples);
+    this->add_item_tag(0, nitems_written(0) + (uint64_t)offset, ZERO_TAG, t_val);
 }
 

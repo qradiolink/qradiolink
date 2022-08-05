@@ -45,6 +45,7 @@ public:
 private:
 
     void add_time_tag(uint64_t nsec, int offset);
+    void add_zero_tag(int offset, int num_samples);
     void handle_idle_time(uint64_t timing_adjust, short *out, int noutput_items);
     int handle_data_bursts(short *out, unsigned int n);
     void alternate_slots();
