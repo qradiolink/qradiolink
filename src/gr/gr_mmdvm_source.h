@@ -40,13 +40,12 @@ public:
     int work(int noutput_items,
            gr_vector_const_void_star &input_items,
            gr_vector_void_star &output_items);
-    bool start();
     void get_zmq_message();
 
 private:
 
     void add_time_tag(uint64_t nsec, int offset);
-    void handle_idle_time(int timing_adjust, short *out, int noutput_items);
+    void handle_idle_time(uint64_t timing_adjust, short *out, int noutput_items);
     int handle_data_bursts(short *out, unsigned int n);
     void alternate_slots();
     BurstTimer *_burst_timer;

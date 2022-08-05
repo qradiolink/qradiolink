@@ -75,9 +75,9 @@ gr_demod_mmdvm_multi::gr_demod_mmdvm_multi(BurstTimer *burst_timer, int sps, int
     _float_to_short3 = gr::blocks::float_to_short::make(1, 32767.0);
     _rotator2 = gr::blocks::rotator_cc::make(2*M_PI*carrier_offset2/intermediate_samp_rate);
     _rotator3 = gr::blocks::rotator_cc::make(2*M_PI*carrier_offset3/intermediate_samp_rate);
-    _mmdvm_sink1 = make_gr_mmdvm_sink(burst_timer, 0);
-    _mmdvm_sink2 = make_gr_mmdvm_sink(burst_timer, 1);
-    _mmdvm_sink3 = make_gr_mmdvm_sink(burst_timer, 2);
+    _mmdvm_sink1 = make_gr_mmdvm_sink(burst_timer, 1);
+    _mmdvm_sink2 = make_gr_mmdvm_sink(burst_timer, 2);
+    _mmdvm_sink3 = make_gr_mmdvm_sink(burst_timer, 3);
 
 
     connect(self(),0,_first_resampler,0);

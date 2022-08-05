@@ -74,9 +74,9 @@ gr_mod_mmdvm_multi::gr_mod_mmdvm_multi(BurstTimer *burst_timer, int sps, int sam
     _rotator3 = gr::blocks::rotator_cc::make(2*M_PI*carrier_offset3/intermediate_samp_rate);
     _add = gr::blocks::add_cc::make();
     _divide_level = gr::blocks::multiply_const_cc::make(0.33);
-    _mmdvm_source1 = make_gr_mmdvm_source(burst_timer, 0);
-    _mmdvm_source2 = make_gr_mmdvm_source(burst_timer, 1);
-    _mmdvm_source3 = make_gr_mmdvm_source(burst_timer, 2);
+    _mmdvm_source1 = make_gr_mmdvm_source(burst_timer, 1);
+    _mmdvm_source2 = make_gr_mmdvm_source(burst_timer, 2);
+    _mmdvm_source3 = make_gr_mmdvm_source(burst_timer, 3);
 
 
 

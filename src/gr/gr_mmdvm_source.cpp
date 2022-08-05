@@ -39,7 +39,7 @@ gr_mmdvm_source::gr_mmdvm_source(BurstTimer *burst_timer, uint8_t cn) :
     _channel_number = cn;
     _sn = 2;
     _correction_time = 0;
-    _add_time_tag = false;
+    _add_time_tag = (cn == 0) || (cn == 1);
     _zmqcontext = zmq::context_t(1);
     _zmqsocket = zmq::socket_t(_zmqcontext, ZMQ_PULL);
     _zmqsocket.connect ("ipc:///tmp/mmdvm-tx" + std::to_string(cn) + ".ipc");
@@ -52,10 +52,6 @@ gr_mmdvm_source::~gr_mmdvm_source()
 {
 }
 
-bool gr_mmdvm_source::start()
-{
-
-}
 
 void gr_mmdvm_source::get_zmq_message()
 {
@@ -85,16 +81,16 @@ void gr_mmdvm_source::get_zmq_message()
 
 }
 
-void gr_mmdvm_source::handle_idle_time(int timing_adjust, short *out, int noutput_items)
+void gr_mmdvm_source::handle_idle_time(uint64_t timing_adjust, short *out, int noutput_items)
 {
     alternate_slots();
-    for(unsigned int i = 0;i < noutput_items; i++)
+    for(int i = 0;i < noutput_items; i++)
     {
         out[i] = 0;
         if(i == 710)
         {
             uint64_t time = _burst_timer->allocate_slot(_sn, _channel_number);
-            if(time > 0L && _channel_number == 0)
+            if(time > 0L && _add_time_tag)
             {
                 add_time_tag(time, i);
             }
@@ -129,7 +125,7 @@ int gr_mmdvm_source::handle_data_bursts(short *out, unsigned int n)
         {
             _sn = 1;
             uint64_t time = _burst_timer->allocate_slot(1, _channel_number);
-            if(time > 0L && _channel_number == 0)
+            if(time > 0L && _add_time_tag)
             {
                 add_time_tag(time, i);
             }
@@ -138,7 +134,7 @@ int gr_mmdvm_source::handle_data_bursts(short *out, unsigned int n)
         {
             _sn = 2;
             uint64_t time = _burst_timer->allocate_slot(2, _channel_number);
-            if(time > 0 && _channel_number == 0L)
+            if(time > 0 && _add_time_tag)
             {
                 add_time_tag(time, i);
             }
@@ -172,14 +168,14 @@ int gr_mmdvm_source::work(int noutput_items,
         data_buf.clear();
         return 0;
     }
-    int timing_adjust = 0L;
+    uint64_t timing_adjust = 0L;
     if(lime_fifo_fill_count > 70)
     {
-        timing_adjust = 1000000L;
+        timing_adjust = 1000000;
     }
     else if(lime_fifo_fill_count < 70)
     {
-        timing_adjust = -1000000L;
+        timing_adjust = -1000000;
     }
 
     if(data_buf.size() < 1)
@@ -187,7 +183,7 @@ int gr_mmdvm_source::work(int noutput_items,
         handle_idle_time(timing_adjust, out, noutput_items);
         return noutput_items;
     }
-    //_burst_timer->set_tx(_channel_number, true);
+
     unsigned int n = std::min((unsigned int)data_buf.size(),
                                   (unsigned int)noutput_items);
 
