@@ -61,7 +61,7 @@ gr_mod_base::gr_mod_base(BurstTimer *burst_timer, QObject *parent, float device_
         _limesdr_sink->set_antenna(255);
         set_bandwidth_specific();
         _limesdr_sink->set_gain(int(rf_gain * 60.0f));
-        _limesdr_sink->set_buffer_size(_samp_rate / 10);
+        _limesdr_sink->set_buffer_size(_samp_rate / 2);
         _top_block->connect(_rotator,0,_limesdr_sink,0);
         _use_tdma = true;
     }

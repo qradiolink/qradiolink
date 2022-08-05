@@ -17,7 +17,7 @@
 #include "bursttimer.h"
 #include <QDebug>
 
-int lime_fifo_fill_count = 70;
+int lime_fifo_fill_count = 50;
 
 BurstTimer::BurstTimer(uint64_t samples_per_slot, uint64_t time_per_sample,
                        uint64_t slot_time, uint64_t burst_delay)
@@ -225,9 +225,9 @@ uint64_t BurstTimer::allocate_slot(int slot_no, int cn)
         return 0L;
     slot *s = new slot;
     s->slot_no = (uint8_t)slot_no;
-    uint64_t elapsed = get_time_delta(cn);
+    //uint64_t elapsed = get_time_delta(cn);
+    uint64_t elapsed = _time_base[cn] + _sample_counter[cn] * _time_per_sample;
 
-    //uint64_t elapsed = _time_base[cn] + _sample_counter[cn] * _time_per_sample;
     if(elapsed <= _last_slot[cn])
     {
         _last_slot[cn] = _last_slot[cn] + _slot_time;
@@ -252,7 +252,7 @@ uint64_t BurstTimer::allocate_slot(int slot_no, int cn)
 
     /// send with timestamp in advance with X nanoseconds
     /// this accounts for delay in RF stage
-    return nsec - PHY_DELAY;
+    return nsec;
 }
 
 

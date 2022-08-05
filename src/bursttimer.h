@@ -23,13 +23,9 @@
 
 #define MAX_MMDVM_CHANNELS 5
 
-static const uint64_t BURST_DELAY = 100000000L; // nanosec
+static const uint64_t BURST_DELAY = 200000000L; // nanosec
 static const uint64_t SLOT_TIME = 30000000L;
 static const uint64_t TX_TIMEOUT = 50000L;
-
-/// Delay between FPGA timestamping logic and antenna
-/// Seems to also depend on sample rate, the higher the sample rate the smaller the delay
-static const uint64_t PHY_DELAY = 50000L; // nanosec (B20X: 293000L)
 
 // FIFO fill count
 extern int lime_fifo_fill_count;

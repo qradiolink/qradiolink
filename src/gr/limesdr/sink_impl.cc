@@ -243,6 +243,7 @@ void sink_impl::work_tags(int noutput_items) {
 void sink_impl::print_stream_stats(int channel) {
     t2 = std::chrono::high_resolution_clock::now();
     auto timePeriod = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
+
     if (timePeriod >= 1000) {
         lms_stream_status_t status;
         LMS_GetStreamStatus(&streamId[channel], &status);
@@ -256,6 +257,7 @@ void sink_impl::print_stream_stats(int channel) {
         lime_fifo_fill_count = fifo_fill_count;
         t1 = t2;
     }
+
 }
 // Setup stream
 void sink_impl::init_stream(int device_number, int channel) {

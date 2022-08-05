@@ -96,6 +96,7 @@ void gr_mmdvm_source::handle_idle_time(uint64_t timing_adjust, short *out, int n
             }
         }
     }
+
     struct timespec time_to_sleep = {0, SLOT_TIME - _correction_time + timing_adjust};
     nanosleep(&time_to_sleep, NULL);
     t2 = std::chrono::high_resolution_clock::now();
@@ -140,7 +141,7 @@ int gr_mmdvm_source::handle_data_bursts(short *out, unsigned int n)
             }
         }
     }
-    return 1;
+    return num_tags_added;
 }
 
 void gr_mmdvm_source::alternate_slots()
@@ -157,8 +158,8 @@ int gr_mmdvm_source::work(int noutput_items,
 {
     (void) input_items;
     short *out = (short*)(output_items[0]);
-    t1 = std::chrono::high_resolution_clock::now();
 
+    t1 = std::chrono::high_resolution_clock::now();
     get_zmq_message();
 
     if(_burst_timer->get_sample_counter(_channel_number) < 1)
@@ -169,13 +170,13 @@ int gr_mmdvm_source::work(int noutput_items,
         return 0;
     }
     uint64_t timing_adjust = 0L;
-    if(lime_fifo_fill_count > 70)
+    if(lime_fifo_fill_count > 50)
     {
-        timing_adjust = 1000000;
+        timing_adjust = 100000 * (lime_fifo_fill_count - 50);
     }
-    else if(lime_fifo_fill_count < 70)
+    else if(lime_fifo_fill_count < 50)
     {
-        timing_adjust = -1000000;
+        timing_adjust = -100000 * (50 - lime_fifo_fill_count);
     }
 
     if(data_buf.size() < 1)
