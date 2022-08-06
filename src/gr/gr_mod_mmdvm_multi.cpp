@@ -78,6 +78,10 @@ gr_mod_mmdvm_multi::gr_mod_mmdvm_multi(BurstTimer *burst_timer, int sps, int sam
     _mmdvm_source2 = make_gr_mmdvm_source(burst_timer, 2);
     _mmdvm_source3 = make_gr_mmdvm_source(burst_timer, 3);
 
+    _zero_idle1 = make_gr_zero_idle_bursts();
+    _zero_idle2 = make_gr_zero_idle_bursts();
+    _zero_idle3 = make_gr_zero_idle_bursts();
+
 
 
     connect(_mmdvm_source1,0,_short_to_float1,0);
@@ -89,9 +93,12 @@ gr_mod_mmdvm_multi::gr_mod_mmdvm_multi(BurstTimer *burst_timer, int sps, int sam
     connect(_audio_amplify1,0,_fm_modulator1,0);
     connect(_audio_amplify2,0,_fm_modulator2,0);
     connect(_audio_amplify3,0,_fm_modulator3,0);
-    connect(_fm_modulator1,0,_filter1,0);
-    connect(_fm_modulator2,0,_filter2,0);
-    connect(_fm_modulator3,0,_filter3,0);
+    connect(_fm_modulator1,0,_zero_idle1,0);
+    connect(_fm_modulator2,0,_zero_idle2,0);
+    connect(_fm_modulator3,0,_zero_idle3,0);
+    connect(_zero_idle1,0,_filter1,0);
+    connect(_zero_idle2,0,_filter2,0);
+    connect(_zero_idle3,0,_filter3,0);
     connect(_filter1,0,_amplify1,0);
     connect(_filter2,0,_amplify2,0);
     connect(_filter3,0,_amplify3,0);

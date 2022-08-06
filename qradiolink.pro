@@ -49,6 +49,7 @@ SOURCES += src/main.cpp\
     src/gr/gr_mmdvm_sink.cpp \
     src/gr/gr_mmdvm_source.cpp \
     src/gr/gr_mod_mmdvm_multi.cpp \
+    src/gr/gr_zero_idle_bursts.cpp \
     src/limerfecontroller.cpp \
         src/mainwindow.cpp\
         src/audio/audioencoder.cpp\
@@ -141,6 +142,7 @@ HEADERS  += src/mainwindow.h\
     src/gr/gr_mmdvm_sink.h \
     src/gr/gr_mmdvm_source.h \
     src/gr/gr_mod_mmdvm_multi.h \
+    src/gr/gr_zero_idle_bursts.h \
     src/limerfecontroller.h \
         src/video/videoencoder.h \
         src/video/imagecapture.h \

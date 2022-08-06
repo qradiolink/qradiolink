@@ -229,7 +229,7 @@ void gr_mmdvm_source::add_time_tag(uint64_t nsec, int offset)
 // Add rx_time tag to stream
 void gr_mmdvm_source::add_zero_tag(int offset, int num_samples)
 {
-    const pmt::pmt_t t_val = pmt::from_long((long)num_samples);
+    const pmt::pmt_t t_val = pmt::from_uint64((uint64_t)num_samples);
     this->add_item_tag(0, nitems_written(0) + (uint64_t)offset, ZERO_TAG, t_val);
 }
 

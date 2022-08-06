@@ -28,6 +28,7 @@
 #include <gnuradio/blocks/multiply_const.h>
 #include <gnuradio/blocks/rotator_cc.h>
 #include "gr_mmdvm_source.h"
+#include "gr_zero_idle_bursts.h"
 #include "src/bursttimer.h"
 
 
@@ -72,6 +73,9 @@ private:
     gr_mmdvm_source_sptr _mmdvm_source1;
     gr_mmdvm_source_sptr _mmdvm_source2;
     gr_mmdvm_source_sptr _mmdvm_source3;
+    gr_zero_idle_bursts_sptr _zero_idle1;
+    gr_zero_idle_bursts_sptr _zero_idle2;
+    gr_zero_idle_bursts_sptr _zero_idle3;
     gr::blocks::multiply_const_cc::sptr _divide_level;
 
 
