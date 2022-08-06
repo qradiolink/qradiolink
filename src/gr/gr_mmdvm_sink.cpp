@@ -38,7 +38,7 @@ gr_mmdvm_sink::gr_mmdvm_sink(BurstTimer *burst_timer, uint8_t cn) :
     _zmqcontext = zmq::context_t(1);
     _zmqsocket = zmq::socket_t(_zmqcontext, ZMQ_PUSH);
     _zmqsocket.bind ("ipc:///tmp/mmdvm-rx" + std::to_string(cn) + ".ipc");
-    _zmqsocket.setsockopt(ZMQ_SNDHWM, 5);
+    _zmqsocket.setsockopt(ZMQ_SNDHWM, 2);
     set_min_noutput_items(720);
     set_max_noutput_items(720);
 }
