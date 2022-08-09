@@ -44,6 +44,7 @@ gr_mmdvm_source::gr_mmdvm_source(BurstTimer *burst_timer, uint8_t cn) :
     _zmqcontext = zmq::context_t(1);
     _zmqsocket = zmq::socket_t(_zmqcontext, ZMQ_PULL);
     _zmqsocket.setsockopt(ZMQ_RCVHWM, 2);
+    _zmqsocket.setsockopt(ZMQ_LINGER, 0);
     _zmqsocket.connect ("ipc:///tmp/mmdvm-tx" + std::to_string(cn) + ".ipc");
     set_min_noutput_items(720);
     set_max_noutput_items(720);
