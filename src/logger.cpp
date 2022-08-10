@@ -50,7 +50,7 @@ void logMessage(QtMsgType type, const char *msg)
     QFile outFile("qradiolink.log");
     outFile.open(QIODevice::WriteOnly | QIODevice::Append);
     QTextStream ts(&outFile);
-    ts << txt << endl;
+    ts << txt << Qt::endl;
     outFile.close();
 }
 
@@ -85,7 +85,7 @@ Logger::Logger(QObject *parent)
     _log_file = new QFile(log_file.absoluteFilePath());
     _log_file->open(QIODevice::WriteOnly | QIODevice::Append);
     _stream = new QTextStream(_log_file);
-    _console_log = true;
+    _console_log = false;
 }
 
 Logger::~Logger()
@@ -127,16 +127,17 @@ void Logger::log(int type, QString msg)
         err = true;
         break;
     }
-    if(_console_log)
+
+    if(err)
+        std::cerr << txt.toStdString() << std::endl;
+    else
+        std::cout << txt.toStdString() << std::endl;
+    if(!_console_log)
     {
-        if(err)
-            std::cerr << txt.toStdString() << std::endl;
-        else
-            std::cout << txt.toStdString() << std::endl;
         emit applicationLog(txt);
     }
 
-    *_stream << txt << endl;
+    *_stream << txt << Qt::endl;
     _mutex.unlock();
 
 }

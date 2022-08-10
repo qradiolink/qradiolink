@@ -64,9 +64,9 @@ int main(int argc, char *argv[])
     qRegisterMetaType<gain_vector>("gain_vector");
     qRegisterMetaType<std::string>("std::string");
 
-
-    QApplication a(argc, argv);
+    QCoreApplication *a = new QCoreApplication(argc, argv);
     QStringList arguments = QCoreApplication::arguments();
+    delete a;
     bool headless = false;
     bool start_transceiver = false;
     bool set_ptt_on = false;
@@ -92,6 +92,15 @@ int main(int argc, char *argv[])
         headless = true;
         start_transceiver = true;
         set_ptt_on = true;
+    }
+    QCoreApplication *app;
+    if(headless)
+    {
+        app = new QCoreApplication(argc, argv);
+    }
+    else
+    {
+        app = new QApplication(argc, argv);
     }
 
 
@@ -119,7 +128,7 @@ int main(int argc, char *argv[])
     QObject::connect(radio_op, SIGNAL(finished()), t1, SLOT(quit()));
     QObject::connect(radio_op, SIGNAL(finished()), radio_op, SLOT(deleteLater()));
     QObject::connect(t1, SIGNAL(finished()), t1, SLOT(deleteLater()));
-    QObject::connect(radio_op, SIGNAL(finished()), &a, SLOT(quit()));
+    QObject::connect(radio_op, SIGNAL(finished()), app, SLOT(quit()));
     t1->start();
 
     QThread *t2 = new QThread;
@@ -191,7 +200,7 @@ int main(int argc, char *argv[])
         std::signal(SIGHUP, signal_handler);
     }
 
-    int ret = a.exec();
+    int ret = app->exec();
 
     /// Cleanup on exit
     ///
@@ -219,6 +228,7 @@ int main(int argc, char *argv[])
     delete settings;
     logger->log(Logger::LogLevelInfo, "Stopping qradiolink");
     delete logger;
+    delete app;
     return ret;
 }
 
