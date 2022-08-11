@@ -118,8 +118,8 @@ int gr_mmdvm_source::handle_data_bursts(short *out, unsigned int n)
             num_tags_added++;
         }
     }
-    if(num_tags_added < 1)
-        return 0;
+    //if(num_tags_added < 1)
+    //    return 0;
 
     for(unsigned int i = 0;i < n; i++)
     {
@@ -193,7 +193,7 @@ int gr_mmdvm_source::work(int noutput_items,
                                   (unsigned int)noutput_items);
 
     int num_tags_added = handle_data_bursts(out, n);
-
+    /*
     if(num_tags_added < 1)
     {
         data_buf.erase(data_buf.begin(), data_buf.begin() + n);
@@ -202,6 +202,7 @@ int gr_mmdvm_source::work(int noutput_items,
         handle_idle_time(timing_adjust, out, noutput_items);
         return noutput_items;
     }
+    */
 
     data_buf.erase(data_buf.begin(), data_buf.begin() + n);
     control_buf.erase(control_buf.begin(), control_buf.begin() + n);
@@ -213,7 +214,7 @@ int gr_mmdvm_source::work(int noutput_items,
 }
 
 
-// Add rx_time tag to stream
+// Add tx_time tag to stream
 void gr_mmdvm_source::add_time_tag(uint64_t nsec, int offset)
 {
     uint64_t intpart = nsec / 1000000000L;
@@ -227,7 +228,7 @@ void gr_mmdvm_source::add_time_tag(uint64_t nsec, int offset)
 
 }
 
-// Add rx_time tag to stream
+// Add zero samples tag to stream
 void gr_mmdvm_source::add_zero_tag(int offset, int num_samples)
 {
     const pmt::pmt_t t_val = pmt::from_uint64((uint64_t)num_samples);

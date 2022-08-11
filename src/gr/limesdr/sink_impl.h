@@ -53,7 +53,7 @@ class sink_impl : public sink {
         uint32_t FIFO_size = 0;
     } stored;
 
-    std::chrono::high_resolution_clock::time_point t1, t2;
+    std::chrono::high_resolution_clock::time_point t1, t2, t1_x, t2_x;
 
     void work_tags(int noutput_items);
 

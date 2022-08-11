@@ -242,12 +242,22 @@ void sink_impl::work_tags(int noutput_items) {
 // Print stream status
 void sink_impl::print_stream_stats(int channel) {
     t2 = std::chrono::high_resolution_clock::now();
+    t2_x = std::chrono::high_resolution_clock::now();
     auto timePeriod = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
-
-    if (timePeriod >= 1000) {
-        lms_stream_status_t status;
+    auto timePeriod_x = std::chrono::duration_cast<std::chrono::milliseconds>(t2_x - t1_x).count();
+    lms_stream_status_t status;
+    int fifo_fill_count = 0;
+    if(timePeriod >= 10)
+    {
         LMS_GetStreamStatus(&streamId[channel], &status);
-        int fifo_fill_count = 100 * status.fifoFilledCount / status.fifoSize;
+        fifo_fill_count = 100 * status.fifoFilledCount / status.fifoSize;
+        lime_fifo_fill_count = fifo_fill_count;
+        t1 = t2;
+    }
+
+    if (timePeriod_x >= 10000) {
+        LMS_GetStreamStatus(&streamId[channel], &status);
+        fifo_fill_count = 100 * status.fifoFilledCount / status.fifoSize;
         std::cout << std::endl;
         std::cout << "TX";
         std::cout << "|rate: " << status.linkRate / 1e6 << " MB/s ";
@@ -255,7 +265,7 @@ void sink_impl::print_stream_stats(int channel) {
         std::cout << "|FIFO: " << fifo_fill_count << "%"
                   << std::endl;
         lime_fifo_fill_count = fifo_fill_count;
-        t1 = t2;
+        t1_x = t2_x;
     }
 
 }
