@@ -29,12 +29,12 @@ class gr_mmdvm_source;
 
 typedef boost::shared_ptr<gr_mmdvm_source> gr_mmdvm_source_sptr;
 
-gr_mmdvm_source_sptr make_gr_mmdvm_source(BurstTimer *burst_timer, uint8_t cn=0);
+gr_mmdvm_source_sptr make_gr_mmdvm_source(BurstTimer *burst_timer, uint8_t cn=0, bool multi_channnel=false);
 
 class gr_mmdvm_source : public gr::sync_block
 {
 public:
-    gr_mmdvm_source(BurstTimer *burst_timer, uint8_t cn=0);
+    gr_mmdvm_source(BurstTimer *burst_timer, uint8_t cn=0, bool multi_channel=false);
     ~gr_mmdvm_source();
 
     int work(int noutput_items,

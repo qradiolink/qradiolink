@@ -70,9 +70,7 @@ private:
     gr::blocks::rotator_cc::sptr _rotator2;
     gr::blocks::rotator_cc::sptr _rotator3;
     gr::blocks::add_cc::sptr _add;
-    gr_mmdvm_source_sptr _mmdvm_source1;
-    gr_mmdvm_source_sptr _mmdvm_source2;
-    gr_mmdvm_source_sptr _mmdvm_source3;
+    gr_mmdvm_source_sptr _mmdvm_source;
     gr_zero_idle_bursts_sptr _zero_idle1;
     gr_zero_idle_bursts_sptr _zero_idle2;
     gr_zero_idle_bursts_sptr _zero_idle3;

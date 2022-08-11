@@ -22,16 +22,16 @@ const uint8_t  MARK_SLOT2 = 0x04U;
 const uint8_t  MARK_NONE  = 0x00U;
 
 gr_mmdvm_source_sptr
-make_gr_mmdvm_source (BurstTimer *burst_timer, uint8_t cn)
+make_gr_mmdvm_source (BurstTimer *burst_timer, uint8_t cn, bool multi_channnel)
 {
-    return gnuradio::get_initial_sptr(new gr_mmdvm_source(burst_timer, cn));
+    return gnuradio::get_initial_sptr(new gr_mmdvm_source(burst_timer, cn, multi_channnel));
 }
 
 static const pmt::pmt_t TIME_TAG = pmt::string_to_symbol("tx_time");
 static const pmt::pmt_t LENGTH_TAG = pmt::string_to_symbol("burst_length");
 static const pmt::pmt_t ZERO_TAG = pmt::string_to_symbol("zero_samples");
 
-gr_mmdvm_source::gr_mmdvm_source(BurstTimer *burst_timer, uint8_t cn) :
+gr_mmdvm_source::gr_mmdvm_source(BurstTimer *burst_timer, uint8_t cn, bool multi_channel) :
         gr::sync_block("gr_mmdvm_source",
                        gr::io_signature::make (0, 0, 0),
                        gr::io_signature::make (cn, cn, sizeof (short)))
@@ -41,13 +41,14 @@ gr_mmdvm_source::gr_mmdvm_source(BurstTimer *burst_timer, uint8_t cn) :
     _sn = 2;
     _correction_time = 0;
     _add_time_tag = (cn == 0) || (cn == 1);
-    for(int i = 0;i < cn;i++)
+    for(int i = 0;i < _num_channels;i++)
     {
         _zmqcontext[i] = zmq::context_t(1);
         _zmqsocket[i] = zmq::socket_t(_zmqcontext[i], ZMQ_PULL);
         _zmqsocket[i].setsockopt(ZMQ_RCVHWM, 2);
         _zmqsocket[i].setsockopt(ZMQ_LINGER, 0);
-        _zmqsocket[i].connect ("ipc:///tmp/mmdvm-tx" + std::to_string(i + 1) + ".ipc");
+        int socket_no = multi_channel ? i + 1 : i;
+        _zmqsocket[i].connect ("ipc:///tmp/mmdvm-tx" + std::to_string(socket_no) + ".ipc");
     }
     set_min_noutput_items(720);
     set_max_noutput_items(720);
@@ -97,6 +98,7 @@ void gr_mmdvm_source::handle_idle_time(uint64_t timing_adjust, short *out, int n
     for(int i = 0;i < noutput_items; i++)
     {
         out[i] = 0;
+
         if(i == 710)
         {
             uint64_t time = _burst_timer->allocate_slot(_sn, which);

@@ -74,7 +74,7 @@ gr_mod_mmdvm_multi::gr_mod_mmdvm_multi(BurstTimer *burst_timer, int sps, int sam
     _rotator3 = gr::blocks::rotator_cc::make(2*M_PI*carrier_offset3/intermediate_samp_rate);
     _add = gr::blocks::add_cc::make();
     _divide_level = gr::blocks::multiply_const_cc::make(0.33);
-    _mmdvm_source3 = make_gr_mmdvm_source(burst_timer, 3);
+    _mmdvm_source = make_gr_mmdvm_source(burst_timer, 3, true);
 
     _zero_idle1 = make_gr_zero_idle_bursts();
     _zero_idle2 = make_gr_zero_idle_bursts();
@@ -82,9 +82,9 @@ gr_mod_mmdvm_multi::gr_mod_mmdvm_multi(BurstTimer *burst_timer, int sps, int sam
 
 
 
-    connect(_mmdvm_source3,0,_short_to_float1,0);
-    connect(_mmdvm_source3,1,_short_to_float2,0);
-    connect(_mmdvm_source3,2,_short_to_float3,0);
+    connect(_mmdvm_source,0,_short_to_float1,0);
+    connect(_mmdvm_source,1,_short_to_float2,0);
+    connect(_mmdvm_source,2,_short_to_float3,0);
     connect(_short_to_float1,0,_audio_amplify1,0);
     connect(_short_to_float2,0,_audio_amplify2,0);
     connect(_short_to_float3,0,_audio_amplify3,0);

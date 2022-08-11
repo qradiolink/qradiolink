@@ -71,6 +71,7 @@ int gr_mmdvm_sink::work(int noutput_items,
 
     for(int i = 0;i < noutput_items; i++)
     {
+        bool time_base_received = false;
         for (gr::tag_t tag : tags)
         {
             if(tag.offset == nitems + (uint64_t)i)
@@ -78,8 +79,9 @@ int gr_mmdvm_sink::work(int noutput_items,
                 uint64_t secs = pmt::to_uint64(pmt::tuple_ref(tag.value, 0));
                 double fracs = pmt::to_double(pmt::tuple_ref(tag.value, 1));
                 // nanoseconds
-                uint64_t time = uint64_t((double)secs * 1000000000.0d) + uint64_t(fracs * 1000000000.0d);
+                uint64_t time = uint64_t(llround(double(secs * 1000000000L) + (fracs * 1000000000.0d)));
                 _burst_timer->set_timer(time, _channel_number);
+                time_base_received = true;
                 break;
             }
         }
@@ -96,7 +98,8 @@ int gr_mmdvm_sink::work(int noutput_items,
         }
         control_buf.push_back(control);
         data_buf.push_back((int16_t)in[i]);
-        _burst_timer->increment_sample_counter(_channel_number);
+        if(!time_base_received)
+            _burst_timer->increment_sample_counter(_channel_number);
 
     }
     uint32_t num_items = (uint32_t)noutput_items;

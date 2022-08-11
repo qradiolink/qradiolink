@@ -57,7 +57,7 @@ gr_demod_mmdvm_multi::gr_demod_mmdvm_multi(BurstTimer *burst_timer, int sps, int
 
 
     _filter1 = gr::filter::fft_filter_ccf::make(1,gr::filter::firdes::low_pass_2(
-                1, target_samp_rate, _filter_width, _filter_width/2, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+                1, target_samp_rate, _filter_width, _filter_width, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
     _filter2 = gr::filter::fft_filter_ccf::make(1,gr::filter::firdes::low_pass_2(
                 1, target_samp_rate, _filter_width, _filter_width/2, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
     _filter3 = gr::filter::fft_filter_ccf::make(1,gr::filter::firdes::low_pass_2(
