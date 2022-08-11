@@ -247,6 +247,7 @@ void sink_impl::print_stream_stats(int channel) {
     auto timePeriod_x = std::chrono::duration_cast<std::chrono::milliseconds>(t2_x - t1_x).count();
     lms_stream_status_t status;
     int fifo_fill_count = 0;
+    /*
     if(timePeriod >= 10)
     {
         LMS_GetStreamStatus(&streamId[channel], &status);
@@ -254,8 +255,9 @@ void sink_impl::print_stream_stats(int channel) {
         lime_fifo_fill_count = fifo_fill_count;
         t1 = t2;
     }
+    */
 
-    if (timePeriod_x >= 10000) {
+    if (timePeriod_x >= 1000) {
         LMS_GetStreamStatus(&streamId[channel], &status);
         fifo_fill_count = 100 * status.fifoFilledCount / status.fifoSize;
         std::cout << std::endl;

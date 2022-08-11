@@ -44,18 +44,18 @@ public:
 
 private:
 
-    void add_time_tag(uint64_t nsec, int offset);
-    void add_zero_tag(int offset, int num_samples);
-    void handle_idle_time(uint64_t timing_adjust, short *out, int noutput_items);
-    int handle_data_bursts(short *out, unsigned int n);
+    void add_time_tag(uint64_t nsec, int offset, int which);
+    void add_zero_tag(int offset, int num_samples, int which);
+    void handle_idle_time(uint64_t timing_adjust, short *out, int noutput_items, int which, bool add_tag);
+    int handle_data_bursts(short *out, unsigned int n, int which, bool add_tag);
     void alternate_slots();
     BurstTimer *_burst_timer;
-    zmq::context_t _zmqcontext;
-    zmq::socket_t _zmqsocket;
-    std::vector<uint8_t> control_buf;
-    std::vector<int16_t> data_buf;
+    zmq::context_t _zmqcontext[MAX_MMDVM_CHANNELS];
+    zmq::socket_t _zmqsocket[MAX_MMDVM_CHANNELS];
+    std::vector<uint8_t> control_buf[MAX_MMDVM_CHANNELS];
+    std::vector<int16_t> data_buf[MAX_MMDVM_CHANNELS];
     gr::thread::mutex _mutex;
-    int _channel_number;
+    int _num_channels;
     std::chrono::high_resolution_clock::time_point t1;
     std::chrono::high_resolution_clock::time_point t2;
     int _sn;

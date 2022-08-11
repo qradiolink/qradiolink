@@ -67,9 +67,9 @@ gr_demod_mmdvm_multi::gr_demod_mmdvm_multi(BurstTimer *burst_timer, int sps, int
     _fm_demod1 = gr::analog::quadrature_demod_cf::make(float(target_samp_rate)/(4*M_PI* float(_filter_width)));
     _fm_demod2 = gr::analog::quadrature_demod_cf::make(float(target_samp_rate)/(4*M_PI* float(_filter_width)));
     _fm_demod3 = gr::analog::quadrature_demod_cf::make(float(target_samp_rate)/(4*M_PI* float(_filter_width)));
-    _level_control1 = gr::blocks::multiply_const_ff::make(0.7);
-    _level_control2 = gr::blocks::multiply_const_ff::make(0.7);
-    _level_control3 = gr::blocks::multiply_const_ff::make(0.7);
+    _level_control1 = gr::blocks::multiply_const_ff::make(0.9);
+    _level_control2 = gr::blocks::multiply_const_ff::make(0.9);
+    _level_control3 = gr::blocks::multiply_const_ff::make(0.9);
     _float_to_short1 = gr::blocks::float_to_short::make(1, 32767.0);
     _float_to_short2 = gr::blocks::float_to_short::make(1, 32767.0);
     _float_to_short3 = gr::blocks::float_to_short::make(1, 32767.0);

@@ -78,6 +78,7 @@ gr_demod_base::gr_demod_base(BurstTimer *burst_timer, QObject *parent, float dev
         _limesdr_source->set_center_freq(_device_frequency);
         _limesdr_source->set_sample_rate(1000000);
         _limesdr_source->set_antenna(255);
+        _limesdr_source->set_buffer_size(_samp_rate / 2);
         set_bandwidth_specific();
         _limesdr_source->set_gain(int(rf_gain * 70.0f));
     }

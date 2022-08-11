@@ -34,7 +34,7 @@ gr_mmdvm_sink::gr_mmdvm_sink(BurstTimer *burst_timer, uint8_t cn) :
                        gr::io_signature::make (0, 0, 0))
 {
     _burst_timer = burst_timer;
-    _channel_number = cn;
+    _channel_number = cn - 1;
     _zmqcontext = zmq::context_t(1);
     _zmqsocket = zmq::socket_t(_zmqcontext, ZMQ_PUSH);
     _zmqsocket.setsockopt(ZMQ_SNDHWM, 2);

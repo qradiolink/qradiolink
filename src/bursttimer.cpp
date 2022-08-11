@@ -225,7 +225,7 @@ uint64_t BurstTimer::allocate_slot(int slot_no, int cn)
         return 0L;
     slot *s = new slot;
     s->slot_no = (uint8_t)slot_no;
-    uint64_t elapsed = get_time_delta(cn);
+    uint64_t elapsed = get_time_delta(0);
     //uint64_t elapsed = _time_base[cn] + _sample_counter[cn] * _time_per_sample;
 
     if(elapsed <= _last_slot[cn])
@@ -238,7 +238,7 @@ uint64_t BurstTimer::allocate_slot(int slot_no, int cn)
     }
     else if((elapsed - _last_slot[cn]) >= (1L * _slot_time))
     {
-        _last_slot[cn] = elapsed;
+        _last_slot[cn] = _last_slot[cn] + _slot_time;
     }
     else
     {
