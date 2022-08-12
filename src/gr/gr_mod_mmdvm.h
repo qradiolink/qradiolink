@@ -26,6 +26,7 @@
 #include <gnuradio/filter/fft_filter_fff.h>
 #include <gnuradio/filter/rational_resampler_base.h>
 #include <gnuradio/blocks/multiply_const.h>
+#include "gr_zero_idle_bursts.h"
 
 
 class gr_mod_mmdvm;
@@ -50,6 +51,7 @@ private:
     gr::blocks::multiply_const_ff::sptr _audio_amplify;
     gr::filter::fft_filter_ccf::sptr _filter;
     gr::blocks::short_to_float::sptr _short_to_float;
+    gr_zero_idle_bursts_sptr _zero_idle_bursts;
 
 
     int _samp_rate;

@@ -48,12 +48,14 @@ gr_mod_mmdvm::gr_mod_mmdvm(int sps, int samp_rate, int carrier_freq,
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
     _filter = gr::filter::fft_filter_ccf::make(1,gr::filter::firdes::low_pass_2(
                 1, target_samp_rate, _filter_width, _filter_width*2, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+    _zero_idle_bursts = make_gr_zero_idle_bursts();
 
 
     connect(self(),0,_short_to_float,0);
     connect(_short_to_float,0,_audio_amplify,0);
     connect(_audio_amplify,0,_fm_modulator,0);
-    connect(_fm_modulator,0,_filter,0);
+    connect(_fm_modulator,0,_zero_idle_bursts,0);
+    connect(_zero_idle_bursts,0,_filter,0);
     connect(_filter,0,_amplify,0);
     connect(_amplify,0,_bb_gain,0);
     connect(_bb_gain,0,_resampler,0);

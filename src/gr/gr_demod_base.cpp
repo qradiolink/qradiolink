@@ -117,7 +117,7 @@ gr_demod_base::gr_demod_base(BurstTimer *burst_timer, QObject *parent, float dev
     }
     else
     {
-        //_mmdvm_sink = make_gr_mmdvm_sink(burst_timer);
+        _mmdvm_sink = make_gr_mmdvm_sink(burst_timer, 1, false);
     }
 
     _deframer1 = make_gr_deframer_bb(1);
@@ -465,16 +465,21 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
             _top_block->disconnect(_wfm,1,_audio_sink,0);
             break;
         case gr_modem_types::ModemTypeMMDVM:
-            _top_block->disconnect(_demod_valve,0,_mmdvm_demod_multi,0);
+            _top_block->disconnect(_demod_valve,0,_mmdvm_demod,0);
             _top_block->disconnect(_demod_valve,0,_rssi_valve,0);
             if(_use_tdma)
             {
-                //_top_block->disconnect(_mmdvm_demod,2,_mmdvm_sink,0);
+                _top_block->disconnect(_mmdvm_demod,2,_mmdvm_sink,0);
             }
             else
             {
                 _top_block->disconnect(_mmdvm_demod,2,_zeromq_sink,0);
             }
+            _top_block->disconnect(_mmdvm_demod,1,_audio_sink,0);
+            break;
+        case gr_modem_types::ModemTypeMMDVMmulti:
+            _top_block->disconnect(_demod_valve,0,_mmdvm_demod_multi,0);
+            _top_block->disconnect(_demod_valve,0,_rssi_valve,0);
             break;
         default:
             break;
@@ -707,18 +712,23 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
             _top_block->connect(_wfm,1,_audio_sink,0);
             break;
         case gr_modem_types::ModemTypeMMDVM:
-            _top_block->connect(_demod_valve,0,_mmdvm_demod_multi,0);
+            _top_block->connect(_demod_valve,0,_mmdvm_demod,0);
             _top_block->connect(_demod_valve,0,_rssi_valve,0);
             if(_use_tdma)
             {
-                //_top_block->connect(_mmdvm_demod,2,_mmdvm_sink,0);
+                _top_block->connect(_mmdvm_demod,2,_mmdvm_sink,0);
             }
             else
             {
                 _top_block->connect(_mmdvm_demod,2,_zeromq_sink,0);
             }
+            _top_block->connect(_mmdvm_demod,1,_audio_sink,0);
             break;
-        break;
+        case gr_modem_types::ModemTypeMMDVMmulti:
+            _top_block->connect(_demod_valve,0,_mmdvm_demod_multi,0);
+            _top_block->connect(_demod_valve,0,_rssi_valve,0);
+            break;
+
         default:
             break;
         }

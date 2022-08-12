@@ -1043,7 +1043,7 @@ void RadioController::endTx()
 
 void RadioController::radioTimeout()
 {
-    if(_tx_mode == gr_modem_types::ModemTypeMMDVM)
+    if(_tx_mode == gr_modem_types::ModemTypeMMDVM || _tx_mode == gr_modem_types::ModemTypeMMDVMmulti)
         return;
     QString time= QDateTime::currentDateTime().toString("d/MMM/yyyy hh:mm:ss");
     emit printText("<br/><b>" + time +
@@ -2027,6 +2027,12 @@ void RadioController::toggleRxMode(int value)
         _step_hz = 10;
         _scan_step_hz = 6250;
         break;
+    case 36:
+        _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
+        _rx_mode = gr_modem_types::ModemTypeMMDVMmulti;
+        _step_hz = 10;
+        _scan_step_hz = 6250;
+        break;
     default:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _rx_mode = gr_modem_types::ModemTypeUSB2500;
@@ -2191,6 +2197,9 @@ void RadioController::toggleTxMode(int value)
         break;
     case 35:
         _tx_mode = gr_modem_types::ModemTypeMMDVM;
+        break;
+    case 36:
+        _tx_mode = gr_modem_types::ModemTypeMMDVMmulti;
         break;
     default:
         _tx_mode = gr_modem_types::ModemTypeBPSK2K;

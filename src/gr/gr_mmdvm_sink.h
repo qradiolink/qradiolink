@@ -29,12 +29,12 @@
 class gr_mmdvm_sink;
 typedef boost::shared_ptr<gr_mmdvm_sink> gr_mmdvm_sink_sptr;
 
-gr_mmdvm_sink_sptr make_gr_mmdvm_sink(BurstTimer *burst_timer, uint8_t cn=0);
+gr_mmdvm_sink_sptr make_gr_mmdvm_sink(BurstTimer *burst_timer, uint8_t cn=0, bool multi_channel=true);
 
 class gr_mmdvm_sink : public gr::sync_block
 {
 public:
-    gr_mmdvm_sink(BurstTimer *burst_timer, uint8_t cn=0);
+    gr_mmdvm_sink(BurstTimer *burst_timer, uint8_t cn=0, bool multi_channel=true);
     ~gr_mmdvm_sink();
     int work(int noutput_items,
            gr_vector_const_void_star &input_items,

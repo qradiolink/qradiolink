@@ -21,14 +21,14 @@ const uint8_t  MARK_SLOT2 = 0x04U;
 const uint8_t  MARK_NONE  = 0x00U;
 
 gr_mmdvm_sink_sptr
-make_gr_mmdvm_sink (BurstTimer *burst_timer, uint8_t cn)
+make_gr_mmdvm_sink (BurstTimer *burst_timer, uint8_t cn, bool multi_channel)
 {
-    return gnuradio::get_initial_sptr(new gr_mmdvm_sink(burst_timer, cn));
+    return gnuradio::get_initial_sptr(new gr_mmdvm_sink(burst_timer, cn, multi_channel));
 }
 
 static const pmt::pmt_t TIME_TAG = pmt::string_to_symbol("rx_time");
 
-gr_mmdvm_sink::gr_mmdvm_sink(BurstTimer *burst_timer, uint8_t cn) :
+gr_mmdvm_sink::gr_mmdvm_sink(BurstTimer *burst_timer, uint8_t cn, bool multi_channel) :
         gr::sync_block("gr_mmdvm_sink",
                        gr::io_signature::make (1, 1, sizeof (short)),
                        gr::io_signature::make (0, 0, 0))
@@ -39,10 +39,11 @@ gr_mmdvm_sink::gr_mmdvm_sink(BurstTimer *burst_timer, uint8_t cn) :
     _zmqsocket = zmq::socket_t(_zmqcontext, ZMQ_PUSH);
     _zmqsocket.setsockopt(ZMQ_SNDHWM, 2);
     _zmqsocket.setsockopt(ZMQ_LINGER, 0);
-    _zmqsocket.bind ("ipc:///tmp/mmdvm-rx" + std::to_string(cn) + ".ipc");
+    int socket_no = multi_channel ? cn : 0;
+    _zmqsocket.bind ("ipc:///tmp/mmdvm-rx" + std::to_string(socket_no) + ".ipc");
 
-    set_min_noutput_items(720);
-    set_max_noutput_items(720);
+    set_min_noutput_items(SAMPLES_PER_SLOT);
+    set_max_noutput_items(SAMPLES_PER_SLOT);
 }
 
 gr_mmdvm_sink::~gr_mmdvm_sink()

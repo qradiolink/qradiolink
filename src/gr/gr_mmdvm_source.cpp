@@ -50,9 +50,9 @@ gr_mmdvm_source::gr_mmdvm_source(BurstTimer *burst_timer, uint8_t cn, bool multi
         int socket_no = multi_channel ? i + 1 : i;
         _zmqsocket[i].connect ("ipc:///tmp/mmdvm-tx" + std::to_string(socket_no) + ".ipc");
     }
-    set_min_noutput_items(720);
-    set_max_noutput_items(720);
-    declare_sample_delay(720);
+    set_min_noutput_items(SAMPLES_PER_SLOT);
+    set_max_noutput_items(SAMPLES_PER_SLOT);
+    declare_sample_delay(SAMPLES_PER_SLOT);
 }
 
 gr_mmdvm_source::~gr_mmdvm_source()
@@ -225,7 +225,7 @@ int gr_mmdvm_source::work(int noutput_items,
     nanosleep(&time_to_sleep, NULL);
     t2 = std::chrono::high_resolution_clock::now();
     _correction_time =  std::chrono::duration_cast<std::chrono::nanoseconds>(t2-t1).count() - (int64_t)SLOT_TIME;
-    return 720;
+    return SAMPLES_PER_SLOT;
 }
 
 
@@ -238,7 +238,7 @@ void gr_mmdvm_source::add_time_tag(uint64_t nsec, int offset, int which)
     const pmt::pmt_t t_val = pmt::make_tuple(pmt::from_uint64(intpart), pmt::from_double(fracpart));
     this->add_item_tag(which, nitems_written(which) + (uint64_t)offset, TIME_TAG, t_val);
     /// length tag doesn't seem to be necessary
-    const pmt::pmt_t b_val = pmt::from_long(720);
+    const pmt::pmt_t b_val = pmt::from_long(SAMPLES_PER_SLOT);
     this->add_item_tag(0, nitems_written(0) + offset, LENGTH_TAG, b_val);
 
 }

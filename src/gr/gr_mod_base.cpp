@@ -414,12 +414,15 @@ void gr_mod_base::set_mode(int mode)
     case gr_modem_types::ModemTypeMMDVM:
         if(_use_tdma)
         {
-            //_top_block->disconnect(_mmdvm_source,0,_mmdvm_mod,0);
+            _top_block->disconnect(_mmdvm_source,0,_mmdvm_mod,0);
         }
         else
         {
             _top_block->disconnect(_zmq_source,0,_mmdvm_mod,0);
         }
+        _top_block->disconnect(_mmdvm_mod,0,_rotator,0);
+        break;
+    case gr_modem_types::ModemTypeMMDVMmulti:
         _top_block->disconnect(_mmdvm_mod_multi,0,_rotator,0);
         break;
     default:
@@ -639,12 +642,16 @@ void gr_mod_base::set_mode(int mode)
         set_carrier_offset(50000);
         if(_use_tdma)
         {
-            //_top_block->connect(_mmdvm_source,0,_mmdvm_mod,0);
+            _top_block->connect(_mmdvm_source,0,_mmdvm_mod,0);
         }
         else
         {
             _top_block->connect(_zmq_source,0,_mmdvm_mod,0);
         }
+        _top_block->connect(_mmdvm_mod,0,_rotator,0);
+        break;
+    case gr_modem_types::ModemTypeMMDVMmulti:
+        set_carrier_offset(50000);
         _top_block->connect(_mmdvm_mod_multi,0,_rotator,0);
         break;
     default:
