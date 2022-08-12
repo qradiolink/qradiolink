@@ -62,9 +62,7 @@ private:
     gr::filter::fft_filter_ccf::sptr _filter1;
     gr::filter::fft_filter_ccf::sptr _filter2;
     gr::filter::fft_filter_ccf::sptr _filter3;
-    gr_mmdvm_sink_sptr _mmdvm_sink1;
-    gr_mmdvm_sink_sptr _mmdvm_sink2;
-    gr_mmdvm_sink_sptr _mmdvm_sink3;
+    gr_mmdvm_sink_sptr _mmdvm_sink;
     gr::blocks::rotator_cc::sptr _rotator2;
     gr::blocks::rotator_cc::sptr _rotator3;
 
