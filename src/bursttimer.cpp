@@ -199,7 +199,9 @@ int BurstTimer::check_time(int cn)
     if(_slot_times[cn].size() < 1)
         return 0;
     s = _slot_times[cn][0];
+    std::unique_lock<std::mutex> guard_time(_timing_mutex[cn]);
     uint64_t sample_time = _time_base[cn] + _sample_counter[cn] * _time_per_sample;
+    guard_time.unlock();
     if(sample_time >= s->slot_time && s->slot_sample_counter == 0)
     {
         s->slot_sample_counter++;

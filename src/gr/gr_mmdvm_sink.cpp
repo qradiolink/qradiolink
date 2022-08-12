@@ -95,6 +95,8 @@ int gr_mmdvm_sink::work(int noutput_items,
                     break;
                 }
             }
+            if(!time_base_received)
+                _burst_timer->increment_sample_counter(chan);
             uint8_t control = MARK_NONE;
             int slot_no = _burst_timer->check_time(chan);
 
@@ -108,9 +110,6 @@ int gr_mmdvm_sink::work(int noutput_items,
             }
             control_buf.push_back(control);
             data_buf.push_back((int16_t)in[chan][i]);
-            if(!time_base_received)
-                _burst_timer->increment_sample_counter(chan);
-
         }
         uint32_t num_items = (uint32_t)noutput_items;
         int buf_size = sizeof(uint32_t) + num_items * sizeof(uint8_t) + num_items * sizeof(int16_t);

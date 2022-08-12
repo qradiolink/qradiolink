@@ -217,7 +217,6 @@ int gr_mmdvm_source::work(int noutput_items,
             return noutput_items;
         }
         */
-
         data_buf[i].erase(data_buf[i].begin(), data_buf[i].begin() + n);
         control_buf[i].erase(control_buf[i].begin(), control_buf[i].begin() + n);
     }
