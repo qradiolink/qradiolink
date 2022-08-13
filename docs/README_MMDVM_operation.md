@@ -15,9 +15,13 @@ Installation
 =======
 
 1. QRadioLink.
+----
+
 Install normally (use the `next` git branch)
 
 2. MMDVM
+-----
+
 <pre>
 git clone https://github.com/qradiolink/mmdvm-sdr
 cd mmdvm-sdr
@@ -28,6 +32,8 @@ make -j 2
 </pre>
 
 3. MMDVMHost
+-----
+
 <pre>
 git clone https://github.com/qradiolink/MMDVMHost-SDR
 cd MMDVMHost-SDR
@@ -39,6 +45,8 @@ Running the transceiver
 =======
 
 1. QRadioLink
+-----
+
 * Start the application normally. Configure the LimeSDR device, as well as all other options.
 Use a device string like **driver=lime,serial=00583A34CAD205** (replace serial with your own).
 You can find out the serial number by running:
@@ -61,6 +69,8 @@ Click save to write the settings in the config file.
 If everything is configured ok, you should see the SDR initialization and then continuous updates about FIFO size.
 
 2. MMDVM
+----
+
 * From the build/ directory, start mmdvm in single channel mode using:
 <pre>
 ./mmdvm
@@ -79,6 +89,8 @@ M: 2022-08-13 11:37:34.779 virtual pts: /dev/pts/15 <> /home/user1/mmdvm-sdr/bui
 * Verify in mmdvm output that the ttyMMDVM has the correct number (1 to 3 in above example)
 
 3. MMDVMHost
+----
+
 * Configure MMDVM.ini first. If using in multi-channel mode, create multiple files, for example MMDVM1.ini, MMDVM2.ini, MMDVM3.ini
 * Each MMDVM.ini has to contain a unique identifier for the virtual pts. In single channel mode the name will always be ttyMMDVM0, otherwise it will be numbered from 1 to 3 depending on the id given after the **-c** switch. The path of the symlink will be located in the mmdvm-sdr build directory if started from there.
 * Example config for DMR below:
