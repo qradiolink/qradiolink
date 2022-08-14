@@ -393,6 +393,15 @@ bool CommandProcessor::processStatusCommands(int command_index, QString &respons
     case 69:
         response.append(QString("Current AGC decay is %1.").arg(_settings->agc_decay));
         break;
+    case 72:
+        response.append(QString("Current RX frequency is %1.").arg(_settings->rx_frequency +
+                                                                   _settings->demod_offset + _settings->lnb_lo_freq));
+        break;
+    case 73:
+        response.append(QString("Current TX frequency is %1.").arg(_settings->rx_frequency +
+                                                                   _settings->demod_offset +
+                                                                   _settings->lnb_lo_freq + _settings->tx_shift));
+        break;
 
     default:
         break;
@@ -1153,4 +1162,6 @@ void CommandProcessor::buildCommandList()
     _command_list->append(new command("agcdecay", 0, "Get AGC decay value"));
     _command_list->append(new command("setagcattack", 1, "Set AGC attack value"));
     _command_list->append(new command("setagcdecay", 1, "Set AGC decay value"));
+    _command_list->append(new command("rxfreq", 0, "Get current RX frequency"));
+    _command_list->append(new command("txfreq", 0, "Get current TX frequency"));
 }
