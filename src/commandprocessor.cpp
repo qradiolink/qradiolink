@@ -584,8 +584,13 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
         }
         else
         {
+            /// rx frequency is the source center frequency
+            int64_t rx_frequency = set - _settings->demod_offset - _settings->lnb_lo_freq;
+            /// tx_frequency is the actual frequency
+            int64_t tx_frequency = set - _settings->lnb_lo_freq;
+            emit tuneFreq(rx_frequency);
+            emit tuneTxFreq(tx_frequency - _settings->tx_shift);
             response = QString("Tuning receiver to %L1 Hz").arg(set);
-            emit tuneFreq(set);
         }
         break;
     }
