@@ -589,7 +589,7 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
             /// tx_frequency is the actual frequency
             int64_t tx_frequency = set - _settings->lnb_lo_freq;
             emit tuneFreq(rx_frequency);
-            emit tuneTxFreq(tx_frequency - _settings->tx_shift);
+            emit tuneTxFreq(tx_frequency);
             response = QString("Tuning receiver to %L1 Hz").arg(set);
         }
         break;
