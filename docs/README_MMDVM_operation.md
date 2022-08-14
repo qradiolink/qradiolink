@@ -57,8 +57,10 @@ Click save to write the settings in the config file.
 
 * Configure the RX frequency which will be the uplink from the radio. Set the TX offset (Split) such that the TX frequency of the SDR will be the RX frequency of the radio. Multi-carrier operation requires no other adjustment. Carrier number zero is on the TX frequency, while carrier 2, 3 etc. will be 25 and 50 kHz above the carrier 0 frquency. For example, a split of 3000 is a positive TX offset of 3 MHz.
 * Set TX and RX gain as desired. It is recommended to start with a lower RX gain.
+* Set the sample rate to 1 Msps (the default). A higher sample rate will waste the CPU for no good reason and can be detrimental.
 * Enable the Duplex button.
-* Choose as operating mode either **MMDVM** or **MMDVM multi**
+* IMPORTANT NOTE: the demodulator offset (which is visually represented by the filter bars on the FFT display) has to be set such that all received channels are located inside the sampling window. The best practice is to either set it to a negative value about 100 kHz above the minimum sampled frequency, or about 50-100 kHz above the SDR center frequency. This is especially important in the **MMDVM multi** mode.
+* Choose as operating mode either **MMDVM** or **MMDVM multi** for both TX and RX
 * Close the application, all the settings will be saved in the config
 * Alternatively all the settings can be instead directly written in the config file which is located in:
 **~/.config/qradiolink/qradiolink.cfg**
@@ -67,6 +69,7 @@ Click save to write the settings in the config file.
 ./qradiolink --mmdvm
 </pre>
 If everything is configured ok, you should see the SDR initialization and then continuous updates about FIFO size.
+* Control of the transceiver can be performed by using telnet on local port 4939 via the CLI interface.
 
 2. MMDVM
 ----
