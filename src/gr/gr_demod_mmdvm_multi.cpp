@@ -16,18 +16,20 @@
 
 #include "gr_demod_mmdvm_multi.h"
 
-gr_demod_mmdvm_multi_sptr make_gr_demod_mmdvm_multi(BurstTimer *burst_timer, int num_channels, int sps, int samp_rate, int carrier_freq,
-                                          int filter_width)
+gr_demod_mmdvm_multi_sptr make_gr_demod_mmdvm_multi(BurstTimer *burst_timer, int num_channels,
+                                                    int channel_separation, int sps, int samp_rate, int carrier_freq,
+                                                    int filter_width)
 {
 
-    return gnuradio::get_initial_sptr(new gr_demod_mmdvm_multi(burst_timer, num_channels, sps, samp_rate, carrier_freq,
+    return gnuradio::get_initial_sptr(new gr_demod_mmdvm_multi(burst_timer, num_channels, channel_separation, sps, samp_rate, carrier_freq,
                                                       filter_width));
 }
 
 
 
-gr_demod_mmdvm_multi::gr_demod_mmdvm_multi(BurstTimer *burst_timer, int num_channels, int sps, int samp_rate, int carrier_freq,
-                                 int filter_width) :
+gr_demod_mmdvm_multi::gr_demod_mmdvm_multi(BurstTimer *burst_timer, int num_channels, int channel_separation,
+                                           int sps, int samp_rate, int carrier_freq,
+                                            int filter_width) :
     gr::hier_block2 ("gr_demod_mmdvm_multi",
                       gr::io_signature::make (1, 1, sizeof (gr_complex)),
                       gr::io_signature::make (0, 0, sizeof (short)))
@@ -46,7 +48,7 @@ gr_demod_mmdvm_multi::gr_demod_mmdvm_multi(BurstTimer *burst_timer, int num_chan
     float fm_demod_width = (float)_filter_width;
     int resamp_filter_width = 60000;
     int resamp_filter_slope = 20000;
-    float carrier_offset = -25000.0f;
+    float carrier_offset = float(-channel_separation);
 
 
     std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, resamp_filter_width,

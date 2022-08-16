@@ -195,7 +195,7 @@ gr_demod_base::gr_demod_base(BurstTimer *burst_timer, QObject *parent, float dev
     _freedv_rx800XA_lsb = make_gr_demod_freedv(125, 1000000, 1700, 2500, 0,
                                                gr::vocoder::freedv_api::MODE_800XA, 1);
     _mmdvm_demod = make_gr_demod_mmdvm();
-    _mmdvm_demod_multi = make_gr_demod_mmdvm_multi(burst_timer, _mmdvm_channels);
+    _mmdvm_demod_multi = make_gr_demod_mmdvm_multi(burst_timer, _mmdvm_channels, 25000);
 
 }
 

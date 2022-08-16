@@ -16,14 +16,17 @@
 
 #include "gr_mod_mmdvm_multi.h"
 
-gr_mod_mmdvm_multi_sptr make_gr_mod_mmdvm_multi(BurstTimer *burst_timer, int num_channels, int sps, int samp_rate, int carrier_freq,
-                                          int filter_width)
+gr_mod_mmdvm_multi_sptr make_gr_mod_mmdvm_multi(BurstTimer *burst_timer, int num_channels, int channel_separation,
+                                                int sps, int samp_rate, int carrier_freq,
+                                                int filter_width)
 {
-    return gnuradio::get_initial_sptr(new gr_mod_mmdvm_multi(burst_timer, num_channels, sps, samp_rate, carrier_freq,
+    return gnuradio::get_initial_sptr(new gr_mod_mmdvm_multi(burst_timer, num_channels, channel_separation,
+                                                             sps, samp_rate, carrier_freq,
                                                       filter_width));
 }
 
-gr_mod_mmdvm_multi::gr_mod_mmdvm_multi(BurstTimer *burst_timer, int num_channels, int sps, int samp_rate, int carrier_freq,
+gr_mod_mmdvm_multi::gr_mod_mmdvm_multi(BurstTimer *burst_timer, int num_channels, int channel_separation,
+                                       int sps, int samp_rate, int carrier_freq,
                                  int filter_width) :
     gr::hier_block2 ("gr_mod_mmdvm_multi",
                       gr::io_signature::make (0, 0, sizeof (short)),
@@ -39,7 +42,7 @@ gr_mod_mmdvm_multi::gr_mod_mmdvm_multi(BurstTimer *burst_timer, int num_channels
     _filter_width = filter_width;
     int resamp_filter_width = 60000;
     int resamp_filter_slope = 10000;
-    float carrier_offset = 25000;
+    float carrier_offset = float(channel_separation);
 
 
     for(int i = 0;i < MAX_MMDVM_CHANNELS;i++)

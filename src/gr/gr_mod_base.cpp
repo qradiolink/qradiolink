@@ -154,7 +154,7 @@ gr_mod_base::gr_mod_base(BurstTimer *burst_timer, QObject *parent, float device_
     _freedv_tx800XA_lsb = make_gr_mod_freedv(125, 1000000, 1700, 2700, 200,
                                                  gr::vocoder::freedv_api::MODE_800XA, 1);
     _mmdvm_mod = make_gr_mod_mmdvm();
-    _mmdvm_mod_multi = make_gr_mod_mmdvm_multi(burst_timer, _mmdvm_channels);
+    _mmdvm_mod_multi = make_gr_mod_mmdvm_multi(burst_timer, _mmdvm_channels, 25000);
 
 }
 
