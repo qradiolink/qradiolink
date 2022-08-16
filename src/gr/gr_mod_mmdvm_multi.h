@@ -35,45 +35,30 @@
 class gr_mod_mmdvm_multi;
 
 typedef boost::shared_ptr<gr_mod_mmdvm_multi> gr_mod_mmdvm_multi_sptr;
-gr_mod_mmdvm_multi_sptr make_gr_mod_mmdvm_multi(BurstTimer *burst_timer, int sps=25, int samp_rate=1000000, int carrier_freq=1700,
+gr_mod_mmdvm_multi_sptr make_gr_mod_mmdvm_multi(BurstTimer *burst_timer, int num_channels=3, int sps=25, int samp_rate=1000000, int carrier_freq=1700,
                                           int filter_width=6250);
 
 class gr_mod_mmdvm_multi : public gr::hier_block2
 {
 public:
-    explicit gr_mod_mmdvm_multi(BurstTimer *burst_timer, int sps=25, int samp_rate=1000000, int carrier_freq=1700,
+    explicit gr_mod_mmdvm_multi(BurstTimer *burst_timer, int num_channels=3, int sps=25, int samp_rate=1000000, int carrier_freq=1700,
                              int filter_width=6250);
     void set_bb_gain(float value);
 
 private:
 
-    gr::analog::frequency_modulator_fc::sptr _fm_modulator1;
-    gr::analog::frequency_modulator_fc::sptr _fm_modulator2;
-    gr::analog::frequency_modulator_fc::sptr _fm_modulator3;
-    gr::filter::rational_resampler_base_ccf::sptr _resampler1;
-    gr::filter::rational_resampler_base_ccf::sptr _resampler2;
-    gr::filter::rational_resampler_base_ccf::sptr _resampler3;
+    gr::analog::frequency_modulator_fc::sptr _fm_modulator[MAX_MMDVM_CHANNELS];
+    gr::filter::rational_resampler_base_ccf::sptr _resampler[MAX_MMDVM_CHANNELS];
     gr::filter::rational_resampler_base_ccf::sptr _final_resampler;
-    gr::blocks::multiply_const_cc::sptr _amplify1;
-    gr::blocks::multiply_const_cc::sptr _amplify2;
-    gr::blocks::multiply_const_cc::sptr _amplify3;
+    gr::blocks::multiply_const_cc::sptr _amplify[MAX_MMDVM_CHANNELS];
     gr::blocks::multiply_const_cc::sptr _bb_gain;
-    gr::blocks::multiply_const_ff::sptr _audio_amplify1;
-    gr::blocks::multiply_const_ff::sptr _audio_amplify2;
-    gr::blocks::multiply_const_ff::sptr _audio_amplify3;
-    gr::filter::fft_filter_ccf::sptr _filter1;
-    gr::filter::fft_filter_ccf::sptr _filter2;
-    gr::filter::fft_filter_ccf::sptr _filter3;
-    gr::blocks::short_to_float::sptr _short_to_float1;
-    gr::blocks::short_to_float::sptr _short_to_float2;
-    gr::blocks::short_to_float::sptr _short_to_float3;
-    gr::blocks::rotator_cc::sptr _rotator2;
-    gr::blocks::rotator_cc::sptr _rotator3;
+    gr::blocks::multiply_const_ff::sptr _audio_amplify[MAX_MMDVM_CHANNELS];
+    gr::filter::fft_filter_ccf::sptr _filter[MAX_MMDVM_CHANNELS];
+    gr::blocks::short_to_float::sptr _short_to_float[MAX_MMDVM_CHANNELS];
+    gr::blocks::rotator_cc::sptr _rotator[MAX_MMDVM_CHANNELS];
     gr::blocks::add_cc::sptr _add;
     gr_mmdvm_source_sptr _mmdvm_source;
-    gr_zero_idle_bursts_sptr _zero_idle1;
-    gr_zero_idle_bursts_sptr _zero_idle2;
-    gr_zero_idle_bursts_sptr _zero_idle3;
+    gr_zero_idle_bursts_sptr _zero_idle[MAX_MMDVM_CHANNELS];
     gr::blocks::multiply_const_cc::sptr _divide_level;
 
 
@@ -81,6 +66,7 @@ private:
     int _sps;
     int _carrier_freq;
     int _filter_width;
+    int _num_channels;
 
 };
 #endif // GR_MOD_MMDVM_MULTI_H

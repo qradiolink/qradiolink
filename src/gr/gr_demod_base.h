@@ -66,7 +66,7 @@ class gr_demod_base : public QObject
 public:
     explicit gr_demod_base(BurstTimer *burst_timer, QObject *parent = 0, float device_frequency=434000000,
                                float rf_gain=50, std::string device_args="rtl=0", std::string device_antenna="RX2",
-                                int freq_corr=0);
+                                int freq_corr=0, int mmdvm_channels=3);
     ~gr_demod_base();
 
     void set_bandwidth_specific();
@@ -169,6 +169,7 @@ private:
 
     float _device_frequency;
     int _freq_correction;
+    int _mmdvm_channels;
     int _msg_nr;
     int _mode;
     int _carrier_offset;

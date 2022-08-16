@@ -33,44 +33,33 @@
 class gr_demod_mmdvm_multi;
 
 typedef boost::shared_ptr<gr_demod_mmdvm_multi> gr_demod_mmdvm_multi_sptr;
-gr_demod_mmdvm_multi_sptr make_gr_demod_mmdvm_multi(BurstTimer *burst_timer, int sps=125, int samp_rate=1000000, int carrier_freq=1700,
+gr_demod_mmdvm_multi_sptr make_gr_demod_mmdvm_multi(BurstTimer *burst_timer, int num_channels=3, int sps=125, int samp_rate=1000000, int carrier_freq=1700,
                                           int filter_width=6250);
 
 class gr_demod_mmdvm_multi : public gr::hier_block2
 {
 public:
-    explicit gr_demod_mmdvm_multi(BurstTimer *burst_timer, int sps=125, int samp_rate=1000000, int carrier_freq=1600,
+    explicit gr_demod_mmdvm_multi(BurstTimer *burst_timer, int num_channels=3, int sps=125, int samp_rate=1000000, int carrier_freq=1600,
                                int filter_width=6250);
 
     void set_filter_width(int filter_width);
 
 
 private:
-    gr::blocks::float_to_short::sptr _float_to_short1;
-    gr::blocks::float_to_short::sptr _float_to_short2;
-    gr::blocks::float_to_short::sptr _float_to_short3;
-    gr::analog::quadrature_demod_cf::sptr _fm_demod1;
-    gr::analog::quadrature_demod_cf::sptr _fm_demod2;
-    gr::analog::quadrature_demod_cf::sptr _fm_demod3;
-    gr::blocks::multiply_const_ff::sptr _level_control1;
-    gr::blocks::multiply_const_ff::sptr _level_control2;
-    gr::blocks::multiply_const_ff::sptr _level_control3;
+    gr::blocks::float_to_short::sptr _float_to_short[MAX_MMDVM_CHANNELS];
+    gr::analog::quadrature_demod_cf::sptr _fm_demod[MAX_MMDVM_CHANNELS];
+    gr::blocks::multiply_const_ff::sptr _level_control[MAX_MMDVM_CHANNELS];
     gr::filter::rational_resampler_base_ccf::sptr _first_resampler;
-    gr::filter::rational_resampler_base_ccf::sptr _resampler1;
-    gr::filter::rational_resampler_base_ccf::sptr _resampler2;
-    gr::filter::rational_resampler_base_ccf::sptr _resampler3;
-    gr::filter::fft_filter_ccf::sptr _filter1;
-    gr::filter::fft_filter_ccf::sptr _filter2;
-    gr::filter::fft_filter_ccf::sptr _filter3;
+    gr::filter::rational_resampler_base_ccf::sptr _resampler[MAX_MMDVM_CHANNELS];
+    gr::filter::fft_filter_ccf::sptr _filter[MAX_MMDVM_CHANNELS];
     gr_mmdvm_sink_sptr _mmdvm_sink;
-    gr::blocks::rotator_cc::sptr _rotator2;
-    gr::blocks::rotator_cc::sptr _rotator3;
+    gr::blocks::rotator_cc::sptr _rotator[MAX_MMDVM_CHANNELS];
 
     int _samples_per_symbol;
     int _samp_rate;
     int _carrier_freq;
     int _filter_width;
-
+    int _num_channels;
 
 };
 

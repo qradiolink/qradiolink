@@ -3613,6 +3613,32 @@ and S-meter (dBm)</string>
                    </property>
                   </widget>
                  </item>
+                 <item row="7" column="2">
+                  <widget class="QLabel" name="label_54">
+                   <property name="text">
+                    <string>MMDVM channels</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="7" column="3">
+                  <widget class="QSpinBox" name="mmdvmChannelsSpinBox">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimum">
+                    <number>2</number>
+                   </property>
+                   <property name="maximum">
+                    <number>5</number>
+                   </property>
+                   <property name="value">
+                    <number>3</number>
+                   </property>
+                  </widget>
+                 </item>
                 </layout>
                </widget>
               </item>

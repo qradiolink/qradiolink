@@ -108,6 +108,7 @@ public:
     int enable_lime_rfe;
     int lime_rfe_attenuation;
     int lime_rfe_notch;
+    int mmdvm_channels;
 
     /// Not saved to config:
 

@@ -167,6 +167,8 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     QObject::connect(ui->voxLevelSlider,SIGNAL(valueChanged(int)),this,SLOT(changeVoxLevel(int)));
     QObject::connect(ui->scanTimerSpinBox,SIGNAL(valueChanged(int)),
                      this,SLOT(updateScanResumeTime(int)));
+    QObject::connect(ui->mmdvmChannelsSpinBox,SIGNAL(valueChanged(int)),
+                     this,SLOT(updateMMDVMChannels(int)));
     QObject::connect(ui->audioOutputComboBox,SIGNAL(currentIndexChanged(int)),
                      this,SLOT(updateAudioOutput(int)));
     QObject::connect(ui->audioInputComboBox,SIGNAL(currentIndexChanged(int)),
@@ -589,6 +591,7 @@ void MainWindow::setConfig()
     ui->agcAttackDial->setValue(_settings->agc_attack);
     ui->agcDecayDial->setValue(_settings->agc_decay);
     ui->scanTimerSpinBox->setValue(_settings->scan_resume_time);
+    ui->mmdvmChannelsSpinBox->setValue(_settings->mmdvm_channels);
     ui->timeoutTimerSpinBox->setValue(_settings->radio_tot);
     ui->lineEditRecordPath->setText(_settings->audio_record_path);
     ui->voxLevelSlider->setSliderPosition(_settings->vox_level);
@@ -2048,6 +2051,11 @@ void MainWindow::setBurstIPMode(bool value)
 void MainWindow::updateScanResumeTime(int value)
 {
     emit setScanResumeTime(value);
+}
+
+void MainWindow::updateMMDVMChannels(int value)
+{
+    _settings->mmdvm_channels = value;
 }
 
 void MainWindow::updateAudioOutput(int value)

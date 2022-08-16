@@ -1698,7 +1698,8 @@ void RadioController::toggleRX(bool value)
         {
             _mutex->lock();
             _modem->initRX(_rx_mode, _settings->rx_device_args.toStdString(),
-                           _settings->rx_antenna.toStdString(), _settings->rx_freq_corr);
+                           _settings->rx_antenna.toStdString(), _settings->rx_freq_corr,
+                           _settings->mmdvm_channels);
             _mutex->unlock();
         }
         catch(std::runtime_error &e)
@@ -1761,7 +1762,8 @@ void RadioController::toggleTX(bool value)
             if(_settings->rx_inited)
                 _modem->stopRX();
             _modem->initTX(_tx_mode, _settings->tx_device_args.toStdString(),
-                           _settings->tx_antenna.toStdString(), _settings->tx_freq_corr);
+                           _settings->tx_antenna.toStdString(), _settings->tx_freq_corr,
+                           _settings->mmdvm_channels);
             _mutex->unlock();
         }
         catch(std::runtime_error &e)

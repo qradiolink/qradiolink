@@ -58,7 +58,8 @@ class gr_mod_base : public QObject
     Q_OBJECT
 public:
     explicit gr_mod_base(BurstTimer *burst_timer, QObject *parent = 0, float device_frequency=434000000,
-                float rf_gain=0.5, std::string device_args="uhd", std::string device_antenna="TX/RX", int freq_corr=0);
+                float rf_gain=0.5, std::string device_args="uhd",
+                         std::string device_antenna="TX/RX", int freq_corr=0, int mmdvm_channels=3);
 
 public slots:
     void start(int buffer_size=0);
@@ -133,6 +134,7 @@ private:
     int _samp_rate;
     int _carrier_freq;
     int _filter_width;
+    int _mmdvm_channels;
     double _device_frequency;
     int _freq_correction;
     int _carrier_offset;

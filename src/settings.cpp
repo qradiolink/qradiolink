@@ -58,6 +58,7 @@ Settings::Settings(Logger *logger)
     enable_lime_rfe = 0;
     lime_rfe_attenuation = 0;
     lime_rfe_notch = 0;
+    mmdvm_channels = 3;
 
     /// old stuff, not used
     _mumble_tcp = 1; // used
@@ -702,6 +703,14 @@ void Settings::readConfig()
     {
         lime_rfe_notch = 2;
     }
+    try
+    {
+        mmdvm_channels = cfg.lookup("mmdvm_channels");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        mmdvm_channels = 3;
+    }
 
 }
 
@@ -781,6 +790,7 @@ void Settings::saveConfig()
     root.add("enable_lime_rfe",libconfig::Setting::TypeInt) = enable_lime_rfe;
     root.add("lime_rfe_attenuation",libconfig::Setting::TypeInt) = lime_rfe_attenuation;
     root.add("lime_rfe_notch",libconfig::Setting::TypeInt) = lime_rfe_notch;
+    root.add("mmdvm_channels",libconfig::Setting::TypeInt) = mmdvm_channels;
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());
