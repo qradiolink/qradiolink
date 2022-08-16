@@ -46,7 +46,7 @@ gr_demod_mmdvm_multi::gr_demod_mmdvm_multi(BurstTimer *burst_timer, int num_chan
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
     float fm_demod_width = (float)_filter_width;
-    int resamp_filter_width = 60000;
+    int resamp_filter_width = (num_channels - 1) * 25000 + 10000;
     int resamp_filter_slope = 20000;
     float carrier_offset = float(-channel_separation);
 

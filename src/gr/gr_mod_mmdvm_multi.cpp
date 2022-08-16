@@ -40,7 +40,7 @@ gr_mod_mmdvm_multi::gr_mod_mmdvm_multi(BurstTimer *burst_timer, int num_channels
     float intermediate_samp_rate = 200000;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
-    int resamp_filter_width = 60000;
+    int resamp_filter_width = (num_channels - 1) * 25000 + 10000;
     int resamp_filter_slope = 10000;
     float carrier_offset = float(channel_separation);
 
