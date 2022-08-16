@@ -52,20 +52,20 @@ gr_modem::~gr_modem()
 }
 
 void gr_modem::initTX(int modem_type, std::string device_args, std::string device_antenna,
-                      int freq_corr, int mmdvm_channels)
+                      int freq_corr, int mmdvm_channels, int mmdvm_channel_separation)
 {
     _modem_type_tx = modem_type;
     _gr_mod_base = new gr_mod_base(_burst_timer,
-                0, 433500000, 1.0, device_args, device_antenna, freq_corr, mmdvm_channels);
+                0, 433500000, 1.0, device_args, device_antenna, freq_corr, mmdvm_channels, mmdvm_channel_separation);
     toggleTxMode(modem_type);
 
 }
 
-void gr_modem::initRX(int modem_type, std::string device_args, std::string device_antenna, int freq_corr, int mmdvm_channels)
+void gr_modem::initRX(int modem_type, std::string device_args, std::string device_antenna, int freq_corr, int mmdvm_channels, int mmdvm_channel_separation)
 {
     _modem_type_rx = modem_type;
     _gr_demod_base = new gr_demod_base(_burst_timer,
-                0, 433500000, 0.9, device_args, device_antenna, freq_corr, mmdvm_channels);
+                0, 433500000, 0.9, device_args, device_antenna, freq_corr, mmdvm_channels, mmdvm_channel_separation);
     toggleRxMode(modem_type);
 
 }

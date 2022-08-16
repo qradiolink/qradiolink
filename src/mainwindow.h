@@ -163,6 +163,7 @@ public slots:
     void setDrawConstellationEye(bool value);
     void updateScanResumeTime(int value);
     void updateMMDVMChannels(int value);
+    void updateMMDVMChannelSeparation(int value);
     void updateAudioOutput(int value);
     void updateAudioInput(int value);
     void toggleAudioRecord(bool value);

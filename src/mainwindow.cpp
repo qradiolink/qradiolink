@@ -169,6 +169,8 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
                      this,SLOT(updateScanResumeTime(int)));
     QObject::connect(ui->mmdvmChannelsSpinBox,SIGNAL(valueChanged(int)),
                      this,SLOT(updateMMDVMChannels(int)));
+    QObject::connect(ui->mmdvmChanSeparationComboBox,SIGNAL(currentIndexChanged(int)),
+                     this,SLOT(updateMMDVMChannelSeparation(int)));
     QObject::connect(ui->audioOutputComboBox,SIGNAL(currentIndexChanged(int)),
                      this,SLOT(updateAudioOutput(int)));
     QObject::connect(ui->audioInputComboBox,SIGNAL(currentIndexChanged(int)),
@@ -592,6 +594,7 @@ void MainWindow::setConfig()
     ui->agcDecayDial->setValue(_settings->agc_decay);
     ui->scanTimerSpinBox->setValue(_settings->scan_resume_time);
     ui->mmdvmChannelsSpinBox->setValue(_settings->mmdvm_channels);
+    ui->mmdvmChanSeparationComboBox->setCurrentText(QString::number(_settings->mmdvm_channel_separation));
     ui->timeoutTimerSpinBox->setValue(_settings->radio_tot);
     ui->lineEditRecordPath->setText(_settings->audio_record_path);
     ui->voxLevelSlider->setSliderPosition(_settings->vox_level);
@@ -2056,6 +2059,12 @@ void MainWindow::updateScanResumeTime(int value)
 void MainWindow::updateMMDVMChannels(int value)
 {
     _settings->mmdvm_channels = value;
+}
+
+void MainWindow::updateMMDVMChannelSeparation(int value)
+{
+    Q_UNUSED(value);
+    _settings->mmdvm_channel_separation = ui->mmdvmChanSeparationComboBox->currentText().toInt();
 }
 
 void MainWindow::updateAudioOutput(int value)

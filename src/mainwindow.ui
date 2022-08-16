@@ -3639,6 +3639,32 @@ and S-meter (dBm)</string>
                    </property>
                   </widget>
                  </item>
+                 <item row="9" column="2">
+                  <widget class="QLabel" name="label_55">
+                   <property name="text">
+                    <string>MMDVM chan sep</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="9" column="3">
+                  <widget class="QComboBox" name="mmdvmChanSeparationComboBox">
+                   <item>
+                    <property name="text">
+                     <string>12500</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>25000</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>50000</string>
+                    </property>
+                   </item>
+                  </widget>
+                 </item>
                 </layout>
                </widget>
               </item>
