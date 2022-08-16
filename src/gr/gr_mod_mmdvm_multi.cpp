@@ -80,7 +80,7 @@ gr_mod_mmdvm_multi::gr_mod_mmdvm_multi(BurstTimer *burst_timer, int num_channels
         _rotator[i] = gr::blocks::rotator_cc::make(2*M_PI * carrier_offset * i / intermediate_samp_rate);
     }
     _add = gr::blocks::add_cc::make();
-    _divide_level = gr::blocks::multiply_const_cc::make(0.33);
+    _divide_level = gr::blocks::multiply_const_cc::make(1.0f / float(num_channels));
     _mmdvm_source = make_gr_mmdvm_source(burst_timer, num_channels, true);
     for(int i = 0;i < MAX_MMDVM_CHANNELS;i++)
     {
