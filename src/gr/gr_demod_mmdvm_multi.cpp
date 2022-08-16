@@ -55,18 +55,17 @@ gr_demod_mmdvm_multi::gr_demod_mmdvm_multi(BurstTimer *burst_timer, int num_chan
                                 resamp_filter_slope, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     std::vector<float> intermediate_interp_taps = gr::filter::firdes::low_pass(3, 3 * intermediate_samp_rate,
                         _filter_width, _filter_width, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
-    _first_resampler = gr::filter::rational_resampler_base_ccf::make(1, 5, taps);
+
+
     for(int i = 0;i < MAX_MMDVM_CHANNELS;i++)
     {
         _resampler[i] = gr::filter::rational_resampler_base_ccf::make(3, 25, intermediate_interp_taps);
     }
-
     for(int i = 0;i < MAX_MMDVM_CHANNELS;i++)
     {
         _filter[i] = gr::filter::fft_filter_ccf::make(1,gr::filter::firdes::low_pass(
                 1, target_samp_rate, _filter_width, _filter_width, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
     }
-
     for(int i = 0;i < MAX_MMDVM_CHANNELS;i++)
     {
         _fm_demod[i] = gr::analog::quadrature_demod_cf::make(float(target_samp_rate)/(4*M_PI* float(fm_demod_width)));
@@ -85,6 +84,7 @@ gr_demod_mmdvm_multi::gr_demod_mmdvm_multi(BurstTimer *burst_timer, int num_chan
     }
 
     _mmdvm_sink = make_gr_mmdvm_sink(burst_timer, num_channels, true);
+    _first_resampler = gr::filter::rational_resampler_base_ccf::make(1, 5, taps);
 
 
     connect(self(),0,_first_resampler,0);

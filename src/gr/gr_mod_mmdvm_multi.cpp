@@ -44,6 +44,11 @@ gr_mod_mmdvm_multi::gr_mod_mmdvm_multi(BurstTimer *burst_timer, int num_channels
     int resamp_filter_slope = 10000;
     float carrier_offset = float(channel_separation);
 
+    std::vector<float> intermediate_interp_taps = gr::filter::firdes::low_pass_2(3, 3*intermediate_samp_rate,
+                        _filter_width, _filter_width, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+    std::vector<float> interp_taps = gr::filter::firdes::low_pass_2(5, _samp_rate,
+                        resamp_filter_width, resamp_filter_slope, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+
 
     for(int i = 0;i < MAX_MMDVM_CHANNELS;i++)
     {
@@ -57,22 +62,14 @@ gr_mod_mmdvm_multi::gr_mod_mmdvm_multi(BurstTimer *burst_timer, int num_channels
     {
         _audio_amplify[i] = gr::blocks::multiply_const_ff::make(0.9,1);
     }
-
-    std::vector<float> intermediate_interp_taps = gr::filter::firdes::low_pass_2(3, 3*intermediate_samp_rate,
-                        _filter_width, _filter_width, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
-    std::vector<float> interp_taps = gr::filter::firdes::low_pass_2(5, _samp_rate,
-                        resamp_filter_width, resamp_filter_slope, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     for(int i = 0;i < MAX_MMDVM_CHANNELS;i++)
     {
         _resampler[i] = gr::filter::rational_resampler_base_ccf::make(25, 3, intermediate_interp_taps);
     }
-    _final_resampler = gr::filter::rational_resampler_base_ccf::make(5, 1, interp_taps);
     for(int i = 0;i < MAX_MMDVM_CHANNELS;i++)
     {
         _amplify[i] = gr::blocks::multiply_const_cc::make(0.8,1);
     }
-
-    _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
     for(int i = 0;i < MAX_MMDVM_CHANNELS;i++)
     {
         _filter[i] = gr::filter::fft_filter_ccf::make(1,gr::filter::firdes::low_pass_2(
@@ -82,13 +79,16 @@ gr_mod_mmdvm_multi::gr_mod_mmdvm_multi(BurstTimer *burst_timer, int num_channels
     {
         _rotator[i] = gr::blocks::rotator_cc::make(2*M_PI * carrier_offset * i / intermediate_samp_rate);
     }
-    _add = gr::blocks::add_cc::make();
-    _divide_level = gr::blocks::multiply_const_cc::make(1.0f / float(num_channels));
-    _mmdvm_source = make_gr_mmdvm_source(burst_timer, num_channels, true);
     for(int i = 0;i < MAX_MMDVM_CHANNELS;i++)
     {
         _zero_idle[i] = make_gr_zero_idle_bursts();
     }
+
+    _add = gr::blocks::add_cc::make();
+    _divide_level = gr::blocks::multiply_const_cc::make(1.0f / float(num_channels));
+    _mmdvm_source = make_gr_mmdvm_source(burst_timer, num_channels, true);
+    _final_resampler = gr::filter::rational_resampler_base_ccf::make(5, 1, interp_taps);
+    _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
 
 
     for(int i = 0;i < num_channels; i++)
