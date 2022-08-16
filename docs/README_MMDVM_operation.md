@@ -1,6 +1,5 @@
 
 # MMDVM operation mode
-=========
 
 QRadioLink can act as a SDR base station transceiver for DMR, System Fusion, D-Star or M17
 by connecting to mmdvm-sdr, a fork of MMDVM which runs on Linux operating systems.
@@ -12,12 +11,13 @@ If you are interested in support for other devices like Ettus USRP or BladeRF pl
 pull request.
 
 ## Installation
-=======
+
 
 ### 1. QRadioLink.
 ----
 
 Install normally (use the `next` git branch)
+
 ----
 
 ### 2. MMDVM
@@ -45,7 +45,6 @@ make -j 4
 ----
 
 ## Running the transceiver
-=======
 
 
 ### 1. QRadioLink
