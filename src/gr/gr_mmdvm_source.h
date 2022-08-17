@@ -46,7 +46,7 @@ private:
 
     void add_time_tag(uint64_t nsec, int offset, int which);
     void add_zero_tag(int offset, int num_samples, int which);
-    void handle_idle_time(uint64_t timing_adjust, short *out, int noutput_items, int which, bool add_tag);
+    void handle_idle_time(short *out, int noutput_items, int which, bool add_tag);
     int handle_data_bursts(short *out, unsigned int n, int which, bool add_tag);
     void alternate_slots();
     BurstTimer *_burst_timer;

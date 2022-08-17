@@ -21,7 +21,7 @@
 #include <chrono>
 #include <QVector>
 
-#define MAX_MMDVM_CHANNELS 5
+#define MAX_MMDVM_CHANNELS 7
 
 static const uint64_t BURST_DELAY = 100000000L; // nanosec
 static const uint64_t SLOT_TIME = 30000000L;

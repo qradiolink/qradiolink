@@ -91,7 +91,7 @@ void gr_mmdvm_source::get_zmq_message()
 
 }
 
-void gr_mmdvm_source::handle_idle_time(uint64_t timing_adjust, short *out, int noutput_items, int which, bool add_tag)
+void gr_mmdvm_source::handle_idle_time(short *out, int noutput_items, int which, bool add_tag)
 {
     alternate_slots();
     add_zero_tag(0, noutput_items, which);
@@ -198,7 +198,7 @@ int gr_mmdvm_source::work(int noutput_items,
     {
         if(data_buf[i].size() < 1)
         {
-            handle_idle_time(timing_adjust, out[i], noutput_items, i, i == 0);
+            handle_idle_time(out[i], noutput_items, i, i == 0);
         }
     }
     for(int i = 0;i < _num_channels;i++)
