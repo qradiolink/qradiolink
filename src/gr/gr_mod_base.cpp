@@ -354,13 +354,13 @@ void gr_mod_base::set_mode(int mode)
         _top_block->disconnect(_qpsk_10k,0,_rotator,0);
         break;
     case gr_modem_types::ModemTypeQPSK250K:
-        _carrier_offset = 50000;
+        set_carrier_offset(50000);
         set_center_freq(_device_frequency - _carrier_offset);
         _top_block->disconnect(_byte_source,0,_qpsk_250k,0);
         _top_block->disconnect(_qpsk_250k,0,_rotator,0);
         break;
     case gr_modem_types::ModemType4FSK100K:
-        _carrier_offset = 50000;
+        set_carrier_offset(50000);
         set_center_freq(_device_frequency - _carrier_offset);
         _top_block->disconnect(_byte_source,0,_4fsk_96k,0);
         _top_block->disconnect(_4fsk_96k,0,_rotator,0);
@@ -425,6 +425,8 @@ void gr_mod_base::set_mode(int mode)
         _top_block->disconnect(_mmdvm_mod,0,_rotator,0);
         break;
     case gr_modem_types::ModemTypeMMDVMmulti:
+        set_carrier_offset(50000);
+        set_center_freq(_device_frequency - _carrier_offset);
         _top_block->disconnect(_mmdvm_mod_multi,0,_rotator,0);
         break;
     default:
@@ -642,6 +644,7 @@ void gr_mod_base::set_mode(int mode)
         break;
     case gr_modem_types::ModemTypeMMDVM:
         set_carrier_offset(50000);
+        set_center_freq(_device_frequency - _carrier_offset);
         if(_use_tdma)
         {
             _top_block->connect(_mmdvm_source,0,_mmdvm_mod,0);
@@ -653,7 +656,8 @@ void gr_mod_base::set_mode(int mode)
         _top_block->connect(_mmdvm_mod,0,_rotator,0);
         break;
     case gr_modem_types::ModemTypeMMDVMmulti:
-        set_carrier_offset(50000);
+        set_carrier_offset(250000);
+        set_center_freq(_device_frequency - _carrier_offset);
         _top_block->connect(_mmdvm_mod_multi,0,_rotator,0);
         break;
     default:
