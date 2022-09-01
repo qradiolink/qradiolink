@@ -32,7 +32,8 @@ gr_mod_mmdvm_multi::gr_mod_mmdvm_multi(BurstTimer *burst_timer, int num_channels
                       gr::io_signature::make (0, 0, sizeof (short)),
                       gr::io_signature::make (1, 1, sizeof (gr_complex)))
 {
-    assert(num_channels <= MAX_MMDVM_CHANNELS);
+    if(num_channels > MAX_MMDVM_CHANNELS)
+        num_channels = MAX_MMDVM_CHANNELS;
     _samp_rate =samp_rate;
     _sps = sps;
     _num_channels = num_channels;
@@ -50,36 +51,39 @@ gr_mod_mmdvm_multi::gr_mod_mmdvm_multi(BurstTimer *burst_timer, int num_channels
                         resamp_filter_width, resamp_filter_slope, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
 
 
-    for(int i = 0;i < MAX_MMDVM_CHANNELS;i++)
+    for(int i = 0;i < _num_channels;i++)
     {
         _short_to_float[i] = gr::blocks::short_to_float::make(1, 32767.0);
     }
-    for(int i = 0;i < MAX_MMDVM_CHANNELS;i++)
+    for(int i = 0;i < _num_channels;i++)
     {
         _fm_modulator[i] = gr::analog::frequency_modulator_fc::make(4*M_PI*_filter_width/target_samp_rate);
     }
-    for(int i = 0;i < MAX_MMDVM_CHANNELS;i++)
+    for(int i = 0;i < _num_channels;i++)
     {
         _audio_amplify[i] = gr::blocks::multiply_const_ff::make(0.9,1);
     }
-    for(int i = 0;i < MAX_MMDVM_CHANNELS;i++)
+    for(int i = 0;i < _num_channels;i++)
     {
         _resampler[i] = gr::filter::rational_resampler_base_ccf::make(25, 3, intermediate_interp_taps);
     }
-    for(int i = 0;i < MAX_MMDVM_CHANNELS;i++)
+    for(int i = 0;i < _num_channels;i++)
     {
         _amplify[i] = gr::blocks::multiply_const_cc::make(0.8,1);
     }
-    for(int i = 0;i < MAX_MMDVM_CHANNELS;i++)
+    for(int i = 0;i < _num_channels;i++)
     {
         _filter[i] = gr::filter::fft_filter_ccf::make(1,gr::filter::firdes::low_pass_2(
                 1, target_samp_rate, _filter_width, _filter_width/2, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
     }
-    for(int i = 0;i < MAX_MMDVM_CHANNELS;i++)
+    for(int i = 0;i < _num_channels;i++)
     {
-        _rotator[i] = gr::blocks::rotator_cc::make(2*M_PI * carrier_offset * i / intermediate_samp_rate);
+        int ct = i;
+        if(i > 3)
+            ct = 3 - i;
+        _rotator[i] = gr::blocks::rotator_cc::make(2*M_PI * carrier_offset * ct / intermediate_samp_rate);
     }
-    for(int i = 0;i < MAX_MMDVM_CHANNELS;i++)
+    for(int i = 0;i < _num_channels;i++)
     {
         _zero_idle[i] = make_gr_zero_idle_bursts();
     }

@@ -35,7 +35,8 @@ gr_demod_mmdvm_multi::gr_demod_mmdvm_multi(BurstTimer *burst_timer, int num_chan
                       gr::io_signature::make (0, 0, sizeof (short)))
 {
     (void) sps;
-    assert(num_channels <= MAX_MMDVM_CHANNELS);
+    if(num_channels > MAX_MMDVM_CHANNELS)
+        num_channels = MAX_MMDVM_CHANNELS;
     _samp_rate = samp_rate;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
@@ -57,30 +58,33 @@ gr_demod_mmdvm_multi::gr_demod_mmdvm_multi(BurstTimer *burst_timer, int num_chan
                         _filter_width, _filter_width, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
 
 
-    for(int i = 0;i < MAX_MMDVM_CHANNELS;i++)
+    for(int i = 0;i < _num_channels;i++)
     {
         _resampler[i] = gr::filter::rational_resampler_base_ccf::make(3, 25, intermediate_interp_taps);
     }
-    for(int i = 0;i < MAX_MMDVM_CHANNELS;i++)
+    for(int i = 0;i < _num_channels;i++)
     {
         _filter[i] = gr::filter::fft_filter_ccf::make(1,gr::filter::firdes::low_pass(
                 1, target_samp_rate, _filter_width, _filter_width, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
     }
-    for(int i = 0;i < MAX_MMDVM_CHANNELS;i++)
+    for(int i = 0;i < _num_channels;i++)
     {
         _fm_demod[i] = gr::analog::quadrature_demod_cf::make(float(target_samp_rate)/(4*M_PI* float(fm_demod_width)));
     }
-    for(int i = 0;i < MAX_MMDVM_CHANNELS;i++)
+    for(int i = 0;i < _num_channels;i++)
     {
         _level_control[i] = gr::blocks::multiply_const_ff::make(0.7);
     }
-    for(int i = 0;i < MAX_MMDVM_CHANNELS;i++)
+    for(int i = 0;i < _num_channels;i++)
     {
         _float_to_short[i] = gr::blocks::float_to_short::make(1, 32767.0);
     }
-    for(int i = 0;i < MAX_MMDVM_CHANNELS;i++)
+    for(int i = 0;i < _num_channels;i++)
     {
-        _rotator[i] = gr::blocks::rotator_cc::make(2*M_PI * carrier_offset * i / intermediate_samp_rate);
+        int ct = i;
+        if(i > 3)
+            ct = 3 - i;
+        _rotator[i] = gr::blocks::rotator_cc::make(2*M_PI * carrier_offset * ct / intermediate_samp_rate);
     }
 
     _mmdvm_sink = make_gr_mmdvm_sink(burst_timer, num_channels, true);

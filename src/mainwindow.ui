@@ -3632,7 +3632,7 @@ and S-meter (dBm)</string>
                     <number>2</number>
                    </property>
                    <property name="maximum">
-                    <number>5</number>
+                    <number>7</number>
                    </property>
                    <property name="value">
                     <number>3</number>
@@ -3656,11 +3656,6 @@ and S-meter (dBm)</string>
                    <item>
                     <property name="text">
                      <string>25000</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>50000</string>
                     </property>
                    </item>
                   </widget>

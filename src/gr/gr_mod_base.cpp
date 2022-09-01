@@ -168,7 +168,7 @@ void gr_mod_base::set_samp_rate(int samp_rate)
     int interpolation = (int) _samp_rate / 1000000;
 
 
-    if(_samp_rate != 1000000)
+    if(_samp_rate >= 2000000)
     {
         try
         {

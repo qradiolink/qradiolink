@@ -1487,7 +1487,7 @@ void RadioController::processVoipVideoFrame(unsigned char *video_frame, int size
 
 void RadioController::startTransmission()
 {
-    if(_settings->rx_inited && _settings->rx_sample_rate != 1000000 &&
+    if(_settings->rx_inited && _settings->rx_sample_rate >= 2000000 &&
             (_settings->rx_device_args == _settings->tx_device_args))
     {
         _logger->log(Logger::LogLevelWarning,
