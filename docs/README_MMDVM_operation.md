@@ -5,8 +5,8 @@ QRadioLink can act as a SDR base station transceiver for DMR, System Fusion, D-S
 by connecting to mmdvm-sdr, a fork of MMDVM which runs on Linux operating systems.
 QRadioLink can work either as a normal single channel transceiver or as a
 multi-channel / multi-carrier transceiver. So far only DMR and System Fusion have been tested
-and confirmed to work, while support for M17 would require an update of the MMDVMHost and MMDVM code to add the latest features in upstream (WIP). System Fusion may not work properly yet in multi-carrier mode.
-Multi-carrier and single carrier DMR is only supported with LimeSDR devices so far due to the need for timestamps.
+and confirmed to work, but D-Star and M17 should work as well (using the latest changes from MMDVM master). System Fusion may have slightly higer BER and may require careful tuning.
+Multi-carrier and single carrier DMR is only supported with LimeSDR devices so far due to the need for timestamps. The other modes can theoretically work with any duplex SDR.
 If you are interested in support for other devices like Ettus USRP or BladeRF please create a
 pull request.
 
@@ -24,9 +24,9 @@ Install normally (use the `next` git branch)
 ----
 
 <pre>
-git clone https://github.com/qradiolink/mmdvm-sdr
-cd mmdvm-sdr
-git checkout tdma_multi
+git clone https://github.com/qradiolink/MMDVM-SDR
+cd MMDVM-SDR
+git checkout mmdvm_sdr
 mkdir build && cd build
 cmake ..
 make -j 2
@@ -39,7 +39,7 @@ make -j 2
 <pre>
 git clone https://github.com/qradiolink/MMDVMHost-SDR
 cd MMDVMHost-SDR
-git checkout mmdvm_sdr_multi
+git checkout mmdvm_sdr
 make -j 4
 </pre>
 ----
@@ -58,14 +58,39 @@ LimeUtil --find
 </pre>
 Click save to write the settings in the config file.
 
-* Configure the RX frequency which will be the uplink from the radio. Set the TX offset (Split) such that the TX frequency of the SDR will be the RX frequency of the radio. Multi-carrier operation requires no other adjustment. Carrier number zero is on the TX frequency (baseband), while carrier 2, 3 etc. will be 25 and 50 kHz above the carrier 0 frequency. For example, a split of 3000 is a positive TX offset of 3 MHz for channel zero, while the other channels will still be offset 3 MHz between RX and TX but have a 25 kHz separation between each other.
-* Set TX and RX gain as desired. It is recommended to start with a lower RX gain.
+* In the Setup -> Radio settings page, choose the number of MMDVM channels to be transmitted, if operating in MMDVM multi-channel mode. This number needs to be between 2 and 7 at the moment (default is 3). The number of channels which can be transmitted simultaneously is heavily dependent on the CPU power. On small ARM platforms, due to the high sample rates involved, it may not be possible to operate more than 1 or 2 channels.
+* Select channel separation (options are currently 12.5 kHz and 25 kHz).
+* Configure the RX frequency which will be the uplink from the radio.
+Set the TX offset (Split) such that the TX frequency of the SDR will be the RX frequency
+of the radio. Multi-carrier operation requires no other adjustment.
+Carrier number zero is on the TX frequency displayed by qradiolink (baseband),
+while carriers 1, 2, and 3 will be 25, 50 and 75 kHz above the carrier 0 frequency
+if the channel separation is configured to be 25 kHz.
+Carriers 4, 5 and 6 are 25, 50 and 75 kHz below the frequency displayed by qradiolink.
+For example, a split of 3000 is a positive TX offset of 3 MHz for channel zero,
+while the other channels will still be offset 3 MHz between RX and TX but have
+a 25 kHz separation between each other. When starting MMDVM,
+channel number 1 will be on baseband, channels 2, 3 and 4 will have positive
+offsets while channels 5, 6 and 7 will be below baseband (main) frequency
+with negative offsets
+
+Example:
+
+  Channel 6     Channel 5   **Channel 1(main)** Channel 2    Channel 3     Channel 4
+  433.8500       433.8750      433.9000         433.9250      433.950       433.9750
+       |            |             |               |             |              |
+       |            |             |               |             |              |
+       |            |             |               |             |              |
+-------|------------|-------------|---------------|-------------|--------------|---------
+            **Diplayed frequency 433.9000**
+
+
+* Set TX and RX gain as desired. It is recommended to start with a lower RX gain if not using a duplexer filter.
 * Set the sample rate to 1 Msps (the default). A higher sample rate will waste the CPU for no good reason and can be detrimental.
 * Enable the Duplex button.
-* IMPORTANT NOTE: the demodulator offset (which is visually represented by the filter bars on the FFT display) has to be set such that all received channels are located inside the sampling window. The best practice is to either set it to a negative value about 100 kHz above the minimum sampled frequency, or about 50-100 kHz above the SDR center frequency. This is especially important in the **MMDVM multi** mode.
+* IMPORTANT NOTE: the demodulator offset (which is visually represented by the filter bars on the FFT display) has to be set such that all received channels are located inside the sampling window. The best practice is to either set it to a negative value about 250 kHz below the minimum sampled frequency, or about 250 kHz above the SDR center frequency. This is especially important in the **MMDVM multi** mode.
 * Choose as operating mode either **MMDVM** or **MMDVM multi** for both TX and RX
-* In the Setup -> Radio settings page, choose the number of MMDVM channels to be transmitted, if operating in MMDVM multi-channel mode. This number needs to be between 2 and 5 at the moment (default is 3). The number of channels which can be transmitted simultaneously is heavily dependent on the CPU power. On small ARM platforms, due to the high sample rates involved, it may not be possible to operate more than 1 or 2 channels.
-* Close the application, all the settings will be saved in the config
+* Close the application, all the settings will be saved in the config file
 * Alternatively all the settings can be instead directly written in the config file which is located in:
 **~/.config/qradiolink/qradiolink.cfg**
 * Finally, start the application from the CLI using the **--mmdvm** switch:
@@ -78,9 +103,9 @@ If everything is configured ok, you should see the SDR initialization and then c
 <pre>
 rlwrap telnet localhost 4939
 qradiolink> rxfreq
-Current RX frequency is 431900000.
-qradiolink> tunerx 431899800
-Tuning receiver to 431,899,800 Hz
+Current RX frequency is 430900000.
+qradiolink> tunerx 430899800
+Tuning receiver to 430,899,800 Hz
 qradiolink> rxgain
 Current RX gain is 32.
 qradiolink> setrxgain 35
@@ -99,7 +124,7 @@ Setting RX gain value to 35
 </pre>
 This will create the symlink to the virtual pts, which you will need to put into MMDVM.ini, section Modem:
 <pre>
-M: 2022-08-13 11:37:34.779 virtual pts: /dev/pts/15 <> /home/user1/mmdvm-sdr/build/ttyMMDVM0
+M: 2022-08-13 11:37:34.779 virtual pts: /dev/pts/15 <> /home/user1/MMDVM-SDR/build/ttyMMDVM0
 </pre>
 * If you have started in single channel mode, the tty will be called **ttyMMDVM0**
 * Alternatively, you can start multiple instances of mmdvm in multi channel mode, if that mode is also configured in QRadioLink. Start multiple mmdvm in different terminals like this (up to three channels so far):
@@ -109,13 +134,14 @@ M: 2022-08-13 11:37:34.779 virtual pts: /dev/pts/15 <> /home/user1/mmdvm-sdr/bui
 ./mmdvm -c 3
 </pre>
 * Verify in mmdvm output that the ttyMMDVM has the correct number (1 to 3 in above example)
+* Channel 1 for mmdvm corresponds to qradiolink channel zero (main frequency) and so forth.
 ----
 
 ### 3. MMDVMHost
 ----
 
 * Configure MMDVM.ini first. If using in multi-channel mode, create multiple files, for example MMDVM1.ini, MMDVM2.ini, MMDVM3.ini
-* Each MMDVM.ini has to contain a unique identifier for the virtual pts. In single channel mode the name will always be ttyMMDVM0, otherwise it will be numbered from 1 to 3 depending on the id given after the **-c** switch. The path of the symlink will be located in the mmdvm-sdr build directory if started from there.
+* Each MMDVM.ini has to contain a unique identifier for the virtual pts. In single channel mode the name will always be ttyMMDVM0, otherwise it will be numbered from 1 to 3 depending on the id given after the **-c** switch. The path of the symlink will be located in the MMDVM-SDR build directory if started from there.
 * Example config for DMR below:
 <pre>
 [General]
@@ -163,7 +189,10 @@ File=NXDN.csv
 Time=24
 
 [Modem]
-Port=/home/user1/mmdvm-sdr/build/ttyMMDVM1
+Port=/home/user1/MMDVM-SDR/build/ttyMMDVM1
+# Above value is not used anymore starting with the new version of MMDVMHost
+# Use this value below instead
+UARTPort=/home/user1/MMDVM-SDR/build/ttyMMDVM1
 Protocol=uart
 # Address=0x22
 TXInvert=1
