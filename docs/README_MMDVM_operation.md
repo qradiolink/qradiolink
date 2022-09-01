@@ -75,13 +75,14 @@ offsets while channels 5, 6 and 7 will be below baseband (main) frequency
 with negative offsets
 
 Example:
-
+<code>
   Channel 6     Channel 5   **Channel 1(main)** Channel 2    Channel 3     Channel 4
   433.8500       433.8750      433.9000         433.9250      433.950       433.9750
        |            |             |               |             |              |
        |            |             |               |             |              |
        |            |             |               |             |              |
 -------|------------|-------------|---------------|-------------|--------------|---------
+</code>
             **Diplayed frequency 433.9000**
 
 
