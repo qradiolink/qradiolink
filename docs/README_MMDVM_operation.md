@@ -83,7 +83,8 @@ Example:
        |            |             |               |             |              |
 -------|------------|-------------|---------------|-------------|--------------|---------
 </pre>
-            **Diplayed frequency 433.9000**
+
+            **Displayed frequency 433.9000**
 
 
 * Set TX and RX gain as desired. It is recommended to start with a lower RX gain if not using a duplexer filter.
