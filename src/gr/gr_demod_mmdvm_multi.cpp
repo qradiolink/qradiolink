@@ -17,17 +17,20 @@
 #include "gr_demod_mmdvm_multi.h"
 
 gr_demod_mmdvm_multi_sptr make_gr_demod_mmdvm_multi(BurstTimer *burst_timer, int num_channels,
-                                                    int channel_separation, int sps, int samp_rate, int carrier_freq,
+                                                    int channel_separation, bool use_tdma,
+                                                    int sps, int samp_rate, int carrier_freq,
                                                     int filter_width)
 {
 
-    return gnuradio::get_initial_sptr(new gr_demod_mmdvm_multi(burst_timer, num_channels, channel_separation, sps, samp_rate, carrier_freq,
+    return gnuradio::get_initial_sptr(new gr_demod_mmdvm_multi(burst_timer, num_channels, channel_separation,
+                                                               use_tdma, sps, samp_rate, carrier_freq,
                                                       filter_width));
 }
 
 
 
 gr_demod_mmdvm_multi::gr_demod_mmdvm_multi(BurstTimer *burst_timer, int num_channels, int channel_separation,
+                                           bool use_tdma,
                                            int sps, int samp_rate, int carrier_freq,
                                             int filter_width) :
     gr::hier_block2 ("gr_demod_mmdvm_multi",
@@ -42,6 +45,7 @@ gr_demod_mmdvm_multi::gr_demod_mmdvm_multi(BurstTimer *burst_timer, int num_chan
     _filter_width = filter_width;
     _samp_rate =samp_rate;
     _num_channels = num_channels;
+    _use_tdma = use_tdma;
     float target_samp_rate = 24000;
     float intermediate_samp_rate = 200000;
     _carrier_freq = carrier_freq;
@@ -87,7 +91,7 @@ gr_demod_mmdvm_multi::gr_demod_mmdvm_multi(BurstTimer *burst_timer, int num_chan
         _rotator[i] = gr::blocks::rotator_cc::make(2*M_PI * carrier_offset * ct / intermediate_samp_rate);
     }
 
-    _mmdvm_sink = make_gr_mmdvm_sink(burst_timer, num_channels, true);
+    _mmdvm_sink = make_gr_mmdvm_sink(burst_timer, num_channels, true, _use_tdma);
     _first_resampler = gr::filter::rational_resampler_base_ccf::make(1, 5, taps);
 
 

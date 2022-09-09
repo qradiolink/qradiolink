@@ -17,15 +17,16 @@
 #include "gr_mod_mmdvm_multi.h"
 
 gr_mod_mmdvm_multi_sptr make_gr_mod_mmdvm_multi(BurstTimer *burst_timer, int num_channels, int channel_separation,
+                                                bool use_tdma,
                                                 int sps, int samp_rate, int carrier_freq,
                                                 int filter_width)
 {
-    return gnuradio::get_initial_sptr(new gr_mod_mmdvm_multi(burst_timer, num_channels, channel_separation,
+    return gnuradio::get_initial_sptr(new gr_mod_mmdvm_multi(burst_timer, num_channels, channel_separation, use_tdma,
                                                              sps, samp_rate, carrier_freq,
                                                       filter_width));
 }
 
-gr_mod_mmdvm_multi::gr_mod_mmdvm_multi(BurstTimer *burst_timer, int num_channels, int channel_separation,
+gr_mod_mmdvm_multi::gr_mod_mmdvm_multi(BurstTimer *burst_timer, int num_channels, int channel_separation, bool use_tdma,
                                        int sps, int samp_rate, int carrier_freq,
                                  int filter_width) :
     gr::hier_block2 ("gr_mod_mmdvm_multi",
@@ -37,6 +38,7 @@ gr_mod_mmdvm_multi::gr_mod_mmdvm_multi(BurstTimer *burst_timer, int num_channels
     _samp_rate =samp_rate;
     _sps = sps;
     _num_channels = num_channels;
+    _use_tdma = use_tdma;
     float target_samp_rate = 24000;
     float intermediate_samp_rate = 200000;
     _carrier_freq = carrier_freq;
@@ -90,7 +92,7 @@ gr_mod_mmdvm_multi::gr_mod_mmdvm_multi(BurstTimer *burst_timer, int num_channels
 
     _add = gr::blocks::add_cc::make();
     _divide_level = gr::blocks::multiply_const_cc::make(1.0f / float(num_channels));
-    _mmdvm_source = make_gr_mmdvm_source(burst_timer, num_channels, true);
+    _mmdvm_source = make_gr_mmdvm_source(burst_timer, num_channels, true, _use_tdma);
     _final_resampler = gr::filter::rational_resampler_base_ccf::make(5, 1, interp_taps);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
 

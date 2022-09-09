@@ -22,16 +22,16 @@ const uint8_t  MARK_SLOT2 = 0x04U;
 const uint8_t  MARK_NONE  = 0x00U;
 
 gr_mmdvm_source_sptr
-make_gr_mmdvm_source (BurstTimer *burst_timer, uint8_t cn, bool multi_channnel)
+make_gr_mmdvm_source (BurstTimer *burst_timer, uint8_t cn, bool multi_channnel, bool use_tdma)
 {
-    return gnuradio::get_initial_sptr(new gr_mmdvm_source(burst_timer, cn, multi_channnel));
+    return gnuradio::get_initial_sptr(new gr_mmdvm_source(burst_timer, cn, multi_channnel, use_tdma));
 }
 
 static const pmt::pmt_t TIME_TAG = pmt::string_to_symbol("tx_time");
 static const pmt::pmt_t LENGTH_TAG = pmt::string_to_symbol("burst_length");
 static const pmt::pmt_t ZERO_TAG = pmt::string_to_symbol("zero_samples");
 
-gr_mmdvm_source::gr_mmdvm_source(BurstTimer *burst_timer, uint8_t cn, bool multi_channel) :
+gr_mmdvm_source::gr_mmdvm_source(BurstTimer *burst_timer, uint8_t cn, bool multi_channel, bool use_tdma) :
         gr::sync_block("gr_mmdvm_source",
                        gr::io_signature::make (0, 0, 0),
                        gr::io_signature::make (cn, cn, sizeof (short)))
@@ -41,6 +41,7 @@ gr_mmdvm_source::gr_mmdvm_source(BurstTimer *burst_timer, uint8_t cn, bool multi
     _sn = 2;
     _correction_time = 0;
     _add_time_tag = (cn == 0) || (cn == 1);
+    _use_tdma = use_tdma;
     for(int i = 0;i < _num_channels;i++)
     {
         _zmqcontext[i] = zmq::context_t(1);
@@ -98,7 +99,6 @@ void gr_mmdvm_source::handle_idle_time(short *out, int noutput_items, int which,
     for(int i = 0;i < noutput_items; i++)
     {
         out[i] = 0;
-
         if(i == 710)
         {
             uint64_t time = _burst_timer->allocate_slot(_sn, which);
@@ -183,9 +183,14 @@ int gr_mmdvm_source::work(int noutput_items,
             start = false;
         }
     }
-    if(!start)
+    if(!start && _use_tdma)
         return 0;
-    uint64_t timing_adjust = 0L;
+    else if(!start)
+    {
+        return SAMPLES_PER_SLOT;
+    }
+
+    int64_t timing_adjust = 0L;
     if(lime_fifo_fill_count > 50)
     {
         timing_adjust = 100000 * (lime_fifo_fill_count - 50);
@@ -224,6 +229,8 @@ int gr_mmdvm_source::work(int noutput_items,
     nanosleep(&time_to_sleep, NULL);
     t2 = std::chrono::high_resolution_clock::now();
     _correction_time =  std::chrono::duration_cast<std::chrono::nanoseconds>(t2-t1).count() - (int64_t)SLOT_TIME;
+    if(!_use_tdma)
+        _correction_time = -100000L;
     return SAMPLES_PER_SLOT;
 }
 

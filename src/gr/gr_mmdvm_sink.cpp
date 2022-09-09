@@ -21,20 +21,21 @@ const uint8_t  MARK_SLOT2 = 0x04U;
 const uint8_t  MARK_NONE  = 0x00U;
 
 gr_mmdvm_sink_sptr
-make_gr_mmdvm_sink (BurstTimer *burst_timer, uint8_t cn, bool multi_channel)
+make_gr_mmdvm_sink (BurstTimer *burst_timer, uint8_t cn, bool multi_channel, bool use_tdma)
 {
-    return gnuradio::get_initial_sptr(new gr_mmdvm_sink(burst_timer, cn, multi_channel));
+    return gnuradio::get_initial_sptr(new gr_mmdvm_sink(burst_timer, cn, multi_channel, use_tdma));
 }
 
 static const pmt::pmt_t TIME_TAG = pmt::string_to_symbol("rx_time");
 
-gr_mmdvm_sink::gr_mmdvm_sink(BurstTimer *burst_timer, uint8_t cn, bool multi_channel) :
+gr_mmdvm_sink::gr_mmdvm_sink(BurstTimer *burst_timer, uint8_t cn, bool multi_channel, bool use_tdma) :
         gr::sync_block("gr_mmdvm_sink",
                        gr::io_signature::make (cn, cn, sizeof (short)),
                        gr::io_signature::make (0, 0, 0))
 {
     _burst_timer = burst_timer;
     _num_channels = cn;
+    _use_tdma = use_tdma;
     for(int i = 0;i < _num_channels;i++)
     {
         _zmqcontext[i] = zmq::context_t(1);
@@ -74,7 +75,6 @@ int gr_mmdvm_sink::work(int noutput_items,
         control_buf.reserve(noutput_items);
         data_buf.reserve(noutput_items);
 
-
         get_tags_in_window(tags, chan, 0, noutput_items, TIME_TAG);
         if (!tags.empty()) {
 
@@ -110,6 +110,7 @@ int gr_mmdvm_sink::work(int noutput_items,
             {
                 control = MARK_SLOT2;
             }
+
             control_buf.push_back(control);
             data_buf.push_back((int16_t)in[chan][i]);
         }

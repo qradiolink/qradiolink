@@ -91,15 +91,9 @@ gr_mod_base::gr_mod_base(BurstTimer *burst_timer, QObject *parent, float device_
 
 
     _signal_source = gr::analog::sig_source_f::make(8000, gr::analog::GR_SIN_WAVE, 600, 0.001, 1);
-    if(!_use_tdma)
-    {
-        std::string zmq_endpoint = "ipc:///tmp/mmdvm-tx.ipc";
-        _zmq_source = gr::zeromq::pull_source::make(sizeof(short), 1, (char*)zmq_endpoint.c_str());
-    }
-    else
-    {
-        _mmdvm_source = make_gr_mmdvm_source(burst_timer, 1, false);
-    }
+
+    _mmdvm_source = make_gr_mmdvm_source(burst_timer, 1, false, _use_tdma);
+
 
     int tw = std::min(_samp_rate/4, 1500000);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1, 1,
@@ -155,7 +149,7 @@ gr_mod_base::gr_mod_base(BurstTimer *burst_timer, QObject *parent, float device_
     _freedv_tx800XA_lsb = make_gr_mod_freedv(125, 1000000, 1700, 2700, 200,
                                                  gr::vocoder::freedv_api::MODE_800XA, 1);
     _mmdvm_mod = make_gr_mod_mmdvm();
-    _mmdvm_mod_multi = make_gr_mod_mmdvm_multi(burst_timer, _mmdvm_channels, mmdvm_channel_separation);
+    _mmdvm_mod_multi = make_gr_mod_mmdvm_multi(burst_timer, _mmdvm_channels, mmdvm_channel_separation, _use_tdma);
 
 }
 
@@ -414,14 +408,7 @@ void gr_mod_base::set_mode(int mode)
         _top_block->disconnect(_freedv_tx800XA_lsb,0,_rotator,0);
         break;
     case gr_modem_types::ModemTypeMMDVM:
-        if(_use_tdma)
-        {
-            _top_block->disconnect(_mmdvm_source,0,_mmdvm_mod,0);
-        }
-        else
-        {
-            _top_block->disconnect(_zmq_source,0,_mmdvm_mod,0);
-        }
+        _top_block->disconnect(_mmdvm_source,0,_mmdvm_mod,0);
         _top_block->disconnect(_mmdvm_mod,0,_rotator,0);
         break;
     case gr_modem_types::ModemTypeMMDVMmulti:
@@ -645,14 +632,7 @@ void gr_mod_base::set_mode(int mode)
     case gr_modem_types::ModemTypeMMDVM:
         set_carrier_offset(50000);
         set_center_freq(_device_frequency - _carrier_offset);
-        if(_use_tdma)
-        {
-            _top_block->connect(_mmdvm_source,0,_mmdvm_mod,0);
-        }
-        else
-        {
-            _top_block->connect(_zmq_source,0,_mmdvm_mod,0);
-        }
+        _top_block->connect(_mmdvm_source,0,_mmdvm_mod,0);
         _top_block->connect(_mmdvm_mod,0,_rotator,0);
         break;
     case gr_modem_types::ModemTypeMMDVMmulti:

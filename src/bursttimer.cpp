@@ -72,7 +72,7 @@ void BurstTimer::set_tx(int cn, bool value, bool wait_timeout)
         if(wait_timeout)
         {
             tx2[cn] = std::chrono::high_resolution_clock::now();
-            if(std::chrono::duration_cast<std::chrono::nanoseconds>(tx2[cn]-tx1[cn]).count() > TX_TIMEOUT)
+            if(std::chrono::duration_cast<std::chrono::nanoseconds>(tx2[cn]-tx1[cn]).count() > (int64_t)TX_TIMEOUT)
                 _tx[cn] = value;
         }
         else
@@ -213,7 +213,7 @@ int BurstTimer::check_time(int cn)
         {
             delete _slot_times[cn][0];
             _slot_times[cn].removeFirst();
-            //qDebug() << "============= Slots remaining: " << _slot_times.size();
+            //qDebug() << "============= Slots remaining: " << _slot_times[cn].size();
             return 0;
         }
         s->slot_sample_counter++;
