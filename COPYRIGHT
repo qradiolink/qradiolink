@@ -1,3 +1,17 @@
+M17 protocol implementation from the OpenRTX project
+https://openrtx.org/
+Copyright:
+- Niccolò Izzo IU2KIN <n@izzo.sh>
+- Silvano Seva IU2KWO <silseva@fastwebnet.it>
+- Federico Amedeo Izzo IU2NUO <federico@izzo.pro>
+- Frederik Saraci IU2NRO <frederik.saraci@gmail.com>
+License: GPL3
+
+LimeSDR blocks with modifications from the gr-limesdr project
+https://github.com/myriadrf/gr-limesdr
+Copyright 2018 Lime Microsystems info@limemicro.com
+License GPL3
+
 CE-SSB blocks from https://github.com/drmpeg/gr-cessb
 /* 
  * Copyright 2016 Ron Economos.
