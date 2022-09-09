@@ -31,7 +31,7 @@ $ sudo apt-get install gnuradio-dev protobuf-compiler gr-osmosdr gnuradio libvol
 
 For Ubuntu 20.04.3 build dependencies are:
 <pre>
-$ sudo apt-get install gnuradio-dev protobuf-compiler gr-osmosdr gnuradio libvolk2-dev libvolk2-bin libprotobuf23 libprotobuf-dev libopus0 libopus-dev libspeexdsp1 libspeexdsp-dev libpulse0 libpulse-dev liblog4cpp5v5 libcodec2-0.9 libcodec2-dev libasound2 libasound2-dev libjpeg-turbo8 libjpeg-turbo8-dev libconfig++9v5 libconfig++-dev qt5-qmake qtbase5-dev libqt5core5a libqt5gui5 libqt5network5 libqt5sql5 qtmultimedia5-dev libqt5multimediawidgets5 libqt5multimedia5-plugins libqt5multimedia5 libftdi-dev libftdi1 libsndfile1-dev libsndfile1 qtgstreamer-plugins-qt5 libgstreamer-plugins-bad1.0-0 liblimesuite-dev liblimesuite20.01-1
+$ sudo apt-get install gnuradio-dev protobuf-compiler gr-osmosdr gnuradio libvolk2-dev libvolk2-bin libprotobuf23 libprotobuf-dev libopus0 libopus-dev libspeexdsp1 libspeexdsp-dev libpulse0 libpulse-dev liblog4cpp5v5 libcodec2-0.9 libcodec2-dev libasound2 libasound2-dev libjpeg-turbo8 libjpeg-turbo8-dev libconfig++9v5 libconfig++-dev qt5-qmake qtbase5-dev libqt5core5a libqt5gui5 libqt5network5 libqt5sql5 qtmultimedia5-dev libqt5multimediawidgets5 libqt5multimedia5-plugins libqt5multimedia5 libftdi-dev libftdi1 libsndfile1-dev libsndfile1 qtgstreamer-plugins-qt5 libgstreamer-plugins-bad1.0-0 liblimesuite-dev liblimesuite20.01-1 libzmq3-dev libzmq5
 </pre>
 
 - Qt >= 5.14 and Qt5 development packages (older versions of Qt5 >= 5.11 might work as well)
@@ -47,7 +47,7 @@ $ sudo apt-get install gnuradio-dev protobuf-compiler gr-osmosdr gnuradio libvol
 In [#67](https://github.com/qradiolink/qradiolink/issues/67) it was reported that it may be necessary to [set some cmake options](https://github.com/qradiolink/qradiolink/issues/67#issuecomment-706307297) In order for [codec2](https://github.com/drowe67/codec2) and it's freedv support to be detected properly.
 - Boost and boost-devel
 - libgnuradio-osmosdr (gr-osmosdr) built with UHD, RTL-SDR, SoapySDR, HackRF, RedPitaya or BladeRF support
-- libprotobuf, libopus, libspeexdsp, libpulse-simple, libpulse, libasound, libcodec2, libsqlite3, libjpeg, libconfig++, libvolk, libftdi, libsndfile1, qtmultimedia5-dev, libqt5multimediawidgets5, libqt5multimedia5, libqt5multimedia5 (gstreamer1.0-plugins-bad for Qt video)
+- libprotobuf, libopus, libspeexdsp, libpulse-simple, libpulse, libasound, libcodec2, libsqlite3, libjpeg, libconfig++, libvolk, libftdi, libsndfile1, qtmultimedia5-dev, libqt5multimediawidgets5, libqt5multimedia5, libqt5multimedia5 (gstreamer1.0-plugins-bad for Qt video), libzmq5
 - protoc compiler (libprotoc 2.6.1 or greater, depending on which version of libprotobuf is used)
 - SoapySDR and SoapyPlutoSDR, SoapyLMS7 are recommended as Soapy has support for many devices
 - LimeSuite: liblimesuite-dev liblimesuite20.10-1 used for LimeRFE control
@@ -118,6 +118,7 @@ Operation
 ----
 
 - See docs/OPERATION.md
+- For MMDVM base station operation mode, see docs/README_MMDVM_operation.md
 
 
 Known issues
@@ -125,6 +126,7 @@ Known issues
 
 - When tuning rapidly for a prolonged time (for example by dragging the filter box across the screen), the audio may experience slowdowns and other glitches. As a workaround, click at the desired location on the waterfall instead of dragging.
 - Due to an issue in libvolk / GNU radio 3.8, digital modes are broken unless the workaround documented in docs/OPERATION.md is applied.
+- High BER in MMDVM mode while using Yaesu System Fusion mode.
 
 
 Copyright and License

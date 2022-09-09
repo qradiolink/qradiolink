@@ -2,11 +2,11 @@
 # MMDVM operation mode
 
 QRadioLink can act as a SDR base station transceiver for DMR, System Fusion, D-Star or M17
-by connecting to mmdvm-sdr, a fork of MMDVM which runs on Linux operating systems.
+by connecting to MMDVM-SDR, a fork of MMDVM which runs on Linux operating systems.
 QRadioLink can work either as a normal single channel transceiver or as a
 multi-channel / multi-carrier transceiver. So far only DMR and System Fusion have been tested
-and confirmed to work, but D-Star and M17 should work as well (using the latest changes from MMDVM master). System Fusion may have slightly higer BER and may require careful tuning.
-Multi-carrier and single carrier DMR is only supported with LimeSDR devices so far due to the need for timestamps. The other modes can theoretically work with any duplex SDR.
+and confirmed to work, but D-Star, M17 and other digital should work as well (using the latest changes from MMDVM master). System Fusion may have slightly higer BER and may require more careful tuning.
+Multi-carrier and single carrier MMDVM modes are only supported with LimeSDR devices so far due to the need for device timestamps used in TDMA mode. 
 If you are interested in support for other devices like Ettus USRP or BladeRF please create a
 pull request.
 
@@ -16,7 +16,7 @@ pull request.
 ### 1. QRadioLink.
 ----
 
-Install normally (use the `next` git branch)
+Install normally (see README.md)
 
 ----
 
@@ -58,7 +58,7 @@ LimeUtil --find
 </pre>
 Click save to write the settings in the config file.
 
-* In the Setup -> Radio settings page, choose the number of MMDVM channels to be transmitted, if operating in MMDVM multi-channel mode. This number needs to be between 2 and 7 at the moment (default is 3). The number of channels which can be transmitted simultaneously is heavily dependent on the CPU power. On small ARM platforms, due to the high sample rates involved, it may not be possible to operate more than 1 or 2 channels.
+* In the Setup -> Radio settings page, choose the number of MMDVM channels to be transmitted, if operating in MMDVM multi-channel mode. This number needs to be between 2 and 7 at the moment (default is 3). The number of channels which can be transmitted simultaneously is heavily dependent on the CPU power. On small ARM platforms, due to the high sample rates involved internally, it may not be possible to operate more than 1 or 2 channels.
 * Select channel separation (options are currently 12.5 kHz and 25 kHz).
 * Configure the RX frequency which will be the uplink from the radio.
 Set the TX offset (Split) such that the TX frequency of the SDR will be the RX frequency
@@ -90,7 +90,7 @@ Example:
 * Set TX and RX gain as desired. It is recommended to start with a lower RX gain if not using a duplexer filter.
 * Set the sample rate to 1 Msps (the default). A higher sample rate will waste the CPU for no good reason and can be detrimental.
 * Enable the Duplex button.
-* IMPORTANT NOTE: the demodulator offset (which is visually represented by the filter bars on the FFT display) has to be set such that all received channels are located inside the sampling window. The best practice is to either set it to a negative value about 250 kHz below the minimum sampled frequency, or about 250 kHz above the SDR center frequency. This is especially important in the **MMDVM multi** mode.
+* IMPORTANT NOTE: the demodulator offset (which is visually represented by the filter bars on the FFT display) has to be set such that all received channels are located inside the sampling window. The best practice is to either set it to a negative value about 250 kHz above the minimum sampled frequency, or about 250 kHz above the SDR center frequency. This is especially important in the **MMDVM multi** mode.
 * Choose as operating mode either **MMDVM** or **MMDVM multi** for both TX and RX
 * Close the application, all the settings will be saved in the config file
 * Alternatively all the settings can be instead directly written in the config file which is located in:
@@ -459,8 +459,8 @@ start multiple instances of MMDVMHost from different terminals using the corresp
 ./MMDVMHost MMDVM3.ini
 </pre>
 
-* You can configure different networks or combination of talkgroups for each channel.
+* You can configure different networks, modes or combination of talkgroups for each channel.
 * The most important options in the MMDVM.ini files are located in the [Modem] section.
-You must enable TXInvert and RXInvert, and also adjust RXLevel to a value where the BER is minimal, 
-generally between 1 and 70. TXLevel can be set to 100 in most cases everywhere.
+You **must** enable TXInvert and RXInvert, and also adjust RXLevel to a value where the BER is minimal, 
+generally between 1 and 70. TXLevel can be set to 100 in most cases everywhere. System Fusion optimum RXLevel is lower than DMR level. A value of 1 can work best in most cases. 
 ----
