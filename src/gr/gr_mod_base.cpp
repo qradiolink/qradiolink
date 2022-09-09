@@ -150,7 +150,7 @@ gr_mod_base::gr_mod_base(BurstTimer *burst_timer, QObject *parent, float device_
                                                  gr::vocoder::freedv_api::MODE_800XA, 1);
     _mmdvm_mod = make_gr_mod_mmdvm();
     _mmdvm_mod_multi = make_gr_mod_mmdvm_multi(burst_timer, _mmdvm_channels, mmdvm_channel_separation, _use_tdma);
-
+    _m17_mod = make_gr_mod_m17();
 }
 
 
@@ -416,6 +416,11 @@ void gr_mod_base::set_mode(int mode)
         set_center_freq(_device_frequency - _carrier_offset);
         _top_block->disconnect(_mmdvm_mod_multi,0,_rotator,0);
         break;
+    case gr_modem_types::ModemTypeM17:
+        set_center_freq(_device_frequency - _carrier_offset);
+        _top_block->disconnect(_audio_source,0,_m17_mod,0);
+        _top_block->disconnect(_m17_mod,0,_rotator,0);
+        break;
     default:
         break;
     }
@@ -640,6 +645,12 @@ void gr_mod_base::set_mode(int mode)
         set_center_freq(_device_frequency - _carrier_offset);
         _top_block->connect(_mmdvm_mod_multi,0,_rotator,0);
         break;
+    case gr_modem_types::ModemTypeM17:
+        set_carrier_offset(50000);
+        set_center_freq(_device_frequency - _carrier_offset);
+        _top_block->connect(_audio_source,0,_m17_mod,0);
+        _top_block->connect(_m17_mod,0,_rotator,0);
+        break;
     default:
         break;
     }
@@ -764,6 +775,9 @@ void gr_mod_base::set_filter_width(int filter_width, int mode)
     case gr_modem_types::ModemTypeCW600USB:
         _usb_cw->set_filter_width(filter_width);
         break;
+    case gr_modem_types::ModemTypeM17:
+        _m17_mod->set_filter_width(filter_width);
+        break;
     default:
         break;
     }
@@ -805,6 +819,7 @@ void gr_mod_base::set_bb_gain(float value)
     _freedv_tx800XA_lsb->set_bb_gain(value);
     _mmdvm_mod->set_bb_gain(value);
     _mmdvm_mod_multi->set_bb_gain(value);
+    _m17_mod->set_bb_gain(value);
 }
 
 void gr_mod_base::set_cw_k(bool value)

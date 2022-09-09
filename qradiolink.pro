@@ -41,13 +41,14 @@ CONFIG(qtaudio) {
     LIBS += -lpulse-simple -lpulse
 }
 
-
 SOURCES += src/main.cpp\
     src/bursttimer.cpp \
     src/gpredictcontrol.cpp \
+    src/gr/gr_demod_m17.cpp \
     src/gr/gr_demod_mmdvm_multi.cpp \
     src/gr/gr_mmdvm_sink.cpp \
     src/gr/gr_mmdvm_source.cpp \
+    src/gr/gr_mod_m17.cpp \
     src/gr/gr_mod_mmdvm_multi.cpp \
     src/gr/gr_zero_idle_bursts.cpp \
     src/limerfecontroller.cpp \
@@ -129,7 +130,9 @@ SOURCES += src/main.cpp\
     src/gr/cessb/stretcher_cc_impl.cc \
     src/gr/limesdr/common/device_handler.cc \
     src/gr/limesdr/source_impl.cc \
-    src/gr/limesdr/sink_impl.cc \
+    src/gr/limesdr/sink_impl.cc
+
+SOURCES += $$files(src/M17/M17/*.cpp)
 
 
 
@@ -138,9 +141,11 @@ HEADERS  += src/mainwindow.h\
         src/audio/audioprocessor.h \
     src/bursttimer.h \
     src/gpredictcontrol.h \
+    src/gr/gr_demod_m17.h \
     src/gr/gr_demod_mmdvm_multi.h \
     src/gr/gr_mmdvm_sink.h \
     src/gr/gr_mmdvm_source.h \
+    src/gr/gr_mod_m17.h \
     src/gr/gr_mod_mmdvm_multi.h \
     src/gr/gr_zero_idle_bursts.h \
     src/limerfecontroller.h \
@@ -232,7 +237,10 @@ HEADERS  += src/mainwindow.h\
     src/gr/limesdr/api.h \
     src/style.h
 
+HEADERS += $$files(src/M17/M17/*.hpp)
+HEADERS += $$files(src/M17/M17/*.h)
 
+INCLUDEPATH += $$_PRO_FILE_PWD_/src/M17/
 
 !isEmpty(LIBDIR) {
     LIBS += -L$$LIBDIR

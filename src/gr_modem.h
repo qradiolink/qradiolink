@@ -37,6 +37,14 @@
 #include "src/gr/gr_demod_base.h"
 #include "src/bursttimer.h"
 
+/// M17 code
+#include <M17/M17FrameDecoder.hpp>
+#include <M17/M17FrameEncoder.hpp>
+#include <M17/M17Demodulator.hpp>
+#include <M17/M17Modulator.hpp>
+#include <M17/M17Transmitter.hpp>
+
+
 #include <math.h>
 
 class gr_modem : public QObject
@@ -49,6 +57,7 @@ public:
 
     bool demodulateAnalog();
     void sendCallsign(QString callsign);
+    bool demodulateM17();
 
 signals:
     void pcmAudio(std::vector<float>* pcm);
@@ -68,6 +77,7 @@ signals:
 public slots:
     void transmitPCMAudio(std::vector<float> *audio_data);
     void transmitDigitalAudio(unsigned char *data, int size);
+    void transmitM17Audio(unsigned char *data, int size);
     void transmitVideoData(unsigned char *data, int size);
     void transmitNetData(unsigned char *data, int size);
     bool demodulate();
@@ -149,6 +159,14 @@ private:
     unsigned long _shift_reg;
     int _modem_sync;
     BurstTimer *_burst_timer;
+
+    /// M17 code
+    M17::M17Modulator    modulator;    ///< M17 modulator.
+    M17::M17Demodulator  demodulator;  ///< M17 demodulator.
+    M17::M17FrameDecoder decoder;      ///< M17 frame decoder
+    M17::M17FrameEncoder encoder;      ///< M17 frame encoder
+    M17::M17Transmitter  m17Tx;        ///< M17 transmission manager.
+    bool _m17_decoder_locked;
 
 };
 

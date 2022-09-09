@@ -51,6 +51,7 @@
 #include "gr_mod_mmdvm.h"
 #include "gr_mod_mmdvm_multi.h"
 #include "gr_mmdvm_source.h"
+#include "gr_mod_m17.h"
 
 
 class gr_mod_base : public QObject
@@ -129,6 +130,7 @@ private:
     gr_mod_freedv_sptr _freedv_tx800XA_lsb;
     gr_mod_mmdvm_sptr _mmdvm_mod;
     gr_mod_mmdvm_multi_sptr _mmdvm_mod_multi;
+    gr_mod_m17_sptr _m17_mod;
 
 
     int _samples_per_symbol;

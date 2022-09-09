@@ -44,7 +44,7 @@ namespace gr_modem_types {
         ModemTypeFREEDV2400ALSB,
         ModemTypeMMDVM,
         ModemTypeMMDVMmulti,
-
+        ModemTypeM17,
     };
 }
 

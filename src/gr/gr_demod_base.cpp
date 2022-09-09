@@ -188,7 +188,7 @@ gr_demod_base::gr_demod_base(BurstTimer *burst_timer, QObject *parent, float dev
                                                gr::vocoder::freedv_api::MODE_800XA, 1);
     _mmdvm_demod = make_gr_demod_mmdvm();
     _mmdvm_demod_multi = make_gr_demod_mmdvm_multi(burst_timer, _mmdvm_channels, mmdvm_channel_separation, _use_tdma);
-
+    _m17_demod = make_gr_demod_m17();
 }
 
 gr_demod_base::~gr_demod_base()
@@ -467,6 +467,11 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
             _top_block->disconnect(_demod_valve,0,_mmdvm_demod_multi,0);
             _top_block->disconnect(_demod_valve,0,_rssi_valve,0);
             break;
+        case gr_modem_types::ModemTypeM17:
+            _top_block->disconnect(_demod_valve,0,_m17_demod,0);
+            _top_block->disconnect(_m17_demod,0,_rssi_valve,0);
+            _top_block->disconnect(_m17_demod,1,_audio_sink,0);
+            break;
         default:
             break;
         }
@@ -706,6 +711,11 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
         case gr_modem_types::ModemTypeMMDVMmulti:
             _top_block->connect(_demod_valve,0,_mmdvm_demod_multi,0);
             _top_block->connect(_demod_valve,0,_rssi_valve,0);
+            break;
+        case gr_modem_types::ModemTypeM17:
+            _top_block->connect(_demod_valve,0,_m17_demod,0);
+            _top_block->connect(_m17_demod,0,_rssi_valve,0);
+            _top_block->connect(_m17_demod,1,_audio_sink,0);
             break;
 
         default:
@@ -954,6 +964,9 @@ void gr_demod_base::set_filter_width(int filter_width, int mode)
         break;
     case gr_modem_types::ModemTypeLSB2500:
         _lsb->set_filter_width(filter_width);
+        break;
+    case gr_modem_types::ModemTypeM17:
+        _m17_demod->set_filter_width(filter_width);
         break;
     default:
         break;

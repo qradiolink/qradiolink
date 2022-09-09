@@ -38,9 +38,12 @@ public:
     unsigned char* encode_codec2_1400(short *audiobuffer, int audiobuffersize, int &length);
     unsigned char* encode_codec2_700(short *audiobuffer, int audiobuffersize, int &length);
     unsigned char* encode_codec2_2400(short *audiobuffer, int audiobuffersize, int &length);
+    unsigned char* encode_codec2_3200(short *audiobuffer, int audiobuffersize, int &length);
     short* decode_codec2_1400(unsigned char *audiobuffer, int audiobuffersize, int &samples);
     short* decode_codec2_700(unsigned char *audiobuffer, int audiobuffersize, int &samples);
     short* decode_codec2_2400(unsigned char *audiobuffer, int audiobuffersize, int &samples);
+    short* decode_codec2_3200(unsigned char *audiobuffer, int audiobuffersize, int &samples);
+
 
 
 private:
@@ -52,6 +55,7 @@ private:
     struct CODEC2 *_codec2_1400;
     struct CODEC2 *_codec2_700;
     struct CODEC2 *_codec2_2400;
+    struct CODEC2 *_codec2_3200;
     AudioProcessor *_processor;
 
 };

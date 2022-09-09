@@ -56,6 +56,7 @@
 #include "gr_demod_mmdvm.h"
 #include "gr_mmdvm_sink.h"
 #include "gr_demod_mmdvm_multi.h"
+#include "gr_demod_m17.h"
 #include "src/modem_types.h"
 #include "src/bursttimer.h"
 #include "rssi_block.h"
@@ -163,6 +164,7 @@ private:
     gr_demod_mmdvm_sptr _mmdvm_demod;
     gr_demod_mmdvm_multi_sptr _mmdvm_demod_multi;
     gr_mmdvm_sink_sptr _mmdvm_sink;
+    gr_demod_m17_sptr _m17_demod;
 
     osmosdr::source::sptr _osmosdr_source;
     gr::limesdr::source::sptr _limesdr_source;

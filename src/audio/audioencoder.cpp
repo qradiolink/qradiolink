@@ -45,6 +45,7 @@ AudioEncoder::AudioEncoder(const Settings *settings)
     _codec2_1400 = codec2_create(CODEC2_MODE_1400);
     _codec2_700 = codec2_create(CODEC2_MODE_700C);
     _codec2_2400 = codec2_create(CODEC2_MODE_2400);
+    _codec2_3200 = codec2_create(CODEC2_MODE_3200);
 
 
 
@@ -92,6 +93,7 @@ AudioEncoder::~AudioEncoder()
     codec2_destroy(_codec2_1400);
     codec2_destroy(_codec2_700);
     codec2_destroy(_codec2_2400);
+    codec2_destroy(_codec2_3200);
     delete _processor;
 }
 
@@ -189,6 +191,18 @@ unsigned char* AudioEncoder::encode_codec2_2400(short *audiobuffer, int audiobuf
     return encoded;
 }
 
+unsigned char* AudioEncoder::encode_codec2_3200(short *audiobuffer, int audiobuffersize, int &length)
+{
+    // 64 bits from 120 16 bit samples
+    _processor->filter_audio(audiobuffer, audiobuffersize, true, false);
+    int bits = codec2_bits_per_frame(_codec2_3200);
+    int bytes = bits / 8;
+    unsigned char *encoded = new unsigned char[bytes];
+    codec2_encode(_codec2_3200, encoded, audiobuffer);
+    length = bytes;
+    return encoded;
+}
+
 short* AudioEncoder::decode_codec2_1400(unsigned char *audiobuffer, int audiobuffersize, int &samples)
 {
     Q_UNUSED(audiobuffersize);
@@ -218,6 +232,17 @@ short* AudioEncoder::decode_codec2_2400(unsigned char *audiobuffer, int audiobuf
     short* decoded = new short[samples];
     memset(decoded,0,(samples)*sizeof(short));
     codec2_decode(_codec2_2400, decoded, audiobuffer);
+    return decoded;
+}
+
+short* AudioEncoder::decode_codec2_3200(unsigned char *audiobuffer, int audiobuffersize, int &samples)
+{
+    Q_UNUSED(audiobuffersize);
+    samples = codec2_samples_per_frame(_codec2_3200);
+    short* decoded = new short[samples];
+    memset(decoded,0,(samples)*sizeof(short));
+    codec2_decode(_codec2_3200, decoded, audiobuffer);
+    _processor->filter_audio(decoded, samples*sizeof(short),false,true);
     return decoded;
 }
 

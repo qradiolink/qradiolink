@@ -121,6 +121,8 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     QObject::connect(_modem,SIGNAL(endAudioTransmission()),this,SLOT(endAudioTransmission()));
     QObject::connect(this,SIGNAL(audioData(unsigned char*,int)),_modem,
                      SLOT(transmitDigitalAudio(unsigned char*,int)));
+    QObject::connect(this,SIGNAL(m17AudioData(unsigned char*,int)),_modem,
+                     SLOT(transmitM17Audio(unsigned char*,int)));
     QObject::connect(this,SIGNAL(pcmData(std::vector<float>*)),_modem,
                      SLOT(transmitPCMAudio(std::vector<float>*)));
     QObject::connect(this,SIGNAL(videoData(unsigned char*,int)),_modem,
@@ -346,6 +348,11 @@ void RadioController::updateInputAudioStream()
         audio_mode = AudioProcessor::AUDIO_MODE_CODEC2;
         emit setAudioReadMode(true, (bool)_settings->audio_compressor, audio_mode, 640);
     }
+    else if((_tx_mode == gr_modem_types::ModemTypeM17))
+    {
+        audio_mode = AudioProcessor::AUDIO_MODE_OPUS;
+        emit setAudioReadMode(true, (bool)_settings->audio_compressor, audio_mode, 640);
+    }
     else if((_tx_mode == gr_modem_types::ModemTypeQPSK20K) ||
             (_tx_mode == gr_modem_types::ModemType2FSK10KFM) ||
             (_tx_mode == gr_modem_types::ModemTypeGMSK10K) ||
@@ -527,6 +534,7 @@ void RadioController::txAudio(short *audiobuffer, int audiobuffer_size,
     ///
     int packet_size = 0;
     unsigned char *encoded_audio;
+
     /// digital volume adjust
     for(unsigned int i = 0;i< audiobuffer_size/sizeof(short);i++)
     {
@@ -539,15 +547,39 @@ void RadioController::txAudio(short *audiobuffer, int audiobuffer_size,
             (_tx_mode == gr_modem_types::ModemType4FSK2K) ||
             (_tx_mode == gr_modem_types::ModemType4FSK2KFM) ||
             (_tx_mode == gr_modem_types::ModemTypeQPSK2K))
+    {
         encoded_audio = _codec->encode_codec2_1400(audiobuffer, audiobuffer_size, packet_size);
+    }
     else if((_tx_mode == gr_modem_types::ModemTypeBPSK1K) ||
             (_tx_mode == gr_modem_types::ModemType2FSK1KFM) ||
             (_tx_mode == gr_modem_types::ModemType2FSK1K) ||
             (_tx_mode == gr_modem_types::ModemTypeGMSK1K) ||
             (_tx_mode == gr_modem_types::ModemType4FSK1KFM))
+    {
         encoded_audio = _codec->encode_codec2_700(audiobuffer, audiobuffer_size, packet_size);
+    }
+    else if((_tx_mode == gr_modem_types::ModemTypeM17))
+    {
+        short frame1[160];
+        short frame2[160];
+        memcpy(frame1, audiobuffer, audiobuffer_size/2);
+        memcpy(frame2, audiobuffer + 160, audiobuffer_size/2);
+        unsigned char *encoded_audio_frame1;
+        unsigned char *encoded_audio_frame2;
+
+        encoded_audio_frame1 = _codec->encode_codec2_3200(frame1, audiobuffer_size/2, packet_size);
+        encoded_audio_frame2 = _codec->encode_codec2_3200(frame2, audiobuffer_size/2, packet_size);
+        unsigned char *encoded_audio = new unsigned char[packet_size * 2];
+        memcpy(encoded_audio, encoded_audio_frame1, packet_size);
+        memcpy(encoded_audio + packet_size, encoded_audio_frame2, packet_size);
+        delete[] encoded_audio_frame1;
+        delete[] encoded_audio_frame2;
+        emit m17AudioData(encoded_audio, packet_size * 2);
+    }
     else
+    {
         encoded_audio = _codec->encode_opus(audiobuffer, audiobuffer_size, packet_size);
+    }
 
     delete[] audiobuffer;
 
@@ -555,8 +587,10 @@ void RadioController::txAudio(short *audiobuffer, int audiobuffer_size,
     {
         processVideoFrame(encoded_audio, packet_size);
     }
-    else
+    else if(_tx_mode != gr_modem_types::ModemTypeM17)
+    {
         emit audioData(encoded_audio,packet_size);
+    }
 
 }
 
@@ -1003,7 +1037,8 @@ void RadioController::stopTx()
                     (_tx_mode == gr_modem_types::ModemTypeGMSK2K) ||
                     (_tx_mode == gr_modem_types::ModemType4FSK2K) ||
                     (_tx_mode == gr_modem_types::ModemType4FSK2KFM) ||
-                    (_tx_mode == gr_modem_types::ModemTypeQPSK2K))
+                    (_tx_mode == gr_modem_types::ModemTypeQPSK2K) ||
+                    (_tx_mode == gr_modem_types::ModemTypeM17))
                 tx_tail_msec = 800;
             else
                 tx_tail_msec = 500;
@@ -1122,7 +1157,16 @@ bool RadioController::getDemodulatorData()
     if(_settings->rx_inited)
     {
         if(_rx_radio_type == radio_type::RADIO_TYPE_DIGITAL)
-            data_to_process = _modem->demodulate();
+        {
+            if(_rx_mode == gr_modem_types::ModemTypeM17)
+            {
+                data_to_process = _modem->demodulateM17();
+            }
+            else
+            {
+                data_to_process = _modem->demodulate();
+            }
+        }
         else if(_rx_radio_type == radio_type::RADIO_TYPE_ANALOG)
         {
             data_to_process = _modem->demodulateAnalog();
@@ -1222,9 +1266,28 @@ void RadioController::receiveDigitalAudio(unsigned char *data, int size)
             (_rx_mode == gr_modem_types::ModemType2FSK1K) ||
             (_rx_mode == gr_modem_types::ModemTypeGMSK1K) ||
             (_rx_mode == gr_modem_types::ModemType4FSK1KFM))
+    {
         audio_out = _codec->decode_codec2_700(data, size, samples);
+    }
+    else if((_rx_mode == gr_modem_types::ModemTypeM17))
+    {
+        unsigned char frame1[size/2];
+        unsigned char frame2[size/2];
+        memcpy(frame1, data, size/2);
+        memcpy(frame2, data + size/2, size/2);
+        short *audio_frame1 = _codec->decode_codec2_3200(frame1, size/2, samples);
+        short *audio_frame2 = _codec->decode_codec2_3200(frame2, size/2, samples);
+        audio_out = new short[samples * 2];
+        memcpy(audio_out, audio_frame1, samples * sizeof(short));
+        memcpy(audio_out + samples, audio_frame2, samples * sizeof(short));
+        delete[] audio_frame1;
+        delete[] audio_frame2;
+        samples = samples * 2;
+    }
     else if(_rx_mode == gr_modem_types::ModemTypeQPSKVideo)
+    {
         audio_out = _codec->decode_opus(data, size, samples, 800);
+    }
     else
     {
         audio_out = _codec->decode_opus(data, size, samples);
@@ -2035,6 +2098,12 @@ void RadioController::toggleRxMode(int value)
         _step_hz = 10;
         _scan_step_hz = 6250;
         break;
+    case 37:
+        _rx_radio_type = radio_type::RADIO_TYPE_DIGITAL;
+        _rx_mode = gr_modem_types::ModemTypeM17;
+        _step_hz = 10;
+        _scan_step_hz = 6250;
+        break;
     default:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _rx_mode = gr_modem_types::ModemTypeUSB2500;
@@ -2202,6 +2271,9 @@ void RadioController::toggleTxMode(int value)
         break;
     case 36:
         _tx_mode = gr_modem_types::ModemTypeMMDVMmulti;
+        break;
+    case 37:
+        _tx_mode = gr_modem_types::ModemTypeM17;
         break;
     default:
         _tx_mode = gr_modem_types::ModemTypeBPSK2K;

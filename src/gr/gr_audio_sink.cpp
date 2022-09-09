@@ -50,14 +50,15 @@ std::vector<float> *gr_audio_sink::get_data()
 {
     gr::thread::scoped_lock guard(_mutex);
     /// Have at least 40 ms of audio buffered
-    if(_data->size() < 320)
+    uint32_t audio_packet_size = 640;
+    if(_data->size() < audio_packet_size)
     {
         return nullptr;
     }
     std::vector<float>* data = new std::vector<float>;
-    data->reserve(_data->size());
-    data->insert(data->end(),_data->begin(),_data->end());
-    _data->clear();
+    data->reserve(audio_packet_size);
+    data->insert(data->end(),_data->begin(),_data->begin() + audio_packet_size);
+    _data->erase(_data->begin(),_data->begin() + audio_packet_size);
 
     return data;
 }
@@ -75,6 +76,7 @@ int gr_audio_sink::work(int noutput_items,
     float *in = (float*)(input_items[0]);
     if(_data->size() > 8000)
     {
+        _data->clear();
         /// not reading data fast enough, anything more than 1 sec
         /// of data in the buffer is a problem downstream so dropping buffer
         return noutput_items;

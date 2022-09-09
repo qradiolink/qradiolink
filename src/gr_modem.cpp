@@ -17,7 +17,12 @@
 #include "gr_modem.h"
 
 gr_modem::gr_modem(const Settings *settings, Logger *logger, QObject *parent) :
-    QObject(parent)
+    QObject(parent),
+    modulator(),
+    demodulator(),
+    decoder(),
+    m17Tx(modulator)
+
 {
     _settings = settings;
     _logger = logger;
@@ -38,6 +43,7 @@ gr_modem::gr_modem(const Settings *settings, Logger *logger, QObject *parent) :
     _gr_mod_base = 0;
     _gr_demod_base = 0;
     _modem_sync = 0;
+    _m17_decoder_locked = false;
 }
 
 gr_modem::~gr_modem()
@@ -180,6 +186,11 @@ void gr_modem::toggleTxMode(int modem_type)
         {
             _tx_frame_length = 47;
         }
+        else if(modem_type == gr_modem_types::ModemTypeM17)
+        {
+            _tx_frame_length = 16;
+            modulator.init();
+        }
     }
 
 }
@@ -289,6 +300,14 @@ void gr_modem::toggleRxMode(int modem_type)
         {
             _bit_buf_len = 48 *8;
             _rx_frame_length = 47;
+        }
+        else if(modem_type == gr_modem_types::ModemTypeM17)
+        {
+            _rx_frame_length = 16;
+            _bit_buf_len = 64 *8;
+            demodulator.init();
+            demodulator.startBasebandSampling();
+            demodulator.invertPhase(false);
         }
         delete[] _bit_buf;
         _bit_buf = new unsigned char[_bit_buf_len];
@@ -570,6 +589,19 @@ void gr_modem::sendCallsign(QString callsign)
 
 void gr_modem::startTransmission(QString callsign)
 {
+    if(!_gr_mod_base)
+    {
+        return;
+    }
+    if(_modem_type_tx == gr_modem_types::ModemTypeM17)
+    {
+        std::vector<float> *audio_data = new std::vector<float>;
+        for(int i = 0; i < 640; i++)
+            audio_data->push_back(0.0f);
+        m17Tx.start(callsign.toStdString(), audio_data);
+        _gr_mod_base->set_audio(audio_data);
+        return;
+    }
     std::vector<unsigned char> *tx_start = new std::vector<unsigned char>;
     // set preamble to 48 bits (ramp-up included)
     for(int i = 0;i < 8;i++)
@@ -584,6 +616,15 @@ void gr_modem::startTransmission(QString callsign)
 
 void gr_modem::endTransmission(QString callsign)
 {
+    if(_modem_type_tx == gr_modem_types::ModemTypeM17)
+    {
+        M17::payload_t dataFrame;
+        std::vector<float> *audio_data = new std::vector<float>;
+        memset(dataFrame.data(), 0, _tx_frame_length);
+        m17Tx.send(dataFrame, audio_data, true);
+        _gr_mod_base->set_audio(audio_data);
+        return;
+    }
     _frame_counter = 0;
     sendCallsign(callsign);
     std::vector<unsigned char> *tx_end = new std::vector<unsigned char>;
@@ -661,6 +702,22 @@ void gr_modem::transmitPCMAudio(std::vector<float> *audio_data)
         delete audio_data;
         return;
     }
+    _gr_mod_base->set_audio(audio_data);
+}
+
+void gr_modem::transmitM17Audio(unsigned char *data, int size)
+{
+    if(!_gr_mod_base)
+    {
+        delete[] data;
+        return;
+    }
+    std::vector<float> *audio_data = new std::vector<float>;
+    M17::payload_t dataFrame;
+    memcpy(dataFrame.data(), data, size);
+    delete[] data;
+    bool lastFrame = false;
+    m17Tx.send(dataFrame, audio_data, lastFrame);
     _gr_mod_base->set_audio(audio_data);
 }
 
@@ -815,6 +872,85 @@ bool gr_modem::demodulateAnalog()
     {
         emit pcmAudio(audio_data);
         return true;
+    }
+    else
+    {
+        delete audio_data;
+        return false;
+    }
+
+}
+
+bool gr_modem::demodulateM17()
+{
+    if(!_gr_demod_base)
+    {
+        return false;
+    }
+    std::vector<float> *audio_data = nullptr;
+    audio_data = _gr_demod_base->getAudio();
+    if(audio_data == nullptr)
+        return false;
+    if(audio_data->size() > 0)
+    {
+        int block_size = audio_data->size();
+        int16_t short_samples[block_size];
+        for(int i = 0;i < block_size; i++)
+        {
+            short_samples[i] = int16_t(audio_data->at(i) * 32767.0f);
+        }
+        audio_data->clear();
+        delete audio_data;
+        bool newData = demodulator.update(short_samples, block_size);
+        bool lock    = demodulator.isLocked();
+        // Reset frame decoder when transitioning from unlocked to locked state
+        if((lock == true) && (_m17_decoder_locked == false))
+        {
+            decoder.reset();
+        }
+
+        _m17_decoder_locked = lock;
+
+        if(_m17_decoder_locked && newData)
+        {
+            auto& frame = demodulator.getFrame();
+            auto type = decoder.decodeFrame(frame);
+
+            if(type == M17::M17FrameType::LINK_SETUP)
+            {
+                M17::M17LinkSetupFrame lsf = decoder.getLsf();
+                bool valid_frame = lsf.valid();
+                if(valid_frame)
+                {
+                    std::string m17_source = lsf.getSource();
+                    std::string m17_destination = lsf.getDestination();
+                    QString callsign = QString::fromStdString(m17_source);
+                    callsign = callsign.remove(QRegExp("[^a-zA-Z/\\d\\s]"));
+                    callsign = callsign.left(7);
+                    emit callsignReceived(callsign);
+                }
+            }
+
+            else if((type == M17::M17FrameType::STREAM))
+            {
+                M17::M17StreamFrame sf = decoder.getStreamFrame();
+                _last_frame_type = FrameTypeVoice;
+                unsigned char *codec2_data = new unsigned char[_rx_frame_length];
+                memcpy(codec2_data, sf.payload().data(), _rx_frame_length);
+
+                emit digitalAudio(codec2_data,_rx_frame_length);
+                /** TODO
+                if(sf.isLastFrame())
+                {
+                    emit endAudioTransmission();
+                    emit receiveEnd();
+                    qDebug() << "Last frame rcvd";
+                    _m17_decoder_locked = false;
+                }
+                */
+            }
+        }
+        return _m17_decoder_locked && newData;
     }
     else
     {
