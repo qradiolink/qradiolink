@@ -1,3 +1,15 @@
+qradiolink (0.8.7-1) experimental; urgency=medium
+
+  [ Adrian Musceac ]
+  * Added MMDVM mode with TDMA support (DMR, YSF, D-Star, M17) compatible with LimeSDR
+  * Added MMDVM multi-carrier mode usable with LimeSDR
+  * Fixed issue with frequency tuning in remote control interface via telnet
+  * Improved CLI only operation
+
+
+ -- Adrian Musceac <adrian@qradiolink.org>  Fri, 09 Sept 2022 20:55:25 +0300
+
+
 qradiolink (0.8.6-2) experimental; urgency=medium
 
   [ Adrian Musceac ]
