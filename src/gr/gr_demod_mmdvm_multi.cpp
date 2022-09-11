@@ -47,7 +47,7 @@ gr_demod_mmdvm_multi::gr_demod_mmdvm_multi(BurstTimer *burst_timer, int num_chan
     _num_channels = num_channels;
     _use_tdma = use_tdma;
     float target_samp_rate = 24000;
-    float intermediate_samp_rate = 200000;
+    float intermediate_samp_rate = 240000;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
     float fm_demod_width = (float)_filter_width;
@@ -58,13 +58,13 @@ gr_demod_mmdvm_multi::gr_demod_mmdvm_multi(BurstTimer *burst_timer, int num_chan
 
     std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, resamp_filter_width,
                                 resamp_filter_slope, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
-    std::vector<float> intermediate_interp_taps = gr::filter::firdes::low_pass(3, 3 * intermediate_samp_rate,
+    std::vector<float> intermediate_interp_taps = gr::filter::firdes::low_pass(1, intermediate_samp_rate,
                         _filter_width, _filter_width, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
 
 
     for(int i = 0;i < _num_channels;i++)
     {
-        _resampler[i] = gr::filter::rational_resampler_base_ccf::make(3, 25, intermediate_interp_taps);
+        _resampler[i] = gr::filter::rational_resampler_base_ccf::make(1, 10, intermediate_interp_taps);
     }
     for(int i = 0;i < _num_channels;i++)
     {

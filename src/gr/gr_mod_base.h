@@ -75,7 +75,7 @@ public slots:
     int set_audio(std::vector<float> *data);
     void set_bb_gain(float value);
     void set_cw_k(bool value);
-    void set_carrier_offset(int64_t carrier_offset);
+    void set_carrier_offset(int64_t carrier_offset, int64_t sample_rate=1000000);
     int64_t reset_carrier_offset();
     void flush_sources();
     const QMap<std::string,QVector<int>> get_gain_names() const;

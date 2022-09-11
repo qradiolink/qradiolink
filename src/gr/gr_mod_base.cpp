@@ -408,6 +408,7 @@ void gr_mod_base::set_mode(int mode)
         _top_block->disconnect(_freedv_tx800XA_lsb,0,_rotator,0);
         break;
     case gr_modem_types::ModemTypeMMDVM:
+        set_carrier_offset(50000);
         _top_block->disconnect(_mmdvm_source,0,_mmdvm_mod,0);
         _top_block->disconnect(_mmdvm_mod,0,_rotator,0);
         break;
@@ -458,22 +459,19 @@ void gr_mod_base::set_mode(int mode)
         _top_block->connect(_2fsk_10k,0,_rotator,0);
         break;
     case gr_modem_types::ModemTypeGMSK2K:
-        _carrier_offset = 50000;
-        _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
+        set_carrier_offset(50000);
         set_center_freq(_device_frequency - _carrier_offset);
         _top_block->connect(_byte_source,0,_gmsk_2k,0);
         _top_block->connect(_gmsk_2k,0,_rotator,0);
         break;
     case gr_modem_types::ModemTypeGMSK1K:
-        _carrier_offset = 50000;
-        _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
+        set_carrier_offset(50000);
         set_center_freq(_device_frequency - _carrier_offset);
         _top_block->connect(_byte_source,0,_gmsk_1k,0);
         _top_block->connect(_gmsk_1k,0,_rotator,0);
         break;
     case gr_modem_types::ModemTypeGMSK10K:
-        _carrier_offset = 50000;
-        _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
+        set_carrier_offset(50000);
         set_center_freq(_device_frequency - _carrier_offset);
         _top_block->connect(_byte_source,0,_gmsk_10k,0);
         _top_block->connect(_gmsk_10k,0,_rotator,0);
@@ -635,13 +633,13 @@ void gr_mod_base::set_mode(int mode)
         _top_block->connect(_freedv_tx800XA_lsb,0,_rotator,0);
         break;
     case gr_modem_types::ModemTypeMMDVM:
-        set_carrier_offset(50000);
+        set_carrier_offset(50000, 1200000);
         set_center_freq(_device_frequency - _carrier_offset);
         _top_block->connect(_mmdvm_source,0,_mmdvm_mod,0);
         _top_block->connect(_mmdvm_mod,0,_rotator,0);
         break;
     case gr_modem_types::ModemTypeMMDVMmulti:
-        set_carrier_offset(250000);
+        set_carrier_offset(250000, 1200000);
         set_center_freq(_device_frequency - _carrier_offset);
         _top_block->connect(_mmdvm_mod_multi,0,_rotator,0);
         break;
@@ -689,7 +687,7 @@ int gr_mod_base::set_audio(std::vector<float> *data)
 
 }
 
-void gr_mod_base::set_carrier_offset(int64_t carrier_offset)
+void gr_mod_base::set_carrier_offset(int64_t carrier_offset, int64_t sample_rate)
 {
     if(((carrier_offset == 50000) || (carrier_offset == 250000))
             && (_carrier_offset != 50000) && (_carrier_offset != 250000))
@@ -700,7 +698,7 @@ void gr_mod_base::set_carrier_offset(int64_t carrier_offset)
     else
     {
         _carrier_offset = carrier_offset;
-        _rotator->set_phase_inc(2*M_PI*_carrier_offset/1000000);
+        _rotator->set_phase_inc(2*M_PI*float(_carrier_offset)/float(sample_rate));
     }
 
 }

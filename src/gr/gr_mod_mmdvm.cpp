@@ -41,9 +41,9 @@ gr_mod_mmdvm::gr_mod_mmdvm(int sps, int samp_rate, int carrier_freq,
     _audio_amplify = gr::blocks::multiply_const_ff::make(0.9,1);
 
 
-    std::vector<float> interp_taps = gr::filter::firdes::low_pass_2(_sps, _samp_rate*3,
+    std::vector<float> interp_taps = gr::filter::firdes::low_pass_2(_sps, _samp_rate,
                         _filter_width, _filter_width, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
-    _resampler = gr::filter::rational_resampler_base_ccf::make(_sps,3, interp_taps);
+    _resampler = gr::filter::rational_resampler_base_ccf::make(_sps,1, interp_taps);
     _amplify = gr::blocks::multiply_const_cc::make(0.8,1);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
     _filter = gr::filter::fft_filter_ccf::make(1,gr::filter::firdes::low_pass_2(

@@ -40,14 +40,14 @@ gr_mod_mmdvm_multi::gr_mod_mmdvm_multi(BurstTimer *burst_timer, int num_channels
     _num_channels = num_channels;
     _use_tdma = use_tdma;
     float target_samp_rate = 24000;
-    float intermediate_samp_rate = 200000;
+    float intermediate_samp_rate = 240000;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
     int resamp_filter_width = (num_channels - 1) * channel_separation + 10000;
     int resamp_filter_slope = 10000;
     float carrier_offset = float(channel_separation);
 
-    std::vector<float> intermediate_interp_taps = gr::filter::firdes::low_pass_2(3, 3*intermediate_samp_rate,
+    std::vector<float> intermediate_interp_taps = gr::filter::firdes::low_pass_2(10, intermediate_samp_rate,
                         _filter_width, _filter_width, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     std::vector<float> interp_taps = gr::filter::firdes::low_pass_2(5, _samp_rate,
                         resamp_filter_width, resamp_filter_slope, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
@@ -67,7 +67,7 @@ gr_mod_mmdvm_multi::gr_mod_mmdvm_multi(BurstTimer *burst_timer, int num_channels
     }
     for(int i = 0;i < _num_channels;i++)
     {
-        _resampler[i] = gr::filter::rational_resampler_base_ccf::make(25, 3, intermediate_interp_taps);
+        _resampler[i] = gr::filter::rational_resampler_base_ccf::make(10, 1, intermediate_interp_taps);
     }
     for(int i = 0;i < _num_channels;i++)
     {

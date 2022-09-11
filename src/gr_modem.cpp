@@ -596,7 +596,7 @@ void gr_modem::startTransmission(QString callsign)
     if(_modem_type_tx == gr_modem_types::ModemTypeM17)
     {
         std::vector<float> *audio_data = new std::vector<float>;
-        for(int i = 0; i < 640; i++)
+        for(int i = 0; i < 160; i++)
             audio_data->push_back(0.0f);
         m17Tx.start(callsign.toStdString(), audio_data);
         _gr_mod_base->set_audio(audio_data);
