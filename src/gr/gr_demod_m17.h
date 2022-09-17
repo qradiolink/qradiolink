@@ -25,6 +25,10 @@
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/filter/fft_filter_fff.h>
 #include <gnuradio/blocks/multiply_const.h>
+#include <gnuradio/digital/symbol_sync_ff.h>
+#include <gnuradio/analog/phase_modulator_fc.h>
+#include <gnuradio/blocks/complex_to_float.h>
+#include <gnuradio/blocks/interleave.h>
 
 
 class gr_demod_m17;
@@ -51,6 +55,11 @@ private:
     gr::filter::rational_resampler_base_fff::sptr _audio_resampler;
     gr::filter::fft_filter_ccf::sptr _filter;
     gr::filter::fft_filter_fff::sptr _audio_filter;
+    gr::digital::symbol_sync_ff::sptr _symbol_sync;
+    gr::filter::fft_filter_fff::sptr _symbol_filter;
+    gr::analog::phase_modulator_fc::sptr _phase_mod;
+    gr::blocks::complex_to_float::sptr _complex_to_float;
+    gr::blocks::interleave::sptr _interleave;
 
     int _samples_per_symbol;
     int _samp_rate;
