@@ -527,6 +527,7 @@ void MainWindow::setConfig()
 {
     ui->lineEditRXDev->addItem(_settings->rx_device_args);
     ui->lineEditTXDev->addItem(_settings->tx_device_args);
+    findDevices();
     ui->lineEditRXAntenna->setText(_settings->rx_antenna);
     ui->lineEditTXAntenna->setText(_settings->tx_antenna);
     ui->lineEditRXFreqCorrection->setText(QString::number(_settings->rx_freq_corr));
