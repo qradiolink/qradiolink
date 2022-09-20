@@ -472,7 +472,7 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
             _top_block->disconnect(_m17_demod,0,_rssi_valve,0);
             _top_block->disconnect(_m17_demod,1,_const_valve,0);
             _top_block->disconnect(_const_valve,0,_constellation,0);
-            _top_block->disconnect(_m17_demod,2,_audio_sink,0);
+            _top_block->disconnect(_m17_demod,2,_bit_sink,0);
             break;
         default:
             break;
@@ -719,7 +719,7 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
             _top_block->connect(_m17_demod,0,_rssi_valve,0);
             _top_block->connect(_m17_demod,1,_const_valve,0);
             _top_block->connect(_const_valve,0,_constellation,0);
-            _top_block->connect(_m17_demod,2,_audio_sink,0);
+            _top_block->connect(_m17_demod,2,_bit_sink,0);
             break;
 
         default:

@@ -22,7 +22,7 @@ gr_demod_m17_sptr make_gr_demod_m17(int sps, int samp_rate, int carrier_freq,
     std::vector<int> signature;
     signature.push_back(sizeof (gr_complex));
     signature.push_back(sizeof (gr_complex));
-    signature.push_back(sizeof (float));
+    signature.push_back(sizeof (unsigned char));
     return gnuradio::get_initial_sptr(new gr_demod_m17(signature, sps, samp_rate, carrier_freq,
                                                       filter_width));
 }
@@ -50,8 +50,8 @@ gr_demod_m17::gr_demod_m17(std::vector<int>signature, int sps, int samp_rate, in
 
     std::vector<int> pre_diff;
 
-    gr::digital::constellation_rect::sptr constellation_4fsk = gr::digital::constellation_rect::make(constellation_points, pre_diff, 2, 4, 1, 1.0, 1.0);
-
+    gr::digital::constellation_rect::sptr constellation_4fsk = gr::digital::constellation_rect::make(
+                constellation_points, pre_diff, 2, 4, 1, 1.0, 1.0);
 
     std::vector<float> taps = gr::filter::firdes::low_pass(3, _samp_rate * 3, _target_samp_rate/2,
                                 _target_samp_rate/2, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
@@ -64,10 +64,9 @@ gr_demod_m17::gr_demod_m17(std::vector<int>signature, int sps, int samp_rate, in
             1, _target_samp_rate, _filter_width, _filter_width, gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
 
     _fm_demod = gr::analog::quadrature_demod_cf::make(_samples_per_symbol/M_PI);
-    _squelch = gr::analog::pwr_squelch_cc::make(-140,0.01,0,true);
     _level_control = gr::blocks::multiply_const_ff::make(0.9);
     std::vector<float> symbol_filter_taps = gr::filter::firdes::root_raised_cosine(2,_target_samp_rate,
-                                                                                   _target_samp_rate/_samples_per_symbol,0.2,32);
+                                                                                   _target_samp_rate/_samples_per_symbol,0.5,32);
     _symbol_filter = gr::filter::fft_filter_fff::make(1,symbol_filter_taps);
     float symbol_rate ((float)_target_samp_rate / (float)_samples_per_symbol);
     float sps_deviation = 500.0f / symbol_rate;
@@ -76,6 +75,15 @@ gr_demod_m17::gr_demod_m17(std::vector<int>signature, int sps, int samp_rate, in
     _phase_mod = gr::analog::phase_modulator_fc::make(M_PI / 2);
     _complex_to_float = gr::blocks::complex_to_float::make();
     _interleave = gr::blocks::interleave::make(4);
+    _slicer = gr::digital::binary_slicer_fb::make();
+    _packer = gr::blocks::pack_k_bits_bb::make(2);
+    _unpacker = gr::blocks::unpack_k_bits_bb::make(2);
+    std::vector<int> map;
+    map.push_back(3);
+    map.push_back(1);
+    map.push_back(2);
+    map.push_back(0);
+    _symbol_map = gr::digital::map_bb::make(map);
 
     connect(self(),0,_resampler,0);
 
@@ -89,9 +97,13 @@ gr_demod_m17::gr_demod_m17(std::vector<int>signature, int sps, int samp_rate, in
     connect(_symbol_sync,0,_phase_mod,0);
     connect(_phase_mod,0,self(),1);
     connect(_phase_mod,0,_complex_to_float,0);
-    connect(_complex_to_float,0,_interleave,1);
-    connect(_complex_to_float,1,_interleave,0);
-    connect(_interleave,0,self(),2);
+    connect(_complex_to_float,0,_interleave,0);
+    connect(_complex_to_float,1,_interleave,1);
+    connect(_interleave,0,_slicer,0);
+    connect(_slicer,0,_packer,0);
+    connect(_packer,0,_symbol_map,0);
+    connect(_symbol_map,0,_unpacker,0);
+    connect(_unpacker,0,self(),2);
 
 }
 
@@ -106,8 +118,4 @@ void gr_demod_m17::set_filter_width(int filter_width)
     _fm_demod->set_gain(_target_samp_rate/(4*M_PI* _filter_width));
 }
 
-void gr_demod_m17::set_squelch(int value)
-{
-    _squelch->set_threshold(value);
-}
 

@@ -208,6 +208,7 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     QObject::connect(ui->memoriesTableWidget,SIGNAL(itemChanged(QTableWidgetItem*)),
                      this,SLOT(editMemoryChannel(QTableWidgetItem*)));
     QObject::connect(ui->pageUserButton,SIGNAL(clicked()), this, SLOT(pageUserRequested()));
+    QObject::connect(ui->findDevicesButton,SIGNAL(clicked()), this, SLOT(findDevices()));
 
     QObject::connect(&_secondary_text_timer,SIGNAL(timeout()),ui->secondaryTextDisplay,SLOT(hide()));
     QObject::connect(&_video_timer,SIGNAL(timeout()),ui->videoFrame,SLOT(hide()));
@@ -524,8 +525,8 @@ void MainWindow::setEnabledDuplex(bool value)
 
 void MainWindow::setConfig()
 {
-    ui->lineEditRXDev->setText(_settings->rx_device_args);
-    ui->lineEditTXDev->setText(_settings->tx_device_args);
+    ui->lineEditRXDev->addItem(_settings->rx_device_args);
+    ui->lineEditTXDev->addItem(_settings->tx_device_args);
     ui->lineEditRXAntenna->setText(_settings->rx_antenna);
     ui->lineEditTXAntenna->setText(_settings->tx_antenna);
     ui->lineEditRXFreqCorrection->setText(QString::number(_settings->rx_freq_corr));
@@ -618,8 +619,8 @@ void MainWindow::setConfig()
 
 void MainWindow::saveUiConfig()
 {
-    _settings->rx_device_args = ui->lineEditRXDev->text();
-    _settings->tx_device_args = ui->lineEditTXDev->text();
+    _settings->rx_device_args = ui->lineEditRXDev->itemText(ui->lineEditRXDev->currentIndex());
+    _settings->tx_device_args = ui->lineEditTXDev->itemText(ui->lineEditTXDev->currentIndex());
     _settings->rx_antenna = ui->lineEditRXAntenna->text();
     _settings->tx_antenna = ui->lineEditTXAntenna->text();
     _settings->rx_freq_corr = (unsigned int)(ui->lineEditRXFreqCorrection->text().toInt() < 0 ? 0 : ui->lineEditRXFreqCorrection->text().toInt());
@@ -1720,6 +1721,7 @@ void MainWindow::mainTabChanged(int value)
     Q_UNUSED(value);
 }
 
+
 void MainWindow::updateFreqGUI(int64_t center_freq, int64_t carrier_offset)
 {
     // Lots of signals flowing around
@@ -2134,4 +2136,17 @@ void MainWindow::displayPageMessage(QString page_user, QString page_message)
 {
     ui->pagedByLabel->setText(QString("Paged by: <strong>%1</strong>").arg(page_user));
     ui->pageMessageLabel->setText(page_message);
+}
+
+void MainWindow::findDevices()
+{
+    QList<QString> devices;
+    findSoapyDevices("", true, devices);
+    findLimeDevices(devices);
+    if(devices.length() > 0)
+        _logger->log(Logger::LogLevelInfo, QString("Found devices: " + devices.join("\n")));
+    else
+        _logger->log(Logger::LogLevelWarning, QString("Could not find known devices, enter device string manually"));
+    ui->lineEditRXDev->addItems(devices);
+    ui->lineEditTXDev->addItems(devices);
 }

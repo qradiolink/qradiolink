@@ -26,6 +26,7 @@
 #include <M17/M17Constants.hpp>
 #include <M17/M17Utils.hpp>
 #include <algorithm>
+#include <iostream>
 
 using namespace M17;
 

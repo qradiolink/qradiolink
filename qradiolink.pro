@@ -43,6 +43,7 @@ CONFIG(qtaudio) {
 
 SOURCES += src/main.cpp\
     src/bursttimer.cpp \
+    src/ext/devices.cpp \
     src/gpredictcontrol.cpp \
     src/gr/gr_demod_m17.cpp \
     src/gr/gr_demod_mmdvm_multi.cpp \
@@ -140,6 +141,7 @@ HEADERS  += src/mainwindow.h\
         src/audio/audioencoder.h\
         src/audio/audioprocessor.h \
     src/bursttimer.h \
+    src/ext/devices.h \
     src/gpredictcontrol.h \
     src/gr/gr_demod_m17.h \
     src/gr/gr_demod_mmdvm_multi.h \
@@ -263,6 +265,7 @@ LIBS += -lgnuradio-pmt -lgnuradio-analog -lgnuradio-fft -lgnuradio-vocoder -lgnu
         -lboost_system$$BOOST_SUFFIX
 LIBS += -lrt -lpthread # need to include on some distros
 LIBS += -lprotobuf -lopus -lcodec2 -ljpeg -lconfig++ -lspeexdsp -lftdi -lsndfile -llog4cpp -lLimeSuite -lzmq
+LIBS += -lSoapySDR
 
 
 RESOURCES += src/resources.qrc

@@ -46,6 +46,7 @@
 #include "src/mumblechannel.h"
 #include "src/style.h"
 #include "src/qtgui/skinneddial.h"
+#include "ext/devices.h"
 
 
 typedef std::vector<std::complex<float>> complex_vector;
@@ -190,6 +191,7 @@ public slots:
     void updateGUIFreq(qint64 freq);
     void tuneDopplerRxFreq(qint64 freq_delta);
     void tuneDopplerTxFreq(qint64 freq_delta);
+    void findDevices();
 
 signals:
     void startTransmission();

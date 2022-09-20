@@ -1160,7 +1160,8 @@ bool RadioController::getDemodulatorData()
         {
             if(_rx_mode == gr_modem_types::ModemTypeM17)
             {
-                data_to_process = _modem->demodulateM17();
+                //data_to_process = _modem->demodulateM17();
+                data_to_process = _modem->demodulate();
             }
             else
             {

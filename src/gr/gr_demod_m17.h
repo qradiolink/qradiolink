@@ -29,6 +29,10 @@
 #include <gnuradio/analog/phase_modulator_fc.h>
 #include <gnuradio/blocks/complex_to_float.h>
 #include <gnuradio/blocks/interleave.h>
+#include <gnuradio/digital/binary_slicer_fb.h>
+#include <gnuradio/digital/map_bb.h>
+#include <gnuradio/blocks/pack_k_bits_bb.h>
+#include <gnuradio/blocks/unpack_k_bits_bb.h>
 
 
 class gr_demod_m17;
@@ -43,13 +47,11 @@ public:
     explicit gr_demod_m17(std::vector<int> signature, int sps=4, int samp_rate=1000000, int carrier_freq=1600,
                                int filter_width=6250);
 
-    void set_squelch(int value);
     void set_filter_width(int filter_width);
 
 
 private:
     gr::analog::quadrature_demod_cf::sptr _fm_demod;
-    gr::analog::pwr_squelch_cc::sptr _squelch;
     gr::blocks::multiply_const_ff::sptr _level_control;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
     gr::filter::rational_resampler_base_fff::sptr _audio_resampler;
@@ -60,6 +62,10 @@ private:
     gr::analog::phase_modulator_fc::sptr _phase_mod;
     gr::blocks::complex_to_float::sptr _complex_to_float;
     gr::blocks::interleave::sptr _interleave;
+    gr::digital::binary_slicer_fb::sptr _slicer;
+    gr::digital::map_bb::sptr _symbol_map;
+    gr::blocks::pack_k_bits_bb::sptr _packer;
+    gr::blocks::unpack_k_bits_bb::sptr _unpacker;
 
     int _samples_per_symbol;
     int _samp_rate;

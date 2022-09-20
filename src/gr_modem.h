@@ -57,7 +57,6 @@ public:
 
     bool demodulateAnalog();
     void sendCallsign(QString callsign);
-    bool demodulateM17();
 
 signals:
     void pcmAudio(std::vector<float>* pcm);
@@ -162,7 +161,6 @@ private:
 
     /// M17 code
     M17::M17Modulator    modulator;    ///< M17 modulator.
-    M17::M17Demodulator  demodulator;  ///< M17 demodulator.
     M17::M17FrameDecoder decoder;      ///< M17 frame decoder
     M17::M17FrameEncoder encoder;      ///< M17 frame encoder
     M17::M17Transmitter  m17Tx;        ///< M17 transmission manager.
