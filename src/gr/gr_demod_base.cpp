@@ -969,9 +969,6 @@ void gr_demod_base::set_filter_width(int filter_width, int mode)
     case gr_modem_types::ModemTypeLSB2500:
         _lsb->set_filter_width(filter_width);
         break;
-    case gr_modem_types::ModemTypeM17:
-        _m17_demod->set_filter_width(filter_width);
-        break;
     default:
         break;
     }

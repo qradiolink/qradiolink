@@ -105,14 +105,5 @@ gr_demod_m17::gr_demod_m17(std::vector<int>signature, int sps, int samp_rate, in
 }
 
 
-void gr_demod_m17::set_filter_width(int filter_width)
-{
-    _filter_width = filter_width;
-    std::vector<float> filter_taps = gr::filter::firdes::low_pass(
-                    1, _target_samp_rate, _filter_width,1200,gr::filter::firdes::WIN_BLACKMAN_HARRIS);
-
-    _filter->set_taps(filter_taps);
-    _fm_demod->set_gain(_target_samp_rate/(4*M_PI* _filter_width));
-}
 
 

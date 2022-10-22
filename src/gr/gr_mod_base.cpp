@@ -773,9 +773,6 @@ void gr_mod_base::set_filter_width(int filter_width, int mode)
     case gr_modem_types::ModemTypeCW600USB:
         _usb_cw->set_filter_width(filter_width);
         break;
-    case gr_modem_types::ModemTypeM17:
-        _m17_mod->set_filter_width(filter_width);
-        break;
     default:
         break;
     }

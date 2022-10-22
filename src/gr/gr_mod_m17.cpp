@@ -84,20 +84,6 @@ gr_mod_m17::gr_mod_m17(int sps, int samp_rate, int carrier_freq,
 }
 
 
-void gr_mod_m17::set_filter_width(int filter_width)
-{
-    _filter_width = filter_width;
-    float if_samp_rate = 48000;
-    std::vector<float> filter_taps = gr::filter::firdes::low_pass_2(
-                1, if_samp_rate, _filter_width, _filter_width, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
-    std::vector<float> interp_taps = gr::filter::firdes::low_pass_2(_sps, _samp_rate * 6,
-                    _filter_width, _filter_width, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
-
-    _filter->set_taps(filter_taps);
-    _resampler->set_taps(interp_taps);
-    _fm_modulator->set_sensitivity(4*M_PI*_filter_width/if_samp_rate);
-}
-
 void gr_mod_m17::set_bb_gain(float value)
 {
     _bb_gain->set_k(value);

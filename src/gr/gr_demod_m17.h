@@ -47,8 +47,6 @@ public:
     explicit gr_demod_m17(std::vector<int> signature, int sps=4, int samp_rate=1000000, int carrier_freq=1600,
                                int filter_width=6250);
 
-    void set_filter_width(int filter_width);
-
 
 private:
     gr::analog::quadrature_demod_cf::sptr _fm_demod;
