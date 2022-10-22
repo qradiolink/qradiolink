@@ -39,13 +39,13 @@ class gr_demod_m17;
 
 typedef boost::shared_ptr<gr_demod_m17> gr_demod_m17_sptr;
 gr_demod_m17_sptr make_gr_demod_m17(int sps=125, int samp_rate=1000000, int carrier_freq=1700,
-                                          int filter_width=8000);
+                                          int filter_width=6250);
 
 class gr_demod_m17 : public gr::hier_block2
 {
 public:
     explicit gr_demod_m17(std::vector<int> signature, int sps=4, int samp_rate=1000000, int carrier_freq=1600,
-                               int filter_width=8000);
+                               int filter_width=6250);
 
     void set_filter_width(int filter_width);
 
