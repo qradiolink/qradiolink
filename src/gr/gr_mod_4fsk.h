@@ -58,6 +58,7 @@ public:
 private:
     gr::blocks::packed_to_unpacked_bb::sptr _packed_to_unpacked;
     gr::digital::chunks_to_symbols_bf::sptr _chunks_to_symbols;
+    gr::blocks::multiply_const_ff::sptr _scale_pulses;
     gr::blocks::multiply_const_cc::sptr _amplify;
     gr::blocks::multiply_const_cc::sptr _bb_gain;
     gr::digital::scrambler_bb::sptr _scrambler;

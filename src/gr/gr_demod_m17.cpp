@@ -62,8 +62,8 @@ gr_demod_m17::gr_demod_m17(std::vector<int>signature, int sps, int samp_rate, in
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
             1, _target_samp_rate, _filter_width, _filter_width, gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
 
-    _fm_demod = gr::analog::quadrature_demod_cf::make(_samples_per_symbol / (M_PI/2));
-    std::vector<float> symbol_filter_taps = gr::filter::firdes::root_raised_cosine(1.0,_target_samp_rate,
+    _fm_demod = gr::analog::quadrature_demod_cf::make(_samples_per_symbol/M_PI);
+    std::vector<float> symbol_filter_taps = gr::filter::firdes::root_raised_cosine(1.5,_target_samp_rate,
                                                                                    _target_samp_rate/_samples_per_symbol,
                                                                                    0.5, ntaps);
     _symbol_filter = gr::filter::fft_filter_fff::make(1,symbol_filter_taps);

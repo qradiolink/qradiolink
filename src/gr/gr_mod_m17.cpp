@@ -56,8 +56,9 @@ gr_mod_m17::gr_mod_m17(int sps, int samp_rate, int carrier_freq,
     _first_resampler = gr::filter::rational_resampler_base_fff::make(_samples_per_symbol, 1,
                     gr::filter::firdes::root_raised_cosine(_samples_per_symbol,
                                 _samples_per_symbol,1, 0.5, 32 * _samples_per_symbol));
+    _scale_pulses = gr::blocks::multiply_const_ff::make(0.66666666, 1);
 
-    _fm_modulator = gr::analog::frequency_modulator_fc::make((M_PI/2) / _samples_per_symbol);
+    _fm_modulator = gr::analog::frequency_modulator_fc::make(M_PI/_samples_per_symbol);
 
     std::vector<float> interp_taps = gr::filter::firdes::low_pass(_sps, _samp_rate * 6,
                         if_samp_rate/2, if_samp_rate/2, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
@@ -73,7 +74,8 @@ gr_mod_m17::gr_mod_m17(int sps, int samp_rate, int carrier_freq,
     connect(_packer,0,_map,0);
     connect(_map,0,_chunks_to_symbols,0);
     connect(_chunks_to_symbols,0,_first_resampler,0);
-    connect(_first_resampler,0,_fm_modulator,0);
+    connect(_first_resampler,0,_scale_pulses,0);
+    connect(_scale_pulses,0,_fm_modulator,0);
     connect(_fm_modulator,0,_filter,0);
     connect(_filter,0,_amplify,0);
     connect(_amplify,0,_bb_gain,0);
