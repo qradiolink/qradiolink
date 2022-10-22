@@ -62,7 +62,6 @@ private:
     gr::blocks::multiply_ff::sptr _multiply;
     gr::blocks::packed_to_unpacked_bb::sptr _packed_to_unpacked;
     gr::digital::chunks_to_symbols_bf::sptr _chunks_to_symbols;
-    gr::blocks::multiply_const_ff::sptr _scale_pulses;
     gr::blocks::pack_k_bits_bb::sptr _packer;
     gr::digital::map_bb::sptr _map;
 
