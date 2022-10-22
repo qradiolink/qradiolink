@@ -1226,7 +1226,6 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
             if(valid_frame)
             {
                 std::string m17_source = lsf.getSource();
-                std::cerr << "M17 source " << m17_source << std::endl;
                 std::string m17_destination = lsf.getDestination();
                 QString callsign = QString::fromStdString(m17_source);
                 callsign = callsign.remove(QRegExp("[^a-zA-Z/\\d\\s]"));
