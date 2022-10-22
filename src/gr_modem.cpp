@@ -1220,8 +1220,6 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
 
         if(type == M17::M17FrameType::LINK_SETUP)
         {
-            qDebug() << "M17 setup frame";
-
             _last_frame_type = FrameTypeM17LSF;
             M17::M17LinkSetupFrame lsf = decoder.getLsf();
             bool valid_frame = lsf.valid();
