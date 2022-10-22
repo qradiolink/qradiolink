@@ -47,6 +47,7 @@ gr_demod_m17::gr_demod_m17(std::vector<int>signature, int sps, int samp_rate, in
     constellation_points.push_back(-0.5+0j);
     constellation_points.push_back(0.5+0j);
     constellation_points.push_back(1.5f+0j);
+    int ntaps = 100 * _samples_per_symbol;
 
     std::vector<int> pre_diff;
 
@@ -55,18 +56,16 @@ gr_demod_m17::gr_demod_m17(std::vector<int>signature, int sps, int samp_rate, in
 
     std::vector<float> taps = gr::filter::firdes::low_pass(3, _samp_rate * 3, _target_samp_rate/2,
                                 _target_samp_rate/2, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
-    std::vector<float> audio_taps = gr::filter::firdes::low_pass_2(2, 2*_target_samp_rate, 3600, 250, 60,
-                                                    gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+
     _resampler = gr::filter::rational_resampler_base_ccf::make(3, 125, taps);
-    _audio_resampler = gr::filter::rational_resampler_base_fff::make(2,5, audio_taps);
 
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
             1, _target_samp_rate, _filter_width, _filter_width, gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
 
     _fm_demod = gr::analog::quadrature_demod_cf::make(_samples_per_symbol/M_PI);
-    _level_control = gr::blocks::multiply_const_ff::make(0.9);
-    std::vector<float> symbol_filter_taps = gr::filter::firdes::root_raised_cosine(2,_target_samp_rate,
-                                                                                   _target_samp_rate/_samples_per_symbol,0.5,32);
+    std::vector<float> symbol_filter_taps = gr::filter::firdes::root_raised_cosine(1.5,_target_samp_rate,
+                                                                                   _target_samp_rate/_samples_per_symbol,
+                                                                                   0.5, ntaps);
     _symbol_filter = gr::filter::fft_filter_fff::make(1,symbol_filter_taps);
     float symbol_rate ((float)_target_samp_rate / (float)_samples_per_symbol);
     float sps_deviation = 500.0f / symbol_rate;
@@ -90,9 +89,7 @@ gr_demod_m17::gr_demod_m17(std::vector<int>signature, int sps, int samp_rate, in
     connect(_resampler,0,_filter,0);
     connect(_filter,0,self(),0);
     connect(_filter,0,_fm_demod,0);
-    connect(_fm_demod,0,_level_control,0);
-    //connect(_level_control,0,self(),1);
-    connect(_level_control,0,_symbol_filter,0);
+    connect(_fm_demod,0,_symbol_filter,0);
     connect(_symbol_filter,0,_symbol_sync,0);
     connect(_symbol_sync,0,_phase_mod,0);
     connect(_phase_mod,0,self(),1);

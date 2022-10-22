@@ -59,7 +59,7 @@ public:
      *
      * @param src: source callsign.
      */
-    void start(const std::string& src, std::vector<float> *samples);
+    void start(const std::string& src, std::vector<unsigned char> *bytes);
 
     /**
      * Start a new data stream with given destination callsign. If destination
@@ -68,7 +68,7 @@ public:
      * @param src: source callsign.
      * @param dst: destination callsign.
      */
-    void start(const std::string& src, const std::string& dst, std::vector<float> *samples);
+    void start(const std::string& src, const std::string& dst, std::vector<unsigned char> *bytes);
 
     /**
      * Send a block of data.
@@ -77,7 +77,7 @@ public:
      * @param isLast: if true, current frame is marked as the last one to be
      * transmitted.
      */
-    void send(const payload_t& payload, std::vector<float> *samples, const bool isLast = false);
+    void send(const payload_t& payload, std::vector<unsigned char> *bytes, const bool isLast = false);
 
 private:
 

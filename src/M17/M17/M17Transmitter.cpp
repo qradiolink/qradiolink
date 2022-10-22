@@ -36,15 +36,15 @@ M17Transmitter::~M17Transmitter()
 
 }
 
-void M17Transmitter::start(const std::string& src, std::vector<float> *samples)
+void M17Transmitter::start(const std::string& src, std::vector<unsigned char> *bytes)
 {
     // Just call start() with an empty string for destination callsign.
     std::string empty;
-    start(src, empty, samples);
+    start(src, empty, bytes);
 }
 
 void M17Transmitter::start(const std::string& src, const std::string& dst,
-                           std::vector<float> *samples)
+                           std::vector<unsigned char> *bytes)
 {
     // Reset LICH and frame counters
     currentLich = 0;
@@ -59,6 +59,7 @@ void M17Transmitter::start(const std::string& src, const std::string& dst,
     type.fields.stream   = 1;    // Stream
     type.fields.dataType = 2;    // Voice data
     type.fields.CAN      = 0;  // Channel access number
+    type.fields.encType  = 0;
 
     lsf.setType(type);
     lsf.updateCrc();
@@ -85,14 +86,22 @@ void M17Transmitter::start(const std::string& src, const std::string& dst,
     std::array<uint8_t, 46> preamble_bytes;
     preamble_sync.fill(0x77);
     preamble_bytes.fill(0x77);
-    modulator.send(preamble_sync, preamble_bytes, samples);
+    for(int i=0;i<preamble_sync.size();i++)
+        bytes->push_back(preamble_sync.at(i));
+    for(int i=0;i<preamble_bytes.size();i++)
+        bytes->push_back(preamble_bytes.at(i));
+    //modulator.send(preamble_sync, preamble_bytes, bytes);
 
     // Send LSF
-    modulator.send(LSF_SYNC_WORD, punctured, samples);
+    bytes->push_back(LSF_SYNC_WORD[0]);
+    bytes->push_back(LSF_SYNC_WORD[1]);
+    for(int i=0;i<punctured.size();i++)
+        bytes->push_back(punctured.at(i));
+    //modulator.send(LSF_SYNC_WORD, punctured, bytes);
 }
 
 void M17Transmitter::send(const payload_t& payload,
-                          std::vector<float> *samples,
+                          std::vector<unsigned char> *bytes,
                           const bool isLast)
 {
     dataFrame.clear();
@@ -122,6 +131,10 @@ void M17Transmitter::send(const payload_t& payload,
 
     interleave(frame);
     decorrelate(frame);
+    bytes->push_back(STREAM_SYNC_WORD[0]);
+    bytes->push_back(STREAM_SYNC_WORD[1]);
+    for(int i=0;i<frame.size();i++)
+        bytes->push_back(frame.at(i));
 
-    modulator.send(STREAM_SYNC_WORD, frame, samples, isLast);
+    //modulator.send(STREAM_SYNC_WORD, frame, samples, isLast);
 }

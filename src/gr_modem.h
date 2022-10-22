@@ -40,7 +40,6 @@
 /// M17 code
 #include <M17/M17FrameDecoder.hpp>
 #include <M17/M17FrameEncoder.hpp>
-#include <M17/M17Demodulator.hpp>
 #include <M17/M17Modulator.hpp>
 #include <M17/M17Transmitter.hpp>
 

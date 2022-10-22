@@ -39,24 +39,21 @@ class gr_demod_m17;
 
 typedef boost::shared_ptr<gr_demod_m17> gr_demod_m17_sptr;
 gr_demod_m17_sptr make_gr_demod_m17(int sps=125, int samp_rate=1000000, int carrier_freq=1700,
-                                          int filter_width=6250);
+                                          int filter_width=8000);
 
 class gr_demod_m17 : public gr::hier_block2
 {
 public:
     explicit gr_demod_m17(std::vector<int> signature, int sps=4, int samp_rate=1000000, int carrier_freq=1600,
-                               int filter_width=6250);
+                               int filter_width=8000);
 
     void set_filter_width(int filter_width);
 
 
 private:
     gr::analog::quadrature_demod_cf::sptr _fm_demod;
-    gr::blocks::multiply_const_ff::sptr _level_control;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
-    gr::filter::rational_resampler_base_fff::sptr _audio_resampler;
     gr::filter::fft_filter_ccf::sptr _filter;
-    gr::filter::fft_filter_fff::sptr _audio_filter;
     gr::digital::symbol_sync_ff::sptr _symbol_sync;
     gr::filter::fft_filter_fff::sptr _symbol_filter;
     gr::analog::phase_modulator_fc::sptr _phase_mod;

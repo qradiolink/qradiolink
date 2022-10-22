@@ -419,7 +419,7 @@ void gr_mod_base::set_mode(int mode)
         break;
     case gr_modem_types::ModemTypeM17:
         set_center_freq(_device_frequency - _carrier_offset);
-        _top_block->disconnect(_audio_source,0,_m17_mod,0);
+        _top_block->disconnect(_byte_source,0,_m17_mod,0);
         _top_block->disconnect(_m17_mod,0,_rotator,0);
         break;
     default:
@@ -646,7 +646,7 @@ void gr_mod_base::set_mode(int mode)
     case gr_modem_types::ModemTypeM17:
         set_carrier_offset(50000);
         set_center_freq(_device_frequency - _carrier_offset);
-        _top_block->connect(_audio_source,0,_m17_mod,0);
+        _top_block->connect(_byte_source,0,_m17_mod,0);
         _top_block->connect(_m17_mod,0,_rotator,0);
         break;
     default:

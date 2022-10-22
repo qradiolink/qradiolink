@@ -38,7 +38,7 @@ gr_mod_mmdvm::gr_mod_mmdvm(int sps, int samp_rate, int carrier_freq,
 
     _short_to_float = gr::blocks::short_to_float::make(1, 32767.0);
     _fm_modulator = gr::analog::frequency_modulator_fc::make(4*M_PI*_filter_width/target_samp_rate);
-    _audio_amplify = gr::blocks::multiply_const_ff::make(0.9,1);
+    _audio_amplify = gr::blocks::multiply_const_ff::make(1.0,1);
 
 
     std::vector<float> interp_taps = gr::filter::firdes::low_pass_2(_sps, _samp_rate,

@@ -589,16 +589,15 @@ void gr_modem::startTransmission(QString callsign)
     {
         return;
     }
+    std::vector<unsigned char> *tx_start = new std::vector<unsigned char>;
     if(_modem_type_tx == gr_modem_types::ModemTypeM17)
     {
-        std::vector<float> *audio_data = new std::vector<float>;
-        for(int i = 0; i < 160; i++)
-            audio_data->push_back(0.0f);
-        m17Tx.start(callsign.toStdString(), audio_data);
-        _gr_mod_base->set_audio(audio_data);
+        m17Tx.start(callsign.toStdString(), tx_start);
+        QVector<std::vector<unsigned char>*> frames;
+        frames.append(tx_start);
+        transmit(frames);
         return;
     }
-    std::vector<unsigned char> *tx_start = new std::vector<unsigned char>;
     // set preamble to 48 bits (ramp-up included)
     for(int i = 0;i < 8;i++)
     {
@@ -612,24 +611,29 @@ void gr_modem::startTransmission(QString callsign)
 
 void gr_modem::endTransmission(QString callsign)
 {
+    std::vector<unsigned char> *tx_end = new std::vector<unsigned char>;
     if(_modem_type_tx == gr_modem_types::ModemTypeM17)
     {
         M17::payload_t dataFrame;
-        std::vector<float> *audio_data = new std::vector<float>;
         memset(dataFrame.data(), 0, _tx_frame_length);
-        m17Tx.send(dataFrame, audio_data, true);
-        _gr_mod_base->set_audio(audio_data);
-        return;
+        m17Tx.send(dataFrame, tx_end, true);
+        for(int i = 0;i<_tx_frame_length/2;i++)
+        {
+            tx_end->push_back(0x55);
+            tx_end->push_back(0x5D);
+        }
     }
-    _frame_counter = 0;
-    sendCallsign(callsign);
-    std::vector<unsigned char> *tx_end = new std::vector<unsigned char>;
-    tx_end->push_back(0x4C);
-    tx_end->push_back(0x8A);
-    tx_end->push_back(0x2B);
-    for(int i = 0;i<_tx_frame_length*10;i++)
+    else
     {
-        tx_end->push_back(0xAA);
+        _frame_counter = 0;
+        sendCallsign(callsign);
+        tx_end->push_back(0x4C);
+        tx_end->push_back(0x8A);
+        tx_end->push_back(0x2B);
+        for(int i = 0;i<_tx_frame_length*10;i++)
+        {
+            tx_end->push_back(0xAA);
+        }
     }
     QVector<std::vector<unsigned char>*> frames;
     frames.append(tx_end);
@@ -708,13 +712,15 @@ void gr_modem::transmitM17Audio(unsigned char *data, int size)
         delete[] data;
         return;
     }
-    std::vector<float> *audio_data = new std::vector<float>;
+    std::vector<unsigned char> *one_frame = new std::vector<unsigned char>;
     M17::payload_t dataFrame;
     memcpy(dataFrame.data(), data, size);
     delete[] data;
     bool lastFrame = false;
-    m17Tx.send(dataFrame, audio_data, lastFrame);
-    _gr_mod_base->set_audio(audio_data);
+    m17Tx.send(dataFrame, one_frame, lastFrame);
+    QVector<std::vector<unsigned char>*> frames;
+    frames.append(one_frame);
+    transmit(frames);
 }
 
 void gr_modem::transmitVideoData(unsigned char *data, int size)

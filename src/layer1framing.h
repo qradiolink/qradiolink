@@ -20,6 +20,7 @@ enum frame_type
     FrameTypeEnd = 0x4C8A2B,
     FrameTypeM17Stream = 0xFF5D,
     FrameTypeM17LSF = 0x55F7,
+    FrameTypeM17EOT = 0x555D,
 };
 
 class Layer1Framing : public QObject
