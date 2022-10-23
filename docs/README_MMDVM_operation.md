@@ -24,7 +24,7 @@ Install normally (see README.md)
 ----
 
 <pre>
-git clone https://github.com/qradiolink/MMDVM-SDR
+git clone https://codeberg.org/qradiolink/MMDVM-SDR
 cd MMDVM-SDR
 git checkout mmdvm_sdr
 mkdir build && cd build
@@ -37,7 +37,7 @@ make -j 2
 ----
 
 <pre>
-git clone https://github.com/qradiolink/MMDVMHost-SDR
+git clone https://codeberg.org/qradiolink/MMDVMHost-SDR
 cd MMDVMHost-SDR
 git checkout mmdvm_sdr
 make -j 4

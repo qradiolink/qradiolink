@@ -80,7 +80,7 @@ Building the software from source
 - Execute build_debian.sh
 
 <pre>
-$ git clone https://github.com/qradiolink/qradiolink
+$ git clone https://codeberg.org/qradiolink/qradiolink
 $ cd qradiolink/
 $ git checkout master
 $ sh ./build_debian.sh
@@ -94,7 +94,7 @@ Or alternatively:
 - Run make (with the optional -j flag)
 
 <pre>
-git clone https://github.com/qradiolink/qradiolink
+git clone https://codeberg.org/qradiolink/qradiolink
 cd qradiolink/
 git checkout master
 mkdir -p build
