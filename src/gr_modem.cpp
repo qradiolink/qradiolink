@@ -565,9 +565,9 @@ void gr_modem::sendCallsign(QString callsign)
     std::vector<unsigned char> *send_callsign = new std::vector<unsigned char>;
     QVector<std::vector<unsigned char>*> callsign_frames;
 
-    send_callsign->push_back(0x8C);
-    send_callsign->push_back(0xC8);
-    send_callsign->push_back(0xDD);
+    send_callsign->push_back((unsigned char)((FrameTypeCallsign >> 16) & 0xFF));
+    send_callsign->push_back((unsigned char)((FrameTypeCallsign >> 8) & 0xFF));
+    send_callsign->push_back((unsigned char)(FrameTypeCallsign & 0xFF));
     for(int i = 0;i<callsign.size();i++)
     {
         send_callsign->push_back(callsign.toStdString().c_str()[i]);
@@ -619,17 +619,17 @@ void gr_modem::endTransmission(QString callsign)
         m17Tx.send(dataFrame, tx_end, true);
         for(int i = 0;i<_tx_frame_length/2;i++)
         {
-            tx_end->push_back(0x55);
-            tx_end->push_back(0x5D);
+            tx_end->push_back((unsigned char)((FrameTypeM17EOT >> 8) & 0xFF));
+            tx_end->push_back((unsigned char)(FrameTypeM17EOT & 0xFF));
         }
     }
     else
     {
         _frame_counter = 0;
         sendCallsign(callsign);
-        tx_end->push_back(0x4C);
-        tx_end->push_back(0x8A);
-        tx_end->push_back(0x2B);
+        tx_end->push_back((unsigned char)((FrameTypeEnd >> 16) & 0xFF));
+        tx_end->push_back((unsigned char)((FrameTypeEnd >> 8) & 0xFF));
+        tx_end->push_back((unsigned char)(FrameTypeEnd & 0xFF));
         for(int i = 0;i<_tx_frame_length*10;i++)
         {
             tx_end->push_back(0xAA);
@@ -758,41 +758,40 @@ std::vector<unsigned char>* gr_modem::frame(unsigned char *encoded_audio, int da
                 || (_modem_type_tx == gr_modem_types::ModemTypeGMSK1K)
                 || (_modem_type_tx == gr_modem_types::ModemType4FSK1KFM))
         {
-            data->push_back(0xB5);
+            data->push_back((unsigned char)(FrameTypeVoice1 & 0xFF));
         }
         else
         {
-            data->push_back(0xED);
-            data->push_back(0x89);
+            data->push_back((unsigned char)((FrameTypeVoice2 >> 8) & 0xFF));
+            data->push_back((unsigned char)(FrameTypeVoice2 & 0xFF));
+            data->push_back(0xAA); // reserved bits
         }
     }
     else if(frame_type == FrameTypeText)
     {
-        data->push_back(0x89);
-        data->push_back(0xED);
+        data->push_back((unsigned char)((FrameTypeText >> 16) & 0xFF));
+        data->push_back((unsigned char)((FrameTypeText >> 8) & 0xFF));
+        data->push_back((unsigned char)(FrameTypeText & 0xFF));
     }
     else if(frame_type == FrameTypeVideo)
     {
-        data->push_back(0x98);
-        data->push_back(0xDE);
+        data->push_back((unsigned char)((FrameTypeVideo >> 16) & 0xFF));
+        data->push_back((unsigned char)((FrameTypeVideo >> 8) & 0xFF));
+        data->push_back((unsigned char)(FrameTypeVideo & 0xFF));
     }
     else if(frame_type == FrameTypeIP)
     {
-        data->push_back(0xDE);
-        data->push_back(0x98);
+        data->push_back((unsigned char)((FrameTypeIP >> 16) & 0xFF));
+        data->push_back((unsigned char)((FrameTypeIP >> 8) & 0xFF));
+        data->push_back((unsigned char)(FrameTypeIP & 0xFF));
     }
     else if(frame_type == FrameTypeProto)
     {
-        data->push_back(0xED);
-        data->push_back(0x77);
+        data->push_back((unsigned char)((FrameTypeProto >> 16) & 0xFF));
+        data->push_back((unsigned char)((FrameTypeProto >> 8) & 0xFF));
+        data->push_back((unsigned char)(FrameTypeProto & 0xFF));
     }
 
-    if((_modem_type_tx != gr_modem_types::ModemTypeBPSK1K) &&
-            (_modem_type_tx != gr_modem_types::ModemType2FSK1KFM) &&
-            (_modem_type_tx != gr_modem_types::ModemType2FSK1K) &&
-            (_modem_type_tx != gr_modem_types::ModemTypeGMSK1K) &&
-            (_modem_type_tx != gr_modem_types::ModemType4FSK1KFM))
-        data->push_back(0xAA); // frame start
     for(int i=0;i< data_size;i++)
     {
         data->push_back(encoded_audio[i]);
