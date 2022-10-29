@@ -25,8 +25,7 @@
 
 using namespace M17;
 
-M17Transmitter::M17Transmitter(M17Modulator& modulator) : modulator(modulator),
-                                                currentLich(0), frameNumber(0)
+M17Transmitter::M17Transmitter() : currentLich(0), frameNumber(0)
 {
 
 }
@@ -90,14 +89,12 @@ void M17Transmitter::start(const std::string& src, const std::string& dst,
         bytes->push_back(preamble_sync.at(i));
     for(int i=0;i<preamble_bytes.size();i++)
         bytes->push_back(preamble_bytes.at(i));
-    //modulator.send(preamble_sync, preamble_bytes, bytes);
 
     // Send LSF
     bytes->push_back(LSF_SYNC_WORD[0]);
     bytes->push_back(LSF_SYNC_WORD[1]);
     for(int i=0;i<punctured.size();i++)
         bytes->push_back(punctured.at(i));
-    //modulator.send(LSF_SYNC_WORD, punctured, bytes);
 }
 
 void M17Transmitter::send(const payload_t& payload,
@@ -135,6 +132,4 @@ void M17Transmitter::send(const payload_t& payload,
     bytes->push_back(STREAM_SYNC_WORD[1]);
     for(int i=0;i<frame.size();i++)
         bytes->push_back(frame.at(i));
-
-    //modulator.send(STREAM_SYNC_WORD, frame, samples, isLast);
 }

@@ -40,7 +40,6 @@
 /// M17 code
 #include <M17/M17FrameDecoder.hpp>
 #include <M17/M17FrameEncoder.hpp>
-#include <M17/M17Modulator.hpp>
 #include <M17/M17Transmitter.hpp>
 
 
@@ -159,7 +158,6 @@ private:
     BurstTimer *_burst_timer;
 
     /// M17 code
-    M17::M17Modulator    modulator;    ///< M17 modulator.
     M17::M17FrameDecoder decoder;      ///< M17 frame decoder
     M17::M17FrameEncoder encoder;      ///< M17 frame encoder
     M17::M17Transmitter  m17Tx;        ///< M17 transmission manager.

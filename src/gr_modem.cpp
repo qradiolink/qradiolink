@@ -18,9 +18,8 @@
 
 gr_modem::gr_modem(const Settings *settings, Logger *logger, QObject *parent) :
     QObject(parent),
-    modulator(),
     decoder(),
-    m17Tx(modulator)
+    m17Tx()
 
 {
     _settings = settings;
@@ -188,7 +187,6 @@ void gr_modem::toggleTxMode(int modem_type)
         else if(modem_type == gr_modem_types::ModemTypeM17)
         {
             _tx_frame_length = 16;
-            modulator.init();
         }
     }
 

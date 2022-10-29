@@ -27,10 +27,11 @@
 
 #include <string>
 #include <array>
+#include <vector>
 #include "M17ConvolutionalEncoder.hpp"
 #include "M17LinkSetupFrame.hpp"
 #include "M17StreamFrame.hpp"
-#include "M17Modulator.hpp"
+#include "M17Constants.hpp"
 
 namespace M17
 {
@@ -47,7 +48,7 @@ public:
      *
      * @param modulator: reference to M17 4FSK modulator driver.
      */
-    M17Transmitter(M17Modulator& modulator);
+    M17Transmitter();
 
     /**
      * Destructor.
@@ -84,7 +85,6 @@ private:
     M17ConvolutionalEncoder      encoder;    ///< Convolutional encoder.
     M17LinkSetupFrame                lsf;    ///< Link Setup Frame handler.
     M17StreamFrame             dataFrame;    ///< Data frame Handler.
-    M17Modulator&              modulator;    ///< 4FSK modulator.
     std::array< lich_t, 6 > lichSegments;    ///< Encoded LSF chunks for LICH generation.
     uint8_t                  currentLich;    ///< Index of current LSF chunk.
     uint16_t                 frameNumber;    ///< Current frame number.

@@ -31,7 +31,7 @@ gr_mod_m17::gr_mod_m17(int sps, int samp_rate, int carrier_freq,
 {
 
     _samp_rate =samp_rate;
-    _sps = 125;
+    _sps = sps;
     _samples_per_symbol = 10;
     float if_samp_rate = 48000;
     _carrier_freq = carrier_freq;
