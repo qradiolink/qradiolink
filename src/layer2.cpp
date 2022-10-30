@@ -46,7 +46,7 @@ void Layer2Protocol::processRadioMessage(QByteArray data)
     QByteArray message(tmp, data_len);
     delete[] tmp;
 
-    if(crc != gr::digital::crc32(message.toStdString()))
+    if(crc != crc32(message.toStdString()))
     {
         _logger->log(Logger::LogLevelCritical, "Radio packet CRC32 failed, dropping packet");
         return;
@@ -70,7 +70,7 @@ void Layer2Protocol::processRadioMessage(QByteArray data)
 
 QByteArray Layer2Protocol::buildRadioMessage(QByteArray data, int msg_type)
 {
-    unsigned int crc = gr::digital::crc32(data.toStdString());
+    unsigned int crc = crc32(data.toStdString());
     QByteArray message;
     QDataStream stream(&message, QIODevice::WriteOnly);
     stream.setByteOrder(QDataStream::BigEndian);

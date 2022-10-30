@@ -23,7 +23,7 @@
 #include <QByteArray>
 #include <QDataStream>
 #include <QDebug>
-#include <gnuradio/digital/crc32.h>
+#include "ext/crc32.h"
 #include "mumblechannel.h"
 #include "station.h"
 #include "logger.h"
