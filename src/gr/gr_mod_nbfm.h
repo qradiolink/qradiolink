@@ -25,8 +25,8 @@
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/filter/fft_filter_fff.h>
-#include <gnuradio/filter/rational_resampler_base.h>
-#include <gnuradio/filter/rational_resampler_base.h>
+#include <gnuradio/filter/rational_resampler.h>
+#include <gnuradio/filter/rational_resampler.h>
 #include <gnuradio/blocks/multiply_const.h>
 #include <gnuradio/blocks/multiply_const.h>
 #include <gnuradio/blocks/multiply.h>
@@ -38,7 +38,7 @@
 
 class gr_mod_nbfm;
 
-typedef boost::shared_ptr<gr_mod_nbfm> gr_mod_nbfm_sptr;
+typedef std::shared_ptr<gr_mod_nbfm> gr_mod_nbfm_sptr;
 gr_mod_nbfm_sptr make_gr_mod_nbfm(int sps=125, int samp_rate=250000, int carrier_freq=1700,
                                           int filter_width=8000);
 
@@ -57,8 +57,8 @@ private:
     gr::filter::iir_filter_ffd::sptr _pre_emph_filter;
     gr::analog::sig_source_f::sptr _tone_source;
     gr::blocks::add_ff::sptr _add;
-    gr::filter::rational_resampler_base_ccf::sptr _resampler;
-    gr::filter::rational_resampler_base_fff::sptr _if_resampler;
+    gr::filter::rational_resampler_ccf::sptr _resampler;
+    gr::filter::rational_resampler_fff::sptr _if_resampler;
     gr::blocks::multiply_const_cc::sptr _amplify;
     gr::blocks::multiply_const_cc::sptr _bb_gain;
     gr::blocks::multiply_const_ff::sptr _audio_amplify;

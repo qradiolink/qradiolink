@@ -53,7 +53,7 @@ gr_mod_m17::gr_mod_m17(int sps, int samp_rate, int carrier_freq,
     _map = gr::digital::map_bb::make(map);
 
     _chunks_to_symbols = gr::digital::chunks_to_symbols_bf::make(constellation);
-    _first_resampler = gr::filter::rational_resampler_base_fff::make(_samples_per_symbol, 1,
+    _first_resampler = gr::filter::rational_resampler_fff::make(_samples_per_symbol, 1,
                     gr::filter::firdes::root_raised_cosine(_samples_per_symbol,
                                 _samples_per_symbol,1, 0.5, 32 * _samples_per_symbol));
     _scale_pulses = gr::blocks::multiply_const_ff::make(0.66666666, 1);
@@ -61,12 +61,12 @@ gr_mod_m17::gr_mod_m17(int sps, int samp_rate, int carrier_freq,
     _fm_modulator = gr::analog::frequency_modulator_fc::make(M_PI/_samples_per_symbol);
 
     std::vector<float> interp_taps = gr::filter::firdes::low_pass(_sps, _samp_rate * 6,
-                        if_samp_rate/2, if_samp_rate/2, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
-    _resampler = gr::filter::rational_resampler_base_ccf::make(_sps, 6, interp_taps);
+                        if_samp_rate/2, if_samp_rate/2, gr::fft::window::WIN_BLACKMAN_HARRIS);
+    _resampler = gr::filter::rational_resampler_ccf::make(_sps, 6, interp_taps);
     _amplify = gr::blocks::multiply_const_cc::make(0.9,1);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
     _filter = gr::filter::fft_filter_ccf::make(1,gr::filter::firdes::low_pass(
-                1, if_samp_rate, _filter_width, _filter_width, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+                1, if_samp_rate, _filter_width, _filter_width, gr::fft::window::WIN_BLACKMAN_HARRIS));
 
 
     connect(self(),0,_packed_to_unpacked,0);

@@ -42,13 +42,13 @@ gr_mod_freedv::gr_mod_freedv(int sps, int samp_rate, int carrier_freq,
     _freedv = gr::vocoder::freedv_tx_ss::make(mode);
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::band_pass(
-                    1, target_samp_rate, 200, 3500, 350, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+                    1, target_samp_rate, 200, 3500, 350, gr::fft::window::WIN_BLACKMAN_HARRIS));
 
     _float_to_complex = gr::blocks::float_to_complex::make();
     std::vector<float> interp_taps = gr::filter::firdes::low_pass(sps, _samp_rate,
                                                         _filter_width, 1200);
 
-    _resampler = gr::filter::rational_resampler_base_ccf::make(sps,1, interp_taps);
+    _resampler = gr::filter::rational_resampler_ccf::make(sps,1, interp_taps);
     _feed_forward_agc = gr::analog::feedforward_agc_cc::make(512,1.0f);
     _amplify = gr::blocks::multiply_const_cc::make(0.98f,1);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
@@ -57,14 +57,14 @@ gr_mod_freedv::gr_mod_freedv(int sps, int samp_rate, int carrier_freq,
         _filter = gr::filter::fft_filter_ccc::make(
                     1,gr::filter::firdes::complex_band_pass_2(
                         1, target_samp_rate, low_cutoff, _filter_width, 250, 90,
-                        gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+                        gr::fft::window::WIN_BLACKMAN_HARRIS));
     }
     else
     {
         _filter = gr::filter::fft_filter_ccc::make(
                     1,gr::filter::firdes::complex_band_pass_2(
                         1, target_samp_rate, -_filter_width, -low_cutoff, 250, 90,
-                        gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+                        gr::fft::window::WIN_BLACKMAN_HARRIS));
     }
 
 

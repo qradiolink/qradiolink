@@ -71,14 +71,14 @@ gr_mod_2fsk::gr_mod_2fsk(int sps, int samp_rate, int carrier_freq,
     _chunks_to_symbols = gr::digital::chunks_to_symbols_bf::make(constellation);
     _freq_modulator = gr::analog::frequency_modulator_fc::make((spacing * M_PI/2)/(_samples_per_symbol));
     _repeat = gr::blocks::repeat::make(4, _samples_per_symbol);
-    _resampler = gr::filter::rational_resampler_base_fff::make(_samples_per_symbol, 1,
+    _resampler = gr::filter::rational_resampler_fff::make(_samples_per_symbol, 1,
                     gr::filter::firdes::root_raised_cosine(_samples_per_symbol,
                                 _samples_per_symbol,1,0.2,nfilts));
     _amplify = gr::blocks::multiply_const_cc::make(amplif,1);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
     _filter = gr::filter::fft_filter_ccf::make(1,gr::filter::firdes::low_pass_2(
-            1, if_samp_rate, _filter_width, 1200, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
-    _resampler2 = gr::filter::rational_resampler_base_ccf::make(second_interp, 1,
+            1, if_samp_rate, _filter_width, 1200, 90, gr::fft::window::WIN_BLACKMAN_HARRIS));
+    _resampler2 = gr::filter::rational_resampler_ccf::make(second_interp, 1,
                 gr::filter::firdes::low_pass(second_interp,_samp_rate,_filter_width,_filter_width*5));
 
     connect(self(),0,_packed_to_unpacked,0);

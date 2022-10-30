@@ -55,17 +55,17 @@ gr_demod_dsss::gr_demod_dsss(std::vector<int>signature, int sps, int samp_rate, 
 
 
     std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _if_samp_rate/2, _if_samp_rate/2,
-                                                           gr::filter::firdes::WIN_BLACKMAN_HARRIS);
-    _resampler = gr::filter::rational_resampler_base_ccf::make(1, 50, taps);
+                                                           gr::fft::window::WIN_BLACKMAN_HARRIS);
+    _resampler = gr::filter::rational_resampler_ccf::make(1, 50, taps);
     _resampler->set_thread_priority(99);
 
     std::vector<float> taps_if = gr::filter::firdes::low_pass(1, _if_samp_rate, _target_samp_rate/2, _target_samp_rate/2,
-                                                           gr::filter::firdes::WIN_BLACKMAN_HARRIS);
-    _resampler_if = gr::filter::rational_resampler_base_ccf::make(13, 50, taps_if);
+                                                           gr::fft::window::WIN_BLACKMAN_HARRIS);
+    _resampler_if = gr::filter::rational_resampler_ccf::make(13, 50, taps_if);
 
     _agc = gr::analog::agc2_cc::make(1e-1, 1e-1, 1, 10);
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
-                            1, _target_samp_rate, _filter_width,1200,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
+                            1, _target_samp_rate, _filter_width,1200,gr::fft::window::WIN_BLACKMAN_HARRIS) );
     _costas_loop = gr::digital::costas_loop_cc::make(2*M_PI/100,2);
     _costas_freq = gr::digital::costas_loop_cc::make(M_PI/200,2,true);
     _dsss_decoder = gr::dsss::dsss_decoder_cc::make(dsss_code, _samples_per_symbol);

@@ -8,7 +8,7 @@
 #include <stdio.h>
 
 class gr_sample_sink;
-typedef boost::shared_ptr<gr_sample_sink> gr_sample_sink_sptr;
+typedef std::shared_ptr<gr_sample_sink> gr_sample_sink_sptr;
 
 gr_sample_sink_sptr make_gr_sample_sink();
 

@@ -23,7 +23,7 @@
 #include <gnuradio/tags.h>
 
 class gr_zero_idle_bursts;
-typedef boost::shared_ptr<gr_zero_idle_bursts> gr_zero_idle_bursts_sptr;
+typedef std::shared_ptr<gr_zero_idle_bursts> gr_zero_idle_bursts_sptr;
 
 gr_zero_idle_bursts_sptr make_gr_zero_idle_bursts();
 

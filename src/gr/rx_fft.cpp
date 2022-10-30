@@ -48,7 +48,7 @@ rx_fft_c::rx_fft_c(unsigned int fftsize, int wintype)
 {
 
     /* create FFT object */
-    d_fft = new gr::fft::fft_complex(d_fftsize, true, 4);
+    d_fft = new gr::fft::fft_complex_fwd(d_fftsize);
     // must remember to check set_fft_size(), we malloc and free there as well
     d_fft_points = (float*)volk_malloc((size_t)d_fftsize * sizeof(float), volk_get_alignment());
     d_sample_buffer = d_fft->get_inbuf();
@@ -152,7 +152,7 @@ void rx_fft_c::set_fft_size(unsigned int fftsize)
 
         /* reset FFT object (also reset FFTW plan) */
         delete d_fft;
-        d_fft = new gr::fft::fft_complex (d_fftsize, true);
+        d_fft = new gr::fft::fft_complex_fwd (d_fftsize);
         d_sample_buffer = d_fft->get_inbuf();
     }
 
@@ -175,13 +175,13 @@ void rx_fft_c::set_window_type(int wintype)
 
     d_wintype = wintype;
 
-    if ((d_wintype < gr::filter::firdes::WIN_HAMMING) || (d_wintype > gr::filter::firdes::WIN_FLATTOP))
+    if ((d_wintype < gr::fft::window::WIN_HAMMING) || (d_wintype > gr::fft::window::WIN_FLATTOP))
     {
-        d_wintype = gr::filter::firdes::WIN_HAMMING;
+        d_wintype = gr::fft::window::WIN_HAMMING;
     }
 
     d_window.clear();
-    d_window = gr::filter::firdes::window((gr::filter::firdes::win_type)d_wintype, d_fftsize, 6.76);
+    d_window = gr::filter::firdes::window((gr::fft::window::win_type)d_wintype, d_fftsize, 6.76);
 }
 
 /*! \brief Get currently used window type. */
@@ -212,7 +212,7 @@ rx_fft_f::rx_fft_f(unsigned int fftsize, int wintype)
 {
 
     /* create FFT object */
-    d_fft = new gr::fft::fft_complex(d_fftsize, true);
+    d_fft = new gr::fft::fft_complex_fwd(d_fftsize);
     d_cbuf = new boost::circular_buffer<float>;
 
     /* allocate circular buffer */
@@ -329,7 +329,7 @@ void rx_fft_f::set_fft_size(unsigned int fftsize)
 
         /* reset FFT object (also reset FFTW plan) */
         delete d_fft;
-        d_fft = new gr::fft::fft_complex(d_fftsize, true);
+        d_fft = new gr::fft::fft_complex_fwd(d_fftsize, true);
     }
 }
 
@@ -350,13 +350,13 @@ void rx_fft_f::set_window_type(int wintype)
 
     d_wintype = wintype;
 
-    if ((d_wintype < gr::filter::firdes::WIN_HAMMING) || (d_wintype > gr::filter::firdes::WIN_FLATTOP))
+    if ((d_wintype < gr::fft::window::WIN_HAMMING) || (d_wintype > gr::fft::window::WIN_FLATTOP))
     {
-        d_wintype = gr::filter::firdes::WIN_HAMMING;
+        d_wintype = gr::fft::window::WIN_HAMMING;
     }
 
     d_window.clear();
-    d_window = gr::filter::firdes::window((gr::filter::firdes::win_type)d_wintype, d_fftsize, 6.76);
+    d_window = gr::filter::firdes::window((gr::fft::window::win_type)d_wintype, d_fftsize, 6.76);
 }
 
 /*! \brief Get currently used window type. */

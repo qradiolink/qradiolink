@@ -38,12 +38,12 @@
 #include <gnuradio/fec/cc_encoder.h>
 #include <gnuradio/fec/encoder.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
-#include <gnuradio/filter/rational_resampler_base.h>
+#include <gnuradio/filter/rational_resampler.h>
 
 
 class gr_mod_dsss;
 
-typedef boost::shared_ptr<gr_mod_dsss> gr_mod_dsss_sptr;
+typedef std::shared_ptr<gr_mod_dsss> gr_mod_dsss_sptr;
 gr_mod_dsss_sptr make_gr_mod_dsss(int sps=125, int samp_rate=250000, int carrier_freq=1700,
                                           int filter_width=8000);
 
@@ -66,9 +66,9 @@ private:
     gr::digital::scrambler_bb::sptr _scrambler;
     gr::dsss::dsss_encoder_bb::sptr _dsss_encoder;
     gr::filter::fft_filter_ccf::sptr _filter;
-    gr::filter::rational_resampler_base_ccf::sptr _resampler;
-    gr::filter::rational_resampler_base_ccf::sptr _resampler_if;
-    gr::filter::rational_resampler_base_ccf::sptr _resampler_rf;
+    gr::filter::rational_resampler_ccf::sptr _resampler;
+    gr::filter::rational_resampler_ccf::sptr _resampler_if;
+    gr::filter::rational_resampler_ccf::sptr _resampler_rf;
 
 
 

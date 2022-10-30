@@ -24,7 +24,7 @@
 #include <stdio.h>
 
 class gr_const_sink;
-typedef boost::shared_ptr<gr_const_sink> gr_const_sink_sptr;
+typedef std::shared_ptr<gr_const_sink> gr_const_sink_sptr;
 
 gr_const_sink_sptr make_gr_const_sink();
 

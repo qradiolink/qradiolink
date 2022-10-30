@@ -52,8 +52,8 @@ gr_demod_base::gr_demod_base(BurstTimer *burst_timer, QObject *parent, float dev
 
     _rotator = gr::blocks::rotator_cc::make(2*M_PI/1000000);
     int tw = std::min(_samp_rate/4, 1500000);
-    _resampler = gr::filter::rational_resampler_base_ccf::make(1, 1,
-                gr::filter::firdes::low_pass(1, _samp_rate, 500000, tw, gr::filter::firdes::WIN_HAMMING));
+    _resampler = gr::filter::rational_resampler_ccf::make(1, 1,
+                gr::filter::firdes::low_pass(1, _samp_rate, 500000, tw, gr::fft::window::WIN_HAMMING));
 
     // FIXME: LimeSDR bandwidth set to higher value for lower freq
     _lime_specific = false;
@@ -110,7 +110,7 @@ gr_demod_base::gr_demod_base(BurstTimer *burst_timer, QObject *parent, float dev
         }
     }
 
-    _fft_sink = make_rx_fft_c(32768, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+    _fft_sink = make_rx_fft_c(32768, gr::fft::window::WIN_BLACKMAN_HARRIS);
     _mmdvm_sink = make_gr_mmdvm_sink(burst_timer, 1, false, _use_tdma);
 
     _deframer1 = make_gr_deframer_bb(1);
@@ -1070,9 +1070,9 @@ void gr_demod_base::set_samp_rate(int samp_rate)
         std::vector<float> taps;
         //int tw = std::min(_samp_rate/4, 1500000);
         taps = gr::filter::firdes::low_pass(1, _samp_rate, 480000, 100000,
-                                            gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+                                            gr::fft::window::WIN_BLACKMAN_HARRIS);
 
-        _resampler = gr::filter::rational_resampler_base_ccf::make(1, decimation, taps);
+        _resampler = gr::filter::rational_resampler_ccf::make(1, decimation, taps);
         _resampler->set_thread_priority(75);
         _top_block->connect(_rotator,0, _resampler,0);
         _top_block->connect(_resampler,0, _demod_valve,0);

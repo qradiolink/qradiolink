@@ -19,7 +19,7 @@
 
 #include <gnuradio/hier_block2.h>
 #include <gnuradio/filter/firdes.h>
-#include <gnuradio/filter/rational_resampler_base.h>
+#include <gnuradio/filter/rational_resampler.h>
 #include <gnuradio/analog/quadrature_demod_cf.h>
 #include <gnuradio/analog/pwr_squelch_cc.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
@@ -37,7 +37,7 @@
 
 class gr_demod_m17;
 
-typedef boost::shared_ptr<gr_demod_m17> gr_demod_m17_sptr;
+typedef std::shared_ptr<gr_demod_m17> gr_demod_m17_sptr;
 gr_demod_m17_sptr make_gr_demod_m17(int sps=125, int samp_rate=1000000, int carrier_freq=1700,
                                           int filter_width=6250);
 
@@ -50,7 +50,7 @@ public:
 
 private:
     gr::analog::quadrature_demod_cf::sptr _fm_demod;
-    gr::filter::rational_resampler_base_ccf::sptr _resampler;
+    gr::filter::rational_resampler_ccf::sptr _resampler;
     gr::filter::fft_filter_ccf::sptr _filter;
     gr::digital::symbol_sync_ff::sptr _symbol_sync;
     gr::filter::fft_filter_fff::sptr _symbol_filter;

@@ -29,7 +29,7 @@
 
 class rssi_block;
 
-typedef boost::shared_ptr<rssi_block> rssi_block_sptr;
+typedef std::shared_ptr<rssi_block> rssi_block_sptr;
 rssi_block_sptr make_rssi_block(int level = -80);
 
 class rssi_block : public gr::hier_block2

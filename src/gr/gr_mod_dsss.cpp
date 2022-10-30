@@ -59,7 +59,7 @@ gr_mod_dsss::gr_mod_dsss(int sps, int samp_rate, int carrier_freq,
     _chunks_to_symbols = gr::digital::chunks_to_symbols_bc::make(constellation);
 
 
-    _resampler = gr::filter::rational_resampler_base_ccf::make(_samples_per_symbol, 1,
+    _resampler = gr::filter::rational_resampler_ccf::make(_samples_per_symbol, 1,
                                   gr::filter::firdes::root_raised_cosine(_samples_per_symbol,
                                         _samples_per_symbol,1,0.35,11 * _samples_per_symbol));
     _resampler->set_thread_priority(99);
@@ -69,10 +69,10 @@ gr_mod_dsss::gr_mod_dsss(int sps, int samp_rate, int carrier_freq,
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
     _filter = gr::filter::fft_filter_ccf::make(
                 1,gr::filter::firdes::low_pass_2(
-                    1, if_samp_rate, _filter_width, 1200, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
-    _resampler_if = gr::filter::rational_resampler_base_ccf::make(50,13,
+                    1, if_samp_rate, _filter_width, 1200, 60, gr::fft::window::WIN_BLACKMAN_HARRIS));
+    _resampler_if = gr::filter::rational_resampler_ccf::make(50,13,
                         gr::filter::firdes::low_pass(50.0,if_samp_rate*50,_filter_width,_filter_width*5));
-    _resampler_rf = gr::filter::rational_resampler_base_ccf::make(50, 1,
+    _resampler_rf = gr::filter::rational_resampler_ccf::make(50, 1,
                         gr::filter::firdes::low_pass(50,_samp_rate,_filter_width,_filter_width*5));
 
 

@@ -70,7 +70,7 @@ gr_mod_qpsk::gr_mod_qpsk(int sps, int samp_rate, int carrier_freq,
     else
         nfilts = 15;
 
-    _resampler = gr::filter::rational_resampler_base_ccf::make(_samples_per_symbol, 1,
+    _resampler = gr::filter::rational_resampler_ccf::make(_samples_per_symbol, 1,
             gr::filter::firdes::root_raised_cosine(_samples_per_symbol, _samples_per_symbol,
                          1, 0.35, nfilts * _samples_per_symbol));
     _amplify = gr::blocks::multiply_const_cc::make(0.6,1);

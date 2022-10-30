@@ -26,7 +26,7 @@
 #include <gnuradio/digital/costas_loop_cc.h>
 #include <gnuradio/analog/agc2_cc.h>
 #include <gnuradio/analog/agc2_ff.h>
-#include <gnuradio/filter/rational_resampler_base.h>
+#include <gnuradio/filter/rational_resampler.h>
 #include <gnuradio/filter/pfb_arb_resampler_ccf.h>
 #include <gnuradio/digital/clock_recovery_mm_cc.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
@@ -42,7 +42,7 @@
 
 class gr_demod_dsss;
 
-typedef boost::shared_ptr<gr_demod_dsss> gr_demod_dsss_sptr;
+typedef std::shared_ptr<gr_demod_dsss> gr_demod_dsss_sptr;
 gr_demod_dsss_sptr make_gr_demod_dsss(int sps=25, int samp_rate=250000, int carrier_freq=1700,
                                           int filter_width=8000);
 
@@ -63,8 +63,8 @@ private:
     gr::blocks::float_to_uchar::sptr _float_to_uchar;
     gr::blocks::add_const_ff::sptr _add_const_fec;
 
-    gr::filter::rational_resampler_base_ccf::sptr _resampler;
-    gr::filter::rational_resampler_base_ccf::sptr _resampler_if;
+    gr::filter::rational_resampler_ccf::sptr _resampler;
+    gr::filter::rational_resampler_ccf::sptr _resampler_if;
     gr::filter::fft_filter_ccf::sptr _filter;
     gr::digital::descrambler_bb::sptr _descrambler;
     gr::digital::descrambler_bb::sptr _descrambler2;

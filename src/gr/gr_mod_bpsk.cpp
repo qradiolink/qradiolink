@@ -49,7 +49,7 @@ gr_mod_bpsk::gr_mod_bpsk(int sps, int samp_rate, int carrier_freq,
     _encode_ccsds = gr::fec::encoder::make(encoder, 1, 1);
 
     _chunks_to_symbols = gr::digital::chunks_to_symbols_bc::make(constellation);
-    _resampler = gr::filter::rational_resampler_base_ccf::make(_samples_per_symbol, 1,
+    _resampler = gr::filter::rational_resampler_ccf::make(_samples_per_symbol, 1,
                 gr::filter::firdes::root_raised_cosine(_samples_per_symbol,
                         _samples_per_symbol, 1, 0.35,11 * _samples_per_symbol));
     _resampler->set_thread_priority(99);

@@ -38,8 +38,8 @@
 class rx_fft_c;
 class rx_fft_f;
 
-typedef boost::shared_ptr<rx_fft_c> rx_fft_c_sptr;
-typedef boost::shared_ptr<rx_fft_f> rx_fft_f_sptr;
+typedef std::shared_ptr<rx_fft_c> rx_fft_c_sptr;
+typedef std::shared_ptr<rx_fft_f> rx_fft_f_sptr;
 
 
 /*! \brief Return a shared_ptr to a new instance of rx_fft_c.
@@ -50,7 +50,7 @@ typedef boost::shared_ptr<rx_fft_f> rx_fft_f_sptr;
  * of raw pointers, the rx_fft_c constructor is private.
  * make_rx_fft_c is the public interface for creating new instances.
  */
-rx_fft_c_sptr make_rx_fft_c(unsigned int fftsize=4096, int wintype=gr::filter::firdes::WIN_HAMMING);
+rx_fft_c_sptr make_rx_fft_c(unsigned int fftsize=4096, int wintype=gr::fft::window::WIN_HAMMING);
 
 
 /*! \brief Block for computing complex FFT.
@@ -70,7 +70,7 @@ class rx_fft_c : public gr::sync_block
     friend rx_fft_c_sptr make_rx_fft_c(unsigned int fftsize, int wintype);
 
 protected:
-    rx_fft_c(unsigned int fftsize=4096, int wintype=gr::filter::firdes::WIN_HAMMING);
+    rx_fft_c(unsigned int fftsize=4096, int wintype=gr::fft::window::WIN_HAMMING);
 
 public:
     ~rx_fft_c();
@@ -94,7 +94,7 @@ private:
 
     boost::mutex d_mutex;  /*! Used to lock FFT output buffer. */
 
-    gr::fft::fft_complex    *d_fft;    /*! FFT object. */
+    gr::fft::fft_complex_fwd    *d_fft;    /*! FFT object. */
     std::vector<float>  d_window; /*! FFT window taps. */
 
     float *d_fft_points;
@@ -119,7 +119,7 @@ private:
  * of raw pointers, the rx_fft_f constructor is private.
  * make_rx_fft_f is the public interface for creating new instances.
  */
-rx_fft_f_sptr make_rx_fft_f(unsigned int fftsize=1024, int wintype=gr::filter::firdes::WIN_HAMMING);
+rx_fft_f_sptr make_rx_fft_f(unsigned int fftsize=1024, int wintype=gr::fft::window::WIN_HAMMING);
 
 
 /*! \brief Block for computing real FFT.
@@ -140,7 +140,7 @@ class rx_fft_f : public gr::sync_block
     friend rx_fft_f_sptr make_rx_fft_f(unsigned int fftsize, int wintype);
 
 protected:
-    rx_fft_f(unsigned int fftsize=1024, int wintype=gr::filter::firdes::WIN_HAMMING);
+    rx_fft_f(unsigned int fftsize=1024, int wintype=gr::fft::window::WIN_HAMMING);
 
 public:
     ~rx_fft_f();
@@ -163,7 +163,7 @@ private:
 
     boost::mutex d_mutex;  /*! Used to lock FFT output buffer. */
 
-    gr::fft::fft_complex    *d_fft;    /*! FFT object. */
+    gr::fft::fft_complex_fwd    *d_fft;    /*! FFT object. */
     std::vector<float>  d_window; /*! FFT window taps. */
 
     boost::circular_buffer<float> *d_cbuf; /*! buffer to accumulate samples. */

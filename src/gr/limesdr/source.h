@@ -28,7 +28,7 @@ namespace gr {
 namespace limesdr {
 class LIMESDR_API source : virtual public gr::block {
     public:
-    typedef boost::shared_ptr<source> sptr;
+    typedef std::shared_ptr<source> sptr;
 
     /*!
      * @brief Return a shared_ptr to a new instance of source.

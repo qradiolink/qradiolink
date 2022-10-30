@@ -7,7 +7,7 @@
 #include <stdio.h>
 
 class gr_4fsk_discriminator;
-typedef boost::shared_ptr<gr_4fsk_discriminator> gr_4fsk_discriminator_sptr;
+typedef std::shared_ptr<gr_4fsk_discriminator> gr_4fsk_discriminator_sptr;
 
 gr_4fsk_discriminator_sptr make_gr_4fsk_discriminator();
 

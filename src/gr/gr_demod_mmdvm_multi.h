@@ -19,8 +19,8 @@
 
 #include <gnuradio/hier_block2.h>
 #include <gnuradio/filter/firdes.h>
-#include <gnuradio/filter/rational_resampler_base.h>
-#include <gnuradio/filter/rational_resampler_base.h>
+#include <gnuradio/filter/rational_resampler.h>
+#include <gnuradio/filter/rational_resampler.h>
 #include <gnuradio/analog/quadrature_demod_cf.h>
 #include <gnuradio/analog/pwr_squelch_ff.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
@@ -32,7 +32,7 @@
 
 class gr_demod_mmdvm_multi;
 
-typedef boost::shared_ptr<gr_demod_mmdvm_multi> gr_demod_mmdvm_multi_sptr;
+typedef std::shared_ptr<gr_demod_mmdvm_multi> gr_demod_mmdvm_multi_sptr;
 gr_demod_mmdvm_multi_sptr make_gr_demod_mmdvm_multi(BurstTimer *burst_timer, int num_channels=3,
                                                     int channel_separation=25000, bool use_tdma=true,
                                                     int sps=125, int samp_rate=1200000, int carrier_freq=1700,
@@ -53,8 +53,8 @@ private:
     gr::blocks::float_to_short::sptr _float_to_short[MAX_MMDVM_CHANNELS];
     gr::analog::quadrature_demod_cf::sptr _fm_demod[MAX_MMDVM_CHANNELS];
     gr::blocks::multiply_const_ff::sptr _level_control[MAX_MMDVM_CHANNELS];
-    gr::filter::rational_resampler_base_ccf::sptr _first_resampler;
-    gr::filter::rational_resampler_base_ccf::sptr _resampler[MAX_MMDVM_CHANNELS];
+    gr::filter::rational_resampler_ccf::sptr _first_resampler;
+    gr::filter::rational_resampler_ccf::sptr _resampler[MAX_MMDVM_CHANNELS];
     gr::filter::fft_filter_ccf::sptr _filter[MAX_MMDVM_CHANNELS];
     gr_mmdvm_sink_sptr _mmdvm_sink;
     gr::blocks::rotator_cc::sptr _rotator[MAX_MMDVM_CHANNELS];

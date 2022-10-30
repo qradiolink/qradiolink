@@ -23,7 +23,7 @@
 #include <gnuradio/analog/feedforward_agc_cc.h>
 #include <gnuradio/filter/fft_filter_ccc.h>
 #include <gnuradio/filter/fft_filter_fff.h>
-#include <gnuradio/filter/rational_resampler_base.h>
+#include <gnuradio/filter/rational_resampler.h>
 #include <gnuradio/blocks/multiply_const.h>
 #include <gnuradio/blocks/multiply_const.h>
 #include <gnuradio/blocks/float_to_complex.h>
@@ -35,7 +35,7 @@
 
 class gr_mod_freedv;
 
-typedef boost::shared_ptr<gr_mod_freedv> gr_mod_freedv_sptr;
+typedef std::shared_ptr<gr_mod_freedv> gr_mod_freedv_sptr;
 gr_mod_freedv_sptr make_gr_mod_freedv(int sps=125, int samp_rate=8000, int carrier_freq=1700,
                                           int filter_width=2000, int low_cutoff=200, int mode=gr::vocoder::freedv_api::MODE_1600, int sb=0);
 
@@ -47,7 +47,7 @@ public:
     void set_bb_gain(float value);
 private:
 
-    gr::filter::rational_resampler_base_ccf::sptr _resampler;
+    gr::filter::rational_resampler_ccf::sptr _resampler;
     gr::blocks::multiply_const_cc::sptr _amplify;
     gr::blocks::multiply_const_cc::sptr _bb_gain;
     gr::filter::fft_filter_fff::sptr _audio_filter;

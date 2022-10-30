@@ -90,9 +90,9 @@ gr_demod_qpsk::gr_demod_qpsk(std::vector<int>signature, int sps, int samp_rate, 
     */
 
     std::vector<float> taps = gr::filter::firdes::low_pass_2(interpolation, _samp_rate * interpolation, _target_samp_rate/2,
-                            _target_samp_rate/10, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+                            _target_samp_rate/10, 60, gr::fft::window::WIN_BLACKMAN_HARRIS);
 
-    _resampler = gr::filter::rational_resampler_base_ccf::make(interpolation, decimation, taps);
+    _resampler = gr::filter::rational_resampler_ccf::make(interpolation, decimation, taps);
     _resampler->set_thread_priority(99);
     _agc = gr::analog::agc2_cc::make(1, 1e-1, 1.0, 1.0);
 
@@ -110,7 +110,7 @@ gr_demod_qpsk::gr_demod_qpsk(std::vector<int>signature, int sps, int samp_rate, 
     _costas_pll = gr::digital::costas_loop_cc::make(M_PI/200/_samples_per_symbol,4,true);
 
     _costas_loop = gr::digital::costas_loop_cc::make(costas_bw,4,true);
-    _equalizer = gr::digital::cma_equalizer_cc::make(8,1,0.005,2);
+    //_equalizer = gr::digital::linear_equalizer::make(8,1,0.005,2);
 
     _diff_phasor = gr::digital::diff_phasor_cc::make();
     const std::complex<float> i(0, 1);

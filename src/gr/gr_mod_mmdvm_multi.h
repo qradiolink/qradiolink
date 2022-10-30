@@ -24,7 +24,7 @@
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/filter/fft_filter_fff.h>
-#include <gnuradio/filter/rational_resampler_base.h>
+#include <gnuradio/filter/rational_resampler.h>
 #include <gnuradio/blocks/multiply_const.h>
 #include <gnuradio/blocks/rotator_cc.h>
 #include "gr_mmdvm_source.h"
@@ -34,7 +34,7 @@
 
 class gr_mod_mmdvm_multi;
 
-typedef boost::shared_ptr<gr_mod_mmdvm_multi> gr_mod_mmdvm_multi_sptr;
+typedef std::shared_ptr<gr_mod_mmdvm_multi> gr_mod_mmdvm_multi_sptr;
 gr_mod_mmdvm_multi_sptr make_gr_mod_mmdvm_multi(BurstTimer *burst_timer, int num_channels=3,
                                                 int channel_separation=25000, bool use_tdma=true,
                                                 int sps=25, int samp_rate=1200000, int carrier_freq=1700,
@@ -52,8 +52,8 @@ public:
 private:
 
     gr::analog::frequency_modulator_fc::sptr _fm_modulator[MAX_MMDVM_CHANNELS];
-    gr::filter::rational_resampler_base_ccf::sptr _resampler[MAX_MMDVM_CHANNELS];
-    gr::filter::rational_resampler_base_ccf::sptr _final_resampler;
+    gr::filter::rational_resampler_ccf::sptr _resampler[MAX_MMDVM_CHANNELS];
+    gr::filter::rational_resampler_ccf::sptr _final_resampler;
     gr::blocks::multiply_const_cc::sptr _amplify[MAX_MMDVM_CHANNELS];
     gr::blocks::multiply_const_cc::sptr _bb_gain;
     gr::blocks::multiply_const_ff::sptr _audio_amplify[MAX_MMDVM_CHANNELS];

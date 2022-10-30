@@ -35,15 +35,15 @@
 #include <gnuradio/blocks/pack_k_bits_bb.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/analog/frequency_modulator_fc.h>
-#include <gnuradio/filter/rational_resampler_base.h>
-#include <gnuradio/filter/rational_resampler_base.h>
+#include <gnuradio/filter/rational_resampler.h>
+#include <gnuradio/filter/rational_resampler.h>
 #include <gnuradio/fec/cc_encoder.h>
 #include <gnuradio/fec/encoder.h>
 
 
 class gr_mod_4fsk;
 
-typedef boost::shared_ptr<gr_mod_4fsk> gr_mod_4fsk_sptr;
+typedef std::shared_ptr<gr_mod_4fsk> gr_mod_4fsk_sptr;
 gr_mod_4fsk_sptr make_gr_mod_4fsk(int sps=125, int samp_rate=250000, int carrier_freq=1700,
                                           int filter_width=8000, bool fm=true);
 
@@ -68,8 +68,8 @@ private:
     gr::digital::map_bb::sptr _map;
     gr::analog::frequency_modulator_fc::sptr _freq_modulator;
     gr::fec::encoder::sptr _encode_ccsds;
-    gr::filter::rational_resampler_base_ccf::sptr _resampler2;
-    gr::filter::rational_resampler_base_fff::sptr _resampler;
+    gr::filter::rational_resampler_ccf::sptr _resampler2;
+    gr::filter::rational_resampler_fff::sptr _resampler;
 
 
 

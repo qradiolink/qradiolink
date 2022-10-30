@@ -24,7 +24,7 @@
 
 class gr_byte_source;
 
-typedef boost::shared_ptr<gr_byte_source> gr_byte_source_sptr;
+typedef std::shared_ptr<gr_byte_source> gr_byte_source_sptr;
 
 gr_byte_source_sptr make_gr_byte_source();
 

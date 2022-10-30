@@ -19,8 +19,8 @@
 
 #include <gnuradio/hier_block2.h>
 #include <gnuradio/filter/firdes.h>
-#include <gnuradio/filter/rational_resampler_base.h>
-#include <gnuradio/filter/rational_resampler_base.h>
+#include <gnuradio/filter/rational_resampler.h>
+#include <gnuradio/filter/rational_resampler.h>
 #include <gnuradio/analog/quadrature_demod_cf.h>
 #include <gnuradio/analog/pwr_squelch_ff.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
@@ -30,7 +30,7 @@
 
 class gr_demod_mmdvm;
 
-typedef boost::shared_ptr<gr_demod_mmdvm> gr_demod_mmdvm_sptr;
+typedef std::shared_ptr<gr_demod_mmdvm> gr_demod_mmdvm_sptr;
 gr_demod_mmdvm_sptr make_gr_demod_mmdvm(int sps=50, int samp_rate=1200000, int carrier_freq=1700,
                                           int filter_width=6250);
 
@@ -49,8 +49,8 @@ private:
     gr::analog::quadrature_demod_cf::sptr _fm_demod;
     gr::analog::pwr_squelch_ff::sptr _squelch;
     gr::blocks::multiply_const_ff::sptr _level_control;
-    gr::filter::rational_resampler_base_ccf::sptr _resampler;
-    gr::filter::rational_resampler_base_fff::sptr _audio_resampler;
+    gr::filter::rational_resampler_ccf::sptr _resampler;
+    gr::filter::rational_resampler_fff::sptr _audio_resampler;
     gr::filter::fft_filter_ccf::sptr _filter;
 
     int _sps;

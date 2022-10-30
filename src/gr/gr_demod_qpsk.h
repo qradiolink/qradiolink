@@ -29,11 +29,11 @@
 #include <gnuradio/fec/decoder.h>
 #include <gnuradio/fec/cc_decoder.h>
 #include <gnuradio/digital/costas_loop_cc.h>
-#include <gnuradio/digital/cma_equalizer_cc.h>
+#include <gnuradio/digital/linear_equalizer.h>
 #include <gnuradio/digital/symbol_sync_cc.h>
 #include <gnuradio/analog/agc2_cc.h>
 #include <gnuradio/digital/fll_band_edge_cc.h>
-#include <gnuradio/filter/rational_resampler_base.h>
+#include <gnuradio/filter/rational_resampler.h>
 #include <gnuradio/digital/constellation.h>
 #include <gnuradio/digital/constellation_decoder_cb.h>
 #include <gnuradio/digital/pfb_clock_sync_ccf.h>
@@ -45,7 +45,7 @@
 
 class gr_demod_qpsk;
 
-typedef boost::shared_ptr<gr_demod_qpsk> gr_demod_qpsk_sptr;
+typedef std::shared_ptr<gr_demod_qpsk> gr_demod_qpsk_sptr;
 gr_demod_qpsk_sptr make_gr_demod_qpsk(int sps=125, int samp_rate=250000, int carrier_freq=1700,
                                           int filter_width=8000);
 
@@ -57,14 +57,14 @@ public:
 
 
 private:
-    gr::digital::cma_equalizer_cc::sptr _equalizer;
+    gr::digital::linear_equalizer::sptr _equalizer;
     gr::analog::agc2_cc::sptr _agc;
     gr::digital::fll_band_edge_cc::sptr _fll;
     gr::digital::pfb_clock_sync_ccf::sptr _clock_sync;
     gr::digital::symbol_sync_cc::sptr _symbol_sync;
     gr::digital::costas_loop_cc::sptr _costas_loop;
     gr::digital::costas_loop_cc::sptr _costas_pll;
-    gr::filter::rational_resampler_base_ccf::sptr _resampler;
+    gr::filter::rational_resampler_ccf::sptr _resampler;
     gr::filter::fft_filter_ccf::sptr _shaping_filter;
     gr::filter::fft_filter_ccf::sptr _filter;
     gr::digital::descrambler_bb::sptr _descrambler;

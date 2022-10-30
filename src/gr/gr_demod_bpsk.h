@@ -25,11 +25,11 @@
 #include <gnuradio/digital/binary_slicer_fb.h>
 #include <gnuradio/blocks/float_to_complex.h>
 #include <gnuradio/digital/costas_loop_cc.h>
-#include <gnuradio/digital/cma_equalizer_cc.h>
+#include <gnuradio/digital/linear_equalizer.h>
 #include <gnuradio/analog/agc2_cc.h>
 #include <gnuradio/analog/agc2_ff.h>
 #include <gnuradio/digital/fll_band_edge_cc.h>
-#include <gnuradio/filter/rational_resampler_base.h>
+#include <gnuradio/filter/rational_resampler.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/digital/descrambler_bb.h>
 #include <gnuradio/blocks/add_const_ff.h>
@@ -42,7 +42,7 @@
 
 class gr_demod_bpsk;
 
-typedef boost::shared_ptr<gr_demod_bpsk> gr_demod_bpsk_sptr;
+typedef std::shared_ptr<gr_demod_bpsk> gr_demod_bpsk_sptr;
 gr_demod_bpsk_sptr make_gr_demod_bpsk(int sps=125, int samp_rate=250000, int carrier_freq=1700,
                                           int filter_width=8000);
 
@@ -54,7 +54,7 @@ public:
 
 private:
 
-    gr::digital::cma_equalizer_cc::sptr _equalizer;
+    gr::digital::linear_equalizer::sptr _equalizer;
     gr::blocks::complex_to_real::sptr _complex_to_real;
     gr::analog::agc2_cc::sptr _agc;
     gr::digital::fll_band_edge_cc::sptr _fll;
@@ -64,7 +64,7 @@ private:
     gr::blocks::float_to_uchar::sptr _float_to_uchar;
     gr::blocks::add_const_ff::sptr _add_const_fec;
 
-    gr::filter::rational_resampler_base_ccf::sptr _resampler;
+    gr::filter::rational_resampler_ccf::sptr _resampler;
     gr::digital::descrambler_bb::sptr _descrambler;
     gr::digital::descrambler_bb::sptr _descrambler2;
     gr::blocks::delay::sptr _delay;

@@ -21,7 +21,7 @@
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/filter/fft_filter_ccc.h>
 #include <gnuradio/filter/fft_filter_fff.h>
-#include <gnuradio/filter/rational_resampler_base.h>
+#include <gnuradio/filter/rational_resampler.h>
 #include <gnuradio/analog/agc2_ff.h>
 #include <gnuradio/analog/feedforward_agc_cc.h>
 #include <gnuradio/blocks/multiply_const.h>
@@ -33,7 +33,7 @@
 
 class gr_mod_am;
 
-typedef boost::shared_ptr<gr_mod_am> gr_mod_am_sptr;
+typedef std::shared_ptr<gr_mod_am> gr_mod_am_sptr;
 gr_mod_am_sptr make_gr_mod_am(int sps=125, int samp_rate=250000, int carrier_freq=1700,
                                           int filter_width=8000);
 
@@ -46,7 +46,7 @@ public:
     void set_bb_gain(float value);
 
 private:
-    gr::filter::rational_resampler_base_ccf::sptr _resampler;
+    gr::filter::rational_resampler_ccf::sptr _resampler;
     gr::blocks::multiply_const_cc::sptr _amplify;
     gr::blocks::multiply_const_cc::sptr _bb_gain;
     gr::blocks::multiply_const_ff::sptr _audio_amplify;

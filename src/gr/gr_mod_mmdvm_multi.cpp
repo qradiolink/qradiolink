@@ -48,9 +48,9 @@ gr_mod_mmdvm_multi::gr_mod_mmdvm_multi(BurstTimer *burst_timer, int num_channels
     float carrier_offset = float(channel_separation);
 
     std::vector<float> intermediate_interp_taps = gr::filter::firdes::low_pass_2(10, intermediate_samp_rate,
-                        _filter_width, _filter_width, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+                        _filter_width, _filter_width, 60, gr::fft::window::WIN_BLACKMAN_HARRIS);
     std::vector<float> interp_taps = gr::filter::firdes::low_pass_2(5, _samp_rate,
-                        resamp_filter_width, resamp_filter_slope, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+                        resamp_filter_width, resamp_filter_slope, 60, gr::fft::window::WIN_BLACKMAN_HARRIS);
 
 
     for(int i = 0;i < _num_channels;i++)
@@ -67,7 +67,7 @@ gr_mod_mmdvm_multi::gr_mod_mmdvm_multi(BurstTimer *burst_timer, int num_channels
     }
     for(int i = 0;i < _num_channels;i++)
     {
-        _resampler[i] = gr::filter::rational_resampler_base_ccf::make(10, 1, intermediate_interp_taps);
+        _resampler[i] = gr::filter::rational_resampler_ccf::make(10, 1, intermediate_interp_taps);
     }
     for(int i = 0;i < _num_channels;i++)
     {
@@ -76,7 +76,7 @@ gr_mod_mmdvm_multi::gr_mod_mmdvm_multi(BurstTimer *burst_timer, int num_channels
     for(int i = 0;i < _num_channels;i++)
     {
         _filter[i] = gr::filter::fft_filter_ccf::make(1,gr::filter::firdes::low_pass_2(
-                1, target_samp_rate, _filter_width, _filter_width/2, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+                1, target_samp_rate, _filter_width, _filter_width/2, 90, gr::fft::window::WIN_BLACKMAN_HARRIS));
     }
     for(int i = 0;i < _num_channels;i++)
     {
@@ -93,7 +93,7 @@ gr_mod_mmdvm_multi::gr_mod_mmdvm_multi(BurstTimer *burst_timer, int num_channels
     _add = gr::blocks::add_cc::make();
     _divide_level = gr::blocks::multiply_const_cc::make(1.0f / float(num_channels));
     _mmdvm_source = make_gr_mmdvm_source(burst_timer, num_channels, true, _use_tdma);
-    _final_resampler = gr::filter::rational_resampler_base_ccf::make(5, 1, interp_taps);
+    _final_resampler = gr::filter::rational_resampler_ccf::make(5, 1, interp_taps);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
 
 

@@ -55,12 +55,12 @@ gr_demod_m17::gr_demod_m17(std::vector<int>signature, int sps, int samp_rate, in
                 constellation_points, pre_diff, 2, 4, 1, 1.0, 1.0);
 
     std::vector<float> taps = gr::filter::firdes::low_pass(3, _samp_rate * 3, _target_samp_rate/2,
-                                _target_samp_rate/2, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+                                _target_samp_rate/2, gr::fft::window::WIN_BLACKMAN_HARRIS);
 
-    _resampler = gr::filter::rational_resampler_base_ccf::make(3, 125, taps);
+    _resampler = gr::filter::rational_resampler_ccf::make(3, 125, taps);
 
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
-            1, _target_samp_rate, _filter_width, _filter_width, gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
+            1, _target_samp_rate, _filter_width, _filter_width, gr::fft::window::WIN_BLACKMAN_HARRIS) );
 
     _fm_demod = gr::analog::quadrature_demod_cf::make(_samples_per_symbol/M_PI);
     std::vector<float> symbol_filter_taps = gr::filter::firdes::root_raised_cosine(1.5,_target_samp_rate,

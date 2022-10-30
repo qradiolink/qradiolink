@@ -36,7 +36,7 @@ namespace gr {
     class CESSB_API stretcher_cc : virtual public gr::block
     {
      public:
-      typedef boost::shared_ptr<stretcher_cc> sptr;
+      typedef std::shared_ptr<stretcher_cc> sptr;
 
       /*!
        * \brief Return a shared_ptr to a new instance of cessb::stretcher_cc.

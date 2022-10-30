@@ -96,8 +96,8 @@ gr_mod_base::gr_mod_base(BurstTimer *burst_timer, QObject *parent, float device_
 
 
     int tw = std::min(_samp_rate/4, 1500000);
-    _resampler = gr::filter::rational_resampler_base_ccf::make(1, 1,
-            gr::filter::firdes::low_pass(1, _samp_rate, 500000, tw, gr::filter::firdes::WIN_HAMMING));
+    _resampler = gr::filter::rational_resampler_ccf::make(1, 1,
+            gr::filter::firdes::low_pass(1, _samp_rate, 500000, tw, gr::fft::window::WIN_HAMMING));
 
     _2fsk_2k_fm = make_gr_mod_2fsk(25, 1000000, 1700, 2700, true); // 4000 for non FM, 2700 for FM
     _2fsk_1k_fm = make_gr_mod_2fsk(50, 1000000, 1700, 1350, true);
@@ -188,8 +188,8 @@ void gr_mod_base::set_samp_rate(int samp_rate)
 
         }
         _resampler.reset();
-        _resampler = gr::filter::rational_resampler_base_ccf::make(interpolation, 1,
-                gr::filter::firdes::low_pass(interpolation, _samp_rate, 480000, 20000, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+        _resampler = gr::filter::rational_resampler_ccf::make(interpolation, 1,
+                gr::filter::firdes::low_pass(interpolation, _samp_rate, 480000, 20000, gr::fft::window::WIN_BLACKMAN_HARRIS));
         _resampler->set_thread_priority(75);
         _top_block->connect(_rotator,0, _resampler,0);
         if(_lime_specific)

@@ -25,7 +25,7 @@
 #include <gnuradio/blocks/unpack_k_bits_bb.h>
 #include <gnuradio/blocks/float_to_complex.h>
 #include <gnuradio/blocks/multiply_const.h>
-#include <gnuradio/filter/rational_resampler_base.h>
+#include <gnuradio/filter/rational_resampler.h>
 #include <gnuradio/digital/binary_slicer_fb.h>
 #include <gnuradio/digital/fll_band_edge_cc.h>
 #include <gnuradio/blocks/divide.h>
@@ -46,7 +46,7 @@
 
 class gr_demod_2fsk;
 
-typedef boost::shared_ptr<gr_demod_2fsk> gr_demod_2fsk_sptr;
+typedef std::shared_ptr<gr_demod_2fsk> gr_demod_2fsk_sptr;
 gr_demod_2fsk_sptr make_gr_demod_2fsk(int sps=125, int samp_rate=250000, int carrier_freq=1700,
                                           int filter_width=8000, bool fm=false);
 
@@ -61,7 +61,7 @@ private:
     gr::blocks::float_to_complex::sptr _float_to_complex;
     gr::filter::fft_filter_fff::sptr _symbol_filter;
     gr::digital::symbol_sync_ff::sptr _symbol_sync;
-    gr::filter::rational_resampler_base_ccf::sptr _resampler;
+    gr::filter::rational_resampler_ccf::sptr _resampler;
     gr::filter::fft_filter_ccf::sptr _filter;
     gr::digital::fll_band_edge_cc::sptr _fll;
     gr::filter::fft_filter_ccc::sptr _lower_filter;

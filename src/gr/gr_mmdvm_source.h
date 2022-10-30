@@ -27,7 +27,7 @@
 
 class gr_mmdvm_source;
 
-typedef boost::shared_ptr<gr_mmdvm_source> gr_mmdvm_source_sptr;
+typedef std::shared_ptr<gr_mmdvm_source> gr_mmdvm_source_sptr;
 
 gr_mmdvm_source_sptr make_gr_mmdvm_source(BurstTimer *burst_timer, uint8_t cn=0, bool multi_channnel=false, bool use_tdma=true);
 

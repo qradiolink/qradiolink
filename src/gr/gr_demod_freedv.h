@@ -21,8 +21,8 @@
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/analog/agc2_ff.h>
 #include <gnuradio/analog/feedforward_agc_cc.h>
-#include <gnuradio/filter/rational_resampler_base.h>
-#include <gnuradio/filter/rational_resampler_base.h>
+#include <gnuradio/filter/rational_resampler.h>
+#include <gnuradio/filter/rational_resampler.h>
 #include <gnuradio/filter/fft_filter_ccc.h>
 #include <gnuradio/filter/fft_filter_fff.h>
 #include <gnuradio/blocks/complex_to_real.h>
@@ -36,7 +36,7 @@
 
 class gr_demod_freedv;
 
-typedef boost::shared_ptr<gr_demod_freedv> gr_demod_freedv_sptr;
+typedef std::shared_ptr<gr_demod_freedv> gr_demod_freedv_sptr;
 gr_demod_freedv_sptr make_gr_demod_freedv(int sps=125, int samp_rate=8000, int carrier_freq=1700,
                                           int filter_width=2000, int low_cutoff=200, int mode=gr::vocoder::freedv_api::MODE_1600, int sb=0);
 
@@ -52,7 +52,7 @@ public:
 
 private:
 
-    gr::filter::rational_resampler_base_ccf::sptr _resampler;
+    gr::filter::rational_resampler_ccf::sptr _resampler;
     gr::filter::fft_filter_ccc::sptr _filter;
     gr::analog::agc2_ff::sptr _agc;
     gr::analog::feedforward_agc_cc::sptr _feed_forward_agc;

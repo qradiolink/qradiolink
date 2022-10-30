@@ -89,13 +89,13 @@ dsss_decoder_cc_impl::dsss_decoder_cc_impl(const std::vector<int> &code, float s
                                                excess_bw, // roll-off factor
                                                rrc_ntaps);
 
-    filter::kernel::fir_filter_ccf *fir_filter = new filter::kernel::fir_filter_ccf(1, rrc_taps);
+    filter::kernel::fir_filter_ccf *fir_filter = new filter::kernel::fir_filter_ccf(rrc_taps);
 
     for (int i = 0; i < code_symbols_size + extra_symbols; i++) {
         d_taps.push_back(fir_filter->filter(&code_symbols[i]));
     }
 
-    d_match_filter = new filter::kernel::fir_filter_ccc(1, d_taps);
+    d_match_filter = new filter::kernel::fir_filter_ccc(d_taps);
     // we can use this to tag back in time
     set_history(d_samples_per_symbol * d_code.size());
 

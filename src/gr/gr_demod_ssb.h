@@ -20,7 +20,7 @@
 #include <gnuradio/hier_block2.h>
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/analog/agc2_cc.h>
-#include <gnuradio/filter/rational_resampler_base.h>
+#include <gnuradio/filter/rational_resampler.h>
 #include <gnuradio/analog/pwr_squelch_cc.h>
 #include <gnuradio/filter/fft_filter_ccc.h>
 #include <gnuradio/filter/fft_filter_fff.h>
@@ -34,7 +34,7 @@
 
 class gr_demod_ssb;
 
-typedef boost::shared_ptr<gr_demod_ssb> gr_demod_ssb_sptr;
+typedef std::shared_ptr<gr_demod_ssb> gr_demod_ssb_sptr;
 gr_demod_ssb_sptr make_gr_demod_ssb(int sps=125, int samp_rate=250000, int carrier_freq=1700,
                                           int filter_width=8000, int sb=0);
 
@@ -51,7 +51,7 @@ public:
     void set_gain(float value);
 
 private:
-    gr::filter::rational_resampler_base_ccf::sptr _resampler;
+    gr::filter::rational_resampler_ccf::sptr _resampler;
     gr::analog::pwr_squelch_cc::sptr _squelch;
     gr::filter::fft_filter_ccc::sptr _filter_usb;
     gr::filter::fft_filter_ccc::sptr _filter_lsb;

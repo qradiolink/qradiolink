@@ -35,7 +35,7 @@ namespace gr {
       class dsss_decoder_cc : virtual public gr::block
       {
        public:
-        typedef boost::shared_ptr<dsss_decoder_cc> sptr;
+        typedef std::shared_ptr<dsss_decoder_cc> sptr;
 
         /*!
          * \brief Return a shared_ptr to a new instance of dsss::dsss_decoder_cc.

@@ -24,14 +24,14 @@
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/filter/fft_filter_fff.h>
-#include <gnuradio/filter/rational_resampler_base.h>
+#include <gnuradio/filter/rational_resampler.h>
 #include <gnuradio/blocks/multiply_const.h>
 #include "gr_zero_idle_bursts.h"
 
 
 class gr_mod_mmdvm;
 
-typedef boost::shared_ptr<gr_mod_mmdvm> gr_mod_mmdvm_sptr;
+typedef std::shared_ptr<gr_mod_mmdvm> gr_mod_mmdvm_sptr;
 gr_mod_mmdvm_sptr make_gr_mod_mmdvm(int sps=50, int samp_rate=1200000, int carrier_freq=1700,
                                           int filter_width=6250);
 
@@ -45,7 +45,7 @@ public:
 private:
 
     gr::analog::frequency_modulator_fc::sptr _fm_modulator;
-    gr::filter::rational_resampler_base_ccf::sptr _resampler;
+    gr::filter::rational_resampler_ccf::sptr _resampler;
     gr::blocks::multiply_const_cc::sptr _amplify;
     gr::blocks::multiply_const_cc::sptr _bb_gain;
     gr::blocks::multiply_const_ff::sptr _audio_amplify;

@@ -24,7 +24,7 @@
 
 
 class gr_bit_sink;
-typedef boost::shared_ptr<gr_bit_sink> gr_bit_sink_sptr;
+typedef std::shared_ptr<gr_bit_sink> gr_bit_sink_sptr;
 
 gr_bit_sink_sptr make_gr_bit_sink();
 

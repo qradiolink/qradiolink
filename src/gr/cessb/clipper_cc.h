@@ -36,7 +36,7 @@ namespace gr {
     class CESSB_API clipper_cc : virtual public gr::sync_block
     {
      public:
-      typedef boost::shared_ptr<clipper_cc> sptr;
+      typedef std::shared_ptr<clipper_cc> sptr;
 
       /*!
        * \brief Return a shared_ptr to a new instance of cessb::clipper_cc.

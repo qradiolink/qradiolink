@@ -38,12 +38,12 @@
 #include <gnuradio/fec/cc_encoder.h>
 #include <gnuradio/fec/encoder.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
-#include <gnuradio/filter/rational_resampler_base.h>
+#include <gnuradio/filter/rational_resampler.h>
 
 
 class gr_mod_bpsk;
 
-typedef boost::shared_ptr<gr_mod_bpsk> gr_mod_bpsk_sptr;
+typedef std::shared_ptr<gr_mod_bpsk> gr_mod_bpsk_sptr;
 gr_mod_bpsk_sptr make_gr_mod_bpsk(int sps=125, int samp_rate=250000, int carrier_freq=1700,
                                           int filter_width=8000);
 
@@ -62,8 +62,8 @@ private:
     gr::blocks::multiply_const_cc::sptr _bb_gain;
     gr::fec::encoder::sptr _encode_ccsds;
     gr::digital::scrambler_bb::sptr _scrambler;
-    gr::filter::rational_resampler_base_ccf::sptr _resampler;
-    gr::filter::rational_resampler_base_ccf::sptr _resampler2;
+    gr::filter::rational_resampler_ccf::sptr _resampler;
+    gr::filter::rational_resampler_ccf::sptr _resampler2;
 
 
 

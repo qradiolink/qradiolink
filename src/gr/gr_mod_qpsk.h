@@ -38,12 +38,12 @@
 #include <gnuradio/blocks/pack_k_bits_bb.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/digital/constellation.h>
-#include <gnuradio/filter/rational_resampler_base.h>
+#include <gnuradio/filter/rational_resampler.h>
 
 
 class gr_mod_qpsk;
 
-typedef boost::shared_ptr<gr_mod_qpsk> gr_mod_qpsk_sptr;
+typedef std::shared_ptr<gr_mod_qpsk> gr_mod_qpsk_sptr;
 gr_mod_qpsk_sptr make_gr_mod_qpsk(int sps=125, int samp_rate=250000, int carrier_freq=1700,
                                           int filter_width=8000);
 
@@ -67,7 +67,7 @@ private:
     gr::digital::diff_encoder_bb::sptr _diff_encoder;
     gr::blocks::pack_k_bits_bb::sptr _packer;
     gr::digital::map_bb::sptr _map;
-    gr::filter::rational_resampler_base_ccf::sptr _resampler;
+    gr::filter::rational_resampler_ccf::sptr _resampler;
 
 
     int _samples_per_symbol;

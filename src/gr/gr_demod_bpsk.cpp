@@ -49,8 +49,8 @@ gr_demod_bpsk::gr_demod_bpsk(std::vector<int>signature, int sps, int samp_rate, 
 
 
     std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _target_samp_rate/2, _target_samp_rate/2,
-                                                           gr::filter::firdes::WIN_BLACKMAN_HARRIS);
-    _resampler = gr::filter::rational_resampler_base_ccf::make(1, 50, taps);
+                                                           gr::fft::window::WIN_BLACKMAN_HARRIS);
+    _resampler = gr::filter::rational_resampler_ccf::make(1, 50, taps);
     _resampler->set_thread_priority(99);
     _agc = gr::analog::agc2_cc::make(1e-1, 1e-1, 1, 1);
     float gain_mu = 0.05;
@@ -59,7 +59,7 @@ gr_demod_bpsk::gr_demod_bpsk(std::vector<int>signature, int sps, int samp_rate, 
                                                               gain_omega*gain_omega, 0.5, gain_mu,
                                                               0.001);
     _costas_loop = gr::digital::costas_loop_cc::make(2*M_PI/200,2);
-    _equalizer = gr::digital::cma_equalizer_cc::make(8,1,0.000005,1);
+    //_equalizer = gr::digital::linear_equalizer::make(8,1,0.000005,1);
     _fll = gr::digital::fll_band_edge_cc::make(_samples_per_symbol, 0.35, 32, 8*M_PI/100);
     _shaping_filter = gr::filter::fft_filter_ccf::make(
                 1, gr::filter::firdes::root_raised_cosine(_samples_per_symbol,_samples_per_symbol,1,0.35,15 * _samples_per_symbol));
@@ -87,8 +87,8 @@ gr_demod_bpsk::gr_demod_bpsk(std::vector<int>signature, int sps, int samp_rate, 
     connect(_shaping_filter,0,self(),0);
     connect(_shaping_filter,0,_agc,0);
     connect(_agc,0,_clock_recovery,0);
-    connect(_clock_recovery,0,_equalizer,0);
-    connect(_equalizer,0,_costas_loop,0);
+    connect(_clock_recovery,0,_costas_loop,0);
+    //connect(_equalizer,0,_costas_loop,0);
     connect(_costas_loop,0,_complex_to_real,0);
     connect(_costas_loop,0,self(),1);
     connect(_complex_to_real,0,_multiply_const_fec,0);

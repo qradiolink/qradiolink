@@ -35,12 +35,12 @@
 #include <gnuradio/analog/frequency_modulator_fc.h>
 #include <gnuradio/fec/cc_encoder.h>
 #include <gnuradio/fec/encoder.h>
-#include <gnuradio/filter/rational_resampler_base.h>
+#include <gnuradio/filter/rational_resampler.h>
 
 
 class gr_mod_gmsk;
 
-typedef boost::shared_ptr<gr_mod_gmsk> gr_mod_gmsk_sptr;
+typedef std::shared_ptr<gr_mod_gmsk> gr_mod_gmsk_sptr;
 gr_mod_gmsk_sptr make_gr_mod_gmsk(int sps=125, int samp_rate=250000, int carrier_freq=1700,
                                           int filter_width=8000);
 
@@ -62,8 +62,8 @@ private:
     gr::filter::fft_filter_ccf::sptr _filter;
     gr::digital::map_bb::sptr _map;
     gr::analog::frequency_modulator_fc::sptr _freq_modulator;
-    gr::filter::rational_resampler_base_fff::sptr _resampler;
-    gr::filter::rational_resampler_base_ccf::sptr _resampler2;
+    gr::filter::rational_resampler_fff::sptr _resampler;
+    gr::filter::rational_resampler_ccf::sptr _resampler2;
 
 
 

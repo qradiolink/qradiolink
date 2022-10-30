@@ -24,7 +24,7 @@
 
 class gr_audio_source;
 
-typedef boost::shared_ptr<gr_audio_source> gr_audio_source_sptr;
+typedef std::shared_ptr<gr_audio_source> gr_audio_source_sptr;
 
 gr_audio_source_sptr make_gr_audio_source();
 

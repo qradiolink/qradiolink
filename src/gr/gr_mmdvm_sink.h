@@ -27,7 +27,7 @@
 
 
 class gr_mmdvm_sink;
-typedef boost::shared_ptr<gr_mmdvm_sink> gr_mmdvm_sink_sptr;
+typedef std::shared_ptr<gr_mmdvm_sink> gr_mmdvm_sink_sptr;
 
 gr_mmdvm_sink_sptr make_gr_mmdvm_sink(BurstTimer *burst_timer, uint8_t cn=0,
                                       bool multi_channel=true, bool use_tdma=true);

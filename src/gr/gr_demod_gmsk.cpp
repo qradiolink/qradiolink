@@ -78,11 +78,11 @@ gr_demod_gmsk::gr_demod_gmsk(std::vector<int>signature, int sps, int samp_rate, 
     polys.push_back(79);
 
     std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _target_samp_rate/2, _target_samp_rate/2,
-                                                           gr::filter::firdes::WIN_BLACKMAN_HARRIS);
-    _resampler = gr::filter::rational_resampler_base_ccf::make(interp, decim, taps);
+                                                           gr::fft::window::WIN_BLACKMAN_HARRIS);
+    _resampler = gr::filter::rational_resampler_ccf::make(interp, decim, taps);
     _resampler->set_thread_priority(99);
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
-                                1, _target_samp_rate, _filter_width,_filter_width/2,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
+                                1, _target_samp_rate, _filter_width,_filter_width/2,gr::fft::window::WIN_BLACKMAN_HARRIS) );
 
     _float_to_complex = gr::blocks::float_to_complex::make();
     float sps_deviation = 200.0f / ((float)_target_samp_rate / (float)_samples_per_symbol);

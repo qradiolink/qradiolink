@@ -31,7 +31,7 @@
 #include <gnuradio/analog/sig_source.h>
 #include <gnuradio/blocks/copy.h>
 #include <gnuradio/zeromq/pull_source.h>
-#include <gnuradio/filter/rational_resampler_base.h>
+#include <gnuradio/filter/rational_resampler.h>
 #include <osmosdr/sink.h>
 #include "limesdr/sink.h"
 #include "src/modem_types.h"
@@ -89,7 +89,7 @@ private:
     gr::limesdr::sink::sptr _limesdr_sink;
     gr::blocks::rotator_cc::sptr _rotator;
     gr::analog::sig_source_f::sptr _signal_source;
-    gr::filter::rational_resampler_base_ccf::sptr _resampler;
+    gr::filter::rational_resampler_ccf::sptr _resampler;
     gr::zeromq::pull_source::sptr _zmq_source;
     gr_mmdvm_source_sptr _mmdvm_source;
 

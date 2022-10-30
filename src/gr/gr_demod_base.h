@@ -23,7 +23,7 @@
 #include <string>
 #include <gnuradio/top_block.h>
 #include <gnuradio/filter/firdes.h>
-#include <gnuradio/filter/rational_resampler_base.h>
+#include <gnuradio/filter/rational_resampler.h>
 #include <gnuradio/filter/freq_xlating_fir_filter.h>
 #include <gnuradio/blocks/multiply.h>
 #include <gnuradio/analog/agc2_ff.h>
@@ -116,7 +116,7 @@ private:
     gr_const_sink_sptr _constellation;
 
     gr::blocks::rotator_cc::sptr _rotator;
-    gr::filter::rational_resampler_base_ccf::sptr _resampler;
+    gr::filter::rational_resampler_ccf::sptr _resampler;
     gr::zeromq::push_sink::sptr _zeromq_sink;
 
     rssi_block_sptr _rssi_block;

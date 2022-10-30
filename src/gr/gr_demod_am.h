@@ -21,7 +21,7 @@
 #include <gnuradio/filter/firdes.h>
 
 #include <gnuradio/analog/agc2_cc.h>
-#include <gnuradio/filter/rational_resampler_base.h>
+#include <gnuradio/filter/rational_resampler.h>
 #include <gnuradio/analog/agc2_ff.h>
 #include <gnuradio/filter/iir_filter_ffd.h>
 #include <gnuradio/filter/fft_filter_fff.h>
@@ -34,7 +34,7 @@
 
 class gr_demod_am;
 
-typedef boost::shared_ptr<gr_demod_am> gr_demod_am_sptr;
+typedef std::shared_ptr<gr_demod_am> gr_demod_am_sptr;
 gr_demod_am_sptr make_gr_demod_am(int sps=125, int samp_rate=250000, int carrier_freq=1700,
                                           int filter_width=8000);
 
@@ -50,8 +50,8 @@ public:
     void set_agc_decay(float value);
 private:
 
-    gr::filter::rational_resampler_base_ccf::sptr _resampler;
-    gr::filter::rational_resampler_base_fff::sptr _audio_resampler;
+    gr::filter::rational_resampler_ccf::sptr _resampler;
+    gr::filter::rational_resampler_fff::sptr _audio_resampler;
     gr::analog::pwr_squelch_cc::sptr _squelch;
     gr::filter::fft_filter_ccc::sptr _filter;
     gr::analog::agc2_ff::sptr _agc;

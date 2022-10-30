@@ -24,7 +24,7 @@
 #include <QDebug>
 
 class gr_deframer_bb;
-typedef boost::shared_ptr<gr_deframer_bb> gr_deframer_bb_sptr;
+typedef std::shared_ptr<gr_deframer_bb> gr_deframer_bb_sptr;
 
 gr_deframer_bb_sptr make_gr_deframer_bb(int modem_type);
 

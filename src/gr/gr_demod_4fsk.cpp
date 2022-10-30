@@ -99,24 +99,24 @@ gr_demod_4fsk::gr_demod_4fsk(std::vector<int>signature, int sps, int samp_rate, 
     int spacing = 1;
 
     std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _target_samp_rate/2, _target_samp_rate/2,
-                                                           gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+                                                           gr::fft::window::WIN_BLACKMAN_HARRIS);
     std::vector<float> symbol_filter_taps = gr::filter::firdes::low_pass(1.0,
                                  _target_samp_rate, _target_samp_rate/_samples_per_symbol, _target_samp_rate/_samples_per_symbol/20,
-                                                                         gr::filter::firdes::WIN_BLACKMAN_HARRIS);
-    _resampler = gr::filter::rational_resampler_base_ccf::make(interpolation, decimation, taps);
+                                                                         gr::fft::window::WIN_BLACKMAN_HARRIS);
+    _resampler = gr::filter::rational_resampler_ccf::make(interpolation, decimation, taps);
     _resampler->set_thread_priority(99);
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
-                                1, _target_samp_rate, _filter_width,_filter_width/2,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
+                                1, _target_samp_rate, _filter_width,_filter_width/2,gr::fft::window::WIN_BLACKMAN_HARRIS) );
     if(!fm)
     {
         _filter1 = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
-                                    1, _target_samp_rate, -_filter_width,-_filter_width+rs,bw,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
+                                    1, _target_samp_rate, -_filter_width,-_filter_width+rs,bw,gr::fft::window::WIN_BLACKMAN_HARRIS) );
         _filter2 = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
-                                    1, _target_samp_rate, -_filter_width+rs,0,bw,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
+                                    1, _target_samp_rate, -_filter_width+rs,0,bw,gr::fft::window::WIN_BLACKMAN_HARRIS) );
         _filter3 = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
-                                    1, _target_samp_rate, 0,_filter_width-rs,bw,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
+                                    1, _target_samp_rate, 0,_filter_width-rs,bw,gr::fft::window::WIN_BLACKMAN_HARRIS) );
         _filter4 = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
-                                    1, _target_samp_rate, _filter_width-rs,_filter_width, bw,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
+                                    1, _target_samp_rate, _filter_width-rs,_filter_width, bw,gr::fft::window::WIN_BLACKMAN_HARRIS) );
         _mag1 = gr::blocks::complex_to_mag::make();
         _mag2 = gr::blocks::complex_to_mag::make();
         _mag3 = gr::blocks::complex_to_mag::make();
