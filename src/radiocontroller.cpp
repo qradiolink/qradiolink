@@ -638,7 +638,7 @@ void RadioController::processVideoFrame(unsigned char *audio_buffer, int audio_s
 
     /// Out to radio
     ///
-    u_int32_t crc = (u_int32_t)gr::digital::crc32(&(videobuffer[24+audio_size]), (size_t)real_size);
+    u_int32_t crc = (u_int32_t)crc32(&(videobuffer[24+audio_size]), (size_t)real_size);
 
     memcpy(&(videobuffer[0]), &real_size, 4*sizeof(unsigned char));
     memcpy(&(videobuffer[4]), &real_size, 4*sizeof(unsigned char));
@@ -698,7 +698,7 @@ void RadioController::processInputNetStream()
 
     if(nread > 0)
     {
-        u_int32_t crc = (u_int32_t)gr::digital::crc32(buffer, nread);
+        u_int32_t crc = (u_int32_t)crc32(buffer, nread);
         memcpy(&(netbuffer[0]), &nread, 4);
         memcpy(&(netbuffer[4]), &nread, 4);
         memcpy(&(netbuffer[8]), &nread, 4);
@@ -1450,7 +1450,7 @@ void RadioController::receiveVideoData(unsigned char *data, int size)
     memcpy(jpeg_frame, &(data[24+audio_size]), frame_size*sizeof(unsigned char));
     u_int32_t crc = getFrameCRC32(data);
     delete[] data;
-    u_int32_t crc_check = (u_int32_t) gr::digital::crc32(jpeg_frame, (size_t)frame_size);
+    u_int32_t crc_check = (u_int32_t) crc32(jpeg_frame, (size_t)frame_size);
     if(crc != crc_check)
     {
         /// JPEG decoder has this nasty habit of segfaulting on image errors
@@ -1502,7 +1502,7 @@ void RadioController::receiveNetData(unsigned char *data, int size)
     u_int32_t crc;
     memcpy(&crc, &data[12], 4);
     delete[] data;
-    u_int32_t crc_check = (u_int32_t)gr::digital::crc32(net_frame, (size_t)frame_size);
+    u_int32_t crc_check = (u_int32_t)crc32(net_frame, (size_t)frame_size);
 
     if(crc != crc_check)
     {

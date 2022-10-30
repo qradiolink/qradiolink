@@ -43,6 +43,7 @@ CONFIG(qtaudio) {
 
 SOURCES += src/main.cpp\
     src/bursttimer.cpp \
+    src/ext/crc32.cpp \
     src/ext/devices.cpp \
     src/gpredictcontrol.cpp \
     src/gr/gr_demod_m17.cpp \
@@ -141,6 +142,7 @@ HEADERS  += src/mainwindow.h\
         src/audio/audioencoder.h\
         src/audio/audioprocessor.h \
     src/bursttimer.h \
+    src/ext/crc32.h \
     src/ext/devices.h \
     src/gpredictcontrol.h \
     src/gr/gr_demod_m17.h \
