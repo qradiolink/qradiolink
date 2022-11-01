@@ -78,6 +78,8 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     _full_screen_shortcut->setContext(Qt::ApplicationShortcut);
 
     QObject::connect(_full_screen_shortcut, SIGNAL(activated()),this, SLOT(makeFullScreen()));
+    QObject::connect(ui->lineEditRXDev, SIGNAL(editTextChanged(QString)), this, SLOT(updateRXDevices(QString)));
+    QObject::connect(ui->lineEditTXDev, SIGNAL(editTextChanged(QString)), this, SLOT(updateTXDevices(QString)));
     QObject::connect(ui->buttonTransmit,SIGNAL(toggled(bool)),this,SLOT(startTx()));
     QObject::connect(ui->sendTextButton,SIGNAL(clicked()),this,SLOT(sendTextRequested()));
     QObject::connect(ui->voipConnectButton,SIGNAL(clicked()),this,SLOT(connectVOIPRequested()));
@@ -2148,6 +2150,20 @@ void MainWindow::findDevices()
         _logger->log(Logger::LogLevelInfo, QString("Found devices: " + devices.join("\n")));
     else
         _logger->log(Logger::LogLevelWarning, QString("Could not find known devices, enter device string manually"));
+    ui->lineEditRXDev->clear();
+    ui->lineEditTXDev->clear();
+    ui->lineEditRXDev->addItem(_settings->rx_device_args);
+    ui->lineEditTXDev->addItem(_settings->tx_device_args);
     ui->lineEditRXDev->addItems(devices);
     ui->lineEditTXDev->addItems(devices);
+}
+
+void MainWindow::updateRXDevices(QString dev_string)
+{
+    ui->lineEditRXDev->setItemText(ui->lineEditRXDev->currentIndex(), dev_string);
+}
+
+void MainWindow::updateTXDevices(QString dev_string)
+{
+    ui->lineEditTXDev->setItemText(ui->lineEditTXDev->currentIndex(), dev_string);
 }

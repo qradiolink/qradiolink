@@ -192,6 +192,8 @@ public slots:
     void tuneDopplerRxFreq(qint64 freq_delta);
     void tuneDopplerTxFreq(qint64 freq_delta);
     void findDevices();
+    void updateRXDevices(QString dev_string);
+    void updateTXDevices(QString dev_string);
 
 signals:
     void startTransmission();
