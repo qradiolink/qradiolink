@@ -96,7 +96,7 @@ signals:
     void newFFTData(float*, int);
     void newConstellationData(complex_vector*);
     void newRSSIValue(float rssi);
-    void initError(QString error);
+    void initError(QString error, int index);
     void writePCM(short *pcm, int bytes, bool preprocess, int mode);
     void rxGainStages(gain_vector rx_gains);
     void txGainStages(gain_vector tx_gains);

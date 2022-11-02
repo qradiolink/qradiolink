@@ -493,7 +493,7 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
     QObject::connect(radio_op, SIGNAL(newRSSIValue(float)), w, SLOT(updateRSSI(float)));
     QObject::connect(radio_op, SIGNAL(newConstellationData(complex_vector*)),
                      w, SLOT(updateConstellation(complex_vector*)));
-    QObject::connect(radio_op, SIGNAL(initError(QString)), w, SLOT(initError(QString)));
+    QObject::connect(radio_op, SIGNAL(initError(QString, int)), w, SLOT(initError(QString, int)));
     QObject::connect(radio_op, SIGNAL(rxGainStages(gain_vector)),
                      w, SLOT(setRxGainStages(gain_vector)));
     QObject::connect(radio_op, SIGNAL(txGainStages(gain_vector)),

@@ -49,6 +49,7 @@
         <file>res/go-down-arrow.png</file>
         <file>res/dial-background.png</file>
         <file>res/dial-needle.png</file>
+        <file>res/edit-find.png</file>
     </qresource>
     <qresource prefix="/fonts">
         <file>res/LiquidCrystal-Normal.otf</file>
