@@ -1772,7 +1772,7 @@ void RadioController::toggleRX(bool value)
             _mutex->unlock();
             _logger->log(Logger::LogLevelFatal,
                          "Could not init RX device, check settings and restart");
-            emit initError("Could not init RX device, check settings");
+            emit initError("Could not init RX device, check settings", 0);
             return;
         }
 
@@ -1846,7 +1846,7 @@ void RadioController::toggleTX(bool value)
             _mutex->unlock();
             _logger->log(Logger::LogLevelFatal,
                          "Could not init TX device, check settings and restart");
-            emit initError("Could not init TX device, check settings");
+            emit initError("Could not init TX device, check settings", 1);
             return;
         }
 

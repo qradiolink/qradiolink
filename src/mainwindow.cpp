@@ -1468,10 +1468,25 @@ void MainWindow::toggleTxMode(int value)
     emit toggleTxModemMode(value);
 }
 
-void MainWindow::initError(QString error)
+void MainWindow::initError(QString error, int index)
 {
-    Q_UNUSED(error);
-    ui->tabWidget->setCurrentIndex(4);
+    QMessageBox errorDialog;
+    errorDialog.setIcon(QMessageBox::Critical);
+    QString dev;
+    if(index == 0)
+    {
+        dev = _settings->rx_device_args;
+    }
+    else
+    {
+        dev = _settings->tx_device_args;
+    }
+    errorDialog.setInformativeText(
+                QString("An error was encountered while trying to intialize the device %1").arg(dev));
+    errorDialog.setText(error);
+    errorDialog.exec();
+    ui->tabWidget->setCurrentIndex(3);
+    ui->settingsTab->setCurrentIndex(1);
 }
 
 void MainWindow::toggleRepeater(bool value)

@@ -24,6 +24,7 @@
 #include <QScrollBar>
 #include <QDir>
 #include <QFileInfo>
+#include <QMessageBox>
 #include <QTreeWidgetItem>
 #include <QTableWidgetItem>
 #include <QGraphicsOpacityEffect>
@@ -130,7 +131,7 @@ public slots:
     void updateSampleRate();
     void setFFTRange(int value);
     void autoSquelch();
-    void initError(QString error);
+    void initError(QString error, int index);
     void showMemoriesPanel(bool show);
     void addMemoryChannel();
     void removeMemoryChannel();
