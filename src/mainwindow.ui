@@ -90,7 +90,7 @@
          </font>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>3</number>
         </property>
         <property name="iconSize">
          <size>
@@ -3718,6 +3718,9 @@ and S-meter (dBm)</string>
                  </property>
                  <item row="0" column="2">
                   <widget class="QPushButton" name="findDevicesButton">
+                   <property name="toolTip">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Search for SoapySDR or LimeSDR devices connected to the system&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
                    <property name="text">
                     <string>Find devices</string>
                    </property>
@@ -3754,6 +3757,9 @@ and S-meter (dBm)</string>
                      <height>0</height>
                     </size>
                    </property>
+                   <property name="toolTip">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select device string from dropdown or manually edit. The default device is the one already saved in the configuration file.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
                    <property name="editable">
                     <bool>true</bool>
                    </property>
@@ -3779,6 +3785,9 @@ and S-meter (dBm)</string>
                      <width>400</width>
                      <height>0</height>
                     </size>
+                   </property>
+                   <property name="toolTip">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select device string from dropdown or manually edit. The default device is the one already saved in the configuration file.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                    </property>
                    <property name="editable">
                     <bool>true</bool>
