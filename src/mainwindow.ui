@@ -2810,7 +2810,7 @@ font: 10pt &quot;Sans Serif&quot;;
              </font>
             </property>
             <property name="currentIndex">
-             <number>1</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="tab">
              <property name="sizePolicy">
@@ -2884,7 +2884,7 @@ font: 10pt &quot;Sans Serif&quot;;
                   <number>4</number>
                  </property>
                  <property name="spacing">
-                  <number>4</number>
+                  <number>10</number>
                  </property>
                  <item row="14" column="4">
                   <widget class="QCheckBox" name="fftHistoryCheckBox">
@@ -3714,7 +3714,7 @@ and S-meter (dBm)</string>
                   <number>4</number>
                  </property>
                  <property name="spacing">
-                  <number>4</number>
+                  <number>10</number>
                  </property>
                  <item row="0" column="2">
                   <widget class="QPushButton" name="findDevicesButton">
