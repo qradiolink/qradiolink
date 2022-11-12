@@ -14,7 +14,7 @@ Supported hardware
 ---
 
 -  [**Ettus USRP bus devices**](https://ettus.com), [**RTL-SDR**](https://osmocom.org/projects/sdr/wiki/rtl-sdr), [**ADALM-Pluto (PlutoSDR)**](https://www.analog.com/en/design-center/evaluation-hardware-and-software/evaluation-boards-kits/adalm-pluto.html), (supported with SoapySDR and [**SoapyPlutoSDR**](https://github.com/pothosware/SoapyPlutoSDR)), [**LimeSDR-mini**](https://www.crowdsupply.com/lime-micro/limesdr-mini), [**LimeNET-Micro**](https://wiki.myriadrf.org/LimeNET_Micro) (both through SoapySDR), BladeRF, other devices supported by [**gr-osmosdr**](https://osmocom.org/projects/sdr/wiki/GrOsmoSDR) like HackRF and RedPitaya (not tested)
-- [**LimeRFE RF frontend**](https://www.crowdsupply.com/lime-micro/limerfe). Control of the LimeRFE is via the USB connection with automatic tuning based on SDR frequency. Only amateur radio bands are supported, cellular paths are not used. Both simplex and duplex mode are supprted.
+- [**LimeRFE RF frontend**](https://www.crowdsupply.com/lime-micro/limerfe). Control of the LimeRFE is via the USB connection with automatic tuning based on SDR frequency. Only amateur radio bands are supported, cellular paths are not used. Both simplex and duplex mode are supported.
 - FTDI FT232 USB relay boards for RF path switching and external power amplifier control
  
 
@@ -28,6 +28,8 @@ Requirements
 <pre>
 $ sudo apt-get install gnuradio-dev protobuf-compiler gr-osmosdr gnuradio libvolk2-dev libvolk2-bin libprotobuf23 libprotobuf-dev libopus0 libopus-dev libspeexdsp1 libspeexdsp-dev libpulse0 libpulse-dev liblog4cpp5v5 libcodec2-0.9 libcodec2-dev libasound2 libasound2-dev libjpeg62-turbo libjpeg62-turbo-dev libconfig++9v5 libconfig++-dev qt5-qmake qtbase5-dev libqt5core5a libqt5gui5 libqt5network5 libqt5sql5 qtmultimedia5-dev libqt5multimediawidgets5 libqt5multimedia5-plugins libqt5multimedia5 libftdi-dev libftdi1 libsndfile1-dev libsndfile1 qtgstreamer-plugins-qt5 libgstreamer-plugins-bad1.0-0 liblimesuite-dev limesuite-udev liblimesuite20.10-1 libzmq3-dev libzmq5 libsoapysdr-dev libsoapysdr0.7
 </pre>
+
+- A version of qradiolink commpatible with GNU Radio 3.10 and usable with Debian Bookworm and distributions with compatible package versions can be built using the **gr_3.10** branch of this repository
 
 For Ubuntu 20.04.3 build dependencies are:
 <pre>
