@@ -40,13 +40,13 @@
 class gr_mod_m17;
 
 typedef boost::shared_ptr<gr_mod_m17> gr_mod_m17_sptr;
-gr_mod_m17_sptr make_gr_mod_m17(int sps=125, int samp_rate=1000000, int carrier_freq=1700,
+gr_mod_m17_sptr make_gr_mod_m17(int sps=250, int samp_rate=1000000, int carrier_freq=1700,
                                           int filter_width=6250);
 
 class gr_mod_m17 : public gr::hier_block2
 {
 public:
-    explicit gr_mod_m17(int sps=125, int samp_rate=1000000, int carrier_freq=1700,
+    explicit gr_mod_m17(int sps=250, int samp_rate=1000000, int carrier_freq=1700,
                              int filter_width=6250);
     void set_bb_gain(float value);
 

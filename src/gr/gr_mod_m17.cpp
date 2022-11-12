@@ -32,8 +32,8 @@ gr_mod_m17::gr_mod_m17(int sps, int samp_rate, int carrier_freq,
 
     _samp_rate =samp_rate;
     _sps = sps;
-    _samples_per_symbol = 10;
-    float if_samp_rate = 48000;
+    _samples_per_symbol = 5;
+    float if_samp_rate = 24000;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
     std::vector<float> constellation;
@@ -55,7 +55,7 @@ gr_mod_m17::gr_mod_m17(int sps, int samp_rate, int carrier_freq,
     _chunks_to_symbols = gr::digital::chunks_to_symbols_bf::make(constellation);
     _first_resampler = gr::filter::rational_resampler_base_fff::make(_samples_per_symbol, 1,
                     gr::filter::firdes::root_raised_cosine(_samples_per_symbol,
-                                _samples_per_symbol,1, 0.5, 32 * _samples_per_symbol));
+                                _samples_per_symbol,1, 0.5, 50 * _samples_per_symbol));
     _scale_pulses = gr::blocks::multiply_const_ff::make(0.66666666, 1);
 
     _fm_modulator = gr::analog::frequency_modulator_fc::make(M_PI/_samples_per_symbol);
