@@ -94,15 +94,12 @@ std::string M17::decode_callsign(const call_t& encodedCall)
 
     // Decode each base-40 digit and map them to the appriate character.
     std::string result;
-    size_t index = 0;
 
     while(encoded)
     {
-        result[index++] = charMap[encoded % 40];
+        result += charMap[encoded % 40];
         encoded /= 40;
     }
-
-    result[index] = '\0';
 
     return result;
 }
