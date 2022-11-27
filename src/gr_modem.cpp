@@ -19,7 +19,7 @@
 gr_modem::gr_modem(const Settings *settings, Logger *logger, QObject *parent) :
     QObject(parent),
     _m17_decoder(),
-    m17Tx()
+    _m17_transmitter()
 
 {
     _settings = settings;
@@ -590,7 +590,7 @@ void gr_modem::startTransmission(QString callsign)
     std::vector<unsigned char> *tx_start = new std::vector<unsigned char>;
     if(_modem_type_tx == gr_modem_types::ModemTypeM17)
     {
-        m17Tx.start(callsign.toStdString(), tx_start);
+        _m17_transmitter.start(callsign.toStdString(), tx_start);
         QVector<std::vector<unsigned char>*> frames;
         frames.append(tx_start);
         transmit(frames);
@@ -614,7 +614,7 @@ void gr_modem::endTransmission(QString callsign)
     {
         M17::payload_t dataFrame;
         memset(dataFrame.data(), 0, _tx_frame_length);
-        m17Tx.send(dataFrame, tx_end, true);
+        _m17_transmitter.send(dataFrame, tx_end, true);
         for(int i = 0;i<_tx_frame_length/2;i++)
         {
             tx_end->push_back((unsigned char)((FrameTypeM17EOT >> 8) & 0xFF));
@@ -715,7 +715,7 @@ void gr_modem::transmitM17Audio(unsigned char *data, int size)
     memcpy(dataFrame.data(), data, size);
     delete[] data;
     bool lastFrame = false;
-    m17Tx.send(dataFrame, one_frame, lastFrame);
+    _m17_transmitter.send(dataFrame, one_frame, lastFrame);
     QVector<std::vector<unsigned char>*> frames;
     frames.append(one_frame);
     transmit(frames);
