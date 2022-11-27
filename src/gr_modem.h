@@ -153,7 +153,7 @@ private:
     int _last_frame_type;
     bool _sync_found;
     int _current_frame_type;
-    unsigned long _shift_reg;
+    uint64_t _shift_reg;
     int _modem_sync;
     BurstTimer *_burst_timer;
 

@@ -18,7 +18,7 @@
 
 gr_modem::gr_modem(const Settings *settings, Logger *logger, QObject *parent) :
     QObject(parent),
-    decoder(),
+    _m17_decoder(),
     m17Tx()
 
 {
@@ -1031,6 +1031,27 @@ int gr_modem::findSync(unsigned char bit)
 {
     _shift_reg = (_shift_reg << 1) | (bit & 0x1);
     u_int32_t temp;
+    if(_modem_type_rx == gr_modem_types::ModemTypeM17)
+    {
+        temp = _shift_reg & 0xFFFF;
+        if(temp == FrameTypeM17Stream)
+        {
+            _sync_found = true;
+            return FrameTypeM17Stream;
+        }
+        if(temp == FrameTypeM17LSF)
+        {
+            _sync_found = true;
+            return FrameTypeM17LSF;
+        }
+        temp = _shift_reg & 0xFFFFFFFF;
+        if(temp == FrameTypeM17EOT)
+        {
+            _sync_found = true;
+            return FrameTypeM17EOT;
+        }
+        return FrameTypeNone;
+    }
     if((_modem_type_rx == gr_modem_types::ModemTypeBPSK1K) ||
             (_modem_type_rx == gr_modem_types::ModemType2FSK1KFM) ||
             (_modem_type_rx == gr_modem_types::ModemType2FSK1K) ||
@@ -1049,16 +1070,6 @@ int gr_modem::findSync(unsigned char bit)
             _modem_type_rx != gr_modem_types::ModemType4FSK100K)
     {
         temp = _shift_reg & 0xFFFF;
-        if(temp == FrameTypeM17Stream)
-        {
-            _sync_found = true;
-            return FrameTypeM17Stream;
-        }
-        if(temp == FrameTypeM17LSF)
-        {
-            _sync_found = true;
-            return FrameTypeM17LSF;
-        }
         if(temp == FrameTypeVoice2)
         {
             _sync_found = true;
@@ -1213,12 +1224,12 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
         frame[0] = (current_frame_type >> 8) & 0xFF;
         frame[1] = (current_frame_type) & 0xFF;
         memcpy(frame.data() + 2, received_data, _rx_frame_length);
-        auto type = decoder.decodeFrame(frame);
+        auto type = _m17_decoder.decodeFrame(frame);
 
         if(type == M17::M17FrameType::LINK_SETUP)
         {
             _last_frame_type = FrameTypeM17LSF;
-            M17::M17LinkSetupFrame lsf = decoder.getLsf();
+            M17::M17LinkSetupFrame lsf = _m17_decoder.getLsf();
             bool valid_frame = lsf.valid();
             if(valid_frame)
             {
@@ -1229,26 +1240,34 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
                 callsign = callsign.left(7);
                 emit callsignReceived(callsign);
             }
-            decoder.reset();
         }
 
         else if((type == M17::M17FrameType::STREAM))
         {
-            M17::M17StreamFrame sf = decoder.getStreamFrame();
-            _last_frame_type = FrameTypeM17Stream;
-            unsigned char *codec2_data = new unsigned char[16];
-            memcpy(codec2_data, sf.payload().data(), 16);
-
-            emit digitalAudio(codec2_data,16);
-            /** TODO
-            if(sf.isLastFrame())
+            M17::M17StreamFrame sf = _m17_decoder.getStreamFrame();
+            M17::M17LinkSetupFrame lsf = _m17_decoder.getLsf();
+            if(lsf.valid())
             {
-                emit endAudioTransmission();
-                emit receiveEnd();
-                qDebug() << "Last frame rcvd";
-                _m17_decoder_locked = false;
+                _last_frame_type = FrameTypeM17Stream;
+                unsigned char *codec2_data = new unsigned char[16];
+                memcpy(codec2_data, sf.payload().data(), 16);
+                emit digitalAudio(codec2_data,16);
             }
-            */
+        }
+    }
+    else if (current_frame_type == FrameTypeM17EOT)
+    {
+        M17::M17LinkSetupFrame lsf = _m17_decoder.getLsf();
+        if(lsf.valid())
+        {
+            std::string m17_source = lsf.getSource();
+            QString callsign = QString::fromStdString(m17_source);
+            callsign = callsign.remove(QRegExp("[^a-zA-Z/\\d\\s]"));
+            callsign = callsign.left(7);
+            emit callsignReceived(callsign);
+            emit endAudioTransmission();
+            emit receiveEnd();
+            _m17_decoder.reset();
         }
     }
     delete[] received_data;
