@@ -1510,12 +1510,18 @@ void MainWindow::clarifierTuneFreq(int value)
     emit fineTuneFreq((qint64)ui->tuneDial->value());
 }
 
+void MainWindow::updateClarifierFreqGUI(int clarifier_offset)
+{
+    ui->clarifierFrequencyDisplay->display(clarifier_offset);
+}
+
 void MainWindow::tuneMainFreq(qint64 freq)
 {
 
     ui->frequencyEdit->setText(QString::number(freq/1000));
     ui->txFrequencyEdit->setText(QString::number(freq/1000));
     ui->tuneDial->setValue(0);
+    ui->clarifierFrequencyDisplay->display(0);
     /// rx_frequency is the center frequency of the source
     _settings->rx_frequency = freq - _settings->demod_offset - _settings->lnb_lo_freq;
     /// tx_frequency is the actual frequency

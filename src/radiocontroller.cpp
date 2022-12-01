@@ -2365,7 +2365,9 @@ void RadioController::toggleRepeat(bool value)
 
 void RadioController::fineTuneFreq(qint64 center_freq)
 {
+    int64_t clarifier_offset = center_freq*_step_hz;
     _modem->setCarrierOffset(_settings->demod_offset + center_freq*_step_hz);
+    emit clarifierFreqToGUI((int)clarifier_offset);
 }
 
 void RadioController::tuneFreq(qint64 center_freq)
