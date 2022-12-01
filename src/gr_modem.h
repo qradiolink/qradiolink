@@ -153,14 +153,14 @@ private:
     int _last_frame_type;
     bool _sync_found;
     int _current_frame_type;
-    unsigned long _shift_reg;
+    uint64_t _shift_reg;
     int _modem_sync;
     BurstTimer *_burst_timer;
 
     /// M17 code
-    M17::M17FrameDecoder decoder;      ///< M17 frame decoder
-    M17::M17FrameEncoder encoder;      ///< M17 frame encoder
-    M17::M17Transmitter  m17Tx;        ///< M17 transmission manager.
+    M17::M17FrameDecoder _m17_decoder;      ///< M17 frame decoder
+    M17::M17FrameEncoder _m17_encoder;      ///< M17 frame encoder
+    M17::M17Transmitter  _m17_transmitter;        ///< M17 transmission manager.
     bool _m17_decoder_locked;
 
 };

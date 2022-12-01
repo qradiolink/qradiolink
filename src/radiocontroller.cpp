@@ -1917,13 +1917,13 @@ void RadioController::toggleRxMode(int value)
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _rx_mode = gr_modem_types::ModemTypeNBFM5000;
         _step_hz = 10;
-        _scan_step_hz = 6250;
+        _scan_step_hz = 12500;
         break;
     case 1:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _rx_mode = gr_modem_types::ModemTypeNBFM2500;
         _step_hz = 10;
-        _scan_step_hz = 12500;
+        _scan_step_hz = 6250;
         break;
     case 2:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
@@ -2107,20 +2107,20 @@ void RadioController::toggleRxMode(int value)
         _rx_mode = gr_modem_types::ModemTypeMMDVM;
         _modem->setSampRate(1200000);
         _step_hz = 10;
-        _scan_step_hz = 6250;
+        _scan_step_hz = 12500;
         break;
     case 36:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _rx_mode = gr_modem_types::ModemTypeMMDVMmulti;
         _modem->setSampRate(1200000);
         _step_hz = 10;
-        _scan_step_hz = 6250;
+        _scan_step_hz = 12500;
         break;
     case 37:
         _rx_radio_type = radio_type::RADIO_TYPE_DIGITAL;
         _rx_mode = gr_modem_types::ModemTypeM17;
         _step_hz = 10;
-        _scan_step_hz = 6250;
+        _scan_step_hz = 12500;
         break;
     default:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
@@ -2365,7 +2365,9 @@ void RadioController::toggleRepeat(bool value)
 
 void RadioController::fineTuneFreq(qint64 center_freq)
 {
+    int64_t clarifier_offset = center_freq*_step_hz;
     _modem->setCarrierOffset(_settings->demod_offset + center_freq*_step_hz);
+    emit clarifierFreqToGUI((int)clarifier_offset);
 }
 
 void RadioController::tuneFreq(qint64 center_freq)

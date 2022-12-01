@@ -47,7 +47,7 @@ gr_demod_m17::gr_demod_m17(std::vector<int>signature, int sps, int samp_rate, in
     constellation_points.push_back(-0.5+0j);
     constellation_points.push_back(0.5+0j);
     constellation_points.push_back(1.5f+0j);
-    int ntaps = 32 * _samples_per_symbol;
+    int ntaps = 50 * _samples_per_symbol;
 
     std::vector<int> pre_diff;
 

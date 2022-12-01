@@ -91,6 +91,7 @@ signals:
     void endAudio(int secs);
     void startAudio();
     void freqToGUI(int64_t center_freq, int64_t carrier_offset);
+    void clarifierFreqToGUI(int clarifier_offset);
     void voipDataPCM(short *pcm, int samples);
     void voipDataOpus(unsigned char *pcm, int packet_size);
     void newFFTData(float*, int);

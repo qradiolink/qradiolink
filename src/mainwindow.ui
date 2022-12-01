@@ -4989,7 +4989,7 @@ color: rgb(182, 182, 182);</string>
         <widget class="QLabel" name="label_20">
          <property name="geometry">
           <rect>
-           <x>510</x>
+           <x>537</x>
            <y>56</y>
            <width>61</width>
            <height>20</height>
@@ -5098,7 +5098,7 @@ color: rgb(182, 182, 182);</string>
         <widget class="SkinnedDial" name="agcAttackDial">
          <property name="geometry">
           <rect>
-           <x>625</x>
+           <x>650</x>
            <y>8</y>
            <width>50</width>
            <height>51</height>
@@ -5114,8 +5114,8 @@ color: rgb(182, 182, 182);</string>
         <widget class="SkinnedDial" name="agcDecayDial">
          <property name="geometry">
           <rect>
-           <x>704</x>
-           <y>7</y>
+           <x>720</x>
+           <y>8</y>
            <width>50</width>
            <height>51</height>
           </rect>
@@ -5130,9 +5130,9 @@ color: rgb(182, 182, 182);</string>
         <widget class="QLabel" name="label_51">
          <property name="geometry">
           <rect>
-           <x>614</x>
+           <x>637</x>
            <y>56</y>
-           <width>81</width>
+           <width>71</width>
            <height>20</height>
           </rect>
          </property>
@@ -5143,14 +5143,67 @@ color: rgb(182, 182, 182);</string>
         <widget class="QLabel" name="label_52">
          <property name="geometry">
           <rect>
-           <x>696</x>
-           <y>55</y>
-           <width>81</width>
+           <x>710</x>
+           <y>56</y>
+           <width>71</width>
            <height>20</height>
           </rect>
          </property>
          <property name="text">
           <string>AGC decay</string>
+         </property>
+        </widget>
+        <widget class="QLCDNumber" name="clarifierFrequencyDisplay">
+         <property name="geometry">
+          <rect>
+           <x>566</x>
+           <y>18</y>
+           <width>70</width>
+           <height>30</height>
+          </rect>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>70</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>70</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(35, 35, 35);
+color: rgb(182, 182, 182);</string>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Sunken</enum>
+         </property>
+         <property name="lineWidth">
+          <number>1</number>
+         </property>
+         <property name="midLineWidth">
+          <number>1</number>
+         </property>
+         <property name="digitCount">
+          <number>5</number>
+         </property>
+         <property name="segmentStyle">
+          <enum>QLCDNumber::Flat</enum>
+         </property>
+         <property name="value" stdset="0">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="intValue" stdset="0">
+          <number>0</number>
          </property>
         </widget>
        </widget>

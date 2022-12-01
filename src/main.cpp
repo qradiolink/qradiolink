@@ -488,6 +488,8 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
                      w, SLOT(displayDataReceiveStatus(bool)));
     QObject::connect(radio_op, SIGNAL(freqToGUI(int64_t, int64_t)),
                      w, SLOT(updateFreqGUI(int64_t, int64_t)));
+    QObject::connect(radio_op, SIGNAL(clarifierFreqToGUI(int)),
+                     w, SLOT(updateClarifierFreqGUI(int)));
     QObject::connect(radio_op, SIGNAL(newFFTData(float*,int)),
                      w, SLOT(newFFTData(float*,int)));
     QObject::connect(radio_op, SIGNAL(newRSSIValue(float)), w, SLOT(updateRSSI(float)));

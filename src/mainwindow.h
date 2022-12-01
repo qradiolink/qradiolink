@@ -107,6 +107,7 @@ public slots:
     void mainTabChanged(int value);
     void clearTextArea();
     void updateFreqGUI(int64_t center_freq, int64_t carrier_offset);
+    void updateClarifierFreqGUI(int clarifier_offset);
     void enterShift();
     void setShiftFromTxFreq(qint64 tx_freq);
     void updateRxCTCSS(int value);

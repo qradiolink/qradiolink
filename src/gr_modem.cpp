@@ -18,8 +18,8 @@
 
 gr_modem::gr_modem(const Settings *settings, Logger *logger, QObject *parent) :
     QObject(parent),
-    decoder(),
-    m17Tx()
+    _m17_decoder(),
+    _m17_transmitter()
 
 {
     _settings = settings;
@@ -392,7 +392,7 @@ void gr_modem::tuneTx(int64_t center_freq)
 {
     if(_gr_mod_base)
     {
-        qDebug() << "TX center frequency: " << center_freq;
+        //qDebug() << "TX center frequency: " << center_freq;
         if(_limits->checkLimit(center_freq))
             _gr_mod_base->tune(center_freq);
         else
@@ -590,7 +590,7 @@ void gr_modem::startTransmission(QString callsign)
     std::vector<unsigned char> *tx_start = new std::vector<unsigned char>;
     if(_modem_type_tx == gr_modem_types::ModemTypeM17)
     {
-        m17Tx.start(callsign.toStdString(), tx_start);
+        _m17_transmitter.start(callsign.toStdString(), tx_start);
         QVector<std::vector<unsigned char>*> frames;
         frames.append(tx_start);
         transmit(frames);
@@ -614,7 +614,7 @@ void gr_modem::endTransmission(QString callsign)
     {
         M17::payload_t dataFrame;
         memset(dataFrame.data(), 0, _tx_frame_length);
-        m17Tx.send(dataFrame, tx_end, true);
+        _m17_transmitter.send(dataFrame, tx_end, true);
         for(int i = 0;i<_tx_frame_length/2;i++)
         {
             tx_end->push_back((unsigned char)((FrameTypeM17EOT >> 8) & 0xFF));
@@ -715,7 +715,7 @@ void gr_modem::transmitM17Audio(unsigned char *data, int size)
     memcpy(dataFrame.data(), data, size);
     delete[] data;
     bool lastFrame = false;
-    m17Tx.send(dataFrame, one_frame, lastFrame);
+    _m17_transmitter.send(dataFrame, one_frame, lastFrame);
     QVector<std::vector<unsigned char>*> frames;
     frames.append(one_frame);
     transmit(frames);
@@ -1031,6 +1031,27 @@ int gr_modem::findSync(unsigned char bit)
 {
     _shift_reg = (_shift_reg << 1) | (bit & 0x1);
     u_int32_t temp;
+    if(_modem_type_rx == gr_modem_types::ModemTypeM17)
+    {
+        temp = _shift_reg & 0xFFFF;
+        if(temp == FrameTypeM17Stream)
+        {
+            _sync_found = true;
+            return FrameTypeM17Stream;
+        }
+        if(temp == FrameTypeM17LSF)
+        {
+            _sync_found = true;
+            return FrameTypeM17LSF;
+        }
+        temp = _shift_reg & 0xFFFFFFFF;
+        if(temp == FrameTypeM17EOT)
+        {
+            _sync_found = true;
+            return FrameTypeM17EOT;
+        }
+        return FrameTypeNone;
+    }
     if((_modem_type_rx == gr_modem_types::ModemTypeBPSK1K) ||
             (_modem_type_rx == gr_modem_types::ModemType2FSK1KFM) ||
             (_modem_type_rx == gr_modem_types::ModemType2FSK1K) ||
@@ -1049,16 +1070,6 @@ int gr_modem::findSync(unsigned char bit)
             _modem_type_rx != gr_modem_types::ModemType4FSK100K)
     {
         temp = _shift_reg & 0xFFFF;
-        if(temp == FrameTypeM17Stream)
-        {
-            _sync_found = true;
-            return FrameTypeM17Stream;
-        }
-        if(temp == FrameTypeM17LSF)
-        {
-            _sync_found = true;
-            return FrameTypeM17LSF;
-        }
         if(temp == FrameTypeVoice2)
         {
             _sync_found = true;
@@ -1213,12 +1224,12 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
         frame[0] = (current_frame_type >> 8) & 0xFF;
         frame[1] = (current_frame_type) & 0xFF;
         memcpy(frame.data() + 2, received_data, _rx_frame_length);
-        auto type = decoder.decodeFrame(frame);
+        auto type = _m17_decoder.decodeFrame(frame);
 
         if(type == M17::M17FrameType::LINK_SETUP)
         {
             _last_frame_type = FrameTypeM17LSF;
-            M17::M17LinkSetupFrame lsf = decoder.getLsf();
+            M17::M17LinkSetupFrame lsf = _m17_decoder.getLsf();
             bool valid_frame = lsf.valid();
             if(valid_frame)
             {
@@ -1229,26 +1240,34 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
                 callsign = callsign.left(7);
                 emit callsignReceived(callsign);
             }
-            decoder.reset();
         }
 
         else if((type == M17::M17FrameType::STREAM))
         {
-            M17::M17StreamFrame sf = decoder.getStreamFrame();
-            _last_frame_type = FrameTypeM17Stream;
-            unsigned char *codec2_data = new unsigned char[16];
-            memcpy(codec2_data, sf.payload().data(), 16);
-
-            emit digitalAudio(codec2_data,16);
-            /** TODO
-            if(sf.isLastFrame())
+            M17::M17StreamFrame sf = _m17_decoder.getStreamFrame();
+            M17::M17LinkSetupFrame lsf = _m17_decoder.getLsf();
+            if(lsf.valid())
             {
-                emit endAudioTransmission();
-                emit receiveEnd();
-                qDebug() << "Last frame rcvd";
-                _m17_decoder_locked = false;
+                _last_frame_type = FrameTypeM17Stream;
+                unsigned char *codec2_data = new unsigned char[16];
+                memcpy(codec2_data, sf.payload().data(), 16);
+                emit digitalAudio(codec2_data,16);
             }
-            */
+        }
+    }
+    else if (current_frame_type == FrameTypeM17EOT)
+    {
+        M17::M17LinkSetupFrame lsf = _m17_decoder.getLsf();
+        if(lsf.valid())
+        {
+            std::string m17_source = lsf.getSource();
+            QString callsign = QString::fromStdString(m17_source);
+            callsign = callsign.remove(QRegExp("[^a-zA-Z/\\d\\s]"));
+            callsign = callsign.left(7);
+            emit callsignReceived(callsign);
+            emit endAudioTransmission();
+            emit receiveEnd();
+            _m17_decoder.reset();
         }
     }
     delete[] received_data;
