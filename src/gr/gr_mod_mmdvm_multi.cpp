@@ -39,16 +39,16 @@ gr_mod_mmdvm_multi::gr_mod_mmdvm_multi(BurstTimer *burst_timer, int num_channels
     _sps = sps;
     _num_channels = num_channels;
     _use_tdma = use_tdma;
-    float target_samp_rate = 24000;
-    float intermediate_samp_rate = 240000;
+    float target_samp_rate = 24000.0f;
+    float intermediate_samp_rate = 240000.0f;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
     int resamp_filter_width = (num_channels - 1) * channel_separation + 10000;
     int resamp_filter_slope = 10000;
     float carrier_offset = float(channel_separation);
 
-    std::vector<float> intermediate_interp_taps = gr::filter::firdes::low_pass_2(10, intermediate_samp_rate,
-                        _filter_width, _filter_width, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+    std::vector<float> intermediate_interp_taps = gr::filter::firdes::low_pass(10, intermediate_samp_rate,
+                        _filter_width, 3500, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     std::vector<float> interp_taps = gr::filter::firdes::low_pass_2(5, _samp_rate,
                         resamp_filter_width, resamp_filter_slope, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
 
@@ -59,7 +59,7 @@ gr_mod_mmdvm_multi::gr_mod_mmdvm_multi(BurstTimer *burst_timer, int num_channels
     }
     for(int i = 0;i < _num_channels;i++)
     {
-        _fm_modulator[i] = gr::analog::frequency_modulator_fc::make(4*M_PI*_filter_width/target_samp_rate);
+        _fm_modulator[i] = gr::analog::frequency_modulator_fc::make(2*M_PI*12500.0f/target_samp_rate);
     }
     for(int i = 0;i < _num_channels;i++)
     {
@@ -75,8 +75,8 @@ gr_mod_mmdvm_multi::gr_mod_mmdvm_multi(BurstTimer *burst_timer, int num_channels
     }
     for(int i = 0;i < _num_channels;i++)
     {
-        _filter[i] = gr::filter::fft_filter_ccf::make(1,gr::filter::firdes::low_pass_2(
-                1, target_samp_rate, _filter_width, _filter_width/2, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+        _filter[i] = gr::filter::fft_filter_ccf::make(1,gr::filter::firdes::low_pass(
+                1, target_samp_rate, _filter_width, 3500, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
     }
     for(int i = 0;i < _num_channels;i++)
     {
