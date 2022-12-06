@@ -1062,8 +1062,9 @@ int gr_modem::findSync(unsigned char bit)
         if (temp == FrameTypeVoice1)
         {
             _sync_found = true;
-            return FrameTypeVoice;
+            return FrameTypeVoice1;
         }
+        return FrameTypeNone;
     }
     if(_modem_type_rx != gr_modem_types::ModemTypeQPSK250K &&
             _modem_type_rx != gr_modem_types::ModemTypeQPSKVideo &&
@@ -1097,6 +1098,13 @@ int gr_modem::findSync(unsigned char bit)
             _sync_found = true;
             return FrameTypeCallsign;
         }
+        temp = _shift_reg & 0xFFFFFF;
+        if(temp == FrameTypeEnd)
+        {
+            _sync_found = true;
+            return FrameTypeEnd;
+        }
+        return FrameTypeNone;
     }
     temp = _shift_reg & 0xFFFFFF;
     if(temp == FrameTypeIP)
@@ -1168,37 +1176,24 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
         emit callsignReceived(callsign);
         delete[] text_data;
     }
-    else if (current_frame_type == FrameTypeVoice)
+    else if (current_frame_type == FrameTypeVoice1)
     {
-        _last_frame_type = FrameTypeVoice;
-        unsigned char *codec2_data = new unsigned char[_rx_frame_length];
-        memset(codec2_data,0,_rx_frame_length);
-        if(((_modem_type_rx == gr_modem_types::ModemTypeBPSK1K) ||
-            (_modem_type_rx == gr_modem_types::ModemType2FSK1KFM) ||
-            (_modem_type_rx == gr_modem_types::ModemType2FSK1K) ||
-            (_modem_type_rx == gr_modem_types::ModemTypeGMSK1K) ||
-            (_modem_type_rx == gr_modem_types::ModemType4FSK1KFM)))
+        _last_frame_type = FrameTypeVoice1;
+        if(_modem_sync >= 16)
         {
-            if(_modem_sync >= 16)
-            {
-                memcpy(codec2_data, received_data, _rx_frame_length);
-                emit digitalAudio(codec2_data,_rx_frame_length);
-            }
-            else
-            {
-                delete[] codec2_data;
-            }
-        }
-        else if((_modem_type_rx != gr_modem_types::ModemTypeBPSK1K) &&
-                (_modem_type_rx != gr_modem_types::ModemType2FSK1KFM) &&
-                (_modem_type_rx != gr_modem_types::ModemType2FSK1K) &&
-                (_modem_type_rx != gr_modem_types::ModemTypeGMSK1K) &&
-                (_modem_type_rx != gr_modem_types::ModemType4FSK1KFM))
-        {
-            memcpy(codec2_data, received_data+1, _rx_frame_length);
+            unsigned char *codec2_data = new unsigned char[_rx_frame_length];
+            memset(codec2_data,0,_rx_frame_length);
+            memcpy(codec2_data, received_data, _rx_frame_length);
             emit digitalAudio(codec2_data,_rx_frame_length);
         }
-
+    }
+    else if (current_frame_type == FrameTypeVoice2)
+    {
+        _last_frame_type = FrameTypeVoice2;
+        unsigned char *codec2_data = new unsigned char[_rx_frame_length];
+        memset(codec2_data,0,_rx_frame_length);
+        memcpy(codec2_data, received_data+1, _rx_frame_length);
+        emit digitalAudio(codec2_data,_rx_frame_length);
     }
     else if (current_frame_type == FrameTypeVideo )
     {
