@@ -46,6 +46,8 @@ private:
     BurstTimer *_burst_timer;
     zmq::context_t _zmqcontext[MAX_MMDVM_CHANNELS];
     zmq::socket_t _zmqsocket[MAX_MMDVM_CHANNELS];
+    std::vector<uint8_t> control_buf[MAX_MMDVM_CHANNELS];
+    std::vector<int16_t> data_buf[MAX_MMDVM_CHANNELS];
     int _num_channels;
     bool _use_tdma;
 };
