@@ -77,7 +77,7 @@ gr_demod_mmdvm_multi::gr_demod_mmdvm_multi(BurstTimer *burst_timer, int num_chan
     }
     for(int i = 0;i < _num_channels;i++)
     {
-        _level_control[i] = gr::blocks::multiply_const_ff::make(0.7);
+        _level_control[i] = gr::blocks::multiply_const_ff::make(1.0);
     }
     for(int i = 0;i < _num_channels;i++)
     {
