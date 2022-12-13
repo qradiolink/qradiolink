@@ -113,19 +113,16 @@ int gr_mmdvm_sink::work(int noutput_items,
         // introduces a delay of minimum 30 mseconds
         if(data_buf[chan].size() >= SAMPLES_PER_SLOT * 2)
         {
-            for(int i = 0;i < 2;i++)
-            {
-                uint32_t num_items = SAMPLES_PER_SLOT;
-                int buf_size = sizeof(uint32_t) + num_items * sizeof(uint8_t) + num_items * sizeof(int16_t);
-                zmq::message_t reply (buf_size);
-                memcpy (reply.data (), &num_items, sizeof(uint32_t));
-                memcpy ((unsigned char *)reply.data () + sizeof(uint32_t), (unsigned char *)control_buf[chan].data(), num_items * sizeof(uint8_t));
-                memcpy ((unsigned char *)reply.data () + sizeof(uint32_t) + num_items * sizeof(uint8_t),
-                        (unsigned char *)data_buf[chan].data(), num_items*sizeof(int16_t));
-                _zmqsocket[chan].send (reply, zmq::send_flags::dontwait);
-                data_buf[chan].erase(data_buf[chan].begin(), data_buf[chan].begin() + num_items);
-                control_buf[chan].erase(control_buf[chan].begin(), control_buf[chan].begin() + num_items);
-            }
+            uint32_t num_items = SAMPLES_PER_SLOT * 2;
+            int buf_size = sizeof(uint32_t) + num_items * sizeof(uint8_t) + num_items * sizeof(int16_t);
+            zmq::message_t reply (buf_size);
+            memcpy (reply.data (), &num_items, sizeof(uint32_t));
+            memcpy ((unsigned char *)reply.data () + sizeof(uint32_t), (unsigned char *)control_buf[chan].data(), num_items * sizeof(uint8_t));
+            memcpy ((unsigned char *)reply.data () + sizeof(uint32_t) + num_items * sizeof(uint8_t),
+                    (unsigned char *)data_buf[chan].data(), num_items*sizeof(int16_t));
+            _zmqsocket[chan].send (reply, zmq::send_flags::dontwait);
+            data_buf[chan].erase(data_buf[chan].begin(), data_buf[chan].begin() + num_items);
+            control_buf[chan].erase(control_buf[chan].begin(), control_buf[chan].begin() + num_items);
         }
     }
 
