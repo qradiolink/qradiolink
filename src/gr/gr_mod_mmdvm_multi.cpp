@@ -43,8 +43,8 @@ gr_mod_mmdvm_multi::gr_mod_mmdvm_multi(BurstTimer *burst_timer, int num_channels
     float intermediate_samp_rate = 240000.0f;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
-    int resamp_filter_width = (num_channels - 1) * channel_separation + 10000;
-    int resamp_filter_slope = 10000;
+    int resamp_filter_width = 100000; // (num_channels - 1) * channel_separation + 10000;
+    int resamp_filter_slope = 25000;
     float carrier_offset = float(channel_separation);
 
     std::vector<float> intermediate_interp_taps = gr::filter::firdes::low_pass(10, intermediate_samp_rate,
