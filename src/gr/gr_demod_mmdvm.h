@@ -32,13 +32,13 @@ class gr_demod_mmdvm;
 
 typedef boost::shared_ptr<gr_demod_mmdvm> gr_demod_mmdvm_sptr;
 gr_demod_mmdvm_sptr make_gr_demod_mmdvm(int sps=50, int samp_rate=1200000, int carrier_freq=1700,
-                                          int filter_width=6250);
+                                          int filter_width=12500);
 
 class gr_demod_mmdvm : public gr::hier_block2
 {
 public:
     explicit gr_demod_mmdvm(std::vector<int> signature, int sps=50, int samp_rate=1200000, int carrier_freq=1600,
-                               int filter_width=6250);
+                               int filter_width=12500);
 
     void set_squelch(int value);
     void set_filter_width(int filter_width);
@@ -51,7 +51,6 @@ private:
     gr::blocks::multiply_const_ff::sptr _level_control;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
     gr::filter::rational_resampler_base_fff::sptr _audio_resampler;
-    gr::filter::fft_filter_ccf::sptr _filter;
 
     int _sps;
     int _samp_rate;
