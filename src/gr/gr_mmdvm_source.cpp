@@ -50,6 +50,7 @@ gr_mmdvm_source::gr_mmdvm_source(BurstTimer *burst_timer, uint8_t cn, bool multi
         _zmqsocket[i].setsockopt(ZMQ_LINGER, 0);
         int socket_no = multi_channel ? i + 1 : i;
         _zmqsocket[i].connect ("ipc:///tmp/mmdvm-tx" + std::to_string(socket_no) + ".ipc");
+        _in_tx[i] = false;
     }
     set_min_noutput_items(SAMPLES_PER_SLOT);
     set_max_noutput_items(SAMPLES_PER_SLOT);
@@ -67,10 +68,26 @@ void gr_mmdvm_source::get_zmq_message()
     for(int j = 0;j < _num_channels;j++)
     {
         zmq::message_t mq_message;
-        zmq::recv_result_t recv_result = _zmqsocket[j].recv(mq_message, zmq::recv_flags::dontwait);
-        int size = mq_message.size();
+        int size = 0;
+        zmq::recv_result_t recv_result;
+        std::chrono::high_resolution_clock::time_point tw1 = std::chrono::high_resolution_clock::now();
+        while(true)
+        {
+            recv_result = _zmqsocket[j].recv(mq_message, zmq::recv_flags::dontwait);
+            size = mq_message.size();
+            if(size > 0 || !_in_tx[j])
+                break;
+            std::chrono::high_resolution_clock::time_point tw2 = std::chrono::high_resolution_clock::now();
+            int64_t wait_time = std::chrono::duration_cast<std::chrono::nanoseconds>(tw2-tw1).count();
+            if(wait_time >= 200000L)
+                break;
+        }
         if(size < 1)
+        {
+            _in_tx[j] = false;
             continue;
+        }
+        _in_tx[j] = true;
         uint32_t buf_size = 0;
         memcpy(&buf_size, (uint8_t*)mq_message.data(), sizeof(uint32_t));
 

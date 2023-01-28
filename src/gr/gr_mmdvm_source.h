@@ -54,6 +54,7 @@ private:
     zmq::socket_t _zmqsocket[MAX_MMDVM_CHANNELS];
     std::vector<uint8_t> control_buf[MAX_MMDVM_CHANNELS];
     std::vector<int16_t> data_buf[MAX_MMDVM_CHANNELS];
+    bool _in_tx[MAX_MMDVM_CHANNELS];
     gr::thread::mutex _mutex;
     int _num_channels;
     std::chrono::high_resolution_clock::time_point t1;

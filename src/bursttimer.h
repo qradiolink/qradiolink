@@ -23,7 +23,7 @@
 
 #define MAX_MMDVM_CHANNELS 7
 
-static const uint64_t BURST_DELAY = 100000000L; // nanosec
+static const uint64_t BURST_DELAY = 30000000L; // nanosec
 static const uint64_t SLOT_TIME = 30000000L;
 static const int64_t TX_TIMEOUT = 50000L;
 static const int32_t SAMPLES_PER_SLOT = 720;
