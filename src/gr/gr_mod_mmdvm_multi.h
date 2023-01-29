@@ -37,7 +37,7 @@ class gr_mod_mmdvm_multi;
 typedef boost::shared_ptr<gr_mod_mmdvm_multi> gr_mod_mmdvm_multi_sptr;
 gr_mod_mmdvm_multi_sptr make_gr_mod_mmdvm_multi(BurstTimer *burst_timer, int num_channels=3,
                                                 int channel_separation=25000, bool use_tdma=true,
-                                                int sps=25, int samp_rate=1200000, int carrier_freq=1700,
+                                                int sps=25, int samp_rate=480000, int carrier_freq=1700,
                                           int filter_width=8000);
 
 class gr_mod_mmdvm_multi : public gr::hier_block2
@@ -45,7 +45,7 @@ class gr_mod_mmdvm_multi : public gr::hier_block2
 public:
     explicit gr_mod_mmdvm_multi(BurstTimer *burst_timer, int num_channels=3, int channel_separation=25000,
                                 bool use_tdma=true,
-                                int sps=25, int samp_rate=1200000, int carrier_freq=1700,
+                                int sps=25, int samp_rate=480000, int carrier_freq=1700,
                              int filter_width=8000);
     void set_bb_gain(float value);
 

@@ -35,7 +35,7 @@ class gr_demod_mmdvm_multi;
 typedef boost::shared_ptr<gr_demod_mmdvm_multi> gr_demod_mmdvm_multi_sptr;
 gr_demod_mmdvm_multi_sptr make_gr_demod_mmdvm_multi(BurstTimer *burst_timer, int num_channels=3,
                                                     int channel_separation=25000, bool use_tdma=true,
-                                                    int sps=125, int samp_rate=1200000, int carrier_freq=1700,
+                                                    int sps=125, int samp_rate=480000, int carrier_freq=1700,
                                                     int filter_width=8000);
 
 class gr_demod_mmdvm_multi : public gr::hier_block2
@@ -43,7 +43,7 @@ class gr_demod_mmdvm_multi : public gr::hier_block2
 public:
     explicit gr_demod_mmdvm_multi(BurstTimer *burst_timer, int num_channels=3, int channel_separation=25000,
                                   bool use_tdma=true,
-                                  int sps=125, int samp_rate=1200000, int carrier_freq=1600,
+                                  int sps=125, int samp_rate=480000, int carrier_freq=1600,
                                     int filter_width=8000);
 
     void set_filter_width(int filter_width);

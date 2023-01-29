@@ -51,8 +51,8 @@ gr_demod_mmdvm_multi::gr_demod_mmdvm_multi(BurstTimer *burst_timer, int num_chan
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
     float fm_demod_width = 12500.0f;
-    int resamp_filter_width = (num_channels - 1) * channel_separation + 10000;
-    int resamp_filter_slope = 20000;
+    int resamp_filter_width = 100000;//(num_channels - 1) * channel_separation + 10000;
+    int resamp_filter_slope = 25000;
     float carrier_offset = float(-channel_separation);
 
 
@@ -92,7 +92,7 @@ gr_demod_mmdvm_multi::gr_demod_mmdvm_multi(BurstTimer *burst_timer, int num_chan
     }
 
     _mmdvm_sink = make_gr_mmdvm_sink(burst_timer, num_channels, true, _use_tdma);
-    _first_resampler = gr::filter::rational_resampler_base_ccf::make(1, 5, taps);
+    _first_resampler = gr::filter::rational_resampler_base_ccf::make(1, 2, taps);
 
 
     connect(self(),0,_first_resampler,0);
