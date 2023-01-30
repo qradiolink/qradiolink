@@ -639,7 +639,7 @@ void gr_mod_base::set_mode(int mode)
         _top_block->connect(_mmdvm_mod,0,_rotator,0);
         break;
     case gr_modem_types::ModemTypeMMDVMmulti:
-        set_carrier_offset(250000, 480000);
+        set_carrier_offset(120000, 480000);
         set_center_freq(_device_frequency - _carrier_offset);
         _top_block->connect(_mmdvm_mod_multi,0,_rotator,0);
         break;
