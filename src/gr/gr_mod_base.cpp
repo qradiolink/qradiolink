@@ -60,6 +60,7 @@ gr_mod_base::gr_mod_base(BurstTimer *burst_timer, QObject *parent, float device_
         _limesdr_sink = gr::limesdr::sink::make(serial.toStdString(), 0, "", "burst_length");
         _limesdr_sink->set_center_freq(_device_frequency - _carrier_offset);
         _limesdr_sink->set_sample_rate(_samp_rate);
+        _limesdr_sink->set_digital_filter(_samp_rate, 0);
         _limesdr_sink->set_antenna(255);
         set_bandwidth_specific();
         _limesdr_sink->set_gain(int(rf_gain * 60.0f));
@@ -229,6 +230,7 @@ void gr_mod_base::set_samp_rate(int samp_rate)
     {
         _limesdr_sink->set_center_freq(_device_frequency - _carrier_offset);
         _limesdr_sink->set_sample_rate(_samp_rate);
+        _limesdr_sink->set_digital_filter(_samp_rate, 0);
         _limesdr_sink->calibrate(_samp_rate);
     }
     else
@@ -409,11 +411,29 @@ void gr_mod_base::set_mode(int mode)
         break;
     case gr_modem_types::ModemTypeMMDVM:
         set_carrier_offset(50000);
+        if(_lime_specific)
+        {
+            set_center_freq(_device_frequency - _carrier_offset);
+            _limesdr_sink->set_nco(0, 0);
+        }
+        else
+        {
+            set_center_freq(_device_frequency - _carrier_offset);
+        }
         _top_block->disconnect(_mmdvm_source,0,_mmdvm_mod,0);
         _top_block->disconnect(_mmdvm_mod,0,_rotator,0);
         break;
     case gr_modem_types::ModemTypeMMDVMmulti:
         set_carrier_offset(50000);
+        if(_lime_specific)
+        {
+            set_center_freq(_device_frequency - _carrier_offset);
+            _limesdr_sink->set_nco(0, 0);
+        }
+        else
+        {
+            set_center_freq(_device_frequency - _carrier_offset);
+        }
         set_center_freq(_device_frequency - _carrier_offset);
         _top_block->disconnect(_mmdvm_mod_multi,0,_rotator,0);
         break;
@@ -633,14 +653,30 @@ void gr_mod_base::set_mode(int mode)
         _top_block->connect(_freedv_tx800XA_lsb,0,_rotator,0);
         break;
     case gr_modem_types::ModemTypeMMDVM:
-        set_carrier_offset(50000, 480000);
-        set_center_freq(_device_frequency - _carrier_offset);
+        set_carrier_offset(0, MMDVM_SAMPLE_RATE);
+        if(_lime_specific)
+        {
+            set_center_freq(_device_frequency);
+            _limesdr_sink->set_nco(_carrier_offset, 0);
+        }
+        else
+        {
+            set_center_freq(_device_frequency - _carrier_offset);
+        }
         _top_block->connect(_mmdvm_source,0,_mmdvm_mod,0);
         _top_block->connect(_mmdvm_mod,0,_rotator,0);
         break;
     case gr_modem_types::ModemTypeMMDVMmulti:
-        set_carrier_offset(120000, 480000);
-        set_center_freq(_device_frequency - _carrier_offset);
+        set_carrier_offset(0, MMDVM_SAMPLE_RATE);
+        if(_lime_specific)
+        {
+            set_center_freq(_device_frequency);
+            _limesdr_sink->set_nco(_carrier_offset, 0);
+        }
+        else
+        {
+            set_center_freq(_device_frequency - _carrier_offset);
+        }
         _top_block->connect(_mmdvm_mod_multi,0,_rotator,0);
         break;
     case gr_modem_types::ModemTypeM17:

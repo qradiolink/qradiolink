@@ -98,16 +98,16 @@ gr_demod_mmdvm_multi::gr_demod_mmdvm_multi(BurstTimer *burst_timer, int num_chan
     _first_resampler = gr::filter::rational_resampler_base_ccf::make(1, 2, taps);
 
 
-    connect(self(),0,_first_resampler,0);
+    //connect(self(),0,_first_resampler,0);
     for(int i = 0;i < num_channels;i++)
     {
         if(i == 0)
         {
-            connect(_first_resampler,0,_resampler[i],0);
+            connect(self(),0,_resampler[i],0);
         }
         else
         {
-            connect(_first_resampler,0,_rotator[i],0);
+            connect(self(),0,_rotator[i],0);
             connect(_rotator[i],0,_resampler[i],0);
         }
         connect(_resampler[i],0,_filter[i],0);

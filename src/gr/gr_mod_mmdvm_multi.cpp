@@ -122,8 +122,8 @@ gr_mod_mmdvm_multi::gr_mod_mmdvm_multi(BurstTimer *burst_timer, int num_channels
 
     connect(_add,0,_divide_level,0);
     connect(_divide_level,0,_bb_gain,0);
-    connect(_bb_gain,0,_final_resampler,0);
-    connect(_final_resampler,0,self(),0);
+    connect(_bb_gain,0,self(),0);
+    //connect(_final_resampler,0,self(),0);
 }
 
 
