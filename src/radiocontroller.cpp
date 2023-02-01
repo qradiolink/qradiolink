@@ -1789,7 +1789,7 @@ void RadioController::toggleRX(bool value)
 
         if((_rx_mode == gr_modem_types::ModemTypeMMDVM) || (_rx_mode == gr_modem_types::ModemTypeMMDVMmulti))
         {
-            _modem->setSampRate(480000);
+            _modem->setSampRate(MMDVM_SAMPLE_RATE);
         }
         else
         {
@@ -1855,7 +1855,7 @@ void RadioController::toggleTX(bool value)
         _modem->tuneTx(433000000);
         if((_tx_mode == gr_modem_types::ModemTypeMMDVM) || (_tx_mode == gr_modem_types::ModemTypeMMDVMmulti))
         {
-            _modem->setSampRate(480000);
+            _modem->setSampRate(MMDVM_SAMPLE_RATE);
         }
         else
         {
@@ -2105,14 +2105,14 @@ void RadioController::toggleRxMode(int value)
     case 35:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _rx_mode = gr_modem_types::ModemTypeMMDVM;
-        _modem->setSampRate(480000);
+        _modem->setSampRate(MMDVM_SAMPLE_RATE);
         _step_hz = 10;
         _scan_step_hz = 12500;
         break;
     case 36:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _rx_mode = gr_modem_types::ModemTypeMMDVMmulti;
-        _modem->setSampRate(480000);
+        _modem->setSampRate(MMDVM_SAMPLE_RATE);
         _step_hz = 10;
         _scan_step_hz = 12500;
         break;
@@ -2286,11 +2286,11 @@ void RadioController::toggleTxMode(int value)
         break;
     case 35:
         _tx_mode = gr_modem_types::ModemTypeMMDVM;
-        _modem->setSampRate(480000);
+        _modem->setSampRate(MMDVM_SAMPLE_RATE);
         break;
     case 36:
         _tx_mode = gr_modem_types::ModemTypeMMDVMmulti;
-        _modem->setSampRate(480000);
+        _modem->setSampRate(MMDVM_SAMPLE_RATE);
         break;
     case 37:
         _tx_mode = gr_modem_types::ModemTypeM17;

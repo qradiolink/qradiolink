@@ -20,6 +20,7 @@
 #include <mutex>
 #include <chrono>
 #include <QVector>
+#include "src/config_mmdvm.h"
 
 #define MAX_MMDVM_CHANNELS 7
 
