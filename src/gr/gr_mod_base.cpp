@@ -60,9 +60,10 @@ gr_mod_base::gr_mod_base(BurstTimer *burst_timer, QObject *parent, float device_
         _limesdr_sink = gr::limesdr::sink::make(serial.toStdString(), 0, "", "burst_length");
         _limesdr_sink->set_center_freq(_device_frequency - _carrier_offset);
         _limesdr_sink->set_sample_rate(_samp_rate);
+        _limesdr_sink->set_digital_filter(_samp_rate, 0);
         _limesdr_sink->set_antenna(255);
         set_bandwidth_specific();
-        _limesdr_sink->set_gain(int(rf_gain * 60.0f));
+        _limesdr_sink->set_gain(int(rf_gain * 73.0f));
         _limesdr_sink->set_buffer_size(_samp_rate / 2);
         _top_block->connect(_rotator,0,_limesdr_sink,0);
         _use_tdma = true;
@@ -229,6 +230,7 @@ void gr_mod_base::set_samp_rate(int samp_rate)
     {
         _limesdr_sink->set_center_freq(_device_frequency - _carrier_offset);
         _limesdr_sink->set_sample_rate(_samp_rate);
+        _limesdr_sink->set_digital_filter(_samp_rate, 0);
         _limesdr_sink->calibrate(_samp_rate);
     }
     else
@@ -726,7 +728,7 @@ void gr_mod_base::set_power(float value, std::string gain_stage)
 {
     if(_lime_specific)
     {
-        _limesdr_sink->set_gain(value * 60.0f);
+        _limesdr_sink->set_gain(value * 73.0f);
         return;
     }
     if (!_gain_range.empty() && (gain_stage.size() < 1))

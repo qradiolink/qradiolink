@@ -1876,9 +1876,12 @@ void RadioController::toggleTX(bool value)
             ++iter;
         }
         emit txGainStages(tx_gains);
-        _mutex->lock();
-        _modem->setTxPower(0.01);
-        _mutex->unlock();
+        if((_tx_mode != gr_modem_types::ModemTypeMMDVM) && (_tx_mode != gr_modem_types::ModemTypeMMDVMmulti))
+        {
+            _mutex->lock();
+            _modem->setTxPower(0.01);
+            _mutex->unlock();
+        }
 
         _settings->tx_inited = true;
     }
