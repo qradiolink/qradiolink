@@ -83,7 +83,7 @@ public slots:
     void transmitTextData(QString text, int frame_type = FrameTypeText);
     void transmitBinData(QByteArray bin_data, int frame_type = FrameTypeProto);
     void initTX(int modem_type, std::string device_args,
-                std::string device_antenna, int freq_corr, float initial_gain=0.94, int mmdvm_channels=3,
+                std::string device_antenna, int freq_corr, int initial_gain=94, int mmdvm_channels=3,
                 int mmdvm_channel_separation=25000);
     void initRX(int modem_type, std::string device_args,
                 std::string device_antenna, int freq_corr, int mmdvm_channels=3,
