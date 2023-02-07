@@ -1834,7 +1834,7 @@ void RadioController::toggleTX(bool value)
             if(_settings->rx_inited)
                 _modem->stopRX();
             _modem->initTX(_tx_mode, _settings->tx_device_args.toStdString(),
-                           _settings->tx_antenna.toStdString(), _settings->tx_freq_corr,
+                           _settings->tx_antenna.toStdString(), _settings->tx_freq_corr, _settings->tx_power,
                            _settings->mmdvm_channels, _settings->mmdvm_channel_separation);
             _mutex->unlock();
         }
