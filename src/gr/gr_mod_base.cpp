@@ -230,6 +230,7 @@ void gr_mod_base::set_samp_rate(int samp_rate)
     {
         _limesdr_sink->set_center_freq(_device_frequency - _carrier_offset);
         _limesdr_sink->set_sample_rate(_samp_rate);
+        _limesdr_sink->set_buffer_size(_samp_rate / 2);
         _limesdr_sink->set_digital_filter(_samp_rate, 0);
         _limesdr_sink->calibrate(_samp_rate);
     }
