@@ -2662,6 +2662,8 @@ void RadioController::enableLimeRFE(bool value)
     {
         _lime_rfe_controller->init();
         _lime_rfe_controller->setRXBand(_settings->rx_frequency + _settings->demod_offset);
+        _lime_rfe_controller->setTXBand(_tx_frequency + _settings->tx_shift);
+        _lime_rfe_controller->setDuplex((bool)_settings->enable_duplex);
     }
     else
     {
