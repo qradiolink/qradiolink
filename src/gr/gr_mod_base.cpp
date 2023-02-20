@@ -64,6 +64,7 @@ gr_mod_base::gr_mod_base(BurstTimer *burst_timer, QObject *parent, float device_
         _limesdr_sink->set_digital_filter(_samp_rate, 0);
         _limesdr_sink->set_antenna(255);
         set_bandwidth_specific();
+        _limesdr_sink->calibrate(_samp_rate);
         _limesdr_sink->set_gain(int(rf_gain * 73.0f));
         _limesdr_sink->set_buffer_size(_samp_rate / 2);
         _top_block->connect(_rotator,0,_limesdr_sink,0);
@@ -868,12 +869,7 @@ void gr_mod_base::set_center_freq(double freq)
 {
     if(_lime_specific)
     {
-        _top_block->lock();
-        _limesdr_sink->set_gain(72);
         _limesdr_sink->set_center_freq(freq);
-        _limesdr_sink->calibrate(_samp_rate);
-        _limesdr_sink->set_gain(int(_tx_gain * 73.0f));
-        _top_block->unlock();
     }
     else
         _osmosdr_sink->set_center_freq(freq);
