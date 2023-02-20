@@ -738,7 +738,7 @@ void gr_mod_base::tune(int64_t center_freq)
 
 void gr_mod_base::set_power(float value, std::string gain_stage)
 {
-    if(value > 100.0f) value = 100.0f;
+    if(value > 1.0f) value = 1.0f;
     _tx_gain = value;
     if(_lime_specific)
     {
