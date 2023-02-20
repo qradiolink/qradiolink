@@ -27,7 +27,7 @@ gr_mod_base::gr_mod_base(BurstTimer *burst_timer, QObject *parent, float device_
     _mmdvm_channels = mmdvm_channels;
     _mode = 9999;
     _samp_rate = 1000000;
-    _tx_gain = 0.01;
+    _tx_gain = rf_gain;
     _use_tdma = false;
     _byte_source = make_gr_byte_source();
     _audio_source = make_gr_audio_source();
@@ -235,9 +235,7 @@ void gr_mod_base::set_samp_rate(int samp_rate)
         _limesdr_sink->set_sample_rate(_samp_rate);
         _limesdr_sink->set_buffer_size(_samp_rate / 2);
         _limesdr_sink->set_digital_filter(_samp_rate, 0);
-        _limesdr_sink->set_gain(72);
         _limesdr_sink->calibrate(_samp_rate);
-        _limesdr_sink->set_gain(int(_tx_gain * 73.0f));
         _top_block->unlock();
     }
     else
