@@ -724,12 +724,7 @@ void gr_mod_base::tune(int64_t center_freq)
     double tx_freq = _device_frequency - _carrier_offset;
     if(_lime_specific)
     {
-        _top_block->lock();
-        _limesdr_sink->set_gain(72);
         _limesdr_sink->set_center_freq(tx_freq);
-        _limesdr_sink->calibrate(_samp_rate);
-        _limesdr_sink->set_gain(int(_tx_gain * 73.0f));
-        _top_block->unlock();
     }
     else
         _osmosdr_sink->set_center_freq(tx_freq);

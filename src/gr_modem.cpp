@@ -55,12 +55,12 @@ gr_modem::~gr_modem()
     delete _burst_timer;
 }
 
-void gr_modem::initTX(int modem_type, std::string device_args, std::string device_antenna,
+void gr_modem::initTX(int modem_type, int64_t frequency, std::string device_args, std::string device_antenna,
                       int freq_corr, int initial_gain, int mmdvm_channels, int mmdvm_channel_separation)
 {
     _modem_type_tx = modem_type;
     _gr_mod_base = new gr_mod_base(_burst_timer,
-                0, 433500000, float(initial_gain)/100.0f, device_args, device_antenna,
+                0, frequency, float(initial_gain)/100.0f, device_args, device_antenna,
                 freq_corr, mmdvm_channels, mmdvm_channel_separation);
     toggleTxMode(modem_type);
 
