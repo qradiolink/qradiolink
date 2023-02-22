@@ -70,6 +70,7 @@ int main(int argc, char *argv[])
     bool headless = false;
     bool start_transceiver = false;
     bool set_ptt_on = false;
+    bool mmdvm_mode = false;
 
     Logger *logger = new Logger;
     if((arguments.length() > 1) && (arguments.indexOf("--headless") != -1))
@@ -92,6 +93,7 @@ int main(int argc, char *argv[])
         headless = true;
         start_transceiver = true;
         set_ptt_on = true;
+        mmdvm_mode = true;
     }
     QCoreApplication *app;
     if(headless)
@@ -138,7 +140,8 @@ int main(int argc, char *argv[])
     QObject::connect(audiowriter, SIGNAL(finished()), t2, SLOT(quit()));
     QObject::connect(audiowriter, SIGNAL(finished()), audiowriter, SLOT(deleteLater()));
     QObject::connect(t2, SIGNAL(finished()), t2, SLOT(deleteLater()));
-    t2->start();
+    if(!mmdvm_mode)
+        t2->start();
 
     QThread *t3 = new QThread;
     t3->setObjectName("audioreader");
@@ -147,7 +150,8 @@ int main(int argc, char *argv[])
     QObject::connect(audioreader, SIGNAL(finished()), t3, SLOT(quit()));
     QObject::connect(audioreader, SIGNAL(finished()), audioreader, SLOT(deleteLater()));
     QObject::connect(t3, SIGNAL(finished()), t3, SLOT(deleteLater()));
-    t3->start();
+    if(!mmdvm_mode)
+        t3->start();
 
     MainWindow *w;
     if(!headless)

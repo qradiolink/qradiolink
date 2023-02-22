@@ -460,8 +460,7 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
         case gr_modem_types::ModemTypeMMDVM:
             _top_block->disconnect(_demod_valve,0,_mmdvm_demod,0);
             _top_block->disconnect(_demod_valve,0,_rssi_valve,0);
-            _top_block->disconnect(_mmdvm_demod,2,_mmdvm_sink,0);
-            _top_block->disconnect(_mmdvm_demod,1,_audio_sink,0);
+            _top_block->disconnect(_mmdvm_demod,0,_mmdvm_sink,0);
             break;
         case gr_modem_types::ModemTypeMMDVMmulti:
             _top_block->disconnect(_demod_valve,0,_mmdvm_demod_multi,0);
@@ -707,8 +706,7 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
         case gr_modem_types::ModemTypeMMDVM:
             _top_block->connect(_demod_valve,0,_mmdvm_demod,0);
             _top_block->connect(_demod_valve,0,_rssi_valve,0);
-            _top_block->connect(_mmdvm_demod,2,_mmdvm_sink,0);
-            _top_block->connect(_mmdvm_demod,1,_audio_sink,0);
+            _top_block->connect(_mmdvm_demod,0,_mmdvm_sink,0);
             break;
         case gr_modem_types::ModemTypeMMDVMmulti:
             _top_block->connect(_demod_valve,0,_mmdvm_demod_multi,0);
@@ -992,7 +990,6 @@ void gr_demod_base::set_squelch(int value)
     _freedv_rx800XA_usb->set_squelch(value);
     _freedv_rx800XA_lsb->set_squelch(value);
     _wfm->set_squelch(value);
-    _mmdvm_demod->set_squelch(value);
 }
 
 void gr_demod_base::set_gain(float value)
