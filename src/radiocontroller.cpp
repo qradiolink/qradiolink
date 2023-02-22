@@ -268,10 +268,13 @@ void RadioController::run()
         _mutex->unlock();
 
         /// Get all available data from the demodulator
-        QtConcurrent::run(this, &RadioController::getFFTData);
-        QtConcurrent::run(this, &RadioController::getConstellationData);
-        QtConcurrent::run(this, &RadioController::getRSSI);
+        if((_rx_mode != gr_modem_types::ModemTypeMMDVM) && (_rx_mode != gr_modem_types::ModemTypeMMDVMmulti))
+        {
+            QtConcurrent::run(this, &RadioController::getFFTData);
+            QtConcurrent::run(this, &RadioController::getConstellationData);
+            QtConcurrent::run(this, &RadioController::getRSSI);
 
+        }
         if(transmitting)
         {
             if(_tx_mode == gr_modem_types::ModemTypeCW600USB)
@@ -285,7 +288,10 @@ void RadioController::run()
 
         }
 
-        data_to_process = getDemodulatorData();
+        if((_rx_mode != gr_modem_types::ModemTypeMMDVM) && (_rx_mode != gr_modem_types::ModemTypeMMDVMmulti))
+        {
+            data_to_process = getDemodulatorData();
+        }
 
         if(_process_text && !_text_transmit_on && (_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL))
         {
@@ -1158,15 +1164,7 @@ bool RadioController::getDemodulatorData()
     {
         if(_rx_radio_type == radio_type::RADIO_TYPE_DIGITAL)
         {
-            if(_rx_mode == gr_modem_types::ModemTypeM17)
-            {
-                //data_to_process = _modem->demodulateM17();
-                data_to_process = _modem->demodulate();
-            }
-            else
-            {
-                data_to_process = _modem->demodulate();
-            }
+            data_to_process = _modem->demodulate();
         }
         else if(_rx_radio_type == radio_type::RADIO_TYPE_ANALOG)
         {

@@ -41,17 +41,12 @@ public:
     explicit gr_demod_mmdvm(std::vector<int> signature, int sps=10, int samp_rate=MMDVM_SAMPLE_RATE, int carrier_freq=1600,
                                int filter_width=10000);
 
-    void set_squelch(int value);
-    void set_filter_width(int filter_width);
-
 
 private:
     gr::blocks::float_to_short::sptr _float_to_short;
     gr::analog::quadrature_demod_cf::sptr _fm_demod;
-    gr::analog::pwr_squelch_ff::sptr _squelch;
     gr::blocks::multiply_const_ff::sptr _level_control;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
-    gr::filter::rational_resampler_base_fff::sptr _audio_resampler;
 
     int _sps;
     int _samp_rate;
