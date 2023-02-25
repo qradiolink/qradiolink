@@ -50,7 +50,7 @@ gr_demod_mmdvm_multi::gr_demod_mmdvm_multi(BurstTimer *burst_timer, int num_chan
     float intermediate_samp_rate = 240000;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
-    float fm_demod_width = 12500.0f;
+    float fm_demod_width = 10000.0f;
     int c_n_b = num_channels;
     if(c_n_b > 4)
         c_n_b = 4;
@@ -61,8 +61,8 @@ gr_demod_mmdvm_multi::gr_demod_mmdvm_multi(BurstTimer *burst_timer, int num_chan
 
     std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, resamp_filter_width,
                                 resamp_filter_slope, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
-    std::vector<float> intermediate_interp_taps = gr::filter::firdes::low_pass(1, intermediate_samp_rate,
-                        _filter_width, 3500, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+    std::vector<float> intermediate_interp_taps = gr::filter::firdes::low_pass_2(1, intermediate_samp_rate,
+                        _filter_width, 1250, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
 
 
     for(int i = 0;i < _num_channels;i++)
@@ -72,7 +72,7 @@ gr_demod_mmdvm_multi::gr_demod_mmdvm_multi(BurstTimer *burst_timer, int num_chan
     for(int i = 0;i < _num_channels;i++)
     {
         _filter[i] = gr::filter::fft_filter_ccf::make(1,gr::filter::firdes::low_pass(
-                1, target_samp_rate, _filter_width, 3500, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
+                1, target_samp_rate, _filter_width, 1250, gr::filter::firdes::WIN_BLACKMAN_HARRIS));
     }
     for(int i = 0;i < _num_channels;i++)
     {
@@ -110,8 +110,8 @@ gr_demod_mmdvm_multi::gr_demod_mmdvm_multi(BurstTimer *burst_timer, int num_chan
             connect(self(),0,_rotator[i],0);
             connect(_rotator[i],0,_resampler[i],0);
         }
-        connect(_resampler[i],0,_filter[i],0);
-        connect(_filter[i],0,_fm_demod[i],0);
+        //connect(_resampler[i],0,_filter[i],0);
+        connect(_resampler[i],0,_fm_demod[i],0);
         connect(_fm_demod[i],0,_level_control[i],0);
         connect(_level_control[i],0,_float_to_short[i],0);
         connect(_float_to_short[i],0,_mmdvm_sink, i);
