@@ -51,7 +51,7 @@ gr_mod_mmdvm_multi::gr_mod_mmdvm_multi(BurstTimer *burst_timer, int num_channels
     float carrier_offset = float(channel_separation);
 
     std::vector<float> intermediate_interp_taps = gr::filter::firdes::low_pass_2(10, intermediate_samp_rate,
-                        _filter_width, 1250, 65, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
+                        _filter_width, 1250, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     std::vector<float> interp_taps = gr::filter::firdes::low_pass_2(5, _samp_rate,
                         resamp_filter_width, resamp_filter_slope, 60, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
 
@@ -106,8 +106,8 @@ gr_mod_mmdvm_multi::gr_mod_mmdvm_multi(BurstTimer *burst_timer, int num_channels
         connect(_short_to_float[i], 0, _audio_amplify[i],0);
         connect(_audio_amplify[i], 0, _fm_modulator[i],0);
         connect(_fm_modulator[i], 0, _zero_idle[i],0);
-        connect(_zero_idle[i], 0, _amplify[i],0);
-        //connect(_filter[i], 0, _amplify[i],0);
+        connect(_zero_idle[i], 0, _filter[i],0);
+        connect(_filter[i], 0, _amplify[i],0);
         connect(_amplify[i], 0, _resampler[i],0);
         if(i == 0)
         {
