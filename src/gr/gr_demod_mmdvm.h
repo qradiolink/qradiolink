@@ -27,18 +27,19 @@
 #include <gnuradio/filter/fft_filter_fff.h>
 #include <gnuradio/blocks/float_to_short.h>
 #include <gnuradio/blocks/multiply_const.h>
+#include "src/config_mmdvm.h"
 
 class gr_demod_mmdvm;
 
 typedef boost::shared_ptr<gr_demod_mmdvm> gr_demod_mmdvm_sptr;
-gr_demod_mmdvm_sptr make_gr_demod_mmdvm(int sps=50, int samp_rate=1200000, int carrier_freq=1700,
-                                          int filter_width=12500);
+gr_demod_mmdvm_sptr make_gr_demod_mmdvm(int sps=10, int samp_rate=MMDVM_SAMPLE_RATE, int carrier_freq=1700,
+                                          int filter_width=10000);
 
 class gr_demod_mmdvm : public gr::hier_block2
 {
 public:
-    explicit gr_demod_mmdvm(std::vector<int> signature, int sps=50, int samp_rate=1200000, int carrier_freq=1600,
-                               int filter_width=12500);
+    explicit gr_demod_mmdvm(std::vector<int> signature, int sps=10, int samp_rate=MMDVM_SAMPLE_RATE, int carrier_freq=1600,
+                               int filter_width=10000);
 
 
 private:

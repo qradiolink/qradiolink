@@ -1787,7 +1787,7 @@ void RadioController::toggleRX(bool value)
 
         if((_rx_mode == gr_modem_types::ModemTypeMMDVM) || (_rx_mode == gr_modem_types::ModemTypeMMDVMmulti))
         {
-            _modem->setSampRate(1200000);
+            _modem->setSampRate(MMDVM_SAMPLE_RATE);
         }
         else
         {
@@ -1853,7 +1853,7 @@ void RadioController::toggleTX(bool value)
         _modem->setBbGain(_settings->bb_gain);
         if((_tx_mode == gr_modem_types::ModemTypeMMDVM) || (_tx_mode == gr_modem_types::ModemTypeMMDVMmulti))
         {
-            _modem->setSampRate(1200000);
+            _modem->setSampRate(MMDVM_SAMPLE_RATE);
         }
         else
         {

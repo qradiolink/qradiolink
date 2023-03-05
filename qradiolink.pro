@@ -142,6 +142,7 @@ HEADERS  += src/mainwindow.h\
         src/audio/audioencoder.h\
         src/audio/audioprocessor.h \
     src/bursttimer.h \
+    src/config_mmdvm.h \
     src/ext/crc32.h \
     src/ext/devices.h \
     src/gpredictcontrol.h \

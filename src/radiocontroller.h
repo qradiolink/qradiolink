@@ -47,6 +47,7 @@
 #include "src/gr_modem.h"
 #include "net/netdevice.h"
 #include "logger.h"
+#include "src/config_mmdvm.h"
 
 
 typedef QVector<Station*> StationList;

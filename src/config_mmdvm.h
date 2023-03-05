@@ -1,0 +1,6 @@
+#ifndef CONFIG_MMDVM_H
+#define CONFIG_MMDVM_H
+
+#define MMDVM_SAMPLE_RATE 240000
+
+#endif // CONFIG_MMDVM_H

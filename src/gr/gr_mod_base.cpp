@@ -233,6 +233,7 @@ void gr_mod_base::set_samp_rate(int samp_rate)
         _top_block->lock();
         _limesdr_sink->set_center_freq(_device_frequency - _carrier_offset);
         _limesdr_sink->set_sample_rate(_samp_rate);
+        _limesdr_sink->set_buffer_size(_samp_rate / 2);
         _limesdr_sink->set_digital_filter(_samp_rate, 0);
         _limesdr_sink->calibrate(_samp_rate);
         _top_block->unlock();
@@ -415,6 +416,7 @@ void gr_mod_base::set_mode(int mode)
         break;
     case gr_modem_types::ModemTypeMMDVM:
         set_carrier_offset(50000);
+        set_center_freq(_device_frequency - _carrier_offset);
         _top_block->disconnect(_mmdvm_source,0,_mmdvm_mod,0);
         _top_block->disconnect(_mmdvm_mod,0,_rotator,0);
         break;
@@ -639,13 +641,13 @@ void gr_mod_base::set_mode(int mode)
         _top_block->connect(_freedv_tx800XA_lsb,0,_rotator,0);
         break;
     case gr_modem_types::ModemTypeMMDVM:
-        set_carrier_offset(50000, 1200000);
+        set_carrier_offset(50000, MMDVM_SAMPLE_RATE);
         set_center_freq(_device_frequency - _carrier_offset);
         _top_block->connect(_mmdvm_source,0,_mmdvm_mod,0);
         _top_block->connect(_mmdvm_mod,0,_rotator,0);
         break;
     case gr_modem_types::ModemTypeMMDVMmulti:
-        set_carrier_offset(250000, 1200000);
+        set_carrier_offset(0, MMDVM_SAMPLE_RATE);
         set_center_freq(_device_frequency - _carrier_offset);
         _top_block->connect(_mmdvm_mod_multi,0,_rotator,0);
         break;

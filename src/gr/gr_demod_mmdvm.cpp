@@ -38,7 +38,7 @@ gr_demod_mmdvm::gr_demod_mmdvm(std::vector<int>signature, int sps, int samp_rate
     _samp_rate = samp_rate;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
-    float fm_demod_width = 12500.0f;
+    float fm_demod_width = 10000.0f;
 
     std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width,
                                 _filter_width, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
