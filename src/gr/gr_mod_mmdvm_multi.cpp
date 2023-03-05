@@ -96,7 +96,7 @@ gr_mod_mmdvm_multi::gr_mod_mmdvm_multi(BurstTimer *burst_timer, int num_channels
     _add = gr::blocks::add_cc::make();
     _divide_level = gr::blocks::multiply_const_cc::make(1.0f / float(num_channels));
     _mmdvm_source = make_gr_mmdvm_source(burst_timer, num_channels, true, _use_tdma);
-    _final_resampler = gr::filter::rational_resampler_base_ccf::make(2, 1, interp_taps);
+    _final_resampler = gr::filter::rational_resampler_base_ccf::make(5, 1, interp_taps);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
 
 
