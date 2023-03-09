@@ -175,6 +175,8 @@ M: 2022-08-13 11:37:34.779 virtual pts: /dev/pts/15 <> /home/user1/MMDVM-SDR/bui
 
 * Note that RX and TX levels are important and may need manual tweaking. Particularly, YSF mode requires much lower RX levels than DMR mode.
 
+* The setting **DMRDelay** which used to be set to zero can now be set to a value between 0 and 100, and instead of influencing RX delay it now serves as a TX delay to prevent idle DMR frames being generated too fast and overwriting the actual transmission. This setting defaults to 70 if set to zero, which is a working value for a relatively powerful x86_64 CPU. Experiment with this value until the repeated transmission does not have artefacts and interruptions. Generally the less powerful the CPU, the lower the value should be.
+
 * Example config for DMR below:
 <pre>
 [General]
