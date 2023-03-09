@@ -79,7 +79,7 @@ void gr_mmdvm_source::get_zmq_message()
                 break;
             std::chrono::high_resolution_clock::time_point tw2 = std::chrono::high_resolution_clock::now();
             int64_t wait_time = std::chrono::duration_cast<std::chrono::nanoseconds>(tw2-tw1).count();
-            if(wait_time >= 200000L)
+            if(wait_time >= 50000L)
                 break;
         }
         if(size < 1)
