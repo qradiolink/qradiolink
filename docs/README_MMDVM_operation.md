@@ -111,6 +111,8 @@ Example:
 
 * An example configuration file for MMDVM multicarrier (mode 36), qradiolink_config_example_mmdvm.cfg is included in this directory. Edit according to examples above and copy it to **~/.config/qradiolink/qradiolink.cfg**
 
+* There is now a new setting in the config file: **burst_delay_msec** which controls how far in the future DMR timeslots are transmitted. This delay can be set to between 10 and 300 milliseconds, depending on the CPU on which qradiolink runs. Generally, the more powerful the CPU, the lower this setting can be set. The default value is 100 msec, but this value will generally not work on ARM platforms and needs to be increased.
+
 * Finally, start the application from the CLI using the **--mmdvm** switch:
 <pre>
 ./qradiolink --mmdvm
