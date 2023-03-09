@@ -40,7 +40,7 @@ gr_mmdvm_sink::gr_mmdvm_sink(BurstTimer *burst_timer, uint8_t cn, bool multi_cha
     {
         _zmqcontext[i] = zmq::context_t(1);
         _zmqsocket[i] = zmq::socket_t(_zmqcontext[i], ZMQ_PUSH);
-        _zmqsocket[i].setsockopt(ZMQ_SNDHWM, 20);
+        _zmqsocket[i].setsockopt(ZMQ_SNDHWM, 100);
         _zmqsocket[i].setsockopt(ZMQ_LINGER, 0);
         int socket_no = multi_channel ? i + 1 : 0;
         _zmqsocket[i].bind ("ipc:///tmp/mmdvm-rx" + std::to_string(socket_no) + ".ipc");
@@ -111,9 +111,9 @@ int gr_mmdvm_sink::work(int noutput_items,
         }
         // buffer up to two timeslots before sending samples to MMDVM
         // introduces a delay of minimum 30 mseconds
-        if(data_buf[chan].size() >= SAMPLES_PER_SLOT * 2)
+        if(data_buf[chan].size() >= SAMPLES_PER_SLOT)
         {
-            uint32_t num_items = SAMPLES_PER_SLOT * 2;
+            uint32_t num_items = SAMPLES_PER_SLOT;
             int buf_size = sizeof(uint32_t) + num_items * sizeof(uint8_t) + num_items * sizeof(int16_t);
             zmq::message_t reply (buf_size);
             memcpy (reply.data (), &num_items, sizeof(uint32_t));

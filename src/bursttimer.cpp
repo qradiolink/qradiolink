@@ -19,8 +19,8 @@
 
 int lime_fifo_fill_count = 50;
 
-BurstTimer::BurstTimer(uint64_t samples_per_slot, uint64_t time_per_sample,
-                       uint64_t slot_time, uint64_t burst_delay)
+BurstTimer::BurstTimer(uint64_t burst_delay, uint64_t samples_per_slot, uint64_t time_per_sample,
+                       uint64_t slot_time)
 {
     _enabled = true;
     _samples_per_slot = samples_per_slot;
