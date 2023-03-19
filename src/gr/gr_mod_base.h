@@ -150,6 +150,7 @@ private:
     void set_center_freq(double freq);
     osmosdr::gain_range_t _gain_range;
     std::vector<std::string> _gain_names;
+    float _tx_gain;
 
 };
 

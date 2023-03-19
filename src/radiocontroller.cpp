@@ -268,10 +268,13 @@ void RadioController::run()
         _mutex->unlock();
 
         /// Get all available data from the demodulator
-        QtConcurrent::run(this, &RadioController::getFFTData);
-        QtConcurrent::run(this, &RadioController::getConstellationData);
-        QtConcurrent::run(this, &RadioController::getRSSI);
+        if((_rx_mode != gr_modem_types::ModemTypeMMDVM) && (_rx_mode != gr_modem_types::ModemTypeMMDVMmulti))
+        {
+            QtConcurrent::run(this, &RadioController::getFFTData);
+            QtConcurrent::run(this, &RadioController::getConstellationData);
+            QtConcurrent::run(this, &RadioController::getRSSI);
 
+        }
         if(transmitting)
         {
             if(_tx_mode == gr_modem_types::ModemTypeCW600USB)
@@ -285,7 +288,10 @@ void RadioController::run()
 
         }
 
-        data_to_process = getDemodulatorData();
+        if((_rx_mode != gr_modem_types::ModemTypeMMDVM) && (_rx_mode != gr_modem_types::ModemTypeMMDVMmulti))
+        {
+            data_to_process = getDemodulatorData();
+        }
 
         if(_process_text && !_text_transmit_on && (_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL))
         {
@@ -1158,15 +1164,7 @@ bool RadioController::getDemodulatorData()
     {
         if(_rx_radio_type == radio_type::RADIO_TYPE_DIGITAL)
         {
-            if(_rx_mode == gr_modem_types::ModemTypeM17)
-            {
-                //data_to_process = _modem->demodulateM17();
-                data_to_process = _modem->demodulate();
-            }
-            else
-            {
-                data_to_process = _modem->demodulate();
-            }
+            data_to_process = _modem->demodulate();
         }
         else if(_rx_radio_type == radio_type::RADIO_TYPE_ANALOG)
         {
@@ -1789,7 +1787,7 @@ void RadioController::toggleRX(bool value)
 
         if((_rx_mode == gr_modem_types::ModemTypeMMDVM) || (_rx_mode == gr_modem_types::ModemTypeMMDVMmulti))
         {
-            _modem->setSampRate(1200000);
+            _modem->setSampRate(MMDVM_SAMPLE_RATE);
         }
         else
         {
@@ -1833,8 +1831,9 @@ void RadioController::toggleTX(bool value)
             _mutex->lock();
             if(_settings->rx_inited)
                 _modem->stopRX();
-            _modem->initTX(_tx_mode, _settings->tx_device_args.toStdString(),
-                           _settings->tx_antenna.toStdString(), _settings->tx_freq_corr,
+            _modem->initTX(_tx_mode, _tx_frequency + _settings->tx_shift,
+                           _settings->tx_device_args.toStdString(),
+                           _settings->tx_antenna.toStdString(), _settings->tx_freq_corr, _settings->tx_power,
                            _settings->mmdvm_channels, _settings->mmdvm_channel_separation);
             _mutex->unlock();
         }
@@ -1852,10 +1851,9 @@ void RadioController::toggleTX(bool value)
 
         _mutex->lock();
         _modem->setBbGain(_settings->bb_gain);
-        _modem->tuneTx(433000000);
         if((_tx_mode == gr_modem_types::ModemTypeMMDVM) || (_tx_mode == gr_modem_types::ModemTypeMMDVMmulti))
         {
-            _modem->setSampRate(1200000);
+            _modem->setSampRate(MMDVM_SAMPLE_RATE);
         }
         else
         {
@@ -1876,9 +1874,12 @@ void RadioController::toggleTX(bool value)
             ++iter;
         }
         emit txGainStages(tx_gains);
-        _mutex->lock();
-        _modem->setTxPower(0.01);
-        _mutex->unlock();
+        if((_tx_mode != gr_modem_types::ModemTypeMMDVM) && (_tx_mode != gr_modem_types::ModemTypeMMDVMmulti))
+        {
+            _mutex->lock();
+            _modem->setTxPower(0.01);
+            _mutex->unlock();
+        }
 
         _settings->tx_inited = true;
     }
@@ -2105,14 +2106,12 @@ void RadioController::toggleRxMode(int value)
     case 35:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _rx_mode = gr_modem_types::ModemTypeMMDVM;
-        _modem->setSampRate(1200000);
         _step_hz = 10;
         _scan_step_hz = 12500;
         break;
     case 36:
         _rx_radio_type = radio_type::RADIO_TYPE_ANALOG;
         _rx_mode = gr_modem_types::ModemTypeMMDVMmulti;
-        _modem->setSampRate(1200000);
         _step_hz = 10;
         _scan_step_hz = 12500;
         break;
@@ -2286,11 +2285,9 @@ void RadioController::toggleTxMode(int value)
         break;
     case 35:
         _tx_mode = gr_modem_types::ModemTypeMMDVM;
-        _modem->setSampRate(1200000);
         break;
     case 36:
         _tx_mode = gr_modem_types::ModemTypeMMDVMmulti;
-        _modem->setSampRate(1200000);
         break;
     case 37:
         _tx_mode = gr_modem_types::ModemTypeM17;
@@ -2659,6 +2656,8 @@ void RadioController::enableLimeRFE(bool value)
     {
         _lime_rfe_controller->init();
         _lime_rfe_controller->setRXBand(_settings->rx_frequency + _settings->demod_offset);
+        _lime_rfe_controller->setTXBand(_tx_frequency + _settings->tx_shift);
+        _lime_rfe_controller->setDuplex((bool)_settings->enable_duplex);
     }
     else
     {

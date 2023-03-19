@@ -27,6 +27,7 @@ gr_mod_base::gr_mod_base(BurstTimer *burst_timer, QObject *parent, float device_
     _mmdvm_channels = mmdvm_channels;
     _mode = 9999;
     _samp_rate = 1000000;
+    _tx_gain = rf_gain;
     _use_tdma = false;
     _byte_source = make_gr_byte_source();
     _audio_source = make_gr_audio_source();
@@ -60,9 +61,11 @@ gr_mod_base::gr_mod_base(BurstTimer *burst_timer, QObject *parent, float device_
         _limesdr_sink = gr::limesdr::sink::make(serial.toStdString(), 0, "", "burst_length");
         _limesdr_sink->set_center_freq(_device_frequency - _carrier_offset);
         _limesdr_sink->set_sample_rate(_samp_rate);
+        _limesdr_sink->set_digital_filter(_samp_rate, 0);
         _limesdr_sink->set_antenna(255);
         set_bandwidth_specific();
-        _limesdr_sink->set_gain(int(rf_gain * 60.0f));
+        _limesdr_sink->calibrate(_samp_rate);
+        _limesdr_sink->set_gain(int(rf_gain * 73.0f));
         _limesdr_sink->set_buffer_size(_samp_rate / 2);
         _top_block->connect(_rotator,0,_limesdr_sink,0);
         _use_tdma = true;
@@ -115,8 +118,8 @@ gr_mod_base::gr_mod_base(BurstTimer *burst_timer, QObject *parent, float device_
     _bpsk_1k = make_gr_mod_bpsk(500, 1000000, 1700, 1500);
     _bpsk_2k = make_gr_mod_bpsk(250, 1000000, 1700, 2800);
     _bpsk_dsss_8 = make_gr_mod_dsss(25, 1000000, 1700, 200);
-    _fm_2500 = make_gr_mod_nbfm(20, 1000000, 1700, 3125);
-    _fm_5000 = make_gr_mod_nbfm(20, 1000000, 1700, 6250);
+    _fm_2500 = make_gr_mod_nbfm(20, 1000000, 1700, 2500);
+    _fm_5000 = make_gr_mod_nbfm(20, 1000000, 1700, 5000);
     _qpsk_2k = make_gr_mod_qpsk(500, 1000000, 1700, 1300);
     _qpsk_10k = make_gr_mod_qpsk(100, 1000000, 1700, 6500);
     _qpsk_250k = make_gr_mod_qpsk(4, 1000000, 1700, 160000);
@@ -227,9 +230,13 @@ void gr_mod_base::set_samp_rate(int samp_rate)
     }
     if(_lime_specific)
     {
+        _top_block->lock();
         _limesdr_sink->set_center_freq(_device_frequency - _carrier_offset);
         _limesdr_sink->set_sample_rate(_samp_rate);
+        _limesdr_sink->set_buffer_size(_samp_rate / 2);
+        _limesdr_sink->set_digital_filter(_samp_rate, 0);
         _limesdr_sink->calibrate(_samp_rate);
+        _top_block->unlock();
     }
     else
     {
@@ -409,6 +416,7 @@ void gr_mod_base::set_mode(int mode)
         break;
     case gr_modem_types::ModemTypeMMDVM:
         set_carrier_offset(50000);
+        set_center_freq(_device_frequency - _carrier_offset);
         _top_block->disconnect(_mmdvm_source,0,_mmdvm_mod,0);
         _top_block->disconnect(_mmdvm_mod,0,_rotator,0);
         break;
@@ -633,13 +641,13 @@ void gr_mod_base::set_mode(int mode)
         _top_block->connect(_freedv_tx800XA_lsb,0,_rotator,0);
         break;
     case gr_modem_types::ModemTypeMMDVM:
-        set_carrier_offset(50000, 1200000);
+        set_carrier_offset(50000, MMDVM_SAMPLE_RATE);
         set_center_freq(_device_frequency - _carrier_offset);
         _top_block->connect(_mmdvm_source,0,_mmdvm_mod,0);
         _top_block->connect(_mmdvm_mod,0,_rotator,0);
         break;
     case gr_modem_types::ModemTypeMMDVMmulti:
-        set_carrier_offset(250000, 1200000);
+        set_carrier_offset(0, MMDVM_SAMPLE_RATE);
         set_center_freq(_device_frequency - _carrier_offset);
         _top_block->connect(_mmdvm_mod_multi,0,_rotator,0);
         break;
@@ -716,7 +724,9 @@ void gr_mod_base::tune(int64_t center_freq)
     _device_frequency = double(center_freq) + double(steps * _freq_correction);
     double tx_freq = _device_frequency - _carrier_offset;
     if(_lime_specific)
+    {
         _limesdr_sink->set_center_freq(tx_freq);
+    }
     else
         _osmosdr_sink->set_center_freq(tx_freq);
     set_bandwidth_specific();
@@ -724,9 +734,11 @@ void gr_mod_base::tune(int64_t center_freq)
 
 void gr_mod_base::set_power(float value, std::string gain_stage)
 {
+    if(value > 1.0f) value = 1.0f;
+    _tx_gain = value;
     if(_lime_specific)
     {
-        _limesdr_sink->set_gain(value * 60.0f);
+        _limesdr_sink->set_gain(int(value * 73.0f));
         return;
     }
     if (!_gain_range.empty() && (gain_stage.size() < 1))
@@ -856,7 +868,9 @@ void gr_mod_base::set_bandwidth_specific()
 void gr_mod_base::set_center_freq(double freq)
 {
     if(_lime_specific)
+    {
         _limesdr_sink->set_center_freq(freq);
+    }
     else
         _osmosdr_sink->set_center_freq(freq);
 }

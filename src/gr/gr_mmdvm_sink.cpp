@@ -40,13 +40,12 @@ gr_mmdvm_sink::gr_mmdvm_sink(BurstTimer *burst_timer, uint8_t cn, bool multi_cha
     {
         _zmqcontext[i] = zmq::context_t(1);
         _zmqsocket[i] = zmq::socket_t(_zmqcontext[i], ZMQ_PUSH);
-        _zmqsocket[i].setsockopt(ZMQ_SNDHWM, 2);
+        _zmqsocket[i].setsockopt(ZMQ_SNDHWM, 100);
         _zmqsocket[i].setsockopt(ZMQ_LINGER, 0);
         int socket_no = multi_channel ? i + 1 : 0;
         _zmqsocket[i].bind ("ipc:///tmp/mmdvm-rx" + std::to_string(socket_no) + ".ipc");
     }
 
-    set_min_noutput_items(SAMPLES_PER_SLOT);
     set_max_noutput_items(SAMPLES_PER_SLOT);
 }
 
@@ -70,10 +69,6 @@ int gr_mmdvm_sink::work(int noutput_items,
     {
         std::vector<gr::tag_t> tags;
         uint64_t nitems = nitems_read(chan);
-        std::vector<uint8_t> control_buf;
-        std::vector<int16_t> data_buf;
-        control_buf.reserve(noutput_items);
-        data_buf.reserve(noutput_items);
 
         get_tags_in_window(tags, chan, 0, noutput_items, TIME_TAG);
         if (!tags.empty()) {
@@ -111,17 +106,24 @@ int gr_mmdvm_sink::work(int noutput_items,
                 control = MARK_SLOT2;
             }
 
-            control_buf.push_back(control);
-            data_buf.push_back((int16_t)in[chan][i]);
+            control_buf[chan].push_back(control);
+            data_buf[chan].push_back((int16_t)in[chan][i]);
         }
-        uint32_t num_items = (uint32_t)noutput_items;
-        int buf_size = sizeof(uint32_t) + num_items * sizeof(uint8_t) + num_items * sizeof(int16_t);
-        zmq::message_t reply (buf_size);
-        memcpy (reply.data (), &num_items, sizeof(uint32_t));
-        memcpy ((unsigned char *)reply.data () + sizeof(uint32_t), (unsigned char *)control_buf.data(), num_items * sizeof(uint8_t));
-        memcpy ((unsigned char *)reply.data () + sizeof(uint32_t) + num_items * sizeof(uint8_t),
-                (unsigned char *)data_buf.data(), num_items*sizeof(int16_t));
-        _zmqsocket[chan].send (reply, zmq::send_flags::dontwait);
+        // buffer up to two timeslots before sending samples to MMDVM
+        // introduces a delay of minimum 30 mseconds
+        if(data_buf[chan].size() >= SAMPLES_PER_SLOT)
+        {
+            uint32_t num_items = SAMPLES_PER_SLOT;
+            int buf_size = sizeof(uint32_t) + num_items * sizeof(uint8_t) + num_items * sizeof(int16_t);
+            zmq::message_t reply (buf_size);
+            memcpy (reply.data (), &num_items, sizeof(uint32_t));
+            memcpy ((unsigned char *)reply.data () + sizeof(uint32_t), (unsigned char *)control_buf[chan].data(), num_items * sizeof(uint8_t));
+            memcpy ((unsigned char *)reply.data () + sizeof(uint32_t) + num_items * sizeof(uint8_t),
+                    (unsigned char *)data_buf[chan].data(), num_items*sizeof(int16_t));
+            _zmqsocket[chan].send (reply, zmq::send_flags::dontwait);
+            data_buf[chan].erase(data_buf[chan].begin(), data_buf[chan].begin() + num_items);
+            control_buf[chan].erase(control_buf[chan].begin(), control_buf[chan].begin() + num_items);
+        }
     }
 
     return noutput_items;

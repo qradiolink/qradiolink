@@ -45,11 +45,12 @@ gr_mmdvm_source::gr_mmdvm_source(BurstTimer *burst_timer, uint8_t cn, bool multi
     for(int i = 0;i < _num_channels;i++)
     {
         _zmqcontext[i] = zmq::context_t(1);
-        _zmqsocket[i] = zmq::socket_t(_zmqcontext[i], ZMQ_PULL);
-        _zmqsocket[i].setsockopt(ZMQ_RCVHWM, 2);
+        _zmqsocket[i] = zmq::socket_t(_zmqcontext[i], ZMQ_REQ);
+        _zmqsocket[i].setsockopt(ZMQ_SNDHWM, 10);
         _zmqsocket[i].setsockopt(ZMQ_LINGER, 0);
         int socket_no = multi_channel ? i + 1 : i;
         _zmqsocket[i].connect ("ipc:///tmp/mmdvm-tx" + std::to_string(socket_no) + ".ipc");
+        _in_tx[i] = false;
     }
     set_min_noutput_items(SAMPLES_PER_SLOT);
     set_max_noutput_items(SAMPLES_PER_SLOT);
@@ -67,15 +68,28 @@ void gr_mmdvm_source::get_zmq_message()
     for(int j = 0;j < _num_channels;j++)
     {
         zmq::message_t mq_message;
-        zmq::recv_result_t recv_result = _zmqsocket[j].recv(mq_message, zmq::recv_flags::dontwait);
-        int size = mq_message.size();
+        int size = 0;
+        zmq::recv_result_t recv_result;
+        //std::chrono::high_resolution_clock::time_point tw1 = std::chrono::high_resolution_clock::now();
+        zmq::message_t request_msg (1);
+        memcpy (request_msg.data (), "s", sizeof(char));
+        _zmqsocket[j].send (request_msg, zmq::send_flags::none);
+        recv_result = _zmqsocket[j].recv(mq_message);
+        size = mq_message.size();
+        //std::chrono::high_resolution_clock::time_point tw2 = std::chrono::high_resolution_clock::now();
+        //int64_t wait_time = std::chrono::duration_cast<std::chrono::nanoseconds>(tw2-tw1).count();
         if(size < 1)
+        {
+            _in_tx[j] = false;
             continue;
+        }
+
         uint32_t buf_size = 0;
         memcpy(&buf_size, (uint8_t*)mq_message.data(), sizeof(uint32_t));
 
         if(buf_size > 0)
         {
+            _in_tx[j] = true;
             uint8_t control[buf_size];
             int16_t data[buf_size];
             memcpy(&control, (uint8_t*)mq_message.data() + sizeof(uint32_t), buf_size * sizeof(uint8_t));
@@ -87,6 +101,10 @@ void gr_mmdvm_source::get_zmq_message()
                 control_buf[j].push_back(control[i]);
                 data_buf[j].push_back(data[i]);
             }
+        }
+        else
+        {
+            _in_tx[j] = false;
         }
     }
 
@@ -225,10 +243,10 @@ int gr_mmdvm_source::work(int noutput_items,
         data_buf[i].erase(data_buf[i].begin(), data_buf[i].begin() + n);
         control_buf[i].erase(control_buf[i].begin(), control_buf[i].begin() + n);
     }
+    t2 = std::chrono::high_resolution_clock::now();
+    _correction_time =  std::chrono::duration_cast<std::chrono::nanoseconds>(t2-t1).count();
     struct timespec time_to_sleep = {0, SLOT_TIME - _correction_time + timing_adjust};
     nanosleep(&time_to_sleep, NULL);
-    t2 = std::chrono::high_resolution_clock::now();
-    _correction_time =  std::chrono::duration_cast<std::chrono::nanoseconds>(t2-t1).count() - (int64_t)SLOT_TIME;
     if(!_use_tdma)
         _correction_time = -100000L;
     return SAMPLES_PER_SLOT;

@@ -155,8 +155,8 @@ gr_demod_base::gr_demod_base(BurstTimer *burst_timer, QObject *parent, float dev
     _bpsk_1k = make_gr_demod_bpsk(10,1000000,1700,1300);
     _bpsk_2k = make_gr_demod_bpsk(5,1000000,1700,2400);
     _bpsk_dsss_8 = make_gr_demod_dsss(25,1000000,1700,150);
-    _fm_2500 = make_gr_demod_nbfm(125, 1000000,1700,3125);
-    _fm_5000 = make_gr_demod_nbfm(125, 1000000,1700,6250);
+    _fm_2500 = make_gr_demod_nbfm(125, 1000000,1700,2500);
+    _fm_5000 = make_gr_demod_nbfm(125, 1000000,1700,5000);
     _qpsk_2k = make_gr_demod_qpsk(125,1000000,1700,1300);
     _qpsk_10k = make_gr_demod_qpsk(25,1000000,1700,6500);
     _qpsk_250k = make_gr_demod_qpsk(2,1000000,1700,160000);
@@ -460,8 +460,7 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
         case gr_modem_types::ModemTypeMMDVM:
             _top_block->disconnect(_demod_valve,0,_mmdvm_demod,0);
             _top_block->disconnect(_demod_valve,0,_rssi_valve,0);
-            _top_block->disconnect(_mmdvm_demod,2,_mmdvm_sink,0);
-            _top_block->disconnect(_mmdvm_demod,1,_audio_sink,0);
+            _top_block->disconnect(_mmdvm_demod,0,_mmdvm_sink,0);
             break;
         case gr_modem_types::ModemTypeMMDVMmulti:
             _top_block->disconnect(_demod_valve,0,_mmdvm_demod_multi,0);
@@ -707,8 +706,7 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
         case gr_modem_types::ModemTypeMMDVM:
             _top_block->connect(_demod_valve,0,_mmdvm_demod,0);
             _top_block->connect(_demod_valve,0,_rssi_valve,0);
-            _top_block->connect(_mmdvm_demod,2,_mmdvm_sink,0);
-            _top_block->connect(_mmdvm_demod,1,_audio_sink,0);
+            _top_block->connect(_mmdvm_demod,0,_mmdvm_sink,0);
             break;
         case gr_modem_types::ModemTypeMMDVMmulti:
             _top_block->connect(_demod_valve,0,_mmdvm_demod_multi,0);
@@ -992,7 +990,6 @@ void gr_demod_base::set_squelch(int value)
     _freedv_rx800XA_usb->set_squelch(value);
     _freedv_rx800XA_lsb->set_squelch(value);
     _wfm->set_squelch(value);
-    _mmdvm_demod->set_squelch(value);
 }
 
 void gr_demod_base::set_gain(float value)

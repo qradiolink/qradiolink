@@ -27,19 +27,20 @@
 #include <gnuradio/filter/rational_resampler.h>
 #include <gnuradio/blocks/multiply_const.h>
 #include "gr_zero_idle_bursts.h"
-
+#include "src/config_mmdvm.h"
 
 class gr_mod_mmdvm;
 
 typedef std::shared_ptr<gr_mod_mmdvm> gr_mod_mmdvm_sptr;
-gr_mod_mmdvm_sptr make_gr_mod_mmdvm(int sps=50, int samp_rate=1200000, int carrier_freq=1700,
-                                          int filter_width=6250);
+gr_mod_mmdvm_sptr make_gr_mod_mmdvm(int sps=10, int samp_rate=MMDVM_SAMPLE_RATE, int carrier_freq=1700,
+                                    int filter_width=8000);
+
 
 class gr_mod_mmdvm : public gr::hier_block2
 {
 public:
-    explicit gr_mod_mmdvm(int sps=50, int samp_rate=1200000, int carrier_freq=1700,
-                             int filter_width=6250);
+    explicit gr_mod_mmdvm(int sps=10, int samp_rate=MMDVM_SAMPLE_RATE, int carrier_freq=1700,
+                             int filter_width=8000);
     void set_bb_gain(float value);
 
 private:

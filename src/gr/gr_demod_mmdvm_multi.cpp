@@ -50,16 +50,19 @@ gr_demod_mmdvm_multi::gr_demod_mmdvm_multi(BurstTimer *burst_timer, int num_chan
     float intermediate_samp_rate = 240000;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
-    float fm_demod_width = (float)_filter_width;
-    int resamp_filter_width = (num_channels - 1) * channel_separation + 10000;
-    int resamp_filter_slope = 20000;
+    float fm_demod_width = 12500.0f;
+    int c_n_b = num_channels;
+    if(c_n_b > 4)
+        c_n_b = 4;
+    int resamp_filter_width = c_n_b * channel_separation;
+    int resamp_filter_slope = 25000;
     float carrier_offset = float(-channel_separation);
 
 
     std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, resamp_filter_width,
                                 resamp_filter_slope, gr::fft::window::WIN_BLACKMAN_HARRIS);
     std::vector<float> intermediate_interp_taps = gr::filter::firdes::low_pass(1, intermediate_samp_rate,
-                        _filter_width, _filter_width, gr::fft::window::WIN_BLACKMAN_HARRIS);
+                        _filter_width, 3500, gr::fft::window::WIN_BLACKMAN_HARRIS);
 
 
     for(int i = 0;i < _num_channels;i++)
@@ -69,15 +72,15 @@ gr_demod_mmdvm_multi::gr_demod_mmdvm_multi(BurstTimer *burst_timer, int num_chan
     for(int i = 0;i < _num_channels;i++)
     {
         _filter[i] = gr::filter::fft_filter_ccf::make(1,gr::filter::firdes::low_pass(
-                1, target_samp_rate, _filter_width, _filter_width, gr::fft::window::WIN_BLACKMAN_HARRIS));
+                1, target_samp_rate, _filter_width, 3500, gr::fft::window::WIN_BLACKMAN_HARRIS));
     }
     for(int i = 0;i < _num_channels;i++)
     {
-        _fm_demod[i] = gr::analog::quadrature_demod_cf::make(float(target_samp_rate)/(4*M_PI* float(fm_demod_width)));
+        _fm_demod[i] = gr::analog::quadrature_demod_cf::make(float(target_samp_rate)/(2*M_PI* float(fm_demod_width)));
     }
     for(int i = 0;i < _num_channels;i++)
     {
-        _level_control[i] = gr::blocks::multiply_const_ff::make(0.7);
+        _level_control[i] = gr::blocks::multiply_const_ff::make(1.0);
     }
     for(int i = 0;i < _num_channels;i++)
     {
@@ -95,16 +98,16 @@ gr_demod_mmdvm_multi::gr_demod_mmdvm_multi(BurstTimer *burst_timer, int num_chan
     _first_resampler = gr::filter::rational_resampler_ccf::make(1, 5, taps);
 
 
-    connect(self(),0,_first_resampler,0);
+    //connect(self(),0,_first_resampler,0);
     for(int i = 0;i < num_channels;i++)
     {
         if(i == 0)
         {
-            connect(_first_resampler,0,_resampler[i],0);
+            connect(self(),0,_resampler[i],0);
         }
         else
         {
-            connect(_first_resampler,0,_rotator[i],0);
+            connect(self(),0,_rotator[i],0);
             connect(_rotator[i],0,_resampler[i],0);
         }
         connect(_resampler[i],0,_filter[i],0);

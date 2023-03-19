@@ -110,6 +110,7 @@ public:
     int lime_rfe_notch;
     int mmdvm_channels;
     int mmdvm_channel_separation;
+    int burst_delay_msec;
 
     /// Not saved to config:
 

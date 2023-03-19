@@ -20,37 +20,33 @@
 #include <gnuradio/hier_block2.h>
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/filter/rational_resampler.h>
-#include <gnuradio/filter/rational_resampler.h>
 #include <gnuradio/analog/quadrature_demod_cf.h>
 #include <gnuradio/analog/pwr_squelch_ff.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/filter/fft_filter_fff.h>
 #include <gnuradio/blocks/float_to_short.h>
 #include <gnuradio/blocks/multiply_const.h>
+#include "src/config_mmdvm.h"
 
 class gr_demod_mmdvm;
 
 typedef std::shared_ptr<gr_demod_mmdvm> gr_demod_mmdvm_sptr;
-gr_demod_mmdvm_sptr make_gr_demod_mmdvm(int sps=50, int samp_rate=1200000, int carrier_freq=1700,
-                                          int filter_width=6250);
+gr_demod_mmdvm_sptr make_gr_demod_mmdvm(int sps=10, int samp_rate=MMDVM_SAMPLE_RATE, int carrier_freq=1700,
+                                        int filter_width=10000);
+
 
 class gr_demod_mmdvm : public gr::hier_block2
 {
 public:
-    explicit gr_demod_mmdvm(std::vector<int> signature, int sps=50, int samp_rate=1200000, int carrier_freq=1600,
-                               int filter_width=6250);
-
-    void set_squelch(int value);
-    void set_filter_width(int filter_width);
+    explicit gr_demod_mmdvm(std::vector<int> signature, int sps=10, int samp_rate=MMDVM_SAMPLE_RATE, int carrier_freq=1600,
+                               int filter_width=10000);
 
 
 private:
     gr::blocks::float_to_short::sptr _float_to_short;
     gr::analog::quadrature_demod_cf::sptr _fm_demod;
-    gr::analog::pwr_squelch_ff::sptr _squelch;
     gr::blocks::multiply_const_ff::sptr _level_control;
     gr::filter::rational_resampler_ccf::sptr _resampler;
-    gr::filter::rational_resampler_fff::sptr _audio_resampler;
     gr::filter::fft_filter_ccf::sptr _filter;
 
     int _sps;

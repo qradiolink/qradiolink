@@ -60,6 +60,7 @@ Settings::Settings(Logger *logger)
     lime_rfe_notch = 0;
     mmdvm_channels = 3;
     mmdvm_channel_separation = 25000;
+    burst_delay_msec = 60;
 
     /// old stuff, not used
     _mumble_tcp = 1; // used
@@ -720,6 +721,14 @@ void Settings::readConfig()
     {
         mmdvm_channel_separation = 25000;
     }
+    try
+    {
+        burst_delay_msec = cfg.lookup("burst_delay_msec");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        burst_delay_msec = 60;
+    }
 
 }
 
@@ -801,6 +810,7 @@ void Settings::saveConfig()
     root.add("lime_rfe_notch",libconfig::Setting::TypeInt) = lime_rfe_notch;
     root.add("mmdvm_channels",libconfig::Setting::TypeInt) = mmdvm_channels;
     root.add("mmdvm_channel_separation",libconfig::Setting::TypeInt) = mmdvm_channel_separation;
+    root.add("burst_delay_msec",libconfig::Setting::TypeInt) = burst_delay_msec;
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());

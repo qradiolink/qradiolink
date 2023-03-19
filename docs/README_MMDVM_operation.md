@@ -2,13 +2,17 @@
 # MMDVM operation mode
 
 QRadioLink can act as a SDR base station transceiver for DMR, System Fusion, D-Star or M17
-by connecting to MMDVM-SDR, a fork of MMDVM which runs on Linux operating systems.
+by connecting to MMDVM-SDR, a fork of MMDVM which runs on Linux operating systems. MMDVM-SDR is slightly different from the original MMDVM software and is tested and developed at https://codeberg.org/qradiolink/MMDVM-SDR on the `mmdvm_sdr` branch. A fork of MMDVMHost is also necessary, which is maintained at https://codeberg.org/qradiolink/MMDVMHost-SDR on the `mmdmv_sdr` branch. 
+
 QRadioLink can work either as a normal single channel transceiver or as a
-multi-channel / multi-carrier transceiver. So far only DMR and System Fusion have been tested
-and confirmed to work, but D-Star, M17 and other digital should work as well (using the latest changes from MMDVM master). System Fusion may have slightly higer BER and may require more careful tuning.
-Multi-carrier and single carrier MMDVM modes are only supported with LimeSDR devices so far due to the need for device timestamps used in TDMA mode. 
-If you are interested in support for other devices like Ettus USRP or BladeRF please create a
-pull request.
+multi-channel / multi-carrier transceiver. So far only DMR, System Fusion and M17 have been tested
+and confirmed to work, but D-Star and other digital modes should work as well. 
+
+Multi-carrier and single carrier MMDVM modes are only supported with LimeSDR devices so far due to the need for device timestamps used in TDMA mode. So far the LimeNet-Micro and the LimeSDR-mini were tested and confirmed to function in this mode.
+
+Support for other devices like Ettus USRP or BladeRF may be added in the future. If you have such hardware and are interested in getting it working, please create a pull request based on the `next` branch.
+
+Due to performance issues, MMDVM modes do not work well on ARM Linux platforms like Raspberry Pi. Some work is currently done to attempt to address this, but at the moment it is recommended to run MMDVM modes on x86_64 platforms with at least 4 cores.
 
 ## Installation
 
@@ -44,24 +48,33 @@ make -j 4
 </pre>
 ----
 
-## Running the transceiver
+## Configuring and running the transceiver
 
+The startup order is 
+
+1. MMDVM via CLI or start.sh script
+2. QRadioLink via CLI with --mmdvm as an option
+3. MMDVMHost instances for all channels
 
 ### 1. QRadioLink
 ----
 
 * Start the application normally. Configure the LimeSDR device, as well as all other options.
 Use a device string like **driver=lime,serial=00583A34CAD205** (replace serial with your own).
-You can find out the serial number by running:
+You can find out the serial number by running LimeUtil, which is part of the LimeSuite package:
 <pre>
 LimeUtil --find
 </pre>
 Click save to write the settings in the config file.
 
 * In the Setup -> Radio settings page, choose the number of MMDVM channels to be transmitted, if operating in MMDVM multi-channel mode. This number needs to be between 2 and 7 at the moment (default is 3). The number of channels which can be transmitted simultaneously is heavily dependent on the CPU power. On small ARM platforms, due to the high sample rates involved internally, it may not be possible to operate more than 1 or 2 channels.
-* Select channel separation (options are currently 12.5 kHz and 25 kHz).
-* Configure the RX frequency which will be the uplink from the radio.
-Set the TX offset (Split) such that the TX frequency of the SDR will be the RX frequency
+**Important**: you will need to start as many instances of MMDVM as many channels are configured here, otherwise qradiolink will not transmit anything.
+
+* Select channel separation (options are currently 12.5 kHz and 25 kHz). Please note that only the 25 kHz channel separation for multicarrier mode has been tested so far.
+
+* Configure the RX frequency which will be the uplink from the radio. In the config file, **rx_frequency** and **demod_offset**, added together, will provide your baseband receive frequency. In multicarrier mode, demod_offset should be small (less than 50 kHz) and chosen such that DC does not fall in a used channel. With a channel separation of 25 kHz, demod_offset can be 12500 or -12500, but check that adding it to rx_frequency results in your wanted receive frequency for channel zero.
+
+* Set the TX offset (Split) such that the TX frequency of the SDR will be the RX frequency
 of the radio. Multi-carrier operation requires no other adjustment.
 Carrier number zero is on the TX frequency displayed by qradiolink (baseband),
 while carriers 1, 2, and 3 will be 25, 50 and 75 kHz above the carrier 0 frequency
@@ -88,19 +101,32 @@ Example:
 
 
 * Set TX and RX gain as desired. It is recommended to start with a lower RX gain if not using a duplexer filter.
-* Set the sample rate to 1 Msps (the default). A higher sample rate will waste the CPU for no good reason and can be detrimental.
-* Enable the Duplex button.
-* IMPORTANT NOTE: the demodulator offset (which is visually represented by the filter bars on the FFT display) has to be set such that all received channels are located inside the sampling window. The best practice is to either set it to a negative value about 250 kHz above the minimum sampled frequency, or about 250 kHz above the SDR center frequency. This is especially important in the **MMDVM multi** mode.
+
+* The sample rate should not be configured and is fixed regardless what is configured in the UI.
+
+* Enable the Duplex button (MMDVM modes are only functional in duplex mode).
+
+* IMPORTANT NOTE: the demodulator offset has to be set such that all received channels are located inside the sampling window but channel zero is slightly shifted away from DC. A negative value about 12.5 kHz below the center frequency can be used, or about 12.5 kHz above the SDR center frequency. This is especially important in the **MMDVM multi** mode.
+
 * Choose as operating mode either **MMDVM** or **MMDVM multi** for both TX and RX
+
 * Close the application, all the settings will be saved in the config file
-* Alternatively all the settings can be instead directly written in the config file which is located in:
+
+* If you are unable to use the GUI all the settings can be instead directly written in the config file which is located in:
 **~/.config/qradiolink/qradiolink.cfg**
+
+* An example configuration file for MMDVM multicarrier (mode 36), qradiolink_config_example_mmdvm.cfg is included in this directory. Edit according to examples above and copy it to **~/.config/qradiolink/qradiolink.cfg**
+
+* There is now a new setting in the config file: **burst_delay_msec** which controls how far in the future DMR timeslots are transmitted. This delay can be set to between 10 and 300 milliseconds, depending on the CPU on which qradiolink runs. Generally, the more powerful the CPU, the lower this setting can be set. The default value is 60 msec, but this value will generally need to be changed as it depends on the processing power of the platform.
+
 * Finally, start the application from the CLI using the **--mmdvm** switch:
 <pre>
 ./qradiolink --mmdvm
 </pre>
-If everything is configured ok, you should see the SDR initialization and then continuous updates about FIFO size. 
+If everything is configured ok, you should see the SDR initialization sequence and then no further messages. If the SDR FIFO runs too low or too high, or if the SDR drops sample packets, you will see a log message in the console.
+
 * Due to some current implementation issues, it is not possible to operate in the MMDVM modes while using the graphical interface.
+
 * Control of the transceiver can be performed while running by using telnet on local port 4939 via the CLI interface. For example:
 <pre>
 rlwrap telnet localhost 4939
@@ -113,14 +139,16 @@ Current RX gain is 32.
 qradiolink> setrxgain 35
 Setting RX gain value to 35
 </pre>
+
 * When operating in MMDVM mode (duplex TX/RX), tuning the RX frequency will automatically tune the TX frequency keeping the defined TX offset (split).
+
 * Keep in mind that SDR devices can have thermal frequency drift, so if the clock is not disciplined by an external precise source you may need to tune the receiver as the device warms and cools. MMDVM demodulation is relatively sensitive to being offset in frequency, so the first thing to check if you observe a high BER is the RX frequency which can be a few hundreds of Hz above or below the optimum value.
 ---
 
 ### 2. MMDVM
 ----
 
-* From the build/ directory, start mmdvm in single channel mode using:
+* For single channel mode: from the build/ directory, start mmdvm in single channel mode using:
 <pre>
 ./mmdvm
 </pre>
@@ -128,14 +156,19 @@ This will create the symlink to the virtual pts, which you will need to put into
 <pre>
 M: 2022-08-13 11:37:34.779 virtual pts: /dev/pts/15 <> /home/user1/MMDVM-SDR/build/ttyMMDVM0
 </pre>
+
 * If you have started in single channel mode, the tty will be called **ttyMMDVM0**
-* Alternatively, you can start multiple instances of mmdvm in multi channel mode, if that mode is also configured in QRadioLink. Start multiple mmdvm in different terminals like this (up to three channels so far):
+
+* For multi-channel mode: start multiple instances of mmdvm using the **-c CHANNEL_NUMBER** flag (requires multichannel mode also configured in QRadioLink). Start multiple mmdvm in different terminals like this (up to 7 channels can be used, numbered here from 1 to 7):
 <pre>
 ./mmdvm -c 1
 ./mmdvm -c 2
 ./mmdvm -c 3
+...
 </pre>
+
 * Verify in mmdvm output that the ttyMMDVM has the correct number (1 to 3 in above example)
+
 * Channel 1 for mmdvm corresponds to qradiolink channel zero (main frequency) and so forth.
 ----
 
@@ -143,7 +176,13 @@ M: 2022-08-13 11:37:34.779 virtual pts: /dev/pts/15 <> /home/user1/MMDVM-SDR/bui
 ----
 
 * Configure MMDVM.ini first. If using in multi-channel mode, create multiple files, for example MMDVM1.ini, MMDVM2.ini, MMDVM3.ini
-* Each MMDVM.ini has to contain a unique identifier for the virtual pts. In single channel mode the name will always be ttyMMDVM0, otherwise it will be numbered from 1 to 3 depending on the id given after the **-c** switch. The path of the symlink will be located in the MMDVM-SDR build directory if started from there.
+
+* Each MMDVM.ini has to contain a unique identifier for the virtual pts. In single channel mode the name will always be ttyMMDVM0, otherwise it will be numbered from 1 to 7 depending on the id given after the **-c** switch. The path of the symlink will be located in the MMDVM-SDR build directory if started from there.
+
+* Note that RX and TX levels are important and may need manual tweaking. Particularly, YSF mode requires much lower RX levels than DMR mode.
+
+* The setting **DMRDelay** should be set to zero since the timing is handled by the LimeSDR FPGA. However you could experiment with increasing it to small values.
+
 * Example config for DMR below:
 <pre>
 [General]
@@ -447,11 +486,12 @@ Address=127.0.0.1
 Port=7642
 </pre>
 
-* Start MMDVMHost using the desired name of the config file. If using multi-channel mode,
+* For single channel mode, start MMDVMHost using the desired name of the config file. If using multi-channel mode,
 start multiple instances of MMDVMHost from different terminals using the corresponding ini config files. Example for single channel mode:
 <pre>
 ./MMDVMHost MMDVM.ini
 </pre>
+
 * Example for multi-channel mode:
 <pre>
 ./MMDVMHost MMDVM1.ini
@@ -460,7 +500,10 @@ start multiple instances of MMDVMHost from different terminals using the corresp
 </pre>
 
 * You can configure different networks, modes or combination of talkgroups for each channel.
+
+* Due to a limitation in the way multicarrier mode is implemented, channel 1 in MMDVM (or channel 0 in qradiolink) must always be assigned to a DMR channel, or alternatively must be left unassigned (no traffic), otherwise timing synchronziation will be affected.
+
 * The most important options in the MMDVM.ini files are located in the [Modem] section.
-You **must** enable TXInvert and RXInvert, and also adjust RXLevel to a value where the BER is minimal, 
-generally between 1 and 70. TXLevel can be set to 100 in most cases everywhere. System Fusion optimum RXLevel is lower than DMR level. A value of 1 can work best in most cases. 
+You **must** enable **TXInvert** and **RXInvert**, and also adjust RXLevel to a value where the BER is minimal, 
+generally between 1 and 70. TXLevel can be set to 100 in most cases everywhere. System Fusion optimum RXLevel is lower than DMR level. A value of 1 can work best in most cases for YSF. 
 ----

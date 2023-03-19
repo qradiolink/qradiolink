@@ -20,6 +20,7 @@
 #include <mutex>
 #include <chrono>
 #include <QVector>
+#include "src/config_mmdvm.h"
 
 #define MAX_MMDVM_CHANNELS 7
 
@@ -34,8 +35,8 @@ extern int lime_fifo_fill_count;
 class BurstTimer
 {
 public:
-    BurstTimer(uint64_t samples_per_slot=720, uint64_t time_per_sample=41667L,
-               uint64_t slot_time=SLOT_TIME, uint64_t burst_delay=BURST_DELAY);
+    BurstTimer(uint64_t burst_delay=BURST_DELAY, uint64_t samples_per_slot=720, uint64_t time_per_sample=41667L,
+               uint64_t slot_time=SLOT_TIME);
     ~BurstTimer();
     void set_enabled(bool value);
     void set_params(uint64_t samples_per_slot, uint64_t time_per_sample, uint64_t slot_time, uint64_t burst_delay);
