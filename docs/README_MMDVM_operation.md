@@ -50,6 +50,11 @@ make -j 4
 
 ## Configuring and running the transceiver
 
+The startup order is 
+
+1. MMDVM via CLI or start.sh script
+2. QRadioLink via CLI with --mmdvm as an option
+3. MMDVMHost instances for all channels
 
 ### 1. QRadioLink
 ----
@@ -63,6 +68,7 @@ LimeUtil --find
 Click save to write the settings in the config file.
 
 * In the Setup -> Radio settings page, choose the number of MMDVM channels to be transmitted, if operating in MMDVM multi-channel mode. This number needs to be between 2 and 7 at the moment (default is 3). The number of channels which can be transmitted simultaneously is heavily dependent on the CPU power. On small ARM platforms, due to the high sample rates involved internally, it may not be possible to operate more than 1 or 2 channels.
+**Important**: you will need to start as many instances of MMDVM as many channels are configured here, otherwise qradiolink will not transmit anything.
 
 * Select channel separation (options are currently 12.5 kHz and 25 kHz). Please note that only the 25 kHz channel separation for multicarrier mode has been tested so far.
 
@@ -111,7 +117,7 @@ Example:
 
 * An example configuration file for MMDVM multicarrier (mode 36), qradiolink_config_example_mmdvm.cfg is included in this directory. Edit according to examples above and copy it to **~/.config/qradiolink/qradiolink.cfg**
 
-* There is now a new setting in the config file: **burst_delay_msec** which controls how far in the future DMR timeslots are transmitted. This delay can be set to between 10 and 300 milliseconds, depending on the CPU on which qradiolink runs. Generally, the more powerful the CPU, the lower this setting can be set. The default value is 100 msec, but this value will generally not work on ARM platforms and needs to be increased.
+* There is now a new setting in the config file: **burst_delay_msec** which controls how far in the future DMR timeslots are transmitted. This delay can be set to between 10 and 300 milliseconds, depending on the CPU on which qradiolink runs. Generally, the more powerful the CPU, the lower this setting can be set. The default value is 60 msec, but this value will generally need to be changed as it depends on the processing power of the platform.
 
 * Finally, start the application from the CLI using the **--mmdvm** switch:
 <pre>
@@ -175,7 +181,7 @@ M: 2022-08-13 11:37:34.779 virtual pts: /dev/pts/15 <> /home/user1/MMDVM-SDR/bui
 
 * Note that RX and TX levels are important and may need manual tweaking. Particularly, YSF mode requires much lower RX levels than DMR mode.
 
-* The setting **DMRDelay** which used to be set to zero can now be set to a value between 0 and 100, and instead of influencing RX delay it now serves as a TX delay to prevent idle DMR frames being generated too fast and overwriting the actual transmission. This setting defaults to 70 if set to zero, which is a working value for a relatively powerful x86_64 CPU. Experiment with this value until the repeated transmission does not have artefacts and interruptions. Generally the less powerful the CPU, the lower the value should be.
+* The setting **DMRDelay** should be set to zero since the timing is handled by the LimeSDR FPGA. However you could experiment with increasing it to small values.
 
 * Example config for DMR below:
 <pre>
@@ -499,5 +505,5 @@ start multiple instances of MMDVMHost from different terminals using the corresp
 
 * The most important options in the MMDVM.ini files are located in the [Modem] section.
 You **must** enable **TXInvert** and **RXInvert**, and also adjust RXLevel to a value where the BER is minimal, 
-generally between 1 and 70. TXLevel can be set to 100 in most cases everywhere. System Fusion optimum RXLevel is lower than DMR level. A value of 1 can work best in most cases. 
+generally between 1 and 70. TXLevel can be set to 100 in most cases everywhere. System Fusion optimum RXLevel is lower than DMR level. A value of 1 can work best in most cases for YSF. 
 ----

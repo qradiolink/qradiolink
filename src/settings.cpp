@@ -60,7 +60,7 @@ Settings::Settings(Logger *logger)
     lime_rfe_notch = 0;
     mmdvm_channels = 3;
     mmdvm_channel_separation = 25000;
-    burst_delay_msec = 100;
+    burst_delay_msec = 60;
 
     /// old stuff, not used
     _mumble_tcp = 1; // used
@@ -727,7 +727,7 @@ void Settings::readConfig()
     }
     catch(const libconfig::SettingNotFoundException &nfex)
     {
-        burst_delay_msec = 100;
+        burst_delay_msec = 60;
     }
 
 }
