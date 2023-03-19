@@ -1,3 +1,22 @@
+qradiolink (0.8.9-1) experimental; urgency=medium
+
+  [ Adrian Musceac ]
+  * Reduced sample rate for MMDVM modes to 240k (better efficiency)
+  * Fixed LimeSDR calibration (MMDVM multicarrier)
+  * Changed communication method to MMDVM-SDR (requires version 1.0 of MMDVM-SDR)
+  * Added setting for burst delay in milliseconds (MMDVM modes)
+  * Improced reliability in MMDVM multicarrier mode
+  * Fixed other issues with MMDVM modes (DMR slot overruns and underruns)
+  * Fixed LimeRFE duplex mode not set correctly at startup
+  * Fixed single core CPU usage increase to maximum after some hours in MMDVM modes
+  * Fixed M17 callsign decoding
+  * Added clarifier frequency offset display
+  * Some other minor bugfixes
+
+
+ -- Adrian Musceac <adrian@qradiolink.org>  Sun, 19 Mar 2023 16:35:00 +0300
+
+
 qradiolink (0.8.8-1) experimental; urgency=medium
 
   [ Adrian Musceac ]
