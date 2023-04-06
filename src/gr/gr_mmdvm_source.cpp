@@ -245,8 +245,11 @@ int gr_mmdvm_source::work(int noutput_items,
     }
     t2 = std::chrono::high_resolution_clock::now();
     _correction_time =  std::chrono::duration_cast<std::chrono::nanoseconds>(t2-t1).count();
-    struct timespec time_to_sleep = {0, SLOT_TIME - _correction_time + timing_adjust};
-    nanosleep(&time_to_sleep, NULL);
+    if((_correction_time + timing_adjust) < (int64_t)SLOT_TIME)
+    {
+        struct timespec time_to_sleep = {0, (int64_t)SLOT_TIME - _correction_time + timing_adjust};
+        nanosleep(&time_to_sleep, NULL);
+    }
     if(!_use_tdma)
         _correction_time = -100000L;
     return SAMPLES_PER_SLOT;
