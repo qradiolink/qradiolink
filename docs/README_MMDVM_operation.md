@@ -181,7 +181,7 @@ M: 2022-08-13 11:37:34.779 virtual pts: /dev/pts/15 <> /home/user1/MMDVM-SDR/bui
 
 * Note that RX and TX levels are important and may need manual tweaking. Particularly, YSF mode requires much lower RX levels than DMR mode.
 
-* The setting **DMRDelay** should be set to zero since the timing is handled by the LimeSDR FPGA. However you could experiment with increasing it to small values.
+* The setting **DMRDelay** should be set to a value between 0 and 100.
 
 * Example config for DMR below:
 <pre>
@@ -242,7 +242,7 @@ PTTInvert=0
 TXDelay=0
 RXOffset=0
 TXOffset=0
-DMRDelay=0
+DMRDelay=90
 RXLevel=70
 TXLevel=100
 RXDCOffset=0
