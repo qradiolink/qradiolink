@@ -111,6 +111,10 @@ public:
     int mmdvm_channels;
     int mmdvm_channel_separation;
     int burst_delay_msec;
+    int m17_can_tx;
+    int m17_can_rx;
+    QString m17_src;
+    QString m17_dest;
 
     /// Not saved to config:
 

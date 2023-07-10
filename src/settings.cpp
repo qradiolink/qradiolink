@@ -61,6 +61,10 @@ Settings::Settings(Logger *logger)
     mmdvm_channels = 3;
     mmdvm_channel_separation = 25000;
     burst_delay_msec = 60;
+    m17_can_tx = 0;
+    m17_can_rx = 0;
+    m17_dest = "ALL";
+    m17_src = "";
 
     /// old stuff, not used
     _mumble_tcp = 1; // used
@@ -729,6 +733,38 @@ void Settings::readConfig()
     {
         burst_delay_msec = 60;
     }
+    try
+    {
+        m17_can_tx = cfg.lookup("m17_can_tx");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        m17_can_tx = 0;
+    }
+    try
+    {
+        m17_can_rx = cfg.lookup("m17_can_rx");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        m17_can_rx = 0;
+    }
+    try
+    {
+        m17_src = QString(cfg.lookup("m17_src"));
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        m17_src = callsign;
+    }
+    try
+    {
+        m17_dest = QString(cfg.lookup("m17_dest"));
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        m17_dest = "ALL";
+    }
 
 }
 
@@ -811,6 +847,10 @@ void Settings::saveConfig()
     root.add("mmdvm_channels",libconfig::Setting::TypeInt) = mmdvm_channels;
     root.add("mmdvm_channel_separation",libconfig::Setting::TypeInt) = mmdvm_channel_separation;
     root.add("burst_delay_msec",libconfig::Setting::TypeInt) = burst_delay_msec;
+    root.add("m17_can_tx",libconfig::Setting::TypeInt) = m17_can_tx;
+    root.add("m17_can_rx",libconfig::Setting::TypeInt) = m17_can_rx;
+    root.add("m17_src",libconfig::Setting::TypeString) = m17_src.toStdString();
+    root.add("m17_dest",libconfig::Setting::TypeString) = m17_dest.toStdString();
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());

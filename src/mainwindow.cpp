@@ -211,6 +211,8 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
                      this,SLOT(editMemoryChannel(QTableWidgetItem*)));
     QObject::connect(ui->pageUserButton,SIGNAL(clicked()), this, SLOT(pageUserRequested()));
     QObject::connect(ui->findDevicesButton,SIGNAL(clicked()), this, SLOT(findDevices()));
+    QObject::connect(ui->spinBoxM17CANRx,SIGNAL(valueChanged(int)),this,SLOT(updateM17CANRx(int)));
+    QObject::connect(ui->spinBoxM17CANTx,SIGNAL(valueChanged(int)),this,SLOT(updateM17CANTx(int)));
 
     QObject::connect(&_secondary_text_timer,SIGNAL(timeout()),ui->secondaryTextDisplay,SLOT(hide()));
     QObject::connect(&_video_timer,SIGNAL(timeout()),ui->videoFrame,SLOT(hide()));
@@ -618,6 +620,10 @@ void MainWindow::setConfig()
     ui->relay8CheckBox->setChecked(bool((_settings->relay_sequence >> 7) & 0x1));
     ui->lnbLOEdit->setText(QString::number(_settings->lnb_lo_freq/1000));
     ui->lineEditLimeRFEDevice->setText(_settings->lime_rfe_device);
+    ui->spinBoxM17CANRx->setValue(_settings->m17_can_rx);
+    ui->spinBoxM17CANTx->setValue(_settings->m17_can_tx);
+    ui->lineEditM17Dest->setText(_settings->m17_dest);
+    ui->lineEditM17Src->setText(_settings->m17_src);
 }
 
 void MainWindow::saveUiConfig()
@@ -669,6 +675,8 @@ void MainWindow::saveUiConfig()
     _settings->relay_sequence = relay_sequence;
     _settings->lnb_lo_freq = (int64_t)(ui->lnbLOEdit->text().toLong() * 1000);
     _settings->lime_rfe_device = ui->lineEditLimeRFEDevice->text();
+    _settings->m17_dest = ui->lineEditM17Dest->text();
+    _settings->m17_src = ui->lineEditM17Src->text();
     _settings->saveConfig();
 }
 
@@ -2187,4 +2195,14 @@ void MainWindow::updateRXDevices(QString dev_string)
 void MainWindow::updateTXDevices(QString dev_string)
 {
     ui->lineEditTXDev->setItemText(ui->lineEditTXDev->currentIndex(), dev_string);
+}
+
+void MainWindow::updateM17CANRx(int value)
+{
+    _settings->m17_can_rx = value;
+}
+
+void MainWindow::updateM17CANTx(int value)
+{
+    _settings->m17_can_tx = value;
 }

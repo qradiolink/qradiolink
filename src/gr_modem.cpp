@@ -591,7 +591,10 @@ void gr_modem::startTransmission(QString callsign)
     std::vector<unsigned char> *tx_start = new std::vector<unsigned char>;
     if(_modem_type_tx == gr_modem_types::ModemTypeM17)
     {
-        _m17_transmitter.start(callsign.toStdString(), tx_start);
+        if(_settings->m17_src != "")
+            callsign = _settings->m17_src;
+        _m17_transmitter.start(callsign.toStdString(), _settings->m17_dest.toStdString(),
+                               (uint16_t)_settings->m17_can_tx, tx_start);
         QVector<std::vector<unsigned char>*> frames;
         frames.append(tx_start);
         transmit(frames);
@@ -1229,12 +1232,12 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
             bool valid_frame = lsf.valid();
             if(valid_frame)
             {
+                _m17_decoder_locked = true;
                 std::string m17_source = lsf.getSource();
                 std::string m17_destination = lsf.getDestination();
-                QString callsign = QString::fromStdString(m17_source);
-                callsign = callsign.remove(QRegExp("[^a-zA-Z/\\d\\s]"));
-                callsign = callsign.left(7);
-                emit callsignReceived(callsign);
+                uint16_t CAN = lsf.getType().fields.CAN;
+                emit m17FrameInfoReceived(QString::fromStdString(m17_source),
+                                          QString::fromStdString(m17_destination), CAN);
             }
         }
 
@@ -1244,10 +1247,22 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
             M17::M17LinkSetupFrame lsf = _m17_decoder.getLsf();
             if(lsf.valid())
             {
+                std::string m17_source = lsf.getSource();
+                std::string m17_destination = lsf.getDestination();
+                uint16_t CAN = lsf.getType().fields.CAN;
                 _last_frame_type = FrameTypeM17Stream;
-                unsigned char *codec2_data = new unsigned char[16];
-                memcpy(codec2_data, sf.payload().data(), 16);
-                emit digitalAudio(codec2_data,16);
+                if(CAN == _settings->m17_can_rx)
+                {
+                    unsigned char *codec2_data = new unsigned char[16];
+                    memcpy(codec2_data, sf.payload().data(), 16);
+                    emit digitalAudio(codec2_data,16);
+                }
+                if(!_m17_decoder_locked)
+                {
+                    _m17_decoder_locked = true;
+                    emit m17FrameInfoReceived(QString::fromStdString(m17_source),
+                                              QString::fromStdString(m17_destination), CAN);
+                }
             }
         }
     }
@@ -1257,12 +1272,19 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
         if(lsf.valid())
         {
             std::string m17_source = lsf.getSource();
-            QString callsign = QString::fromStdString(m17_source);
-            callsign = callsign.remove(QRegExp("[^a-zA-Z/\\d\\s]"));
-            callsign = callsign.left(7);
-            emit callsignReceived(callsign);
-            emit endAudioTransmission();
-            emit receiveEnd();
+            std::string m17_destination = lsf.getDestination();
+            uint16_t CAN = lsf.getType().fields.CAN;
+            if(_m17_decoder_locked)
+            {
+                _m17_decoder_locked = false;
+                emit m17FrameInfoReceived(QString::fromStdString(m17_source),
+                                          QString::fromStdString(m17_destination), CAN);
+            }
+            if(CAN == _settings->m17_can_rx)
+            {
+                emit endAudioTransmission();
+                emit receiveEnd();
+            }
             _m17_decoder.reset();
         }
     }

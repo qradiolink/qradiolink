@@ -123,6 +123,7 @@ public slots:
     void stop();
     void textReceived(QString text);
     void callsignReceived(QString callsign);
+    void m17FrameInfoReceived(QString src, QString dest, uint16_t CAN);
     void protoReceived(QByteArray data);
     void audioFrameReceived();
     void dataFrameReceived();

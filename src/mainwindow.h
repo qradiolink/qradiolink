@@ -196,6 +196,8 @@ public slots:
     void findDevices();
     void updateRXDevices(QString dev_string);
     void updateTXDevices(QString dev_string);
+    void updateM17CANRx(int value);
+    void updateM17CANTx(int value);
 
 signals:
     void startTransmission();

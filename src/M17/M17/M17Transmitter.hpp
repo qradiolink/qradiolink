@@ -69,7 +69,7 @@ public:
      * @param src: source callsign.
      * @param dst: destination callsign.
      */
-    void start(const std::string& src, const std::string& dst, std::vector<unsigned char> *bytes);
+    void start(const std::string& src, const std::string& dst, uint16_t CAN, std::vector<unsigned char> *bytes);
 
     /**
      * Send a block of data.

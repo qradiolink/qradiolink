@@ -115,6 +115,8 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     QObject::connect(_modem,SIGNAL(textReceived(QString)),this,SLOT(textReceived(QString)));
     QObject::connect(_modem,SIGNAL(callsignReceived(QString)),this,
                      SLOT(callsignReceived(QString)));
+    QObject::connect(_modem,SIGNAL(m17FrameInfoReceived(QString, QString, uint16_t)),this,
+                     SLOT(m17FrameInfoReceived(QString, QString, uint16_t)));
     QObject::connect(_modem,SIGNAL(audioFrameReceived()),this,SLOT(audioFrameReceived()));
     QObject::connect(_modem,SIGNAL(dataFrameReceived()),this,SLOT(dataFrameReceived()));
     QObject::connect(_modem,SIGNAL(receiveEnd()),this,SLOT(receiveEnd()));
@@ -1656,6 +1658,17 @@ void RadioController::callsignReceived(QString callsign)
             + callsign + " </font><br/>\n";
     emit printText(text,true);
     emit printCallsign(callsign);
+}
+
+void RadioController::m17FrameInfoReceived(QString src, QString dest, uint16_t CAN)
+{
+    QString time= QDateTime::currentDateTime().toString("dd/MMM/yyyy hh:mm:ss");
+    QString text = "\n\n<br/><b>" + time + "</b>  <font color=\"#00d000\">CAN <b>"
+             + QString::number(CAN) + "</font></b> "
+             + "<font color=\"#FF5555\">" + src + "</font> > "
+             + "<font color=\"#55AAFF\">" + dest + " </font><br/>\n";
+    emit printText(text,true);
+    emit printCallsign(src);
 }
 
 /// GUI only
