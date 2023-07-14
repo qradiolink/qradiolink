@@ -115,6 +115,8 @@ public:
     int m17_can_rx;
     QString m17_src;
     QString m17_dest;
+    int m17_decode_all_can;
+    int m17_destination_type;
 
     /// Not saved to config:
 

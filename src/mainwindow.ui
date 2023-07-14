@@ -4378,46 +4378,6 @@ and S-meter (dBm)</string>
                  <property name="spacing">
                   <number>10</number>
                  </property>
-                 <item row="2" column="2">
-                  <spacer name="horizontalSpacer_12">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>40</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                 <item row="9" column="0">
-                  <spacer name="verticalSpacer">
-                   <property name="orientation">
-                    <enum>Qt::Vertical</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>20</width>
-                     <height>40</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                 <item row="8" column="0">
-                  <widget class="QLabel" name="label_57">
-                   <property name="text">
-                    <string>M17 Destination</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="6" column="0">
-                  <widget class="QLabel" name="label_67">
-                   <property name="text">
-                    <string>M17 Channel Access Number receive</string>
-                   </property>
-                  </widget>
-                 </item>
                  <item row="2" column="1">
                   <widget class="QSpinBox" name="spinBoxM17CANTx">
                    <property name="sizePolicy">
@@ -4431,17 +4391,30 @@ and S-meter (dBm)</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="7" column="0">
-                  <widget class="QLabel" name="label_58">
+                 <item row="8" column="0">
+                  <widget class="QLabel" name="label_57">
                    <property name="text">
-                    <string>M17 Source</string>
+                    <string>Destination callsign</string>
                    </property>
                   </widget>
+                 </item>
+                 <item row="2" column="3">
+                  <spacer name="horizontalSpacer_12">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
                  </item>
                  <item row="2" column="0">
                   <widget class="QLabel" name="label_65">
                    <property name="text">
-                    <string>M17 Channel Access Number transmit</string>
+                    <string>Channel Access Number transmit</string>
                    </property>
                   </widget>
                  </item>
@@ -4455,6 +4428,26 @@ and S-meter (dBm)</string>
                    </property>
                   </widget>
                  </item>
+                 <item row="10" column="0">
+                  <spacer name="verticalSpacer">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="7" column="0">
+                  <widget class="QLabel" name="label_58">
+                   <property name="text">
+                    <string>Source callsign</string>
+                   </property>
+                  </widget>
+                 </item>
                  <item row="7" column="1">
                   <widget class="QLineEdit" name="lineEditM17Src">
                    <property name="sizePolicy">
@@ -4462,6 +4455,20 @@ and S-meter (dBm)</string>
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="6" column="0">
+                  <widget class="QLabel" name="label_67">
+                   <property name="text">
+                    <string>Channel Access Number receive</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="6" column="2">
+                  <widget class="QCheckBox" name="checkBoxM17DecodeAllCAN">
+                   <property name="text">
+                    <string>Decode all channel access numbers</string>
                    </property>
                   </widget>
                  </item>
@@ -4475,6 +4482,42 @@ and S-meter (dBm)</string>
                    </property>
                    <property name="maximum">
                     <number>15</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="9" column="1">
+                  <widget class="QComboBox" name="comboBoxM17DestinationType">
+                   <item>
+                    <property name="text">
+                     <string>Callsign</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>ALL</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>ECHO</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>INFO</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>UNLINK</string>
+                    </property>
+                   </item>
+                  </widget>
+                 </item>
+                 <item row="9" column="0">
+                  <widget class="QLabel" name="label_56">
+                   <property name="text">
+                    <string>Destination type</string>
                    </property>
                   </widget>
                  </item>

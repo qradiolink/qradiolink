@@ -1251,7 +1251,7 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
                 std::string m17_destination = lsf.getDestination();
                 uint16_t CAN = lsf.getType().fields.CAN;
                 _last_frame_type = FrameTypeM17Stream;
-                if(CAN == _settings->m17_can_rx)
+                if((CAN == _settings->m17_can_rx) || _settings->m17_decode_all_can)
                 {
                     unsigned char *codec2_data = new unsigned char[16];
                     memcpy(codec2_data, sf.payload().data(), 16);
@@ -1274,13 +1274,10 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
             std::string m17_source = lsf.getSource();
             std::string m17_destination = lsf.getDestination();
             uint16_t CAN = lsf.getType().fields.CAN;
-            if(_m17_decoder_locked)
-            {
-                _m17_decoder_locked = false;
-                emit m17FrameInfoReceived(QString::fromStdString(m17_source),
-                                          QString::fromStdString(m17_destination), CAN);
-            }
-            if(CAN == _settings->m17_can_rx)
+            _m17_decoder_locked = false;
+            emit m17FrameInfoReceived(QString::fromStdString(m17_source),
+                                      QString::fromStdString(m17_destination), CAN);
+            if((CAN == _settings->m17_can_rx) || _settings->m17_decode_all_can)
             {
                 emit endAudioTransmission();
                 emit receiveEnd();

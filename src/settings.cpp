@@ -65,6 +65,8 @@ Settings::Settings(Logger *logger)
     m17_can_rx = 0;
     m17_dest = "ALL";
     m17_src = "";
+    m17_decode_all_can = 1;
+    m17_destination_type = 0;
 
     /// old stuff, not used
     _mumble_tcp = 1; // used
@@ -763,7 +765,23 @@ void Settings::readConfig()
     }
     catch(const libconfig::SettingNotFoundException &nfex)
     {
-        m17_dest = "ALL";
+        m17_dest = "";
+    }
+    try
+    {
+        m17_decode_all_can = cfg.lookup("m17_decode_all_can");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        m17_decode_all_can = 1;
+    }
+    try
+    {
+        m17_destination_type = cfg.lookup("m17_destination_type");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        m17_destination_type = 0;
     }
 
 }
@@ -851,6 +869,8 @@ void Settings::saveConfig()
     root.add("m17_can_rx",libconfig::Setting::TypeInt) = m17_can_rx;
     root.add("m17_src",libconfig::Setting::TypeString) = m17_src.toStdString();
     root.add("m17_dest",libconfig::Setting::TypeString) = m17_dest.toStdString();
+    root.add("m17_decode_all_can",libconfig::Setting::TypeInt) = m17_decode_all_can;
+    root.add("m17_destination_type",libconfig::Setting::TypeInt) = m17_destination_type;
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());

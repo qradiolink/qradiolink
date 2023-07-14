@@ -198,6 +198,8 @@ public slots:
     void updateTXDevices(QString dev_string);
     void updateM17CANRx(int value);
     void updateM17CANTx(int value);
+    void updateM17DecodeAllCAN(bool value);
+    void updateM17DestinationType(int value);
 
 signals:
     void startTransmission();

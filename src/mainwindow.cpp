@@ -213,6 +213,9 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     QObject::connect(ui->findDevicesButton,SIGNAL(clicked()), this, SLOT(findDevices()));
     QObject::connect(ui->spinBoxM17CANRx,SIGNAL(valueChanged(int)),this,SLOT(updateM17CANRx(int)));
     QObject::connect(ui->spinBoxM17CANTx,SIGNAL(valueChanged(int)),this,SLOT(updateM17CANTx(int)));
+    QObject::connect(ui->checkBoxM17DecodeAllCAN,SIGNAL(toggled(bool)),this,SLOT(updateM17DecodeAllCAN(bool)));
+    QObject::connect(ui->comboBoxM17DestinationType,SIGNAL(currentIndexChanged(int)),
+                     this,SLOT(updateM17DestinationType(int)));
 
     QObject::connect(&_secondary_text_timer,SIGNAL(timeout()),ui->secondaryTextDisplay,SLOT(hide()));
     QObject::connect(&_video_timer,SIGNAL(timeout()),ui->videoFrame,SLOT(hide()));
@@ -624,6 +627,8 @@ void MainWindow::setConfig()
     ui->spinBoxM17CANTx->setValue(_settings->m17_can_tx);
     ui->lineEditM17Dest->setText(_settings->m17_dest);
     ui->lineEditM17Src->setText(_settings->m17_src);
+    ui->checkBoxM17DecodeAllCAN->setChecked(bool(_settings->m17_decode_all_can));
+    ui->comboBoxM17DestinationType->setCurrentIndex(_settings->m17_destination_type);
 }
 
 void MainWindow::saveUiConfig()
@@ -2205,4 +2210,14 @@ void MainWindow::updateM17CANRx(int value)
 void MainWindow::updateM17CANTx(int value)
 {
     _settings->m17_can_tx = value;
+}
+
+void MainWindow::updateM17DecodeAllCAN(bool value)
+{
+    _settings->m17_decode_all_can = (int)value;
+}
+
+void MainWindow::updateM17DestinationType(int value)
+{
+    _settings->m17_destination_type = value;
 }
