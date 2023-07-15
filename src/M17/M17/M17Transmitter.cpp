@@ -40,10 +40,10 @@ void M17Transmitter::start(const std::string& src, std::vector<unsigned char> *b
     // Just call start() with an empty string for destination callsign.
     std::string empty;
     uint16_t CAN = 0;
-    start(src, empty, CAN, bytes);
+    start(src, empty, CAN, 0, bytes);
 }
 
-void M17Transmitter::start(const std::string& src, const std::string& dst, uint16_t CAN,
+void M17Transmitter::start(const std::string& src, const std::string& dst, uint16_t CAN, int destination_type,
                            std::vector<unsigned char> *bytes)
 {
     // Reset LICH and frame counters
@@ -53,7 +53,14 @@ void M17Transmitter::start(const std::string& src, const std::string& dst, uint1
     // Fill the Link Setup Frame
     lsf.clear();
     lsf.setSource(src);
-    if(!dst.empty()) lsf.setDestination(dst);
+    if(destination_type == 0)
+    {
+        if(!dst.empty()) lsf.setDestination(dst);
+    }
+    else
+    {
+        lsf.setDestination(destination_type);
+    }
 
     streamType_t type;
     type.fields.stream   = 1;    // Stream

@@ -1663,8 +1663,8 @@ void RadioController::callsignReceived(QString callsign)
 void RadioController::m17FrameInfoReceived(QString src, QString dest, uint16_t CAN)
 {
     QString time= QDateTime::currentDateTime().toString("dd/MMM/yyyy hh:mm:ss");
-    QString text = "\n\n<br/><b>" + time + "</b>  <font color=\"#00d000\">CAN <b>"
-             + QString::number(CAN) + "</font></b> "
+    QString text = "\n\n<br/><b>" + time + "</b>  <font color=\"#00d000\">CAN </font><font color=\"#FFFFFF\"><b>"
+             + QString::number(CAN) + "</b></font> "
              + "<font color=\"#FF5555\">" + src + "</font> > "
              + "<font color=\"#55AAFF\">" + dest + " </font><br/>\n";
     emit printText(text,true);

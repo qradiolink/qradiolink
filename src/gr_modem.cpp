@@ -594,7 +594,7 @@ void gr_modem::startTransmission(QString callsign)
         if(_settings->m17_src != "")
             callsign = _settings->m17_src;
         _m17_transmitter.start(callsign.toStdString(), _settings->m17_dest.toStdString(),
-                               (uint16_t)_settings->m17_can_tx, tx_start);
+                               (uint16_t)_settings->m17_can_tx, _settings->m17_destination_type, tx_start);
         QVector<std::vector<unsigned char>*> frames;
         frames.append(tx_start);
         transmit(frames);
