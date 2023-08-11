@@ -119,6 +119,7 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     QObject::connect(ui->pttVoipButton,SIGNAL(toggled(bool)),this,SLOT(togglePTTVOIP(bool)));
     QObject::connect(ui->voipForwardButton,SIGNAL(toggled(bool)),
                      this,SLOT(toggleVOIPForwarding(bool)));
+    QObject::connect(ui->svxlinkButton,SIGNAL(toggled(bool)),this,SLOT(toggleSVXlink(bool)));
     QObject::connect(ui->recordButton,SIGNAL(toggled(bool)),this,SLOT(toggleAudioRecord(bool)));
     QObject::connect(ui->toggleRepeaterButton,SIGNAL(toggled(bool)),this,SLOT(toggleRepeater(bool)));
     QObject::connect(ui->toggleVoxButton,SIGNAL(toggled(bool)),this,SLOT(toggleVox(bool)));
@@ -1787,6 +1788,14 @@ void MainWindow::updateTxCTCSS(int value)
 void MainWindow::togglePTTVOIP(bool value)
 {
     emit usePTTForVOIP(value);
+}
+
+void MainWindow::toggleSVXlink(bool value)
+{
+    if(value)
+        emit connectSVX();
+    else
+        emit disconnectSVX();
 }
 
 void MainWindow::toggleVOIPForwarding(bool value)

@@ -83,6 +83,7 @@ public:
     QString audio_output_device;
     QString audio_input_device;
     int control_port; // FIXME: this should be unsigned uint16
+    int svx_listen_port;
     int remote_control;
     int agc_attack;
     int agc_decay;

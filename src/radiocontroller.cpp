@@ -440,7 +440,7 @@ bool RadioController::processMixerQueue()
         short *local_pcm = new short[320];
         memcpy(local_pcm, pcm, 320*sizeof(short));
 
-        if(_settings->voip_forwarding || _settings->repeater_enabled)
+        if(_settings->voip_forwarding || _settings->repeater_enabled || _settings->svxlink_enabled)
         {
             if(!_voip_tx_timer->isActive())
             {
@@ -457,7 +457,7 @@ bool RadioController::processMixerQueue()
             /// nothing towards radio or VOIP
             delete[] pcm;
         }
-        if((_settings->voip_forwarding || _settings->repeater_enabled) &&
+        if((_settings->voip_forwarding || _settings->repeater_enabled || _settings->svxlink_enabled) &&
                 _settings->mute_forwarded_audio)
         {
             delete[] local_pcm;

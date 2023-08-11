@@ -113,6 +113,7 @@ public slots:
     void updateRxCTCSS(int value);
     void updateTxCTCSS(int value);
     void togglePTTVOIP(bool value);
+    void toggleSVXlink(bool value);
     void toggleVOIPForwarding(bool value);
     void toggleVox(bool value);
     void toggleRepeater(bool value);
@@ -273,6 +274,8 @@ signals:
     void setTxLimits(bool value);
     void pageUser(QString user, QString text);
     void setTxCarrierOffset(qint64 offset);
+    void connectSVX();
+    void disconnectSVX();
 
 public:
     explicit MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_channels, QWidget *parent = 0);

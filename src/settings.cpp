@@ -50,6 +50,7 @@ Settings::Settings(Logger *logger)
     fft_size = 32768;
     waterfall_fps = 15;
     control_port = 4939;
+    svx_listen_port = 4938;
     voip_server="127.0.0.1";
     bb_gain = 1;
     night_mode = 0;
@@ -521,6 +522,14 @@ void Settings::readConfig()
     }
     try
     {
+        svx_listen_port = cfg.lookup("svx_listen_port");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        svx_listen_port = 4938;
+    }
+    try
+    {
         remote_control = cfg.lookup("remote_control");
     }
     catch(const libconfig::SettingNotFoundException &nfex)
@@ -836,6 +845,7 @@ void Settings::saveConfig()
     root.add("enable_relays",libconfig::Setting::TypeInt) = enable_relays;
     root.add("rssi_calibration_value",libconfig::Setting::TypeInt) = rssi_calibration_value;
     root.add("control_port",libconfig::Setting::TypeInt) = control_port;
+    root.add("svx_listen_port",libconfig::Setting::TypeInt) = svx_listen_port;
     root.add("agc_attack",libconfig::Setting::TypeInt) = agc_attack;
     root.add("agc_decay",libconfig::Setting::TypeInt) = agc_decay;
     root.add("remote_control",libconfig::Setting::TypeInt) = remote_control;

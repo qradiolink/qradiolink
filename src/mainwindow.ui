@@ -90,7 +90,7 @@
          </font>
         </property>
         <property name="currentIndex">
-         <number>3</number>
+         <number>1</number>
         </property>
         <property name="iconSize">
          <size>
@@ -2016,6 +2016,36 @@ background-color: #4a5053</string>
                </property>
                <property name="text">
                 <string>PTT for VOIP</string>
+               </property>
+               <property name="icon">
+                <iconset resource="resources.qrc">
+                 <normaloff>:/res/Button-Blank-Gray-icon.png</normaloff>
+                 <normalon>:/res/Button-Blank-Yellow-icon.png</normalon>:/res/Button-Blank-Gray-icon.png</iconset>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="svxlinkButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>120</width>
+                 <height>35</height>
+                </size>
+               </property>
+               <property name="toolTip">
+                <string>Connect to SVXLink</string>
+               </property>
+               <property name="text">
+                <string>SVXLink</string>
                </property>
                <property name="icon">
                 <iconset resource="resources.qrc">
