@@ -90,7 +90,7 @@
          </font>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>3</number>
         </property>
         <property name="iconSize">
          <size>
@@ -2028,7 +2028,7 @@ background-color: #4a5053</string>
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="svxlinkButton">
+              <widget class="QPushButton" name="udpAudioButton">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -2045,7 +2045,7 @@ background-color: #4a5053</string>
                 <string>Connect to SVXLink</string>
                </property>
                <property name="text">
-                <string>SVXLink</string>
+                <string>UDP audio</string>
                </property>
                <property name="icon">
                 <iconset resource="resources.qrc">
@@ -2840,7 +2840,7 @@ font: 10pt &quot;Sans Serif&quot;;
              </font>
             </property>
             <property name="currentIndex">
-             <number>2</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="tab">
              <property name="sizePolicy">
@@ -3683,6 +3683,35 @@ and S-meter (dBm)</string>
                    <property name="text">
                     <string>Timeout stops TX</string>
                    </property>
+                  </widget>
+                 </item>
+                 <item row="12" column="2">
+                  <widget class="QLabel" name="label_59">
+                   <property name="text">
+                    <string>UDP Audio sample rate</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="12" column="3">
+                  <widget class="QComboBox" name="udpSampleRateComboBox">
+                   <property name="currentIndex">
+                    <number>1</number>
+                   </property>
+                   <item>
+                    <property name="text">
+                     <string>8000</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>16000</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>48000</string>
+                    </property>
+                   </item>
                   </widget>
                  </item>
                 </layout>

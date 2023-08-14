@@ -232,7 +232,7 @@ void RadioController::run()
         _mutex->unlock();
 
         QCoreApplication::processEvents(); // process signals
-        if(_settings->voip_connected)
+        if(_settings->voip_connected || _settings->udp_enabled)
             QtConcurrent::run(this, &RadioController::flushRadioToVoipBuffer);
         buffers_filling = processMixerQueue();
 
@@ -326,6 +326,7 @@ void RadioController::updateInputAudioStream()
 {
     /// Cases where not using local audio
     if(_settings->voip_forwarding
+            || (_settings->udp_enabled && _settings->mute_forwarded_audio)
             || (_settings->repeater_enabled)
             || (!_transmitting && !_settings->vox_enabled)
             || (_tx_mode == gr_modem_types::ModemTypeQPSK250K)
@@ -406,7 +407,7 @@ void RadioController::updateCWK()
 
 void RadioController::flushRadioToVoipBuffer()
 {
-    if(!_settings->voip_connected || _radio_to_voip_on)
+    if((!_settings->voip_connected && !_settings->udp_enabled) || _radio_to_voip_on)
         return;
     _radio_to_voip_on = true;
     /// large size of frames (120 ms) are better for Mumble client compatibility, but...
@@ -419,12 +420,22 @@ void RadioController::flushRadioToVoipBuffer()
         {
             pcm[i] = _to_voip_buffer->at(i) * _voip_volume;
         }
-        int packet_size = 0;
-        unsigned char *encoded_audio;
-        /// encode the PCM with higher quality and bitrate
-        encoded_audio = _codec->encode_opus_voip(pcm, 320*sizeof(short), packet_size);
-        emit voipDataOpus(encoded_audio,packet_size);
-        delete[] pcm;
+        if(_settings->voip_connected)
+        {
+            int packet_size = 0;
+            unsigned char *encoded_audio;
+            /// encode the PCM with higher quality and bitrate
+            encoded_audio = _codec->encode_opus_voip(pcm, 320*sizeof(short), packet_size);
+            emit voipDataOpus(encoded_audio,packet_size);
+        }
+        else if(_settings->udp_enabled)
+        {
+            emit udpAudioSamples(pcm, 320);
+        }
+        else
+        {
+            delete[] pcm;
+        }
         _to_voip_buffer->remove(0,320);
     }
     _radio_to_voip_on = false;
@@ -440,7 +451,7 @@ bool RadioController::processMixerQueue()
         short *local_pcm = new short[320];
         memcpy(local_pcm, pcm, 320*sizeof(short));
 
-        if(_settings->voip_forwarding || _settings->repeater_enabled || _settings->svxlink_enabled)
+        if(_settings->voip_forwarding || _settings->repeater_enabled || _settings->udp_enabled)
         {
             if(!_voip_tx_timer->isActive())
             {
@@ -457,7 +468,7 @@ bool RadioController::processMixerQueue()
             /// nothing towards radio or VOIP
             delete[] pcm;
         }
-        if((_settings->voip_forwarding || _settings->repeater_enabled || _settings->svxlink_enabled) &&
+        if((_settings->voip_forwarding || _settings->repeater_enabled || _settings->udp_enabled) &&
                 _settings->mute_forwarded_audio)
         {
             delete[] local_pcm;
@@ -1097,7 +1108,7 @@ void RadioController::radioTimeout()
     for(unsigned int i=0;i<size/sizeof(short);i++)
     {
         samples[i] = short(origin[i] / 2);
-        if(_settings->voip_forwarding)
+        if(_settings->voip_forwarding || _settings->udp_enabled)
         {
             /// routed to Mumble
             _to_voip_buffer->push_back(samples[i]);
@@ -1314,9 +1325,9 @@ void RadioController::receiveDigitalAudio(unsigned char *data, int size)
         for(int i=0;i<samples;i++)
         {
             audio_out[i] = (short)((float)audio_out[i] * _rx_volume);
-            if(_settings->voip_forwarding)
+            if(_settings->voip_forwarding || _settings->udp_enabled)
             {
-                /// routing to Mumble
+                /// routing to Mumble or UDP connection
                 _to_voip_buffer->push_back(audio_out[i]);
             }
         }
@@ -1326,9 +1337,15 @@ void RadioController::receiveDigitalAudio(unsigned char *data, int size)
             /// no local audio
             delete[] audio_out;
         }
+        else if(_settings->udp_enabled && _settings->mute_forwarded_audio
+                && !_settings->repeater_enabled)
+        {
+            /// no local audio
+            delete[] audio_out;
+        }
         else
         {
-            if(_settings->voip_connected || _settings->repeater_enabled)
+            if(_settings->voip_connected || _settings->repeater_enabled || _settings->udp_enabled)
             {
                 /// need to mix several audio channels
                 _audio_mixer_in->addSamples(audio_out, samples, 9900); // radio id hardcoded
@@ -1351,7 +1368,7 @@ void RadioController::receivePCMAudio(std::vector<float> *audio_data)
     for(int i=0;i<size;i++)
     {
         pcm[i] = (short)(audio_data->at(i) * _rx_volume * 32767.0f);
-        if(_settings->voip_forwarding)
+        if(_settings->voip_forwarding || _settings->udp_enabled)
         {
             /// routed to Mumble
             _to_voip_buffer->push_back(pcm[i]);
@@ -1364,9 +1381,15 @@ void RadioController::receivePCMAudio(std::vector<float> *audio_data)
         /// No local audio
         delete[] pcm;
     }
+    else if(_settings->udp_enabled && !_settings->repeater_enabled
+            && _settings->mute_forwarded_audio)
+    {
+        /// No local audio
+        delete[] pcm;
+    }
     else
     {
-        if(_settings->voip_connected || _settings->repeater_enabled)
+        if(_settings->voip_connected || _settings->repeater_enabled || _settings->udp_enabled)
         {
             /// Need to mix several audio channels
             _audio_mixer_in->addSamples(pcm, size, 9900); // radio id hardcoded
@@ -2341,6 +2364,12 @@ void RadioController::setVOIPForwarding(bool value)
     _settings->voip_forwarding = value;
 }
 
+void RadioController::setUDPAudio(bool value)
+{
+    _settings->udp_enabled = value;
+    emit enableUDPAudio(value);
+}
+
 void RadioController::setVox(bool value)
 {
     _settings->vox_enabled = value;
@@ -2546,6 +2575,12 @@ void RadioController::setVoipBitrate(int value)
     _settings->voip_bitrate = value;
     _logger->log(Logger::LogLevelInfo,QString("Setting VOIP bitrate to %1").arg(value));
     _codec->set_voip_bitrate(value);
+}
+
+void RadioController::setUDPAudioSampleRate(int value)
+{
+    _settings->udp_audio_sample_rate = value;
+    _logger->log(Logger::LogLevelInfo,QString("Setting UDP audio sample rate to %1").arg(value));
 }
 
 void RadioController::setEndBeep(int value)

@@ -28,6 +28,7 @@ Settings::Settings(Logger *logger)
     voip_connected = false;
     voip_forwarding = false;
     voip_ptt_enabled = false;
+    udp_enabled = false;
     vox_enabled = false;
     repeater_enabled = false;
     current_voip_channel = -1;
@@ -68,6 +69,7 @@ Settings::Settings(Logger *logger)
     m17_src = "";
     m17_decode_all_can = 1;
     m17_destination_type = 0;
+    udp_audio_sample_rate = 48000;
 
     /// old stuff, not used
     _mumble_tcp = 1; // used
@@ -792,6 +794,15 @@ void Settings::readConfig()
     {
         m17_destination_type = 0;
     }
+    try
+    {
+        udp_audio_sample_rate = cfg.lookup("udp_audio_sample_rate");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        udp_audio_sample_rate = 48000;
+    }
+
 
 }
 
@@ -881,6 +892,7 @@ void Settings::saveConfig()
     root.add("m17_dest",libconfig::Setting::TypeString) = m17_dest.toStdString();
     root.add("m17_decode_all_can",libconfig::Setting::TypeInt) = m17_decode_all_can;
     root.add("m17_destination_type",libconfig::Setting::TypeInt) = m17_destination_type;
+    root.add("udp_audio_sample_rate",libconfig::Setting::TypeInt) = udp_audio_sample_rate;
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());

@@ -118,6 +118,7 @@ public:
     QString m17_dest;
     int m17_decode_all_can;
     int m17_destination_type;
+    int udp_audio_sample_rate;
 
     /// Not saved to config:
 
@@ -130,6 +131,7 @@ public:
     float rssi;
     bool voip_connected;
     bool vox_enabled;
+    bool udp_enabled;
     bool repeater_enabled;
     bool voip_forwarding;
     bool voip_ptt_enabled;

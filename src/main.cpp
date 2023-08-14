@@ -27,7 +27,7 @@
 #include <csignal>
 #include "src/mainwindow.h"
 #include "src/mumbleclient.h"
-#include "src/svxclient.h"
+#include "src/udpclient.h"
 #include "src/audio/audiowriter.h"
 #include "src/audio/audioreader.h"
 #include "src/mumblechannel.h"
@@ -38,11 +38,11 @@
 
 
 void connectIndependentSignals(AudioWriter *audiowriter, AudioReader *audioreader,
-                               RadioController *radio_op, MumbleClient *mumbleclient, SVXClient *svxclient, TelnetServer *telnet_server);
+                               RadioController *radio_op, MumbleClient *mumbleclient, UDPClient *udpclient, TelnetServer *telnet_server);
 void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
-                       AudioReader *audioreader, MainWindow *w, MumbleClient *mumbleclient, SVXClient *svxclient,
+                       AudioReader *audioreader, MainWindow *w, MumbleClient *mumbleclient, UDPClient *udpclient,
                        RadioController *radio_op, Logger *logger);
-void connectCommandSignals(TelnetServer *telnet_server, MumbleClient *mumbleclient, SVXClient *svxclient,
+void connectCommandSignals(TelnetServer *telnet_server, MumbleClient *mumbleclient, UDPClient *udpclient,
                        RadioController *radio_op);
 class Station;
 
@@ -116,7 +116,7 @@ int main(int argc, char *argv[])
     RadioChannels *radio_channels = new RadioChannels(logger);
     radio_channels->readConfig();
     MumbleClient *mumbleclient = new MumbleClient(settings, logger);
-    SVXClient *svxclient = new SVXClient(settings, logger);
+    UDPClient *udpclient = new UDPClient(settings, logger);
     RadioController *radio_op = new RadioController(settings, logger, radio_channels);
     AudioWriter *audiowriter = new AudioWriter(settings, logger);
     AudioReader *audioreader = new AudioReader(settings, logger);
@@ -162,7 +162,7 @@ int main(int argc, char *argv[])
         ///
         w = new MainWindow(settings, logger, radio_channels);
         connectGuiSignals(telnet_server, audiowriter, audioreader, w,
-                          mumbleclient, svxclient, radio_op, logger);
+                          mumbleclient, udpclient, radio_op, logger);
         /// requires the slots to be set up
         w->initSettings();
         w->show();
@@ -180,16 +180,16 @@ int main(int argc, char *argv[])
 
     /// Connect non-GUI signals
     ///
-    connectCommandSignals(telnet_server, mumbleclient, svxclient, radio_op);
+    connectCommandSignals(telnet_server, mumbleclient, udpclient, radio_op);
 
     /// Signals independent of GUI or remote interface
-    connectIndependentSignals(audiowriter, audioreader, radio_op, mumbleclient, svxclient, telnet_server);
+    connectIndependentSignals(audiowriter, audioreader, radio_op, mumbleclient, udpclient, telnet_server);
 
     /// Start remote command listener
     if(headless)
     {
         telnet_server->start();
-        svxclient->start();
+        radio_op->setUDPAudio(true);
         if(start_transceiver)
         {
             radio_op->toggleTX(true);
@@ -225,11 +225,11 @@ int main(int argc, char *argv[])
         logger->log(Logger::LogLevelInfo, "Stopping receiver");
         logger->log(Logger::LogLevelInfo, "Stopping transmitter");
         radio_op->stop();
-        svxclient->stop();
+        radio_op->setUDPAudio(false);
     }
     delete telnet_server;
     delete mumbleclient;
-    delete svxclient;
+    delete udpclient;
     radio_channels->saveConfig();
     delete radio_channels;
     settings->saveConfig();
@@ -241,7 +241,7 @@ int main(int argc, char *argv[])
 }
 
 void connectIndependentSignals(AudioWriter *audiowriter, AudioReader *audioreader,
-                               RadioController *radio_op, MumbleClient *mumbleclient, SVXClient *svxclient,
+                               RadioController *radio_op, MumbleClient *mumbleclient, UDPClient *udpclient,
                                TelnetServer *telnet_server)
 {
     QObject::connect(radio_op,SIGNAL(terminateConnections()),audiowriter,SLOT(stop()));
@@ -263,8 +263,10 @@ void connectIndependentSignals(AudioWriter *audiowriter, AudioReader *audioreade
                      mumbleclient, SLOT(processPCMAudio(short*,int)));
     QObject::connect(mumbleclient, SIGNAL(pcmAudio(short*,int,quint64)),
                      radio_op, SLOT(processVoipAudioFrame(short*, int, quint64)));
-    QObject::connect(svxclient, SIGNAL(pcmAudio(short*,int,quint64)),
+    QObject::connect(udpclient, SIGNAL(pcmAudio(short*,int,quint64)),
                      radio_op, SLOT(processVoipAudioFrame(short*, int, quint64)));
+    QObject::connect(radio_op, SIGNAL(udpAudioSamples(short*,int)),
+                     udpclient, SLOT(writeAudioToNetwork(short*,int)));
     QObject::connect(mumbleclient, SIGNAL(videoFrame(unsigned char*,int,quint64)),
                      radio_op, SLOT(processVoipVideoFrame(unsigned char*,int,quint64)));
     QObject::connect(mumbleclient,SIGNAL(newChannels(ChannelList)),
@@ -275,10 +277,12 @@ void connectIndependentSignals(AudioWriter *audiowriter, AudioReader *audioreade
                      mumbleclient, SLOT(newMumbleMessage(QString)));
     QObject::connect(mumbleclient, SIGNAL(textMessage(QString,bool)),
                      radio_op, SLOT(textMumble(QString,bool)));
+    QObject::connect(radio_op, SIGNAL(enableUDPAudio(bool)),
+                     udpclient, SLOT(enable(bool)));
 }
 
 
-void connectCommandSignals(TelnetServer *telnet_server, MumbleClient *mumbleclient, SVXClient *svxclient,
+void connectCommandSignals(TelnetServer *telnet_server, MumbleClient *mumbleclient, UDPClient *udpclient,
                        RadioController *radio_op)
 {
     QObject::connect(telnet_server->command_processor,SIGNAL(stopRadio()),radio_op,SLOT(stop()));
@@ -396,7 +400,7 @@ void connectCommandSignals(TelnetServer *telnet_server, MumbleClient *mumbleclie
 
 
 void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
-                       AudioReader *audioreader, MainWindow *w, MumbleClient *mumbleclient, SVXClient *svxclient,
+                       AudioReader *audioreader, MainWindow *w, MumbleClient *mumbleclient, UDPClient *udpclient,
                        RadioController *radio_op, Logger *logger)
 {
     /// GUI to radio and Mumble
@@ -436,6 +440,7 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
     QObject::connect(w,SIGNAL(enableRSSI(bool)),radio_op,SLOT(enableRSSI(bool)));
     QObject::connect(w,SIGNAL(usePTTForVOIP(bool)),radio_op,SLOT(usePTTForVOIP(bool)));
     QObject::connect(w,SIGNAL(setVOIPForwarding(bool)),radio_op,SLOT(setVOIPForwarding(bool)));
+    QObject::connect(w,SIGNAL(setUDPAudio(bool)),radio_op,SLOT(setUDPAudio(bool)));
     QObject::connect(w,SIGNAL(setVox(bool)),radio_op,SLOT(setVox(bool)));
     QObject::connect(w,SIGNAL(toggleRepeat(bool)),radio_op,SLOT(toggleRepeat(bool)));
     QObject::connect(w,SIGNAL(enableReverseShift(bool)),radio_op,SLOT(enableReverseShift(bool)));
@@ -455,6 +460,8 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
     QObject::connect(w,SIGNAL(setAudioRecord(bool)),radio_op,SLOT(setAudioRecord(bool)));
     QObject::connect(w,SIGNAL(setVoipBitrate(int)),
                      radio_op,SLOT(setVoipBitrate(int)));
+    QObject::connect(w,SIGNAL(setUDPAudioSampleRate(int)),
+                     radio_op,SLOT(setUDPAudioSampleRate(int)));
     QObject::connect(w,SIGNAL(setEndBeep(int)),
                      radio_op,SLOT(setEndBeep(int)));
     QObject::connect(w,SIGNAL(setMuteForwardedAudio(bool)),
@@ -474,10 +481,6 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
     QObject::connect(w,SIGNAL(disconnectFromServer()),mumbleclient,SLOT(disconnectFromServer()));
     QObject::connect(w,SIGNAL(disableRemote()),telnet_server,SLOT(stop()));
     QObject::connect(w,SIGNAL(enableRemote()),telnet_server,SLOT(start()));
-    QObject::connect(w,SIGNAL(connectSVX()),
-                     svxclient,SLOT(start()));
-    QObject::connect(w,SIGNAL(disconnectSVX()),
-                     svxclient,SLOT(stop()));
     QObject::connect(w,SIGNAL(setMute(bool)),mumbleclient,SLOT(setMute(bool)));
     QObject::connect(w,SIGNAL(changeChannel(int)),mumbleclient,SLOT(joinChannel(int)));
     QObject::connect(w,SIGNAL(newMumbleMessage(QString)),

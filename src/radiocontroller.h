@@ -100,6 +100,7 @@ signals:
     void newRSSIValue(float rssi);
     void initError(QString error, int index);
     void writePCM(short *pcm, int bytes, bool preprocess, int mode);
+    void udpAudioSamples(short *pcm, int samples);
     void rxGainStages(gain_vector rx_gains);
     void txGainStages(gain_vector tx_gains);
     void setSelfDeaf(bool deaf);
@@ -109,6 +110,7 @@ signals:
     void recordAudio(bool value);
     void newPageMessage(QString paged_by, QString message);
     void terminateConnections();
+    void enableUDPAudio(bool value);
 
 
 public slots:
@@ -169,6 +171,8 @@ public slots:
     void processVoipVideoFrame(unsigned char *video_frame, int size, quint64 sid);
     void usePTTForVOIP(bool value);
     void setVOIPForwarding(bool value);
+    void setUDPAudio(bool value);
+    void setUDPAudioSampleRate(int value);
     void startTx();
     void stopTx();
     void endTx();
