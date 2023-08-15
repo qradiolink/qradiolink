@@ -633,6 +633,8 @@ void MainWindow::setConfig()
     ui->checkBoxM17DecodeAllCAN->setChecked(bool(_settings->m17_decode_all_can));
     ui->comboBoxM17DestinationType->setCurrentIndex(_settings->m17_destination_type);
     ui->udpSampleRateComboBox->setCurrentText(QString::number(_settings->udp_audio_sample_rate));
+    ui->udpRXPortLineEdit->setText(QString::number(_settings->udp_send_port));
+    ui->udpTXPortLineEdit->setText(QString::number(_settings->udp_listen_port));
 }
 
 void MainWindow::saveUiConfig()
@@ -686,6 +688,8 @@ void MainWindow::saveUiConfig()
     _settings->lime_rfe_device = ui->lineEditLimeRFEDevice->text();
     _settings->m17_dest = ui->lineEditM17Dest->text();
     _settings->m17_src = ui->lineEditM17Src->text();
+    _settings->udp_send_port = ui->udpRXPortLineEdit->text().toInt();
+    _settings->udp_listen_port = ui->udpTXPortLineEdit->text().toInt();
     _settings->saveConfig();
 }
 

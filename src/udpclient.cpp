@@ -43,11 +43,11 @@ void UDPClient::start()
     if(err < 0)
         return;
     bool status;
-    if(_settings->svx_listen_port != 0)
+    if(_settings->udp_listen_port != 0)
     {
-        status = _udp_socket_tx->bind(QHostAddress::LocalHost, _settings->svx_listen_port);
+        status = _udp_socket_tx->bind(QHostAddress::LocalHost, _settings->udp_listen_port);
         _logger->log(Logger::LogLevelInfo, QString(
-            "Listening for UDP audio samples on localhost port %1").arg(_settings->svx_listen_port));
+            "Listening for UDP audio samples on localhost port %1").arg(_settings->udp_listen_port));
     }
     else
         status = false;
@@ -55,7 +55,7 @@ void UDPClient::start()
     {
         _logger->log(Logger::LogLevelWarning, QString(
             "Server could not bind to port %1, another instance is probably listening already"
-            ).arg(_settings->svx_listen_port));
+            ).arg(_settings->udp_listen_port));
         _started = false;
     }
     else
@@ -96,7 +96,7 @@ void UDPClient::readPendingDatagrams()
         if(datagram.isValid())
         {
             QByteArray data = datagram.data();
-            _logger->log(Logger::LogLevelDebug, QString("UDP datagram with size: %1").arg(data.size()));
+            //_logger->log(Logger::LogLevelDebug, QString("UDP datagram with size: %1").arg(data.size()));
             int16_t *udp_samples = (int16_t*)data.data();
             uint32_t samples = data.size() / sizeof(short);
             int16_t *pcm = new int16_t[samples];
@@ -111,12 +111,9 @@ void UDPClient::readPendingDatagrams()
 void UDPClient::writeAudioToNetwork(short *pcm, int samples)
 {
     uint32_t out_length;
-    int16_t *resampled = new int16_t[samples * (_settings->udp_audio_sample_rate / 8000)];
+    int16_t resampled[samples * (_settings->udp_audio_sample_rate / 8000)];
     speex_resampler_process_int(_resampler_rx, 0, pcm, (uint32_t*)&samples, resampled, &out_length);
     qint64 size = out_length * sizeof(int16_t);
-    char payload[size];
-    memcpy(payload, resampled, size);
     delete[] pcm;
-    delete[] resampled;
-    _udp_socket_rx->writeDatagram((const char*)payload, size, QHostAddress::LocalHost, _settings->svx_listen_port - 1);
+    _udp_socket_rx->writeDatagram((const char*)resampled, size, QHostAddress::LocalHost, _settings->udp_send_port);
 }
