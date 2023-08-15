@@ -40,9 +40,9 @@
 void connectIndependentSignals(AudioWriter *audiowriter, AudioReader *audioreader,
                                RadioController *radio_op, MumbleClient *mumbleclient, UDPClient *udpclient, TelnetServer *telnet_server);
 void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
-                       AudioReader *audioreader, MainWindow *w, MumbleClient *mumbleclient, UDPClient *udpclient,
+                       AudioReader *audioreader, MainWindow *w, MumbleClient *mumbleclient,
                        RadioController *radio_op, Logger *logger);
-void connectCommandSignals(TelnetServer *telnet_server, MumbleClient *mumbleclient, UDPClient *udpclient,
+void connectCommandSignals(TelnetServer *telnet_server, MumbleClient *mumbleclient,
                        RadioController *radio_op);
 class Station;
 
@@ -162,7 +162,7 @@ int main(int argc, char *argv[])
         ///
         w = new MainWindow(settings, logger, radio_channels);
         connectGuiSignals(telnet_server, audiowriter, audioreader, w,
-                          mumbleclient, udpclient, radio_op, logger);
+                          mumbleclient, radio_op, logger);
         /// requires the slots to be set up
         w->initSettings();
         w->show();
@@ -180,7 +180,7 @@ int main(int argc, char *argv[])
 
     /// Connect non-GUI signals
     ///
-    connectCommandSignals(telnet_server, mumbleclient, udpclient, radio_op);
+    connectCommandSignals(telnet_server, mumbleclient, radio_op);
 
     /// Signals independent of GUI or remote interface
     connectIndependentSignals(audiowriter, audioreader, radio_op, mumbleclient, udpclient, telnet_server);
@@ -189,7 +189,6 @@ int main(int argc, char *argv[])
     if(headless)
     {
         telnet_server->start();
-        radio_op->setUDPAudio(true);
         if(start_transceiver)
         {
             radio_op->toggleTX(true);
@@ -225,11 +224,10 @@ int main(int argc, char *argv[])
         logger->log(Logger::LogLevelInfo, "Stopping receiver");
         logger->log(Logger::LogLevelInfo, "Stopping transmitter");
         radio_op->stop();
-        radio_op->setUDPAudio(false);
     }
     delete telnet_server;
-    delete mumbleclient;
     delete udpclient;
+    delete mumbleclient;
     radio_channels->saveConfig();
     delete radio_channels;
     settings->saveConfig();
@@ -282,7 +280,7 @@ void connectIndependentSignals(AudioWriter *audiowriter, AudioReader *audioreade
 }
 
 
-void connectCommandSignals(TelnetServer *telnet_server, MumbleClient *mumbleclient, UDPClient *udpclient,
+void connectCommandSignals(TelnetServer *telnet_server, MumbleClient *mumbleclient,
                        RadioController *radio_op)
 {
     QObject::connect(telnet_server->command_processor,SIGNAL(stopRadio()),radio_op,SLOT(stop()));
@@ -396,11 +394,12 @@ void connectCommandSignals(TelnetServer *telnet_server, MumbleClient *mumbleclie
                      radio_op,SLOT(setTxLimits(bool)));
     QObject::connect(mumbleclient,SIGNAL(commandMessage(QString,int)),
                      telnet_server->command_processor,SLOT(parseMumbleMessage(QString,int)));
+    QObject::connect(telnet_server->command_processor,SIGNAL(setUDPEnabled(bool)),radio_op,SLOT(setUDPAudio(bool)));
 }
 
 
 void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
-                       AudioReader *audioreader, MainWindow *w, MumbleClient *mumbleclient, UDPClient *udpclient,
+                       AudioReader *audioreader, MainWindow *w, MumbleClient *mumbleclient,
                        RadioController *radio_op, Logger *logger)
 {
     /// GUI to radio and Mumble

@@ -48,6 +48,8 @@ void UDPClient::start()
         status = _udp_socket_tx->bind(QHostAddress::LocalHost, _settings->udp_listen_port);
         _logger->log(Logger::LogLevelInfo, QString(
             "Listening for UDP audio samples on localhost port %1").arg(_settings->udp_listen_port));
+        _logger->log(Logger::LogLevelInfo, QString(
+            "Streaming UDP audio to localhost port %1").arg(_settings->udp_send_port));
     }
     else
         status = false;
@@ -76,7 +78,8 @@ void UDPClient::stop()
      _udp_socket_tx->close();
      speex_resampler_destroy(_resampler_tx);
      speex_resampler_destroy(_resampler_rx);
-     _logger->log(Logger::LogLevelInfo, "Stop listening for UDP samples");
+     _logger->log(Logger::LogLevelInfo, QString("Stopped listening for UDP samples on port %1").arg(_settings->udp_listen_port));
+     _logger->log(Logger::LogLevelInfo, QString("Stopped streaming UDP audio on port %1").arg(_settings->udp_send_port));
 }
 
 void UDPClient::enable(bool value)

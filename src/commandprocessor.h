@@ -111,6 +111,7 @@ signals:
     void toggleSelfDeaf(bool deaf);
     void toggleSelfMute(bool mute);
     void setAudioRecord(bool value);
+    void setUDPEnabled(bool value);
 
     void stopRadio();
 

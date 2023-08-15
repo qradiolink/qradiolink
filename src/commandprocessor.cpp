@@ -402,6 +402,12 @@ bool CommandProcessor::processStatusCommands(int command_index, QString &respons
                                                                    _settings->demod_offset +
                                                                    _settings->lnb_lo_freq + _settings->tx_shift));
         break;
+    case 74:
+        if(_settings->udp_enabled)
+            response.append("UDP streaming is enabled.");
+        else
+            response.append("UDP streaming is disabled.");
+        break;
 
     default:
         break;
@@ -1076,6 +1082,21 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
         }
         break;
     }
+    case 75:
+    {
+        int set = param1.toInt();
+        if(set != 0 && set != 1)
+        {
+            response = "Parameter value is not supported";
+            success = false;
+        }
+        else
+        {
+            response = QString("Setting UDP streaming to %1").arg(set);
+            emit setUDPEnabled((bool)set);
+        }
+        break;
+    }
 
     default:
         break;
@@ -1164,4 +1185,6 @@ void CommandProcessor::buildCommandList()
     _command_list->append(new command("setagcdecay", 1, "Set AGC decay value"));
     _command_list->append(new command("rxfreq", 0, "Get current RX frequency"));
     _command_list->append(new command("txfreq", 0, "Get current TX frequency"));
+    _command_list->append(new command("udpstatus", 0, "Get UDP audio forwarding status"));
+    _command_list->append(new command("setudpenabled", 1, "Set UDP streaming mode, (1 enabled, 0 disabled)"));
 }
