@@ -22,6 +22,7 @@ Settings::Settings(Logger *logger)
     _config_file = setupConfig();
 
     /// not saved to config
+    headless_mode = false;
     rx_inited = false;
     tx_inited = false;
     tx_started = false;

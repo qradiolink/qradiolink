@@ -270,7 +270,8 @@ void RadioController::run()
         _mutex->unlock();
 
         /// Get all available data from the demodulator
-        if((_rx_mode != gr_modem_types::ModemTypeMMDVM) && (_rx_mode != gr_modem_types::ModemTypeMMDVMmulti))
+        if((_rx_mode != gr_modem_types::ModemTypeMMDVM) && (_rx_mode != gr_modem_types::ModemTypeMMDVMmulti)
+                && !_settings->headless_mode)
         {
             QtConcurrent::run(this, &RadioController::getFFTData);
             QtConcurrent::run(this, &RadioController::getConstellationData);
@@ -459,7 +460,8 @@ bool RadioController::processMixerQueue()
                 _transmitting = true;
                 _mutex->unlock();
             }
-            _voip_tx_timer->start(500);
+            int tx_timer_value = (_settings->voip_forwarding ? 500 : (_settings->udp_enabled ? 750 : 250));
+            _voip_tx_timer->start(tx_timer_value);
             /// Out to radio and don't loop back to Mumble
             txAudio(pcm, 320*sizeof(short), 1, true);
         }
@@ -923,6 +925,8 @@ void RadioController::transmitBinData()
 
 void RadioController::sendTxBeep(int sound)
 {
+    if(_settings->udp_enabled)
+        return;
     short *samples;
     int size;
     switch(sound)

@@ -16,6 +16,8 @@
 
 #include "udpclient.h"
 
+const uint32_t INTERNAL_AUDIO_SAMP_RATE = 8000;
+
 UDPClient::UDPClient(const Settings *settings, Logger *logger, QObject *parent) : QObject(parent)
 {
     _settings = settings;
@@ -35,21 +37,24 @@ void UDPClient::start()
 {
     if(_started)
         return;
-    int err;
-    _resampler_tx = speex_resampler_init(1, _settings->udp_audio_sample_rate, 8000, 10, &err);
+    int err = 0;
+    _resampler_tx = speex_resampler_init(1, _settings->udp_audio_sample_rate, INTERNAL_AUDIO_SAMP_RATE, 10, &err);
     if(err < 0)
+    {
+        _logger->log(Logger::LogLevelFatal, QString("Could not initialize TX resampler, error code: %1").arg(err));
         return;
-    _resampler_rx = speex_resampler_init(1, 8000, _settings->udp_audio_sample_rate, 10, &err);
+    }
+    err = 0;
+    _resampler_rx = speex_resampler_init(1, INTERNAL_AUDIO_SAMP_RATE, _settings->udp_audio_sample_rate, 10, &err);
     if(err < 0)
+    {
+        _logger->log(Logger::LogLevelFatal, QString("Could not initialize RX resampler, error code: %1").arg(err));
         return;
+    }
     bool status;
     if(_settings->udp_listen_port != 0)
     {
         status = _udp_socket_tx->bind(QHostAddress::LocalHost, _settings->udp_listen_port);
-        _logger->log(Logger::LogLevelInfo, QString(
-            "Listening for UDP audio samples on localhost port %1").arg(_settings->udp_listen_port));
-        _logger->log(Logger::LogLevelInfo, QString(
-            "Streaming UDP audio to localhost port %1").arg(_settings->udp_send_port));
     }
     else
         status = false;
@@ -62,6 +67,10 @@ void UDPClient::start()
     }
     else
     {
+        _logger->log(Logger::LogLevelInfo, QString(
+            "Listening for UDP audio samples on localhost port %1").arg(_settings->udp_listen_port));
+        _logger->log(Logger::LogLevelInfo, QString(
+            "Streaming UDP audio to localhost port %1").arg(_settings->udp_send_port));
         QObject::connect(_udp_socket_tx, SIGNAL(readyRead()), this, SLOT(readPendingDatagrams()));
         _started = true;
     }
@@ -78,6 +87,7 @@ void UDPClient::stop()
      _udp_socket_tx->close();
      speex_resampler_destroy(_resampler_tx);
      speex_resampler_destroy(_resampler_rx);
+
      _logger->log(Logger::LogLevelInfo, QString("Stopped listening for UDP samples on port %1").arg(_settings->udp_listen_port));
      _logger->log(Logger::LogLevelInfo, QString("Stopped streaming UDP audio on port %1").arg(_settings->udp_send_port));
 }
@@ -104,7 +114,7 @@ void UDPClient::readPendingDatagrams()
             uint32_t samples = data.size() / sizeof(short);
             int16_t *pcm = new int16_t[samples];
             uint32_t out_length;
-            // SVXlink uses a sample rate of 16000 internally, so resample it to our rate of 8000
+            // SVXlink uses a sample rate of 16000 /48000 internally, so resample it to our rate of INTERNAL_AUDIO_SAMP_RATE
             speex_resampler_process_int(_resampler_tx, 0, udp_samples, &samples, pcm, &out_length);
             emit pcmAudio(pcm, out_length, 9991);
         }
@@ -113,10 +123,16 @@ void UDPClient::readPendingDatagrams()
 
 void UDPClient::writeAudioToNetwork(short *pcm, int samples)
 {
-    uint32_t out_length;
-    int16_t resampled[samples * (_settings->udp_audio_sample_rate / 8000)];
+    if(!_started)
+    {
+        delete[] pcm;
+        return;
+    }
+    uint32_t out_length = samples * (_settings->udp_audio_sample_rate / INTERNAL_AUDIO_SAMP_RATE);
+    int16_t resampled[out_length];
     speex_resampler_process_int(_resampler_rx, 0, pcm, (uint32_t*)&samples, resampled, &out_length);
     qint64 size = out_length * sizeof(int16_t);
     delete[] pcm;
+    //_logger->log(Logger::LogLevelDebug, QString("RX UDP datagram with size: %1").arg(size));
     _udp_socket_rx->writeDatagram((const char*)resampled, size, QHostAddress::LocalHost, _settings->udp_send_port);
 }

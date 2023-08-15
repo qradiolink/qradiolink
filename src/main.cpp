@@ -71,6 +71,7 @@ int main(int argc, char *argv[])
     bool headless = false;
     bool start_transceiver = false;
     bool set_ptt_on = false;
+    bool set_udp_on = false;
     bool mmdvm_mode = false;
 
     Logger *logger = new Logger;
@@ -85,6 +86,11 @@ int main(int argc, char *argv[])
             {
                 set_ptt_on = true;
             }
+        }
+        if((arguments.length() > 2) && (arguments.indexOf("--udp") != -1))
+        {
+            set_udp_on = true;
+            start_transceiver = true;
         }
 
     }
@@ -188,7 +194,13 @@ int main(int argc, char *argv[])
     /// Start remote command listener
     if(headless)
     {
+        settings->headless_mode = true;
         telnet_server->start();
+        if(set_udp_on)
+        {
+            radio_op->setUDPAudio(true);
+            logger->log(Logger::LogLevelInfo, "Started UDP audio streaming");
+        }
         if(start_transceiver)
         {
             radio_op->toggleTX(true);
@@ -220,6 +232,11 @@ int main(int argc, char *argv[])
                 radio_op->endTransmission();
                 logger->log(Logger::LogLevelInfo, "Set PTT off");
             }
+        }
+        if(set_udp_on)
+        {
+            radio_op->setUDPAudio(false);
+            logger->log(Logger::LogLevelInfo, "Stopped UDP audio streaming");
         }
         logger->log(Logger::LogLevelInfo, "Stopping receiver");
         logger->log(Logger::LogLevelInfo, "Stopping transmitter");

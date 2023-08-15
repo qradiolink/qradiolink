@@ -124,6 +124,7 @@ public:
     /// Not saved to config:
 
     /// Used by both radio-op/mumbleclient and remote interface
+    bool headless_mode;
     bool rx_inited;
     bool tx_inited;
     bool tx_started;
