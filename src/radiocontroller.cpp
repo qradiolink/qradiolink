@@ -470,7 +470,8 @@ bool RadioController::processMixerQueue()
 {
     if(_audio_mixer_in->buffers_available())
     {
-        short *pcm = _audio_mixer_in->mix_samples(_voip_volume);
+        int maximum_frame_size = _settings->udp_enabled ? 320 : 960;
+        short *pcm = _audio_mixer_in->mix_samples(_tx_volume, maximum_frame_size);
         if(pcm == nullptr)
             return false;
         short *local_pcm = new short[320];
@@ -1163,7 +1164,7 @@ void RadioController::stopVoipTx()
 void RadioController::callbackStopReceive()
 {
     _receiving = false;
-    if(_settings->udp_enabled)
+    if(_settings->udp_enabled) /// used only for SVXlink
     {
         int fd = open(_settings->sql_pty_path.toStdString().c_str(), O_RDWR | O_NONBLOCK | O_SYNC);
         if(fd < 0)
@@ -1173,15 +1174,6 @@ void RadioController::callbackStopReceive()
         }
         write(fd, "Z", 1);
         close(fd);
-
-        for(int i=0; i < 5;i++)
-        {
-            uint32_t length = 320;
-            int16_t *pcm = new int16_t[length];
-            memset(pcm, 0, length * sizeof(int16_t));
-            //_logger->log(Logger::LogLevelDebug, QString("End Audio UDP datagram with size: %1").arg(length * sizeof(int16_t)));
-            emit udpAudioSamples(pcm, length);
-        }
     }
 }
 

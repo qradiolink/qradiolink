@@ -113,9 +113,9 @@ void UDPClient::readPendingDatagrams()
             uint32_t samples = data.size() / sizeof(short);
             int16_t *pcm = new int16_t[samples];
             uint32_t out_length = samples / (_settings->udp_audio_sample_rate / INTERNAL_AUDIO_SAMP_RATE);
-            // SVXlink uses a sample rate of 16000 /48000 internally, so resample it to our rate of INTERNAL_AUDIO_SAMP_RATE
+            /// SVXlink uses a sample rate of 16000 /48000 internally, so resample it to our rate of INTERNAL_AUDIO_SAMP_RATE
             speex_resampler_process_int(_resampler_tx, 0, udp_samples, &samples, pcm, &out_length);
-            emit pcmAudio(pcm, out_length, 9991);
+            emit pcmAudio(pcm, out_length, 9001);
         }
     }
 }
