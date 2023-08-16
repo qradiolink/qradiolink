@@ -55,8 +55,8 @@ gr_demod_nbfm::gr_demod_nbfm(std::vector<int>signature, int sps, int samp_rate, 
             1, _target_samp_rate, _filter_width, 200, 90 ,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
 
     _fm_demod = gr::analog::quadrature_demod_cf::make(_target_samp_rate/(4*M_PI* _filter_width));
-    _squelch = gr::analog::pwr_squelch_cc::make(-140,0.01,0,true);
-    _ctcss = gr::analog::ctcss_squelch_ff::make(8000,88.5,0.02,4000,320,true);
+    _squelch = gr::analog::pwr_squelch_cc::make(-140,0.01,320,true);
+    _ctcss = gr::analog::ctcss_squelch_ff::make(8000,88.5,0.01,4000,320,true);
     _level_control = gr::blocks::multiply_const_ff::make(2.0);
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::band_pass_2(
