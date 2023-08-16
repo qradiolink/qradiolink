@@ -453,7 +453,7 @@ void RadioController::flushRadioToVoipBuffer()
             encoded_audio = _codec->encode_opus_voip(pcm, 320*sizeof(short), packet_size);
             emit voipDataOpus(encoded_audio,packet_size);
         }
-        else if(_settings->udp_enabled)
+        if(_settings->udp_enabled)
         {
             emit udpAudioSamples(pcm, 320);
         }
@@ -1142,7 +1142,7 @@ void RadioController::radioTimeout()
     for(unsigned int i=0;i<size/sizeof(short);i++)
     {
         samples[i] = short(origin[i] / 2);
-        if(_settings->voip_forwarding || _settings->udp_enabled)
+        if(_settings->voip_forwarding)
         {
             /// routed to Mumble
             _to_voip_buffer->push_back(samples[i]);
