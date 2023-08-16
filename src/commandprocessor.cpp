@@ -488,7 +488,7 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
     }
     case 22:
     {
-        int set = param1.toFloat();
+        float set = param1.toFloat();
         if((set < 0.0) || (set > 250.0))
         {
             response = "Parameter value is not supported";
@@ -503,7 +503,7 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
     }
     case 23:
     {
-        int set = param1.toFloat();
+        float set = param1.toFloat();
         if((set < 0.0) || (set > 250.0))
         {
             response = "Parameter value is not supported";
