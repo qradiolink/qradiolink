@@ -316,7 +316,7 @@ void RadioController::run()
             if(data_to_process)
             {
                 _receiving = true;
-                emit startReceiveTimer(200);
+                _rx_timer->start(500);
             }
         }
 

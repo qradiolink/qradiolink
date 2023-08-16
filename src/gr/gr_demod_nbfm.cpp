@@ -56,7 +56,8 @@ gr_demod_nbfm::gr_demod_nbfm(std::vector<int>signature, int sps, int samp_rate, 
 
     _fm_demod = gr::analog::quadrature_demod_cf::make(_target_samp_rate/(4*M_PI* _filter_width));
     _squelch = gr::analog::pwr_squelch_cc::make(-140,0.01,320,true);
-    _ctcss = gr::analog::ctcss_squelch_ff::make(8000,88.5,0.01,4000,320,true);
+    /// CTCSS ramp down needs to be faster than power squelch ramp down
+    _ctcss = gr::analog::ctcss_squelch_ff::make(8000,88.5,0.01,8000,160,true);
     _level_control = gr::blocks::multiply_const_ff::make(2.0);
     _audio_filter = gr::filter::fft_filter_fff::make(
                 1,gr::filter::firdes::band_pass_2(
