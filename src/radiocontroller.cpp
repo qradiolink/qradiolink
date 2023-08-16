@@ -1148,8 +1148,10 @@ void RadioController::radioTimeout()
             _to_voip_buffer->push_back(samples[i]);
         }
     }
-
-    emit writePCM(samples, size, false, AudioProcessor::AUDIO_MODE_ANALOG);
+    if(!_settings->voip_forwarding && !_settings->udp_enabled)
+    {
+        emit writePCM(samples, size, false, AudioProcessor::AUDIO_MODE_ANALOG);
+    }
     if(_settings->tot_tx_end)
     {
         _mutex->lock();
@@ -2617,11 +2619,13 @@ void RadioController::enableAudioCompressor(bool value)
 
 void RadioController::setVolume(int value)
 {
+    _settings->rx_volume = value;
     _rx_volume = 1e-3*exp(((float)value/100.0)*6.908);
 }
 
 void RadioController::setTxVolume(int value)
 {
+    _settings->tx_volume = value;
     _tx_volume = 1e-3*exp(((float)value/50.0)*6.908);
 }
 
