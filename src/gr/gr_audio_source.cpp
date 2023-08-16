@@ -65,28 +65,27 @@ int gr_audio_source::work(int noutput_items,
     gr::thread::scoped_lock guard(_mutex);
     if(_finished)
     {
+        _finished = false;
         guard.unlock();
         struct timespec time_to_sleep = {0, 5000000L };
         nanosleep(&time_to_sleep, NULL);
-        _finished = false;
         return 0;
     }
 
 
     float *out = (float*)(output_items[0]);
-    unsigned n = std::min((unsigned)_data->size() - _offset,
+    unsigned n = std::min((unsigned)_data->size(),
                                   (unsigned)noutput_items);
     for(unsigned i=0;i < n;i++)
     {
-        out[i] = _data->at(_offset + i);
+        out[i] = _data->at(i);
     }
 
-    _offset += n;
-    if(_offset >= _data->size())
+    if(_data->size() > 0)
+        _data->erase(_data->begin(), _data->begin() + n);
+    if(_data->size() < 1)
     {
-        _data->clear();
         _finished = true;
-        _offset = 0;
     }
     return n;
 }
