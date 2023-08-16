@@ -351,7 +351,7 @@ void RadioController::updateInputAudioStream()
 {
     /// Cases where not using local audio
     if(_settings->voip_forwarding
-            || (_settings->udp_enabled && _settings->mute_forwarded_audio)
+            || (_settings->udp_enabled)
             || (_settings->repeater_enabled)
             || (!_transmitting && !_settings->vox_enabled)
             || (_tx_mode == gr_modem_types::ModemTypeQPSK250K)
@@ -470,6 +470,18 @@ bool RadioController::processMixerQueue()
 {
     if(_audio_mixer_in->buffers_available())
     {
+        int tx_timer_value = (_settings->voip_forwarding ? 500 : (_settings->udp_enabled ? 500 : 250));
+        if(_settings->voip_forwarding || _settings->repeater_enabled || _settings->udp_enabled)
+        {
+            if(!_voip_tx_timer->isActive())
+            {
+                _mutex->lock();
+                _transmitting = true;
+                _mutex->unlock();
+                _voip_tx_timer->start(tx_timer_value);
+                return true;
+            }
+        }
         int maximum_frame_size = _settings->udp_enabled ? 320 : 960;
         short *pcm = _audio_mixer_in->mix_samples(_tx_volume, maximum_frame_size);
         if(pcm == nullptr)
@@ -479,13 +491,6 @@ bool RadioController::processMixerQueue()
 
         if(_settings->voip_forwarding || _settings->repeater_enabled || _settings->udp_enabled)
         {
-            if(!_voip_tx_timer->isActive())
-            {
-                _mutex->lock();
-                _transmitting = true;
-                _mutex->unlock();
-            }
-            int tx_timer_value = (_settings->voip_forwarding ? 500 : (_settings->udp_enabled ? 750 : 250));
             _voip_tx_timer->start(tx_timer_value);
             /// Out to radio and don't loop back to Mumble
             txAudio(pcm, 320*sizeof(short), 1, true);
