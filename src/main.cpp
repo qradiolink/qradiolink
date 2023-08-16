@@ -411,7 +411,10 @@ void connectCommandSignals(TelnetServer *telnet_server, MumbleClient *mumbleclie
                      radio_op,SLOT(setTxLimits(bool)));
     QObject::connect(mumbleclient,SIGNAL(commandMessage(QString,int)),
                      telnet_server->command_processor,SLOT(parseMumbleMessage(QString,int)));
-    QObject::connect(telnet_server->command_processor,SIGNAL(setUDPEnabled(bool)),radio_op,SLOT(setUDPAudio(bool)));
+    QObject::connect(telnet_server->command_processor,SIGNAL(setUDPEnabled(bool)),
+                     radio_op,SLOT(setUDPAudio(bool)));
+    QObject::connect(telnet_server->command_processor,SIGNAL(setVoipVolume(int)),
+                     radio_op,SLOT(setVoipVolume(int)));
 }
 
 

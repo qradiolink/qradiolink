@@ -408,6 +408,9 @@ bool CommandProcessor::processStatusCommands(int command_index, QString &respons
         else
             response.append("UDP streaming is disabled.");
         break;
+    case 76:
+        response.append(QString("Current VOIP volume is %1.").arg(_settings->voip_volume));
+        break;
 
     default:
         break;
@@ -1097,6 +1100,21 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
         }
         break;
     }
+    case 77:
+    {
+        int set = param1.toInt();
+        if((set < 0) || (set > 100))
+        {
+            response = "Parameter value is not supported";
+            success = false;
+        }
+        else
+        {
+            response = QString("Setting VOIP volume value to %1").arg(set);
+            emit setVoipVolume(set);
+        }
+        break;
+    }
 
     default:
         break;
@@ -1187,4 +1205,6 @@ void CommandProcessor::buildCommandList()
     _command_list->append(new command("txfreq", 0, "Get current TX frequency"));
     _command_list->append(new command("udpstatus", 0, "Get UDP audio forwarding status"));
     _command_list->append(new command("setudpenabled", 1, "Set UDP streaming mode, (1 enabled, 0 disabled)"));
+    _command_list->append(new command("voipvolume", 0, "Get VOIP volume value"));
+    _command_list->append(new command("setvoipvolume", 1, "Set VOIP volume value, (integer value level between 0 and 100)"));
 }

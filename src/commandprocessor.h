@@ -112,6 +112,7 @@ signals:
     void toggleSelfMute(bool mute);
     void setAudioRecord(bool value);
     void setUDPEnabled(bool value);
+    void setVoipVolume(int value);
 
     void stopRadio();
 
