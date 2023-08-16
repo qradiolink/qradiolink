@@ -470,7 +470,7 @@ bool RadioController::processMixerQueue()
 {
     if(_audio_mixer_in->buffers_available())
     {
-        short *pcm = _audio_mixer_in->mix_samples(_rx_volume);
+        short *pcm = _audio_mixer_in->mix_samples(_voip_volume);
         if(pcm == nullptr)
             return false;
         short *local_pcm = new short[320];
@@ -1612,7 +1612,7 @@ void RadioController::protoReceived(QByteArray data)
     dataFrameReceived();
 }
 
-/// signal from Mumble
+/// signal from Mumble or UDP client
 void RadioController::processVoipAudioFrame(short *pcm, int samples, quint64 sid)
 {
     _audio_mixer_in->addSamples(pcm, samples, sid);
