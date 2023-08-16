@@ -72,6 +72,7 @@ public:
 
     void flushRadioToVoipBuffer();
     void updateDataModemReset(bool transmitting, bool ptt_activated);
+    void callbackOnReceive();
 
 
 signals:
@@ -111,6 +112,7 @@ signals:
     void newPageMessage(QString paged_by, QString message);
     void terminateConnections();
     void enableUDPAudio(bool value);
+    void startReceiveTimer(int value);
 
 
 public slots:
@@ -177,6 +179,7 @@ public slots:
     void stopTx();
     void endTx();
     void stopVoipTx();
+    void callbackStopReceive();
     void toggleRepeat(bool value);
     void setChannels(ChannelList channels);
     void setStations(StationList list);
@@ -247,6 +250,7 @@ private:
     QTimer *_data_led_timer;
     QTimer *_vox_timer;
     QTimer *_voip_tx_timer;
+    QTimer *_rx_timer;
     QTimer *_end_tx_timer;
     QTimer *_radio_time_out_timer;
     QElapsedTimer *_data_read_timer;
@@ -275,6 +279,7 @@ private:
 
     bool _stop_thread;
     bool _transmitting;
+    bool _receiving;
     bool _process_text;
     bool _process_data;
     bool _repeat_text;

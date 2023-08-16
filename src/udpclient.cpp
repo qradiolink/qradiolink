@@ -87,7 +87,6 @@ void UDPClient::stop()
      _udp_socket_tx->close();
      speex_resampler_destroy(_resampler_tx);
      speex_resampler_destroy(_resampler_rx);
-
      _logger->log(Logger::LogLevelInfo, QString("Stopped listening for UDP samples on port %1").arg(_settings->udp_listen_port));
      _logger->log(Logger::LogLevelInfo, QString("Stopped streaming UDP audio on port %1").arg(_settings->udp_send_port));
 }
@@ -128,6 +127,7 @@ void UDPClient::writeAudioToNetwork(short *pcm, int samples)
         delete[] pcm;
         return;
     }
+
     uint32_t out_length = samples * (_settings->udp_audio_sample_rate / INTERNAL_AUDIO_SAMP_RATE);
     int16_t resampled[out_length];
     speex_resampler_process_int(_resampler_rx, 0, pcm, (uint32_t*)&samples, resampled, &out_length);
@@ -136,3 +136,4 @@ void UDPClient::writeAudioToNetwork(short *pcm, int samples)
     //_logger->log(Logger::LogLevelDebug, QString("RX UDP datagram with size: %1").arg(size));
     _udp_socket_rx->writeDatagram((const char*)resampled, size, QHostAddress::LocalHost, _settings->udp_send_port);
 }
+

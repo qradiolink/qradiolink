@@ -72,6 +72,7 @@ Settings::Settings(Logger *logger)
     m17_decode_all_can = 1;
     m17_destination_type = 0;
     udp_audio_sample_rate = 48000;
+    sql_pty_path = "/tmp/sql_pty";
 
     /// old stuff, not used
     _mumble_tcp = 1; // used
@@ -812,6 +813,14 @@ void Settings::readConfig()
     {
         udp_audio_sample_rate = 48000;
     }
+    try
+    {
+        sql_pty_path = QString(cfg.lookup("sql_pty_path"));
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        sql_pty_path = "/tmp/sql_pty";
+    }
 
 
 }
@@ -904,6 +913,7 @@ void Settings::saveConfig()
     root.add("m17_decode_all_can",libconfig::Setting::TypeInt) = m17_decode_all_can;
     root.add("m17_destination_type",libconfig::Setting::TypeInt) = m17_destination_type;
     root.add("udp_audio_sample_rate",libconfig::Setting::TypeInt) = udp_audio_sample_rate;
+    root.add("sql_pty_path",libconfig::Setting::TypeString) = sql_pty_path.toStdString();
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());

@@ -120,6 +120,7 @@ public:
     int m17_decode_all_can;
     int m17_destination_type;
     int udp_audio_sample_rate;
+    QString sql_pty_path;
 
     /// Not saved to config:
 

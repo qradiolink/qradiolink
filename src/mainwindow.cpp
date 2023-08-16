@@ -635,6 +635,7 @@ void MainWindow::setConfig()
     ui->udpSampleRateComboBox->setCurrentText(QString::number(_settings->udp_audio_sample_rate));
     ui->udpRXPortLineEdit->setText(QString::number(_settings->udp_send_port));
     ui->udpTXPortLineEdit->setText(QString::number(_settings->udp_listen_port));
+    ui->sqlPTYLineEdit->setText(_settings->sql_pty_path);
 }
 
 void MainWindow::saveUiConfig()
@@ -690,6 +691,7 @@ void MainWindow::saveUiConfig()
     _settings->m17_src = ui->lineEditM17Src->text();
     _settings->udp_send_port = ui->udpRXPortLineEdit->text().toInt();
     _settings->udp_listen_port = ui->udpTXPortLineEdit->text().toInt();
+    _settings->sql_pty_path = ui->sqlPTYLineEdit->text();
     _settings->saveConfig();
 }
 
@@ -1682,7 +1684,6 @@ void MainWindow::setTxVolumeDisplay(int value)
 
 void MainWindow::changeVoipVolume(int value)
 {
-    _settings->voip_volume = value;
     ui->voipGainSlider->setSliderPosition(value);
     emit setVoipVolume((int)value);
 }

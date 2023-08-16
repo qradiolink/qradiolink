@@ -50,6 +50,8 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     _data_led_timer->setSingleShot(true);
     _voip_tx_timer = new QTimer(this);
     _voip_tx_timer->setSingleShot(true);
+    _rx_timer = new QTimer(this);
+    _rx_timer->setSingleShot(true);
     _vox_timer = new QTimer(this);
     _vox_timer->setSingleShot(true);
     _end_tx_timer = new QTimer(this);
@@ -82,12 +84,14 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     _cw_tone = false;
     _enable_rssi = true;
     _transmitting = false;
+    _receiving = false;
     _process_text = false;
     _process_data = false;
     _repeat_text = false;
 
     _rx_volume = 1e-3*exp(((float)_settings->rx_volume/100.0)*6.908);
-    _tx_volume = 1e-3*exp(((float)_settings->tx_volume/50.0)*6.908);;
+    _tx_volume = 1e-3*exp(((float)_settings->tx_volume/50.0)*6.908);
+    _voip_volume = 1e-3*exp(((float)_settings->voip_volume/50.0)*6.908);
     _tx_frequency = _settings->rx_frequency + _settings->demod_offset;
     _autotune_freq = 0;
     _tune_limit_lower = -500000;
@@ -106,6 +110,8 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     QObject::connect(_data_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));
     QObject::connect(_data_led_timer, SIGNAL(timeout()), this, SLOT(receiveEnd()));
     QObject::connect(_voip_tx_timer, SIGNAL(timeout()), this, SLOT(stopVoipTx()));
+    QObject::connect(this, SIGNAL(startReceiveTimer(int)), _rx_timer, SLOT(start(int)));
+    QObject::connect(_rx_timer, SIGNAL(timeout()), this, SLOT(callbackStopReceive()));
     QObject::connect(_end_tx_timer, SIGNAL(timeout()), this, SLOT(endTx()));
     QObject::connect(_radio_time_out_timer, SIGNAL(timeout()), this, SLOT(radioTimeout()));
 
@@ -180,6 +186,7 @@ RadioController::~RadioController()
     delete _voice_led_timer;
     delete _data_led_timer;
     delete _voip_tx_timer;
+    delete _rx_timer;
     delete _vox_timer;
     delete _end_tx_timer;
     delete _cw_timer;
@@ -222,11 +229,13 @@ void RadioController::run()
     bool ptt_activated = false;
     bool data_to_process = false;
     bool buffers_filling = false;
+    bool receiving_on = false;
     int last_channel_broadcast_time = 0;
     while(!_stop_thread)
     {
         _mutex->lock();
         bool transmitting = _transmitting;
+        bool receiving = _receiving;
         bool voip_forwarding = _settings->voip_forwarding;
         bool data_modem_sleeping = _data_modem_sleeping;
         _mutex->unlock();
@@ -250,6 +259,16 @@ void RadioController::run()
         }
 
         updateDataModemReset(transmitting, ptt_activated); // for IP modem latency buildup
+
+        if(receiving && !receiving_on)
+        {
+            receiving_on = true;
+            QtConcurrent::run(this, &RadioController::callbackOnReceive);
+        }
+        if(!receiving && receiving_on)
+        {
+            receiving_on = false;
+        }
 
         if(transmitting && !ptt_activated)
         {
@@ -294,6 +313,11 @@ void RadioController::run()
         if((_rx_mode != gr_modem_types::ModemTypeMMDVM) && (_rx_mode != gr_modem_types::ModemTypeMMDVMmulti))
         {
             data_to_process = getDemodulatorData();
+            if(data_to_process)
+            {
+                _receiving = true;
+                emit startReceiveTimer(200);
+            }
         }
 
         if(_process_text && !_text_transmit_on && (_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL))
@@ -1134,6 +1158,46 @@ void RadioController::stopVoipTx()
     _mutex->lock();
     _transmitting = false;
     _mutex->unlock();
+}
+
+void RadioController::callbackStopReceive()
+{
+    _receiving = false;
+    if(_settings->udp_enabled)
+    {
+        int fd = open(_settings->sql_pty_path.toStdString().c_str(), O_RDWR | O_NONBLOCK | O_SYNC);
+        if(fd < 0)
+        {
+            _logger->log(Logger::LogLevelWarning, QString("Could not find SVXlink squelch PTY file descriptor: %1").arg(_settings->sql_pty_path));
+            return;
+        }
+        write(fd, "Z", 1);
+        close(fd);
+
+        for(int i=0; i < 5;i++)
+        {
+            uint32_t length = 320;
+            int16_t *pcm = new int16_t[length];
+            memset(pcm, 0, length * sizeof(int16_t));
+            //_logger->log(Logger::LogLevelDebug, QString("End Audio UDP datagram with size: %1").arg(length * sizeof(int16_t)));
+            emit udpAudioSamples(pcm, length);
+        }
+    }
+}
+
+void RadioController::callbackOnReceive()
+{
+    if(_settings->udp_enabled)
+    {
+        int fd = open(_settings->sql_pty_path.toStdString().c_str(), O_RDWR | O_NONBLOCK | O_SYNC);
+        if(fd < 0)
+        {
+            _logger->log(Logger::LogLevelWarning, QString("Could not find SVXlink squelch PTY file descriptor: %1").arg(_settings->sql_pty_path));
+            return;
+        }
+        write(fd, "O", 1);
+        close(fd);
+    }
 }
 
 void RadioController::setAudioRecord(bool value)
@@ -2566,7 +2630,8 @@ void RadioController::setTxVolume(int value)
 
 void RadioController::setVoipVolume(int value)
 {
-    _voip_volume = 1e-3*exp(((float)value/50.0)*6.908);
+    _settings->voip_volume = value;
+    _voip_volume = 1e-3*exp(((float)_settings->voip_volume/50.0)*6.908);
 }
 
 void RadioController::setVoxLevel(int value)
