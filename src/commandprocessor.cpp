@@ -614,6 +614,8 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
     }
     case 30:
     {
+        response = QString("Use command tunerx to tune the transmitter along with the receiver. TX shift will be preserved.");
+        success = false;
         break;
     }
     case 31:
