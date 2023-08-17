@@ -482,7 +482,7 @@ bool RadioController::processMixerQueue()
                 return true;
             }
         }
-        int maximum_frame_size = _settings->udp_enabled ? 320 : 960;
+        int maximum_frame_size = _settings->udp_enabled ? 320 : 320; /// FIXME: mixer buffers not emptied completely lead to stuck TX
         short *pcm = _audio_mixer_in->mix_samples(_tx_volume, maximum_frame_size);
         if(pcm == nullptr)
             return false;
