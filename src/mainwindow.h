@@ -113,6 +113,7 @@ public slots:
     void updateRxCTCSS(int value);
     void updateTxCTCSS(int value);
     void togglePTTVOIP(bool value);
+    void toggleUDP(bool value);
     void toggleVOIPForwarding(bool value);
     void toggleVox(bool value);
     void toggleRepeater(bool value);
@@ -200,6 +201,7 @@ public slots:
     void updateM17CANTx(int value);
     void updateM17DecodeAllCAN(bool value);
     void updateM17DestinationType(int value);
+    void updateUDPAudioSampleRate(int value);
 
 signals:
     void startTransmission();
@@ -273,6 +275,9 @@ signals:
     void setTxLimits(bool value);
     void pageUser(QString user, QString text);
     void setTxCarrierOffset(qint64 offset);
+    void setUDPAudio(bool value);
+    void setUDPAudioSampleRate(int value);
+
 
 public:
     explicit MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_channels, QWidget *parent = 0);

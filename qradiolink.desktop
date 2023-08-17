@@ -8,4 +8,4 @@ GenericName=Multimode SDR transceiver
 Comment=SDR transceiver based on GNU radio
 Exec=qradiolink
 Icon=icon
-Categories=Education;
+Categories=HamRadio;Network;

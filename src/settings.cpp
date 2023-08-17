@@ -22,12 +22,14 @@ Settings::Settings(Logger *logger)
     _config_file = setupConfig();
 
     /// not saved to config
+    headless_mode = false;
     rx_inited = false;
     tx_inited = false;
     tx_started = false;
     voip_connected = false;
     voip_forwarding = false;
     voip_ptt_enabled = false;
+    udp_enabled = false;
     vox_enabled = false;
     repeater_enabled = false;
     current_voip_channel = -1;
@@ -50,6 +52,8 @@ Settings::Settings(Logger *logger)
     fft_size = 32768;
     waterfall_fps = 15;
     control_port = 4939;
+    udp_listen_port = 4938;
+    udp_send_port = 4937;
     voip_server="127.0.0.1";
     bb_gain = 1;
     night_mode = 0;
@@ -67,6 +71,8 @@ Settings::Settings(Logger *logger)
     m17_src = "";
     m17_decode_all_can = 1;
     m17_destination_type = 0;
+    udp_audio_sample_rate = 48000;
+    sql_pty_path = "/tmp/sql_pty";
 
     /// old stuff, not used
     _mumble_tcp = 1; // used
@@ -521,6 +527,22 @@ void Settings::readConfig()
     }
     try
     {
+        udp_listen_port = cfg.lookup("udp_listen_port");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        udp_listen_port = 4938;
+    }
+    try
+    {
+        udp_send_port = cfg.lookup("udp_send_port");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        udp_send_port = 4937;
+    }
+    try
+    {
         remote_control = cfg.lookup("remote_control");
     }
     catch(const libconfig::SettingNotFoundException &nfex)
@@ -783,6 +805,23 @@ void Settings::readConfig()
     {
         m17_destination_type = 0;
     }
+    try
+    {
+        udp_audio_sample_rate = cfg.lookup("udp_audio_sample_rate");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        udp_audio_sample_rate = 48000;
+    }
+    try
+    {
+        sql_pty_path = QString(cfg.lookup("sql_pty_path"));
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        sql_pty_path = "/tmp/sql_pty";
+    }
+
 
 }
 
@@ -836,6 +875,8 @@ void Settings::saveConfig()
     root.add("enable_relays",libconfig::Setting::TypeInt) = enable_relays;
     root.add("rssi_calibration_value",libconfig::Setting::TypeInt) = rssi_calibration_value;
     root.add("control_port",libconfig::Setting::TypeInt) = control_port;
+    root.add("udp_listen_port",libconfig::Setting::TypeInt) = udp_listen_port;
+    root.add("udp_send_port",libconfig::Setting::TypeInt) = udp_send_port;
     root.add("agc_attack",libconfig::Setting::TypeInt) = agc_attack;
     root.add("agc_decay",libconfig::Setting::TypeInt) = agc_decay;
     root.add("remote_control",libconfig::Setting::TypeInt) = remote_control;
@@ -871,6 +912,8 @@ void Settings::saveConfig()
     root.add("m17_dest",libconfig::Setting::TypeString) = m17_dest.toStdString();
     root.add("m17_decode_all_can",libconfig::Setting::TypeInt) = m17_decode_all_can;
     root.add("m17_destination_type",libconfig::Setting::TypeInt) = m17_destination_type;
+    root.add("udp_audio_sample_rate",libconfig::Setting::TypeInt) = udp_audio_sample_rate;
+    root.add("sql_pty_path",libconfig::Setting::TypeString) = sql_pty_path.toStdString();
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());

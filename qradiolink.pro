@@ -57,6 +57,7 @@ SOURCES += src/main.cpp\
         src/mainwindow.cpp\
         src/audio/audioencoder.cpp\
         src/audio/audioprocessor.cpp \
+    src/udpclient.cpp \
         src/video/videoencoder.cpp \
         src/video/imagecapture.cpp \
         src/mumbleclient.cpp\
@@ -154,6 +155,7 @@ HEADERS  += src/mainwindow.h\
     src/gr/gr_mod_mmdvm_multi.h \
     src/gr/gr_zero_idle_bursts.h \
     src/limerfecontroller.h \
+    src/udpclient.h \
         src/video/videoencoder.h \
         src/video/imagecapture.h \
         src/layer2.h \

@@ -402,6 +402,15 @@ bool CommandProcessor::processStatusCommands(int command_index, QString &respons
                                                                    _settings->demod_offset +
                                                                    _settings->lnb_lo_freq + _settings->tx_shift));
         break;
+    case 74:
+        if(_settings->udp_enabled)
+            response.append("UDP streaming is enabled.");
+        else
+            response.append("UDP streaming is disabled.");
+        break;
+    case 76:
+        response.append(QString("Current VOIP volume is %1.").arg(_settings->voip_volume));
+        break;
 
     default:
         break;
@@ -479,7 +488,7 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
     }
     case 22:
     {
-        int set = param1.toFloat();
+        float set = param1.toFloat();
         if((set < 0.0) || (set > 250.0))
         {
             response = "Parameter value is not supported";
@@ -494,7 +503,7 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
     }
     case 23:
     {
-        int set = param1.toFloat();
+        float set = param1.toFloat();
         if((set < 0.0) || (set > 250.0))
         {
             response = "Parameter value is not supported";
@@ -605,6 +614,8 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
     }
     case 30:
     {
+        response = QString("Use command tunerx to tune the transmitter along with the receiver. TX shift will be preserved.");
+        success = false;
         break;
     }
     case 31:
@@ -1076,6 +1087,36 @@ bool CommandProcessor::processActionCommands(int command_index, QString &respons
         }
         break;
     }
+    case 75:
+    {
+        int set = param1.toInt();
+        if(set != 0 && set != 1)
+        {
+            response = "Parameter value is not supported";
+            success = false;
+        }
+        else
+        {
+            response = QString("Setting UDP streaming to %1").arg(set);
+            emit setUDPEnabled((bool)set);
+        }
+        break;
+    }
+    case 77:
+    {
+        int set = param1.toInt();
+        if((set < 0) || (set > 100))
+        {
+            response = "Parameter value is not supported";
+            success = false;
+        }
+        else
+        {
+            response = QString("Setting VOIP volume value to %1").arg(set);
+            emit setVoipVolume(set);
+        }
+        break;
+    }
 
     default:
         break;
@@ -1164,4 +1205,8 @@ void CommandProcessor::buildCommandList()
     _command_list->append(new command("setagcdecay", 1, "Set AGC decay value"));
     _command_list->append(new command("rxfreq", 0, "Get current RX frequency"));
     _command_list->append(new command("txfreq", 0, "Get current TX frequency"));
+    _command_list->append(new command("udpstatus", 0, "Get UDP audio forwarding status"));
+    _command_list->append(new command("setudpenabled", 1, "Set UDP streaming mode, (1 enabled, 0 disabled)"));
+    _command_list->append(new command("voipvolume", 0, "Get VOIP volume value"));
+    _command_list->append(new command("setvoipvolume", 1, "Set VOIP volume value, (integer value level between 0 and 100)"));
 }

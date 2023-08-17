@@ -83,6 +83,8 @@ public:
     QString audio_output_device;
     QString audio_input_device;
     int control_port; // FIXME: this should be unsigned uint16
+    int udp_listen_port;
+    int udp_send_port;
     int remote_control;
     int agc_attack;
     int agc_decay;
@@ -117,10 +119,13 @@ public:
     QString m17_dest;
     int m17_decode_all_can;
     int m17_destination_type;
+    int udp_audio_sample_rate;
+    QString sql_pty_path;
 
     /// Not saved to config:
 
     /// Used by both radio-op/mumbleclient and remote interface
+    bool headless_mode;
     bool rx_inited;
     bool tx_inited;
     bool tx_started;
@@ -129,6 +134,7 @@ public:
     float rssi;
     bool voip_connected;
     bool vox_enabled;
+    bool udp_enabled;
     bool repeater_enabled;
     bool voip_forwarding;
     bool voip_ptt_enabled;

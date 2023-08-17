@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1400</width>
-    <height>721</height>
+    <height>944</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -2028,6 +2028,36 @@ background-color: #4a5053</string>
               </widget>
              </item>
              <item>
+              <widget class="QPushButton" name="udpAudioButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>120</width>
+                 <height>35</height>
+                </size>
+               </property>
+               <property name="toolTip">
+                <string>Connect to SVXLink</string>
+               </property>
+               <property name="text">
+                <string>UDP audio</string>
+               </property>
+               <property name="icon">
+                <iconset resource="resources.qrc">
+                 <normaloff>:/res/Button-Blank-Gray-icon.png</normaloff>
+                 <normalon>:/res/Button-Blank-Yellow-icon.png</normalon>:/res/Button-Blank-Gray-icon.png</iconset>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
               <widget class="QPushButton" name="repeaterInfoButton">
                <property name="toolTip">
                 <string>Broadcast channel and user information over radio</string>
@@ -2810,7 +2840,7 @@ font: 10pt &quot;Sans Serif&quot;;
              </font>
             </property>
             <property name="currentIndex">
-             <number>2</number>
+             <number>1</number>
             </property>
             <widget class="QWidget" name="tab">
              <property name="sizePolicy">
@@ -2886,17 +2916,95 @@ font: 10pt &quot;Sans Serif&quot;;
                  <property name="spacing">
                   <number>10</number>
                  </property>
-                 <item row="14" column="4">
-                  <widget class="QCheckBox" name="fftHistoryCheckBox">
-                   <property name="text">
-                    <string>FFT history effect</string>
+                 <item row="7" column="3">
+                  <widget class="QSpinBox" name="mmdvmChannelsSpinBox">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimum">
+                    <number>2</number>
+                   </property>
+                   <property name="maximum">
+                    <number>7</number>
+                   </property>
+                   <property name="value">
+                    <number>3</number>
                    </property>
                   </widget>
                  </item>
-                 <item row="6" column="5">
-                  <widget class="QCheckBox" name="drawConstellationEyeCheckBox">
+                 <item row="5" column="3">
+                  <widget class="QComboBox" name="endBeepComboBox">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>300</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <item>
+                    <property name="text">
+                     <string>None</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>End beep 1</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>1500 Hz tone</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>MDC1200</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>MODAT</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>TalkPermit</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>MDC1200 Preamble</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Status Change</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Beep Beep</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Caution</string>
+                    </property>
+                   </item>
+                  </widget>
+                 </item>
+                 <item row="10" column="4">
+                  <widget class="QCheckBox" name="totStopTxCheckBox">
                    <property name="text">
-                    <string>Draw constellation eye</string>
+                    <string>Timeout stops TX</string>
                    </property>
                   </widget>
                  </item>
@@ -2907,10 +3015,10 @@ font: 10pt &quot;Sans Serif&quot;;
                    </property>
                   </widget>
                  </item>
-                 <item row="14" column="2">
-                  <widget class="QLabel" name="label_49">
+                 <item row="13" column="2">
+                  <widget class="QLabel" name="label_60">
                    <property name="text">
-                    <string>TX frequency</string>
+                    <string>UDP audio RX port</string>
                    </property>
                   </widget>
                  </item>
@@ -2927,6 +3035,143 @@ font: 10pt &quot;Sans Serif&quot;;
                    </property>
                   </widget>
                  </item>
+                 <item row="5" column="4">
+                  <widget class="QCheckBox" name="nightModeCheckBox">
+                   <property name="text">
+                    <string>Night mode</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="5" column="2">
+                  <widget class="QLabel" name="label_44">
+                   <property name="text">
+                    <string>End beep</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="9" column="0">
+                  <widget class="QLabel" name="label_30">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="text">
+                    <string>Microphone gain</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="11" column="0">
+                  <widget class="QLabel" name="label_42">
+                   <property name="text">
+                    <string>Vox level</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="6" column="0">
+                  <widget class="QLabel" name="label_36">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="text">
+                    <string>Digital gain (TX)</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="12" column="1">
+                  <widget class="QSlider" name="limeRFEAttenuatorSlider">
+                   <property name="maximum">
+                    <number>5</number>
+                   </property>
+                   <property name="pageStep">
+                    <number>5</number>
+                   </property>
+                   <property name="value">
+                    <number>2</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="6" column="5">
+                  <widget class="QCheckBox" name="drawConstellationEyeCheckBox">
+                   <property name="text">
+                    <string>Draw constellation eye</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="6" column="2">
+                  <widget class="QLabel" name="label_40">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="text">
+                    <string>Scan resume time (sec)</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="13" column="3">
+                  <widget class="QLineEdit" name="udpRXPortLineEdit">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="11" column="4">
+                  <widget class="QCheckBox" name="remoteControlCheckBox">
+                   <property name="text">
+                    <string>Remote control</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="12" column="0">
+                  <widget class="QLabel" name="label_53">
+                   <property name="text">
+                    <string>LimeRFE attenuator</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="4">
+                  <widget class="QCheckBox" name="checkBoxRelays">
+                   <property name="text">
+                    <string>Enable relays</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="13" column="4">
+                  <widget class="QCheckBox" name="gpredictCheckBox">
+                   <property name="text">
+                    <string>GPredict control</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="11" column="1">
+                  <widget class="QSlider" name="voxLevelSlider">
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="pageStep">
+                    <number>10</number>
+                   </property>
+                   <property name="value">
+                    <number>20</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                  </widget>
+                 </item>
                  <item row="2" column="1">
                   <widget class="QComboBox" name="audioOutputComboBox">
                    <property name="sizePolicy">
@@ -2937,121 +3182,56 @@ font: 10pt &quot;Sans Serif&quot;;
                    </property>
                   </widget>
                  </item>
-                 <item row="7" column="1">
-                  <widget class="QSlider" name="rxGainSlider">
-                   <property name="toolTip">
-                    <string>Digital IF gain</string>
-                   </property>
-                   <property name="value">
-                    <number>50</number>
-                   </property>
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="tickPosition">
-                    <enum>QSlider::TicksBelow</enum>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="9" column="4">
-                  <widget class="QCheckBox" name="burstIPCheckBox">
+                 <item row="11" column="2">
+                  <widget class="QLabel" name="label_23">
                    <property name="text">
-                    <string>IP mode burst</string>
+                    <string>LNB LO</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="14" column="1">
-                  <widget class="QFrame" name="frame_9">
-                   <property name="frameShape">
-                    <enum>QFrame::StyledPanel</enum>
-                   </property>
-                   <property name="frameShadow">
-                    <enum>QFrame::Raised</enum>
-                   </property>
-                   <layout class="QHBoxLayout" name="horizontalLayout_6">
-                    <property name="spacing">
-                     <number>4</number>
-                    </property>
-                    <property name="leftMargin">
-                     <number>1</number>
-                    </property>
-                    <property name="topMargin">
-                     <number>1</number>
-                    </property>
-                    <property name="rightMargin">
-                     <number>1</number>
-                    </property>
-                    <property name="bottomMargin">
-                     <number>1</number>
-                    </property>
-                    <item>
-                     <widget class="QLineEdit" name="rssiCalibrateEdit">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>100</width>
-                        <height>16777215</height>
-                       </size>
-                      </property>
-                      <property name="toolTip">
-                       <string>Enter calibration value for known signal</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <spacer name="horizontalSpacer_18">
-                      <property name="orientation">
-                       <enum>Qt::Horizontal</enum>
-                      </property>
-                      <property name="sizeHint" stdset="0">
-                       <size>
-                        <width>40</width>
-                        <height>20</height>
-                       </size>
-                      </property>
-                     </spacer>
-                    </item>
-                    <item>
-                     <widget class="QPushButton" name="rssiCalibrateButton">
-                      <property name="text">
-                       <string>Calibrate</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </widget>
-                 </item>
-                 <item row="6" column="1">
-                  <widget class="QSlider" name="digitalGainSlider">
-                   <property name="minimum">
-                    <number>0</number>
-                   </property>
-                   <property name="maximum">
-                    <number>10</number>
-                   </property>
-                   <property name="pageStep">
-                    <number>1</number>
-                   </property>
-                   <property name="value">
-                    <number>5</number>
-                   </property>
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="tickPosition">
-                    <enum>QSlider::TicksBelow</enum>
-                   </property>
-                   <property name="tickInterval">
-                    <number>1</number>
+                 <item row="11" column="3">
+                  <widget class="QLineEdit" name="lnbLOEdit">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
                    </property>
                   </widget>
                  </item>
-                 <item row="14" column="3">
+                 <item row="13" column="1">
+                  <widget class="QLabel" name="vuMeterLabel">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>300</width>
+                     <height>10</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>300</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="9" column="5">
+                  <widget class="QCheckBox" name="checkBoxLimeRFENotch">
+                   <property name="text">
+                    <string>LimeRFE notch filter</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="15" column="3">
                   <widget class="QFrame" name="frame_13">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -3133,89 +3313,6 @@ font: 10pt &quot;Sans Serif&quot;;
                    </layout>
                   </widget>
                  </item>
-                 <item row="2" column="4">
-                  <widget class="QCheckBox" name="checkBoxRelays">
-                   <property name="text">
-                    <string>Enable relays</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="6" column="0">
-                  <widget class="QLabel" name="label_36">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="text">
-                    <string>Digital gain (TX)</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="5">
-                  <widget class="QCheckBox" name="colouredFFTCheckBox">
-                   <property name="text">
-                    <string>Coloured FFT</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="9" column="3">
-                  <widget class="QComboBox" name="mmdvmChanSeparationComboBox">
-                   <item>
-                    <property name="text">
-                     <string>12500</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>25000</string>
-                    </property>
-                   </item>
-                  </widget>
-                 </item>
-                 <item row="12" column="0">
-                  <widget class="QLabel" name="label_53">
-                   <property name="text">
-                    <string>LimeRFE attenuator</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="0">
-                  <widget class="QLabel" name="label_33">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="text">
-                    <string>Output audio device</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="9" column="1">
-                  <widget class="QSlider" name="micGainSlider">
-                   <property name="maximum">
-                    <number>100</number>
-                   </property>
-                   <property name="singleStep">
-                    <number>10</number>
-                   </property>
-                   <property name="value">
-                    <number>50</number>
-                   </property>
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="tickPosition">
-                    <enum>QSlider::TicksBelow</enum>
-                   </property>
-                   <property name="tickInterval">
-                    <number>10</number>
-                   </property>
-                  </widget>
-                 </item>
                  <item row="7" column="4">
                   <widget class="QCheckBox" name="checkBoxAudioCompressor">
                    <property name="text">
@@ -3223,60 +3320,17 @@ font: 10pt &quot;Sans Serif&quot;;
                    </property>
                   </widget>
                  </item>
-                 <item row="5" column="1">
-                  <widget class="QComboBox" name="audioInputComboBox">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="11" column="0">
-                  <widget class="QLabel" name="label_42">
+                 <item row="15" column="4">
+                  <widget class="QCheckBox" name="fftHistoryCheckBox">
                    <property name="text">
-                    <string>Vox level</string>
+                    <string>FFT history effect</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="11" column="2">
-                  <widget class="QLabel" name="label_23">
+                 <item row="2" column="2">
+                  <widget class="QLabel" name="label_43">
                    <property name="text">
-                    <string>LNB LO</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="12" column="4">
-                  <widget class="QCheckBox" name="checkBoxTxLimits">
-                   <property name="text">
-                    <string>TX limits</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="11" column="4">
-                  <widget class="QCheckBox" name="remoteControlCheckBox">
-                   <property name="text">
-                    <string>Remote control</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="10" column="3">
-                  <widget class="QSpinBox" name="timeoutTimerSpinBox">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="suffix">
-                    <string/>
-                   </property>
-                   <property name="maximum">
-                    <number>300</number>
-                   </property>
-                   <property name="value">
-                    <number>60</number>
+                    <string>VOIP bitrate</string>
                    </property>
                   </widget>
                  </item>
@@ -3287,56 +3341,10 @@ font: 10pt &quot;Sans Serif&quot;;
                    </property>
                   </widget>
                  </item>
-                 <item row="7" column="0">
-                  <widget class="QLabel" name="label_48">
+                 <item row="9" column="4">
+                  <widget class="QCheckBox" name="burstIPCheckBox">
                    <property name="text">
-                    <string>Digital gain (RX)</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="11" column="3">
-                  <widget class="QLineEdit" name="lnbLOEdit">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="9" column="5">
-                  <widget class="QCheckBox" name="checkBoxLimeRFENotch">
-                   <property name="text">
-                    <string>LimeRFE notch filter</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="7" column="3">
-                  <widget class="QSpinBox" name="mmdvmChannelsSpinBox">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimum">
-                    <number>2</number>
-                   </property>
-                   <property name="maximum">
-                    <number>7</number>
-                   </property>
-                   <property name="value">
-                    <number>3</number>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="6" column="4">
-                  <widget class="QCheckBox" name="muteForwardedAudioCheckBox">
-                   <property name="enabled">
-                    <bool>false</bool>
-                   </property>
-                   <property name="text">
-                    <string>Mute forwarded audio</string>
+                    <string>IP mode burst</string>
                    </property>
                   </widget>
                  </item>
@@ -3375,43 +3383,77 @@ font: 10pt &quot;Sans Serif&quot;;
                    </item>
                   </widget>
                  </item>
-                 <item row="13" column="1">
-                  <widget class="QLabel" name="vuMeterLabel">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>300</width>
-                     <height>10</height>
-                    </size>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>300</width>
-                     <height>20</height>
-                    </size>
-                   </property>
+                 <item row="12" column="4">
+                  <widget class="QCheckBox" name="checkBoxTxLimits">
                    <property name="text">
-                    <string/>
+                    <string>TX limits</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="5" column="4">
-                  <widget class="QCheckBox" name="nightModeCheckBox">
-                   <property name="text">
-                    <string>Night mode</string>
+                 <item row="15" column="1">
+                  <widget class="QFrame" name="frame_9">
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
                    </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="2">
-                  <widget class="QLabel" name="label_43">
-                   <property name="text">
-                    <string>VOIP bitrate</string>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
                    </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_6">
+                    <property name="spacing">
+                     <number>4</number>
+                    </property>
+                    <property name="leftMargin">
+                     <number>1</number>
+                    </property>
+                    <property name="topMargin">
+                     <number>1</number>
+                    </property>
+                    <property name="rightMargin">
+                     <number>1</number>
+                    </property>
+                    <property name="bottomMargin">
+                     <number>1</number>
+                    </property>
+                    <item>
+                     <widget class="QLineEdit" name="rssiCalibrateEdit">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>100</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
+                      <property name="toolTip">
+                       <string>Enter calibration value for known signal</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <spacer name="horizontalSpacer_18">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="rssiCalibrateButton">
+                      <property name="text">
+                       <string>Calibrate</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
                   </widget>
                  </item>
                  <item row="7" column="5">
@@ -3421,64 +3463,50 @@ font: 10pt &quot;Sans Serif&quot;;
                    </property>
                   </widget>
                  </item>
-                 <item row="6" column="3">
-                  <widget class="QSpinBox" name="scanTimerSpinBox">
+                 <item row="9" column="3">
+                  <widget class="QComboBox" name="mmdvmChanSeparationComboBox">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
                    </property>
-                   <property name="minimum">
-                    <number>1</number>
-                   </property>
-                   <property name="maximum">
-                    <number>30</number>
-                   </property>
-                   <property name="value">
-                    <number>5</number>
-                   </property>
+                   <item>
+                    <property name="text">
+                     <string>12500</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>25000</string>
+                    </property>
+                   </item>
                   </widget>
                  </item>
-                 <item row="12" column="1">
-                  <widget class="QSlider" name="limeRFEAttenuatorSlider">
+                 <item row="9" column="1">
+                  <widget class="QSlider" name="micGainSlider">
                    <property name="maximum">
-                    <number>5</number>
+                    <number>100</number>
                    </property>
-                   <property name="pageStep">
-                    <number>5</number>
+                   <property name="singleStep">
+                    <number>10</number>
                    </property>
                    <property name="value">
-                    <number>2</number>
+                    <number>50</number>
                    </property>
                    <property name="orientation">
                     <enum>Qt::Horizontal</enum>
                    </property>
-                  </widget>
-                 </item>
-                 <item row="5" column="2">
-                  <widget class="QLabel" name="label_44">
-                   <property name="text">
-                    <string>End beep</string>
+                   <property name="tickPosition">
+                    <enum>QSlider::TicksBelow</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>10</number>
                    </property>
                   </widget>
                  </item>
-                 <item row="13" column="4">
-                  <widget class="QCheckBox" name="gpredictCheckBox">
-                   <property name="text">
-                    <string>GPredict control</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="9" column="2">
-                  <widget class="QLabel" name="label_55">
-                   <property name="text">
-                    <string>MMDVM chan sep</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="6" column="2">
-                  <widget class="QLabel" name="label_40">
+                 <item row="5" column="0">
+                  <widget class="QLabel" name="label_32">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                      <horstretch>0</horstretch>
@@ -3486,11 +3514,36 @@ font: 10pt &quot;Sans Serif&quot;;
                     </sizepolicy>
                    </property>
                    <property name="text">
-                    <string>Scan resume time (sec)</string>
+                    <string>Input audio device</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="14" column="0">
+                 <item row="6" column="1">
+                  <widget class="QSlider" name="digitalGainSlider">
+                   <property name="minimum">
+                    <number>0</number>
+                   </property>
+                   <property name="maximum">
+                    <number>10</number>
+                   </property>
+                   <property name="pageStep">
+                    <number>1</number>
+                   </property>
+                   <property name="value">
+                    <number>5</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TicksBelow</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>1</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="15" column="0">
                   <widget class="QLabel" name="label_34">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -3526,22 +3579,6 @@ and S-meter (dBm)</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="11" column="1">
-                  <widget class="QSlider" name="voxLevelSlider">
-                   <property name="maximum">
-                    <number>100</number>
-                   </property>
-                   <property name="pageStep">
-                    <number>10</number>
-                   </property>
-                   <property name="value">
-                    <number>20</number>
-                   </property>
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                  </widget>
-                 </item>
                  <item row="7" column="2">
                   <widget class="QLabel" name="label_54">
                    <property name="text">
@@ -3549,82 +3586,76 @@ and S-meter (dBm)</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="5" column="3">
-                  <widget class="QComboBox" name="endBeepComboBox">
+                 <item row="12" column="3">
+                  <widget class="QComboBox" name="udpSampleRateComboBox">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
                    </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>300</width>
-                     <height>16777215</height>
-                    </size>
+                   <property name="currentIndex">
+                    <number>1</number>
                    </property>
                    <item>
                     <property name="text">
-                     <string>None</string>
+                     <string>8000</string>
                     </property>
                    </item>
                    <item>
                     <property name="text">
-                     <string>End beep 1</string>
+                     <string>16000</string>
                     </property>
                    </item>
                    <item>
                     <property name="text">
-                     <string>1500 Hz tone</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>MDC1200</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>MODAT</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>TalkPermit</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>MDC1200 Preamble</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>Status Change</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>Beep Beep</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>Caution</string>
+                     <string>48000</string>
                     </property>
                    </item>
                   </widget>
                  </item>
-                 <item row="9" column="0">
-                  <widget class="QLabel" name="label_30">
+                 <item row="10" column="3">
+                  <widget class="QSpinBox" name="timeoutTimerSpinBox">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
                    </property>
-                   <property name="text">
-                    <string>Microphone gain</string>
+                   <property name="suffix">
+                    <string/>
+                   </property>
+                   <property name="maximum">
+                    <number>300</number>
+                   </property>
+                   <property name="value">
+                    <number>60</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="7" column="1">
+                  <widget class="QSlider" name="rxGainSlider">
+                   <property name="toolTip">
+                    <string>Digital IF gain</string>
+                   </property>
+                   <property name="value">
+                    <number>50</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TicksBelow</enum>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="5" column="1">
+                  <widget class="QComboBox" name="audioInputComboBox">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
                    </property>
                   </widget>
                  </item>
@@ -3635,8 +3666,72 @@ and S-meter (dBm)</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="5" column="0">
-                  <widget class="QLabel" name="label_32">
+                 <item row="7" column="0">
+                  <widget class="QLabel" name="label_48">
+                   <property name="text">
+                    <string>Digital gain (RX)</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="6" column="4">
+                  <widget class="QCheckBox" name="muteForwardedAudioCheckBox">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
+                   <property name="text">
+                    <string>Mute forwarded audio</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="12" column="2">
+                  <widget class="QLabel" name="label_59">
+                   <property name="text">
+                    <string>UDP Audio sample rate</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="5">
+                  <widget class="QCheckBox" name="colouredFFTCheckBox">
+                   <property name="text">
+                    <string>Coloured FFT</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="9" column="2">
+                  <widget class="QLabel" name="label_55">
+                   <property name="text">
+                    <string>MMDVM chan sep</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="15" column="2">
+                  <widget class="QLabel" name="label_49">
+                   <property name="text">
+                    <string>TX frequency</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="6" column="3">
+                  <widget class="QSpinBox" name="scanTimerSpinBox">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimum">
+                    <number>1</number>
+                   </property>
+                   <property name="maximum">
+                    <number>30</number>
+                   </property>
+                   <property name="value">
+                    <number>5</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="0">
+                  <widget class="QLabel" name="label_33">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                      <horstretch>0</horstretch>
@@ -3644,14 +3739,24 @@ and S-meter (dBm)</string>
                     </sizepolicy>
                    </property>
                    <property name="text">
-                    <string>Input audio device</string>
+                    <string>Output audio device</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="10" column="4">
-                  <widget class="QCheckBox" name="totStopTxCheckBox">
+                 <item row="14" column="2">
+                  <widget class="QLabel" name="label_61">
                    <property name="text">
-                    <string>Timeout stops TX</string>
+                    <string>UDP audio TX port</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="14" column="3">
+                  <widget class="QLineEdit" name="udpTXPortLineEdit">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
                    </property>
                   </widget>
                  </item>
@@ -3716,62 +3821,6 @@ and S-meter (dBm)</string>
                  <property name="spacing">
                   <number>10</number>
                  </property>
-                 <item row="0" column="2">
-                  <widget class="QPushButton" name="findDevicesButton">
-                   <property name="toolTip">
-                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Search for SoapySDR or LimeSDR devices connected to the system&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                   </property>
-                   <property name="text">
-                    <string>Find devices</string>
-                   </property>
-                   <property name="icon">
-                    <iconset resource="resources.qrc">
-                     <normaloff>:/res/edit-find.png</normaloff>:/res/edit-find.png</iconset>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="7" column="0">
-                  <widget class="QLabel" name="label_7">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="text">
-                    <string>RX Freq Correction (ppm)</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="1">
-                  <widget class="QComboBox" name="lineEditRXDev">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>400</width>
-                     <height>0</height>
-                    </size>
-                   </property>
-                   <property name="toolTip">
-                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select device string from dropdown or manually edit. The default device is the one already saved in the configuration file.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                   </property>
-                   <property name="editable">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="14" column="0">
-                  <widget class="QLabel" name="label_37">
-                   <property name="text">
-                    <string>LimeRFE device</string>
-                   </property>
-                  </widget>
-                 </item>
                  <item row="3" column="1">
                   <widget class="QComboBox" name="lineEditTXDev">
                    <property name="sizePolicy">
@@ -3794,6 +3843,142 @@ and S-meter (dBm)</string>
                    </property>
                   </widget>
                  </item>
+                 <item row="3" column="0">
+                  <widget class="QLabel" name="label_3">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="text">
+                    <string>TX device args</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="4" column="1">
+                  <widget class="QLineEdit" name="lineEditTXAntenna">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>100</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>100</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true"/>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="6" column="1">
+                  <widget class="QLineEdit" name="lineEditTXFreqCorrection">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>50</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>50</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="2">
+                  <widget class="QPushButton" name="findDevicesButton">
+                   <property name="toolTip">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Search for SoapySDR or LimeSDR devices connected to the system&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
+                   <property name="text">
+                    <string>Find devices</string>
+                   </property>
+                   <property name="icon">
+                    <iconset resource="resources.qrc">
+                     <normaloff>:/res/edit-find.png</normaloff>:/res/edit-find.png</iconset>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="5" column="0">
+                  <widget class="QLabel" name="label_6">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="text">
+                    <string>RX antenna</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="14" column="0">
+                  <widget class="QLabel" name="label_37">
+                   <property name="text">
+                    <string>LimeRFE device</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="12" column="0">
+                  <widget class="QLabel" name="label_24">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="text">
+                    <string>Scan step (Hz)</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="10" column="0">
+                  <widget class="QLabel" name="label_10">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="text">
+                    <string>Video Device</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="9" column="1">
+                  <widget class="QLineEdit" name="lineEditRecordPath">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>300</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                  </widget>
+                 </item>
                  <item row="14" column="1">
                   <widget class="QLineEdit" name="lineEditLimeRFEDevice">
                    <property name="sizePolicy">
@@ -3810,109 +3995,7 @@ and S-meter (dBm)</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="10" column="1">
-                  <widget class="QLineEdit" name="lineEditVideoDevice">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>200</width>
-                     <height>0</height>
-                    </size>
-                   </property>
-                   <property name="styleSheet">
-                    <string notr="true"/>
-                   </property>
-                   <property name="maxLength">
-                    <number>100</number>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="15" column="0">
-                  <widget class="QLabel" name="label_39">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="text">
-                    <string>Remote control port</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="15" column="1">
-                  <widget class="QLineEdit" name="remoteControlEdit">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>100</width>
-                     <height>16777215</height>
-                    </size>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="7" column="1">
-                  <widget class="QLineEdit" name="lineEditRXFreqCorrection">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>50</width>
-                     <height>0</height>
-                    </size>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>50</width>
-                     <height>16777215</height>
-                    </size>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="9" column="0">
-                  <widget class="QLabel" name="label_41">
-                   <property name="text">
-                    <string>Audio record path</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="8" column="1">
-                  <widget class="QLineEdit" name="lineEditIPaddress">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>200</width>
-                     <height>16777215</height>
-                    </size>
-                   </property>
-                   <property name="styleSheet">
-                    <string notr="true"/>
-                   </property>
-                   <property name="maxLength">
-                    <number>100</number>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="16" column="1">
+                 <item row="17" column="1">
                   <widget class="QComboBox" name="blockBufferSizeComboBox">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -3992,45 +4075,6 @@ and S-meter (dBm)</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="12" column="0">
-                  <widget class="QLabel" name="label_24">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="text">
-                    <string>Scan step (Hz)</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="5" column="0">
-                  <widget class="QLabel" name="label_6">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="text">
-                    <string>RX antenna</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="0">
-                  <widget class="QLabel" name="label_2">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="text">
-                    <string>RX device args</string>
-                   </property>
-                  </widget>
-                 </item>
                  <item row="8" column="0">
                   <widget class="QLabel" name="label_18">
                    <property name="sizePolicy">
@@ -4045,66 +4089,8 @@ and S-meter (dBm)</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="12" column="1">
-                  <widget class="QLineEdit" name="lineEditScanStep">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>100</width>
-                     <height>16777215</height>
-                    </size>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="6" column="0">
-                  <widget class="QLabel" name="label_8">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="text">
-                    <string>TX Freq Correction (ppm)</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="9" column="1">
-                  <widget class="QLineEdit" name="lineEditRecordPath">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>300</width>
-                     <height>16777215</height>
-                    </size>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="3" column="0">
-                  <widget class="QLabel" name="label_3">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="text">
-                    <string>TX device args</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="6" column="1">
-                  <widget class="QLineEdit" name="lineEditTXFreqCorrection">
+                 <item row="7" column="1">
+                  <widget class="QLineEdit" name="lineEditRXFreqCorrection">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                      <horstretch>0</horstretch>
@@ -4122,19 +4108,6 @@ and S-meter (dBm)</string>
                      <width>50</width>
                      <height>16777215</height>
                     </size>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="13" column="0">
-                  <widget class="QLabel" name="label_4">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="text">
-                    <string>Callsign</string>
                    </property>
                   </widget>
                  </item>
@@ -4151,8 +4124,8 @@ and S-meter (dBm)</string>
                    </property>
                   </spacer>
                  </item>
-                 <item row="4" column="1">
-                  <widget class="QLineEdit" name="lineEditTXAntenna">
+                 <item row="10" column="1">
+                  <widget class="QLineEdit" name="lineEditVideoDevice">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                      <horstretch>0</horstretch>
@@ -4161,23 +4134,20 @@ and S-meter (dBm)</string>
                    </property>
                    <property name="minimumSize">
                     <size>
-                     <width>100</width>
+                     <width>200</width>
                      <height>0</height>
-                    </size>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>100</width>
-                     <height>16777215</height>
                     </size>
                    </property>
                    <property name="styleSheet">
                     <string notr="true"/>
                    </property>
+                   <property name="maxLength">
+                    <number>100</number>
+                   </property>
                   </widget>
                  </item>
-                 <item row="10" column="0">
-                  <widget class="QLabel" name="label_10">
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="label_2">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                      <horstretch>0</horstretch>
@@ -4185,14 +4155,7 @@ and S-meter (dBm)</string>
                     </sizepolicy>
                    </property>
                    <property name="text">
-                    <string>Video Device</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="16" column="0">
-                  <widget class="QLabel" name="label_45">
-                   <property name="text">
-                    <string>GR Block buffer size</string>
+                    <string>RX device args</string>
                    </property>
                   </widget>
                  </item>
@@ -4206,6 +4169,22 @@ and S-meter (dBm)</string>
                    </property>
                    <property name="text">
                     <string>TX antenna</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="12" column="1">
+                  <widget class="QLineEdit" name="lineEditScanStep">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>100</width>
+                     <height>16777215</height>
+                    </size>
                    </property>
                   </widget>
                  </item>
@@ -4231,6 +4210,149 @@ and S-meter (dBm)</string>
                    </property>
                    <property name="styleSheet">
                     <string notr="true"/>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="15" column="1">
+                  <widget class="QLineEdit" name="remoteControlEdit">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>100</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="9" column="0">
+                  <widget class="QLabel" name="label_41">
+                   <property name="text">
+                    <string>Audio record path</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QComboBox" name="lineEditRXDev">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>400</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="toolTip">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select device string from dropdown or manually edit. The default device is the one already saved in the configuration file.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
+                   <property name="editable">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="6" column="0">
+                  <widget class="QLabel" name="label_8">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="text">
+                    <string>TX Freq Correction (ppm)</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="15" column="0">
+                  <widget class="QLabel" name="label_39">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="text">
+                    <string>Remote control port</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="13" column="0">
+                  <widget class="QLabel" name="label_4">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="text">
+                    <string>Callsign</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="17" column="0">
+                  <widget class="QLabel" name="label_45">
+                   <property name="text">
+                    <string>GR Block buffer size</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="7" column="0">
+                  <widget class="QLabel" name="label_7">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="text">
+                    <string>RX Freq Correction (ppm)</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="8" column="1">
+                  <widget class="QLineEdit" name="lineEditIPaddress">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>200</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true"/>
+                   </property>
+                   <property name="maxLength">
+                    <number>100</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="16" column="0">
+                  <widget class="QLabel" name="label_62">
+                   <property name="text">
+                    <string>SVXlink SQL PTY path</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="16" column="1">
+                  <widget class="QLineEdit" name="sqlPTYLineEdit">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
                    </property>
                   </widget>
                  </item>

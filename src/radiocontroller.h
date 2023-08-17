@@ -72,6 +72,7 @@ public:
 
     void flushRadioToVoipBuffer();
     void updateDataModemReset(bool transmitting, bool ptt_activated);
+    void callbackOnReceive();
 
 
 signals:
@@ -100,6 +101,7 @@ signals:
     void newRSSIValue(float rssi);
     void initError(QString error, int index);
     void writePCM(short *pcm, int bytes, bool preprocess, int mode);
+    void udpAudioSamples(short *pcm, int samples);
     void rxGainStages(gain_vector rx_gains);
     void txGainStages(gain_vector tx_gains);
     void setSelfDeaf(bool deaf);
@@ -109,6 +111,8 @@ signals:
     void recordAudio(bool value);
     void newPageMessage(QString paged_by, QString message);
     void terminateConnections();
+    void enableUDPAudio(bool value);
+    void startReceiveTimer(int value);
 
 
 public slots:
@@ -169,10 +173,13 @@ public slots:
     void processVoipVideoFrame(unsigned char *video_frame, int size, quint64 sid);
     void usePTTForVOIP(bool value);
     void setVOIPForwarding(bool value);
+    void setUDPAudio(bool value);
+    void setUDPAudioSampleRate(int value);
     void startTx();
     void stopTx();
     void endTx();
     void stopVoipTx();
+    void callbackStopReceive();
     void toggleRepeat(bool value);
     void setChannels(ChannelList channels);
     void setStations(StationList list);
@@ -243,6 +250,7 @@ private:
     QTimer *_data_led_timer;
     QTimer *_vox_timer;
     QTimer *_voip_tx_timer;
+    QTimer *_rx_timer;
     QTimer *_end_tx_timer;
     QTimer *_radio_time_out_timer;
     QElapsedTimer *_data_read_timer;
@@ -271,6 +279,7 @@ private:
 
     bool _stop_thread;
     bool _transmitting;
+    bool _receiving;
     bool _process_text;
     bool _process_data;
     bool _repeat_text;
