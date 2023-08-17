@@ -42,7 +42,7 @@ class gr_demod_nbfm : public gr::hier_block2
 {
 public:
     explicit gr_demod_nbfm(std::vector<int> signature, int sps=4, int samp_rate=8000, int carrier_freq=1600,
-                               int filter_width=1800);
+                               int filter_width=8000);
 
     void set_squelch(int value);
     void set_ctcss(float value);

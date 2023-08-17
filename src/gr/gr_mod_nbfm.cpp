@@ -41,25 +41,25 @@ gr_mod_nbfm::gr_mod_nbfm(int sps, int samp_rate, int carrier_freq,
     _fm_modulator = gr::analog::frequency_modulator_fc::make(4*M_PI*_filter_width/if_samp_rate);
     _audio_amplify = gr::blocks::multiply_const_ff::make(0.99,1);
     _audio_filter = gr::filter::fft_filter_fff::make(
-                1,gr::filter::firdes::band_pass_2(
-                    1, target_samp_rate, 300, 3500, 200, 90, gr::fft::window::WIN_BLACKMAN_HARRIS));
+                1,gr::filter::firdes::low_pass_2(
+                    1, target_samp_rate, 3500, 200, 35, gr::fft::window::WIN_BLACKMAN_HARRIS));
 
     _pre_emph_filter = gr::filter::iir_filter_ffd::make(_btaps, _ataps, false);
 
     std::vector<float> if_taps = gr::filter::firdes::low_pass_2(25, if_samp_rate * 4,
-                        _filter_width, 1200, 90, gr::fft::window::WIN_BLACKMAN_HARRIS);
+                        _filter_width, 3500, 60, gr::fft::window::WIN_BLACKMAN_HARRIS);
     _if_resampler = gr::filter::rational_resampler_fff::make(25,4, if_taps);
 
     _tone_source = gr::analog::sig_source_f::make(target_samp_rate,gr::analog::GR_COS_WAVE,88.5,0.15);
     _add = gr::blocks::add_ff::make();
 
     std::vector<float> interp_taps = gr::filter::firdes::low_pass_2(_sps, _samp_rate,
-                        _filter_width, 1200, 90, gr::fft::window::WIN_BLACKMAN_HARRIS);
+                        _filter_width, 3500, 60, gr::fft::window::WIN_BLACKMAN_HARRIS);
     _resampler = gr::filter::rational_resampler_ccf::make(_sps,1, interp_taps);
     _amplify = gr::blocks::multiply_const_cc::make(0.8,1);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
     _filter = gr::filter::fft_filter_ccf::make(1,gr::filter::firdes::low_pass_2(
-                1, if_samp_rate, _filter_width, 1200, 90, gr::fft::window::WIN_BLACKMAN_HARRIS));
+                1, if_samp_rate, _filter_width, 3500, 60, gr::fft::window::WIN_BLACKMAN_HARRIS));
 
 
     connect(self(),0,_audio_filter,0);
@@ -100,9 +100,12 @@ void gr_mod_nbfm::set_bb_gain(float value)
 
 void gr_mod_nbfm::set_ctcss(float value)
 {
+    float target_samp_rate = 8000.0f;
     if(value == 0)
     {
         _audio_amplify->set_k(0.98);
+        _audio_filter->set_taps(gr::filter::firdes::low_pass_2(
+                                    1, target_samp_rate, 3500, 200, 35, gr::fft::window::WIN_BLACKMAN_HARRIS));
         try {
             disconnect(_audio_amplify,0,_add,0);
             disconnect(_add,0,_pre_emph_filter,0);
@@ -116,6 +119,8 @@ void gr_mod_nbfm::set_ctcss(float value)
     else
     {
         _audio_amplify->set_k(0.85);
+        _audio_filter->set_taps(gr::filter::firdes::band_pass_2(
+                                    1, target_samp_rate, 300, 3500, 200, 35, gr::fft::window::WIN_BLACKMAN_HARRIS));
         _tone_source->set_frequency(value);
         try {
             disconnect(_audio_amplify,0,_pre_emph_filter,0);

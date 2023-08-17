@@ -52,15 +52,16 @@ gr_demod_nbfm::gr_demod_nbfm(std::vector<int>signature, int sps, int samp_rate, 
     _audio_resampler = gr::filter::rational_resampler_fff::make(2,5, audio_taps);
 
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass_2(
-            1, _target_samp_rate, _filter_width, 200, 90 ,gr::fft::window::WIN_BLACKMAN_HARRIS) );
+            1, _target_samp_rate, _filter_width, 3500, 60 ,gr::fft::window::WIN_BLACKMAN_HARRIS) );
 
     _fm_demod = gr::analog::quadrature_demod_cf::make(_target_samp_rate/(4*M_PI* _filter_width));
-    _squelch = gr::analog::pwr_squelch_cc::make(-140,0.01,0,true);
-    _ctcss = gr::analog::ctcss_squelch_ff::make(8000,88.5,0.02,4000,0,true);
+    _squelch = gr::analog::pwr_squelch_cc::make(-140,0.01,320,true);
+    /// CTCSS ramp down needs to be faster than power squelch ramp down
+    _ctcss = gr::analog::ctcss_squelch_ff::make(8000,88.5,0.01,8000,160,true);
     _level_control = gr::blocks::multiply_const_ff::make(2.0);
     _audio_filter = gr::filter::fft_filter_fff::make(
-                1,gr::filter::firdes::band_pass_2(
-                    1, 8000, 300, 3500, 200, 90, gr::fft::window::WIN_BLACKMAN_HARRIS));
+                1,gr::filter::firdes::low_pass_2(
+                    1, 8000, 3500, 200, 35, gr::fft::window::WIN_BLACKMAN_HARRIS));
 
 
     connect(self(),0,_resampler,0);
@@ -100,6 +101,8 @@ void gr_demod_nbfm::set_ctcss(float value)
         try {
             disconnect(_audio_resampler,0,_ctcss,0);
             disconnect(_ctcss,0,_audio_filter,0);
+            _audio_filter->set_taps(gr::filter::firdes::low_pass_2(
+                                        1, 8000, 3500, 200, 35, gr::fft::window::WIN_BLACKMAN_HARRIS));
             connect(_audio_resampler,0,_audio_filter,0);
         }
         catch(std::invalid_argument &e)
@@ -112,6 +115,8 @@ void gr_demod_nbfm::set_ctcss(float value)
         _ctcss->set_frequency(value);
         try {
             disconnect(_audio_resampler,0,_audio_filter,0);
+            _audio_filter->set_taps(gr::filter::firdes::band_pass_2(
+                                        1, 8000, 300, 3500, 200, 35, gr::fft::window::WIN_BLACKMAN_HARRIS));
             connect(_audio_resampler,0,_ctcss,0);
             connect(_ctcss,0,_audio_filter,0);
         }

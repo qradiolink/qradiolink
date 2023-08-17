@@ -65,6 +65,7 @@ signals:
     void textReceived(QString text);
     void protoReceived(QByteArray data);
     void callsignReceived(QString text);
+    void m17FrameInfoReceived(QString src, QString dest, uint16_t CAN);
     void audioFrameReceived();
     void dataFrameReceived();
     void syncIssues();

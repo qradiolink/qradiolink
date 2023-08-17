@@ -81,6 +81,13 @@ public:
     void setDestination(const std::string& callsign);
 
     /**
+     * Set special destination (ECHO, INFO, UNLINK).
+     *
+     * @param int: destination type.
+     */
+    void setDestination(const int& destination_type);
+
+    /**
      * Get destination callsign.
      *
      * @return: string containing the destination callsign.

@@ -119,6 +119,7 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     QObject::connect(ui->pttVoipButton,SIGNAL(toggled(bool)),this,SLOT(togglePTTVOIP(bool)));
     QObject::connect(ui->voipForwardButton,SIGNAL(toggled(bool)),
                      this,SLOT(toggleVOIPForwarding(bool)));
+    QObject::connect(ui->udpAudioButton,SIGNAL(toggled(bool)),this,SLOT(toggleUDP(bool)));
     QObject::connect(ui->recordButton,SIGNAL(toggled(bool)),this,SLOT(toggleAudioRecord(bool)));
     QObject::connect(ui->toggleRepeaterButton,SIGNAL(toggled(bool)),this,SLOT(toggleRepeater(bool)));
     QObject::connect(ui->toggleVoxButton,SIGNAL(toggled(bool)),this,SLOT(toggleVox(bool)));
@@ -179,6 +180,8 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
                      this,SLOT(updateAudioInput(int)));
     QObject::connect(ui->voipBitrateComboBox,SIGNAL(currentIndexChanged(int)),
                      this,SLOT(updateVoipBitrate(int)));
+    QObject::connect(ui->udpSampleRateComboBox,SIGNAL(currentIndexChanged(int)),
+                     this,SLOT(updateUDPAudioSampleRate(int)));
     QObject::connect(ui->endBeepComboBox,SIGNAL(currentIndexChanged(int)),
                      this,SLOT(updateEndBeep(int)));
     QObject::connect(ui->blockBufferSizeComboBox,SIGNAL(currentIndexChanged(int)),
@@ -211,6 +214,11 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
                      this,SLOT(editMemoryChannel(QTableWidgetItem*)));
     QObject::connect(ui->pageUserButton,SIGNAL(clicked()), this, SLOT(pageUserRequested()));
     QObject::connect(ui->findDevicesButton,SIGNAL(clicked()), this, SLOT(findDevices()));
+    QObject::connect(ui->spinBoxM17CANRx,SIGNAL(valueChanged(int)),this,SLOT(updateM17CANRx(int)));
+    QObject::connect(ui->spinBoxM17CANTx,SIGNAL(valueChanged(int)),this,SLOT(updateM17CANTx(int)));
+    QObject::connect(ui->checkBoxM17DecodeAllCAN,SIGNAL(toggled(bool)),this,SLOT(updateM17DecodeAllCAN(bool)));
+    QObject::connect(ui->comboBoxM17DestinationType,SIGNAL(currentIndexChanged(int)),
+                     this,SLOT(updateM17DestinationType(int)));
 
     QObject::connect(&_secondary_text_timer,SIGNAL(timeout()),ui->secondaryTextDisplay,SLOT(hide()));
     QObject::connect(&_video_timer,SIGNAL(timeout()),ui->videoFrame,SLOT(hide()));
@@ -618,6 +626,16 @@ void MainWindow::setConfig()
     ui->relay8CheckBox->setChecked(bool((_settings->relay_sequence >> 7) & 0x1));
     ui->lnbLOEdit->setText(QString::number(_settings->lnb_lo_freq/1000));
     ui->lineEditLimeRFEDevice->setText(_settings->lime_rfe_device);
+    ui->spinBoxM17CANRx->setValue(_settings->m17_can_rx);
+    ui->spinBoxM17CANTx->setValue(_settings->m17_can_tx);
+    ui->lineEditM17Dest->setText(_settings->m17_dest);
+    ui->lineEditM17Src->setText(_settings->m17_src);
+    ui->checkBoxM17DecodeAllCAN->setChecked(bool(_settings->m17_decode_all_can));
+    ui->comboBoxM17DestinationType->setCurrentIndex(_settings->m17_destination_type);
+    ui->udpSampleRateComboBox->setCurrentText(QString::number(_settings->udp_audio_sample_rate));
+    ui->udpRXPortLineEdit->setText(QString::number(_settings->udp_send_port));
+    ui->udpTXPortLineEdit->setText(QString::number(_settings->udp_listen_port));
+    ui->sqlPTYLineEdit->setText(_settings->sql_pty_path);
 }
 
 void MainWindow::saveUiConfig()
@@ -669,6 +687,11 @@ void MainWindow::saveUiConfig()
     _settings->relay_sequence = relay_sequence;
     _settings->lnb_lo_freq = (int64_t)(ui->lnbLOEdit->text().toLong() * 1000);
     _settings->lime_rfe_device = ui->lineEditLimeRFEDevice->text();
+    _settings->m17_dest = ui->lineEditM17Dest->text();
+    _settings->m17_src = ui->lineEditM17Src->text();
+    _settings->udp_send_port = ui->udpRXPortLineEdit->text().toInt();
+    _settings->udp_listen_port = ui->udpTXPortLineEdit->text().toInt();
+    _settings->sql_pty_path = ui->sqlPTYLineEdit->text();
     _settings->saveConfig();
 }
 
@@ -1661,7 +1684,6 @@ void MainWindow::setTxVolumeDisplay(int value)
 
 void MainWindow::changeVoipVolume(int value)
 {
-    _settings->voip_volume = value;
     ui->voipGainSlider->setSliderPosition(value);
     emit setVoipVolume((int)value);
 }
@@ -1774,6 +1796,11 @@ void MainWindow::updateTxCTCSS(int value)
 void MainWindow::togglePTTVOIP(bool value)
 {
     emit usePTTForVOIP(value);
+}
+
+void MainWindow::toggleUDP(bool value)
+{
+    emit setUDPAudio(value);
 }
 
 void MainWindow::toggleVOIPForwarding(bool value)
@@ -2188,3 +2215,30 @@ void MainWindow::updateTXDevices(QString dev_string)
 {
     ui->lineEditTXDev->setItemText(ui->lineEditTXDev->currentIndex(), dev_string);
 }
+
+void MainWindow::updateM17CANRx(int value)
+{
+    _settings->m17_can_rx = value;
+}
+
+void MainWindow::updateM17CANTx(int value)
+{
+    _settings->m17_can_tx = value;
+}
+
+void MainWindow::updateM17DecodeAllCAN(bool value)
+{
+    _settings->m17_decode_all_can = (int)value;
+}
+
+void MainWindow::updateM17DestinationType(int value)
+{
+    _settings->m17_destination_type = value;
+}
+
+void MainWindow::updateUDPAudioSampleRate(int value)
+{
+    Q_UNUSED(value);
+    emit setUDPAudioSampleRate(ui->udpSampleRateComboBox->currentText().toInt());
+}
+

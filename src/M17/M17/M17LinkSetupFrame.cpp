@@ -56,8 +56,42 @@ void M17LinkSetupFrame::setDestination(const std::string& callsign)
     encode_callsign(callsign, data.dst);
 }
 
+void M17LinkSetupFrame::setDestination(const int& destination_type)
+{
+    if(destination_type == 1) // ALL
+    {
+        uint8_t all[] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
+        memcpy(data.dst.data(), all, 6*sizeof(uint8_t));
+    }
+    if(destination_type == 2) // ECHO
+    {
+        uint8_t echo[] = { 0x00, 0x00, 0x00, 0x0E, 0xD8, 0x7D };
+        memcpy(data.dst.data(), echo, 6*sizeof(uint8_t));
+    }
+    if(destination_type == 3) // INFO
+    {
+        uint8_t info[] = { 0x00, 0x00, 0x00, 0x0E, 0xCD, 0xB9};
+        memcpy(data.dst.data(), info, 6*sizeof(uint8_t));
+    }
+    if(destination_type == 4) // UNLINK
+    {
+        uint8_t unlink[] = { 0x00, 0x00, 0x45, 0x4F, 0x77, 0x45};
+        memcpy(data.dst.data(), unlink, 6*sizeof(uint8_t));
+    }
+}
+
 std::string M17LinkSetupFrame::getDestination()
 {
+    uint64_t destination_type = 0;
+    memcpy(&destination_type + 2, data.dst.data(), 6 * sizeof(uint8_t));
+    if (destination_type == 0xFFFFFFFFFFFF)
+        return "ALL";
+    if (destination_type == 0x0000000ED87D)
+        return "ECHO";
+    if (destination_type == 0x0000000ECDB9)
+        return "INFO";
+    if (destination_type == 0x0000454F7745)
+        return "UNLINK";
     return decode_callsign(data.dst);
 }
 
