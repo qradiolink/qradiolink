@@ -1,3 +1,20 @@
+qradiolink (0.8.10-1) experimental; urgency=medium
+
+  [ Adrian Musceac ]
+  * Added UDP audio streaming mode, for both transmit and receive
+  * Interoperability with SVXlink via UDP audio
+  * M17 protocol improvements: decode and encode channel access numbers,
+    added special TX destinations (ECHO, UNLINK, BROADCAST, callsign)
+  * Fixed issue with TX remaining stuck in simplex mode when VOIP forwarding is on
+  * Fixed issues with some CLI commands not interpreted correctly
+  * Adjustment of FM RX and TX flowgraphs
+  * CTCSS tones in FM modes are not filtered if CTCSS is disabled, and are
+    passed to external applications
+
+
+ -- Adrian Musceac <adrian@qradiolink.org>  Fri, 18 Aug 2023 13:15:00 +0300
+
+
 qradiolink (0.8.9-1) experimental; urgency=medium
 
   [ Adrian Musceac ]

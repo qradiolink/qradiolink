@@ -1,2 +1,2 @@
 version=4
-https://codeberg.org/qradiolink/qradiolink/releases .*/(\d.*).tar.gz
+https://codeberg.org/qradiolink/qradiolink/tags .*/(\d.*).tar.gz
