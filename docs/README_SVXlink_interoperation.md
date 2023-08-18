@@ -2,6 +2,7 @@
 # SVXlink and UDP audio streaming operation mode
 
 QRadioLink can now interoperate with SVXlink and other applications which use UDP audio streaming.
+Voice forwarding to and from Mumble and UDP audio streaming are not mutually exclusive. If both options are enabled, demodulated audio will be sent to both UDP and Mumble, while voice originating from Mumble will be mixed with voice originating from UDP and the result will be transmitted over RF.
 There are several new settings for the configuration of UDP streaming and SVXlink control:
 
 * **UDP audio sample rate** (default 16000): possible values are 48000, 16000, 8000. Audio is resampled from the internal rate of 8000 samples per second to the rate defined here. To communicate with SVXlink, the rate set here needs to match the setting CARD_SAMPLE_RATE in the [GLOBAL] section of the svxlink config. Also important, the other application needs to stream only mono audio (only one channel, not interleaved samples from two channels). In svxlink this is achieved by setting CARD_CHANNELS=1 in the [GLOBAL] section.
