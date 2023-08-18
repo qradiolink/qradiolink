@@ -468,9 +468,10 @@ void RadioController::flushRadioToVoipBuffer()
 
 bool RadioController::processMixerQueue()
 {
-    if(_audio_mixer_in->buffers_available())
+    int maximum_frame_size = _settings->udp_enabled ? 320 : 960;
+    if(_audio_mixer_in->buffers_available(maximum_frame_size))
     {
-        int tx_timer_value = (_settings->voip_forwarding ? 500 : (_settings->udp_enabled ? 500 : 250));
+        int tx_timer_value = (_settings->voip_forwarding ? 200 : (_settings->udp_enabled ? 300 : 250));
         if(_settings->voip_forwarding || _settings->repeater_enabled || _settings->udp_enabled)
         {
             if(!_voip_tx_timer->isActive())
@@ -482,7 +483,6 @@ bool RadioController::processMixerQueue()
                 return true;
             }
         }
-        int maximum_frame_size = _settings->udp_enabled ? 320 : 320; /// FIXME: mixer buffers not emptied completely lead to stuck TX
         short *pcm = _audio_mixer_in->mix_samples(_tx_volume, maximum_frame_size);
         if(pcm == nullptr)
             return false;
@@ -955,8 +955,6 @@ void RadioController::transmitBinData()
 
 void RadioController::sendTxBeep(int sound)
 {
-    if(_settings->udp_enabled)
-        return;
     short *samples;
     int size;
     switch(sound)
@@ -1100,8 +1098,15 @@ void RadioController::stopTx()
                 && ((_tx_mode == gr_modem_types::ModemTypeNBFM2500) ||
                     (_tx_mode == gr_modem_types::ModemTypeNBFM5000)))
         {
-            sendTxBeep(_settings->end_beep);
-            tx_tail_msec = 800;
+            if(_settings->end_beep > 0)
+            {
+                sendTxBeep(_settings->end_beep);
+                tx_tail_msec = 1500;
+            }
+            else
+            {
+                tx_tail_msec = 800;
+            }
         }
         // FIXME: end tail length should be calculated exactly
         _end_tx_timer->start(tx_tail_msec);
