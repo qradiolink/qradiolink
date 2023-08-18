@@ -5,6 +5,14 @@ QRadioLink can now interoperate with SVXlink and other applications which use UD
 Voice forwarding to and from Mumble and UDP audio streaming are not mutually exclusive. If both options are enabled, demodulated audio will be sent to both UDP and Mumble, while voice originating from Mumble will be mixed with voice originating from UDP and the result will be transmitted over RF.
 
 
+# Known issues
+
+Short carrier drops in the first 30 seconds or so of the start of the transmission (svxlink to RF).
+This is due to sample jitter in the GNU radio flowgraphs leading to SDR underruns.
+
+
+# Settings
+
 There are several new settings for the configuration of UDP streaming and SVXlink control:
 
 * **UDP audio sample rate** (default 16000): possible values are 48000, 16000, 8000. Audio is resampled from the internal rate of 8000 samples per second to the rate defined here. To communicate with SVXlink, the rate set here needs to match the setting CARD_SAMPLE_RATE in the [GLOBAL] section of the svxlink config. Also important, the other application needs to stream only mono audio (only one channel, not interleaved samples from two channels). In svxlink this is achieved by setting CARD_CHANNELS=1 in the [GLOBAL] section.
@@ -39,7 +47,8 @@ Setting squelch value to -140
 
 At the moment the VOX squelch in svxlink cannot be used.
 
-# Relevant QRadioLink config values to be adjusted
+
+# Relevant QRadioLink config values
 
 <pre>
 squelch = -75;
@@ -56,6 +65,7 @@ sql_pty_path = "/tmp/sql_pty";
 </pre>
 
 SVXlink in repeater mode has not yet been tested. For it to work, one needs to set duplex on in qradiolink and set a TX shift equal to the repeater split.
+
 
 # Example working svxlink client config for a simplex node
 
@@ -116,9 +126,9 @@ AUDIO_DEV=udp:127.0.0.1:4937
 AUDIO_CHANNEL=0
 AUDIO_DEV_KEEP_OPEN=0
 SQL_DET=PTY
-SQL_START_DELAY=100
+SQL_START_DELAY=40
 SQL_DELAY=40
-SQL_HANGTIME=0
+SQL_HANGTIME=100
 #SQL_EXTENDED_HANGTIME=1000
 #SQL_EXTENDED_HANGTIME_THRESH=15
 SQL_TIMEOUT=1000
