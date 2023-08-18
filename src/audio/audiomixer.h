@@ -34,8 +34,8 @@ signals:
 
 public slots:
     void addSamples(short *pcm, int samples, int sid);
-    short *mix_samples(float rx_volume, int maximum_frame_size=960);
-    bool buffers_available();
+    short *mix_samples(float rx_volume, int maximum_frame_size=320);
+    bool buffers_available(int maximum_frame_size=320);
     void empty();
 
 private:

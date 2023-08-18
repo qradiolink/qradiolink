@@ -42,9 +42,25 @@ void AudioMixer::empty()
     }
 }
 
-bool AudioMixer::buffers_available()
+bool AudioMixer::buffers_available(int maximum_frame_size)
 {
-    return _sample_buffers.size() > 0;
+    _mutex.lock();
+    int max_samples = 0;
+    if(_sample_buffers.size() > 0)
+    {
+        QMap<int, QVector<short>*>::const_iterator iter = _sample_buffers.constBegin();
+        while (iter != _sample_buffers.constEnd())
+        {
+            QVector<short> *samples_for_sid = iter.value();
+            if(samples_for_sid->size() > max_samples)
+            {
+                max_samples = samples_for_sid->size();
+            }
+            ++iter;
+        }
+    }
+    _mutex.unlock();
+    return max_samples > maximum_frame_size;
 }
 
 
