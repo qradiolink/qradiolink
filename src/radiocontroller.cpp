@@ -1171,7 +1171,7 @@ void RadioController::stopVoipTx()
 void RadioController::callbackStopReceive()
 {
     _receiving = false;
-    if(_settings->udp_enabled) /// used only for SVXlink
+    if(_settings->udp_enabled && !_settings->sql_pty_path.isEmpty()) /// used only for SVXlink
     {
         int fd = open(_settings->sql_pty_path.toStdString().c_str(), O_RDWR | O_NONBLOCK | O_SYNC);
         if(fd < 0)
@@ -1186,7 +1186,7 @@ void RadioController::callbackStopReceive()
 
 void RadioController::callbackOnReceive()
 {
-    if(_settings->udp_enabled)
+    if(_settings->udp_enabled && !_settings->sql_pty_path.isEmpty())
     {
         int fd = open(_settings->sql_pty_path.toStdString().c_str(), O_RDWR | O_NONBLOCK | O_SYNC);
         if(fd < 0)
