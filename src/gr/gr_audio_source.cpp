@@ -15,6 +15,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "gr_audio_source.h"
+#include <gnuradio/blocks/pdu.h>
 
 
 gr_audio_source_sptr
@@ -31,6 +32,7 @@ gr_audio_source::gr_audio_source() :
     _offset = 0;
     _finished = true;
     _data = new std::vector<float>;
+    message_port_register_in(gr::blocks::pdu::pdu_port_id());
     /// Audio samples come in packets of 40 msec;
     set_output_multiple(320);
 }
@@ -54,6 +56,8 @@ int gr_audio_source::set_data(std::vector<float> *data)
     data->clear();
     delete data;
     _finished = false;
+    pmt::pmt_t msg;
+    this->_post(gr::blocks::pdu::pdu_port_id(), msg);
     return 0;
 }
 

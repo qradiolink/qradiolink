@@ -1101,17 +1101,16 @@ void RadioController::stopTx()
             if(_settings->end_beep > 0)
             {
                 sendTxBeep(_settings->end_beep);
-                tx_tail_msec = 1500;
+                tx_tail_msec = 800;
             }
             else
             {
-                tx_tail_msec = 800;
+                tx_tail_msec = 200;
             }
         }
         // FIXME: end tail length should be calculated exactly
         _end_tx_timer->start(tx_tail_msec);
         _radio_time_out_timer->stop();
-
     }
 }
 

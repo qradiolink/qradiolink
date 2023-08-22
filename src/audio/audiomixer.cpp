@@ -60,7 +60,7 @@ bool AudioMixer::buffers_available(int maximum_frame_size)
         }
     }
     _mutex.unlock();
-    return max_samples > maximum_frame_size;
+    return max_samples >= maximum_frame_size;
 }
 
 
