@@ -46,6 +46,7 @@ private:
     std::vector<unsigned char> *_data;
     gr::thread::condition_variable _cond_wait;
     gr::thread::mutex _mutex;
+    void message_handler_function(const pmt::pmt_t& msg);
 };
 
 #endif // GR_BYTE_SOURCE_H

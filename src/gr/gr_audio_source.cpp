@@ -18,6 +18,8 @@
 #include <gnuradio/blocks/pdu.h>
 
 
+const pmt::pmt_t port_id = pmt::intern("analog_msg_port");
+
 gr_audio_source_sptr
 make_gr_audio_source ()
 {
@@ -32,7 +34,9 @@ gr_audio_source::gr_audio_source() :
     _offset = 0;
     _finished = true;
     _data = new std::vector<float>;
-    message_port_register_in(gr::blocks::pdu::pdu_port_id());
+    message_port_register_in(port_id);
+    set_msg_handler(port_id,
+       [this](const pmt::pmt_t& msg) { message_handler_function(msg); });
     /// Audio samples come in packets of 40 msec;
     set_output_multiple(320);
 }
@@ -57,8 +61,15 @@ int gr_audio_source::set_data(std::vector<float> *data)
     delete data;
     _finished = false;
     pmt::pmt_t msg;
-    this->_post(gr::blocks::pdu::pdu_port_id(), msg);
+    this->_post(port_id, msg);
     return 0;
+}
+
+void gr_audio_source::message_handler_function(const pmt::pmt_t &msg)
+{
+    (void) msg;
+    if(this->nmsgs(port_id) > 0)
+        delete_head_nowait(port_id);
 }
 
 int gr_audio_source::work(int noutput_items,

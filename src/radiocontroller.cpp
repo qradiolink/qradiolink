@@ -468,7 +468,7 @@ void RadioController::flushRadioToVoipBuffer()
 
 bool RadioController::processMixerQueue()
 {
-    int maximum_frame_size = _settings->udp_enabled ? 320 : 960;
+    int maximum_frame_size = _settings->udp_enabled ? 1600 : 960;
     if(_audio_mixer_in->buffers_available(maximum_frame_size))
     {
         int tx_timer_value = (_settings->voip_forwarding ? 200 : (_settings->udp_enabled ? 300 : 250));
@@ -1875,6 +1875,7 @@ void RadioController::toggleRX(bool value)
         {
             _modem->deinitRX(_rx_mode);
             _mutex->unlock();
+            _logger->log(Logger::LogLevelFatal, e.what());
             _logger->log(Logger::LogLevelFatal,
                          "Could not init RX device, check settings and restart");
             emit initError("Could not init RX device, check settings", 0);
@@ -1950,6 +1951,7 @@ void RadioController::toggleTX(bool value)
             if(_settings->rx_inited)
                 _modem->startRX(_settings->block_buffer_size);
             _mutex->unlock();
+            _logger->log(Logger::LogLevelFatal, e.what());
             _logger->log(Logger::LogLevelFatal,
                          "Could not init TX device, check settings and restart");
             emit initError("Could not init TX device, check settings", 1);
