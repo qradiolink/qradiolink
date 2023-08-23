@@ -243,7 +243,6 @@ void RadioController::run()
         QCoreApplication::processEvents(); // process signals
         if(_settings->voip_connected || _settings->udp_enabled)
             QtConcurrent::run(this, &RadioController::flushRadioToVoipBuffer);
-        buffers_filling = processMixerQueue();
 
         if(voip_forwarding && !transmitting && !ptt_activated &&
                 (_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL))
@@ -1464,6 +1463,7 @@ void RadioController::receivePCMAudio(std::vector<float> *audio_data)
         {
             /// Need to mix several audio channels
             _audio_mixer_in->addSamples(pcm, size, 9900); // radio id hardcoded
+            processMixerQueue();
         }
         else
         {
@@ -1619,6 +1619,7 @@ void RadioController::protoReceived(QByteArray data)
 void RadioController::processVoipAudioFrame(short *pcm, int samples, quint64 sid)
 {
     _audio_mixer_in->addSamples(pcm, samples, sid);
+    processMixerQueue();
 }
 
 void RadioController::processVoipVideoFrame(unsigned char *video_frame, int size, quint64 sid)
