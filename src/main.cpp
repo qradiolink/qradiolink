@@ -203,14 +203,14 @@ int main(int argc, char *argv[])
         }
         if(start_transceiver)
         {
+            radio_op->toggleRX(true);
+            logger->log(Logger::LogLevelInfo, "Started receiver");
             radio_op->toggleTX(true);
             logger->log(Logger::LogLevelInfo, "Started transmitter");
             if(set_ptt_on)
             {
                 radio_op->startTransmission();
             }
-            radio_op->toggleRX(true);
-            logger->log(Logger::LogLevelInfo, "Started receiver");
         }
         std::signal(SIGINT, signal_handler);
         std::signal(SIGTERM, signal_handler);
