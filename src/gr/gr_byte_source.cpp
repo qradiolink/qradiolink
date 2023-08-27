@@ -15,7 +15,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "gr_byte_source.h"
-#include <gnuradio/blocks/pdu.h>
+#include <gnuradio/pdu.h>
 
 
 const pmt::pmt_t port_id = pmt::intern("digital_msg_port");
