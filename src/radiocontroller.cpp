@@ -243,7 +243,6 @@ void RadioController::run()
         QCoreApplication::processEvents(); // process signals
         if(_settings->voip_connected || _settings->udp_enabled)
             QtConcurrent::run(this, &RadioController::flushRadioToVoipBuffer);
-        buffers_filling = processMixerQueue();
 
         if(voip_forwarding && !transmitting && !ptt_activated &&
                 (_tx_radio_type == radio_type::RADIO_TYPE_DIGITAL))
@@ -316,7 +315,7 @@ void RadioController::run()
             if(data_to_process)
             {
                 _receiving = true;
-                _rx_timer->start(500);
+                _rx_timer->start(200);
             }
         }
 
@@ -468,7 +467,7 @@ void RadioController::flushRadioToVoipBuffer()
 
 bool RadioController::processMixerQueue()
 {
-    int maximum_frame_size = _settings->udp_enabled ? 320 : 960;
+    int maximum_frame_size = _settings->udp_enabled ? 1600 : 960;
     if(_audio_mixer_in->buffers_available(maximum_frame_size))
     {
         int tx_timer_value = (_settings->voip_forwarding ? 200 : (_settings->udp_enabled ? 300 : 250));
@@ -1101,17 +1100,16 @@ void RadioController::stopTx()
             if(_settings->end_beep > 0)
             {
                 sendTxBeep(_settings->end_beep);
-                tx_tail_msec = 1500;
+                tx_tail_msec = 800;
             }
             else
             {
-                tx_tail_msec = 800;
+                tx_tail_msec = 200;
             }
         }
         // FIXME: end tail length should be calculated exactly
         _end_tx_timer->start(tx_tail_msec);
         _radio_time_out_timer->stop();
-
     }
 }
 
@@ -1465,6 +1463,7 @@ void RadioController::receivePCMAudio(std::vector<float> *audio_data)
         {
             /// Need to mix several audio channels
             _audio_mixer_in->addSamples(pcm, size, 9900); // radio id hardcoded
+            processMixerQueue();
         }
         else
         {
@@ -1620,6 +1619,7 @@ void RadioController::protoReceived(QByteArray data)
 void RadioController::processVoipAudioFrame(short *pcm, int samples, quint64 sid)
 {
     _audio_mixer_in->addSamples(pcm, samples, sid);
+    processMixerQueue();
 }
 
 void RadioController::processVoipVideoFrame(unsigned char *video_frame, int size, quint64 sid)
@@ -1876,6 +1876,7 @@ void RadioController::toggleRX(bool value)
         {
             _modem->deinitRX(_rx_mode);
             _mutex->unlock();
+            _logger->log(Logger::LogLevelFatal, e.what());
             _logger->log(Logger::LogLevelFatal,
                          "Could not init RX device, check settings and restart");
             emit initError("Could not init RX device, check settings", 0);
@@ -1951,6 +1952,7 @@ void RadioController::toggleTX(bool value)
             if(_settings->rx_inited)
                 _modem->startRX(_settings->block_buffer_size);
             _mutex->unlock();
+            _logger->log(Logger::LogLevelFatal, e.what());
             _logger->log(Logger::LogLevelFatal,
                          "Could not init TX device, check settings and restart");
             emit initError("Could not init TX device, check settings", 1);

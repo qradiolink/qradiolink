@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1400</width>
+    <width>1500</width>
     <height>944</height>
    </rect>
   </property>
@@ -90,7 +90,7 @@
          </font>
         </property>
         <property name="currentIndex">
-         <number>3</number>
+         <number>0</number>
         </property>
         <property name="iconSize">
          <size>
@@ -5325,7 +5325,7 @@ color: rgb(182, 182, 182);</string>
         <widget class="QFrame" name="rxGainsFrameMenu">
          <property name="geometry">
           <rect>
-           <x>781</x>
+           <x>840</x>
            <y>23</y>
            <width>301</width>
            <height>51</height>
@@ -5354,7 +5354,7 @@ color: rgb(182, 182, 182);</string>
         <widget class="QFrame" name="txGainsFrameMenu">
          <property name="geometry">
           <rect>
-           <x>1090</x>
+           <x>1150</x>
            <y>23</y>
            <width>301</width>
            <height>51</height>
@@ -5383,7 +5383,7 @@ color: rgb(182, 182, 182);</string>
         <widget class="QLabel" name="label_21">
          <property name="geometry">
           <rect>
-           <x>794</x>
+           <x>850</x>
            <y>2</y>
            <width>70</width>
            <height>20</height>
@@ -5402,7 +5402,7 @@ color: rgb(182, 182, 182);</string>
         <widget class="QLabel" name="label_50">
          <property name="geometry">
           <rect>
-           <x>1104</x>
+           <x>1160</x>
            <y>1</y>
            <width>70</width>
            <height>20</height>
@@ -5421,7 +5421,7 @@ color: rgb(182, 182, 182);</string>
         <widget class="SkinnedDial" name="agcAttackDial">
          <property name="geometry">
           <rect>
-           <x>650</x>
+           <x>660</x>
            <y>8</y>
            <width>50</width>
            <height>51</height>
@@ -5437,7 +5437,7 @@ color: rgb(182, 182, 182);</string>
         <widget class="SkinnedDial" name="agcDecayDial">
          <property name="geometry">
           <rect>
-           <x>720</x>
+           <x>750</x>
            <y>8</y>
            <width>50</width>
            <height>51</height>
@@ -5453,9 +5453,9 @@ color: rgb(182, 182, 182);</string>
         <widget class="QLabel" name="label_51">
          <property name="geometry">
           <rect>
-           <x>637</x>
+           <x>640</x>
            <y>56</y>
-           <width>71</width>
+           <width>90</width>
            <height>20</height>
           </rect>
          </property>
@@ -5466,9 +5466,9 @@ color: rgb(182, 182, 182);</string>
         <widget class="QLabel" name="label_52">
          <property name="geometry">
           <rect>
-           <x>710</x>
+           <x>740</x>
            <y>56</y>
-           <width>71</width>
+           <width>90</width>
            <height>20</height>
           </rect>
          </property>
@@ -6595,8 +6595,8 @@ font: 14pt &quot;Sans Serif&quot;;
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1400</width>
-     <height>30</height>
+     <width>1500</width>
+     <height>34</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

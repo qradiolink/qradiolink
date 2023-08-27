@@ -60,7 +60,7 @@ bool AudioMixer::buffers_available(int maximum_frame_size)
         }
     }
     _mutex.unlock();
-    return max_samples > maximum_frame_size;
+    return max_samples >= maximum_frame_size;
 }
 
 
@@ -89,7 +89,7 @@ void AudioMixer::addSamples(short *pcm, int samples, int sid)
 short* AudioMixer::mix_samples(float rx_volume, int maximum_frame_size)
 {
     const int frame_size = 320; // to radio is always 40 msec
-    const int max_frame_size = maximum_frame_size; // to voip can reach 120 msec , but due to a bug using only 40 msec
+    const int max_frame_size = maximum_frame_size; // maximum samples to accumulate in any one channel
     short *pcm = nullptr;
     int max_samples = 0;
     QMap<int, int> sizes_map;

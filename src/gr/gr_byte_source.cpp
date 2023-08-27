@@ -15,7 +15,10 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "gr_byte_source.h"
+#include <gnuradio/blocks/pdu.h>
 
+
+const pmt::pmt_t port_id = pmt::intern("digital_msg_port");
 
 gr_byte_source_sptr
 make_gr_byte_source ()
@@ -31,6 +34,9 @@ gr_byte_source::gr_byte_source() :
     _offset = 0;
     _finished = true;
     _data = new std::vector<unsigned char>;
+    message_port_register_in(port_id);
+    set_msg_handler(port_id,
+       [this](const pmt::pmt_t& msg) { message_handler_function(msg); });
 }
 
 gr_byte_source::~gr_byte_source()
@@ -54,7 +60,16 @@ int gr_byte_source::set_data(std::vector<unsigned char> *data)
     data->clear();
     delete data;
     _finished = false;
+    pmt::pmt_t msg;
+    this->_post(port_id, msg);
     return 0;
+}
+
+void gr_byte_source::message_handler_function(const pmt::pmt_t &msg)
+{
+    (void) msg;
+    if(this->nmsgs(port_id) > 0)
+        delete_head_nowait(port_id);
 }
 
 int gr_byte_source::work(int noutput_items,
