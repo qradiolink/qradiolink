@@ -248,7 +248,7 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
 
 
     _video_img = new QPixmap;
-    _constellation_img = new QPixmap(300,300);
+    _constellation_img = new QImage(300,300, QImage::Format_ARGB32);
     _vu_meter_img = new QPixmap(300,20);
     _realFftData = new float[1048576];
     _iirFftData = new float[1048576];
@@ -1078,7 +1078,8 @@ void MainWindow::updateConstellation(complex_vector *constellation_data)
         return;
     }
     _mutex.lock();
-    _constellation_img->fill(QColor("transparent"));
+
+
     QPen pen(QColor(0,255,0,255), 4, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     QPen pen_green(QColor(0,255,0,255), 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     QPen pen_red(QColor(255,0,0,125), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
@@ -1088,14 +1089,24 @@ void MainWindow::updateConstellation(complex_vector *constellation_data)
     pen_list.append(pen_green);
     pen_list.append(pen_blue);
     QPen pen2(QColor(180,180,180,180), 1, Qt::SolidLine, Qt::SquareCap, Qt::RoundJoin);
+    QImage previous(*_constellation_img);
 
+    _constellation_img->fill(QColor("transparent"));
     _constellation_painter->begin(_constellation_img);
+    if(_settings->fft_history)
+    {
+        _constellation_painter->setOpacity(0.9);
+        _constellation_painter->setCompositionMode(QPainter::CompositionMode_Source);
+        _constellation_painter->drawImage(0, 0, previous);
+    }
+    _constellation_painter->setOpacity(1.0);
     _constellation_painter->setCompositionMode(QPainter::CompositionMode_Source);
     _constellation_painter->setPen(pen2);
     _constellation_painter->drawLine(150, 0, 150, 300);
     _constellation_painter->drawLine(0, 150, 300, 150);
     _constellation_painter->setPen(pen);
     std::complex<float> prev_pt(0.0, 0.0);
+    _constellation_painter->setCompositionMode(QPainter::CompositionMode_HardLight);
     for(int i = 0;i < (int)constellation_data->size();i++)
     {
         _constellation_painter->setPen(pen);
@@ -1117,7 +1128,7 @@ void MainWindow::updateConstellation(complex_vector *constellation_data)
     }
     _constellation_painter->end();
 
-    ui->constellationLabel->setPixmap(*_constellation_img);
+    ui->constellationLabel->setPixmap(QPixmap::fromImage(*_constellation_img));
     _mutex.unlock();
     constellation_data->clear();
     delete constellation_data;

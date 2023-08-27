@@ -20,6 +20,7 @@
 #include <QMainWindow>
 #include <QCloseEvent>
 #include <QFile>
+#include <QImage>
 #include <QFileDialog>
 #include <QScrollBar>
 #include <QDir>
@@ -299,7 +300,7 @@ private:
     Logger *_logger;
     RadioChannels *_radio_channels;
     QPixmap *_video_img;
-    QPixmap *_constellation_img;
+    QImage *_constellation_img;
     QPixmap *_vu_meter_img;
     QFileInfo *_config_file;
     QPainter *_constellation_painter;
