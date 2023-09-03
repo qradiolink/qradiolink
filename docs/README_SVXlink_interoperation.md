@@ -7,8 +7,7 @@ Voice forwarding to and from Mumble and UDP audio streaming are not mutually exc
 
 # Known issues
 
-Short carrier drops in the first 30 seconds or so of the start of the transmission (svxlink to RF).
-This is due to sample jitter in the GNU radio flowgraphs leading to SDR underruns.
+Short carrier drops when UDP network packets are delayed too much or lost. Since there is no continuous FM carrier like on a real radio, they will be noticeable when packet loss occurs or network latency exceeds the JITTER_BUFFER_DELAY setting in svxlink.
 
 
 # Settings

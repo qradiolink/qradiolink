@@ -1,3 +1,16 @@
+qradiolink (0.8.11-1) experimental; urgency=medium
+
+  [ Adrian Musceac ]
+  * Fixed carrier drops at start of transmissions when streaming UDP or VOIP packets
+  * Faster synchronization at the start of digital transmissions
+  * Added 500 msec of history to the constellation display if FFT history is enabled
+  * UDP and VOIP network packets drive the timing of the transmit flowgraph
+  * Fixed AGC labels partly obscured in controls menu bar
+
+
+ -- Adrian Musceac <adrian@qradiolink.org>  Sun, 03 Sep 2023 14:56:00 +0300
+
+
 qradiolink (0.8.10-1) experimental; urgency=medium
 
   [ Adrian Musceac ]
