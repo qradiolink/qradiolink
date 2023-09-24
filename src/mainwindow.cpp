@@ -636,6 +636,8 @@ void MainWindow::setConfig()
     ui->udpRXPortLineEdit->setText(QString::number(_settings->udp_send_port));
     ui->udpTXPortLineEdit->setText(QString::number(_settings->udp_listen_port));
     ui->sqlPTYLineEdit->setText(_settings->sql_pty_path);
+    ui->localUDPIPAddressLineEdit->setText(_settings->udp_audio_local_address);
+    ui->remoteUDPIPAddressLineEdit->setText(_settings->udp_audio_remote_address);
 }
 
 void MainWindow::saveUiConfig()
@@ -692,6 +694,8 @@ void MainWindow::saveUiConfig()
     _settings->udp_send_port = ui->udpRXPortLineEdit->text().toInt();
     _settings->udp_listen_port = ui->udpTXPortLineEdit->text().toInt();
     _settings->sql_pty_path = ui->sqlPTYLineEdit->text();
+    _settings->udp_audio_local_address = ui->localUDPIPAddressLineEdit->text();
+    _settings->udp_audio_remote_address = ui->remoteUDPIPAddressLineEdit->text();
     _settings->saveConfig();
 }
 

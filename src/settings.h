@@ -121,6 +121,8 @@ public:
     int m17_destination_type;
     int udp_audio_sample_rate;
     QString sql_pty_path;
+    QString udp_audio_local_address;
+    QString udp_audio_remote_address;
 
     /// Not saved to config:
 

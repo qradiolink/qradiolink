@@ -54,7 +54,7 @@ void UDPClient::start()
     bool status;
     if(_settings->udp_listen_port != 0)
     {
-        status = _udp_socket_tx->bind(QHostAddress::LocalHost, _settings->udp_listen_port);
+        status = _udp_socket_tx->bind(QHostAddress(_settings->udp_audio_local_address), _settings->udp_listen_port);
     }
     else
         status = false;
@@ -134,6 +134,6 @@ void UDPClient::writeAudioToNetwork(short *pcm, int samples)
     qint64 size = out_length * sizeof(int16_t);
     delete[] pcm;
     //_logger->log(Logger::LogLevelDebug, QString("RX UDP datagram with size: %1").arg(size));
-    _udp_socket_rx->writeDatagram((const char*)resampled, size, QHostAddress::LocalHost, _settings->udp_send_port);
+    _udp_socket_rx->writeDatagram((const char*)resampled, size, QHostAddress(_settings->udp_audio_remote_address), _settings->udp_send_port);
 }
 
