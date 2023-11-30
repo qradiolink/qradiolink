@@ -28,6 +28,7 @@
 #include <gnuradio/blocks/float_to_short.h>
 #include <gnuradio/blocks/multiply_const.h>
 #include "src/config_mmdvm.h"
+#include "rssi_tag_block.h"
 
 class gr_demod_mmdvm;
 
@@ -40,6 +41,7 @@ class gr_demod_mmdvm : public gr::hier_block2
 public:
     explicit gr_demod_mmdvm(std::vector<int> signature, int sps=10, int samp_rate=MMDVM_SAMPLE_RATE, int carrier_freq=1600,
                                int filter_width=10000);
+    void calibrate_rssi(float level);
 
 
 private:
@@ -47,6 +49,7 @@ private:
     gr::analog::quadrature_demod_cf::sptr _fm_demod;
     gr::blocks::multiply_const_ff::sptr _level_control;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
+    rssi_tag_block_sptr _rssi_tag_block;
 
     int _sps;
     int _samp_rate;

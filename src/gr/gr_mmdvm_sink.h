@@ -49,6 +49,7 @@ private:
     std::vector<uint8_t> control_buf[MAX_MMDVM_CHANNELS];
     std::vector<int16_t> data_buf[MAX_MMDVM_CHANNELS];
     int _num_channels;
+    uint32_t _rssi[MAX_MMDVM_CHANNELS];
     bool _use_tdma;
 };
 

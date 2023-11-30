@@ -1137,6 +1137,8 @@ void gr_demod_base::set_bandwidth_specific()
 void gr_demod_base::calibrate_rssi(float value)
 {
     _rssi_block->set_level(value);
+    _mmdvm_demod->calibrate_rssi(value);
+    _mmdvm_demod_multi->calibrate_rssi(value);
 }
 
 void gr_demod_base::set_agc_attack(int value)

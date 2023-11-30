@@ -43,6 +43,7 @@ gr_demod_mmdvm::gr_demod_mmdvm(std::vector<int>signature, int sps, int samp_rate
     std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _filter_width,
                                 _filter_width, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1,_sps, taps);
+    _rssi_tag_block = make_rssi_tag_block();
 
     _fm_demod = gr::analog::quadrature_demod_cf::make(float(_target_samp_rate)/(2*M_PI* fm_demod_width));
     _level_control = gr::blocks::multiply_const_ff::make(1.0);
@@ -50,12 +51,18 @@ gr_demod_mmdvm::gr_demod_mmdvm(std::vector<int>signature, int sps, int samp_rate
 
 
     connect(self(),0,_resampler,0);
-    connect(_resampler,0,_fm_demod,0);
+    connect(_resampler,0,_rssi_tag_block,0);
+    connect(_rssi_tag_block,0,_fm_demod,0);
     connect(_fm_demod,0,_level_control,0);
     connect(_level_control,0,_float_to_short,0);
     connect(_float_to_short,0,self(),0);
 
 
+}
+
+void gr_demod_mmdvm::calibrate_rssi(float level)
+{
+    _rssi_tag_block->calibrate_rssi(level);
 }
 
 

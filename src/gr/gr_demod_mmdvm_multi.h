@@ -29,6 +29,7 @@
 #include <gnuradio/blocks/rotator_cc.h>
 #include "src/bursttimer.h"
 #include "gr_mmdvm_sink.h"
+#include "rssi_tag_block.h"
 
 class gr_demod_mmdvm_multi;
 
@@ -47,6 +48,7 @@ public:
                                     int filter_width=8000);
 
     void set_filter_width(int filter_width);
+    void calibrate_rssi(float level);
 
 
 private:
@@ -57,6 +59,7 @@ private:
     gr::filter::rational_resampler_base_ccf::sptr _resampler[MAX_MMDVM_CHANNELS];
     gr::filter::fft_filter_ccf::sptr _filter[MAX_MMDVM_CHANNELS];
     gr_mmdvm_sink_sptr _mmdvm_sink;
+    rssi_tag_block_sptr _rssi_tag_block[MAX_MMDVM_CHANNELS];
     gr::blocks::rotator_cc::sptr _rotator[MAX_MMDVM_CHANNELS];
 
     int _samples_per_symbol;
