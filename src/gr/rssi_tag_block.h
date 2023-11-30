@@ -41,6 +41,8 @@ public:
 private:
     void add_rssi_tag(float db);
     float _calibration_level;
+    unsigned int _nitems;
+    float _sum;
 
 };
 

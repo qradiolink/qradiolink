@@ -31,6 +31,8 @@ rssi_tag_block::rssi_tag_block()
           gr::io_signature::make(1, 1, sizeof(gr_complex)))
 {
     _calibration_level = 0.0f;
+    _nitems = 0;
+    _sum = 0.0f;
 }
 
 rssi_tag_block::~rssi_tag_block()
@@ -44,17 +46,22 @@ int rssi_tag_block::work (int noutput_items,
     const gr_complex *in = (const gr_complex*) input_items[0];
     gr_complex *out = (gr_complex*)(output_items[0]);
     float pwr = 0.0;
-    float sum = 0.0;
 
     for(int i = 0;i < noutput_items;i++)
     {
         pwr = in[i].real()*in[i].real() + in[i].imag()*in[i].imag();
-        sum += pwr*pwr;
+        _sum += pwr*pwr;
         out[i] = in[i];
     }
-    float level = sqrt(sum / (float)(noutput_items));
-    float db = (float) 10.0f * log10f(level + 1.0e-20) + _calibration_level;
-    this->add_rssi_tag(db);
+    _nitems += noutput_items;
+    if(_nitems > 2000)
+    {
+        float level = sqrt(_sum / (float)(_nitems));
+        float db = (float) 10.0f * log10f(level + 1.0e-20) + _calibration_level;
+        this->add_rssi_tag(db);
+        _sum = 0;
+        _nitems = 0;
+    }
     return noutput_items;
 }
 
