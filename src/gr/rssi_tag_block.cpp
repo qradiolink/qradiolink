@@ -51,17 +51,18 @@ int rssi_tag_block::work (int noutput_items,
     {
         pwr = in[i].real()*in[i].real() + in[i].imag()*in[i].imag();
         _sum += pwr*pwr;
+        _nitems += 1;
         out[i] = in[i];
+        if(_nitems >= 240)
+        {
+            float level = sqrt(_sum / (float)(_nitems));
+            float db = (float) 10.0f * log10f(level + 1.0e-20) + _calibration_level;
+            this->add_rssi_tag(db);
+            _sum = 0;
+            _nitems = 0;
+        }
     }
-    _nitems += noutput_items;
-    if(_nitems > 2000)
-    {
-        float level = sqrt(_sum / (float)(_nitems));
-        float db = (float) 10.0f * log10f(level + 1.0e-20) + _calibration_level;
-        this->add_rssi_tag(db);
-        _sum = 0;
-        _nitems = 0;
-    }
+
     return noutput_items;
 }
 

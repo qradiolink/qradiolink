@@ -81,9 +81,15 @@ int gr_mmdvm_sink::work(int noutput_items,
             std::sort(tags.begin(), tags.end(), gr::tag_t::offset_compare);
         }
         get_tags_in_window(rssi_tags, chan, 0, noutput_items, RSSI_TAG);
+        if (!rssi_tags.empty()) {
+
+            std::sort(rssi_tags.begin(), rssi_tags.end(), gr::tag_t::offset_compare);
+        }
         for (gr::tag_t tag : rssi_tags)
         {
-            _rssi[chan] = (uint32_t)fabs(pmt::to_float((tag.value)));
+            uint32_t rssi = (uint32_t)fabs(pmt::to_float((tag.value)));
+            if(rssi >= _rssi[chan])
+                _rssi[chan] = rssi;
         }
 
         for(int i = 0;i < noutput_items; i++)
@@ -134,6 +140,7 @@ int gr_mmdvm_sink::work(int noutput_items,
             _zmqsocket[chan].send (reply, zmq::send_flags::dontwait);
             data_buf[chan].erase(data_buf[chan].begin(), data_buf[chan].begin() + num_items);
             control_buf[chan].erase(control_buf[chan].begin(), control_buf[chan].begin() + num_items);
+            _rssi[chan] = 0;
         }
     }
 
