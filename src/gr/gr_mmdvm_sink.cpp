@@ -125,14 +125,15 @@ int gr_mmdvm_sink::work(int noutput_items,
             }
             if((slot_no == 1) || (slot_no == 2))
             {
-                for(unsigned int n=0;n<_rssi[chan][0].size();n++)
+                for(int n=(int(_rssi[chan][0].size()) - 1);n>=0;n--)
                 {
                     uint64_t rssi_offset = _rssi[chan][1].at(n);
-                    if((rssi_offset < total_items + i) && ((total_items + i - rssi_offset) >= 240) &&  ((total_items + i - rssi_offset) <= 480))
+                    if((rssi_offset < total_items + i) && ((total_items + i - rssi_offset) >= 30) &&  ((total_items + i - rssi_offset) <= 390))
                     {
                         _last_rssi_on_timeslot[chan] = _rssi[chan][0].at(n);
                         _rssi[chan][0].erase(_rssi[chan][0].begin(), _rssi[chan][0].begin() + n);
                         _rssi[chan][1].erase(_rssi[chan][1].begin(), _rssi[chan][1].begin() + n);
+                        break;
                     }
                 }
             }

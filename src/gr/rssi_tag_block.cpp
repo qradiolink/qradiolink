@@ -54,7 +54,7 @@ int rssi_tag_block::work (int noutput_items,
         _sum += pwr*pwr;
         _nitems += 1;
         out[i] = in[i];
-        if(_nitems >= 360)
+        if(_nitems >= 300)
         {
             float level = sqrt(_sum / (float)(_nitems));
             float db = (float) 10.0f * log10f(level + 1.0e-20) + _calibration_level;
