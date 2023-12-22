@@ -38,6 +38,7 @@ gr_mmdvm_sink::gr_mmdvm_sink(BurstTimer *burst_timer, uint8_t cn, bool multi_cha
     _burst_timer = burst_timer;
     _num_channels = cn;
     _use_tdma = use_tdma;
+
     for(int i = 0;i < _num_channels;i++)
     {
         _zmqcontext[i] = zmq::context_t(1);
@@ -46,7 +47,7 @@ gr_mmdvm_sink::gr_mmdvm_sink(BurstTimer *burst_timer, uint8_t cn, bool multi_cha
         _zmqsocket[i].setsockopt(ZMQ_LINGER, 0);
         int socket_no = multi_channel ? i + 1 : 0;
         _zmqsocket[i].bind ("ipc:///tmp/mmdvm-rx" + std::to_string(socket_no) + ".ipc");
-        _rssi[i] = 0;
+        _last_rssi_on_timeslot[i] = 0;
     }
 
 
@@ -88,9 +89,10 @@ int gr_mmdvm_sink::work(int noutput_items,
         for (gr::tag_t tag : rssi_tags)
         {
             uint32_t rssi = (uint32_t)fabs(pmt::to_float((tag.value)));
-            if(rssi >= _rssi[chan])
-                _rssi[chan] = rssi;
+            _rssi[chan][0].push_back(rssi);
+            _rssi[chan][1].push_back(tag.offset);
         }
+        uint64_t total_items = nitems_read(chan);
 
         for(int i = 0;i < noutput_items; i++)
         {
@@ -121,6 +123,19 @@ int gr_mmdvm_sink::work(int noutput_items,
             {
                 control = MARK_SLOT2;
             }
+            if((slot_no == 1) || (slot_no == 2))
+            {
+                for(unsigned int n=0;n<_rssi[chan][0].size();n++)
+                {
+                    uint64_t rssi_offset = _rssi[chan][1].at(n);
+                    if((rssi_offset < total_items + i) && ((total_items + i - rssi_offset) >= 240) &&  ((total_items + i - rssi_offset) <= 480))
+                    {
+                        _last_rssi_on_timeslot[chan] = _rssi[chan][0].at(n);
+                        _rssi[chan][0].erase(_rssi[chan][0].begin(), _rssi[chan][0].begin() + n);
+                        _rssi[chan][1].erase(_rssi[chan][1].begin(), _rssi[chan][1].begin() + n);
+                    }
+                }
+            }
 
             control_buf[chan].push_back(control);
             data_buf[chan].push_back((int16_t)in[chan][i]);
@@ -133,14 +148,16 @@ int gr_mmdvm_sink::work(int noutput_items,
             int buf_size = 2 * sizeof(uint32_t) + num_items * sizeof(uint8_t) + num_items * sizeof(int16_t);
             zmq::message_t reply (buf_size);
             memcpy (reply.data (), &num_items, sizeof(uint32_t));
-            memcpy ((unsigned char *)reply.data () + sizeof(uint32_t), &(_rssi[chan]), sizeof(uint32_t));
+            memcpy ((unsigned char *)reply.data () + sizeof(uint32_t), &(_last_rssi_on_timeslot[chan]), sizeof(uint32_t));
             memcpy ((unsigned char *)reply.data () + 2 * sizeof(uint32_t), (unsigned char *)control_buf[chan].data(), num_items * sizeof(uint8_t));
             memcpy ((unsigned char *)reply.data () + 2 * sizeof(uint32_t) + num_items * sizeof(uint8_t),
                     (unsigned char *)data_buf[chan].data(), num_items*sizeof(int16_t));
             _zmqsocket[chan].send (reply, zmq::send_flags::dontwait);
             data_buf[chan].erase(data_buf[chan].begin(), data_buf[chan].begin() + num_items);
             control_buf[chan].erase(control_buf[chan].begin(), control_buf[chan].begin() + num_items);
-            _rssi[chan] = 0;
+
+            _last_rssi_on_timeslot[chan] = 0;
+
         }
     }
 

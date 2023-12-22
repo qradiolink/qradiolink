@@ -1,4 +1,5 @@
 // Written by Adrian Musceac YO8RZZ , started Nov 2023.
+// Based on code from Gqrx rx_meter Copyright 2011 Alexandru Csete OZ9AEC.
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License as
@@ -26,7 +27,7 @@ rssi_tag_block_sptr make_rssi_tag_block ()
 }
 
 rssi_tag_block::rssi_tag_block()
-    : gr::sync_block ("rx_meter_c",
+    : gr::sync_block ("rssi_tag_block",
           gr::io_signature::make(1, 1, sizeof(gr_complex)),
           gr::io_signature::make(1, 1, sizeof(gr_complex)))
 {
@@ -53,11 +54,11 @@ int rssi_tag_block::work (int noutput_items,
         _sum += pwr*pwr;
         _nitems += 1;
         out[i] = in[i];
-        if(_nitems >= 240)
+        if(_nitems >= 360)
         {
             float level = sqrt(_sum / (float)(_nitems));
             float db = (float) 10.0f * log10f(level + 1.0e-20) + _calibration_level;
-            this->add_rssi_tag(db);
+            this->add_rssi_tag(db, i);
             _sum = 0;
             _nitems = 0;
         }
@@ -67,10 +68,10 @@ int rssi_tag_block::work (int noutput_items,
 }
 
 // Add RSSI db tag to stream
-void rssi_tag_block::add_rssi_tag(float db)
+void rssi_tag_block::add_rssi_tag(float db, uint64_t sample)
 {
     const pmt::pmt_t t_val = pmt::from_float(db);
-    this->add_item_tag(0, nitems_written(0), RSSI_TAG, t_val);
+    this->add_item_tag(0, nitems_written(0) + sample, RSSI_TAG, t_val);
 }
 
 void rssi_tag_block::calibrate_rssi(float level)

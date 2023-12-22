@@ -39,7 +39,7 @@ public:
     void calibrate_rssi(float level);
 
 private:
-    void add_rssi_tag(float db);
+    void add_rssi_tag(float db, uint64_t sample);
     float _calibration_level;
     unsigned int _nitems;
     float _sum;

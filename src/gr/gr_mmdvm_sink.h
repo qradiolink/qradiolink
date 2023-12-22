@@ -17,6 +17,7 @@
 #ifndef GR_MMDV_SINK_H
 #define GR_MMDV_SINK_H
 
+#include <vector>
 #include <gnuradio/sync_block.h>
 #include <gnuradio/sync_interpolator.h>
 #include <gnuradio/io_signature.h>
@@ -49,7 +50,8 @@ private:
     std::vector<uint8_t> control_buf[MAX_MMDVM_CHANNELS];
     std::vector<int16_t> data_buf[MAX_MMDVM_CHANNELS];
     int _num_channels;
-    uint32_t _rssi[MAX_MMDVM_CHANNELS];
+    std::vector<uint64_t> _rssi[MAX_MMDVM_CHANNELS][2];
+    int _last_rssi_on_timeslot[MAX_MMDVM_CHANNELS];
     bool _use_tdma;
 };
 
