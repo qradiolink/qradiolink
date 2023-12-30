@@ -50,8 +50,9 @@ private:
     std::vector<uint8_t> control_buf[MAX_MMDVM_CHANNELS];
     std::vector<int16_t> data_buf[MAX_MMDVM_CHANNELS];
     int _num_channels;
-    std::vector<uint64_t> _rssi[MAX_MMDVM_CHANNELS][2];
+    std::vector<uint64_t> _rssi[MAX_MMDVM_CHANNELS];
     int _last_rssi_on_timeslot[MAX_MMDVM_CHANNELS];
+    uint64_t _slot_sample_counter[MAX_MMDVM_CHANNELS];
     bool _use_tdma;
 };
 
