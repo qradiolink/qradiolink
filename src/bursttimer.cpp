@@ -156,7 +156,8 @@ uint64_t BurstTimer::get_time_delta(int cn)
 {
     std::unique_lock<std::mutex> guard(_timing_mutex[cn]);
     t2[cn] = std::chrono::high_resolution_clock::now();
-    return _time_base[cn] + (uint64_t) std::chrono::duration_cast<std::chrono::nanoseconds>(t2[cn]-t1[cn]).count();
+    return _time_base[cn] + _sample_counter[cn] * _time_per_sample +
+            (uint64_t) std::chrono::duration_cast<std::chrono::nanoseconds>(t2[cn]-t1[cn]).count();
 }
 
 void BurstTimer::reset_timer(int cn)
@@ -181,6 +182,7 @@ void BurstTimer::increment_sample_counter(int cn)
 {
     std::unique_lock<std::mutex> guard(_timing_mutex[cn]);
     _sample_counter[cn]++;
+    t1[cn] = std::chrono::high_resolution_clock::now();
 }
 
 uint64_t BurstTimer::get_sample_counter(int cn)
