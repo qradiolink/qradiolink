@@ -293,7 +293,7 @@ void gr_mod_base::set_samp_rate(int samp_rate)
         _limesdr_sink->calibrate(_samp_rate);
         _top_block->unlock();
     }
-    if(_uhd_specific)
+    else if(_uhd_specific)
     {
         _top_block->lock();
         _uhd_sink->set_center_freq(_device_frequency - _carrier_offset);
@@ -316,7 +316,7 @@ const QMap<std::string,QVector<int>> gr_mod_base::get_gain_names() const
     QMap<std::string,QVector<int>> gain_names;
     if(_lime_specific)
         return gain_names;
-    if(_uhd_specific)
+    else if(_uhd_specific)
     {
         for(unsigned int i=0;i<_gain_names.size();i++)
         {
