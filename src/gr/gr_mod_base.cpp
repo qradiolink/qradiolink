@@ -228,7 +228,7 @@ void gr_mod_base::set_samp_rate(int samp_rate)
             _top_block->disconnect(_rotator,0, _resampler,0);
             if(_lime_specific)
                 _top_block->disconnect(_resampler,0, _limesdr_sink,0);
-            if(_uhd_specific)
+            else if(_uhd_specific)
                 _top_block->disconnect(_resampler,0, _uhd_sink,0);
              else
                 _top_block->disconnect(_resampler,0, _osmosdr_sink,0);
