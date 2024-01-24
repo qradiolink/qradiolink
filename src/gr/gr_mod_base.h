@@ -33,6 +33,8 @@
 #include <gnuradio/zeromq/pull_source.h>
 #include <gnuradio/filter/rational_resampler_base.h>
 #include <osmosdr/sink.h>
+#include <gnuradio/uhd/usrp_sink.h>
+#include <uhd/stream.hpp>
 #include "limesdr/sink.h"
 #include "src/modem_types.h"
 #include "src/bursttimer.h"
@@ -87,6 +89,7 @@ private:
     gr_audio_source_sptr _audio_source;
     osmosdr::sink::sptr _osmosdr_sink;
     gr::limesdr::sink::sptr _limesdr_sink;
+    gr::uhd::usrp_sink::sptr _uhd_sink;
     gr::blocks::rotator_cc::sptr _rotator;
     gr::analog::sig_source_f::sptr _signal_source;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
@@ -144,11 +147,13 @@ private:
     int _preserve_carrier_offset;
     int _mode;
     bool _lime_specific; // FIXME: ugly hack
+    bool _uhd_specific; // ugly hack x2
     double _osmo_filter_bw;
     bool _use_tdma;
     void set_bandwidth_specific();
     void set_center_freq(double freq);
     osmosdr::gain_range_t _gain_range;
+    uhd::gain_range_t _uhd_gain_range;
     std::vector<std::string> _gain_names;
     float _tx_gain;
 
