@@ -17,7 +17,7 @@
 #include "bursttimer.h"
 #include <QDebug>
 
-int lime_fifo_fill_count = 50;
+int lime_fifo_fill_count = -1;
 
 BurstTimer::BurstTimer(uint64_t burst_delay, uint64_t samples_per_slot, uint64_t time_per_sample,
                        uint64_t slot_time)

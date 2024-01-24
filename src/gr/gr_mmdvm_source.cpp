@@ -209,7 +209,11 @@ int gr_mmdvm_source::work(int noutput_items,
     }
 
     int64_t timing_adjust = 0L;
-    if(lime_fifo_fill_count > 50)
+    if(lime_fifo_fill_count == -1)
+    {
+        timing_adjust = 0L;
+    }
+    else if(lime_fifo_fill_count > 50)
     {
         timing_adjust = 100000 * (lime_fifo_fill_count - 50);
     }
@@ -243,12 +247,15 @@ int gr_mmdvm_source::work(int noutput_items,
         data_buf[i].erase(data_buf[i].begin(), data_buf[i].begin() + n);
         control_buf[i].erase(control_buf[i].begin(), control_buf[i].begin() + n);
     }
-    t2 = std::chrono::high_resolution_clock::now();
-    _correction_time =  std::chrono::duration_cast<std::chrono::nanoseconds>(t2-t1).count();
-    if((_correction_time + timing_adjust) < (int64_t)SLOT_TIME)
+    if(lime_fifo_fill_count > -1)
     {
-        struct timespec time_to_sleep = {0, (int64_t)SLOT_TIME - _correction_time + timing_adjust};
-        nanosleep(&time_to_sleep, NULL);
+        t2 = std::chrono::high_resolution_clock::now();
+        _correction_time =  std::chrono::duration_cast<std::chrono::nanoseconds>(t2-t1).count();
+        if((_correction_time + timing_adjust) < (int64_t)SLOT_TIME)
+        {
+            struct timespec time_to_sleep = {0, (int64_t)SLOT_TIME - _correction_time + timing_adjust};
+            nanosleep(&time_to_sleep, NULL);
+        }
     }
     if(!_use_tdma)
         _correction_time = -100000L;
