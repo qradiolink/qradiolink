@@ -81,7 +81,7 @@ gr_mod_base::gr_mod_base(BurstTimer *burst_timer, QObject *parent, float device_
         set_bandwidth_specific();
         _limesdr_sink->calibrate(_samp_rate);
         _limesdr_sink->set_gain(int(rf_gain * 73.0f));
-        _limesdr_sink->set_buffer_size(_samp_rate / 2);
+        _limesdr_sink->set_buffer_size(_samp_rate / 10);
         _top_block->connect(_rotator,0,_limesdr_sink,0);
         _use_tdma = true;
     }
@@ -91,7 +91,7 @@ gr_mod_base::gr_mod_base(BurstTimer *burst_timer, QObject *parent, float device_
         burst_timer->set_enabled(true);
         uhd::stream_args_t stream_args("fc32", "sc16");
         stream_args.channels = {0};
-        stream_args.args["spp"] = "200"; // 200 samples per packet
+        //stream_args.args["spp"] = "1000"; // 1000 samples per packet
         uhd::device_addr_t device_addr("uhd=0");
         _uhd_sink = gr::uhd::usrp_sink::make(device_addr, stream_args);
         _uhd_sink->set_center_freq(_device_frequency - _carrier_offset);
@@ -288,7 +288,7 @@ void gr_mod_base::set_samp_rate(int samp_rate)
         _top_block->lock();
         _limesdr_sink->set_center_freq(_device_frequency - _carrier_offset);
         _limesdr_sink->set_sample_rate(_samp_rate);
-        _limesdr_sink->set_buffer_size(_samp_rate / 2);
+        _limesdr_sink->set_buffer_size(_samp_rate / 10);
         _limesdr_sink->set_digital_filter(_samp_rate, 0);
         _limesdr_sink->calibrate(_samp_rate);
         _top_block->unlock();

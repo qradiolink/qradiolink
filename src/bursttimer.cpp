@@ -26,7 +26,7 @@ BurstTimer::BurstTimer(uint64_t burst_delay, uint64_t samples_per_slot, uint64_t
     _samples_per_slot = samples_per_slot;
     _time_per_sample = time_per_sample;
     _slot_time = slot_time;
-    _burst_delay = burst_delay;
+    _burst_delay = burst_delay * 1000000;
     for(uint8_t i = 0;i < MAX_MMDVM_CHANNELS;i++)
         _sample_counter[i] = 0;
     for(uint8_t i = 0;i < MAX_MMDVM_CHANNELS;i++)
@@ -188,7 +188,7 @@ void BurstTimer::increment_sample_counter(int cn)
 uint64_t BurstTimer::get_sample_counter(int cn)
 {
     std::unique_lock<std::mutex> guard(_timing_mutex[cn]);
-    return _time_base[cn] + _sample_counter[cn];
+    return _time_base[cn] + _sample_counter[cn] * _time_per_sample;
 }
 
 
@@ -223,7 +223,7 @@ int BurstTimer::check_time(int cn)
     return 0;
 }
 
-uint64_t BurstTimer::allocate_slot(int slot_no, int cn)
+uint64_t BurstTimer::allocate_slot(int slot_no, int64_t &timing, int cn)
 {
     if(!_enabled)
         return 0L;
@@ -234,6 +234,7 @@ uint64_t BurstTimer::allocate_slot(int slot_no, int cn)
 
     if(elapsed <= _last_slot[cn])
     {
+        timing = _last_slot[cn] - elapsed;
         _last_slot[cn] = _last_slot[cn] + _slot_time;
     }
     else if(_last_slot[cn] == 0)

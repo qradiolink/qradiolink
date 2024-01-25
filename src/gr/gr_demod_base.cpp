@@ -95,7 +95,7 @@ gr_demod_base::gr_demod_base(BurstTimer *burst_timer, QObject *parent, float dev
         _limesdr_source->set_center_freq(_device_frequency);
         _limesdr_source->set_sample_rate(1000000);
         _limesdr_source->set_antenna(255);
-        _limesdr_source->set_buffer_size(_samp_rate / 2);
+        _limesdr_source->set_buffer_size(_samp_rate / 10);
         set_bandwidth_specific();
         _limesdr_source->set_gain(int(rf_gain * 70.0f));
     }
@@ -105,7 +105,7 @@ gr_demod_base::gr_demod_base(BurstTimer *burst_timer, QObject *parent, float dev
         _use_tdma = true;
          uhd::stream_args_t stream_args("fc32", "sc16");
          stream_args.channels = {0};
-         stream_args.args["spp"] = "200"; // 200 samples per packet
+         stream_args.args["spp"] = "1000"; // 1000 samples per packet
          uhd::device_addr_t device_addr("uhd=0");
         _uhd_source = gr::uhd::usrp_source::make(device_addr,stream_args);
         _uhd_source->set_center_freq(_device_frequency);
