@@ -209,6 +209,7 @@ int gr_mmdvm_source::work(int noutput_items,
     {
         struct timespec time_to_sleep = {0, timing_correct};
         nanosleep(&time_to_sleep, NULL);
+        timing_correct = 0;
     }
 
     for(int i = 0;i < _num_channels;i++)
