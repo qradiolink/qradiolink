@@ -92,7 +92,7 @@ gr_mod_base::gr_mod_base(BurstTimer *burst_timer, QObject *parent, float device_
         uhd::stream_args_t stream_args("fc32", "sc16");
         stream_args.channels = {0};
         //stream_args.args["spp"] = "1000"; // 1000 samples per packet
-        uhd::device_addr_t device_addr("uhd=0");
+        uhd::device_addr_t device_addr(QString("serial:%1").arg(serial).toStdString());
         _uhd_sink = gr::uhd::usrp_sink::make(device_addr, stream_args);
         _uhd_sink->set_center_freq(_device_frequency - _carrier_offset);
         _uhd_sink->set_samp_rate(_samp_rate);
@@ -110,6 +110,7 @@ gr_mod_base::gr_mod_base(BurstTimer *burst_timer, QObject *parent, float device_
         {
             _uhd_sink->set_gain(rf_gain);
         }
+        _uhd_sink->set_start_time(uhd::time_spec_t(0.0d));
         _top_block->connect(_rotator,0,_uhd_sink,0);
         _use_tdma = true;
     }
