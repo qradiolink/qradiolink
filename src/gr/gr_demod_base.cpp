@@ -108,7 +108,7 @@ gr_demod_base::gr_demod_base(BurstTimer *burst_timer, QObject *parent, float dev
          //stream_args.args["spp"] = "1000"; // 1000 samples per packet
          std::string dev_string;
          if(serial.size() > 1)
-             dev_string = QString("serial:%1").arg(serial).toStdString();
+             dev_string = QString("serial=%1").arg(serial).toStdString();
          else
              dev_string = "uhd=0";
          uhd::device_addr_t device_addr(dev_string);
