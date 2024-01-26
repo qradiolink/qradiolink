@@ -269,7 +269,6 @@ void sink_impl::print_stream_stats(int channel) {
             std::cout << "|FIFO: " << fifo_fill_count << "%"
                       << std::endl;
         }
-        lime_fifo_fill_count = fifo_fill_count;
         t1_x = t2_x;
     }
 

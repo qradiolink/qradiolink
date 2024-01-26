@@ -20,7 +20,6 @@
 const uint8_t  MARK_SLOT1 = 0x08U;
 const uint8_t  MARK_SLOT2 = 0x04U;
 const uint8_t  MARK_NONE  = 0x00U;
-int64_t timing_correct = 0;
 
 gr_mmdvm_source_sptr
 make_gr_mmdvm_source (BurstTimer *burst_timer, uint8_t cn, bool multi_channnel, bool use_tdma)
@@ -40,6 +39,7 @@ gr_mmdvm_source::gr_mmdvm_source(BurstTimer *burst_timer, uint8_t cn, bool multi
     _burst_timer = burst_timer;
     _num_channels = cn;
     _sn = 2;
+    _timing_correction = 0;
     _add_time_tag = (cn == 0) || (cn == 1);
     _use_tdma = use_tdma;
     for(int i = 0;i < _num_channels;i++)
@@ -118,7 +118,7 @@ void gr_mmdvm_source::handle_idle_time(short *out, int noutput_items, int which,
         out[i] = 0;
         if(i == 710)
         {
-            uint64_t time = _burst_timer->allocate_slot(_sn, timing_correct, which);
+            uint64_t time = _burst_timer->allocate_slot(_sn, _timing_correction, which);
             if(time > 0L && add_tag)
             {
                 add_time_tag(time, i, which);
@@ -149,7 +149,7 @@ int gr_mmdvm_source::handle_data_bursts(short *out, unsigned int n, int which, b
         if(control == MARK_SLOT1)
         {
             _sn = 1;
-            uint64_t time = _burst_timer->allocate_slot(1, timing_correct, which);
+            uint64_t time = _burst_timer->allocate_slot(1, _timing_correction, which);
             if(time > 0L && add_tag)
             {
                 add_time_tag(time, i, which);
@@ -158,7 +158,7 @@ int gr_mmdvm_source::handle_data_bursts(short *out, unsigned int n, int which, b
         if(control == MARK_SLOT2)
         {
             _sn = 2;
-            uint64_t time = _burst_timer->allocate_slot(2, timing_correct, which);
+            uint64_t time = _burst_timer->allocate_slot(2, _timing_correction, which);
             if(time > 0 && add_tag)
             {
                 add_time_tag(time, i, which);
@@ -205,11 +205,11 @@ int gr_mmdvm_source::work(int noutput_items,
         return SAMPLES_PER_SLOT;
     }
     get_zmq_message();
-    if(timing_correct > 0)
+    if(_timing_correction > 0)
     {
-        struct timespec time_to_sleep = {0, timing_correct};
+        struct timespec time_to_sleep = {0, _timing_correction};
         nanosleep(&time_to_sleep, NULL);
-        timing_correct = 0;
+        _timing_correction = 0;
     }
 
     for(int i = 0;i < _num_channels;i++)

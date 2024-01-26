@@ -92,7 +92,12 @@ gr_mod_base::gr_mod_base(BurstTimer *burst_timer, QObject *parent, float device_
         uhd::stream_args_t stream_args("fc32", "sc16");
         stream_args.channels = {0};
         //stream_args.args["spp"] = "1000"; // 1000 samples per packet
-        uhd::device_addr_t device_addr(QString("serial:%1").arg(serial).toStdString());
+        std::string dev_string;
+        if(serial.size() > 1)
+            dev_string = QString("serial:%1").arg(serial).toStdString();
+        else
+            dev_string = "uhd=0";
+        uhd::device_addr_t device_addr(dev_string);
         _uhd_sink = gr::uhd::usrp_sink::make(device_addr, stream_args);
         _uhd_sink->set_center_freq(_device_frequency - _carrier_offset);
         _uhd_sink->set_samp_rate(_samp_rate);
@@ -231,7 +236,7 @@ void gr_mod_base::set_samp_rate(int samp_rate)
                 _top_block->disconnect(_resampler,0, _limesdr_sink,0);
             else if(_uhd_specific)
                 _top_block->disconnect(_resampler,0, _uhd_sink,0);
-             else
+            else
                 _top_block->disconnect(_resampler,0, _osmosdr_sink,0);
         }
         catch(std::invalid_argument &e)
@@ -821,9 +826,8 @@ void gr_mod_base::set_power(float value, std::string gain_stage)
     if(_lime_specific)
     {
         _limesdr_sink->set_gain(int(value * 73.0f));
-        return;
     }
-    if(_uhd_specific)
+    else if(_uhd_specific)
     {
         if (!_uhd_gain_range.empty() && (gain_stage.size() < 1))
         {
@@ -835,18 +839,20 @@ void gr_mod_base::set_power(float value, std::string gain_stage)
         {
             _uhd_sink->set_gain(value, gain_stage);
         }
-        return;
-    }
-    if (!_gain_range.empty() && (gain_stage.size() < 1))
-    {
-        double gain =  std::floor(double(_gain_range.start()) +
-                double(value)*(double(_gain_range.stop())-double(_gain_range.start())));
-        _osmosdr_sink->set_gain(gain);
     }
     else
     {
-        _osmosdr_sink->set_gain_mode(false);
-        _osmosdr_sink->set_gain(value, gain_stage);
+        if (!_gain_range.empty() && (gain_stage.size() < 1))
+        {
+            double gain =  std::floor(double(_gain_range.start()) +
+                    double(value)*(double(_gain_range.stop())-double(_gain_range.start())));
+            _osmosdr_sink->set_gain(gain);
+        }
+        else
+        {
+            _osmosdr_sink->set_gain_mode(false);
+            _osmosdr_sink->set_gain(value, gain_stage);
+        }
     }
 }
 

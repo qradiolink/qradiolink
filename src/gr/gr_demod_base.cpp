@@ -105,8 +105,13 @@ gr_demod_base::gr_demod_base(BurstTimer *burst_timer, QObject *parent, float dev
         _use_tdma = true;
          uhd::stream_args_t stream_args("fc32", "sc16");
          stream_args.channels = {0};
-         stream_args.args["spp"] = "1000"; // 1000 samples per packet
-         uhd::device_addr_t device_addr("uhd=0");
+         //stream_args.args["spp"] = "1000"; // 1000 samples per packet
+         std::string dev_string;
+         if(serial.size() > 1)
+             dev_string = QString("serial:%1").arg(serial).toStdString();
+         else
+             dev_string = "uhd=0";
+         uhd::device_addr_t device_addr(dev_string);
         _uhd_source = gr::uhd::usrp_source::make(device_addr,stream_args);
         _uhd_source->set_center_freq(_device_frequency);
         _uhd_source->set_samp_rate(1000000);
@@ -165,12 +170,8 @@ gr_demod_base::gr_demod_base(BurstTimer *burst_timer, QObject *parent, float dev
     _deframer2_10k = make_gr_deframer_bb(3);
 
     _top_block->connect(_rotator,0,_demod_valve,0);
-    if(!_lime_specific && !_uhd_specific)
-    {
-        _top_block->connect(_osmosdr_source,0,_rotator,0);
-        _top_block->connect(_osmosdr_source,0,_fft_sink,0);
-    }
-    else if(_lime_specific)
+
+    if(_lime_specific)
     {
         _top_block->connect(_limesdr_source,0,_rotator,0);
         _top_block->connect(_limesdr_source,0,_fft_sink,0);
@@ -179,6 +180,11 @@ gr_demod_base::gr_demod_base(BurstTimer *burst_timer, QObject *parent, float dev
     {
         _top_block->connect(_uhd_source,0,_rotator,0);
         _top_block->connect(_uhd_source,0,_fft_sink,0);
+    }
+    else
+    {
+        _top_block->connect(_osmosdr_source,0,_rotator,0);
+        _top_block->connect(_osmosdr_source,0,_fft_sink,0);
     }
 
 
@@ -241,12 +247,12 @@ gr_demod_base::gr_demod_base(BurstTimer *burst_timer, QObject *parent, float dev
 gr_demod_base::~gr_demod_base()
 {
     _top_block->disconnect_all();
-    if(!_lime_specific && !_uhd_specific)
-        _osmosdr_source.reset();
-    else if(_lime_specific)
+    if(_lime_specific)
         _limesdr_source.reset();
     else if(_uhd_specific)
         _uhd_source.reset();
+    else
+        _osmosdr_source.reset();
 }
 
 const QMap<std::string,QVector<int>> gr_demod_base::get_gain_names() const

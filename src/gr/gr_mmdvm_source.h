@@ -57,6 +57,7 @@ private:
     bool _in_tx[MAX_MMDVM_CHANNELS];
     gr::thread::mutex _mutex;
     int _num_channels;
+    int64_t _timing_correction;
     int _sn;
     bool _add_time_tag;
     bool _use_tdma;

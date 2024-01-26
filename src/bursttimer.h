@@ -29,8 +29,6 @@ static const uint64_t SLOT_TIME = 30000000L;
 static const int64_t TX_TIMEOUT = 50000L;
 static const int32_t SAMPLES_PER_SLOT = 720;
 
-// FIFO fill count
-extern int lime_fifo_fill_count;
 
 class BurstTimer
 {
