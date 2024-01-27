@@ -93,6 +93,10 @@ gr_demod_mmdvm_multi::gr_demod_mmdvm_multi(BurstTimer *burst_timer, int num_chan
             ct = 3 - i;
         _rotator[i] = gr::blocks::rotator_cc::make(2*M_PI * carrier_offset * ct / intermediate_samp_rate);
     }
+    for(int i = 0;i < _num_channels;i++)
+    {
+        _rssi_tag_block[i] = make_rssi_tag_block();
+    }
 
     _mmdvm_sink = make_gr_mmdvm_sink(burst_timer, num_channels, true, _use_tdma);
     _first_resampler = gr::filter::rational_resampler_ccf::make(1, 5, taps);
@@ -111,14 +115,21 @@ gr_demod_mmdvm_multi::gr_demod_mmdvm_multi(BurstTimer *burst_timer, int num_chan
             connect(_rotator[i],0,_resampler[i],0);
         }
         connect(_resampler[i],0,_filter[i],0);
-        connect(_filter[i],0,_fm_demod[i],0);
+        connect(_filter[i],0,_rssi_tag_block[i],0);
+        connect(_rssi_tag_block[i],0,_fm_demod[i],0);
         connect(_fm_demod[i],0,_level_control[i],0);
         connect(_level_control[i],0,_float_to_short[i],0);
         connect(_float_to_short[i],0,_mmdvm_sink, i);
     }
 }
 
-
+void gr_demod_mmdvm_multi::calibrate_rssi(float level)
+{
+    for(int i = 0;i < _num_channels;i++)
+    {
+        _rssi_tag_block[i]->calibrate_rssi(level);
+    }
+}
 
 
 

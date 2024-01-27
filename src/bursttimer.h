@@ -29,8 +29,6 @@ static const uint64_t SLOT_TIME = 30000000L;
 static const int64_t TX_TIMEOUT = 50000L;
 static const int32_t SAMPLES_PER_SLOT = 720;
 
-// FIFO fill count
-extern int lime_fifo_fill_count;
 
 class BurstTimer
 {
@@ -46,7 +44,7 @@ public:
     void increment_sample_counter(int cn=0);
     uint64_t get_sample_counter(int cn);
     int check_time(int cn=0);
-    uint64_t allocate_slot(int slot_no, int cn=0);
+    uint64_t allocate_slot(int slot_no, int64_t &timing, int cn=0);
     uint64_t get_last_timestamp(int cn=0);
     uint64_t get_last_timestamp_global();
     void set_last_timestamp(int cn, uint64_t value);

@@ -3,6 +3,7 @@
 
 QRadioLink can now interoperate with SVXlink and other applications which use UDP audio streaming.
 Voice forwarding to and from Mumble and UDP audio streaming are not mutually exclusive. If both options are enabled, demodulated audio will be sent to both UDP and Mumble, while voice originating from Mumble will be mixed with voice originating from UDP and the result will be transmitted over RF.
+It is now possible to stream audio via UDP to and from a remote system on the same IP network as the host running qradiolink.
 
 
 # Known issues
@@ -16,11 +17,15 @@ There are several new settings for the configuration of UDP streaming and SVXlin
 
 * **UDP audio sample rate** (default 16000): possible values are 48000, 16000, 8000. Audio is resampled from the internal rate of 8000 samples per second to the rate defined here. To communicate with SVXlink, the rate set here needs to match the setting CARD_SAMPLE_RATE in the [GLOBAL] section of the svxlink config. Also important, the other application needs to stream only mono audio (only one channel, not interleaved samples from two channels). In svxlink this is achieved by setting CARD_CHANNELS=1 in the [GLOBAL] section.
 
-* **UDP audio RX port** (default 4937). This is the UDP port where demodulated audio samples are sent to. Needs to match the port defined in the streaming application. In svxlink, the [Rx1] audio device option will look like this: AUDIO_DEV=udp:127.0.0.1:4937
+* **UDP audio Remote port** (default 4937). This is the UDP port (on remote or local system) where demodulated audio samples are sent to. Needs to match the port defined for RX in the other streaming application. In svxlink, the [Rx1] audio device option will look like this: AUDIO_DEV=udp:127.0.0.1:4937
 
-* **UDP audio TX port** (default 4938). This is the UDP port where qradiolink listens for audio samples to be transmitted over the air. Needs to match the port defined for TX in the streaming application. In svxlink, the [Tx1] audio device option will look like this: AUDIO_DEV=udp:127.0.0.1:4938
+* **UDP audio Local port** (default 4938). This is the UDP port (on local system) where qradiolink listens for audio samples to be transmitted over the air. Needs to match the port defined for TX in the streaming application. In svxlink, the [Tx1] audio device option will look like this: AUDIO_DEV=udp:127.0.0.1:4938
 
-* **SVXlink squelch PTY path** (default /tmp/sql_pty): in the General settings tab, this is the path of a pseudo-tty used by SVXlink to control squelch. Needs to match setting PTY_PATH in the [Rx1] section of svxlink. Also, the squelch detector in svxlink needs to be set to PTY: SQL_DET=PTY (also in the [Rx1] section). This setting is only useful if squelch is controlled by qradiolink (normal squelch and / or CTCSS squelch).
+* **UDP audio Local IP Address** (default 127.0.0.1). This is the local IP address of the system where qradiolink runs. Can be 127.0.0.1 if svxlink runs on the same system.
+
+* **UDP audio Remote IP Address** (default 127.0.0.1). This is the remote IP address of the system where svxlink (or other UDP application) runs. Can be 127.0.0.1 if svxlink runs on the same system.
+
+* **SVXlink squelch PTY path** (default /tmp/sql_pty): in the General settings tab, this is the path of a pseudo-tty used by SVXlink to control squelch. Needs to match setting PTY_PATH in the [Rx1] section of svxlink. Also, the squelch detector in svxlink needs to be set to PTY: SQL_DET=PTY (also in the [Rx1] section). This setting is only useful if squelch is controlled by qradiolink (normal squelch and / or CTCSS squelch). Squelch detect via PTY will only work if qradiolink runs on the same system as svxlink. Otherwise use CTCSS or VOX squelch in svxlink.
 
 * **UDP audio**: this button (in the Base station tab) needs to be enabled once RX and TX have been enabled in qradiolink.
 If starting qradiolink headless from the command line, use this command argument to enable UDP streaming:
@@ -61,6 +66,8 @@ udp_send_port = 4937;
 tot_tx_end = 0;
 udp_audio_sample_rate = 16000;
 sql_pty_path = "/tmp/sql_pty";
+udp_audio_local_address = "127.0.0.1";
+udp_audio_remote_address = "127.0.0.1";
 </pre>
 
 SVXlink in repeater mode has not yet been tested. For it to work, one needs to set duplex on in qradiolink and set a TX shift equal to the repeater split.

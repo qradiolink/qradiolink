@@ -27,7 +27,7 @@ gr_modem::gr_modem(const Settings *settings, Logger *logger, QObject *parent) :
     _limits = new Limits;
     _bit_buf_len = 8 *8;
     _bit_buf = new unsigned char[_bit_buf_len];
-    _burst_timer = new BurstTimer(_settings->burst_delay_msec * 1000000);
+    _burst_timer = new BurstTimer(_settings->burst_delay_msec);
     _modem_type_rx = gr_modem_types::ModemTypeBPSK2K;
     _modem_type_tx = gr_modem_types::ModemTypeBPSK2K;
     _rx_frame_length = 7;

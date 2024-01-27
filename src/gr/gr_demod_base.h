@@ -35,6 +35,7 @@
 #include <gnuradio/zeromq/push_sink.h>
 #include <gnuradio/constants.h>
 #include <osmosdr/source.h>
+#include <gnuradio/uhd/usrp_source.h>
 #include "limesdr/source.h"
 #include <vector>
 #include "gr_audio_sink.h"
@@ -168,6 +169,7 @@ private:
 
     osmosdr::source::sptr _osmosdr_source;
     gr::limesdr::source::sptr _limesdr_source;
+    gr::uhd::usrp_source::sptr _uhd_source;
 
     float _device_frequency;
     int _freq_correction;
@@ -179,9 +181,11 @@ private:
     int _samp_rate;
     bool _locked;
     bool _lime_specific; // LimeSDR specific
+    bool _uhd_specific;
     bool _use_tdma;
     double _osmo_filter_bw;
     osmosdr::gain_range_t _gain_range;
+    uhd::gain_range_t _uhd_gain_range;
     std::vector<std::string> _gain_names;
 };
 

@@ -15,7 +15,8 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "gr_demod_base.h"
-
+#include <uhd/stream.hpp>
+#include <iostream>
 
 
 gr_demod_base::gr_demod_base(BurstTimer *burst_timer, QObject *parent, float device_frequency,
@@ -57,6 +58,7 @@ gr_demod_base::gr_demod_base(BurstTimer *burst_timer, QObject *parent, float dev
 
     // FIXME: LimeSDR bandwidth set to higher value for lower freq
     _lime_specific = false;
+    _uhd_specific = false;
     QString serial = "";
     QString device(device_args.c_str());
     if(device.contains("driver=lime", Qt::CaseInsensitive))
@@ -72,16 +74,61 @@ gr_demod_base::gr_demod_base(BurstTimer *burst_timer, QObject *parent, float dev
             }
         }
     }
+    if(device.contains("driver=uhd", Qt::CaseInsensitive))
+    {
+        _uhd_specific = true;
+        QStringList args = device.split(",");
+        for(int i = 0; i < args.size();i++)
+        {
+            QStringList values = args.at(i).split("=");
+            if((values.size() > 1) && (values.at(0) == "serial"))
+            {
+                serial = values.at(1);
+            }
+        }
+    }
     if(_lime_specific && serial.size() > 0)
     {
+        std::cout << "Using LimeSDR native source" << std::endl;
         _use_tdma = true;
         _limesdr_source = gr::limesdr::source::make(serial.toStdString(), 0, "");
         _limesdr_source->set_center_freq(_device_frequency);
         _limesdr_source->set_sample_rate(1000000);
         _limesdr_source->set_antenna(255);
-        _limesdr_source->set_buffer_size(_samp_rate / 2);
+        _limesdr_source->set_buffer_size(_samp_rate / 10);
         set_bandwidth_specific();
         _limesdr_source->set_gain(int(rf_gain * 70.0f));
+    }
+    else if(_uhd_specific)
+    {
+        std::cout << "Using USRP native source" << std::endl;
+        _use_tdma = true;
+         uhd::stream_args_t stream_args("fc32", "sc16");
+         stream_args.channels = {0};
+         //stream_args.args["spp"] = "1000"; // 1000 samples per packet
+         std::string dev_string;
+         if(serial.size() > 1)
+             dev_string = QString("serial=%1").arg(serial).toStdString();
+         else
+             dev_string = "uhd=0";
+         uhd::device_addr_t device_addr(dev_string);
+        _uhd_source = gr::uhd::usrp_source::make(device_addr,stream_args);
+        _uhd_source->set_center_freq(_device_frequency);
+        _uhd_source->set_samp_rate(1000000);
+        _uhd_source->set_antenna(device_antenna);
+        set_bandwidth_specific();
+        _uhd_gain_range = _uhd_source->get_gain_range();
+        _gain_names = _uhd_source->get_gain_names();
+        if (!_uhd_gain_range.empty())
+        {
+            double gain =  (double)_uhd_gain_range.start() + rf_gain*(
+                        (double)_uhd_gain_range.stop()- (double)_uhd_gain_range.start());
+            _uhd_source->set_gain(gain);
+        }
+        else
+        {
+            _uhd_source->set_gain(rf_gain);
+        }
     }
     else
     {
@@ -123,15 +170,21 @@ gr_demod_base::gr_demod_base(BurstTimer *burst_timer, QObject *parent, float dev
     _deframer2_10k = make_gr_deframer_bb(3);
 
     _top_block->connect(_rotator,0,_demod_valve,0);
-    if(!_lime_specific)
-    {
-        _top_block->connect(_osmosdr_source,0,_rotator,0);
-        _top_block->connect(_osmosdr_source,0,_fft_sink,0);
-    }
-    else
+
+    if(_lime_specific)
     {
         _top_block->connect(_limesdr_source,0,_rotator,0);
         _top_block->connect(_limesdr_source,0,_fft_sink,0);
+    }
+    else if(_uhd_specific)
+    {
+        _top_block->connect(_uhd_source,0,_rotator,0);
+        _top_block->connect(_uhd_source,0,_fft_sink,0);
+    }
+    else
+    {
+        _top_block->connect(_osmosdr_source,0,_rotator,0);
+        _top_block->connect(_osmosdr_source,0,_fft_sink,0);
     }
 
 
@@ -194,10 +247,12 @@ gr_demod_base::gr_demod_base(BurstTimer *burst_timer, QObject *parent, float dev
 gr_demod_base::~gr_demod_base()
 {
     _top_block->disconnect_all();
-    if(!_lime_specific)
-        _osmosdr_source.reset();
-    else
+    if(_lime_specific)
         _limesdr_source.reset();
+    else if(_uhd_specific)
+        _uhd_source.reset();
+    else
+        _osmosdr_source.reset();
 }
 
 const QMap<std::string,QVector<int>> gr_demod_base::get_gain_names() const
@@ -205,6 +260,20 @@ const QMap<std::string,QVector<int>> gr_demod_base::get_gain_names() const
     QMap<std::string,QVector<int>> gain_names;
     if(_lime_specific)
         return gain_names;
+    if(_uhd_specific)
+    {
+        for(unsigned int i=0;i<_gain_names.size();i++)
+        {
+            QVector<int> gains;
+            uhd::gain_range_t gain_range = _uhd_source->get_gain_range(_gain_names.at(i));
+            int gain_min = gain_range.start();
+            int gain_max = gain_range.stop();
+            gains.push_back(gain_min);
+            gains.push_back(gain_max);
+            gain_names[_gain_names.at(i)] = gains;
+        }
+        return gain_names;
+    }
     for(unsigned int i=0;i<_gain_names.size();i++)
     {
         QVector<int> gains;
@@ -873,10 +942,12 @@ void gr_demod_base::tune(int64_t center_freq)
 {
     int64_t steps = center_freq / 1000000;
     _device_frequency = center_freq + steps * _freq_correction;
-    if(!_lime_specific)
-        _osmosdr_source->set_center_freq(_device_frequency);
-    else
+    if(_lime_specific)
         _limesdr_source->set_center_freq(_device_frequency);
+    else if(_uhd_specific)
+        _uhd_source->set_center_freq(_device_frequency);
+    else
+        _osmosdr_source->set_center_freq(_device_frequency);
     set_bandwidth_specific();
 }
 
@@ -900,6 +971,20 @@ void gr_demod_base::set_rx_sensitivity(double value, std::string gain_stage)
     if(_lime_specific)
     {
         _limesdr_source->set_gain(int(value * 70.0d));
+        return;
+    }
+    if(_uhd_specific)
+    {
+        if (!_uhd_gain_range.empty())
+        {
+            double gain =  (double)_uhd_gain_range.start() + value*(
+                        (double)_uhd_gain_range.stop()- (double)_uhd_gain_range.start());
+            _uhd_source->set_gain(gain);
+        }
+        else
+        {
+            _uhd_source->set_gain(value);
+        }
         return;
     }
     if (!_gain_range.empty() && (gain_stage.size() < 1))
@@ -1096,17 +1181,24 @@ void gr_demod_base::set_samp_rate(int samp_rate)
 
 
     _rotator->set_phase_inc(2*M_PI*-_carrier_offset/_samp_rate);
-    if(!_lime_specific)
-    {
-        _osmosdr_source->set_center_freq(_device_frequency);
-        _osmosdr_source->set_sample_rate(_samp_rate);
-    }
-    else
+
+    if(_lime_specific)
     {
         _limesdr_source->set_center_freq(_device_frequency);
         _limesdr_source->set_sample_rate(_samp_rate);
         _limesdr_source->set_digital_filter(_samp_rate, 0);
         _limesdr_source->calibrate(_samp_rate);
+    }
+    else if(_uhd_specific)
+    {
+        _uhd_source->set_center_freq(_device_frequency);
+        _uhd_source->set_samp_rate(_samp_rate);
+        _uhd_source->set_bandwidth(_samp_rate, 0);
+    }
+    else
+    {
+        _osmosdr_source->set_center_freq(_device_frequency);
+        _osmosdr_source->set_sample_rate(_samp_rate);
     }
     set_bandwidth_specific();
     _top_block->unlock();
@@ -1126,17 +1218,24 @@ void gr_demod_base::set_bandwidth_specific()
     {
         _osmo_filter_bw = (double)(std::max(1500000, _samp_rate));
     }
-    if(!_lime_specific)
-        _osmosdr_source->set_bandwidth(_osmo_filter_bw);
-    else
+
+    if(_lime_specific)
     {
         _limesdr_source->set_bandwidth(_osmo_filter_bw);
     }
+    else if(_uhd_specific)
+    {
+        _uhd_source->set_bandwidth(_osmo_filter_bw);
+    }
+    else
+        _osmosdr_source->set_bandwidth(_osmo_filter_bw);
 }
 
 void gr_demod_base::calibrate_rssi(float value)
 {
     _rssi_block->set_level(value);
+    _mmdvm_demod->calibrate_rssi(value);
+    _mmdvm_demod_multi->calibrate_rssi(value);
 }
 
 void gr_demod_base::set_agc_attack(int value)

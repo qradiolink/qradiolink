@@ -40,6 +40,7 @@ gr_mod_base::gr_mod_base(BurstTimer *burst_timer, QObject *parent, float device_
 
     // FIXME: LimeSDR bandwidth set to higher value for lower freq
     _lime_specific = false;
+    _uhd_specific = false;
     QString serial = "";
     QString device(device_args.c_str());
     if(device.contains("driver=lime", Qt::CaseInsensitive))
@@ -55,8 +56,22 @@ gr_mod_base::gr_mod_base(BurstTimer *burst_timer, QObject *parent, float device_
             }
         }
     }
+    if(device.contains("driver=uhd", Qt::CaseInsensitive))
+    {
+        _uhd_specific = true;
+        QStringList args = device.split(",");
+        for(int i = 0; i < args.size();i++)
+        {
+            QStringList values = args.at(i).split("=");
+            if((values.size() > 1) && (values.at(0) == "serial"))
+            {
+                serial = values.at(1);
+            }
+        }
+    }
     if(_lime_specific && serial.size() > 0)
     {
+        std::cout << "Using native LimeSDR sink" << std::endl;
         burst_timer->set_enabled(true);
         _limesdr_sink = gr::limesdr::sink::make(serial.toStdString(), 0, "", "burst_length");
         _limesdr_sink->set_center_freq(_device_frequency - _carrier_offset);
@@ -66,8 +81,42 @@ gr_mod_base::gr_mod_base(BurstTimer *burst_timer, QObject *parent, float device_
         set_bandwidth_specific();
         _limesdr_sink->calibrate(_samp_rate);
         _limesdr_sink->set_gain(int(rf_gain * 73.0f));
-        _limesdr_sink->set_buffer_size(_samp_rate / 2);
+        _limesdr_sink->set_buffer_size(_samp_rate / 10);
         _top_block->connect(_rotator,0,_limesdr_sink,0);
+        _use_tdma = true;
+    }
+    else if(_uhd_specific)
+    {
+        std::cout << "Using native USRP sink" << std::endl;
+        burst_timer->set_enabled(true);
+        uhd::stream_args_t stream_args("fc32", "sc16");
+        stream_args.channels = {0};
+        //stream_args.args["spp"] = "1000"; // 1000 samples per packet
+        std::string dev_string;
+        if(serial.size() > 1)
+            dev_string = QString("serial=%1").arg(serial).toStdString();
+        else
+            dev_string = "uhd=0";
+        uhd::device_addr_t device_addr(dev_string);
+        _uhd_sink = gr::uhd::usrp_sink::make(device_addr, stream_args);
+        _uhd_sink->set_center_freq(_device_frequency - _carrier_offset);
+        _uhd_sink->set_samp_rate(_samp_rate);
+        _uhd_sink->set_bandwidth(_samp_rate, 0);
+        _uhd_sink->set_antenna(device_antenna);
+        set_bandwidth_specific();
+        _uhd_gain_range = _uhd_sink->get_gain_range();
+        _gain_names = _uhd_sink->get_gain_names();
+        if (!_uhd_gain_range.empty())
+        {
+            double gain =  _uhd_gain_range.start() + rf_gain*(_uhd_gain_range.stop()-_uhd_gain_range.start());
+            _uhd_sink->set_gain(gain);
+        }
+        else
+        {
+            _uhd_sink->set_gain(rf_gain);
+        }
+        _uhd_sink->set_start_time(uhd::time_spec_t(0.0d));
+        _top_block->connect(_rotator,0,_uhd_sink,0);
         _use_tdma = true;
     }
     else
@@ -171,6 +220,8 @@ void gr_mod_base::set_samp_rate(int samp_rate)
         {
             if(_lime_specific)
                 _top_block->disconnect(_rotator,0, _limesdr_sink,0);
+            else if(_uhd_specific)
+                _top_block->disconnect(_rotator,0, _uhd_sink,0);
             else
                 _top_block->disconnect(_rotator,0, _osmosdr_sink,0);
         }
@@ -183,7 +234,9 @@ void gr_mod_base::set_samp_rate(int samp_rate)
             _top_block->disconnect(_rotator,0, _resampler,0);
             if(_lime_specific)
                 _top_block->disconnect(_resampler,0, _limesdr_sink,0);
-             else
+            else if(_uhd_specific)
+                _top_block->disconnect(_resampler,0, _uhd_sink,0);
+            else
                 _top_block->disconnect(_resampler,0, _osmosdr_sink,0);
         }
         catch(std::invalid_argument &e)
@@ -197,6 +250,8 @@ void gr_mod_base::set_samp_rate(int samp_rate)
         _top_block->connect(_rotator,0, _resampler,0);
         if(_lime_specific)
             _top_block->connect(_resampler,0, _limesdr_sink,0);
+        else if(_uhd_specific)
+            _top_block->connect(_resampler,0, _uhd_sink,0);
         else
             _top_block->connect(_resampler,0, _osmosdr_sink,0);
     }
@@ -207,6 +262,8 @@ void gr_mod_base::set_samp_rate(int samp_rate)
             _top_block->disconnect(_rotator,0, _resampler,0);
             if(_lime_specific)
                 _top_block->disconnect(_resampler,0, _limesdr_sink,0);
+            else if(_uhd_specific)
+                _top_block->disconnect(_resampler,0, _uhd_sink,0);
             else
                 _top_block->disconnect(_resampler,0, _osmosdr_sink,0);
         }
@@ -214,6 +271,8 @@ void gr_mod_base::set_samp_rate(int samp_rate)
         {
             if(_lime_specific)
                 _top_block->disconnect(_rotator,0, _limesdr_sink,0);
+            else if(_uhd_specific)
+                _top_block->disconnect(_rotator,0, _uhd_sink,0);
             else
                 _top_block->disconnect(_rotator,0, _osmosdr_sink,0);
         }
@@ -221,6 +280,8 @@ void gr_mod_base::set_samp_rate(int samp_rate)
         {
             if(_lime_specific)
                 _top_block->connect(_rotator,0, _limesdr_sink,0);
+            else if(_uhd_specific)
+                _top_block->connect(_rotator,0, _uhd_sink,0);
             else
                 _top_block->connect(_rotator,0, _osmosdr_sink,0);
         }
@@ -233,9 +294,17 @@ void gr_mod_base::set_samp_rate(int samp_rate)
         _top_block->lock();
         _limesdr_sink->set_center_freq(_device_frequency - _carrier_offset);
         _limesdr_sink->set_sample_rate(_samp_rate);
-        _limesdr_sink->set_buffer_size(_samp_rate / 2);
+        _limesdr_sink->set_buffer_size(_samp_rate / 10);
         _limesdr_sink->set_digital_filter(_samp_rate, 0);
         _limesdr_sink->calibrate(_samp_rate);
+        _top_block->unlock();
+    }
+    else if(_uhd_specific)
+    {
+        _top_block->lock();
+        _uhd_sink->set_center_freq(_device_frequency - _carrier_offset);
+        _uhd_sink->set_samp_rate(_samp_rate);
+        _uhd_sink->set_bandwidth(_samp_rate, 0);
         _top_block->unlock();
     }
     else
@@ -253,6 +322,20 @@ const QMap<std::string,QVector<int>> gr_mod_base::get_gain_names() const
     QMap<std::string,QVector<int>> gain_names;
     if(_lime_specific)
         return gain_names;
+    else if(_uhd_specific)
+    {
+        for(unsigned int i=0;i<_gain_names.size();i++)
+        {
+            QVector<int> gains;
+            uhd::gain_range_t gain_range = _uhd_sink->get_gain_range(_gain_names.at(i));
+            int gain_min = gain_range.start();
+            int gain_max = gain_range.stop();
+            gains.push_back(gain_min);
+            gains.push_back(gain_max);
+            gain_names[_gain_names.at(i)] = gains;
+        }
+        return gain_names;
+    }
     for(unsigned int i=0;i<_gain_names.size();i++)
     {
         QVector<int> gains;
@@ -727,6 +810,10 @@ void gr_mod_base::tune(int64_t center_freq)
     {
         _limesdr_sink->set_center_freq(tx_freq);
     }
+    else if(_uhd_specific)
+    {
+        _uhd_sink->set_center_freq(tx_freq);
+    }
     else
         _osmosdr_sink->set_center_freq(tx_freq);
     set_bandwidth_specific();
@@ -739,18 +826,33 @@ void gr_mod_base::set_power(float value, std::string gain_stage)
     if(_lime_specific)
     {
         _limesdr_sink->set_gain(int(value * 73.0f));
-        return;
     }
-    if (!_gain_range.empty() && (gain_stage.size() < 1))
+    else if(_uhd_specific)
     {
-        double gain =  std::floor(double(_gain_range.start()) +
-                double(value)*(double(_gain_range.stop())-double(_gain_range.start())));
-        _osmosdr_sink->set_gain(gain);
+        if (!_uhd_gain_range.empty() && (gain_stage.size() < 1))
+        {
+            double gain =  std::floor(double(_uhd_gain_range.start()) +
+                    double(value)*(double(_uhd_gain_range.stop())-double(_uhd_gain_range.start())));
+            _uhd_sink->set_gain(gain);
+        }
+        else
+        {
+            _uhd_sink->set_gain(value, gain_stage);
+        }
     }
     else
     {
-        _osmosdr_sink->set_gain_mode(false);
-        _osmosdr_sink->set_gain(value, gain_stage);
+        if (!_gain_range.empty() && (gain_stage.size() < 1))
+        {
+            double gain =  std::floor(double(_gain_range.start()) +
+                    double(value)*(double(_gain_range.stop())-double(_gain_range.start())));
+            _osmosdr_sink->set_gain(gain);
+        }
+        else
+        {
+            _osmosdr_sink->set_gain_mode(false);
+            _osmosdr_sink->set_gain(value, gain_stage);
+        }
     }
 }
 
@@ -861,6 +963,8 @@ void gr_mod_base::set_bandwidth_specific()
     }
     if(_lime_specific)
         _limesdr_sink->set_bandwidth(_osmo_filter_bw);
+    else if(_uhd_specific)
+        _uhd_sink->set_bandwidth(_osmo_filter_bw);
     else
         _osmosdr_sink->set_bandwidth(_osmo_filter_bw);
 }
@@ -870,6 +974,10 @@ void gr_mod_base::set_center_freq(double freq)
     if(_lime_specific)
     {
         _limesdr_sink->set_center_freq(freq);
+    }
+    else if(_uhd_specific)
+    {
+        _uhd_sink->set_center_freq(freq);
     }
     else
         _osmosdr_sink->set_center_freq(freq);

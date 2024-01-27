@@ -39,7 +39,7 @@ gr_mmdvm_source::gr_mmdvm_source(BurstTimer *burst_timer, uint8_t cn, bool multi
     _burst_timer = burst_timer;
     _num_channels = cn;
     _sn = 2;
-    _correction_time = 0;
+    _timing_correction = 0;
     _add_time_tag = (cn == 0) || (cn == 1);
     _use_tdma = use_tdma;
     for(int i = 0;i < _num_channels;i++)
@@ -54,7 +54,6 @@ gr_mmdvm_source::gr_mmdvm_source(BurstTimer *burst_timer, uint8_t cn, bool multi
     }
     set_min_noutput_items(SAMPLES_PER_SLOT);
     set_max_noutput_items(SAMPLES_PER_SLOT);
-    declare_sample_delay(SAMPLES_PER_SLOT);
 }
 
 gr_mmdvm_source::~gr_mmdvm_source()
@@ -119,7 +118,7 @@ void gr_mmdvm_source::handle_idle_time(short *out, int noutput_items, int which,
         out[i] = 0;
         if(i == 710)
         {
-            uint64_t time = _burst_timer->allocate_slot(_sn, which);
+            uint64_t time = _burst_timer->allocate_slot(_sn, _timing_correction, which);
             if(time > 0L && add_tag)
             {
                 add_time_tag(time, i, which);
@@ -150,7 +149,7 @@ int gr_mmdvm_source::handle_data_bursts(short *out, unsigned int n, int which, b
         if(control == MARK_SLOT1)
         {
             _sn = 1;
-            uint64_t time = _burst_timer->allocate_slot(1, which);
+            uint64_t time = _burst_timer->allocate_slot(1, _timing_correction, which);
             if(time > 0L && add_tag)
             {
                 add_time_tag(time, i, which);
@@ -159,7 +158,7 @@ int gr_mmdvm_source::handle_data_bursts(short *out, unsigned int n, int which, b
         if(control == MARK_SLOT2)
         {
             _sn = 2;
-            uint64_t time = _burst_timer->allocate_slot(2, which);
+            uint64_t time = _burst_timer->allocate_slot(2, _timing_correction, which);
             if(time > 0 && add_tag)
             {
                 add_time_tag(time, i, which);
@@ -188,12 +187,10 @@ int gr_mmdvm_source::work(int noutput_items,
         out[i] = (short*)(output_items[i]);
     }
 
-    t1 = std::chrono::high_resolution_clock::now();
-    get_zmq_message();
     bool start = true;
     for(int i = 0;i < _num_channels;i++)
     {
-        if(_burst_timer->get_sample_counter(i) < 1)
+        if(_burst_timer->get_sample_counter(i) < 1000)
         {
             std::cout << "Waiting for RX samples to initialize timebase" << std::endl;
             control_buf[i].clear();
@@ -207,16 +204,14 @@ int gr_mmdvm_source::work(int noutput_items,
     {
         return SAMPLES_PER_SLOT;
     }
+    get_zmq_message();
+    if(_timing_correction > 0)
+    {
+        struct timespec time_to_sleep = {0, _timing_correction};
+        nanosleep(&time_to_sleep, NULL);
+        _timing_correction = 0;
+    }
 
-    int64_t timing_adjust = 0L;
-    if(lime_fifo_fill_count > 50)
-    {
-        timing_adjust = 100000 * (lime_fifo_fill_count - 50);
-    }
-    else if(lime_fifo_fill_count < 50)
-    {
-        timing_adjust = -100000 * (50 - lime_fifo_fill_count);
-    }
     for(int i = 0;i < _num_channels;i++)
     {
         if(data_buf[i].size() < 1)
@@ -243,15 +238,6 @@ int gr_mmdvm_source::work(int noutput_items,
         data_buf[i].erase(data_buf[i].begin(), data_buf[i].begin() + n);
         control_buf[i].erase(control_buf[i].begin(), control_buf[i].begin() + n);
     }
-    t2 = std::chrono::high_resolution_clock::now();
-    _correction_time =  std::chrono::duration_cast<std::chrono::nanoseconds>(t2-t1).count();
-    if((_correction_time + timing_adjust) < (int64_t)SLOT_TIME)
-    {
-        struct timespec time_to_sleep = {0, (int64_t)SLOT_TIME - _correction_time + timing_adjust};
-        nanosleep(&time_to_sleep, NULL);
-    }
-    if(!_use_tdma)
-        _correction_time = -100000L;
     return SAMPLES_PER_SLOT;
 }
 

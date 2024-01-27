@@ -27,7 +27,8 @@ Build-Depends: debhelper-compat (= 13),
                qtmultimedia5-dev,
                liblimesuite-dev,
                libzmq3-dev,
-               libsoapysdr-dev
+               libsoapysdr-dev,
+               libuhd-dev
 
 Package: qradiolink
 Architecture: any

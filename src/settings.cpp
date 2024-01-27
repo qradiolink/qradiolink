@@ -73,6 +73,8 @@ Settings::Settings(Logger *logger)
     m17_destination_type = 0;
     udp_audio_sample_rate = 48000;
     sql_pty_path = "/tmp/sql_pty";
+    udp_audio_local_address = "127.0.0.1";
+    udp_audio_remote_address = "127.0.0.1";
 
     /// old stuff, not used
     _mumble_tcp = 1; // used
@@ -821,6 +823,22 @@ void Settings::readConfig()
     {
         sql_pty_path = "/tmp/sql_pty";
     }
+    try
+    {
+        udp_audio_local_address = QString(cfg.lookup("udp_audio_local_address"));
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        udp_audio_local_address = "127.0.0.1";
+    }
+    try
+    {
+        udp_audio_remote_address = QString(cfg.lookup("udp_audio_remote_address"));
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        udp_audio_remote_address = "127.0.0.1";
+    }
 
 
 }
@@ -914,6 +932,8 @@ void Settings::saveConfig()
     root.add("m17_destination_type",libconfig::Setting::TypeInt) = m17_destination_type;
     root.add("udp_audio_sample_rate",libconfig::Setting::TypeInt) = udp_audio_sample_rate;
     root.add("sql_pty_path",libconfig::Setting::TypeString) = sql_pty_path.toStdString();
+    root.add("udp_audio_local_address",libconfig::Setting::TypeString) = udp_audio_local_address.toStdString();
+    root.add("udp_audio_remote_address",libconfig::Setting::TypeString) = udp_audio_remote_address.toStdString();
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());

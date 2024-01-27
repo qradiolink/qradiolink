@@ -53,6 +53,7 @@ SOURCES += src/main.cpp\
     src/gr/gr_mod_m17.cpp \
     src/gr/gr_mod_mmdvm_multi.cpp \
     src/gr/gr_zero_idle_bursts.cpp \
+    src/gr/rssi_tag_block.cpp \
     src/limerfecontroller.cpp \
         src/mainwindow.cpp\
         src/audio/audioencoder.cpp\
@@ -154,6 +155,7 @@ HEADERS  += src/mainwindow.h\
     src/gr/gr_mod_m17.h \
     src/gr/gr_mod_mmdvm_multi.h \
     src/gr/gr_zero_idle_bursts.h \
+    src/gr/rssi_tag_block.h \
     src/limerfecontroller.h \
     src/udpclient.h \
         src/video/videoencoder.h \
@@ -265,7 +267,7 @@ FORMS    += src/mainwindow.ui
 
 
 LIBS += -lgnuradio-pmt -lgnuradio-analog -lgnuradio-fft -lgnuradio-vocoder -lgnuradio-zeromq \
-        -lgnuradio-osmosdr -lvolk -lfmt \
+        -lgnuradio-osmosdr -lgnuradio-uhd -luhd -lvolk -lfmt \
         -lgnuradio-blocks -lgnuradio-filter -lgnuradio-digital -lgnuradio-runtime -lgnuradio-fec \
         -lboost_system$$BOOST_SUFFIX
 LIBS += -lrt -lpthread # need to include on some distros
