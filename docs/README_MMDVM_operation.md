@@ -2,17 +2,24 @@
 # MMDVM operation mode
 
 QRadioLink can act as a SDR base station transceiver for DMR, System Fusion, D-Star or M17
-by connecting to MMDVM-SDR, a fork of MMDVM which runs on Linux operating systems. MMDVM-SDR is slightly different from the original MMDVM software and is tested and developed at https://codeberg.org/qradiolink/MMDVM-SDR on the `mmdvm_sdr` branch. A fork of MMDVMHost is also necessary, which is maintained at https://codeberg.org/qradiolink/MMDVMHost-SDR on the `mmdmv_sdr` branch. 
+by connecting to MMDVM-SDR, a fork of MMDVM which runs on Linux operating systems. 
+MMDVM-SDR is slightly different from the original MMDVM software and is tested and developed at https://codeberg.org/qradiolink/MMDVM-SDR on the `mmdvm_sdr` branch. A fork of MMDVMHost is also necessary, which is maintained at https://codeberg.org/qradiolink/MMDVMHost-SDR on the `mmdmv_sdr` branch.
+
+# DMR tier III trunked radio base station mode
+
+QRadioLink can also act as a DMR tier III trunked radio base station using MMDVM-SDR, MMDVMHost-SDR, DMRGateway and dmrtc (https://codeberg.org/qradiolink/dmrtc). This mode requires using the **trunking** branch from MMDVM-SDR, MMDVMHost-SDR and DMRGateway, and the master branch of dmrtc.
+
+# Single and multi-carrier
 
 QRadioLink can work either as a normal single channel transceiver or as a
 multi-channel / multi-carrier transceiver. So far only DMR, System Fusion and M17 have been tested
-and confirmed to work, but D-Star and other digital modes should work as well. 
+and confirmed to work, but D-Star and other digital modes supported by MMDVM should work as well. 
 
-Multi-carrier and single carrier MMDVM modes are only supported with LimeSDR devices so far due to the need for device timestamps used in TDMA mode. So far the LimeNet-Micro and the LimeSDR-mini were tested and confirmed to function in this mode.
+Multi-carrier and single carrier MMDVM modes are only supported with LimeSDR and Ettus USRP devices so far due to the need for device timestamps used in TDMA mode. The LimeNet-Micro, the LimeSDR-mini and the USRP B20X were tested and confirmed to function in this mode. Other UHD based devices (AntSDR?) may also work but were not tested.
 
-Support for other devices like Ettus USRP or BladeRF may be added in the future. If you have such hardware and are interested in getting it working, please create a pull request based on the `next` branch.
+Support for other devices like BladeRF may be added in the future. If you have such hardware and are interested in getting it working, please create a pull request based on the `next` branch.
 
-Due to performance issues, MMDVM modes do not work well on ARM Linux platforms like Raspberry Pi. Some work is currently done to attempt to address this, but at the moment it is recommended to run MMDVM modes on x86_64 platforms with at least 4 cores.
+Due to performance issues, MMDVM multi-carrier modes do not work very well on ARM Linux platforms like Raspberry Pi. Some work is currently done to attempt to address this, but at the moment it is recommended to run MMDVM modes on x86_64 platforms with at least 4 cores.
 
 ## Installation
 
@@ -27,10 +34,12 @@ Install normally (see README.md)
 ### 2. MMDVM
 ----
 
+- **Important:** you need to use the CMake build system, not the original Makefile, so use cmake instead of make
+
 <pre>
 git clone https://codeberg.org/qradiolink/MMDVM-SDR
 cd MMDVM-SDR
-git checkout mmdvm_sdr
+git checkout mmdvm_sdr # for DMR tier III use the trunking branch
 mkdir build && cd build
 cmake ..
 make -j 2
@@ -43,7 +52,29 @@ make -j 2
 <pre>
 git clone https://codeberg.org/qradiolink/MMDVMHost-SDR
 cd MMDVMHost-SDR
-git checkout mmdvm_sdr
+git checkout mmdvm_sdr # for DMR tier III use the trunking branch
+make -j 4
+</pre>
+----
+
+### 4. DMRTC (trunking controller)
+----
+
+<pre>
+git clone https://codeberg.org/qradiolink/dmrtc
+cd dmrtc
+git checkout master
+make -j 4
+</pre>
+----
+
+### 5. DMRGateway (only used for DMR tier III trunking)
+----
+
+<pre>
+git clone https://codeberg.org/qradiolink/DMRGateway
+cd DMRGateway
+git checkout trunking
 make -j 4
 </pre>
 ----
@@ -53,24 +84,50 @@ make -j 4
 The startup order is 
 
 1. MMDVM via CLI or start.sh script
-2. QRadioLink via CLI with --mmdvm as an option
+2. QRadioLink via CLI with --mmdvm as a CLI parameter
 3. MMDVMHost instances for all channels
 
-### 1. QRadioLink
+### 1. MMDVM
 ----
 
-* Start the application normally. Configure the LimeSDR device, as well as all other options.
-Use a device string like **driver=lime,serial=00583A34CAD205** (replace serial with your own).
-You can find out the serial number by running LimeUtil, which is part of the LimeSuite package:
+* For single channel mode: from the build/ directory, start mmdvm in single channel mode using:
+<pre>
+./mmdvm
+</pre>
+This will create the symlink to the virtual pts, which you will need to put into MMDVM.ini, section Modem:
+<pre>
+M: 2022-08-13 11:37:34.779 virtual pts: /dev/pts/15 <> /home/user1/MMDVM-SDR/build/ttyMMDVM0
+</pre>
+
+* If you have started in single channel mode, the tty will be called **ttyMMDVM0**
+
+* For multi-channel mode: start multiple instances of mmdvm using the **-c CHANNEL_NUMBER** flag (requires multichannel mode also configured in QRadioLink). Start multiple mmdvm in different terminals like this (up to 7 channels can be used, numbered here from 1 to 7):
+<pre>
+./mmdvm -c 1
+./mmdvm -c 2
+./mmdvm -c 3
+...
+</pre>
+
+* Verify in mmdvm output that the ttyMMDVM has the correct number (1 to 3 in above example)
+
+* Channel 1 for mmdvm corresponds to qradiolink channel zero (main frequency) and so forth.
+----
+
+### 2. QRadioLink
+----
+
+* Start the application normally. Configure the LimeSDR or USRP device, as well as all other options.
+Use a device string like **driver=lime,serial=00583A34CAD205** for LimeSDR or **driver=uhd,serial=00583A3** for USRP devices (replace serial with your own). Note serial is only needed if you have multiple devices.
+You can find out the serial number by running LimeUtil, which is part of the LimeSuite package or uhd_find_devices:
 <pre>
 LimeUtil --find
 </pre>
-Click save to write the settings in the config file.
 
 * In the Setup -> Radio settings page, choose the number of MMDVM channels to be transmitted, if operating in MMDVM multi-channel mode. This number needs to be between 2 and 7 at the moment (default is 3). The number of channels which can be transmitted simultaneously is heavily dependent on the CPU power. On small ARM platforms, due to the high sample rates involved internally, it may not be possible to operate more than 1 or 2 channels.
 **Important**: you will need to start as many instances of MMDVM as many channels are configured here, otherwise qradiolink will not transmit anything.
 
-* Select channel separation (options are currently 12.5 kHz and 25 kHz). Please note that only the 25 kHz channel separation for multicarrier mode has been tested so far.
+* Select channel separation (options are currently 12.5 kHz and 25 kHz). Please note that only the 25 kHz channel separation for multicarrier mode has been tested so far and is recommended.
 
 * Configure the RX frequency which will be the uplink from the radio. In the config file, **rx_frequency** and **demod_offset**, added together, will provide your baseband receive frequency. In multicarrier mode, demod_offset should be small (less than 50 kHz) and chosen such that DC does not fall in a used channel. With a channel separation of 25 kHz, demod_offset can be 12500 or -12500, but check that adding it to rx_frequency results in your wanted receive frequency for channel zero.
 
@@ -110,6 +167,8 @@ Example:
 
 * Choose as operating mode either **MMDVM** or **MMDVM multi** for both TX and RX
 
+* Click save to write the settings in the config file.
+
 * Close the application, all the settings will be saved in the config file
 
 * If you are unable to use the GUI all the settings can be instead directly written in the config file which is located in:
@@ -145,32 +204,6 @@ Setting RX gain value to 35
 * Keep in mind that SDR devices can have thermal frequency drift, so if the clock is not disciplined by an external precise source you may need to tune the receiver as the device warms and cools. MMDVM demodulation is relatively sensitive to being offset in frequency, so the first thing to check if you observe a high BER is the RX frequency which can be a few hundreds of Hz above or below the optimum value.
 ---
 
-### 2. MMDVM
-----
-
-* For single channel mode: from the build/ directory, start mmdvm in single channel mode using:
-<pre>
-./mmdvm
-</pre>
-This will create the symlink to the virtual pts, which you will need to put into MMDVM.ini, section Modem:
-<pre>
-M: 2022-08-13 11:37:34.779 virtual pts: /dev/pts/15 <> /home/user1/MMDVM-SDR/build/ttyMMDVM0
-</pre>
-
-* If you have started in single channel mode, the tty will be called **ttyMMDVM0**
-
-* For multi-channel mode: start multiple instances of mmdvm using the **-c CHANNEL_NUMBER** flag (requires multichannel mode also configured in QRadioLink). Start multiple mmdvm in different terminals like this (up to 7 channels can be used, numbered here from 1 to 7):
-<pre>
-./mmdvm -c 1
-./mmdvm -c 2
-./mmdvm -c 3
-...
-</pre>
-
-* Verify in mmdvm output that the ttyMMDVM has the correct number (1 to 3 in above example)
-
-* Channel 1 for mmdvm corresponds to qradiolink channel zero (main frequency) and so forth.
-----
 
 ### 3. MMDVMHost
 ----
@@ -180,8 +213,6 @@ M: 2022-08-13 11:37:34.779 virtual pts: /dev/pts/15 <> /home/user1/MMDVM-SDR/bui
 * Each MMDVM.ini has to contain a unique identifier for the virtual pts. In single channel mode the name will always be ttyMMDVM0, otherwise it will be numbered from 1 to 7 depending on the id given after the **-c** switch. The path of the symlink will be located in the MMDVM-SDR build directory if started from there.
 
 * Note that RX and TX levels are important and may need manual tweaking. Particularly, YSF mode requires much lower RX levels than DMR mode.
-
-* The setting **DMRDelay** should be set to a value between 0 and 100.
 
 * Example config for DMR below:
 <pre>
@@ -287,6 +318,11 @@ WhiteList=
 
 [DMR]
 Enable=1
+# These 4 below settings are only relevant for tier III trunked radio mode
+# Trunking=1
+# SystemCode=9
+# RegistrationRequired=1
+# ControlChannel=1 # set this to 1 only for the first instance of MMDVMHost on the control channel
 Beacons=1
 BeaconInterval=30
 BeaconDuration=10
@@ -505,5 +541,5 @@ start multiple instances of MMDVMHost from different terminals using the corresp
 
 * The most important options in the MMDVM.ini files are located in the [Modem] section.
 You **must** enable **TXInvert** and **RXInvert**, and also adjust RXLevel to a value where the BER is minimal, 
-generally between 1 and 70. TXLevel can be set to 100 in most cases everywhere. System Fusion optimum RXLevel is lower than DMR level. A value of 1 can work best in most cases for YSF. 
+generally between 1 and 70. TXLevel can be set to values between 80 and 100 in most cases everywhere. System Fusion optimum RXLevel is lower than DMR level. A value of 1 can work best in most cases for YSF. 
 ----

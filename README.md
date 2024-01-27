@@ -35,7 +35,7 @@ $ sudo apt-get install gnuradio-dev protobuf-compiler gr-osmosdr gnuradio libvol
 
 For Ubuntu 20.04.3 build dependencies are:
 <pre>
-$ sudo apt-get install gnuradio-dev protobuf-compiler gr-osmosdr gnuradio libvolk2-dev libvolk2-bin libprotobuf23 libprotobuf-dev libopus0 libopus-dev libspeexdsp1 libspeexdsp-dev libpulse0 libpulse-dev liblog4cpp5v5 libcodec2-0.9 libcodec2-dev libasound2 libasound2-dev libjpeg-turbo8 libjpeg-turbo8-dev libconfig++9v5 libconfig++-dev qt5-qmake qtbase5-dev libqt5core5a libqt5gui5 libqt5network5 libqt5sql5 qtmultimedia5-dev libqt5multimediawidgets5 libqt5multimedia5-plugins libqt5multimedia5 libftdi-dev libftdi1 libsndfile1-dev libsndfile1 qtgstreamer-plugins-qt5 libgstreamer-plugins-bad1.0-0 liblimesuite-dev liblimesuite20.01-1 libzmq3-dev libzmq5 libsoapysdr-dev libsoapysdr0.7
+$ sudo apt-get install gnuradio-dev protobuf-compiler gr-osmosdr gnuradio libvolk2-dev libvolk2-bin libprotobuf23 libprotobuf-dev libopus0 libopus-dev libspeexdsp1 libspeexdsp-dev libpulse0 libpulse-dev liblog4cpp5v5 libcodec2-0.9 libcodec2-dev libasound2 libasound2-dev libjpeg-turbo8 libjpeg-turbo8-dev libconfig++9v5 libconfig++-dev qt5-qmake qtbase5-dev libqt5core5a libqt5gui5 libqt5network5 libqt5sql5 qtmultimedia5-dev libqt5multimediawidgets5 libqt5multimedia5-plugins libqt5multimedia5 libftdi-dev libftdi1 libsndfile1-dev libsndfile1 qtgstreamer-plugins-qt5 libgstreamer-plugins-bad1.0-0 liblimesuite-dev liblimesuite20.01-1 libzmq3-dev libzmq5 libsoapysdr-dev libsoapysdr0.7 libuhd-dev libuhd
 </pre>
 
 - Qt >= 5.14 and Qt5 development packages (older versions of Qt5 >= 5.11 might work as well)
@@ -55,6 +55,7 @@ In [#67](https://github.com/qradiolink/qradiolink/issues/67) it was reported tha
 - protoc compiler (libprotoc 2.6.1 or greater, depending on which version of libprotobuf is used)
 - SoapySDR and SoapyPlutoSDR, SoapyLMS7 are recommended as Soapy has support for many devices
 - LimeSuite: liblimesuite-dev liblimesuite20.10-1 used for LimeRFE control
+- libuhd and libuhd-dev
 
 In order to build on Ubuntu 17.10 you have to install the following packages, assuming a full GNU Radio development environment is already installed. Please note these instructions are for a very old version and are not guaranteed to work with newer versions. It is recommended to follow the Debian install guide and adjust for Ubuntu differences.
 
