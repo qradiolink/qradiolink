@@ -50,6 +50,7 @@
         <file>res/dial-background.png</file>
         <file>res/dial-needle.png</file>
         <file>res/edit-find.png</file>
+        <file>res/qradiolink.png</file>
     </qresource>
     <qresource prefix="/fonts">
         <file>res/LiquidCrystal-Normal.otf</file>

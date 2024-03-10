@@ -302,7 +302,7 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     _speech_icon_timer.setSingleShot(true);
     _secondary_text_timer.setSingleShot(true);
 
-    setWindowIcon(QIcon(":/res/logo.png"));
+    setWindowIcon(QIcon(":/res/qradiolink.png"));
     setWindowTitle("QRadioLink");
 
 }

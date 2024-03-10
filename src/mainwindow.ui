@@ -27,10 +27,16 @@
   </property>
   <property name="windowIcon">
    <iconset resource="resources.qrc">
-    <normaloff>:/res/logo.png</normaloff>:/res/logo.png</iconset>
+    <normaloff>:/res/qradiolink.png</normaloff>:/res/qradiolink.png</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true"/>
+  </property>
+  <property name="iconSize">
+   <size>
+    <width>64</width>
+    <height>64</height>
+   </size>
   </property>
   <widget class="QWidget" name="centralWidget">
    <property name="sizePolicy">
