@@ -128,11 +128,10 @@ int gr_mmdvm_sink::work(int noutput_items,
                 control = MARK_SLOT2;
                 _slot_sample_counter[chan] = 1;
             }
-            if(_slot_sample_counter[chan] > 0)
-            {
-                control_buf[chan].push_back(control);
-                data_buf[chan].push_back((int16_t)in[chan][i]);
-            }
+
+            control_buf[chan].push_back(control);
+            data_buf[chan].push_back((int16_t)in[chan][i]);
+
             if(_slot_sample_counter[chan] >= SAMPLES_PER_SLOT)
             {
                 uint32_t rssi1 = _rssi[chan].back();
