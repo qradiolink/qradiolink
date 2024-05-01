@@ -130,8 +130,8 @@ Known issues
 ----
 
 - When tuning rapidly for a prolonged time (for example by dragging the filter box across the screen), the audio may experience slowdowns and other glitches. As a workaround, click at the desired location on the waterfall instead of dragging.
-- Due to an issue in libvolk / GNU radio 3.8, digital modes are broken unless the workaround documented in docs/OPERATION.md is applied.
-- High BER in MMDVM mode while using Yaesu System Fusion mode.
+- Roundtrip latency increases to double over 24 hours of continuous operation with Ettus USRP in MMDVM modes
+- Calculated RSSI values for MMDVM RF channels are not always accurate
 
 
 Copyright and License

@@ -1,3 +1,17 @@
+qradiolink (0.8.12-1) experimental; urgency=medium
+
+  [ Adrian Musceac ]
+  * Consolidate DMR Tier III base station functions
+  * Direct support for Ettus USRP via gnuradio-uhd and libuhd
+  * Reduced roundtrip latency to half (350 ms) for the DMR TDMA RF channel
+  * Added RSSI calculation for MMDVM channel
+  * Compatibility with tag 1.1 of MMDVM-SDR
+  * Added documentation for DMR trunking mode with MMDVM
+
+
+ -- Adrian Musceac <adrian@qradiolink.org>  Wed, 01 May 2024 11:48:00 +0300
+
+
 qradiolink (0.8.11-1) experimental; urgency=medium
 
   [ Adrian Musceac ]
