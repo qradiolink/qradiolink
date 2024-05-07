@@ -119,8 +119,12 @@ qmake .. INSTALL_PREFIX=/usr/local/bin LIBDIR=/opt/lib INCDIR=/opt/include
 
 
 
-Operation
+Configuration and operation
 ----
+
+HTML documentation is available on the QRadioLink [documentation site](https://qradiolink.org/docs/home/index.html "documentation site")
+
+Bundled documentation:
 
 - See docs/OPERATION.md
 - For MMDVM base station operation mode, see docs/README_MMDVM_operation.md
