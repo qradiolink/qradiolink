@@ -2125,7 +2125,7 @@ void RadioController::toggleRxMode(int value)
         break;
     case 17:
         _rx_mode = gr_modem_types::ModemTypeQPSK20K;
-        _step_hz = 50;
+        _step_hz = 10;
         _scan_step_hz = 25000;
         break;
     case 18:
@@ -2150,7 +2150,7 @@ void RadioController::toggleRxMode(int value)
         break;
     case 22:
         _rx_mode = gr_modem_types::ModemType2FSK10KFM;
-        _step_hz = 500;
+        _step_hz = 10;
         _scan_step_hz = 50000;
         break;
     case 23:
@@ -2165,7 +2165,7 @@ void RadioController::toggleRxMode(int value)
         break;
     case 25:
         _rx_mode = gr_modem_types::ModemTypeGMSK10K;
-        _step_hz = 500;
+        _step_hz = 10;
         _scan_step_hz = 50000;
         break;
     case 26:
@@ -2185,21 +2185,21 @@ void RadioController::toggleRxMode(int value)
         break;
     case 29:
         _rx_mode = gr_modem_types::ModemType4FSK10KFM;
-        _step_hz = 500;
+        _step_hz = 10;
         _scan_step_hz = 50000;
         break;
     case 30:
         _rx_mode = gr_modem_types::ModemTypeQPSKVideo;
-        _step_hz = 1000;
+        _step_hz = 500;
         break;
     case 31:
         _rx_mode = gr_modem_types::ModemTypeQPSK250K;
-        _step_hz = 1000;
+        _step_hz = 500;
         _scan_step_hz = 500000;
         break;
     case 32:
         _rx_mode = gr_modem_types::ModemType4FSK100K;
-        _step_hz = 1000;
+        _step_hz = 200;
         _scan_step_hz = 500000;
         break;
     case 33:
