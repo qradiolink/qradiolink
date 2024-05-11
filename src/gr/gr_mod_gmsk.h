@@ -59,7 +59,6 @@ private:
     gr::blocks::multiply_const_cc::sptr _amplify;
     gr::blocks::multiply_const_cc::sptr _bb_gain;
     gr::digital::scrambler_bb::sptr _scrambler;
-    gr::filter::fft_filter_ccf::sptr _filter;
     gr::digital::map_bb::sptr _map;
     gr::analog::frequency_modulator_fc::sptr _freq_modulator;
     gr::filter::rational_resampler_fff::sptr _resampler;

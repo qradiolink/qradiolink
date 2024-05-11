@@ -556,7 +556,7 @@ void MainWindow::setConfig()
     ui->voipServerPortEdit->setText(QString::number(_settings->voip_port));
     ui->voipPasswordEdit->setText(_settings->voip_password);
     ui->remoteControlEdit->setText(QString::number(_settings->control_port));
-
+    ui->lineEditTxCarrierOffset->setText(QString::number(_settings->tx_carrier_offset));
     ui->frequencyEdit->setText(QString::number(_settings->rx_frequency/1000));
     ui->shiftEdit->setText(QString::number(_settings->tx_shift / 1000));
     ui->voipServerEdit->setText(_settings->voip_server);
@@ -688,6 +688,7 @@ void MainWindow::saveUiConfig()
     relay_sequence |= (int)ui->relay8CheckBox->isChecked() << 7;
     _settings->relay_sequence = relay_sequence;
     _settings->lnb_lo_freq = (int64_t)(ui->lnbLOEdit->text().toLong() * 1000);
+    _settings->tx_carrier_offset = ui->lineEditTxCarrierOffset->text().toInt();
     _settings->lime_rfe_device = ui->lineEditLimeRFEDevice->text();
     _settings->m17_dest = ui->lineEditM17Dest->text();
     _settings->m17_src = ui->lineEditM17Src->text();

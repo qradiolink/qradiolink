@@ -44,14 +44,22 @@ gr_mod_gmsk::gr_mod_gmsk(int sps, int samp_rate, int carrier_freq,
     _samp_rate =samp_rate;
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
-    int nfilts = 15 * _samples_per_symbol;
+    int nfilts = 35;
     float amplif = 0.9f;
 
-    int second_interp = 10;
-    int if_samp_rate = 100000;
-    if(_samples_per_symbol == 5)
+    int second_interp = 5;
+    int if_samp_rate = 200000;
+    if(_samples_per_symbol == 10)
     {
-        nfilts = nfilts * 5;
+        nfilts = 80;
+    }
+    if(_samples_per_symbol == 50)
+    {
+        nfilts = 55;
+    }
+    if(_samples_per_symbol == 100)
+    {
+        nfilts = 35;
     }
     if((nfilts % 2) == 0)
         nfilts += 1;
@@ -67,25 +75,20 @@ gr_mod_gmsk::gr_mod_gmsk(int sps, int samp_rate, int carrier_freq,
     _freq_modulator = gr::analog::frequency_modulator_fc::make((M_PI/2)/(_samples_per_symbol));
     _resampler = gr::filter::rational_resampler_fff::make(_samples_per_symbol, 1,
                     gr::filter::firdes::gaussian(_samples_per_symbol,
-                                _samples_per_symbol,0.3,nfilts));
+                                _samples_per_symbol,0.5,nfilts));
     _amplify = gr::blocks::multiply_const_cc::make(amplif,1);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
-    _filter = gr::filter::fft_filter_ccf::make(1,gr::filter::firdes::low_pass_2(
-            1, if_samp_rate, _filter_width, 1200, 90, gr::fft::window::WIN_BLACKMAN_HARRIS));
     _resampler2 = gr::filter::rational_resampler_ccf::make(second_interp, 1,
-                gr::filter::firdes::low_pass(second_interp,_samp_rate,_filter_width,_filter_width*5));
+                gr::filter::firdes::low_pass(second_interp,_samp_rate,_filter_width,_filter_width));
 
     connect(self(),0,_packed_to_unpacked,0);
     connect(_packed_to_unpacked,0,_scrambler,0);
     connect(_scrambler,0,_encode_ccsds,0);
     connect(_encode_ccsds,0,_map,0);
     connect(_map,0,_chunks_to_symbols,0);
-
     connect(_chunks_to_symbols,0,_resampler,0);
     connect(_resampler,0,_freq_modulator,0);
-
-    connect(_freq_modulator,0,_filter,0);
-    connect(_filter,0,_amplify,0);
+    connect(_freq_modulator,0,_amplify,0);
     connect(_amplify,0,_bb_gain,0);
     connect(_bb_gain,0,_resampler2,0);
     connect(_resampler2,0,self(),0);

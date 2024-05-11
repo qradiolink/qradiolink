@@ -64,13 +64,13 @@ gr_demod_4fsk::gr_demod_4fsk(std::vector<int>signature, int sps, int samp_rate, 
     }
     if(sps == 10)
     {
-        _target_samp_rate = 5000;
-        _samples_per_symbol = sps/2;
-        decimation = 200;
+        _target_samp_rate = 10000;
+        _samples_per_symbol = sps;
+        decimation = 100;
         interpolation = 1;
         rs = 1000;
         bw = 2000;
-        nfilts = 12 * _samples_per_symbol;
+        nfilts = 25 * _samples_per_symbol;
     }
     if(sps == 2)
     {
@@ -131,12 +131,12 @@ gr_demod_4fsk::gr_demod_4fsk(std::vector<int>signature, int sps, int samp_rate, 
     _shaping_filter = gr::filter::fft_filter_fff::make(
                 1, gr::filter::firdes::root_raised_cosine(1.5,_target_samp_rate,
                                     _target_samp_rate/_samples_per_symbol,0.2,nfilts));
-    float symbol_rate ((float)_target_samp_rate / (float)_samples_per_symbol);
-    float sps_deviation = 500.0f / symbol_rate;
+    float symbol_rate = ((float)_target_samp_rate / (float)_samples_per_symbol);
+    float sps_deviation = 0.05f;
     _symbol_sync = gr::digital::symbol_sync_ff::make(gr::digital::TED_MOD_MUELLER_AND_MULLER, _samples_per_symbol,
-                                                    2 * M_PI / (symbol_rate / 50), 1.0, 0.2869, sps_deviation, 1, constellation_4fsk);
+                                                    2 * M_PI / 200.0f, 1.0, 0.2869, sps_deviation, 1, constellation_4fsk);
     _symbol_sync_complex = gr::digital::symbol_sync_cc::make(gr::digital::TED_MOD_MUELLER_AND_MULLER, _samples_per_symbol,
-                                                    2 * M_PI / (symbol_rate / 50), 1.0, 0.2869, sps_deviation, 1, constellation_4fsk);
+                                                    2 * M_PI / 200.0f, 1.0, 0.2869, sps_deviation, 1, constellation_4fsk);
     _float_to_complex = gr::blocks::float_to_complex::make();
     _descrambler = gr::digital::descrambler_bb::make(0x8A, 0x7F ,7);
 

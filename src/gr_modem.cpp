@@ -421,7 +421,6 @@ void gr_modem::setCarrierOffset(int64_t offset)
 
 void gr_modem::setTxCarrierOffset(int64_t offset)
 {
-    qDebug() << "TX carrier offset: " << offset;
     if(_gr_mod_base)
         _gr_mod_base->set_carrier_offset(offset);
 }
@@ -431,7 +430,6 @@ qint64 gr_modem::resetTxCarrierOffset()
     if(_gr_mod_base)
     {
         qint64 offset = _gr_mod_base->reset_carrier_offset();
-        qDebug() << "TX carrier offset: " << offset;
         return offset;
     }
     return 0;

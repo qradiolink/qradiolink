@@ -29,6 +29,7 @@
 #include <gnuradio/blocks/divide.h>
 #include <gnuradio/analog/rail_ff.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
+#include <gnuradio/filter/fft_filter_fff.h>
 #include <gnuradio/filter/fft_filter_ccc.h>
 #include <gnuradio/digital/descrambler_bb.h>
 #include <gnuradio/fec/decoder.h>
@@ -70,7 +71,7 @@ private:
     gr::fec::decoder::sptr _cc_decoder;
     gr::fec::decoder::sptr _cc_decoder2;
     gr::analog::quadrature_demod_cf::sptr _freq_demod;
-    gr::filter::fft_filter_ccf::sptr _shaping_filter;
+    gr::filter::fft_filter_fff::sptr _shaping_filter;
 
 
     int _samples_per_symbol;

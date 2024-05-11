@@ -52,12 +52,13 @@ gr_mod_4fsk::gr_mod_4fsk(int sps, int samp_rate, int carrier_freq,
     _carrier_freq = carrier_freq;
     _filter_width = filter_width;
 
-    int nfilts = 256;
+    int nfilts = _samples_per_symbol * 10;
     int second_interp = 20;
     if(sps == 2)
     {
         _samples_per_symbol = 5;
         second_interp = 2;
+        nfilts = 256;
     }
 
     int spacing = 2;
@@ -86,10 +87,9 @@ gr_mod_4fsk::gr_mod_4fsk(int sps, int samp_rate, int carrier_freq,
     _amplify = gr::blocks::multiply_const_cc::make(amplif, 1);
     _scale_pulses = gr::blocks::multiply_const_ff::make(0.66666666, 1);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
-    _filter = gr::filter::fft_filter_ccf::make(1,gr::filter::firdes::low_pass(
-                1, _samp_rate, _filter_width, _filter_width/2,gr::fft::window::WIN_BLACKMAN_HARRIS));
     _resampler2 = gr::filter::rational_resampler_ccf::make(second_interp, 1,
-                gr::filter::firdes::low_pass(second_interp,_samp_rate,_filter_width,_filter_width*5));
+                gr::filter::firdes::low_pass(second_interp,_samp_rate,_filter_width,_filter_width));
+
 
 
     connect(self(),0,_packed_to_unpacked,0);
@@ -109,11 +109,10 @@ gr_mod_4fsk::gr_mod_4fsk(int sps, int samp_rate, int carrier_freq,
         connect(_chunks_to_symbols,0,_repeat,0);
         connect(_repeat,0,_freq_modulator,0);
     }
-    connect(_freq_modulator,0,_resampler2,0);
-    connect(_resampler2,0,_amplify,0);
+    connect(_freq_modulator,0,_amplify,0);
     connect(_amplify,0,_bb_gain,0);
-    connect(_bb_gain,0,_filter,0);
-    connect(_filter,0,self(),0);
+    connect(_bb_gain,0,_resampler2,0);
+    connect(_resampler2,0,self(),0);
 
 }
 

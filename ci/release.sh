@@ -373,7 +373,7 @@ done
 cat >>Dockerfile <<EOF
 RUN echo force-unsafe-io > /etc/dpkg/dpkg.cfg.d/force-unsafe-io
 RUN echo 'Acquire::EnableSrvRecords "false";' > /etc/apt/apt.conf.d/90srvrecords
-RUN apt-get update && apt-get dist-upgrade --yes
+RUN apt-get update 
 EOF
 
 if [ "${TRAVIS_DEBIAN_AUTOPKGTEST}" = "true" ]
