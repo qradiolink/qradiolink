@@ -64,6 +64,7 @@ public:
     QString ip_address;
     int64_t demod_offset;
     int64_t rx_sample_rate;
+    int64_t tx_carrier_offset; // is changed by Doppler correction
     int scan_step;
     int show_controls;
     int show_constellation;
@@ -132,7 +133,6 @@ public:
     bool tx_inited;
     bool tx_started;
     qint64 tx_frequency;
-    qint64 tx_carrier_offset; // is changed by Doppler correction
     float rssi;
     bool voip_connected;
     bool vox_enabled;

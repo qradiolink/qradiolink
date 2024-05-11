@@ -2846,7 +2846,7 @@ font: 10pt &quot;Sans Serif&quot;;
              </font>
             </property>
             <property name="currentIndex">
-             <number>3</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="tab">
              <property name="sizePolicy">
@@ -3694,6 +3694,23 @@ and S-meter (dBm)</string>
                    </property>
                    <property name="text">
                     <string>Output audio device</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="12" column="2">
+                  <widget class="QLabel" name="label_66">
+                   <property name="text">
+                    <string>Tx carrier offset</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="12" column="3">
+                  <widget class="QLineEdit" name="lineEditTxCarrierOffset">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
                    </property>
                   </widget>
                  </item>

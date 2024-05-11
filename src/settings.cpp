@@ -34,7 +34,7 @@ Settings::Settings(Logger *logger)
     repeater_enabled = false;
     current_voip_channel = -1;
     rssi = 0.0;
-    tx_carrier_offset = 50000;
+    tx_carrier_offset = 0;
 
     /// saved to config
     demod_offset = 0;
@@ -398,6 +398,14 @@ void Settings::readConfig()
     catch(const libconfig::SettingNotFoundException &nfex)
     {
         rx_sample_rate = 1000000;
+    }
+    try
+    {
+        tx_carrier_offset = cfg.lookup("tx_carrier_offset");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        tx_carrier_offset = 0;
     }
     try
     {
@@ -866,6 +874,7 @@ void Settings::saveConfig()
     root.add("tx_volume",libconfig::Setting::TypeInt) = tx_volume;
     root.add("voip_volume",libconfig::Setting::TypeInt) = voip_volume;
     root.add("rx_frequency",libconfig::Setting::TypeInt64) = rx_frequency;
+    root.add("tx_carrier_offset",libconfig::Setting::TypeInt64) = tx_carrier_offset;
     root.add("tx_shift",libconfig::Setting::TypeInt64) = tx_shift;
     root.add("voip_server",libconfig::Setting::TypeString) = voip_server.toStdString();
     root.add("voip_port",libconfig::Setting::TypeInt) = voip_port;

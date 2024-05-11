@@ -1969,6 +1969,7 @@ void RadioController::toggleTX(bool value)
         {
             _modem->setSampRate(_settings->rx_sample_rate);
         }
+        _modem->setTxCarrierOffset(_settings->tx_carrier_offset);
         _modem->setTxCTCSS(_settings->tx_ctcss);
         _modem->startTX(_settings->block_buffer_size);
         if(_settings->rx_inited)
