@@ -39,27 +39,27 @@ gr_demod_gmsk::gr_demod_gmsk(std::vector<int>signature, int sps, int samp_rate, 
     int decim, interp, nfilts;
     if(sps == 10)
     {
-        _target_samp_rate = 10000;
-        _samples_per_symbol = sps / 2;
-        decim = 100;
-        interp = 1;
-        nfilts = 35  * _samples_per_symbol;
-    }
-    else if(sps >= 5)
-    {
         _target_samp_rate = 20000;
         _samples_per_symbol = sps;
         decim = 50;
         interp = 1;
-        nfilts = 35  * _samples_per_symbol;
+        nfilts = 35;
     }
-    else
+    else if(sps == 5)
     {
         _target_samp_rate = 40000;
-        _samples_per_symbol = sps*2;
+        _samples_per_symbol = sps * 2;
         decim = 25;
         interp = 1;
-        nfilts = 125  * _samples_per_symbol;
+        nfilts = 55;
+    }
+    else if(sps == 1)
+    {
+        _target_samp_rate = 80000;
+        _samples_per_symbol = 4;
+        decim = 25;
+        interp = 2;
+        nfilts = 80;
     }
 
     if((nfilts % 2) == 0)
@@ -82,16 +82,18 @@ gr_demod_gmsk::gr_demod_gmsk(std::vector<int>signature, int sps, int samp_rate, 
     _resampler = gr::filter::rational_resampler_base_ccf::make(interp, decim, taps);
     _resampler->set_thread_priority(99);
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
-                                1, _target_samp_rate, _filter_width,_filter_width/2,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
+                               1, _target_samp_rate, _filter_width,_filter_width,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
 
     _float_to_complex = gr::blocks::float_to_complex::make();
-    float sps_deviation = 200.0f / ((float)_target_samp_rate / (float)_samples_per_symbol);
+    float sps_deviation = 0.05;
     _symbol_sync = gr::digital::symbol_sync_ff::make(gr::digital::TED_MOD_MUELLER_AND_MULLER, _samples_per_symbol,
-                                                    2 * M_PI * 0.01, 1.0, 1.0, sps_deviation, 1,
+                                                    2 * M_PI / 200.0f, 1.0, 0.2869, sps_deviation, 1,
                                                      gr::digital::constellation_bpsk::make());
 
 
     _freq_demod = gr::analog::quadrature_demod_cf::make(_samples_per_symbol/(M_PI/2));
+    _shaping_filter = gr::filter::fft_filter_fff::make(1,
+                                                       gr::filter::firdes::gaussian(1, _samples_per_symbol,0.5,nfilts));
     _multiply_const_fec = gr::blocks::multiply_const_ff::make(128);
     _float_to_uchar = gr::blocks::float_to_uchar::make();
     _add_const_fec = gr::blocks::add_const_ff::make(128.0);
@@ -111,7 +113,8 @@ gr_demod_gmsk::gr_demod_gmsk(std::vector<int>signature, int sps, int samp_rate, 
     connect(_resampler,0,_filter,0);
     connect(_filter,0,self(),0);
     connect(_filter,0,_freq_demod,0);
-    connect(_freq_demod,0,_symbol_sync,0);
+    connect(_freq_demod,0,_shaping_filter,0);
+    connect(_shaping_filter,0,_symbol_sync,0);
     connect(_symbol_sync,0,_float_to_complex,0);
     connect(_float_to_complex,0,self(),1);
     connect(_symbol_sync,0,_multiply_const_fec,0);

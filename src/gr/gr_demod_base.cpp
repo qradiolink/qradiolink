@@ -192,18 +192,18 @@ gr_demod_base::gr_demod_base(BurstTimer *burst_timer, QObject *parent, float dev
     _top_block->connect(_rssi_block,0,_rssi,0);
 
 
-    _2fsk_2k_fm = make_gr_demod_2fsk(5,1000000,1700,2700, true); // 4000 for non FM, 2700 for FM
-    _2fsk_1k_fm = make_gr_demod_2fsk(10,1000000,1700,1350, true);
+    _2fsk_2k_fm = make_gr_demod_2fsk(5,1000000,1700,4000, true); // 4000 for non FM, 2700 for FM
+    _2fsk_1k_fm = make_gr_demod_2fsk(10,1000000,1700,2500, true);
     _2fsk_2k = make_gr_demod_2fsk(5,1000000,1700,4000, false);
     _2fsk_1k = make_gr_demod_2fsk(10,1000000,1700,2000, false);
-    _2fsk_10k = make_gr_demod_2fsk(1,1000000,1700,13500, true);
-    _gmsk_2k = make_gr_demod_gmsk(5,1000000,1700,3000);
-    _gmsk_1k = make_gr_demod_gmsk(10,1000000,1700,1500);
-    _gmsk_10k = make_gr_demod_gmsk(1,1000000,1700,15000);
+    _2fsk_10k = make_gr_demod_2fsk(1,1000000,1700,25000, true);
+    _gmsk_2k = make_gr_demod_gmsk(5,1000000,1700,3500);
+    _gmsk_1k = make_gr_demod_gmsk(10,1000000,1700,2500);
+    _gmsk_10k = make_gr_demod_gmsk(1,1000000,1700,30000);
     _4fsk_2k = make_gr_demod_4fsk(5,1000000,1700,4000, false);
-    _4fsk_2k_fm = make_gr_demod_4fsk(5,1000000,1700,2500, true);
-    _4fsk_1k_fm = make_gr_demod_4fsk(10,1000000,1700,1250, true);
-    _4fsk_10k_fm = make_gr_demod_4fsk(1,1000000,1700,12500, true);
+    _4fsk_2k_fm = make_gr_demod_4fsk(5,1000000,1700,3000, true);
+    _4fsk_1k_fm = make_gr_demod_4fsk(10,1000000,1700,2000, true);
+    _4fsk_10k_fm = make_gr_demod_4fsk(1,1000000,1700,20000, true);
     _am = make_gr_demod_am(125, 1000000,1700,5000);
     _bpsk_1k = make_gr_demod_bpsk(10,1000000,1700,1300);
     _bpsk_2k = make_gr_demod_bpsk(5,1000000,1700,2400);

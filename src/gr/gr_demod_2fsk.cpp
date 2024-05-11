@@ -39,26 +39,26 @@ gr_demod_2fsk::gr_demod_2fsk(std::vector<int>signature, int sps, int samp_rate, 
     int decim, interp, nfilts;
     if(sps == 10)
     {
-        _target_samp_rate = 10000;
-        _samples_per_symbol = sps / 2;
-        decim = 100;
-        interp = 1;
-        nfilts = 35  * _samples_per_symbol;
-    }
-    else if(sps >= 5)
-    {
         _target_samp_rate = 20000;
         _samples_per_symbol = sps;
         decim = 50;
         interp = 1;
         nfilts = 35  * _samples_per_symbol;
     }
-    else
+    else if(sps >= 5)
     {
         _target_samp_rate = 40000;
-        _samples_per_symbol = sps*2;
+        _samples_per_symbol = sps * 2;
         decim = 25;
         interp = 1;
+        nfilts = 35  * _samples_per_symbol;
+    }
+    else if(sps == 1)
+    {
+        _target_samp_rate = 80000;
+        _samples_per_symbol = 4;
+        decim = 25;
+        interp = 2;
         nfilts = 125  * _samples_per_symbol;
     }
     int spacing = 2;
@@ -89,7 +89,7 @@ gr_demod_2fsk::gr_demod_2fsk(std::vector<int>signature, int sps, int samp_rate, 
     _resampler->set_thread_priority(99);
     _fll = gr::digital::fll_band_edge_cc::make(_samples_per_symbol, 0.1, 16, 24*M_PI/100);
     _filter = gr::filter::fft_filter_ccf::make(1, gr::filter::firdes::low_pass(
-                                1, _target_samp_rate, _filter_width,_filter_width/2,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
+                                1, _target_samp_rate, _filter_width,_filter_width,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
 
     _upper_filter = gr::filter::fft_filter_ccc::make(1, gr::filter::firdes::complex_band_pass(
                                 1, _target_samp_rate, -_filter_width,0,_filter_width,gr::filter::firdes::WIN_BLACKMAN_HARRIS) );
