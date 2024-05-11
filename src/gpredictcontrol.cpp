@@ -27,7 +27,7 @@ GPredictControl::GPredictControl(const Settings* settings, Logger *logger,  QObj
 QString GPredictControl::processMessages(QString message, int &action, qint64 &rx_freq, qint64 &tx_freq,
                                          qint64 &rx_freq_delta, qint64 &tx_freq_delta)
 {
-    QStringList messages = message.split("\n", QString::SkipEmptyParts);
+    QStringList messages = message.split("\n", Qt::SkipEmptyParts);
     action = RadioAction::NoAction;
 
     bool reply = false;
