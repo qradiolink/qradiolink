@@ -71,7 +71,7 @@ private:
     gr::fec::decoder::sptr _cc_decoder;
     gr::fec::decoder::sptr _cc_decoder2;
     gr::analog::quadrature_demod_cf::sptr _freq_demod;
-    gr::filter::fft_filter_fff::sptr _shaping_filter;
+    gr::filter::fft_filter_fff::sptr _symbol_filter;
 
 
     int _samples_per_symbol;

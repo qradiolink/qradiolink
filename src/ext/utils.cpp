@@ -151,10 +151,10 @@ void buildFilterWidthList(std::vector<std::complex<int>>* filter_widths, std::ve
     filter_widths->push_back(std::complex<int>(-1350, 1350));  // 2FSK 1K RRC
     filter_widths->push_back(std::complex<int>(-4000, 4000));  // 2FSK 2K
     filter_widths->push_back(std::complex<int>(-2000, 2000));  // 2FSK 1K
-    filter_widths->push_back(std::complex<int>(-15000, 15000));  // 2FSK 10K RRC
-    filter_widths->push_back(std::complex<int>(-3000, 3000));  // GMSK 2K
-    filter_widths->push_back(std::complex<int>(-1500, 1500));  // GMSK 1K
-    filter_widths->push_back(std::complex<int>(-15000, 15000));  // GMSK 10K
+    filter_widths->push_back(std::complex<int>(-20000, 20000));  // 2FSK 10K RRC
+    filter_widths->push_back(std::complex<int>(-4000, 4000));  // GMSK 2K
+    filter_widths->push_back(std::complex<int>(-2000, 2000));  // GMSK 1K
+    filter_widths->push_back(std::complex<int>(-20000, 20000));  // GMSK 10K
     filter_widths->push_back(std::complex<int>(-4400, 4400));  // 4FSK 2K
     //filter_widths->push_back(std::complex<int>(-25000, 25000));    // 4FSK 10K
     filter_widths->push_back(std::complex<int>(-2500, 2500));  // 4FSK 2K RRC
@@ -187,14 +187,14 @@ void buildFilterWidthList(std::vector<std::complex<int>>* filter_widths, std::ve
     ranges->push_back(std::complex<int>(-1400, 1400)); // BPSK 700
     ranges->push_back(std::complex<int>(-1500, 1500));  // QPSK 2K
     ranges->push_back(std::complex<int>(-7000, 7000));    // QPSK 10K
-    ranges->push_back(std::complex<int>(-2700, 2700));  // 2FSK 2K RRC
-    ranges->push_back(std::complex<int>(-1350, 1350));  // 2FSK 1K RRC
+    ranges->push_back(std::complex<int>(-4000, 4000));  // 2FSK 2K RRC
+    ranges->push_back(std::complex<int>(-2000, 2000));  // 2FSK 1K RRC
     ranges->push_back(std::complex<int>(-4000, 4000));  // 2FSK 2K
     ranges->push_back(std::complex<int>(-2000, 2000));  // 2FSK 1K
-    ranges->push_back(std::complex<int>(-15000, 15000));  // 2FSK 10K
-    ranges->push_back(std::complex<int>(-3000, 3000));  // GMSK 2K
-    ranges->push_back(std::complex<int>(-1500, 1500));  // GMSK 1K
-    ranges->push_back(std::complex<int>(-15000, 15000));  // GMSK 10K
+    ranges->push_back(std::complex<int>(-20000, 20000));  // 2FSK 10K
+    ranges->push_back(std::complex<int>(-4000, 4000));  // GMSK 2K
+    ranges->push_back(std::complex<int>(-2000, 2000));  // GMSK 1K
+    ranges->push_back(std::complex<int>(-20000, 20000));  // GMSK 10K
     ranges->push_back(std::complex<int>(-4400, 4400));  // 4FSK 2K
     //ranges->push_back(std::complex<int>(-25000, 25000));    // 4FSK 10K
     ranges->push_back(std::complex<int>(-2000, 2000));  // 4FSK 2K RRC
