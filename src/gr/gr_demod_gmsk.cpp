@@ -92,8 +92,9 @@ gr_demod_gmsk::gr_demod_gmsk(std::vector<int>signature, int sps, int samp_rate, 
 
 
     _freq_demod = gr::analog::quadrature_demod_cf::make(_samples_per_symbol/(M_PI/2));
-    _shaping_filter = gr::filter::fft_filter_fff::make(1,
-                                                       gr::filter::firdes::gaussian(1, _samples_per_symbol,0.5,nfilts));
+    _symbol_filter = gr::filter::fft_filter_fff::make(1, gr::filter::firdes::low_pass(1, _target_samp_rate,
+                                                                                    _target_samp_rate/_samples_per_symbol,
+                                                                                    _target_samp_rate/_samples_per_symbol));
     _multiply_const_fec = gr::blocks::multiply_const_ff::make(128);
     _float_to_uchar = gr::blocks::float_to_uchar::make();
     _add_const_fec = gr::blocks::add_const_ff::make(128.0);
@@ -113,8 +114,8 @@ gr_demod_gmsk::gr_demod_gmsk(std::vector<int>signature, int sps, int samp_rate, 
     connect(_resampler,0,_filter,0);
     connect(_filter,0,self(),0);
     connect(_filter,0,_freq_demod,0);
-    connect(_freq_demod,0,_shaping_filter,0);
-    connect(_shaping_filter,0,_symbol_sync,0);
+    connect(_freq_demod,0,_symbol_filter,0);
+    connect(_symbol_filter,0,_symbol_sync,0);
     connect(_symbol_sync,0,_float_to_complex,0);
     connect(_float_to_complex,0,self(),1);
     connect(_symbol_sync,0,_multiply_const_fec,0);

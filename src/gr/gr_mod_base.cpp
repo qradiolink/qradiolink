@@ -157,8 +157,8 @@ gr_mod_base::gr_mod_base(BurstTimer *burst_timer, QObject *parent, float device_
     _2fsk_1k = make_gr_mod_2fsk(50, 1000000, 1700, 2000, false);
     _2fsk_10k = make_gr_mod_2fsk(5, 1000000, 1700, 25000, true);
     _gmsk_2k = make_gr_mod_gmsk(50, 1000000, 1700, 4000);
-    _gmsk_1k = make_gr_mod_gmsk(100, 1000000, 1700, 2500);
-    _gmsk_10k = make_gr_mod_gmsk(10, 1000000, 1700, 35000);
+    _gmsk_1k = make_gr_mod_gmsk(100, 1000000, 1700, 2000);
+    _gmsk_10k = make_gr_mod_gmsk(10, 1000000, 1700, 20000);
     _4fsk_2k = make_gr_mod_4fsk(25, 1000000, 1700, 4000, false);
     _4fsk_2k_fm = make_gr_mod_4fsk(25, 1000000, 1700, 3500, true);
     _4fsk_1k_fm = make_gr_mod_4fsk(50, 1000000, 1700, 2000, true);

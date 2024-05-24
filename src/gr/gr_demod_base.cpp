@@ -197,9 +197,9 @@ gr_demod_base::gr_demod_base(BurstTimer *burst_timer, QObject *parent, float dev
     _2fsk_2k = make_gr_demod_2fsk(5,1000000,1700,4000, false);
     _2fsk_1k = make_gr_demod_2fsk(10,1000000,1700,2000, false);
     _2fsk_10k = make_gr_demod_2fsk(1,1000000,1700,25000, true);
-    _gmsk_2k = make_gr_demod_gmsk(5,1000000,1700,3500);
-    _gmsk_1k = make_gr_demod_gmsk(10,1000000,1700,2500);
-    _gmsk_10k = make_gr_demod_gmsk(1,1000000,1700,30000);
+    _gmsk_2k = make_gr_demod_gmsk(5,1000000,1700,4000);
+    _gmsk_1k = make_gr_demod_gmsk(10,1000000,1700,2000);
+    _gmsk_10k = make_gr_demod_gmsk(1,1000000,1700,20000);
     _4fsk_2k = make_gr_demod_4fsk(5,1000000,1700,4000, false);
     _4fsk_2k_fm = make_gr_demod_4fsk(5,1000000,1700,3000, true);
     _4fsk_1k_fm = make_gr_demod_4fsk(10,1000000,1700,2000, true);

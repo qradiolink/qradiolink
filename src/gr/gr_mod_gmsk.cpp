@@ -51,7 +51,9 @@ gr_mod_gmsk::gr_mod_gmsk(int sps, int samp_rate, int carrier_freq,
     int if_samp_rate = 200000;
     if(_samples_per_symbol == 10)
     {
-        nfilts = 80;
+        _samples_per_symbol = 50;
+        second_interp = 1;
+        nfilts = 55;
     }
     if(_samples_per_symbol == 50)
     {
@@ -75,7 +77,7 @@ gr_mod_gmsk::gr_mod_gmsk(int sps, int samp_rate, int carrier_freq,
     _freq_modulator = gr::analog::frequency_modulator_fc::make((M_PI/2)/(_samples_per_symbol));
     _resampler = gr::filter::rational_resampler_base_fff::make(_samples_per_symbol, 1,
                     gr::filter::firdes::gaussian(_samples_per_symbol,
-                                _samples_per_symbol,0.5,nfilts));
+                                _samples_per_symbol,0.3,nfilts));
     _amplify = gr::blocks::multiply_const_cc::make(amplif,1);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
     _resampler2 = gr::filter::rational_resampler_base_ccf::make(second_interp, 1,
