@@ -48,7 +48,6 @@ gr_mod_gmsk::gr_mod_gmsk(int sps, int samp_rate, int carrier_freq,
     float amplif = 0.9f;
 
     int second_interp = 5;
-    int if_samp_rate = 200000;
     if(_samples_per_symbol == 10)
     {
         _samples_per_symbol = 50;

@@ -23,10 +23,14 @@ public:
 
     std::vector<gr_complex>* get_data();
     void flush();
+    void set_sample_window(unsigned int size);
+    void set_enabled(bool value);
 
 private:
     unsigned int _offset;
+    unsigned int _window_size;
     bool _finished;
+    bool _enabled;
     std::vector<gr_complex> *_data;
     gr::thread::condition_variable _cond_wait;
     gr::thread::mutex _mutex;

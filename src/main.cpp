@@ -467,6 +467,9 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
     QObject::connect(w,SIGNAL(setCarrierOffset(qint64)),radio_op,SLOT(setCarrierOffset(qint64)));
     QObject::connect(w,SIGNAL(newFFTSize(int)),radio_op,SLOT(setFFTSize(int)));
     QObject::connect(w,SIGNAL(setWaterfallFPS(int)),radio_op,SLOT(setFFTPollTime(int)));
+    QObject::connect(w,SIGNAL(setSampleWindow(uint)),radio_op,SLOT(setSampleWindow(uint)));
+    QObject::connect(w,SIGNAL(setSampleRateTimeDomain(int)),radio_op,SLOT(setTimeDomainSampleRate(int)));
+    QObject::connect(w,SIGNAL(enableTimeDomain(bool)),radio_op,SLOT(enableTimeDomain(bool)));
     QObject::connect(w,SIGNAL(setSampleRate(int)),radio_op,SLOT(setRxSampleRate(int)));
     QObject::connect(w,SIGNAL(newFilterWidth(int)),radio_op,SLOT(setFilterWidth(int)));
     QObject::connect(w,SIGNAL(enableAudioCompressor(bool)),
@@ -529,6 +532,8 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
                      w, SLOT(updateClarifierFreqGUI(int)));
     QObject::connect(radio_op, SIGNAL(newFFTData(float*,int)),
                      w, SLOT(newFFTData(float*,int)));
+    QObject::connect(radio_op, SIGNAL(newSampleData(float*,int)),
+                     w, SLOT(newSampleData(float*,int)));
     QObject::connect(radio_op, SIGNAL(newRSSIValue(float)), w, SLOT(updateRSSI(float)));
     QObject::connect(radio_op, SIGNAL(newConstellationData(complex_vector*)),
                      w, SLOT(updateConstellation(complex_vector*)));

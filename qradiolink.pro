@@ -91,6 +91,7 @@ SOURCES += src/main.cpp\
         src/limits.cpp \
     src/qtgui/freqctrl.cpp \
     src/qtgui/plotter.cpp \
+    src/qtgui/plotter_time.cpp \
     src/qtgui/skinneddial.cpp \
     src/gr/rssi_block.cpp \
     src/gr/gr_mod_base.cpp \
@@ -194,6 +195,7 @@ HEADERS  += src/mainwindow.h\
         src/limits.h \
     src/qtgui/freqctrl.h \
     src/qtgui/plotter.h \
+    src/qtgui/plotter_time.h \
     src/qtgui/skinneddial.h \
     src/gr/rssi_block.h \
     src/gr/gr_mod_base.h \

@@ -534,6 +534,12 @@ void gr_modem::enableGUIFFT(bool value)
         _gr_demod_base->enable_gui_fft(value);
 }
 
+void gr_modem::enableTimeDomain(bool value)
+{
+    if(_gr_demod_base)
+        _gr_demod_base->enable_time_domain(value);
+}
+
 void gr_modem::enableRSSI(bool value)
 {
     if(_gr_demod_base)
@@ -550,6 +556,50 @@ void gr_modem::enableDemod(bool value)
 {
     if(_gr_demod_base)
         _gr_demod_base->enable_demodulator(value);
+}
+
+void gr_modem::getFFTData(float* data, unsigned int &size)
+{
+    if(_gr_demod_base)
+        _gr_demod_base->get_FFT_data(data, size);
+}
+
+void gr_modem::getSampleData(float* data, unsigned int &size)
+{
+    if(_gr_demod_base)
+        _gr_demod_base->get_sample_data(data, size);
+}
+
+void gr_modem::setSampleWindow(unsigned int size)
+{
+    if(_gr_demod_base)
+        _gr_demod_base->set_sample_window(size);
+}
+
+void gr_modem::setTimeDomainSampleRate(unsigned int samp_rate)
+{
+    if(_gr_demod_base)
+        _gr_demod_base->set_time_sink_samp_rate(samp_rate);
+}
+
+float gr_modem::getRSSI()
+{
+    if(_gr_demod_base)
+        return _gr_demod_base->get_rssi();
+    else
+    {
+        return 9999.0;
+    }
+}
+
+std::vector<gr_complex>* gr_modem::getConstellation()
+{
+    if(_gr_demod_base)
+        return _gr_demod_base->get_constellation_data();
+    else
+    {
+        return nullptr;
+    }
 }
 
 ///
@@ -830,32 +880,6 @@ static void packBytes(unsigned char *pktbuf, const unsigned char *bitbuf, int bi
         t = (t << 1) | (bitbuf[i+6] & 0x1);
         t = (t << 1) | (bitbuf[i+7] & 0x1);
         *pktbuf++ = t;
-    }
-}
-
-void gr_modem::getFFTData(float* data, unsigned int &size)
-{
-    if(_gr_demod_base)
-        _gr_demod_base->get_FFT_data(data, size);
-}
-
-float gr_modem::getRSSI()
-{
-    if(_gr_demod_base)
-        return _gr_demod_base->get_rssi();
-    else
-    {
-        return 9999.0;
-    }
-}
-
-std::vector<gr_complex>* gr_modem::getConstellation()
-{
-    if(_gr_demod_base)
-        return _gr_demod_base->get_constellation_data();
-    else
-    {
-        return nullptr;
     }
 }
 

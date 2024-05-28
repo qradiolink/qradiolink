@@ -97,6 +97,7 @@ signals:
     void voipDataPCM(short *pcm, int samples);
     void voipDataOpus(unsigned char *pcm, int packet_size);
     void newFFTData(float*, int);
+    void newSampleData(float*, int);
     void newConstellationData(complex_vector*);
     void newRSSIValue(float rssi);
     void initError(QString error, int index);
@@ -160,6 +161,7 @@ public slots:
     void setLimeRFEAttenuation(int value);
     void enableGUIConst(bool value);
     void enableGUIFFT(bool value);
+    void enableTimeDomain(bool value);
     void enableRSSI(bool value);
     void enableDuplex(bool value);
     void scan(bool receiving, bool wait_for_timer=true);
@@ -189,6 +191,8 @@ public slots:
     void resetTxCarrierOffset();
     void setFFTSize(int size);
     void setFFTPollTime(int fps);
+    void setSampleWindow(uint size);
+    void setTimeDomainSampleRate(int samp_rate);
     void setRxSampleRate(int samp_rate);
     void enableAudioCompressor(bool value);
     void enableRelays(bool value);
@@ -223,6 +227,7 @@ private:
     void transmitBinData();
     bool getDemodulatorData();
     void getFFTData();
+    void getSampleData();
     void getConstellationData();
     void getRSSI();
     void setRelays(bool transmitting);
@@ -263,6 +268,7 @@ private:
     QElapsedTimer *_cw_timer;
     unsigned char *_rand_frame_data;
     float *_fft_data;
+    float *_sample_data;
     QVector<short> *_to_voip_buffer;
     QByteArray *_data_rec_sound;
     QByteArray *_end_rec_sound;

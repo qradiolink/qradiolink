@@ -135,6 +135,7 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     QObject::connect(ui->peakDetectCheckBox,SIGNAL(toggled(bool)),this,SLOT(setPeakDetect(bool)));
     QObject::connect(ui->fpsBox,SIGNAL(currentIndexChanged(int)),this,SLOT(newWaterfallFPS()));
     QObject::connect(ui->sampleRateBox,SIGNAL(currentIndexChanged(int)),this,SLOT(updateSampleRate()));
+    QObject::connect(ui->timeSampleRateBox,SIGNAL(currentIndexChanged(int)),this,SLOT(updateSampleRateTimeDomain()));
     QObject::connect(ui->checkBoxAudioCompressor,SIGNAL(toggled(bool)),
                      this,SLOT(setAudioCompressor(bool)));
     QObject::connect(ui->checkBoxRelays,SIGNAL(toggled(bool)),this,SLOT(setRelays(bool)));
@@ -204,6 +205,12 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     QObject::connect(ui->plotterFrame,SIGNAL(newDemodFreq(qint64,qint64)),
                      this,SLOT(carrierOffsetChanged(qint64,qint64)));
 
+    // Time domain display
+    QObject::connect(ui->spinBoxSampleScaling,SIGNAL(valueChanged(int)),
+                     this,SLOT(updateSampleScaling(int)));
+    QObject::connect(ui->spinBoxSampleWindow,SIGNAL(valueChanged(int)),
+                     this,SLOT(updateSampleWindow(int)));
+
     QObject::connect(ui->voipTreeWidget,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),
                      this,SLOT(channelState(QTreeWidgetItem *,int)));
     QObject::connect(ui->memoriesTableWidget,SIGNAL(cellClicked(int, int)),
@@ -219,6 +226,8 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     QObject::connect(ui->checkBoxM17DecodeAllCAN,SIGNAL(toggled(bool)),this,SLOT(updateM17DecodeAllCAN(bool)));
     QObject::connect(ui->comboBoxM17DestinationType,SIGNAL(currentIndexChanged(int)),
                      this,SLOT(updateM17DestinationType(int)));
+    QObject::connect(ui->enableTimeDomainButton,SIGNAL(toggled(bool)),this,SLOT(enableTimeDomainDisplay(bool)));
+    QObject::connect(ui->waveformComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(setTimeDomainWaveform(int)));
 
     QObject::connect(&_secondary_text_timer,SIGNAL(timeout()),ui->secondaryTextDisplay,SLOT(hide()));
     QObject::connect(&_video_timer,SIGNAL(timeout()),ui->videoFrame,SLOT(hide()));
@@ -252,6 +261,8 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     _vu_meter_img = new QPixmap(300,20);
     _realFftData = new float[1048576];
     _iirFftData = new float[1048576];
+    _sampleDataReal = new std::vector<float>;
+    _sampleDataImag = new std::vector<float>;
     _s_meter_bg = new QPixmap(":/res/s-meter-bg-black-small.png");
     _current_voip_channel = -1;
     _ptt_activated = false;
@@ -261,6 +272,8 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     _tx_frequency = _settings->rx_frequency + _settings->demod_offset + _settings->tx_shift;
 
     _rssi = 0;
+
+    // Plotter initialization
     QRect xy = this->geometry();
     ui->plotterContainer->resize(xy.right() -xy.left()-20,xy.bottom()-xy.top()-120);
     ui->secondaryTextDisplay->move(xy.left() + 5, xy.bottom() - 265);
@@ -276,6 +289,22 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     ui->plotterFrame->setWaterfallRange(-120.0,-30.0);
     ui->plotterFrame->setFFTHistory(false);
     ui->plotterFrame->setFftPlotColor(QColor(0x77CCCCCC));
+
+
+    // Time Plotter initialization
+    ui->timePlotter->setSampleRate(_settings->time_domain_sample_rate);
+    ui->timePlotter->setSpanFreq((quint32)_settings->time_domain_sample_rate);
+    ui->timePlotter->setFreqUnits((float)_settings->time_domain_sample_rate);
+    ui->timePlotter->setRunningState(false);
+    ui->timePlotter->setPercent2DScreen(100);
+    ui->timePlotter->setFftFill(false);
+    ui->timePlotter->setFreqDigits(3);
+    ui->timePlotter->setTooltipsEnabled(true);
+    ui->timePlotter->setClickResolution(1);
+    ui->timePlotter->setFftRange(-100.0,100.0);
+    ui->timePlotter->setFFTHistory(false);
+    ui->timePlotter->setFftPlotColor(QColor(0x77CCCCCC));
+
     _range_set = false;
     //QPixmap pm = QPixmap::grabWidget(ui->frameCtrlFreq);
     //ui->frameCtrlFreq->setMask(pm.createHeuristicMask(false));
@@ -320,6 +349,7 @@ void MainWindow::initSettings()
     setEnabledDuplex((bool) _settings->enable_duplex);
     setAudioCompressor((bool) _settings->audio_compressor);
     ui->showConstellationButton->setChecked(_settings->show_constellation);
+    ui->enableTimeDomainButton->setChecked(_settings->show_time_domain);
     showConstellation(_settings->show_constellation);
     ui->showControlsButton->setChecked((bool)_settings->show_controls);
     showControls((bool)_settings->show_controls);
@@ -384,6 +414,10 @@ MainWindow::~MainWindow()
     delete _constellation_painter;
     delete[] _realFftData;
     delete[] _iirFftData;
+    _sampleDataReal->clear();
+    delete _sampleDataReal;
+    _sampleDataImag->clear();
+    delete _sampleDataImag;
     delete _eff_freq;
     delete _eff_const;
     delete _eff_video;
@@ -572,6 +606,8 @@ void MainWindow::setConfig()
     ui->plotterFrame->setWaterfallRange(_settings->panadapter_min_db, _settings->panadapter_max_db);
     ui->sampleRateBox->setCurrentIndex(ui->sampleRateBox->findText
                                        (QString::number(_settings->rx_sample_rate)));
+    ui->timeSampleRateBox->setCurrentIndex(ui->timeSampleRateBox->findText
+                                       (QString::number(_settings->time_domain_sample_rate)));
     ui->averagingSlider->setValue((int)(1.0f/_settings->fft_averaging));
     ui->fftSizeBox->setCurrentIndex(ui->fftSizeBox->findText(QString::number(_settings->fft_size)));
     ui->fpsBox->setCurrentIndex(ui->fpsBox->findText(QString::number(_settings->waterfall_fps)));
@@ -638,6 +674,11 @@ void MainWindow::setConfig()
     ui->sqlPTYLineEdit->setText(_settings->sql_pty_path);
     ui->localUDPIPAddressLineEdit->setText(_settings->udp_audio_local_address);
     ui->remoteUDPIPAddressLineEdit->setText(_settings->udp_audio_remote_address);
+    ui->spinBoxSampleScaling->setValue(_settings->time_domain_sample_scaling);
+    ui->spinBoxSampleWindow->setValue(_settings->time_domain_sample_speed);
+    ui->timePlotter->setSampleRate(_settings->time_domain_sample_rate);
+    ui->timePlotter->setSpanFreq((quint32)_settings->time_domain_sample_rate);
+    ui->timePlotter->setFreqUnits((float)_settings->time_domain_sample_rate);
 }
 
 void MainWindow::saveUiConfig()
@@ -669,6 +710,7 @@ void MainWindow::saveUiConfig()
     _settings->tx_mode = ui->txModemTypeComboBox->currentIndex();
     _settings->ip_address = ui->lineEditIPaddress->text();
     _settings->rx_sample_rate = (int64_t)(ui->sampleRateBox->currentText().toLong());
+    _settings->time_domain_sample_rate = (int64_t)(ui->timeSampleRateBox->currentText().toLong());
     _settings->fft_size = (ui->fftSizeBox->currentText().toInt());
     _settings->scan_step = (int)ui->lineEditScanStep->text().toInt();
     _settings->waterfall_fps = (int)ui->fpsBox->currentText().toInt();
@@ -1054,6 +1096,42 @@ void MainWindow::newFFTData(float *fft_data, int fftsize)
     //ui->plotterFrame->setNewFftData(_iirFftData, _realFftData, fftsize);
 
     QtConcurrent::run(ui->plotterFrame, &CPlotter::setNewFftData, _iirFftData, _realFftData, fftsize);
+}
+
+void MainWindow::newSampleData(float *sample_data, int size)
+{
+    // don't paint anything if window is minimized
+    if(isMinimized())
+        return;
+
+    if (size == 0)
+        return;
+
+    for (int i = 0; i <size/2; i++)
+    {
+        _sampleDataReal->push_back(sample_data[i] * float(_settings->time_domain_sample_scaling));
+    }
+    for (int i = size/2,k=0;k<size/2;i++,k++)
+    {
+        _sampleDataImag->push_back(sample_data[i] * float(_settings->time_domain_sample_scaling));
+    }
+
+    if(((int)_sampleDataReal->size() < _settings->time_domain_sample_rate)
+            || ((int)_sampleDataImag->size() < _settings->time_domain_sample_rate))
+    {
+        return;
+    }
+
+    if((int)_sampleDataReal->size() > _settings->time_domain_sample_rate)
+        _sampleDataReal->erase(_sampleDataReal->begin(),
+                               _sampleDataReal->begin() + (int)_sampleDataReal->size() - _settings->time_domain_sample_rate);
+    if((int)_sampleDataImag->size() > _settings->time_domain_sample_rate)
+        _sampleDataImag->erase(_sampleDataImag->begin(),
+                               _sampleDataImag->begin() + (int)_sampleDataImag->size() - _settings->time_domain_sample_rate);
+
+    //ui->timePlotter->setNewFftData(_sampleData, _sampleData, size);
+    QtConcurrent::run(ui->timePlotter, &CTimePlotter::setNewFftData, _sampleDataReal->data(),
+                      _sampleDataImag->data(), _settings->time_domain_sample_rate);
 }
 
 
@@ -1465,8 +1543,10 @@ void MainWindow::toggleSelfMute(bool mute)
 void MainWindow::toggleRXwin(bool value)
 {
     emit setSampleRate(ui->sampleRateBox->currentText().toInt());
+    emit setSampleRateTimeDomain(ui->timeSampleRateBox->currentText().toInt());
     emit toggleRX(value);
     ui->plotterFrame->setRunningState(value);
+    ui->timePlotter->setRunningState(value);
     setFFTSize(_settings->fft_size);
     newWaterfallFPS();
     _range_set = false;
@@ -1524,7 +1604,7 @@ void MainWindow::initError(QString error, int index)
                 QString("An error was encountered while trying to intialize the device %1").arg(dev));
     errorDialog.setText(error);
     errorDialog.exec();
-    ui->tabWidget->setCurrentIndex(3);
+    ui->tabWidget->setCurrentIndex(4);
     ui->settingsTab->setCurrentIndex(1);
 }
 
@@ -1918,6 +1998,28 @@ void MainWindow::updateSampleRate()
     emit setSampleRate(samp_rate);
 }
 
+void MainWindow::updateSampleRateTimeDomain()
+{
+    int samp_rate = ui->timeSampleRateBox->currentText().toInt();
+    int old_span = _settings->time_domain_sample_rate;
+    _settings->time_domain_sample_rate = samp_rate;
+    if((int)_sampleDataReal->size() > _settings->time_domain_sample_rate)
+    {
+        _sampleDataReal->erase(_sampleDataReal->begin(),
+                               _sampleDataReal->begin() + (int)_sampleDataReal->size() - _settings->time_domain_sample_rate);
+    }
+    if((int)_sampleDataImag->size() > _settings->time_domain_sample_rate)
+    {
+        _sampleDataImag->erase(_sampleDataImag->begin(),
+                               _sampleDataImag->begin() + (int)_sampleDataImag->size() - _settings->time_domain_sample_rate);
+    }
+    ui->timePlotter->setSampleRate(samp_rate);
+    ui->timePlotter->setFreqUnits((float)_settings->time_domain_sample_rate);
+    if(old_span > samp_rate)
+        ui->timePlotter->setSpanFreq((quint32)_settings->time_domain_sample_rate);
+    emit setSampleRateTimeDomain(samp_rate);
+}
+
 void MainWindow::setFFTRange(int value)
 {
     /// value is from one to 10
@@ -2257,4 +2359,39 @@ void MainWindow::updateUDPAudioSampleRate(int value)
     Q_UNUSED(value);
     emit setUDPAudioSampleRate(ui->udpSampleRateComboBox->currentText().toInt());
 }
+
+void MainWindow::updateSampleScaling(int value)
+{
+    _settings->time_domain_sample_scaling = value;
+}
+
+void MainWindow::updateSampleWindow(int value)
+{
+    _settings->time_domain_sample_speed = value;
+    emit setSampleWindow(_settings->time_domain_sample_speed);
+}
+
+void MainWindow::enableTimeDomainDisplay(bool value)
+{
+    _settings->show_time_domain = (int) value;
+    emit enableTimeDomain(value);
+}
+
+void MainWindow::setTimeDomainWaveform(int value)
+{
+    switch(value)
+    {
+    case 0: // complex
+        ui->timePlotter->drawSampleChannel(true, true);
+        break;
+    case 1: // real only
+        ui->timePlotter->drawSampleChannel(true, false);
+        break;
+    case 2: // imag only
+        ui->timePlotter->drawSampleChannel(false, true);
+        break;
+    }
+}
+
+
 

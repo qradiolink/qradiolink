@@ -61,6 +61,7 @@
 #include "src/modem_types.h"
 #include "src/bursttimer.h"
 #include "rssi_block.h"
+#include "gr_sample_sink.h"
 
 class gr_demod_base : public QObject
 {
@@ -82,6 +83,9 @@ public slots:
     std::vector<unsigned char> *getData(int nr);
     std::vector<float> *getAudio();
     void get_FFT_data(float *fft_data,  unsigned int &fftSize);
+    void get_sample_data(float *sample_data,  unsigned int &size);
+    void set_sample_window(unsigned int size);
+    void set_time_sink_samp_rate(int samp_rate);
     void tune(int64_t center_freq);
     void set_carrier_offset(int64_t carrier_offset);
     void set_rx_sensitivity(double value, std::string gain_stage="");
@@ -92,6 +96,7 @@ public slots:
     void set_ctcss(float value);
     void enable_gui_const(bool value);
     void enable_gui_fft(bool value);
+    void enable_time_domain(bool value);
     void enable_rssi(bool value);
     void enable_demodulator(bool value);
     double get_freq();
@@ -107,6 +112,7 @@ public slots:
 private:
     gr::top_block_sptr _top_block;
     gr_audio_sink_sptr _audio_sink;
+    gr_sample_sink_sptr _sample_sink;
     gr_bit_sink_sptr _bit_sink;
     rx_fft_c_sptr _fft_sink;
     gr::blocks::message_debug::sptr _message_sink;
@@ -118,6 +124,7 @@ private:
 
     gr::blocks::rotator_cc::sptr _rotator;
     gr::filter::rational_resampler_ccf::sptr _resampler;
+    gr::filter::rational_resampler_ccf::sptr _resampler_time_domain;
     gr::zeromq::push_sink::sptr _zeromq_sink;
 
     rssi_block_sptr _rssi_block;
@@ -178,6 +185,7 @@ private:
     int _mode;
     int _carrier_offset;
     bool _demod_running;
+    bool _time_domain_enabled;
     int _samp_rate;
     bool _locked;
     bool _lime_specific; // LimeSDR specific

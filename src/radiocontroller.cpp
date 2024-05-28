@@ -42,6 +42,7 @@ RadioController::RadioController(Settings *settings, Logger *logger,
     _to_voip_buffer = new QVector<short>;
     /// pre-allocated at maximum possible FFT size (make it a constant?)
     _fft_data = new float[1048576];
+    _sample_data = new float[1048576];
     _end_rec_sound = nullptr;
 
     _voice_led_timer = new QTimer(this);
@@ -194,6 +195,7 @@ RadioController::~RadioController()
     delete _mutex;
     delete[] _rand_frame_data;
     delete[] _fft_data;
+    delete[] _sample_data;
     _to_voip_buffer->clear();
     delete _to_voip_buffer;
     delete _relay_controller;
@@ -292,6 +294,7 @@ void RadioController::run()
                 && !_settings->headless_mode)
         {
             QtConcurrent::run(this, &RadioController::getFFTData);
+            QtConcurrent::run(this, &RadioController::getSampleData);
             QtConcurrent::run(this, &RadioController::getConstellationData);
             QtConcurrent::run(this, &RadioController::getRSSI);
 
@@ -1305,6 +1308,25 @@ void RadioController::setFFTPollTime(int fps)
     _fft_poll_time = (int)(1000 / fps);
 }
 
+void RadioController::setSampleWindow(uint size)
+{
+    _modem->setSampleWindow(size);
+}
+
+void RadioController::getSampleData()
+{
+    if(!_settings->show_time_domain)
+    {
+        return;
+    }
+    unsigned int size = 0;
+    _modem->getSampleData(_sample_data, size);
+    if(size > 0)
+    {
+        emit newSampleData(_sample_data, (int)size);
+    }
+}
+
 void RadioController::getConstellationData()
 {
     if(!_settings->show_constellation)
@@ -1905,6 +1927,9 @@ void RadioController::toggleRX(bool value)
         _modem->setCarrierOffset(_settings->demod_offset);
         _modem->tune(_settings->rx_frequency);
         _modem->calibrateRSSI(_settings->rssi_calibration_value);
+        _modem->enableTimeDomain((bool)_settings->show_time_domain);
+        _modem->setTimeDomainSampleRate(_settings->time_domain_sample_rate);
+        _modem->setSampleWindow(_settings->time_domain_sample_speed);
         _modem->startRX(_settings->block_buffer_size);
         _mutex->unlock();
         const QMap<std::string,QVector<int>> rx_gains = _modem->getRxGainNames();
@@ -2615,6 +2640,14 @@ void RadioController::setRxSampleRate(int samp_rate)
     _mutex->unlock();
 }
 
+void RadioController::setTimeDomainSampleRate(int samp_rate)
+{
+    _settings->time_domain_sample_rate = samp_rate;
+    _mutex->lock();
+    _modem->setTimeDomainSampleRate(samp_rate);
+    _mutex->unlock();
+}
+
 void RadioController::setFFTSize(int size)
 {
     _modem->setFFTSize(size);
@@ -2743,6 +2776,12 @@ void RadioController::enableGUIFFT(bool value)
 {
     _settings->show_fft = (int)value;
     _modem->enableGUIFFT(value);
+}
+
+void RadioController::enableTimeDomain(bool value)
+{
+    _settings->show_time_domain = (int)value;
+    _modem->enableTimeDomain(value);
 }
 
 void RadioController::enableDuplex(bool value)

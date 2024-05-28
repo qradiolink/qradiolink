@@ -96,7 +96,7 @@
          </font>
         </property>
         <property name="currentIndex">
-         <number>3</number>
+         <number>1</number>
         </property>
         <property name="iconSize">
          <size>
@@ -1427,6 +1427,235 @@ background-color: #4a5053</string>
            </item>
           </layout>
          </widget>
+        </widget>
+        <widget class="QWidget" name="tabTime">
+         <attribute name="title">
+          <string>Time Domain</string>
+         </attribute>
+         <layout class="QGridLayout" name="gridLayout_19">
+          <item row="0" column="0">
+           <widget class="QFrame" name="frame_4">
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_10">
+             <item>
+              <widget class="CTimePlotter" name="timePlotter">
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QFrame" name="frame_8">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <layout class="QHBoxLayout" name="horizontalLayout_13">
+                <item>
+                 <widget class="QPushButton" name="enableTimeDomainButton">
+                  <property name="text">
+                   <string>Enabled</string>
+                  </property>
+                  <property name="icon">
+                   <iconset>
+                    <normalon>:/res/Button-Blank-Yellow-icon.png</normalon>
+                    <activeoff>:/res/Button-Blank-Gray-icon.png</activeoff>
+                   </iconset>
+                  </property>
+                  <property name="checkable">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="label_71">
+                  <property name="text">
+                   <string>Sample rate</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QComboBox" name="timeSampleRateBox">
+                  <property name="font">
+                   <font>
+                    <family>Sans Serif</family>
+                    <pointsize>9</pointsize>
+                    <weight>50</weight>
+                    <italic>false</italic>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="toolTip">
+                   <string>Set sample rate</string>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">font: 9pt &quot;Sans Serif&quot;;
+</string>
+                  </property>
+                  <property name="currentIndex">
+                   <number>5</number>
+                  </property>
+                  <item>
+                   <property name="text">
+                    <string>1000</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>2000</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>5000</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>10000</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>20000</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>50000</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>100000</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>200000</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>500000</string>
+                   </property>
+                  </item>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="label_72">
+                  <property name="text">
+                   <string>Waveform</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QComboBox" name="waveformComboBox">
+                  <property name="currentIndex">
+                   <number>0</number>
+                  </property>
+                  <item>
+                   <property name="text">
+                    <string>Complex</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>Real</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>Imaginary</string>
+                   </property>
+                  </item>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="label_68">
+                  <property name="text">
+                   <string>Sample scaling</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="spinBoxSampleScaling">
+                  <property name="toolTip">
+                   <string>Scale sample amplitudes with this value</string>
+                  </property>
+                  <property name="minimum">
+                   <number>1</number>
+                  </property>
+                  <property name="maximum">
+                   <number>50000</number>
+                  </property>
+                  <property name="singleStep">
+                   <number>100</number>
+                  </property>
+                  <property name="value">
+                   <number>1000</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="label_69">
+                  <property name="text">
+                   <string>Speed</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="spinBoxSampleWindow">
+                  <property name="toolTip">
+                   <string>How many samples to update at once</string>
+                  </property>
+                  <property name="maximum">
+                   <number>100000</number>
+                  </property>
+                  <property name="singleStep">
+                   <number>100</number>
+                  </property>
+                  <property name="value">
+                   <number>50000</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_24">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
         </widget>
         <widget class="QWidget" name="voipTab">
          <property name="sizePolicy">
@@ -6750,6 +6979,12 @@ font: 14pt &quot;Sans Serif&quot;;
    <class>SkinnedDial</class>
    <extends>QDial</extends>
    <header>src/qtgui/skinneddial.h</header>
+  </customwidget>
+  <customwidget>
+   <class>CTimePlotter</class>
+   <extends>QFrame</extends>
+   <header>src/qtgui/plotter_time.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>
