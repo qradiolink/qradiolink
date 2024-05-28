@@ -112,11 +112,15 @@ public slots:
     void setTxCTCSS(float value);
     void enableGUIConst(bool value);
     void enableGUIFFT(bool value);
+    void enableTimeDomain(bool value);
     void enableRSSI(bool value);
     void calibrateRSSI(float value);
     void enableDemod(bool value);
     double getFreqGUI();
     void getFFTData(float *data, unsigned int &size);
+    void getSampleData(float *data, unsigned int &size);
+    void setSampleWindow(unsigned int size);
+    void setTimeDomainSampleRate(unsigned int samp_rate);
     void setCarrierOffset(int64_t offset);
     void setTxCarrierOffset(int64_t offset);
     qint64 resetTxCarrierOffset();

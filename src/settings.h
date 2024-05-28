@@ -68,6 +68,7 @@ public:
     int scan_step;
     int show_controls;
     int show_constellation;
+    int show_time_domain;
     int enable_duplex;
     int fft_size;
     float fft_averaging;
@@ -75,6 +76,9 @@ public:
     int draw_constellation_eye;
     int waterfall_fps;
     int show_fft;
+    int time_domain_sample_scaling;
+    int time_domain_sample_rate;
+    int time_domain_sample_speed;
     int fft_history;
     int coloured_fft;
     int audio_compressor;

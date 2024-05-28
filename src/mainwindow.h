@@ -43,6 +43,7 @@
 #include "src/radiochannel.h"
 #include "src/qtgui/freqctrl.h"
 #include "src/qtgui/plotter.h"
+#include "src/qtgui/plotter_time.h"
 #include "src/settings.h"
 #include "src/logger.h"
 #include "src/mumblechannel.h"
@@ -120,6 +121,7 @@ public slots:
     void toggleRepeater(bool value);
     void channelState(QTreeWidgetItem *item, int k);
     void newFFTData(float* fft_data, int fftsize);
+    void newSampleData(float *sample_data, int size);
     void carrierOffsetChanged(qint64 freq, qint64 offset);
     void setFFTSize(int size);
     void setAveraging(int x);
@@ -203,6 +205,11 @@ public slots:
     void updateM17DecodeAllCAN(bool value);
     void updateM17DestinationType(int value);
     void updateUDPAudioSampleRate(int value);
+    void updateSampleScaling(int value);
+    void updateSampleWindow(int value);
+    void enableTimeDomainDisplay(bool value);
+    void updateSampleRateTimeDomain();
+    void setTimeDomainWaveform(int value);
 
 signals:
     void startTransmission();
@@ -278,6 +285,9 @@ signals:
     void setTxCarrierOffset(qint64 offset);
     void setUDPAudio(bool value);
     void setUDPAudioSampleRate(int value);
+    void setSampleWindow(uint size);
+    void setSampleRateTimeDomain(int samp_rate);
+    void enableTimeDomain(bool value);
 
 
 public:
@@ -317,6 +327,9 @@ private:
     QShortcut *_full_screen_shortcut;
     float *_realFftData;
     float *_iirFftData;
+    std::vector<float> *_sampleDataReal;
+    std::vector<float> *_sampleDataImag;
+    float _sampleScaleFactor;
 
     QTimer _secondary_text_timer;
     QTimer _video_timer;

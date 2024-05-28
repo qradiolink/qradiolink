@@ -18,6 +18,7 @@
 #include <uhd/stream.hpp>
 #include <iostream>
 
+static const unsigned int INTERNAL_DEFAULT_SAMPLE_RATE = 1000000;
 
 gr_demod_base::gr_demod_base(BurstTimer *burst_timer, QObject *parent, float device_frequency,
                              float rf_gain, std::string device_args, std::string device_antenna,
@@ -31,8 +32,9 @@ gr_demod_base::gr_demod_base(BurstTimer *burst_timer, QObject *parent, float dev
     _top_block = gr::make_top_block("demodulator");
     _mode = 9999;
     _carrier_offset = 0;
-    _samp_rate = 1000000;
+    _samp_rate = INTERNAL_DEFAULT_SAMPLE_RATE;
     _use_tdma = false;
+    _time_domain_enabled = false;
     _freq_correction = freq_corr;
     _mmdvm_channels = mmdvm_channels;
 
@@ -50,11 +52,14 @@ gr_demod_base::gr_demod_base(BurstTimer *burst_timer, QObject *parent, float dev
     _demod_valve = gr::blocks::copy::make(8);
     _demod_valve->set_enabled(true);
     _rssi_block = make_rssi_block();
+    _sample_sink = make_gr_sample_sink();
 
-    _rotator = gr::blocks::rotator_cc::make(2*M_PI/1000000);
+    _rotator = gr::blocks::rotator_cc::make(2*M_PI/INTERNAL_DEFAULT_SAMPLE_RATE);
     int tw = std::min(_samp_rate/4, 1500000);
     _resampler = gr::filter::rational_resampler_base_ccf::make(1, 1,
                 gr::filter::firdes::low_pass(1, _samp_rate, 500000, tw, gr::filter::firdes::WIN_HAMMING));
+    _resampler_time_domain = gr::filter::rational_resampler_base_ccf::make(1, 10,
+                gr::filter::firdes::low_pass(1, INTERNAL_DEFAULT_SAMPLE_RATE, 50000, 25000, gr::filter::firdes::WIN_HAMMING));
 
     // FIXME: LimeSDR bandwidth set to higher value for lower freq
     _lime_specific = false;
@@ -93,7 +98,7 @@ gr_demod_base::gr_demod_base(BurstTimer *burst_timer, QObject *parent, float dev
         _use_tdma = true;
         _limesdr_source = gr::limesdr::source::make(serial.toStdString(), 0, "");
         _limesdr_source->set_center_freq(_device_frequency);
-        _limesdr_source->set_sample_rate(1000000);
+        _limesdr_source->set_sample_rate(INTERNAL_DEFAULT_SAMPLE_RATE);
         _limesdr_source->set_antenna(255);
         _limesdr_source->set_buffer_size(_samp_rate / 10);
         set_bandwidth_specific();
@@ -114,7 +119,7 @@ gr_demod_base::gr_demod_base(BurstTimer *burst_timer, QObject *parent, float dev
          uhd::device_addr_t device_addr(dev_string);
         _uhd_source = gr::uhd::usrp_source::make(device_addr,stream_args);
         _uhd_source->set_center_freq(_device_frequency);
-        _uhd_source->set_samp_rate(1000000);
+        _uhd_source->set_samp_rate(INTERNAL_DEFAULT_SAMPLE_RATE);
         _uhd_source->set_antenna(device_antenna);
         set_bandwidth_specific();
         _uhd_gain_range = _uhd_source->get_gain_range();
@@ -136,7 +141,7 @@ gr_demod_base::gr_demod_base(BurstTimer *burst_timer, QObject *parent, float dev
         _osmosdr_source = osmosdr::source::make(device_args);
         _osmosdr_source->set_center_freq(_device_frequency);
         set_bandwidth_specific();
-        _osmosdr_source->set_sample_rate(1000000);
+        _osmosdr_source->set_sample_rate(INTERNAL_DEFAULT_SAMPLE_RATE);
         //_osmosdr_source->set_freq_corr(freq_corr);
         _osmosdr_source->set_gain_mode(true);
         _osmosdr_source->set_dc_offset_mode(2);
@@ -192,52 +197,52 @@ gr_demod_base::gr_demod_base(BurstTimer *burst_timer, QObject *parent, float dev
     _top_block->connect(_rssi_block,0,_rssi,0);
 
 
-    _2fsk_2k_fm = make_gr_demod_2fsk(5,1000000,1700,4000, true); // 4000 for non FM, 2700 for FM
-    _2fsk_1k_fm = make_gr_demod_2fsk(10,1000000,1700,2500, true);
-    _2fsk_2k = make_gr_demod_2fsk(5,1000000,1700,4000, false);
-    _2fsk_1k = make_gr_demod_2fsk(10,1000000,1700,2000, false);
-    _2fsk_10k = make_gr_demod_2fsk(1,1000000,1700,25000, true);
-    _gmsk_2k = make_gr_demod_gmsk(5,1000000,1700,4000);
-    _gmsk_1k = make_gr_demod_gmsk(10,1000000,1700,2000);
-    _gmsk_10k = make_gr_demod_gmsk(1,1000000,1700,20000);
-    _4fsk_2k = make_gr_demod_4fsk(5,1000000,1700,4000, false);
-    _4fsk_2k_fm = make_gr_demod_4fsk(5,1000000,1700,3000, true);
-    _4fsk_1k_fm = make_gr_demod_4fsk(10,1000000,1700,2000, true);
-    _4fsk_10k_fm = make_gr_demod_4fsk(1,1000000,1700,20000, true);
-    _am = make_gr_demod_am(125, 1000000,1700,5000);
-    _bpsk_1k = make_gr_demod_bpsk(10,1000000,1700,1300);
-    _bpsk_2k = make_gr_demod_bpsk(5,1000000,1700,2400);
-    _bpsk_dsss_8 = make_gr_demod_dsss(25,1000000,1700,150);
-    _fm_2500 = make_gr_demod_nbfm(125, 1000000,1700,2500);
-    _fm_5000 = make_gr_demod_nbfm(125, 1000000,1700,5000);
-    _qpsk_2k = make_gr_demod_qpsk(125,1000000,1700,1300);
-    _qpsk_10k = make_gr_demod_qpsk(25,1000000,1700,6500);
-    _qpsk_250k = make_gr_demod_qpsk(2,1000000,1700,160000);
-    _qpsk_video = make_gr_demod_qpsk(2,1000000,1700,160000);
-    _4fsk_96k = make_gr_demod_4fsk(2,1000000,1700,125000, true);
-    _usb = make_gr_demod_ssb(125, 1000000,1700,2700,0);
-    _lsb = make_gr_demod_ssb(125, 1000000,1700,2700,1);
-    _wfm = make_gr_demod_wbfm(125, 1000000,1700,75000);
-    _freedv_rx1600_usb = make_gr_demod_freedv(125, 1000000, 1700, 2500, 200,
+    _2fsk_2k_fm = make_gr_demod_2fsk(5,INTERNAL_DEFAULT_SAMPLE_RATE,1700,4000, true); // 4000 for non FM, 2700 for FM
+    _2fsk_1k_fm = make_gr_demod_2fsk(10,INTERNAL_DEFAULT_SAMPLE_RATE,1700,2500, true);
+    _2fsk_2k = make_gr_demod_2fsk(5,INTERNAL_DEFAULT_SAMPLE_RATE,1700,4000, false);
+    _2fsk_1k = make_gr_demod_2fsk(10,INTERNAL_DEFAULT_SAMPLE_RATE,1700,2000, false);
+    _2fsk_10k = make_gr_demod_2fsk(1,INTERNAL_DEFAULT_SAMPLE_RATE,1700,25000, true);
+    _gmsk_2k = make_gr_demod_gmsk(5,INTERNAL_DEFAULT_SAMPLE_RATE,1700,4000);
+    _gmsk_1k = make_gr_demod_gmsk(10,INTERNAL_DEFAULT_SAMPLE_RATE,1700,2000);
+    _gmsk_10k = make_gr_demod_gmsk(1,INTERNAL_DEFAULT_SAMPLE_RATE,1700,20000);
+    _4fsk_2k = make_gr_demod_4fsk(5,INTERNAL_DEFAULT_SAMPLE_RATE,1700,4000, false);
+    _4fsk_2k_fm = make_gr_demod_4fsk(5,INTERNAL_DEFAULT_SAMPLE_RATE,1700,3000, true);
+    _4fsk_1k_fm = make_gr_demod_4fsk(10,INTERNAL_DEFAULT_SAMPLE_RATE,1700,2000, true);
+    _4fsk_10k_fm = make_gr_demod_4fsk(1,INTERNAL_DEFAULT_SAMPLE_RATE,1700,20000, true);
+    _am = make_gr_demod_am(125, INTERNAL_DEFAULT_SAMPLE_RATE,1700,5000);
+    _bpsk_1k = make_gr_demod_bpsk(10,INTERNAL_DEFAULT_SAMPLE_RATE,1700,1300);
+    _bpsk_2k = make_gr_demod_bpsk(5,INTERNAL_DEFAULT_SAMPLE_RATE,1700,2400);
+    _bpsk_dsss_8 = make_gr_demod_dsss(25,INTERNAL_DEFAULT_SAMPLE_RATE,1700,150);
+    _fm_2500 = make_gr_demod_nbfm(125, INTERNAL_DEFAULT_SAMPLE_RATE,1700,2500);
+    _fm_5000 = make_gr_demod_nbfm(125, INTERNAL_DEFAULT_SAMPLE_RATE,1700,5000);
+    _qpsk_2k = make_gr_demod_qpsk(125,INTERNAL_DEFAULT_SAMPLE_RATE,1700,1300);
+    _qpsk_10k = make_gr_demod_qpsk(25,INTERNAL_DEFAULT_SAMPLE_RATE,1700,6500);
+    _qpsk_250k = make_gr_demod_qpsk(2,INTERNAL_DEFAULT_SAMPLE_RATE,1700,160000);
+    _qpsk_video = make_gr_demod_qpsk(2,INTERNAL_DEFAULT_SAMPLE_RATE,1700,160000);
+    _4fsk_96k = make_gr_demod_4fsk(2,INTERNAL_DEFAULT_SAMPLE_RATE,1700,125000, true);
+    _usb = make_gr_demod_ssb(125, INTERNAL_DEFAULT_SAMPLE_RATE,1700,2700,0);
+    _lsb = make_gr_demod_ssb(125, INTERNAL_DEFAULT_SAMPLE_RATE,1700,2700,1);
+    _wfm = make_gr_demod_wbfm(125, INTERNAL_DEFAULT_SAMPLE_RATE,1700,75000);
+    _freedv_rx1600_usb = make_gr_demod_freedv(125, INTERNAL_DEFAULT_SAMPLE_RATE, 1700, 2500, 200,
                                               gr::vocoder::freedv_api::MODE_1600, 0);
 
     ///int version = atoi(gr::minor_version().c_str());
-    _freedv_rx700C_usb = make_gr_demod_freedv(125, 1000000, 1700, 2400, 600,
+    _freedv_rx700C_usb = make_gr_demod_freedv(125, INTERNAL_DEFAULT_SAMPLE_RATE, 1700, 2400, 600,
                                                   gr::vocoder::freedv_api::MODE_700C, 0);
-    _freedv_rx700D_usb = make_gr_demod_freedv(125, 1000000, 1700, 2400, 600,
+    _freedv_rx700D_usb = make_gr_demod_freedv(125, INTERNAL_DEFAULT_SAMPLE_RATE, 1700, 2400, 600,
                                                   gr::vocoder::freedv_api::MODE_700D, 0);
 
-    _freedv_rx800XA_usb = make_gr_demod_freedv(125, 1000000, 1700, 2500, 0,
+    _freedv_rx800XA_usb = make_gr_demod_freedv(125, INTERNAL_DEFAULT_SAMPLE_RATE, 1700, 2500, 0,
                                                gr::vocoder::freedv_api::MODE_800XA, 0);
 
-    _freedv_rx1600_lsb = make_gr_demod_freedv(125, 1000000, 1700, 2500,200,
+    _freedv_rx1600_lsb = make_gr_demod_freedv(125, INTERNAL_DEFAULT_SAMPLE_RATE, 1700, 2500,200,
                                               gr::vocoder::freedv_api::MODE_1600, 1);
 
-    _freedv_rx700C_lsb = make_gr_demod_freedv(125, 1000000, 1700, 2400, 600,
+    _freedv_rx700C_lsb = make_gr_demod_freedv(125, INTERNAL_DEFAULT_SAMPLE_RATE, 1700, 2400, 600,
                                                   gr::vocoder::freedv_api::MODE_700C, 1);
-    _freedv_rx700D_lsb = make_gr_demod_freedv(125, 1000000, 1700, 2400, 600,
+    _freedv_rx700D_lsb = make_gr_demod_freedv(125, INTERNAL_DEFAULT_SAMPLE_RATE, 1700, 2400, 600,
                                                   gr::vocoder::freedv_api::MODE_700D, 1);
-    _freedv_rx800XA_lsb = make_gr_demod_freedv(125, 1000000, 1700, 2500, 0,
+    _freedv_rx800XA_lsb = make_gr_demod_freedv(125, INTERNAL_DEFAULT_SAMPLE_RATE, 1700, 2500, 0,
                                                gr::vocoder::freedv_api::MODE_800XA, 1);
     _mmdvm_demod = make_gr_demod_mmdvm();
     _mmdvm_demod_multi = make_gr_demod_mmdvm_multi(burst_timer, _mmdvm_channels, mmdvm_channel_separation, _use_tdma);
@@ -937,10 +942,42 @@ void gr_demod_base::get_FFT_data(float *fft_data,  unsigned int &fftSize)
     return;
 }
 
+void gr_demod_base::get_sample_data(float *sample_data,  unsigned int &size)
+{
+    if(!_demod_running)
+    {
+        size = 0;
+        return;
+    }
+    std::vector<gr_complex> *data = _sample_sink->get_data();
+    if(data == nullptr)
+    {
+        size = 0;
+        return;
+    }
+    uint i;
+    for(i = 0;i<data->size();i++)
+    {
+        sample_data[i] = data->at(i).real();
+    }
+    for(uint j = 0;j<data->size();j++)
+    {
+        sample_data[i + j + 1] = data->at(j).imag();
+    }
+    size = data->size() * 2;
+    data->clear();
+    delete data;
+    return;
+}
+
+void gr_demod_base::set_sample_window(unsigned int size)
+{
+    _sample_sink->set_sample_window(size);
+}
 
 void gr_demod_base::tune(int64_t center_freq)
 {
-    int64_t steps = center_freq / 1000000;
+    int64_t steps = center_freq / INTERNAL_DEFAULT_SAMPLE_RATE;
     _device_frequency = center_freq + steps * _freq_correction;
     if(_lime_specific)
         _limesdr_source->set_center_freq(_device_frequency);
@@ -1022,6 +1059,41 @@ void gr_demod_base::enable_rssi(bool value)
 void gr_demod_base::enable_gui_fft(bool value)
 {
     _fft_sink->set_enabled(value);
+}
+
+void gr_demod_base::enable_time_domain(bool value)
+{
+    _time_domain_enabled = value;
+    _top_block->lock();
+    _locked = true;
+    if(value)
+    {
+        try
+        {
+            _top_block->connect(_demod_valve,0, _resampler_time_domain,0);
+            _top_block->connect(_resampler_time_domain,0, _sample_sink,0);
+        }
+        catch(std::invalid_argument &e)
+        {
+
+        }
+    }
+    else
+    {
+        try
+        {
+            _top_block->disconnect(_demod_valve,0, _resampler_time_domain,0);
+            _top_block->disconnect(_resampler_time_domain,0, _sample_sink,0);
+        }
+        catch(std::invalid_argument &e)
+        {
+
+        }
+    }
+
+    _sample_sink->set_enabled(value);
+    _top_block->unlock();
+    _locked = false;
 }
 
 void gr_demod_base::enable_demodulator(bool value)
@@ -1120,14 +1192,56 @@ std::vector<gr_complex>* gr_demod_base::get_constellation_data()
     return data;
 }
 
+void gr_demod_base::set_time_sink_samp_rate(int samp_rate)
+{
+    if((uint)samp_rate > INTERNAL_DEFAULT_SAMPLE_RATE)
+        return;
+    _top_block->lock();
+    _locked = true;
+
+    int decimation = INTERNAL_DEFAULT_SAMPLE_RATE / samp_rate;
+    if(_time_domain_enabled)
+    {
+        try
+        {
+            _top_block->disconnect(_demod_valve,0, _resampler_time_domain,0);
+            _top_block->disconnect(_resampler_time_domain,0, _sample_sink,0);
+        }
+        catch(std::invalid_argument &e)
+        {
+
+        }
+    }
+
+    _resampler_time_domain.reset();
+    std::vector<float> taps;
+    taps = gr::filter::firdes::low_pass(1, INTERNAL_DEFAULT_SAMPLE_RATE, samp_rate/2, samp_rate/4,
+                                        gr::filter::firdes::WIN_HAMMING);
+
+    _resampler_time_domain = gr::filter::rational_resampler_base_ccf::make(1, decimation, taps);
+    if(_time_domain_enabled)
+    {
+        try
+        {
+            _top_block->connect(_demod_valve,0, _resampler_time_domain,0);
+            _top_block->connect(_resampler_time_domain,0, _sample_sink,0);
+        }
+        catch(std::invalid_argument &e)
+        {
+
+        }
+    }
+    _top_block->unlock();
+    _locked = false;
+}
+
 void gr_demod_base::set_samp_rate(int samp_rate)
 {
     _top_block->lock();
     _locked = true;
     _samp_rate = samp_rate;
 
-    int decimation = (int) _samp_rate / 1000000;
-
+    int decimation = (int) _samp_rate / INTERNAL_DEFAULT_SAMPLE_RATE;
 
     if(_samp_rate >= 2000000)
     {

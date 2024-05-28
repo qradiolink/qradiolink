@@ -53,7 +53,6 @@ gr_mod_2fsk::gr_mod_2fsk(int sps, int samp_rate, int carrier_freq,
         amplif = 0.9f;
     }
     int second_interp = 10;
-    int if_samp_rate = 100000;
     if(_samples_per_symbol == 5)
     {
         nfilts = nfilts * 5;

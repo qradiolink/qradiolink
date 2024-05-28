@@ -34,7 +34,6 @@ Settings::Settings(Logger *logger)
     repeater_enabled = false;
     current_voip_channel = -1;
     rssi = 0.0;
-    tx_carrier_offset = 0;
 
     /// saved to config
     demod_offset = 0;
@@ -47,7 +46,11 @@ Settings::Settings(Logger *logger)
     scan_step = 0;
     show_controls = 0;
     show_constellation = 0;
+    show_time_domain = 0;
     show_fft = 0;
+    time_domain_sample_rate = 100000;
+    time_domain_sample_scaling = 1000;
+    time_domain_sample_speed = 50000;
     enable_duplex = 0;
     fft_size = 32768;
     waterfall_fps = 15;
@@ -64,6 +67,7 @@ Settings::Settings(Logger *logger)
     lime_rfe_notch = 0;
     mmdvm_channels = 3;
     mmdvm_channel_separation = 25000;
+    tx_carrier_offset = 0;
     burst_delay_msec = 60;
     m17_can_tx = 0;
     m17_can_rx = 0;
@@ -430,6 +434,14 @@ void Settings::readConfig()
     catch(const libconfig::SettingNotFoundException &nfex)
     {
         show_constellation = 0;
+    }
+    try
+    {
+        show_time_domain = cfg.lookup("show_time_domain");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        show_time_domain = 0;
     }
     try
     {
@@ -847,6 +859,30 @@ void Settings::readConfig()
     {
         udp_audio_remote_address = "127.0.0.1";
     }
+    try
+    {
+        time_domain_sample_rate = cfg.lookup("time_domain_sample_rate");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        time_domain_sample_rate = 100000;
+    }
+    try
+    {
+        time_domain_sample_scaling = cfg.lookup("time_domain_sample_scaling");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        time_domain_sample_scaling = 1000;
+    }
+    try
+    {
+        time_domain_sample_speed = cfg.lookup("time_domain_sample_speed");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        time_domain_sample_speed = 50000;
+    }
 
 
 }
@@ -889,6 +925,7 @@ void Settings::saveConfig()
     root.add("scan_step",libconfig::Setting::TypeInt) = scan_step;
     root.add("show_controls",libconfig::Setting::TypeInt) = show_controls;
     root.add("show_constellation",libconfig::Setting::TypeInt) = show_constellation;
+    root.add("show_time_domain",libconfig::Setting::TypeInt) = show_time_domain;
     root.add("show_fft",libconfig::Setting::TypeInt) = show_fft;
     root.add("fft_history",libconfig::Setting::TypeInt) = fft_history;
     root.add("coloured_fft",libconfig::Setting::TypeInt) = coloured_fft;
@@ -943,6 +980,9 @@ void Settings::saveConfig()
     root.add("sql_pty_path",libconfig::Setting::TypeString) = sql_pty_path.toStdString();
     root.add("udp_audio_local_address",libconfig::Setting::TypeString) = udp_audio_local_address.toStdString();
     root.add("udp_audio_remote_address",libconfig::Setting::TypeString) = udp_audio_remote_address.toStdString();
+    root.add("time_domain_sample_rate",libconfig::Setting::TypeInt) = time_domain_sample_rate;
+    root.add("time_domain_sample_scaling",libconfig::Setting::TypeInt) = time_domain_sample_scaling;
+    root.add("time_domain_sample_speed",libconfig::Setting::TypeInt) = time_domain_sample_speed;
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());
