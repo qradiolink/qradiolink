@@ -210,6 +210,8 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
                      this,SLOT(updateSampleScaling(int)));
     QObject::connect(ui->spinBoxSampleWindow,SIGNAL(valueChanged(int)),
                      this,SLOT(updateSampleWindow(int)));
+    QObject::connect(ui->spinBoxTimeFilterWidth,SIGNAL(valueChanged(int)),
+                     this,SLOT(updateTimeDomainFilter(int)));
 
     QObject::connect(ui->voipTreeWidget,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),
                      this,SLOT(channelState(QTreeWidgetItem *,int)));
@@ -676,6 +678,9 @@ void MainWindow::setConfig()
     ui->remoteUDPIPAddressLineEdit->setText(_settings->udp_audio_remote_address);
     ui->spinBoxSampleScaling->setValue(_settings->time_domain_sample_scaling);
     ui->spinBoxSampleWindow->setValue(_settings->time_domain_sample_speed);
+    ui->spinBoxTimeFilterWidth->setValue(_settings->time_domain_filter_width);
+    ui->spinBoxTimeFilterWidth->setMaximum(_settings->time_domain_sample_rate/2 - _settings->time_domain_sample_rate/8);
+    ui->spinBoxTimeFilterWidth->setMinimum(_settings->time_domain_sample_rate/10);
     ui->timePlotter->setSampleRate(_settings->time_domain_sample_rate);
     ui->timePlotter->setSpanFreq((quint32)_settings->time_domain_sample_rate);
     ui->timePlotter->setFreqUnits((float)_settings->time_domain_sample_rate);
@@ -711,6 +716,7 @@ void MainWindow::saveUiConfig()
     _settings->ip_address = ui->lineEditIPaddress->text();
     _settings->rx_sample_rate = (int64_t)(ui->sampleRateBox->currentText().toLong());
     _settings->time_domain_sample_rate = (int64_t)(ui->timeSampleRateBox->currentText().toLong());
+    _settings->time_domain_filter_width = (int64_t)(ui->spinBoxTimeFilterWidth->value());
     _settings->fft_size = (ui->fftSizeBox->currentText().toInt());
     _settings->scan_step = (int)ui->lineEditScanStep->text().toInt();
     _settings->waterfall_fps = (int)ui->fpsBox->currentText().toInt();
@@ -1544,6 +1550,7 @@ void MainWindow::toggleRXwin(bool value)
 {
     emit setSampleRate(ui->sampleRateBox->currentText().toInt());
     emit setSampleRateTimeDomain(ui->timeSampleRateBox->currentText().toInt());
+    emit setTimeDomainFilter(ui->spinBoxTimeFilterWidth->value());
     emit toggleRX(value);
     ui->plotterFrame->setRunningState(value);
     ui->timePlotter->setRunningState(value);
@@ -2002,6 +2009,7 @@ void MainWindow::updateSampleRateTimeDomain()
 {
     int samp_rate = ui->timeSampleRateBox->currentText().toInt();
     int old_span = _settings->time_domain_sample_rate;
+    int current_filter_width = ui->spinBoxTimeFilterWidth->value();
     _settings->time_domain_sample_rate = samp_rate;
     if((int)_sampleDataReal->size() > _settings->time_domain_sample_rate)
     {
@@ -2018,6 +2026,20 @@ void MainWindow::updateSampleRateTimeDomain()
     if(old_span > samp_rate)
         ui->timePlotter->setSpanFreq((quint32)_settings->time_domain_sample_rate);
     emit setSampleRateTimeDomain(samp_rate);
+    int filter_width = samp_rate/2 - samp_rate/8;
+    ui->spinBoxTimeFilterWidth->setMaximum(filter_width);
+    ui->spinBoxTimeFilterWidth->setMinimum(samp_rate/10);
+    if(current_filter_width < samp_rate/10)
+    {
+        ui->spinBoxTimeFilterWidth->setValue(samp_rate/10);
+        updateTimeDomainFilter(samp_rate/10);
+    }
+    else if(current_filter_width > filter_width)
+    {
+        ui->spinBoxTimeFilterWidth->setValue(filter_width);
+        updateTimeDomainFilter(filter_width);
+    }
+
 }
 
 void MainWindow::setFFTRange(int value)
@@ -2369,6 +2391,12 @@ void MainWindow::updateSampleWindow(int value)
 {
     _settings->time_domain_sample_speed = value;
     emit setSampleWindow(_settings->time_domain_sample_speed);
+}
+
+void MainWindow::updateTimeDomainFilter(int value)
+{
+    _settings->time_domain_filter_width = value;
+    emit setTimeDomainFilter(value);
 }
 
 void MainWindow::enableTimeDomainDisplay(bool value)

@@ -1214,8 +1214,7 @@ void gr_demod_base::set_time_sink_samp_rate(int samp_rate)
     }
 
     _resampler_time_domain.reset();
-    std::vector<float> taps;
-    taps = gr::filter::firdes::low_pass(1, INTERNAL_DEFAULT_SAMPLE_RATE, samp_rate/2, samp_rate/4,
+    std::vector<float> taps = gr::filter::firdes::low_pass(1, INTERNAL_DEFAULT_SAMPLE_RATE, samp_rate/2 - samp_rate/8, samp_rate/4,
                                         gr::filter::firdes::WIN_HAMMING);
 
     _resampler_time_domain = gr::filter::rational_resampler_base_ccf::make(1, decimation, taps);
@@ -1231,6 +1230,17 @@ void gr_demod_base::set_time_sink_samp_rate(int samp_rate)
 
         }
     }
+    _top_block->unlock();
+    _locked = false;
+}
+
+void gr_demod_base::set_time_domain_filter_width(double filter_width)
+{
+    _top_block->lock();
+    _locked = true;
+    std::vector<float> taps = gr::filter::firdes::low_pass(1, INTERNAL_DEFAULT_SAMPLE_RATE, filter_width, filter_width,
+                                        gr::filter::firdes::WIN_HAMMING);
+    _resampler_time_domain->set_taps(taps);
     _top_block->unlock();
     _locked = false;
 }

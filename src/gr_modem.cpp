@@ -582,6 +582,12 @@ void gr_modem::setTimeDomainSampleRate(unsigned int samp_rate)
         _gr_demod_base->set_time_sink_samp_rate(samp_rate);
 }
 
+void gr_modem::setTimeDomainFilterWidth(double filter_width)
+{
+    if(_gr_demod_base)
+        _gr_demod_base->set_time_domain_filter_width((double)filter_width);
+}
+
 float gr_modem::getRSSI()
 {
     if(_gr_demod_base)

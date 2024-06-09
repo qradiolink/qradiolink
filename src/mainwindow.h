@@ -210,6 +210,7 @@ public slots:
     void enableTimeDomainDisplay(bool value);
     void updateSampleRateTimeDomain();
     void setTimeDomainWaveform(int value);
+    void updateTimeDomainFilter(int value);
 
 signals:
     void startTransmission();
@@ -287,6 +288,7 @@ signals:
     void setUDPAudioSampleRate(int value);
     void setSampleWindow(uint size);
     void setSampleRateTimeDomain(int samp_rate);
+    void setTimeDomainFilter(int filter_width);
     void enableTimeDomain(bool value);
 
 

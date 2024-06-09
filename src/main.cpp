@@ -469,6 +469,7 @@ void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
     QObject::connect(w,SIGNAL(setWaterfallFPS(int)),radio_op,SLOT(setFFTPollTime(int)));
     QObject::connect(w,SIGNAL(setSampleWindow(uint)),radio_op,SLOT(setSampleWindow(uint)));
     QObject::connect(w,SIGNAL(setSampleRateTimeDomain(int)),radio_op,SLOT(setTimeDomainSampleRate(int)));
+    QObject::connect(w,SIGNAL(setTimeDomainFilter(int)),radio_op,SLOT(setTimeDomainFilterWidth(int)));
     QObject::connect(w,SIGNAL(enableTimeDomain(bool)),radio_op,SLOT(enableTimeDomain(bool)));
     QObject::connect(w,SIGNAL(setSampleRate(int)),radio_op,SLOT(setRxSampleRate(int)));
     QObject::connect(w,SIGNAL(newFilterWidth(int)),radio_op,SLOT(setFilterWidth(int)));

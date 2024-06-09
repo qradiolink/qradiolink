@@ -86,6 +86,7 @@ public slots:
     void get_sample_data(float *sample_data,  unsigned int &size);
     void set_sample_window(unsigned int size);
     void set_time_sink_samp_rate(int samp_rate);
+    void set_time_domain_filter_width(double filter_width);
     void tune(int64_t center_freq);
     void set_carrier_offset(int64_t carrier_offset);
     void set_rx_sensitivity(double value, std::string gain_stage="");
