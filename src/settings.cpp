@@ -51,6 +51,7 @@ Settings::Settings(Logger *logger)
     time_domain_sample_rate = 100000;
     time_domain_sample_scaling = 1000;
     time_domain_sample_speed = 50000;
+    time_domain_filter_width = 10000;
     enable_duplex = 0;
     fft_size = 32768;
     waterfall_fps = 15;
@@ -883,6 +884,14 @@ void Settings::readConfig()
     {
         time_domain_sample_speed = 50000;
     }
+    try
+    {
+        time_domain_filter_width = cfg.lookup("time_domain_filter_width");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        time_domain_filter_width = 10000;
+    }
 
 
 }
@@ -983,6 +992,7 @@ void Settings::saveConfig()
     root.add("time_domain_sample_rate",libconfig::Setting::TypeInt) = time_domain_sample_rate;
     root.add("time_domain_sample_scaling",libconfig::Setting::TypeInt) = time_domain_sample_scaling;
     root.add("time_domain_sample_speed",libconfig::Setting::TypeInt) = time_domain_sample_speed;
+    root.add("time_domain_filter_width",libconfig::Setting::TypeInt) = time_domain_filter_width;
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());

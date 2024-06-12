@@ -79,6 +79,7 @@ public:
     int time_domain_sample_scaling;
     int time_domain_sample_rate;
     int time_domain_sample_speed;
+    int time_domain_filter_width;
     int fft_history;
     int coloured_fft;
     int audio_compressor;

@@ -2648,6 +2648,14 @@ void RadioController::setTimeDomainSampleRate(int samp_rate)
     _mutex->unlock();
 }
 
+void RadioController::setTimeDomainFilterWidth(int filter_width)
+{
+    _settings->time_domain_filter_width = filter_width;
+    _mutex->lock();
+    _modem->setTimeDomainFilterWidth((double)filter_width);
+    _mutex->unlock();
+}
+
 void RadioController::setFFTSize(int size)
 {
     _modem->setFFTSize(size);

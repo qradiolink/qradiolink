@@ -1509,18 +1509,8 @@ background-color: #4a5053</string>
 </string>
                   </property>
                   <property name="currentIndex">
-                   <number>5</number>
+                   <number>3</number>
                   </property>
-                  <item>
-                   <property name="text">
-                    <string>1000</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>2000</string>
-                   </property>
-                  </item>
                   <item>
                    <property name="text">
                     <string>5000</string>
@@ -1630,6 +1620,32 @@ background-color: #4a5053</string>
                   </property>
                   <property name="singleStep">
                    <number>100</number>
+                  </property>
+                  <property name="value">
+                   <number>50000</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="label_70">
+                  <property name="text">
+                   <string>Filter</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="spinBoxTimeFilterWidth">
+                  <property name="toolTip">
+                   <string>How many samples to update at once</string>
+                  </property>
+                  <property name="minimum">
+                   <number>100</number>
+                  </property>
+                  <property name="maximum">
+                   <number>250000</number>
+                  </property>
+                  <property name="singleStep">
+                   <number>1000</number>
                   </property>
                   <property name="value">
                    <number>50000</number>

@@ -121,6 +121,7 @@ public slots:
     void getSampleData(float *data, unsigned int &size);
     void setSampleWindow(unsigned int size);
     void setTimeDomainSampleRate(unsigned int samp_rate);
+    void setTimeDomainFilterWidth(double filter_width);
     void setCarrierOffset(int64_t offset);
     void setTxCarrierOffset(int64_t offset);
     qint64 resetTxCarrierOffset();

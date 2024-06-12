@@ -193,6 +193,7 @@ public slots:
     void setFFTPollTime(int fps);
     void setSampleWindow(uint size);
     void setTimeDomainSampleRate(int samp_rate);
+    void setTimeDomainFilterWidth(int filter_width);
     void setRxSampleRate(int samp_rate);
     void enableAudioCompressor(bool value);
     void enableRelays(bool value);
