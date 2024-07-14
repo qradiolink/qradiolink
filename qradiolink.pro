@@ -135,10 +135,7 @@ SOURCES += src/main.cpp\
     src/gr/cessb/stretcher_cc_impl.cc \
     src/gr/limesdr/common/device_handler.cc \
     src/gr/limesdr/source_impl.cc \
-    src/gr/limesdr/sink_impl.cc \
-    src/gr/limesdrng/device_handler.cc \
-    src/gr/limesdrng/source_impl.cc \
-    src/gr/limesdrng/sink_impl.cc
+    src/gr/limesdr/sink_impl.cc
 
 SOURCES += $$files(src/M17/M17/*.cpp)
 
@@ -249,12 +246,6 @@ HEADERS  += src/mainwindow.h\
     src/gr/limesdr/source_impl.h \
     src/gr/limesdr/sink_impl.h \
     src/gr/limesdr/api.h \
-    src/gr/limesdrng/device_handler.h \
-    src/gr/limesdrng/source.h \
-    src/gr/limesdrng/sink.h \
-    src/gr/limesdrng/source_impl.h \
-    src/gr/limesdrng/sink_impl.h \
-    src/gr/limesdrng/api.h \
     src/style.h
 
 HEADERS += $$files(src/M17/M17/*.hpp)

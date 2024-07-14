@@ -36,12 +36,7 @@
 #include <gnuradio/constants.h>
 #include <osmosdr/source.h>
 #include <gnuradio/uhd/usrp_source.h>
-#define LIMESDR_NG
-#ifndef LIMESDR_NG
 #include "limesdr/source.h"
-#else
-#include "limesdrng/source.h"
-#endif
 #include <vector>
 #include "gr_audio_sink.h"
 #include "gr_bit_sink.h"

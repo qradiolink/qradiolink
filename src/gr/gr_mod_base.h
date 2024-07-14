@@ -35,12 +35,7 @@
 #include <osmosdr/sink.h>
 #include <gnuradio/uhd/usrp_sink.h>
 #include <uhd/stream.hpp>
-#define LIMESDR_NG
-#ifndef LIMESDR_NG
 #include "limesdr/sink.h"
-#else
-#include "limesdrng/sink.h"
-#endif
 #include "src/modem_types.h"
 #include "src/bursttimer.h"
 #include "gr_byte_source.h"
