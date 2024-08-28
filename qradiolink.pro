@@ -135,7 +135,8 @@ SOURCES += src/main.cpp\
     src/gr/cessb/stretcher_cc_impl.cc \
     src/gr/limesdr/common/device_handler.cc \
     src/gr/limesdr/source_impl.cc \
-    src/gr/limesdr/sink_impl.cc
+    src/gr/limesdr/sink_impl.cc \
+    src/zeromqclient.cpp
 
 SOURCES += $$files(src/M17/M17/*.cpp)
 
@@ -246,7 +247,8 @@ HEADERS  += src/mainwindow.h\
     src/gr/limesdr/source_impl.h \
     src/gr/limesdr/sink_impl.h \
     src/gr/limesdr/api.h \
-    src/style.h
+    src/style.h \
+    src/zeromqclient.h
 
 HEADERS += $$files(src/M17/M17/*.hpp)
 HEADERS += $$files(src/M17/M17/*.h)

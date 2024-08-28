@@ -80,6 +80,7 @@ Settings::Settings(Logger *logger)
     sql_pty_path = "/tmp/sql_pty";
     udp_audio_local_address = "127.0.0.1";
     udp_audio_remote_address = "127.0.0.1";
+    zmq_proxy_channel = 5;
 
     /// old stuff, not used
     _mumble_tcp = 1; // used
@@ -862,6 +863,14 @@ void Settings::readConfig()
     }
     try
     {
+        zmq_proxy_channel = cfg.lookup("zmq_proxy_channel");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        zmq_proxy_channel = 5;
+    }
+    try
+    {
         time_domain_sample_rate = cfg.lookup("time_domain_sample_rate");
     }
     catch(const libconfig::SettingNotFoundException &nfex)
@@ -989,6 +998,7 @@ void Settings::saveConfig()
     root.add("sql_pty_path",libconfig::Setting::TypeString) = sql_pty_path.toStdString();
     root.add("udp_audio_local_address",libconfig::Setting::TypeString) = udp_audio_local_address.toStdString();
     root.add("udp_audio_remote_address",libconfig::Setting::TypeString) = udp_audio_remote_address.toStdString();
+    root.add("zmq_proxy_channel",libconfig::Setting::TypeInt) = zmq_proxy_channel;
     root.add("time_domain_sample_rate",libconfig::Setting::TypeInt) = time_domain_sample_rate;
     root.add("time_domain_sample_scaling",libconfig::Setting::TypeInt) = time_domain_sample_scaling;
     root.add("time_domain_sample_speed",libconfig::Setting::TypeInt) = time_domain_sample_speed;

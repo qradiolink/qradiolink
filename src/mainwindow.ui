@@ -96,7 +96,7 @@
          </font>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>4</number>
         </property>
         <property name="iconSize">
          <size>
@@ -3091,7 +3091,7 @@ font: 10pt &quot;Sans Serif&quot;;
              </font>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>3</number>
             </property>
             <widget class="QWidget" name="tab">
              <property name="sizePolicy">
@@ -4844,6 +4844,30 @@ and S-meter (dBm)</string>
                  <enum>QFrame::Raised</enum>
                 </property>
                 <layout class="QGridLayout" name="gridLayout_18">
+                 <item row="4" column="0">
+                  <widget class="QLabel" name="label_64">
+                   <property name="text">
+                    <string>Remote IP address</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="0">
+                  <widget class="QLabel" name="label_61">
+                   <property name="text">
+                    <string>UDP audio local port</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1">
+                  <widget class="QLineEdit" name="udpRXPortLineEdit">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                  </widget>
+                 </item>
                  <item row="0" column="2">
                   <spacer name="horizontalSpacer_23">
                    <property name="orientation">
@@ -4857,17 +4881,38 @@ and S-meter (dBm)</string>
                    </property>
                   </spacer>
                  </item>
-                 <item row="3" column="0">
-                  <widget class="QLabel" name="label_63">
+                 <item row="5" column="0">
+                  <widget class="QLabel" name="label_62">
                    <property name="text">
-                    <string>Local IP address</string>
+                    <string>SVXlink SQL PTY path
+ (localhost only)</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="4" column="0">
-                  <widget class="QLabel" name="label_64">
+                 <item row="5" column="1">
+                  <widget class="QLineEdit" name="sqlPTYLineEdit">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="label_59">
                    <property name="text">
-                    <string>Remote IP address</string>
+                    <string>UDP Audio sample rate</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="1">
+                  <widget class="QLineEdit" name="udpTXPortLineEdit">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
                    </property>
                   </widget>
                  </item>
@@ -4899,20 +4944,17 @@ and S-meter (dBm)</string>
                    </item>
                   </widget>
                  </item>
-                 <item row="4" column="1">
-                  <widget class="QLineEdit" name="remoteUDPIPAddressLineEdit">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
+                 <item row="3" column="0">
+                  <widget class="QLabel" name="label_63">
+                   <property name="text">
+                    <string>Local IP address</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="2" column="0">
-                  <widget class="QLabel" name="label_61">
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="label_60">
                    <property name="text">
-                    <string>UDP audio local port</string>
+                    <string>UDP audio remote port</string>
                    </property>
                   </widget>
                  </item>
@@ -4926,15 +4968,8 @@ and S-meter (dBm)</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="0" column="0">
-                  <widget class="QLabel" name="label_59">
-                   <property name="text">
-                    <string>UDP Audio sample rate</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="1">
-                  <widget class="QLineEdit" name="udpRXPortLineEdit">
+                 <item row="4" column="1">
+                  <widget class="QLineEdit" name="remoteUDPIPAddressLineEdit">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                      <horstretch>0</horstretch>
@@ -4943,38 +4978,43 @@ and S-meter (dBm)</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="1" column="0">
-                  <widget class="QLabel" name="label_60">
+                 <item row="6" column="0">
+                  <widget class="QLabel" name="label_73">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>70</height>
+                    </size>
+                   </property>
                    <property name="text">
-                    <string>UDP audio remote port</string>
+                    <string>Multicarrier
+channel number
+for UDP proxy</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="2" column="1">
-                  <widget class="QLineEdit" name="udpTXPortLineEdit">
+                 <item row="6" column="1">
+                  <widget class="QSpinBox" name="spinBoxUDPChannelNumber">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
                    </property>
-                  </widget>
-                 </item>
-                 <item row="5" column="0">
-                  <widget class="QLabel" name="label_62">
-                   <property name="text">
-                    <string>SVXlink SQL PTY path
- (localhost only)</string>
+                   <property name="minimum">
+                    <number>2</number>
                    </property>
-                  </widget>
-                 </item>
-                 <item row="5" column="1">
-                  <widget class="QLineEdit" name="sqlPTYLineEdit">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
+                   <property name="maximum">
+                    <number>7</number>
+                   </property>
+                   <property name="value">
+                    <number>5</number>
                    </property>
                   </widget>
                  </item>

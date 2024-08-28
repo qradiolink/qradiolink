@@ -25,6 +25,7 @@ UDPClient::UDPClient(const Settings *settings, Logger *logger, QObject *parent) 
     _started = false;
     _udp_socket_tx = new QUdpSocket(this);
     _udp_socket_rx = new QUdpSocket(this);
+    _resampled_rate = INTERNAL_AUDIO_SAMP_RATE;
 }
 
 UDPClient::~UDPClient()
@@ -33,19 +34,30 @@ UDPClient::~UDPClient()
     delete _udp_socket_rx;
 }
 
+void UDPClient::setResamplingRate(uint32_t rate)
+{
+
+    if(rate > _settings->udp_audio_sample_rate)
+    {
+        _logger->log(Logger::LogLevelFatal, QString("Could not set sampling rate: %1 is larger than UDP audio rate").arg(rate));
+        return;
+    }
+    _resampled_rate = rate;
+}
+
 void UDPClient::start()
 {
     if(_started)
         return;
     int err = 0;
-    _resampler_tx = speex_resampler_init(1, _settings->udp_audio_sample_rate, INTERNAL_AUDIO_SAMP_RATE, 10, &err);
+    _resampler_tx = speex_resampler_init(1, _settings->udp_audio_sample_rate, _resampled_rate, 10, &err);
     if(err < 0)
     {
         _logger->log(Logger::LogLevelFatal, QString("Could not initialize TX resampler, error code: %1").arg(err));
         return;
     }
     err = 0;
-    _resampler_rx = speex_resampler_init(1, INTERNAL_AUDIO_SAMP_RATE, _settings->udp_audio_sample_rate, 10, &err);
+    _resampler_rx = speex_resampler_init(1, _resampled_rate, _settings->udp_audio_sample_rate, 10, &err);
     if(err < 0)
     {
         _logger->log(Logger::LogLevelFatal, QString("Could not initialize RX resampler, error code: %1").arg(err));
@@ -112,7 +124,7 @@ void UDPClient::readPendingDatagrams()
             int16_t *udp_samples = (int16_t*)data.data();
             uint32_t samples = data.size() / sizeof(short);
             int16_t *pcm = new int16_t[samples];
-            uint32_t out_length = samples / (_settings->udp_audio_sample_rate / INTERNAL_AUDIO_SAMP_RATE);
+            uint32_t out_length = samples / (_settings->udp_audio_sample_rate / _resampled_rate);
             /// SVXlink uses a sample rate of 16000 /48000 internally, so resample it to our rate of INTERNAL_AUDIO_SAMP_RATE
             speex_resampler_process_int(_resampler_tx, 0, udp_samples, &samples, pcm, &out_length);
             emit pcmAudio(pcm, out_length, 9001);
@@ -128,7 +140,7 @@ void UDPClient::writeAudioToNetwork(short *pcm, int samples)
         return;
     }
 
-    uint32_t out_length = samples * (_settings->udp_audio_sample_rate / INTERNAL_AUDIO_SAMP_RATE);
+    uint32_t out_length = samples * (_settings->udp_audio_sample_rate / _resampled_rate);
     int16_t resampled[out_length];
     speex_resampler_process_int(_resampler_rx, 0, pcm, (uint32_t*)&samples, resampled, &out_length);
     qint64 size = out_length * sizeof(int16_t);
