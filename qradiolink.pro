@@ -89,6 +89,7 @@ SOURCES += src/main.cpp\
         src/net/netdevice.cpp \
         src/layer1framing.cpp \
         src/limits.cpp \
+        src/zeromqclient.cpp \
     src/qtgui/freqctrl.cpp \
     src/qtgui/plotter.cpp \
     src/qtgui/plotter_time.cpp \
@@ -135,8 +136,8 @@ SOURCES += src/main.cpp\
     src/gr/cessb/stretcher_cc_impl.cc \
     src/gr/limesdr/common/device_handler.cc \
     src/gr/limesdr/source_impl.cc \
-    src/gr/limesdr/sink_impl.cc \
-    src/zeromqclient.cpp
+    src/gr/limesdr/sink_impl.cc
+
 
 SOURCES += $$files(src/M17/M17/*.cpp)
 
@@ -194,6 +195,8 @@ HEADERS  += src/mainwindow.h\
         src/radiocontroller.h \
         src/layer1framing.h \
         src/limits.h \
+        src/style.h \
+        src/zeromqclient.h \
     src/qtgui/freqctrl.h \
     src/qtgui/plotter.h \
     src/qtgui/plotter_time.h \
@@ -246,9 +249,8 @@ HEADERS  += src/mainwindow.h\
     src/gr/limesdr/sink.h \
     src/gr/limesdr/source_impl.h \
     src/gr/limesdr/sink_impl.h \
-    src/gr/limesdr/api.h \
-    src/style.h \
-    src/zeromqclient.h
+    src/gr/limesdr/api.h
+
 
 HEADERS += $$files(src/M17/M17/*.hpp)
 HEADERS += $$files(src/M17/M17/*.h)
