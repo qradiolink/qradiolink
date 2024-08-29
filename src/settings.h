@@ -129,6 +129,7 @@ public:
     QString sql_pty_path;
     QString udp_audio_local_address;
     QString udp_audio_remote_address;
+    int zmq_proxy_channel;
 
     /// Not saved to config:
 

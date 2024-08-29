@@ -676,6 +676,7 @@ void MainWindow::setConfig()
     ui->sqlPTYLineEdit->setText(_settings->sql_pty_path);
     ui->localUDPIPAddressLineEdit->setText(_settings->udp_audio_local_address);
     ui->remoteUDPIPAddressLineEdit->setText(_settings->udp_audio_remote_address);
+    ui->spinBoxUDPChannelNumber->setValue(_settings->zmq_proxy_channel);
     ui->spinBoxSampleScaling->setValue(_settings->time_domain_sample_scaling);
     ui->spinBoxSampleWindow->setValue(_settings->time_domain_sample_speed);
     ui->spinBoxTimeFilterWidth->setValue(_settings->time_domain_filter_width);
@@ -745,6 +746,7 @@ void MainWindow::saveUiConfig()
     _settings->sql_pty_path = ui->sqlPTYLineEdit->text();
     _settings->udp_audio_local_address = ui->localUDPIPAddressLineEdit->text();
     _settings->udp_audio_remote_address = ui->remoteUDPIPAddressLineEdit->text();
+    _settings->zmq_proxy_channel = ui->spinBoxUDPChannelNumber->value();
     _settings->saveConfig();
 }
 

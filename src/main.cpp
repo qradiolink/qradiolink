@@ -34,11 +34,13 @@
 #include "src/radiochannel.h"
 #include "src/radiocontroller.h"
 #include "src/telnetserver.h"
+#include "src/zeromqclient.h"
 #include "src/logger.h"
 
 
 void connectIndependentSignals(AudioWriter *audiowriter, AudioReader *audioreader,
-                               RadioController *radio_op, MumbleClient *mumbleclient, UDPClient *udpclient, TelnetServer *telnet_server);
+                               RadioController *radio_op, MumbleClient *mumbleclient, UDPClient *udpclient,
+                               TelnetServer *telnet_server, ZeroMQClient *zmq_client, bool mmdvm_mode=false, bool udp_audio=false);
 void connectGuiSignals(TelnetServer *telnet_server, AudioWriter *audiowriter,
                        AudioReader *audioreader, MainWindow *w, MumbleClient *mumbleclient,
                        RadioController *radio_op, Logger *logger);
@@ -87,12 +89,10 @@ int main(int argc, char *argv[])
                 set_ptt_on = true;
             }
         }
-        if((arguments.length() > 2) && (arguments.indexOf("--udp") != -1))
-        {
-            set_udp_on = true;
-            start_transceiver = true;
-        }
-
+    }
+    if((arguments.length() > 1) && (arguments.indexOf("--udp") != -1))
+    {
+        set_udp_on = true;
     }
     if((arguments.length() > 1) && (arguments.indexOf("--mmdvm") != -1))
     {
@@ -127,6 +127,7 @@ int main(int argc, char *argv[])
     AudioWriter *audiowriter = new AudioWriter(settings, logger);
     AudioReader *audioreader = new AudioReader(settings, logger);
     TelnetServer *telnet_server = new TelnetServer(settings, logger, radio_channels);
+    ZeroMQClient *zmq_client = new ZeroMQClient(settings);
 
 
     /// Init threads
@@ -189,14 +190,15 @@ int main(int argc, char *argv[])
     connectCommandSignals(telnet_server, mumbleclient, radio_op);
 
     /// Signals independent of GUI or remote interface
-    connectIndependentSignals(audiowriter, audioreader, radio_op, mumbleclient, udpclient, telnet_server);
+    connectIndependentSignals(audiowriter, audioreader, radio_op, mumbleclient, udpclient,
+                              telnet_server, zmq_client, mmdvm_mode, set_udp_on);
 
     /// Start remote command listener
     if(headless)
     {
         settings->headless_mode = true;
         telnet_server->start();
-        if(set_udp_on)
+        if(set_udp_on && !mmdvm_mode)
         {
             radio_op->setUDPAudio(true);
             logger->log(Logger::LogLevelInfo, "Started UDP audio streaming");
@@ -215,6 +217,13 @@ int main(int argc, char *argv[])
         std::signal(SIGINT, signal_handler);
         std::signal(SIGTERM, signal_handler);
         std::signal(SIGHUP, signal_handler);
+    }
+    if(mmdvm_mode && set_udp_on)
+    {
+        logger->log(Logger::LogLevelInfo, QString("Starting UDP to ZeroMQ proxy on channel %1").arg(settings->zmq_proxy_channel));
+        zmq_client->init();
+        udpclient->setResamplingRate(24000);
+        udpclient->enable(true);
     }
 
     int ret = app->exec();
@@ -242,6 +251,7 @@ int main(int argc, char *argv[])
         logger->log(Logger::LogLevelInfo, "Stopping transmitter");
         radio_op->stop();
     }
+    delete zmq_client;
     delete telnet_server;
     delete udpclient;
     delete mumbleclient;
@@ -257,7 +267,7 @@ int main(int argc, char *argv[])
 
 void connectIndependentSignals(AudioWriter *audiowriter, AudioReader *audioreader,
                                RadioController *radio_op, MumbleClient *mumbleclient, UDPClient *udpclient,
-                               TelnetServer *telnet_server)
+                               TelnetServer *telnet_server, ZeroMQClient *zmq_client, bool mmdvm_mode, bool udp_audio)
 {
     QObject::connect(radio_op,SIGNAL(terminateConnections()),audiowriter,SLOT(stop()));
     QObject::connect(radio_op,SIGNAL(terminateConnections()),audioreader,SLOT(stop()));
@@ -278,10 +288,6 @@ void connectIndependentSignals(AudioWriter *audiowriter, AudioReader *audioreade
                      mumbleclient, SLOT(processPCMAudio(short*,int)));
     QObject::connect(mumbleclient, SIGNAL(pcmAudio(short*,int,quint64)),
                      radio_op, SLOT(processVoipAudioFrame(short*, int, quint64)));
-    QObject::connect(udpclient, SIGNAL(pcmAudio(short*,int,quint64)),
-                     radio_op, SLOT(processVoipAudioFrame(short*, int, quint64)));
-    QObject::connect(radio_op, SIGNAL(udpAudioSamples(short*,int)),
-                     udpclient, SLOT(writeAudioToNetwork(short*,int)));
     QObject::connect(mumbleclient, SIGNAL(videoFrame(unsigned char*,int,quint64)),
                      radio_op, SLOT(processVoipVideoFrame(unsigned char*,int,quint64)));
     QObject::connect(mumbleclient,SIGNAL(newChannels(ChannelList)),
@@ -292,8 +298,20 @@ void connectIndependentSignals(AudioWriter *audiowriter, AudioReader *audioreade
                      mumbleclient, SLOT(newMumbleMessage(QString)));
     QObject::connect(mumbleclient, SIGNAL(textMessage(QString,bool)),
                      radio_op, SLOT(textMumble(QString,bool)));
-    QObject::connect(radio_op, SIGNAL(enableUDPAudio(bool)),
-                     udpclient, SLOT(enable(bool)));
+    if(!mmdvm_mode)
+    {
+        QObject::connect(udpclient, SIGNAL(pcmAudio(short*,int,quint64)),
+                         radio_op, SLOT(processVoipAudioFrame(short*, int, quint64)));
+        QObject::connect(radio_op, SIGNAL(udpAudioSamples(short*,int)),
+                         udpclient, SLOT(writeAudioToNetwork(short*,int)));
+        QObject::connect(radio_op, SIGNAL(enableUDPAudio(bool)),
+                         udpclient, SLOT(enable(bool)));
+    }
+    if(mmdvm_mode && udp_audio)
+    {
+        QObject::connect(udpclient, SIGNAL(pcmAudio(short*,int,quint64)), zmq_client, SLOT(txSamples(short*,int,quint64)));
+        QObject::connect(zmq_client, SIGNAL(rxSamples(short*,int)), udpclient, SLOT(writeAudioToNetwork(short*,int)));
+    }
 }
 
 

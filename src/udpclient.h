@@ -37,6 +37,7 @@ signals:
 public slots:
     void enable(bool);
     void writeAudioToNetwork(short *pcm, int samples);
+    void setResamplingRate(uint32_t rate);
 
 private slots:
     void readPendingDatagrams();
@@ -51,6 +52,7 @@ private:
     bool _started;
     SpeexResamplerState *_resampler_tx;
     SpeexResamplerState *_resampler_rx;
+    uint32_t _resampled_rate;
 
 };
 
