@@ -1,3 +1,14 @@
+qradiolink (0.9.0-1) experimental; urgency=medium
+
+  [ Adrian Musceac ]
+  * Added configurable time domain display
+  * Added UDP to ZeroMQ proxy (enables SVXLink audio as one of the FM carriers in MMDVM-multi mode)
+  * FM is now one of the modes supported by MMDVM-multicarrier
+
+
+ -- Adrian Musceac <adrian@qradiolink.org>  Thu, 29 Aug 2024 10:35:00 +0300
+
+
 qradiolink (0.8.13-2) experimental; urgency=medium
 
   [ Adrian Musceac ]
