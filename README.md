@@ -1,8 +1,6 @@
 README
 ==========
 
-[![Packaging status](https://repology.org/badge/vertical-allrepos/qradiolink.svg)](https://repology.org/project/qradiolink/versions)
-
 
 About
 -----
@@ -72,14 +70,6 @@ On Ubuntu 18.04 LTS, replace libjpeg62-turbo and libjpeg62-turbo-dev with libjpe
 $ sudo apt install libjpeg-turbo8-dev libjpeg-dev
 </pre>
 
-[Downloads](https://github.com/qradiolink/qradiolink/releases "Downloads")
-----
-
-Debian 11 Bullseye x86_64 packages are provided via automated builds. An AppImage for running the application on other Linux distributions with glibc >= 2.27 without installing it is also provided. The AppImage is based on Debian 11 Bullseye packages.
-Please see the [Github releases page](https://github.com/qradiolink/qradiolink/releases) for binary downloads.
-
-Opensuse packages are available from [Opensuse build server](https://build.opensuse.org/package/show/hardware:sdr/qradiolink)
-thanks to Martin Hauke.
 
 Building the software from source
 -----
