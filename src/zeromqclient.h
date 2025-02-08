@@ -56,6 +56,7 @@ private:
     QVector<int16_t> *_tx_buffer;
     QMutex _tx_mutex;
     QMutex _rx_mutex;
+    uint16_t _tx_timeout_counter;
 
 };
 
