@@ -33,11 +33,11 @@ gr_mod_mmdvm_multi2::gr_mod_mmdvm_multi2(BurstTimer *burst_timer, int num_channe
                       gr::io_signature::make (0, 0, sizeof (short)),
                       gr::io_signature::make (1, 1, sizeof (gr_complex)))
 {
-    (void) channel_separation;
     if(num_channels > MAX_MMDVM_CHANNELS)
         num_channels = MAX_MMDVM_CHANNELS;
     _samp_rate =samp_rate;
     _sps = sps;
+    int min_c = std::min(num_channels, 4);
     _num_channels = num_channels;
     _use_tdma = use_tdma;
     float target_samp_rate = 24000.0f;
@@ -118,7 +118,7 @@ gr_mod_mmdvm_multi2::gr_mod_mmdvm_multi2(BurstTimer *burst_timer, int num_channe
     }
     for(int i=0;i < 10 - _num_channels;i++)
     {
-        connect(_null_source[i], 0, _synthesizer, 4 + i);
+        connect(_null_source[i], 0, _synthesizer, min_c + i);
     }
 
 
