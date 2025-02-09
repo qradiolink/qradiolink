@@ -50,7 +50,6 @@ private:
     gr::filter::rational_resampler_ccf::sptr _resampler;
     gr::filter::fft_filter_ccf::sptr _filter;
     rssi_tag_block_sptr _rssi_tag_block;
-    gr::filter::fft_filter_ccf::sptr _filter;
 
     int _sps;
     int _samp_rate;
