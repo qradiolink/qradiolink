@@ -33,7 +33,7 @@
 
 class gr_demod_mmdvm_multi2;
 
-typedef boost::shared_ptr<gr_demod_mmdvm_multi2> gr_demod_mmdvm_multi2_sptr;
+typedef std::shared_ptr<gr_demod_mmdvm_multi2> gr_demod_mmdvm_multi2_sptr;
 gr_demod_mmdvm_multi2_sptr make_gr_demod_mmdvm_multi2(BurstTimer *burst_timer, int num_channels=3,
                                                     int channel_separation=25000, bool use_tdma=true,
                                                     int sps=125, int samp_rate=MMDVM_SAMPLE_RATE, int carrier_freq=1700,
