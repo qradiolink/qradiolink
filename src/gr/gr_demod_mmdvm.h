@@ -34,13 +34,13 @@ class gr_demod_mmdvm;
 
 typedef boost::shared_ptr<gr_demod_mmdvm> gr_demod_mmdvm_sptr;
 gr_demod_mmdvm_sptr make_gr_demod_mmdvm(int sps=10, int samp_rate=MMDVM_SAMPLE_RATE, int carrier_freq=1700,
-                                          int filter_width=10000);
+                                          int filter_width=5000);
 
 class gr_demod_mmdvm : public gr::hier_block2
 {
 public:
     explicit gr_demod_mmdvm(std::vector<int> signature, int sps=10, int samp_rate=MMDVM_SAMPLE_RATE, int carrier_freq=1600,
-                               int filter_width=10000);
+                               int filter_width=5000);
     void calibrate_rssi(float level);
 
 
@@ -50,6 +50,7 @@ private:
     gr::blocks::multiply_const_ff::sptr _level_control;
     gr::filter::rational_resampler_base_ccf::sptr _resampler;
     rssi_tag_block_sptr _rssi_tag_block;
+    gr::filter::fft_filter_ccf::sptr _filter;
 
     int _sps;
     int _samp_rate;
