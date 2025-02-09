@@ -147,7 +147,7 @@ void ZeroMQClient::receive()
     {
         int16_t signed_sample = 0;
         memcpy(&signed_sample, (unsigned char*)mq_message.data() + sizeof(uint32_t) + sizeof(uint32_t) + data_size * sizeof(uint8_t) + i * sizeof(int16_t), sizeof(int16_t));
-        _rx_buffer->push_back(int16_t((float(signed_sample) / 32767.0f * 0.7f) * 32767.0f));
+        _rx_buffer->push_back(int16_t((float(signed_sample) * float(_settings->voip_volume) / 100.0f)));
     }
     ::pthread_mutex_unlock(&_RXlock);
     if((uint32_t)_rx_buffer->size() >= num_items * 4) // buffer up to 120 ms
@@ -167,7 +167,7 @@ void ZeroMQClient::txSamples(short *samples, int size, quint64 chan)
     _tx_timeout_counter = 0;
     for(int i=0;i< size;i++)
     {
-        _tx_buffer->push_back(short(float(samples[i]) * float(_settings->voip_volume) / 100.0f) );
+        _tx_buffer->push_back(int16_t(float(samples[i]) * float(_settings->voip_volume) / 100.0f) );
     }
     _tx_mutex.unlock();
     delete[] samples;
