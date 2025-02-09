@@ -40,13 +40,13 @@ gr_mod_mmdvm::gr_mod_mmdvm(int sps, int samp_rate, int carrier_freq,
     _fm_modulator = gr::analog::frequency_modulator_fc::make(2*M_PI*12500.0f/target_samp_rate);
     _audio_amplify = gr::blocks::multiply_const_ff::make(1.0,1);
 
-    std::vector<float> interp_taps = gr::filter::firdes::low_pass_2(250, 250 * target_samp_rate,
-                        _filter_width, 2000, 90, gr::fft::window::WIN_BLACKMAN_HARRIS);
-    _resampler = gr::filter::rational_resampler_ccf::make(250,24, interp_taps);
+    std::vector<float> interp_taps = gr::filter::firdes::low_pass_2(125, 125 * target_samp_rate,
+                        _filter_width, 2000, 60, gr::fft::window::WIN_BLACKMAN_HARRIS);
+    _resampler = gr::filter::rational_resampler_ccf::make(125,12, interp_taps);
     _amplify = gr::blocks::multiply_const_cc::make(0.8,1);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
     _filter = gr::filter::fft_filter_ccf::make(1,gr::filter::firdes::low_pass_2(
-                1, target_samp_rate, _filter_width, 2000, 90, gr::fft::window::WIN_BLACKMAN_HARRIS));
+                1, target_samp_rate, _filter_width, 2000, 60, gr::fft::window::WIN_BLACKMAN_HARRIS));
 
     _zero_idle_bursts = make_gr_zero_idle_bursts();
 
