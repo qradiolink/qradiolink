@@ -40,7 +40,7 @@ gr_demod_mmdvm::gr_demod_mmdvm(std::vector<int>signature, int sps, int samp_rate
     _filter_width = filter_width;
     float fm_demod_width = 10000.0f;
 
-    std::vector<float> taps = gr::filter::firdes::low_pass_2(24, _samp_rate, _filter_width,
+    std::vector<float> taps = gr::filter::firdes::low_pass_2(24, 24 * _samp_rate, _filter_width,
                                 2000, 90, gr::filter::firdes::WIN_BLACKMAN_HARRIS);
     _resampler = gr::filter::rational_resampler_base_ccf::make(24,250, taps);
     _rssi_tag_block = make_rssi_tag_block();
