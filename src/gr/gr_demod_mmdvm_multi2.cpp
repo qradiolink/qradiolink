@@ -38,7 +38,7 @@ gr_demod_mmdvm_multi2::gr_demod_mmdvm_multi2(BurstTimer *burst_timer, int num_ch
                       gr::io_signature::make (0, 0, sizeof (short)))
 {
     (void) sps;
-    (void) channel_separation;
+    int min_c = std::min(num_channels, 4);
     if(num_channels > MAX_MMDVM_CHANNELS)
         num_channels = MAX_MMDVM_CHANNELS;
     _samp_rate = samp_rate;
@@ -129,7 +129,7 @@ gr_demod_mmdvm_multi2::gr_demod_mmdvm_multi2(BurstTimer *burst_timer, int num_ch
     }
     for(int i=0;i < 10 - _num_channels;i++)
     {
-        connect(_channelizer, 4 + i, _null_sink[i], 0);
+        connect(_channelizer, min_c + i, _null_sink[i], 0);
     }
 }
 
