@@ -21,7 +21,7 @@ ZeroMQClient::ZeroMQClient(Settings *settings, QObject *parent) : QObject(parent
     _settings = settings;
     _rx_buffer = new QVector<int16_t>();
     _tx_buffer = new QVector<int16_t>();
-
+    _tx_timeout_counter = 0;
 }
 
 ZeroMQClient::~ZeroMQClient()
@@ -103,6 +103,20 @@ void ZeroMQClient::transmit()
         ::pthread_mutex_unlock(&_TXlock);
         _tx_mutex.unlock();
     }
+    else if(_tx_timeout_counter < 10)
+    {
+        int buf_size = sizeof(uint32_t) + num_items * sizeof(uint8_t) + num_items * sizeof(int16_t);
+
+        zmq::message_t reply (buf_size);
+        memcpy (reply.data (), &num_items, sizeof(uint32_t));
+        memset ((unsigned char *)reply.data () + sizeof(uint32_t), 0, num_items * sizeof(uint8_t));
+        memset ((unsigned char *)reply.data () + sizeof(uint32_t) + num_items * sizeof(uint8_t),
+                0, num_items*sizeof(int16_t));
+        _zmqsocketTX.send (reply, zmq::send_flags::dontwait);
+        ::pthread_mutex_unlock(&_TXlock);
+        _tx_timeout_counter++;
+        _tx_mutex.unlock();
+    }
     else
     {
         ::pthread_mutex_unlock(&_TXlock);
@@ -133,7 +147,7 @@ void ZeroMQClient::receive()
     {
         int16_t signed_sample = 0;
         memcpy(&signed_sample, (unsigned char*)mq_message.data() + sizeof(uint32_t) + sizeof(uint32_t) + data_size * sizeof(uint8_t) + i * sizeof(int16_t), sizeof(int16_t));
-        _rx_buffer->push_back(int16_t((float(signed_sample) / 32767.0f * 0.7f) * 32767.0f));
+        _rx_buffer->push_back(int16_t((float(signed_sample) * float(_settings->voip_volume) / 100.0f)));
     }
     ::pthread_mutex_unlock(&_RXlock);
     if((uint32_t)_rx_buffer->size() >= num_items * 4) // buffer up to 120 ms
@@ -150,9 +164,10 @@ void ZeroMQClient::txSamples(short *samples, int size, quint64 chan)
 {
     Q_UNUSED(chan);
     _tx_mutex.lock();
+    _tx_timeout_counter = 0;
     for(int i=0;i< size;i++)
     {
-        _tx_buffer->push_back(samples[i]);
+        _tx_buffer->push_back(int16_t(float(samples[i]) * float(_settings->voip_volume) / 100.0f) );
     }
     _tx_mutex.unlock();
     delete[] samples;
