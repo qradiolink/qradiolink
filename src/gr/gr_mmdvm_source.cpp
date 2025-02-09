@@ -20,6 +20,7 @@
 const uint8_t  MARK_SLOT1 = 0x08U;
 const uint8_t  MARK_SLOT2 = 0x04U;
 const uint8_t  MARK_NONE  = 0x00U;
+const int32_t  ZERO_SAMPLES = SAMPLES_PER_SLOT * 25 / 24; // resampling ratio
 
 gr_mmdvm_source_sptr
 make_gr_mmdvm_source (BurstTimer *burst_timer, uint8_t cn, bool multi_channnel, bool use_tdma)
@@ -112,7 +113,7 @@ void gr_mmdvm_source::get_zmq_message()
 void gr_mmdvm_source::handle_idle_time(short *out, int noutput_items, int which, bool add_tag)
 {
     alternate_slots();
-    add_zero_tag(0, noutput_items, which);
+    add_zero_tag(0, ZERO_SAMPLES, which);
     for(int i = 0;i < noutput_items; i++)
     {
         out[i] = 0;

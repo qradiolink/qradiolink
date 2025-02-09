@@ -48,10 +48,12 @@ SOURCES += src/main.cpp\
     src/gpredictcontrol.cpp \
     src/gr/gr_demod_m17.cpp \
     src/gr/gr_demod_mmdvm_multi.cpp \
+    src/gr/gr_demod_mmdvm_multi2.cpp \
     src/gr/gr_mmdvm_sink.cpp \
     src/gr/gr_mmdvm_source.cpp \
     src/gr/gr_mod_m17.cpp \
     src/gr/gr_mod_mmdvm_multi.cpp \
+    src/gr/gr_mod_mmdvm_multi2.cpp \
     src/gr/gr_zero_idle_bursts.cpp \
     src/gr/rssi_tag_block.cpp \
     src/limerfecontroller.cpp \
@@ -153,10 +155,12 @@ HEADERS  += src/mainwindow.h\
     src/gpredictcontrol.h \
     src/gr/gr_demod_m17.h \
     src/gr/gr_demod_mmdvm_multi.h \
+    src/gr/gr_demod_mmdvm_multi2.h \
     src/gr/gr_mmdvm_sink.h \
     src/gr/gr_mmdvm_source.h \
     src/gr/gr_mod_m17.h \
     src/gr/gr_mod_mmdvm_multi.h \
+    src/gr/gr_mod_mmdvm_multi2.h \
     src/gr/gr_zero_idle_bursts.h \
     src/gr/rssi_tag_block.h \
     src/limerfecontroller.h \
