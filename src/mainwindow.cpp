@@ -1391,7 +1391,7 @@ void MainWindow::updateOnlineStations(StationList stations)
     for(int i=0;i<stations.size();i++)
     {
         QList<QTreeWidgetItem*> list = ui->voipTreeWidget->findItems(
-                    ".", Qt::MatchRegExp | Qt::MatchExactly | Qt::MatchRecursive,3);
+                    ".", Qt::MatchRegularExpression | Qt::MatchExactly | Qt::MatchRecursive,3);
         if(list.size()>0)
         {
             delete list.at(0);
@@ -1991,7 +1991,7 @@ void MainWindow::updateRSSI(float value)
     QPen pen(QColor(224,33,33,255), 4, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     QPixmap s_meter = _s_meter_bg->copy(0,0,154,60);
     QPainter p(&s_meter);
-    p.setRenderHint(QPainter::HighQualityAntialiasing);
+    p.setRenderHint(QPainter::Antialiasing);
     p.setPen(pen);
     p.drawLine(needle);
     p.end();

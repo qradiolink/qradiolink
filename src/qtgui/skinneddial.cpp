@@ -38,7 +38,7 @@ SkinnedDial::SkinnedDial(QWidget *parent) : QDial(parent) {
     m_background      = new QPixmap(":res/dial-background.png");
     m_needle          = new QPixmap(":res/dial-needle.png");
     m_maxDeg          = 135.0;
-    m_paintFlags      = QPainter::RenderHint(QPainter::Antialiasing | QPainter::SmoothPixmapTransform || QPainter::HighQualityAntialiasing);
+    m_paintFlags      = QPainter::RenderHint(QPainter::Antialiasing | QPainter::SmoothPixmapTransform || QPainter::Antialiasing);
     m_cacheBackground = new QPixmap;
     m_cacheNeedle     = new QPixmap;
     m_cacheNeedleRot  = new QPixmap;
@@ -70,7 +70,7 @@ SkinnedDial::SkinnedDial(QPixmap* c_back, QPixmap* c_needle, float c_angle, QWid
     *m_background      = *c_back;
     *m_needle          = *c_needle;
     m_maxDeg           = c_angle;
-    m_paintFlags       = QPainter::RenderHint(QPainter::Antialiasing | QPainter::SmoothPixmapTransform || QPainter::HighQualityAntialiasing);
+    m_paintFlags       = QPainter::RenderHint(QPainter::Antialiasing | QPainter::SmoothPixmapTransform || QPainter::Antialiasing);
     *m_cacheBackground = *m_background;
     *m_cacheNeedle     = *m_needle;
     *m_cacheNeedleRot  = *m_needle;

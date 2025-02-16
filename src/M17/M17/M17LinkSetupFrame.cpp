@@ -83,7 +83,8 @@ void M17LinkSetupFrame::setDestination(const int& destination_type)
 std::string M17LinkSetupFrame::getDestination()
 {
     uint64_t destination_type = 0;
-    memcpy(&destination_type + 2, data.dst.data(), 6 * sizeof(uint8_t));
+    memcpy(&destination_type, data.dst.data(), 6 * sizeof(uint8_t));
+    destination_type = destination_type >> 8;
     if (destination_type == 0xFFFFFFFFFFFF)
         return "ALL";
     if (destination_type == 0x0000000ED87D)

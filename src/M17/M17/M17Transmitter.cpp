@@ -93,15 +93,15 @@ void M17Transmitter::start(const std::string& src, const std::string& dst, uint1
     std::array<uint8_t, 46> preamble_bytes;
     preamble_sync.fill(0x77);
     preamble_bytes.fill(0x77);
-    for(int i=0;i<preamble_sync.size();i++)
+    for(uint i=0;i<preamble_sync.size();i++)
         bytes->push_back(preamble_sync.at(i));
-    for(int i=0;i<preamble_bytes.size();i++)
+    for(uint i=0;i<preamble_bytes.size();i++)
         bytes->push_back(preamble_bytes.at(i));
 
     // Send LSF
     bytes->push_back(LSF_SYNC_WORD[0]);
     bytes->push_back(LSF_SYNC_WORD[1]);
-    for(int i=0;i<punctured.size();i++)
+    for(uint i=0;i<punctured.size();i++)
         bytes->push_back(punctured.at(i));
 }
 
@@ -138,6 +138,6 @@ void M17Transmitter::send(const payload_t& payload,
     decorrelate(frame);
     bytes->push_back(STREAM_SYNC_WORD[0]);
     bytes->push_back(STREAM_SYNC_WORD[1]);
-    for(int i=0;i<frame.size();i++)
+    for(uint i=0;i<frame.size();i++)
         bytes->push_back(frame.at(i));
 }

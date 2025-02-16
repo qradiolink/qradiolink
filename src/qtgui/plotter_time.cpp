@@ -390,13 +390,13 @@ void CTimePlotter::mouseMoveEvent(QMouseEvent* event)
     }
     else if (XAXIS == m_CursorCaptured)
     {
-        if (event->buttons() & (Qt::LeftButton | Qt::MidButton))
+        if (event->buttons() & (Qt::LeftButton | Qt::MiddleButton))
         {
             setCursor(QCursor(Qt::ClosedHandCursor));
             // pan viewable range or move center frequency
             int delta_px = m_Xzero - pt.x();
             qint64 delta_hz = delta_px * m_Span / m_OverlayPixmap.width();
-            if (event->buttons() & Qt::MidButton)
+            if (event->buttons() & Qt::MiddleButton)
             {
                 m_CenterFreq += delta_hz;
                 m_DemodCenterFreq += delta_hz;
@@ -696,7 +696,7 @@ void CTimePlotter::mousePressEvent(QMouseEvent * event)
                 m_GrabPosition = 1;
                 drawOverlay();
             }
-            else if (event->buttons() == Qt::MidButton)
+            else if (event->buttons() == Qt::MiddleButton)
             {
                 // set center freq
                 m_CenterFreq = roundFreq(freqFromX(pt.x()), m_ClickResolution);
@@ -1372,7 +1372,7 @@ void CTimePlotter::drawOverlay()
     QRect   rect;
     QFontMetrics    metrics(m_Font);
     QPainter        painter(&m_OverlayPixmap);
-    painter.setRenderHint(QPainter::HighQualityAntialiasing);
+    painter.setRenderHint(QPainter::Antialiasing);
 
     if(!painter.isActive())
         painter.begin(&m_OverlayPixmap);

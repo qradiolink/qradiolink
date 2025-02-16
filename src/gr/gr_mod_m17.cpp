@@ -60,9 +60,9 @@ gr_mod_m17::gr_mod_m17(int sps, int samp_rate, int carrier_freq,
 
     _fm_modulator = gr::analog::frequency_modulator_fc::make(M_PI/_samples_per_symbol);
 
-    std::vector<float> interp_taps = gr::filter::firdes::low_pass(_sps, _samp_rate * 6,
+    std::vector<float> interp_taps = gr::filter::firdes::low_pass(_sps, _samp_rate * 3,
                         if_samp_rate/2, if_samp_rate/2, gr::fft::window::WIN_BLACKMAN_HARRIS);
-    _resampler = gr::filter::rational_resampler_ccf::make(_sps, 6, interp_taps);
+    _resampler = gr::filter::rational_resampler_ccf::make(_sps, 3, interp_taps);
     _amplify = gr::blocks::multiply_const_cc::make(0.9,1);
     _bb_gain = gr::blocks::multiply_const_cc::make(1,1);
     _filter = gr::filter::fft_filter_ccf::make(1,gr::filter::firdes::low_pass(

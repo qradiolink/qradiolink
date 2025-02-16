@@ -37,12 +37,12 @@ void ZeroMQClient::init()
 {
     _zmqcontextTX = zmq::context_t(1);
     _zmqsocketTX = zmq::socket_t(_zmqcontextTX, ZMQ_REP);
-    _zmqsocketTX.setsockopt(ZMQ_SNDHWM, 10);
+    _zmqsocketTX.set(zmq::sockopt::sndhwm, 10);
     _zmqsocketTX.bind ("ipc:///tmp/mmdvm-tx" + std::to_string(_settings->zmq_proxy_channel) + ".ipc");
 
     _zmqcontextRX = zmq::context_t(1);
     _zmqsocketRX = zmq::socket_t(_zmqcontextRX, ZMQ_PULL);
-    _zmqsocketRX.setsockopt(ZMQ_RCVHWM, 10);
+    _zmqsocketRX.set(zmq::sockopt::sndhwm, 10);
     _zmqsocketRX.connect ("ipc:///tmp/mmdvm-rx" + std::to_string(_settings->zmq_proxy_channel) + ".ipc");
     ::pthread_mutex_init(&_TXlock, NULL);
     ::pthread_mutex_init(&_RXlock, NULL);

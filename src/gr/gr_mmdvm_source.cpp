@@ -47,8 +47,8 @@ gr_mmdvm_source::gr_mmdvm_source(BurstTimer *burst_timer, uint8_t cn, bool multi
     {
         _zmqcontext[i] = zmq::context_t(1);
         _zmqsocket[i] = zmq::socket_t(_zmqcontext[i], ZMQ_REQ);
-        _zmqsocket[i].setsockopt(ZMQ_SNDHWM, 10);
-        _zmqsocket[i].setsockopt(ZMQ_LINGER, 0);
+        _zmqsocket[i].set(zmq::sockopt::sndhwm, 10);
+        _zmqsocket[i].set(zmq::sockopt::linger, 0);
         int socket_no = multi_channel ? i + 1 : i;
         _zmqsocket[i].connect ("ipc:///tmp/mmdvm-tx" + std::to_string(socket_no) + ".ipc");
         _in_tx[i] = false;

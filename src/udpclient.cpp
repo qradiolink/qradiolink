@@ -37,7 +37,7 @@ UDPClient::~UDPClient()
 void UDPClient::setResamplingRate(uint32_t rate)
 {
 
-    if(rate > _settings->udp_audio_sample_rate)
+    if(rate > (uint32_t)_settings->udp_audio_sample_rate)
     {
         _logger->log(Logger::LogLevelFatal, QString("Could not set sampling rate: %1 is larger than UDP audio rate").arg(rate));
         return;
