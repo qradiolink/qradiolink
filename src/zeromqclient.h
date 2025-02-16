@@ -31,6 +31,7 @@ public:
     explicit ZeroMQClient(Settings *settings, QObject *parent = nullptr);
     ~ZeroMQClient();
     void init();
+    void stop();
     static void* tx_thread(void * arg);
     static void* rx_thread(void * arg);
     void receive();

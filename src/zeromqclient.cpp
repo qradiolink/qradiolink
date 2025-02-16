@@ -53,6 +53,17 @@ void ZeroMQClient::init()
     ::pthread_setname_np(_threadRX, "zmq_mmdvm_rx");
 }
 
+void ZeroMQClient::stop()
+{
+    ::pthread_cancel(_threadRX);
+    ::pthread_cancel(_threadTX);
+    _zmqsocketRX.disconnect("ipc:///tmp/mmdvm-rx" + std::to_string(_settings->zmq_proxy_channel) + ".ipc");
+    _zmqsocketRX.close();
+    _zmqcontextRX.close();
+    _zmqsocketTX.close();
+    _zmqcontextTX.close();
+}
+
 void* ZeroMQClient::tx_thread(void* arg)
 {
     ZeroMQClient* o = (ZeroMQClient*)arg;
@@ -81,7 +92,7 @@ void ZeroMQClient::transmit()
 {
     uint32_t num_items = 720;
     zmq::message_t request_message;
-    zmq::recv_result_t recv_result = _zmqsocketTX.recv(request_message);
+    zmq::recv_result_t recv_result = _zmqsocketTX.recv(request_message, zmq::recv_flags::none);
     Q_UNUSED(recv_result);
     if(request_message.size() < 1)
         return;

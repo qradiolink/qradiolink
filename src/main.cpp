@@ -251,6 +251,10 @@ int main(int argc, char *argv[])
         logger->log(Logger::LogLevelInfo, "Stopping transmitter");
         radio_op->stop();
     }
+    if(mmdvm_mode && set_udp_on)
+    {
+        zmq_client->stop();
+    }
     delete zmq_client;
     delete telnet_server;
     delete udpclient;
