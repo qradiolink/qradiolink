@@ -120,8 +120,8 @@ gr_demod_mmdvm_multi2::gr_demod_mmdvm_multi2(BurstTimer *burst_timer, int num_ch
             m++;
         }
 
-        connect(_resampler[i],0,_filter[i],0);
-        connect(_filter[i],0,_rssi_tag_block[i],0);
+        connect(_resampler[i],0,_rssi_tag_block[i],0);
+        //connect(_filter[i],0,_rssi_tag_block[i],0);
         connect(_rssi_tag_block[i],0,_fm_demod[i],0);
         connect(_fm_demod[i],0,_level_control[i],0);
         connect(_level_control[i],0,_float_to_short[i],0);
