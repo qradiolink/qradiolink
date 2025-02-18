@@ -26,12 +26,12 @@ SSLClient::SSLClient(QObject *parent) :
     _hostname = "127.0.0.1";
     _port= MUMBLE_PORT;
     _socket = new QSslSocket;
-    _socket->setPeerVerifyMode(QSslSocket::QueryPeer);
+    _socket->setPeerVerifyMode(QSslSocket::VerifyNone);
     _socket->ignoreSslErrors();
-#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 4)
-    _socket->setProtocol(QSsl::TlsV1_3);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+    _socket->setProtocol(QSsl::TlsV1_3OrLater);
 #else
-    _socket->setProtocol(QSsl::TlsV1_2);
+    _socket->setProtocol(QSsl::TlsV1_3);
 #endif
     QObject::connect(_socket,SIGNAL(error(QAbstractSocket::SocketError )),
                      this,SLOT(connectionFailed(QAbstractSocket::SocketError)));

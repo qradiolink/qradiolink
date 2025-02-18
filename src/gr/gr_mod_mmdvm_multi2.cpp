@@ -101,8 +101,8 @@ gr_mod_mmdvm_multi2::gr_mod_mmdvm_multi2(BurstTimer *burst_timer, int num_channe
         connect(_mmdvm_source, i, _short_to_float[i],0);
         connect(_short_to_float[i], 0, _audio_amplify[i],0);
         connect(_audio_amplify[i], 0, _fm_modulator[i],0);
-        connect(_fm_modulator[i], 0, _amplify[i],0);
-        //connect(_filter[i], 0, _amplify[i],0);
+        connect(_fm_modulator[i], 0, _filter[i],0);
+        connect(_filter[i], 0, _amplify[i],0);
         connect(_amplify[i], 0, _resampler[i],0);
         connect(_resampler[i], 0, _zero_idle[i],0);
         //              6  7  8  9  0  1  2  3  4  5
