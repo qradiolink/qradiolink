@@ -21,21 +21,25 @@ Supported hardware
 Requirements
 ----
 
-- Since release 0.8.5, GNU radio version 3.8 is necessary and Qt 5.14 is used for the graphical interface.
-- Also since release 0.8.5 the video mode requires gstreamer and libgstreamer-plugins-bad1.0-0
-- Build dependencies on Debian 11 with Qt5 and GNU radio 3.8: 
-
-<pre>
-$ sudo apt-get install gnuradio-dev protobuf-compiler gr-osmosdr gnuradio libvolk2-dev libvolk2-bin libprotobuf23 libprotobuf-dev libopus0 libopus-dev libspeexdsp1 libspeexdsp-dev libpulse0 libpulse-dev liblog4cpp5v5 libcodec2-0.9 libcodec2-dev libasound2 libasound2-dev libjpeg62-turbo libjpeg62-turbo-dev libconfig++9v5 libconfig++-dev qt5-qmake qtbase5-dev libqt5core5a libqt5gui5 libqt5network5 libqt5sql5 qtmultimedia5-dev libqt5multimediawidgets5 libqt5multimedia5-plugins libqt5multimedia5 libftdi-dev libftdi1 libsndfile1-dev libsndfile1 qtgstreamer-plugins-qt5 libgstreamer-plugins-bad1.0-0 liblimesuite-dev limesuite-udev liblimesuite20.10-1 libzmq3-dev libzmq5 libsoapysdr-dev libsoapysdr0.7 libuhd-dev libuhd3.15.0
-</pre>
-
-- A version of qradiolink commpatible with GNU Radio 3.10 and usable with Debian Bookworm and distributions with compatible package versions can be built using the **gr_3.10** branch of this repository
+- Starting with release 0.9.1, GNU Radio version 3.10 is necessary and Qt 5.15 is used for the graphical interface.
+- Starting with release 0.8.5 the video mode requires gstreamer and libgstreamer-plugins-bad1.0-0
+- A version of qradiolink commpatible with GNU Radio 3.10 and usable with Debian 12 Bookworm and distributions with compatible package versions can be built using the **gr_3.10** branch of this repository
+- Build dependencies on Debian 12 (Bookworm) with Qt 5.15 and GNU Radio 3.10: 
 
 <pre>
 $ sudo apt-get install gnuradio-dev protobuf-compiler gr-osmosdr gnuradio libvolk2-dev libvolk2-bin libprotobuf32 libprotobuf-dev libopus0 libopus-dev libspeexdsp1 libspeexdsp-dev libpulse0 libpulse-dev liblog4cpp5v5 libcodec2-1.0 libcodec2-dev libasound2 libasound2-dev libjpeg62-turbo libjpeg62-turbo-dev libconfig++9v5 libconfig++-dev qt5-qmake qtbase5-dev libqt5core5a libqt5gui5 libqt5network5 libqt5sql5 qtmultimedia5-dev libqt5multimediawidgets5 libqt5multimedia5-plugins libqt5multimedia5 libftdi-dev libftdi1 libsndfile1-dev libsndfile1 qtgstreamer-plugins-qt5 libgstreamer-plugins-bad1.0-0 liblimesuite-dev limesuite-udev liblimesuite22.09-1 libzmq3-dev libzmq5 libsoapysdr-dev libsoapysdr0.8 libuhd-dev libuhd4.3.0
 </pre>
 
-For Ubuntu 20.04.3 build dependencies are:
+- A version of qradiolink commpatible with GNU Radio 3.8 and usable with Debian 11 Bullseye and distributions with compatible package versions can be built using the **gr_3.8** branch of this repository
+
+<pre>
+$ sudo apt-get install gnuradio-dev protobuf-compiler gr-osmosdr gnuradio libvolk2-dev libvolk2-bin libprotobuf23 libprotobuf-dev libopus0 libopus-dev libspeexdsp1 libspeexdsp-dev libpulse0 libpulse-dev liblog4cpp5v5 libcodec2-0.9 libcodec2-dev libasound2 libasound2-dev libjpeg62-turbo libjpeg62-turbo-dev libconfig++9v5 libconfig++-dev qt5-qmake qtbase5-dev libqt5core5a libqt5gui5 libqt5network5 libqt5sql5 qtmultimedia5-dev libqt5multimediawidgets5 libqt5multimedia5-plugins libqt5multimedia5 libftdi-dev libftdi1 libsndfile1-dev libsndfile1 qtgstreamer-plugins-qt5 libgstreamer-plugins-bad1.0-0 liblimesuite-dev limesuite-udev liblimesuite20.10-1 libzmq3-dev libzmq5 libsoapysdr-dev libsoapysdr0.7 libuhd-dev libuhd3.15.0
+</pre>
+
+
+
+- For Ubuntu 20.04.3 build dependencies are:
+
 <pre>
 $ sudo apt-get install gnuradio-dev protobuf-compiler gr-osmosdr gnuradio libvolk2-dev libvolk2-bin libprotobuf23 libprotobuf-dev libopus0 libopus-dev libspeexdsp1 libspeexdsp-dev libpulse0 libpulse-dev liblog4cpp5v5 libcodec2-0.9 libcodec2-dev libasound2 libasound2-dev libjpeg-turbo8 libjpeg-turbo8-dev libconfig++9v5 libconfig++-dev qt5-qmake qtbase5-dev libqt5core5a libqt5gui5 libqt5network5 libqt5sql5 qtmultimedia5-dev libqt5multimediawidgets5 libqt5multimedia5-plugins libqt5multimedia5 libftdi-dev libftdi1 libsndfile1-dev libsndfile1 qtgstreamer-plugins-qt5 libgstreamer-plugins-bad1.0-0 liblimesuite-dev liblimesuite20.01-1 libzmq3-dev libzmq5 libsoapysdr-dev libsoapysdr0.7 libuhd-dev libuhd
 </pre>
@@ -118,11 +122,6 @@ Configuration and operation
 
 HTML documentation is available on the QRadioLink [documentation site](https://qradiolink.org/docs/home/index.html "documentation site")
 
-Bundled documentation:
-
-- See docs/OPERATION.md
-- For MMDVM base station operation mode, see docs/README_MMDVM_operation.md
-
 
 Known issues
 ----
@@ -130,6 +129,7 @@ Known issues
 - When tuning rapidly for a prolonged time (for example by dragging the filter box across the screen), the audio may experience slowdowns and other glitches. As a workaround, click at the desired location on the waterfall instead of dragging.
 - Roundtrip latency increases to double over 24 hours of continuous operation with Ettus USRP in MMDVM modes
 - Calculated RSSI values for MMDVM RF channels are not always accurate
+- some TDMA issues manifested with GNU Radio 3.10
 
 
 Copyright and License
