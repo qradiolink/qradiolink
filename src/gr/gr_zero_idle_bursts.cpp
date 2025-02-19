@@ -56,11 +56,11 @@ int gr_zero_idle_bursts::work(int noutput_items,
 
     for(int i = 0;i < noutput_items; i++)
     {
-        for (gr::tag_t tag : tags)
+        for (gr::tag_t& tag : tags)
         {
             if(tag.offset == nitems + (uint64_t)i)
             {
-                _sample_counter += pmt::to_uint64(tag.value);
+                _sample_counter = pmt::to_uint64(tag.value);
                 break;
             }
         }

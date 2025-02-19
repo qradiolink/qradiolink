@@ -87,7 +87,7 @@ int gr_mmdvm_sink::work(int noutput_items,
 
             std::sort(rssi_tags.begin(), rssi_tags.end(), gr::tag_t::offset_compare);
         }
-        for (gr::tag_t tag : rssi_tags)
+        for (gr::tag_t& tag : rssi_tags)
         {
             uint32_t rssi = (uint32_t)fabs(pmt::to_float((tag.value)));
             _rssi[chan].push_back(rssi);
@@ -100,7 +100,7 @@ int gr_mmdvm_sink::work(int noutput_items,
             {
                 _slot_sample_counter[chan]++;
             }
-            for (gr::tag_t tag : tags)
+            for (gr::tag_t& tag : tags)
             {
                 if(tag.offset == nitems + (uint64_t)i)
                 {
