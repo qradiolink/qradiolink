@@ -153,7 +153,7 @@ void BurstTimer::set_params(uint64_t samples_per_slot, uint64_t time_per_sample,
 
 uint64_t BurstTimer::get_time_delta(int cn)
 {
-    std::unique_lock<std::mutex> guard(_timing_mutex[cn]);
+    std::scoped_lock<std::mutex> guard(_timing_mutex[cn]);
     t2[cn] = std::chrono::high_resolution_clock::now();
     return _time_base[cn] + _sample_counter[cn] * _time_per_sample +
             (uint64_t) std::chrono::duration_cast<std::chrono::nanoseconds>(t2[cn]-t1[cn]).count();
@@ -161,7 +161,7 @@ uint64_t BurstTimer::get_time_delta(int cn)
 
 void BurstTimer::reset_timer(int cn)
 {
-    std::unique_lock<std::mutex> guard(_timing_mutex[cn]);
+    std::scoped_lock<std::mutex> guard(_timing_mutex[cn]);
     _sample_counter[cn] = 0;
     _time_base[cn] = 0;
     t1[cn]= std::chrono::high_resolution_clock::now();
@@ -170,7 +170,7 @@ void BurstTimer::reset_timer(int cn)
 
 void BurstTimer::set_timer(uint64_t value, int cn)
 {
-    std::unique_lock<std::mutex> guard(_timing_mutex[cn]);
+    std::scoped_lock<std::mutex> guard(_timing_mutex[cn]);
     //qDebug() << "================= Set timer: " << value << " ===================";
     _sample_counter[cn] = 0;
     _time_base[cn] = value;
@@ -179,14 +179,14 @@ void BurstTimer::set_timer(uint64_t value, int cn)
 
 void BurstTimer::increment_sample_counter(int cn)
 {
-    std::unique_lock<std::mutex> guard(_timing_mutex[cn]);
+    std::scoped_lock<std::mutex> guard(_timing_mutex[cn]);
     _sample_counter[cn]++;
     t1[cn] = std::chrono::high_resolution_clock::now();
 }
 
 uint64_t BurstTimer::get_sample_counter(int cn)
 {
-    std::unique_lock<std::mutex> guard(_timing_mutex[cn]);
+    std::scoped_lock<std::mutex> guard(_timing_mutex[cn]);
     return _time_base[cn] + _sample_counter[cn] * _time_per_sample;
 }
 
@@ -196,13 +196,13 @@ int BurstTimer::check_time(int cn)
     if(!_enabled)
         return 0;
     slot *s;
-    std::unique_lock<std::mutex> guard(_slot_mutex[cn]);
+    std::scoped_lock<std::mutex> guard(_slot_mutex[cn]);
     if(_slot_times[cn].size() < 1)
         return 0;
     s = _slot_times[cn][0];
-    std::unique_lock<std::mutex> guard_time(_timing_mutex[cn]);
+    std::scoped_lock<std::mutex> guard_time(_timing_mutex[cn]);
     uint64_t sample_time = _time_base[cn] + _sample_counter[cn] * _time_per_sample;
-    guard_time.unlock();
+
     if(sample_time >= s->slot_time && s->slot_sample_counter == 0)
     {
         s->slot_sample_counter++;
