@@ -199,7 +199,7 @@ int BurstTimer::check_time(int cn, bool time_base_received)
     std::scoped_lock<std::mutex> guard(_slot_mutex[cn]);
     if(_slot_times[cn].size() < 1)
         return 0;
-    s = _slot_times[cn][0];
+    s = _slot_times[cn].at(0);
     std::scoped_lock<std::mutex> guard_time(_timing_mutex[cn]);
     if(!time_base_received)
     {

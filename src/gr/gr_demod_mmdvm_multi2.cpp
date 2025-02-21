@@ -96,6 +96,7 @@ gr_demod_mmdvm_multi2::gr_demod_mmdvm_multi2(BurstTimer *burst_timer, int num_ch
     }
     _channelizer = gr::filter::pfb_channelizer_ccf::make(10, taps, 1.0f);
     //_channelizer->declare_sample_delay(channelizer_delay);
+    _channelizer->set_tag_propagation_policy(gr::block::TPP_ALL_TO_ALL);
     _stream_to_streams = gr::blocks::stream_to_streams::make(sizeof(gr_complex), 10);
 
     _mmdvm_sink = make_gr_mmdvm_sink(burst_timer, num_channels, true, _use_tdma);
