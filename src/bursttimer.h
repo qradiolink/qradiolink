@@ -43,7 +43,7 @@ public:
     void set_timer(uint64_t value, int cn=0);
     void increment_sample_counter(int cn=0);
     uint64_t get_sample_counter(int cn);
-    int check_time(int cn=0);
+    int check_time(int cn=0, bool time_base_received=false);
     uint64_t allocate_slot(int slot_no, int64_t &timing, int cn=0);
     uint64_t get_last_timestamp(int cn=0);
     uint64_t get_last_timestamp_global();

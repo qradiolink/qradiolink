@@ -191,7 +191,7 @@ uint64_t BurstTimer::get_sample_counter(int cn)
 }
 
 
-int BurstTimer::check_time(int cn)
+int BurstTimer::check_time(int cn, bool time_base_received)
 {
     if(!_enabled)
         return 0;
@@ -201,6 +201,11 @@ int BurstTimer::check_time(int cn)
         return 0;
     s = _slot_times[cn][0];
     std::scoped_lock<std::mutex> guard_time(_timing_mutex[cn]);
+    if(!time_base_received)
+    {
+        _sample_counter[cn]++;
+        t1[cn] = std::chrono::high_resolution_clock::now();
+    }
     uint64_t sample_time = _time_base[cn] + _sample_counter[cn] * _time_per_sample;
 
     if(sample_time >= s->slot_time && s->slot_sample_counter == 0)
