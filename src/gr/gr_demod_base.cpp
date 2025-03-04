@@ -118,7 +118,7 @@ gr_demod_base::gr_demod_base(BurstTimer *burst_timer, QObject *parent, float dev
          else
              dev_string = "uhd=0";
          uhd::device_addr_t device_addr(dev_string);
-        _uhd_source = gr::uhd::usrp_source::make(device_addr,stream_args);
+        _uhd_source = gr::uhd::usrp_source::make(device_addr, stream_args, true);
         _uhd_source->set_center_freq(_device_frequency);
         _uhd_source->set_samp_rate(INTERNAL_DEFAULT_SAMPLE_RATE);
         _uhd_source->set_antenna(device_antenna);

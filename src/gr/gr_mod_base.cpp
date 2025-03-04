@@ -115,7 +115,6 @@ gr_mod_base::gr_mod_base(BurstTimer *burst_timer, QObject *parent, float device_
         {
             _uhd_sink->set_gain(rf_gain);
         }
-        _uhd_sink->set_start_time(uhd::time_spec_t(0.0d));
         _top_block->connect(_rotator,0,_uhd_sink,0);
         _use_tdma = true;
     }

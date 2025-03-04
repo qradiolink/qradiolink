@@ -52,9 +52,11 @@ public:
     bool get_tx(int cn=0);
     bool get_other_tx_status(int cn);
     bool get_global_tx_status();
+    bool get_timing_initialized(int cn);
 
 private:
     bool _enabled;
+    bool _timing_initialized[MAX_MMDVM_CHANNELS];
     bool _tx[MAX_MMDVM_CHANNELS];
     std::mutex _timing_mutex[MAX_MMDVM_CHANNELS];
     std::mutex _slot_mutex[MAX_MMDVM_CHANNELS];

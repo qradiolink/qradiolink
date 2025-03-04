@@ -191,7 +191,7 @@ int gr_mmdvm_source::work(int noutput_items,
     bool start = true;
     for(int i = 0;i < _num_channels;i++)
     {
-        if(_burst_timer->get_sample_counter(i) < 1000)
+        if(!_burst_timer->get_timing_initialized(i))
         {
             std::cout << "Waiting for RX samples to initialize timebase" << std::endl;
             control_buf[i].clear();
@@ -252,8 +252,8 @@ void gr_mmdvm_source::add_time_tag(uint64_t nsec, int offset, int which)
     const pmt::pmt_t t_val = pmt::make_tuple(pmt::from_uint64(intpart), pmt::from_double(fracpart));
     this->add_item_tag(which, nitems_written(which) + (uint64_t)offset, TIME_TAG, t_val);
     /// length tag doesn't seem to be necessary
-    const pmt::pmt_t b_val = pmt::from_long(SAMPLES_PER_SLOT);
-    this->add_item_tag(0, nitems_written(0) + offset, LENGTH_TAG, b_val);
+    //const pmt::pmt_t b_val = pmt::from_long((SAMPLES_PER_SLOT + 30) * 10);
+    //this->add_item_tag(0, nitems_written(0) + offset, LENGTH_TAG, b_val);
 
 }
 

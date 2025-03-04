@@ -37,6 +37,8 @@ BurstTimer::BurstTimer(uint64_t burst_delay, uint64_t samples_per_slot, uint64_t
     for(uint8_t i = 0;i < MAX_MMDVM_CHANNELS;i++)
         _tx[i] = false;
     for(uint8_t i = 0;i < MAX_MMDVM_CHANNELS;i++)
+        _timing_initialized[i] = false;
+    for(uint8_t i = 0;i < MAX_MMDVM_CHANNELS;i++)
         t1[i] = std::chrono::high_resolution_clock::now();
     for(uint8_t i = 0;i < MAX_MMDVM_CHANNELS;i++)
         tx1[i] = std::chrono::high_resolution_clock::now();
@@ -155,8 +157,9 @@ uint64_t BurstTimer::get_time_delta(int cn)
 {
     std::scoped_lock<std::mutex> guard(_timing_mutex[cn]);
     t2[cn] = std::chrono::high_resolution_clock::now();
-    return _time_base[cn] + _sample_counter[cn] * _time_per_sample +
-            (uint64_t) std::chrono::duration_cast<std::chrono::nanoseconds>(t2[cn]-t1[cn]).count();
+    return _time_base[cn] + _sample_counter[cn] * _time_per_sample;
+    // FIXME: with UHD 4.0 using this leads to dropeed packets
+    // + (uint64_t) std::chrono::duration_cast<std::chrono::nanoseconds>(t2[cn]-t1[cn]).count();
 }
 
 void BurstTimer::reset_timer(int cn)
@@ -174,7 +177,14 @@ void BurstTimer::set_timer(uint64_t value, int cn)
     //qDebug() << "================= Set timer: " << value << " ===================";
     _sample_counter[cn] = 0;
     _time_base[cn] = value;
+    _timing_initialized[cn] = true;
     t1[cn] = std::chrono::high_resolution_clock::now();
+}
+
+bool BurstTimer::get_timing_initialized(int cn)
+{
+    std::scoped_lock<std::mutex> guard(_timing_mutex[0]);
+    return _timing_initialized[cn];
 }
 
 void BurstTimer::increment_sample_counter(int cn)
@@ -234,7 +244,6 @@ uint64_t BurstTimer::allocate_slot(int slot_no, int64_t &timing, int cn)
     slot *s = new slot;
     s->slot_no = (uint8_t)slot_no;
     uint64_t elapsed = get_time_delta(0);
-    //uint64_t elapsed = _time_base[cn] + _sample_counter[cn] * _time_per_sample;
 
     if(elapsed <= _last_slot[cn])
     {
