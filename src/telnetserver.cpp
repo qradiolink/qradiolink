@@ -61,7 +61,7 @@ void TelnetServer::stop()
     _stop = true;
     for(int i =0;i<_connected_clients.size();i++)
     {
-        QTcpSocket *s = _connected_clients.at(i);
+        QTcpSocket *s = _connected_clients[i];
         s->write("Server is stopping now.\n");
         s->flush();
         s->disconnectFromHost();

@@ -100,12 +100,12 @@ void MumbleClient::cleanup()
     _channel_id = INT64_MAX;
     for(int i=0; i < _channels.size();i++)
     {
-        delete _channels.at(i);
+        delete _channels[i];
     }
     _channels.clear();
     for(int i=0; i < _stations.size();i++)
     {
-        delete _stations.at(i);
+        delete _stations[i];
     }
     _stations.clear();
     emit disconnected();
@@ -413,7 +413,7 @@ void MumbleClient::processUserRemove(quint8 *message, quint64 size)
     us.ParseFromArray(message,size);
     for(int i=0; i < _stations.size(); i++)
     {
-        Station *s = _stations.at(i);
+        Station *s = _stations[i];
         if(s->id == us.session())
         {
             _stations.remove(i);

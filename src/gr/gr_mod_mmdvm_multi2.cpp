@@ -33,6 +33,7 @@ gr_mod_mmdvm_multi2::gr_mod_mmdvm_multi2(BurstTimer *burst_timer, int num_channe
                       gr::io_signature::make (0, 0, sizeof (short)),
                       gr::io_signature::make (1, 1, sizeof (gr_complex)))
 {
+    (void) channel_separation;
     if(num_channels > MAX_MMDVM_CHANNELS)
         num_channels = MAX_MMDVM_CHANNELS;
     _samp_rate =samp_rate;

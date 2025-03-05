@@ -866,8 +866,8 @@ void gr_modem::transmit(QVector<std::vector<unsigned char>*> frames)
     for (int i=0; i<frames.size();i++)
     {
         all_frames->insert( all_frames->end(), frames.at(i)->begin(), frames.at(i)->end() );
-        frames.at(i)->clear();
-        delete frames.at(i);
+        frames[i]->clear();
+        delete frames[i];
     }
     _gr_mod_base->set_data(all_frames);
 

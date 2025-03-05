@@ -49,6 +49,10 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
 
     buildFilterWidthList(_filter_widths, _filter_ranges, _filter_symmetric);
     buildModeList(_mode_list);
+    if(_settings->rx_mode > (_mode_list->size() - 1))
+        _settings->rx_mode = 0;
+    if(_settings->tx_mode > (_mode_list->size() - 1))
+        _settings->tx_mode = 0;
     ui->rxModemTypeComboBox->addItems(_mode_list->toList());
     ui->txModemTypeComboBox->addItems(_mode_list->toList());
     _logger->log(Logger::LogLevelDebug, "Looking up available audio devices");
@@ -392,11 +396,11 @@ MainWindow::~MainWindow()
 {
     for(int i =0;i<_rx_gain_sliders.size();i++)
     {
-        delete _rx_gain_sliders.at(i);
+        delete _rx_gain_sliders[i];
     }
     for(int i =0;i<_tx_gain_sliders.size();i++)
     {
-        delete _tx_gain_sliders.at(i);
+        delete _tx_gain_sliders[i];
     }
     _rx_gain_sliders.clear();
     _tx_gain_sliders.clear();
@@ -2175,7 +2179,7 @@ void MainWindow::setRxGainStages(gain_vector rx_gains)
 {
     for(int i=0;i < _rx_gain_sliders.size();i++)
     {
-        SkinnedDial *slider = _rx_gain_sliders.at(i);
+        SkinnedDial *slider = _rx_gain_sliders[i];
         delete slider;
     }
     _rx_gain_sliders.clear();
@@ -2203,7 +2207,7 @@ void MainWindow::setTxGainStages(gain_vector tx_gains)
 {
     for(int i=0;i < _tx_gain_sliders.size();i++)
     {
-        SkinnedDial *slider = _tx_gain_sliders.at(i);
+        SkinnedDial *slider = _tx_gain_sliders[i];
         delete slider;
     }
     _tx_gain_sliders.clear();

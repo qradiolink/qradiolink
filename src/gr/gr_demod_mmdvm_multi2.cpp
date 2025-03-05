@@ -37,7 +37,7 @@ gr_demod_mmdvm_multi2::gr_demod_mmdvm_multi2(BurstTimer *burst_timer, int num_ch
                       gr::io_signature::make (1, 1, sizeof (gr_complex)),
                       gr::io_signature::make (0, 0, sizeof (short)))
 {
-    (void) sps;
+    (void) sps, channel_separation;
     int min_c = std::min(num_channels, 4);
     if(num_channels > MAX_MMDVM_CHANNELS)
         num_channels = MAX_MMDVM_CHANNELS;
