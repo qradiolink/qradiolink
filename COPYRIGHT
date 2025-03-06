@@ -1,3 +1,8 @@
+This program uses code from MMDVMHost for DMR layers 2 and 3:
+Copyright Jonathan Naylor G4KLX, Ian Wraith , Patrick Maier DK5MP et al., licensed under GPLv2
+Original repository: https://github.com/g4klx/MMDVMHost
+Original license located in the src/MMDVM directory.
+
 M17 protocol implementation from the OpenRTX project
 https://openrtx.org/
 Copyright:

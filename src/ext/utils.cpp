@@ -125,6 +125,7 @@ void buildModeList(QVector<QString> *operating_modes)
     operating_modes->push_back("MMDVM");
     operating_modes->push_back("MMDVM multi");
     operating_modes->push_back("M17");
+    operating_modes->push_back("DMR");
 }
 
 void buildFilterWidthList(std::vector<std::complex<int>>* filter_widths, std::vector<std::complex<int>>*ranges, std::vector<bool> *symmetric)
@@ -168,6 +169,8 @@ void buildFilterWidthList(std::vector<std::complex<int>>* filter_widths, std::ve
     filter_widths->push_back(std::complex<int>(-6250, 6250));  // MMDVM
     filter_widths->push_back(std::complex<int>(-6250, 6250));  // MMDVM multi channel
     filter_widths->push_back(std::complex<int>(-6250, 6250));  // M17
+    filter_widths->push_back(std::complex<int>(-6250, 6250));  // DMR
+
 
     ranges->push_back(std::complex<int>(-10000, 10000));  // FM
     ranges->push_back(std::complex<int>(-9000, 9000));  // NBFM
@@ -208,6 +211,7 @@ void buildFilterWidthList(std::vector<std::complex<int>>* filter_widths, std::ve
     ranges->push_back(std::complex<int>(-10000, 10000));  // MMDVM
     ranges->push_back(std::complex<int>(-10000, 10000));  // MMDVM multi channel
     ranges->push_back(std::complex<int>(-10000, 10000));  // M17
+    ranges->push_back(std::complex<int>(-10000, 10000));  // DMR
 
     symmetric->push_back(true);  // FM
     symmetric->push_back(true);  // NBFM
@@ -248,5 +252,6 @@ void buildFilterWidthList(std::vector<std::complex<int>>* filter_widths, std::ve
     symmetric->push_back(true); // MMDVM
     symmetric->push_back(true); // MMDVM multi channel
     symmetric->push_back(true); // M17
+    symmetric->push_back(true); // DMR
 }
 

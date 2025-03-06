@@ -45,6 +45,7 @@
 #include "video/videoencoder.h"
 #include "video/imagecapture.h"
 #include "src/gr_modem.h"
+#include "src/DMR/dmrcontrol.h"
 #include "net/netdevice.h"
 #include "logger.h"
 #include "src/config_mmdvm.h"
@@ -85,6 +86,7 @@ signals:
     void displayDataReceiveStatus(bool status);
     void audioData(unsigned char *buf, int size);
     void m17AudioData(unsigned char *buf, int size);
+    void dmrAudioData(unsigned char *buf, int size);
     void pcmData(std::vector<float> *pcm);
     void videoData(unsigned char *buf, int size);
     void netData(unsigned char *buf, int size);
@@ -126,7 +128,7 @@ public slots:
     void textData(QString text, bool repeat = false);
     void textMumble(QString text, bool channel = false);
     void stop();
-    void textReceived(QString text);
+    void textReceived(QString text, bool html);
     void callsignReceived(QString callsign);
     void m17FrameInfoReceived(QString src, QString dest, uint16_t CAN);
     void protoReceived(QByteArray data);
@@ -171,6 +173,7 @@ public slots:
     void stopMemoryScan();
     void tuneMemoryChannel(radiochannel *chan);
     void endAudioTransmission();
+    void endBeep();
     void processVoipAudioFrame(short *pcm, int samples, quint64 sid);
     void processVoipVideoFrame(unsigned char *video_frame, int size, quint64 sid);
     void usePTTForVOIP(bool value);
@@ -250,6 +253,7 @@ private:
     ImageCapture *_camera;
     NetDevice *_net_device;
     gr_modem *_modem;
+    DMRControl *_dmr_control;
     Layer2Protocol *_layer2;
     QMutex *_mutex;
     QTimer *_voice_led_timer;

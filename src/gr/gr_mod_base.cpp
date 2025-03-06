@@ -16,7 +16,7 @@
 
 #include "gr_mod_base.h"
 
-gr_mod_base::gr_mod_base(BurstTimer *burst_timer, QObject *parent, float device_frequency, float rf_gain,
+gr_mod_base::gr_mod_base(BurstTimer *burst_timer, DMRTiming *dmrtiming, QObject *parent, float device_frequency, float rf_gain,
                            std::string device_args, std::string device_antenna, int freq_corr, int mmdvm_channels,
                          int mmdvm_channel_separation) :
     QObject(parent)
@@ -145,6 +145,8 @@ gr_mod_base::gr_mod_base(BurstTimer *burst_timer, QObject *parent, float device_
 
     _mmdvm_source = make_gr_mmdvm_source(burst_timer, 1, false, _use_tdma);
 
+    _dmr_source = make_gr_dmr_source(dmrtiming);
+
 
     int tw = std::min(_samp_rate/4, 1500000);
     _resampler = gr::filter::rational_resampler_ccf::make(1, 1,
@@ -202,6 +204,7 @@ gr_mod_base::gr_mod_base(BurstTimer *burst_timer, QObject *parent, float device_
     _mmdvm_mod = make_gr_mod_mmdvm();
     _mmdvm_mod_multi = make_gr_mod_mmdvm_multi2(burst_timer, _mmdvm_channels, mmdvm_channel_separation, _use_tdma);
     _m17_mod = make_gr_mod_m17();
+    _dmr_mod = make_gr_mod_dmr();
 }
 
 
@@ -512,6 +515,11 @@ void gr_mod_base::set_mode(int mode)
         _top_block->disconnect(_byte_source,0,_m17_mod,0);
         _top_block->disconnect(_m17_mod,0,_rotator,0);
         break;
+    case gr_modem_types::ModemTypeDMR:
+        set_center_freq(_device_frequency - _carrier_offset);
+        _top_block->disconnect(_dmr_source,0,_dmr_mod,0);
+        _top_block->disconnect(_dmr_mod,0,_rotator,0);
+        break;
     default:
         break;
     }
@@ -739,6 +747,12 @@ void gr_mod_base::set_mode(int mode)
         _top_block->connect(_byte_source,0,_m17_mod,0);
         _top_block->connect(_m17_mod,0,_rotator,0);
         break;
+    case gr_modem_types::ModemTypeDMR:
+        set_carrier_offset(_carrier_offset);
+        set_center_freq(_device_frequency - _carrier_offset);
+        _top_block->connect(_dmr_source,0,_dmr_mod,0);
+        _top_block->connect(_dmr_mod,0,_rotator,0);
+        break;
     default:
         break;
     }
@@ -769,6 +783,11 @@ void gr_mod_base::stop()
 int gr_mod_base::set_data(std::vector<u_int8_t> *data)
 {
     return _byte_source->set_data(data);
+}
+
+int gr_mod_base::setDMRData(std::vector<DMRFrame> &frames)
+{
+    return _dmr_source->set_data(frames);
 }
 
 int gr_mod_base::set_audio(std::vector<float> *data)

@@ -16,7 +16,7 @@
 
 #include "gr_modem.h"
 
-gr_modem::gr_modem(const Settings *settings, Logger *logger, QObject *parent) :
+gr_modem::gr_modem(const Settings *settings, Logger *logger, DMRControl *dmrcontrol, QObject *parent) :
     QObject(parent),
     _m17_decoder(),
     _m17_transmitter()
@@ -24,10 +24,12 @@ gr_modem::gr_modem(const Settings *settings, Logger *logger, QObject *parent) :
 {
     _settings = settings;
     _logger = logger;
+    _dmr_control = dmrcontrol;
     _limits = new Limits;
     _bit_buf_len = 8 *8;
     _bit_buf = new unsigned char[_bit_buf_len];
     _burst_timer = new BurstTimer(_settings->burst_delay_msec);
+    _dmr_timing = new DMRTiming(settings);
     _modem_type_rx = gr_modem_types::ModemTypeBPSK2K;
     _modem_type_tx = gr_modem_types::ModemTypeBPSK2K;
     _rx_frame_length = 7;
@@ -53,13 +55,14 @@ gr_modem::~gr_modem()
     delete[] _bit_buf;
     delete _limits;
     delete _burst_timer;
+    delete _dmr_timing;
 }
 
 void gr_modem::initTX(int modem_type, int64_t frequency, std::string device_args, std::string device_antenna,
                       int freq_corr, int initial_gain, int mmdvm_channels, int mmdvm_channel_separation)
 {
     _modem_type_tx = modem_type;
-    _gr_mod_base = new gr_mod_base(_burst_timer,
+    _gr_mod_base = new gr_mod_base(_burst_timer, _dmr_timing,
                 0, frequency, float(initial_gain)/100.0f, device_args, device_antenna,
                 freq_corr, mmdvm_channels, mmdvm_channel_separation);
     toggleTxMode(modem_type);
@@ -69,7 +72,7 @@ void gr_modem::initTX(int modem_type, int64_t frequency, std::string device_args
 void gr_modem::initRX(int modem_type, std::string device_args, std::string device_antenna, int freq_corr, int mmdvm_channels, int mmdvm_channel_separation)
 {
     _modem_type_rx = modem_type;
-    _gr_demod_base = new gr_demod_base(_burst_timer,
+    _gr_demod_base = new gr_demod_base(_burst_timer, _dmr_timing,
                 0, 433500000, 0.9, device_args, device_antenna, freq_corr, mmdvm_channels, mmdvm_channel_separation);
     toggleRxMode(modem_type);
 
@@ -189,6 +192,10 @@ void gr_modem::toggleTxMode(int modem_type)
         {
             _tx_frame_length = 16;
         }
+        else if(modem_type == gr_modem_types::ModemTypeDMR)
+        {
+            _tx_frame_length = 9;
+        }
     }
 
 }
@@ -302,6 +309,11 @@ void gr_modem::toggleRxMode(int modem_type)
         else if(modem_type == gr_modem_types::ModemTypeM17)
         {
             _rx_frame_length = 46;
+            _bit_buf_len = 46 *8;
+        }
+        else if(modem_type == gr_modem_types::ModemTypeDMR)
+        {
+            _rx_frame_length = 9;
             _bit_buf_len = 46 *8;
         }
         delete[] _bit_buf;
@@ -642,6 +654,36 @@ void gr_modem::startTransmission(QString callsign)
     {
         return;
     }
+    if(_modem_type_tx == gr_modem_types::ModemTypeDMR)
+    {
+        _dmr_timing->set_tx_time(false);
+        if(_settings->dmr_mode == DMR_MODE::DMR_MODE_DMO)
+        {
+            _dmr_timing->set_slot_times(_settings->dmr_timeslot);
+            transmitDMRHeader(_settings->dmr_timeslot);
+            return;
+        }
+        else
+        {
+            if(_dmr_timing->timing_recent(_settings->dmr_timeslot))
+            {
+                // Callback triggered when timing info is received after this point
+                QObject::connect(_dmr_timing, SIGNAL(timing_ready(unsigned int)), this, SLOT(transmitDMRHeader(unsigned int)));
+                // Skip CSBK if timing info is recent on downlink
+                return;
+            }
+        }
+        std::vector<DMRFrame> frames_start;
+        _dmr_control->getStartCSBK(frames_start);
+        _gr_mod_base->setDMRData(frames_start);
+        if(_settings->dmr_mode != DMR_MODE::DMR_MODE_DMO)
+        {
+            // Callback triggered after repeater wakes up and timing info is received
+            QObject::connect(_dmr_timing, SIGNAL(timing_ready(unsigned int)), this, SLOT(transmitDMRHeader(unsigned int)));
+        }
+
+        return;
+    }
     std::vector<unsigned char> *tx_start = new std::vector<unsigned char>;
     if(_modem_type_tx == gr_modem_types::ModemTypeM17)
     {
@@ -667,6 +709,12 @@ void gr_modem::startTransmission(QString callsign)
 
 void gr_modem::endTransmission(QString callsign)
 {
+    if(_modem_type_tx == gr_modem_types::ModemTypeDMR)
+    {
+        _dmr_control->stopVoiceTX();
+        QObject::disconnect(_dmr_timing, SIGNAL(timing_ready(unsigned int)), this, SLOT(transmitDMRHeader(unsigned int)));
+        return;
+    }
     std::vector<unsigned char> *tx_end = new std::vector<unsigned char>;
     if(_modem_type_tx == gr_modem_types::ModemTypeM17)
     {
@@ -696,6 +744,62 @@ void gr_modem::endTransmission(QString callsign)
     transmit(frames);
 }
 
+void gr_modem::transmitDMRHeader(unsigned int ts)
+{
+    if(!_gr_mod_base)
+        return;
+    if(ts != (unsigned int)_settings->dmr_timeslot)
+        return;
+    if(_settings->dmr_mode == DMR_MODE::DMR_MODE_REPEATER)
+    {
+        // remove callback
+        QObject::disconnect(_dmr_timing, SIGNAL(timing_ready(unsigned int)), this, SLOT(transmitDMRHeader(unsigned int)));
+    }
+    _dmr_timing->set_tx_time(true);
+    std::vector<DMRFrame> frames_lc;
+    _dmr_control->getVoiceHeader(frames_lc);
+    _gr_mod_base->setDMRData(frames_lc);
+    _dmr_control->initVoiceTX();
+    //emit endBeep();
+}
+
+void gr_modem::transmitDMR(unsigned char *audio_data, int size)
+{
+    (void) size;
+    if(!_gr_mod_base)
+    {
+        delete[] audio_data;
+        return;
+    }
+    if(!_dmr_control->getTXStatus())
+    {
+        delete[] audio_data;
+        return;
+    }
+    uint8_t audio_frames = _dmr_control->addTxAudio(audio_data);
+    if(audio_frames >= 3)
+    {
+        std::vector<DMRFrame> frames;
+        uint16_t frame_no = audio_frames / 3;
+        for(uint16_t i=0;i< frame_no;i++)
+        {
+            DMRFrame frame(DMRFrameTypeVoice);
+            if(_dmr_control->getTxAudio(frame))
+            {
+                frames.push_back(frame);
+                if(frame.getDataType() == DT_TERMINATOR_WITH_LC)
+                {
+                    frames.push_back(frame);
+                    DMRFrame frame_end(DMRFrameTypeData);
+                    frame_end.setSlotNo(0);
+                    for(int i=0;i<2;i++)
+                        frames.push_back(frame_end);
+                }
+            }
+        }
+        _gr_mod_base->setDMRData(frames);
+    }
+}
 
 void gr_modem::transmitTextData(QString text, int frame_type)
 {
@@ -917,6 +1021,19 @@ bool gr_modem::demodulate()
     if(!_gr_demod_base)
     {
         return false;
+    }
+    if(_modem_type_rx == gr_modem_types::ModemTypeDMR)
+    {
+        std::vector<DMRFrame> frames = _gr_demod_base->getDMRData();
+        if(frames.size() > 0)
+        {
+            _dmr_control->addFrames(frames);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
     std::vector<unsigned char> *demod_data = nullptr;
     std::vector<unsigned char> *demod_data2 = nullptr;
@@ -1185,7 +1302,7 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
             }
         }
         QString text = QString::fromLocal8Bit(text_data,string_length);
-        emit textReceived(text);
+        emit textReceived(text, false);
         delete[] text_data;
     }
     else if (current_frame_type == FrameTypeProto)
@@ -1320,7 +1437,7 @@ void gr_modem::handleStreamEnd()
 {
     if(_last_frame_type == FrameTypeText)
     {
-        emit textReceived( QString("\n"));
+        emit textReceived( QString("\n"), false);
     }
     emit endAudioTransmission();
     emit receiveEnd();

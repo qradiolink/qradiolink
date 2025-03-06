@@ -36,6 +36,8 @@
 #include "src/gr/gr_mod_base.h"
 #include "src/gr/gr_demod_base.h"
 #include "src/bursttimer.h"
+#include "src/DMR/dmrcontrol.h"
+#include "src/DMR/dmrtiming.h"
 
 /// M17 code
 #include <M17/M17FrameDecoder.hpp>
@@ -50,7 +52,7 @@ class gr_modem : public QObject
     Q_OBJECT
 public:
 
-    explicit gr_modem(const Settings *settings, Logger *logger, QObject *parent = 0);
+    explicit gr_modem(const Settings *settings, Logger *logger, DMRControl *dmrcontrol, QObject *parent = 0);
     ~gr_modem();
 
     bool demodulateAnalog();
@@ -62,7 +64,7 @@ signals:
     void videoData(unsigned char *video_data, int size);
     void netData(unsigned char *net_data, int size);
     void demodulated_audio(short *pcm, short size);
-    void textReceived(QString text);
+    void textReceived(QString text, bool html);
     void protoReceived(QByteArray data);
     void callsignReceived(QString text);
     void m17FrameInfoReceived(QString src, QString dest, uint16_t CAN);
@@ -71,6 +73,7 @@ signals:
     void syncIssues();
     void receiveEnd();
     void endAudioTransmission();
+    void endBeep();
 
 public slots:
     void transmitPCMAudio(std::vector<float> *audio_data);
@@ -78,6 +81,8 @@ public slots:
     void transmitM17Audio(unsigned char *data, int size);
     void transmitVideoData(unsigned char *data, int size);
     void transmitNetData(unsigned char *data, int size);
+    void transmitDMR(unsigned char *audio_data, int size);
+    void transmitDMRHeader(unsigned int ts);
     bool demodulate();
     void startTransmission(QString callsign);
     void endTransmission(QString callsign);
@@ -144,6 +149,9 @@ private:
 
     const Settings *_settings;
     Logger *_logger;
+    BurstTimer *_burst_timer;
+    DMRControl *_dmr_control;
+    DMRTiming *_dmr_timing;
     Limits *_limits;
     gr_mod_base *_gr_mod_base;
     gr_demod_base *_gr_demod_base;
@@ -161,7 +169,7 @@ private:
     int _current_frame_type;
     uint64_t _shift_reg;
     int _modem_sync;
-    BurstTimer *_burst_timer;
+
 
     /// M17 code
     M17::M17FrameDecoder _m17_decoder;      ///< M17 frame decoder

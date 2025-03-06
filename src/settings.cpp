@@ -81,6 +81,17 @@ Settings::Settings(Logger *logger)
     udp_audio_local_address = "127.0.0.1";
     udp_audio_remote_address = "127.0.0.1";
     zmq_proxy_channel = 5;
+    vocoder_plugin_path = "/tmp";
+    dmr_mode = 0;
+    dmr_vocoder = 0;
+    dmr_promiscuous_mode = 0;
+    dmr_timeslot = 1;
+    dmr_color_code = 1;
+    dmr_source_id = 1;
+    dmr_destination_id = 9;
+    dmr_call_type = 0;
+    dmr_timing_correction = 0;
+    dmr_talker_alias = "";
 
     /// old stuff, not used
     _mumble_tcp = 1; // used
@@ -901,6 +912,94 @@ void Settings::readConfig()
     {
         time_domain_filter_width = 10000;
     }
+    try
+    {
+        vocoder_plugin_path = QString(cfg.lookup("vocoder_plugin_path"));
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        vocoder_plugin_path = QString("/tmp");
+    }
+    try
+    {
+        dmr_mode = cfg.lookup("dmr_mode");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        dmr_mode = 0;
+    }
+    try
+    {
+        dmr_timeslot = cfg.lookup("dmr_timeslot");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        dmr_timeslot = 1;
+    }
+    try
+    {
+        dmr_color_code = cfg.lookup("dmr_color_code");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        dmr_color_code = 1;
+    }
+    try
+    {
+        dmr_vocoder = cfg.lookup("dmr_vocoder");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        dmr_vocoder = 0;
+    }
+    try
+    {
+        dmr_promiscuous_mode = cfg.lookup("dmr_promiscuous_mode");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        dmr_promiscuous_mode = 0;
+    }
+    try
+    {
+        dmr_source_id = cfg.lookup("dmr_source_id");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        dmr_source_id = 1;
+    }
+    try
+    {
+        dmr_destination_id = cfg.lookup("dmr_destination_id");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        dmr_destination_id = 9;
+    }
+    try
+    {
+        dmr_call_type = cfg.lookup("dmr_call_type");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        dmr_call_type = 0;
+    }
+    try
+    {
+        dmr_timing_correction = cfg.lookup("dmr_timing_correction");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        dmr_timing_correction = 0;
+    }
+    try
+    {
+        dmr_talker_alias = QString(cfg.lookup("dmr_talker_alias"));
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        dmr_talker_alias = "";
+    }
 
 
 }
@@ -1003,6 +1102,17 @@ void Settings::saveConfig()
     root.add("time_domain_sample_scaling",libconfig::Setting::TypeInt) = time_domain_sample_scaling;
     root.add("time_domain_sample_speed",libconfig::Setting::TypeInt) = time_domain_sample_speed;
     root.add("time_domain_filter_width",libconfig::Setting::TypeInt) = time_domain_filter_width;
+    root.add("vocoder_plugin_path",libconfig::Setting::TypeString) = vocoder_plugin_path.toStdString();
+    root.add("dmr_mode",libconfig::Setting::TypeInt) = dmr_mode;
+    root.add("dmr_timeslot",libconfig::Setting::TypeInt) = dmr_timeslot;
+    root.add("dmr_color_code",libconfig::Setting::TypeInt) = dmr_color_code;
+    root.add("dmr_promiscuous_mode",libconfig::Setting::TypeInt) = dmr_promiscuous_mode;
+    root.add("dmr_vocoder",libconfig::Setting::TypeInt) = dmr_vocoder;
+    root.add("dmr_source_id",libconfig::Setting::TypeInt) = dmr_source_id;
+    root.add("dmr_destination_id",libconfig::Setting::TypeInt) = dmr_destination_id;
+    root.add("dmr_call_type",libconfig::Setting::TypeInt) = dmr_call_type;
+    root.add("dmr_timing_correction",libconfig::Setting::TypeInt) = dmr_timing_correction;
+    root.add("dmr_talker_alias",libconfig::Setting::TypeString) = dmr_talker_alias.toStdString();
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());

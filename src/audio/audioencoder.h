@@ -22,6 +22,7 @@
 #include <codec2/codec2.h>
 #include "src/audio/audioprocessor.h"
 #include "src/settings.h"
+#include "src/audio/vocoder_plugin.h"
 
 
 
@@ -39,15 +40,17 @@ public:
     unsigned char* encode_codec2_700(short *audiobuffer, int audiobuffersize, int &length);
     unsigned char* encode_codec2_2400(short *audiobuffer, int audiobuffersize, int &length);
     unsigned char* encode_codec2_3200(short *audiobuffer, int audiobuffersize, int &length);
+    unsigned char* encode_vocoder(short *audiobuffer, int audiobuffersize, int &length);
     short* decode_codec2_1400(unsigned char *audiobuffer, int audiobuffersize, int &samples);
     short* decode_codec2_700(unsigned char *audiobuffer, int audiobuffersize, int &samples);
     short* decode_codec2_2400(unsigned char *audiobuffer, int audiobuffersize, int &samples);
     short* decode_codec2_3200(unsigned char *audiobuffer, int audiobuffersize, int &samples);
-
+    short* decode_vocoder(unsigned char *audiobuffer, int audiobuffersize, int &samples);
 
 
 private:
     const Settings *_settings;
+    bool loadVocoderPlugin();
     OpusEncoder *_enc;
     OpusDecoder *_dec;
     OpusEncoder *_enc_voip;
@@ -57,6 +60,8 @@ private:
     struct CODEC2 *_codec2_2400;
     struct CODEC2 *_codec2_3200;
     AudioProcessor *_processor;
+    Vocoder *_vocoder_plugin;
+    bool _vocoder_loaded;
 
 };
 

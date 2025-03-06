@@ -36,6 +36,7 @@
 #include "src/telnetserver.h"
 #include "src/zeromqclient.h"
 #include "src/logger.h"
+#include "src/DMR/dmrframe.h"
 
 
 void connectIndependentSignals(AudioWriter *audiowriter, AudioReader *audioreader,
@@ -66,6 +67,8 @@ int main(int argc, char *argv[])
     typedef QMap<std::string,QVector<int>> gain_vector;
     qRegisterMetaType<gain_vector>("gain_vector");
     qRegisterMetaType<std::string>("std::string");
+    typedef std::vector<DMRFrame> DMRFrame_vector;
+    qRegisterMetaType<DMRFrame_vector>("DMRFrame_vector");
 
     QCoreApplication *a = new QCoreApplication(argc, argv);
     QStringList arguments = QCoreApplication::arguments();

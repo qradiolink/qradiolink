@@ -689,6 +689,17 @@ void MainWindow::setConfig()
     ui->timePlotter->setSampleRate(_settings->time_domain_sample_rate);
     ui->timePlotter->setSpanFreq((quint32)_settings->time_domain_sample_rate);
     ui->timePlotter->setFreqUnits((float)_settings->time_domain_sample_rate);
+    ui->spinBoxDMRTimeslot->setValue(_settings->dmr_timeslot);
+    ui->spinBoxDMRColorCode->setValue(_settings->dmr_color_code);
+    ui->comboBoxDMRMode->setCurrentIndex(_settings->dmr_mode);
+    ui->comboBoxDMRCallType->setCurrentIndex(_settings->dmr_call_type);
+    ui->comboBoxDMRVocoder->setCurrentIndex(_settings->dmr_vocoder);
+    ui->checkBoxDMRPromiscuousMode->setChecked((bool)_settings->dmr_promiscuous_mode);
+    ui->lineEditDMRSourceID->setText(QString::number(_settings->dmr_source_id));
+    ui->lineEditDMRDestinationID->setText(QString::number(_settings->dmr_destination_id));
+    ui->lineEditDMRTimingCorrection->setText(QString::number(_settings->dmr_timing_correction));
+    ui->lineEditVocoderPluginPath->setText(_settings->vocoder_plugin_path);
+    ui->lineEditDMRTalkerAlias->setText(_settings->dmr_talker_alias);
 }
 
 void MainWindow::saveUiConfig()
@@ -751,6 +762,17 @@ void MainWindow::saveUiConfig()
     _settings->udp_audio_local_address = ui->localUDPIPAddressLineEdit->text();
     _settings->udp_audio_remote_address = ui->remoteUDPIPAddressLineEdit->text();
     _settings->zmq_proxy_channel = ui->spinBoxUDPChannelNumber->value();
+    _settings->dmr_mode = ui->comboBoxDMRMode->currentIndex();
+    _settings->dmr_call_type = ui->comboBoxDMRCallType->currentIndex();
+    _settings->dmr_timeslot = (int)(ui->spinBoxDMRTimeslot->value());
+    _settings->dmr_color_code = (int)(ui->spinBoxDMRColorCode->value());
+    _settings->dmr_promiscuous_mode = (int)(ui->checkBoxDMRPromiscuousMode->isChecked());
+    _settings->dmr_vocoder = ui->comboBoxDMRVocoder->currentIndex();
+    _settings->vocoder_plugin_path = ui->lineEditVocoderPluginPath->text();
+    _settings->dmr_talker_alias = ui->lineEditDMRTalkerAlias->text();
+    _settings->dmr_source_id = ui->lineEditDMRSourceID->text().toInt();
+    _settings->dmr_destination_id = ui->lineEditDMRDestinationID->text().toInt();
+    _settings->dmr_timing_correction = ui->lineEditDMRTimingCorrection->text().toInt();
     _settings->saveConfig();
 }
 

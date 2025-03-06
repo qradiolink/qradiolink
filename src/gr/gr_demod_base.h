@@ -58,16 +58,19 @@
 #include "gr_mmdvm_sink.h"
 #include "gr_demod_mmdvm_multi2.h"
 #include "gr_demod_m17.h"
+#include "gr_demod_dmr.h"
 #include "src/modem_types.h"
 #include "src/bursttimer.h"
+#include "src/DMR/dmrtiming.h"
 #include "rssi_block.h"
 #include "gr_sample_sink.h"
+#include "gr_dmr_sink.h"
 
 class gr_demod_base : public QObject
 {
     Q_OBJECT
 public:
-    explicit gr_demod_base(BurstTimer *burst_timer, QObject *parent = 0, float device_frequency=434000000,
+    explicit gr_demod_base(BurstTimer *burst_timer, DMRTiming *dmrtiming, QObject *parent = 0, float device_frequency=434000000,
                                float rf_gain=50, std::string device_args="rtl=0", std::string device_antenna="RX2",
                                 int freq_corr=0, int mmdvm_channels=3, int mmdvm_channel_separation=25000);
     ~gr_demod_base();
@@ -79,6 +82,7 @@ signals:
 public slots:
     void start(int buffer_size=0);
     void stop();
+    std::vector<DMRFrame> getDMRData();
     std::vector<unsigned char> *getData();
     std::vector<unsigned char> *getData(int nr);
     std::vector<float> *getAudio();
@@ -173,7 +177,9 @@ private:
     gr_demod_mmdvm_sptr _mmdvm_demod;
     gr_demod_mmdvm_multi2_sptr _mmdvm_demod_multi;
     gr_mmdvm_sink_sptr _mmdvm_sink;
+    gr_dmr_sink_sptr _dmr_sink;
     gr_demod_m17_sptr _m17_demod;
+    gr_demod_dmr_sptr _dmr_demod;
 
     osmosdr::source::sptr _osmosdr_source;
     gr::limesdr::source::sptr _limesdr_source;

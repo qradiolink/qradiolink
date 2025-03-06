@@ -20,7 +20,7 @@
 
 static const unsigned int INTERNAL_DEFAULT_SAMPLE_RATE = 1000000;
 
-gr_demod_base::gr_demod_base(BurstTimer *burst_timer, QObject *parent, float device_frequency,
+gr_demod_base::gr_demod_base(BurstTimer *burst_timer, DMRTiming *dmrtiming, QObject *parent, float device_frequency,
                              float rf_gain, std::string device_args, std::string device_antenna,
                               int freq_corr, int mmdvm_channels, int mmdvm_channel_separation) :
     QObject(parent)
@@ -165,6 +165,7 @@ gr_demod_base::gr_demod_base(BurstTimer *burst_timer, QObject *parent, float dev
 
     _fft_sink = make_rx_fft_c(32768, gr::fft::window::WIN_BLACKMAN_HARRIS);
     _mmdvm_sink = make_gr_mmdvm_sink(burst_timer, 1, false, _use_tdma);
+    _dmr_sink = make_gr_dmr_sink(dmrtiming);
 
     _deframer1 = make_gr_deframer_bb(1);
     _deframer2 = make_gr_deframer_bb(1);
@@ -248,6 +249,7 @@ gr_demod_base::gr_demod_base(BurstTimer *burst_timer, QObject *parent, float dev
     _mmdvm_demod = make_gr_demod_mmdvm();
     _mmdvm_demod_multi = make_gr_demod_mmdvm_multi2(burst_timer, _mmdvm_channels, mmdvm_channel_separation, _use_tdma);
     _m17_demod = make_gr_demod_m17();
+    _dmr_demod = make_gr_demod_dmr(5, INTERNAL_DEFAULT_SAMPLE_RATE);
 }
 
 gr_demod_base::~gr_demod_base()
@@ -548,6 +550,13 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
             _top_block->disconnect(_const_valve,0,_constellation,0);
             _top_block->disconnect(_m17_demod,2,_bit_sink,0);
             break;
+        case gr_modem_types::ModemTypeDMR:
+            _top_block->disconnect(_demod_valve,0,_dmr_demod,0);
+            _top_block->disconnect(_dmr_demod,0,_rssi_valve,0);
+            _top_block->disconnect(_dmr_demod,1,_const_valve,0);
+            _top_block->disconnect(_const_valve,0,_constellation,0);
+            _top_block->disconnect(_dmr_demod,2,_dmr_sink,0);
+            break;
         default:
             break;
         }
@@ -794,6 +803,13 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
             _top_block->connect(_const_valve,0,_constellation,0);
             _top_block->connect(_m17_demod,2,_bit_sink,0);
             break;
+        case gr_modem_types::ModemTypeDMR:
+            _top_block->connect(_demod_valve,0,_dmr_demod,0);
+            _top_block->connect(_dmr_demod,0,_rssi_valve,0);
+            _top_block->connect(_dmr_demod,1,_const_valve,0);
+            _top_block->connect(_const_valve,0,_constellation,0);
+            _top_block->connect(_dmr_demod,2,_dmr_sink,0);
+            break;
 
         default:
             break;
@@ -920,6 +936,17 @@ std::vector<unsigned char>* gr_demod_base::getData()
         return nullptr;
     }
     std::vector<unsigned char> *data = _bit_sink->get_data();
+    return data;
+}
+
+std::vector<DMRFrame> gr_demod_base::getDMRData()
+{
+    if(!_demod_running)
+    {
+        std::vector<DMRFrame> data;
+        return data;
+    }
+    std::vector<DMRFrame> data = _dmr_sink->get_data();
     return data;
 }
 

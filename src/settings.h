@@ -129,6 +129,17 @@ public:
     QString sql_pty_path;
     QString udp_audio_local_address;
     QString udp_audio_remote_address;
+    QString vocoder_plugin_path;
+    int dmr_mode;
+    int dmr_vocoder;
+    int dmr_timeslot;
+    int dmr_color_code;
+    int dmr_promiscuous_mode;
+    int dmr_timing_correction;
+    int dmr_source_id;
+    int dmr_destination_id;
+    int dmr_call_type;
+    QString dmr_talker_alias;
     int zmq_proxy_channel;
 
     /// Not saved to config:

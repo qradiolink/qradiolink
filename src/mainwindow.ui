@@ -90,7 +90,6 @@
          <font>
           <family>Sans Serif</family>
           <pointsize>10</pointsize>
-          <weight>50</weight>
           <italic>false</italic>
           <bold>false</bold>
          </font>
@@ -390,7 +389,6 @@ background-color: #1F1D1D;</string>
                 <font>
                  <family>Sans Serif</family>
                  <pointsize>9</pointsize>
-                 <weight>50</weight>
                  <italic>false</italic>
                  <bold>false</bold>
                 </font>
@@ -1063,7 +1061,6 @@ padding-right:15px;</string>
                 <font>
                  <family>Monospace</family>
                  <pointsize>9</pointsize>
-                 <weight>50</weight>
                  <italic>false</italic>
                  <bold>false</bold>
                 </font>
@@ -1496,7 +1493,6 @@ background-color: #4a5053</string>
                    <font>
                     <family>Sans Serif</family>
                     <pointsize>9</pointsize>
-                    <weight>50</weight>
                     <italic>false</italic>
                     <bold>false</bold>
                    </font>
@@ -2705,7 +2701,6 @@ color: rgb(0, 67, 98);</string>
                 <font>
                  <family>Sans Serif</family>
                  <pointsize>10</pointsize>
-                 <weight>50</weight>
                  <italic>false</italic>
                  <bold>false</bold>
                 </font>
@@ -3085,13 +3080,12 @@ font: 10pt &quot;Sans Serif&quot;;
              <font>
               <family>Sans Serif</family>
               <pointsize>10</pointsize>
-              <weight>50</weight>
               <italic>false</italic>
               <bold>false</bold>
              </font>
             </property>
             <property name="currentIndex">
-             <number>3</number>
+             <number>4</number>
             </property>
             <widget class="QWidget" name="tab">
              <property name="sizePolicy">
@@ -3504,7 +3498,6 @@ font: 10pt &quot;Sans Serif&quot;;
                        <font>
                         <family>Sans Serif</family>
                         <pointsize>12</pointsize>
-                        <weight>50</weight>
                         <italic>false</italic>
                         <bold>false</bold>
                        </font>
@@ -5036,6 +5029,312 @@ for UDP proxy</string>
               </item>
              </layout>
             </widget>
+            <widget class="QWidget" name="tab_8">
+             <attribute name="title">
+              <string>DMR settings</string>
+             </attribute>
+             <layout class="QVBoxLayout" name="verticalLayout_11">
+              <item>
+               <widget class="QFrame" name="gridFrame_3">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>1024</width>
+                  <height>330</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>450</height>
+                 </size>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">font: 9pt &quot;Sans Serif&quot;;</string>
+                </property>
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+                <layout class="QGridLayout" name="gridLayout_20">
+                 <property name="sizeConstraint">
+                  <enum>QLayout::SetDefaultConstraint</enum>
+                 </property>
+                 <property name="leftMargin">
+                  <number>4</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>4</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>4</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>4</number>
+                 </property>
+                 <property name="spacing">
+                  <number>10</number>
+                 </property>
+                 <item row="7" column="1">
+                  <widget class="QComboBox" name="comboBoxDMRVocoder">
+                   <item>
+                    <property name="text">
+                     <string>Codec2</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Plugin</string>
+                    </property>
+                   </item>
+                  </widget>
+                 </item>
+                 <item row="3" column="1">
+                  <widget class="QSpinBox" name="spinBoxDMRTimeslot">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimum">
+                    <number>1</number>
+                   </property>
+                   <property name="maximum">
+                    <number>2</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="14" column="0">
+                  <widget class="QLabel" name="label_81">
+                   <property name="text">
+                    <string>Timing 
+correction
+(samples)</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="12" column="1">
+                  <widget class="QComboBox" name="comboBoxDMRCallType">
+                   <item>
+                    <property name="text">
+                     <string>Group</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Private</string>
+                    </property>
+                   </item>
+                  </widget>
+                 </item>
+                 <item row="7" column="0">
+                  <widget class="QLabel" name="label_77">
+                   <property name="text">
+                    <string>Vocoder</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="13" column="1">
+                  <widget class="QLineEdit" name="lineEditVocoderPluginPath">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="10" column="0">
+                  <widget class="QLabel" name="label_82">
+                   <property name="text">
+                    <string>Talker alias</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="9" column="1">
+                  <widget class="QLineEdit" name="lineEditDMRDestinationID">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="inputMask">
+                    <string notr="true"/>
+                   </property>
+                   <property name="text">
+                    <string notr="true">0</string>
+                   </property>
+                   <property name="maxLength">
+                    <number>7</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="11" column="0">
+                  <widget class="QLabel" name="label_78">
+                   <property name="text">
+                    <string>DMR mode</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="8" column="1">
+                  <widget class="QLineEdit" name="lineEditDMRSourceID">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="text">
+                    <string>0</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="8" column="0">
+                  <widget class="QLabel" name="label_76">
+                   <property name="text">
+                    <string>My DMR ID</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="4" column="0">
+                  <widget class="QLabel" name="label_80">
+                   <property name="text">
+                    <string>Color code</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="14" column="1">
+                  <widget class="QLineEdit" name="lineEditDMRTimingCorrection">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="3">
+                  <spacer name="horizontalSpacer_25">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="9" column="0">
+                  <widget class="QLabel" name="label_74">
+                   <property name="text">
+                    <string>Destination ID</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="11" column="1">
+                  <widget class="QComboBox" name="comboBoxDMRMode">
+                   <property name="maxCount">
+                    <number>5</number>
+                   </property>
+                   <item>
+                    <property name="text">
+                     <string>Repeater</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>DMO</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Trunked</string>
+                    </property>
+                   </item>
+                  </widget>
+                 </item>
+                 <item row="15" column="0">
+                  <spacer name="verticalSpacer_5">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="10" column="1">
+                  <widget class="QLineEdit" name="lineEditDMRTalkerAlias">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="0">
+                  <widget class="QLabel" name="label_75">
+                   <property name="text">
+                    <string>Timeslot</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="13" column="0">
+                  <widget class="QLabel" name="label_79">
+                   <property name="text">
+                    <string>Vocoder 
+plugin 
+path</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="12" column="0">
+                  <widget class="QLabel" name="label_83">
+                   <property name="text">
+                    <string>Call type</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="4" column="1">
+                  <widget class="QSpinBox" name="spinBoxDMRColorCode">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="maximum">
+                    <number>15</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="0">
+                  <widget class="QCheckBox" name="checkBoxDMRPromiscuousMode">
+                   <property name="text">
+                    <string>Promiscuous mode</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+             </layout>
+            </widget>
            </widget>
           </item>
           <item>
@@ -5195,7 +5494,6 @@ background-color: rgb(255, 0, 0);</string>
           <font>
            <family>Sans Serif</family>
            <pointsize>8</pointsize>
-           <weight>50</weight>
            <italic>false</italic>
            <bold>false</bold>
           </font>
@@ -5254,7 +5552,6 @@ background-color: rgb(255, 0, 0);</string>
           <font>
            <family>Sans Serif</family>
            <pointsize>8</pointsize>
-           <weight>50</weight>
            <italic>false</italic>
            <bold>false</bold>
           </font>
@@ -6576,7 +6873,6 @@ background-color: rgb(150, 150, 150);
              <font>
               <family>Sans Serif</family>
               <pointsize>14</pointsize>
-              <weight>50</weight>
               <italic>false</italic>
               <bold>false</bold>
              </font>
@@ -6643,7 +6939,6 @@ color: #FF0000;</string>
              <font>
               <family>Sans Serif</family>
               <pointsize>9</pointsize>
-              <weight>50</weight>
               <italic>false</italic>
               <bold>false</bold>
              </font>
@@ -6683,7 +6978,6 @@ color: #FF0000;</string>
              <font>
               <family>Sans Serif</family>
               <pointsize>9</pointsize>
-              <weight>50</weight>
               <italic>false</italic>
               <bold>false</bold>
              </font>
@@ -6927,7 +7221,6 @@ font: 14pt &quot;Sans Serif&quot;;
                 <font>
                  <family>Sans Serif</family>
                  <pointsize>12</pointsize>
-                 <weight>50</weight>
                  <italic>false</italic>
                  <bold>false</bold>
                 </font>
@@ -6984,7 +7277,7 @@ font: 14pt &quot;Sans Serif&quot;;
      <x>0</x>
      <y>0</y>
      <width>1500</width>
-     <height>34</height>
+     <height>29</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

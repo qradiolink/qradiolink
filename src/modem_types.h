@@ -45,6 +45,7 @@ namespace gr_modem_types {
         ModemTypeMMDVM,
         ModemTypeMMDVMmulti,
         ModemTypeM17,
+        ModemTypeDMR,
     };
 }
 

@@ -38,8 +38,11 @@
 #include "limesdr/sink.h"
 #include "src/modem_types.h"
 #include "src/bursttimer.h"
+#include "src/DMR/dmrtiming.h"
+#include "src/DMR/dmrframe.h"
 #include "gr_byte_source.h"
 #include "gr_audio_source.h"
+#include "gr_dmr_source.h"
 #include "gr_mod_2fsk.h"
 #include "gr_mod_gmsk.h"
 #include "gr_mod_4fsk.h"
@@ -54,13 +57,14 @@
 #include "gr_mod_mmdvm_multi2.h"
 #include "gr_mmdvm_source.h"
 #include "gr_mod_m17.h"
+#include "gr_mod_dmr.h"
 
 
 class gr_mod_base : public QObject
 {
     Q_OBJECT
 public:
-    explicit gr_mod_base(BurstTimer *burst_timer, QObject *parent = 0, float device_frequency=434000000,
+    explicit gr_mod_base(BurstTimer *burst_timer, DMRTiming *dmrtiming, QObject *parent = 0, float device_frequency=434000000,
                 float rf_gain=0.5, std::string device_args="uhd",
                          std::string device_antenna="TX/RX", int freq_corr=0, int mmdvm_channels=3,
                          int mmdvm_channel_separation=25000);
@@ -69,6 +73,7 @@ public slots:
     void start(int buffer_size=0);
     void stop();
     int set_data(std::vector<u_int8_t> *data);
+    int setDMRData(std::vector<DMRFrame> &frames);
     void tune(int64_t center_freq);
     void set_power(float value, std::string gain_stage="");
     void set_filter_width(int filter_width, int mode);
@@ -95,6 +100,7 @@ private:
     gr::filter::rational_resampler_ccf::sptr _resampler;
     gr::zeromq::pull_source::sptr _zmq_source;
     gr_mmdvm_source_sptr _mmdvm_source;
+    gr_dmr_source_sptr _dmr_source;
 
     gr_mod_2fsk_sptr _2fsk_2k_fm;
     gr_mod_2fsk_sptr _2fsk_1k_fm;
@@ -134,6 +140,7 @@ private:
     gr_mod_mmdvm_sptr _mmdvm_mod;
     gr_mod_mmdvm_multi2_sptr _mmdvm_mod_multi;
     gr_mod_m17_sptr _m17_mod;
+    gr_mod_dmr_sptr _dmr_mod;
 
 
     int _samples_per_symbol;

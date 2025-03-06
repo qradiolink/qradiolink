@@ -21,16 +21,17 @@
 #include <gnuradio/sync_interpolator.h>
 #include <gnuradio/io_signature.h>
 #include <gnuradio/tags.h>
+#include <src/bursttimer.h>
 
 class gr_zero_idle_bursts;
 typedef std::shared_ptr<gr_zero_idle_bursts> gr_zero_idle_bursts_sptr;
 
-gr_zero_idle_bursts_sptr make_gr_zero_idle_bursts();
+gr_zero_idle_bursts_sptr make_gr_zero_idle_bursts(unsigned int delay=0);
 
 class gr_zero_idle_bursts : public gr::sync_block
 {
 public:
-    gr_zero_idle_bursts();
+    gr_zero_idle_bursts(unsigned int delay=0);
     ~gr_zero_idle_bursts();
     int work(int noutput_items,
            gr_vector_const_void_star &input_items,
@@ -38,6 +39,7 @@ public:
 
 private:
     uint64_t _sample_counter;
+    unsigned int _delay;
 };
 
 #endif // GR_ZERO_IDLE_BURSTS_H

@@ -42,15 +42,21 @@ CONFIG(qtaudio) {
 }
 
 SOURCES += src/main.cpp\
+    src/DMR/dmrcontrol.cpp \
+    src/DMR/dmrtiming.cpp \
+    src/DMR/dmrutils.cpp \
     src/bursttimer.cpp \
+    src/DMR/dmrframe.cpp \
     src/ext/crc32.cpp \
     src/ext/devices.cpp \
     src/gpredictcontrol.cpp \
     src/gr/gr_demod_m17.cpp \
+    src/gr/gr_dmr_source.cpp \
     src/gr/gr_demod_mmdvm_multi.cpp \
     src/gr/gr_demod_mmdvm_multi2.cpp \
     src/gr/gr_mmdvm_sink.cpp \
     src/gr/gr_mmdvm_source.cpp \
+    src/gr/gr_mod_dmr.cpp \
     src/gr/gr_mod_m17.cpp \
     src/gr/gr_mod_mmdvm_multi.cpp \
     src/gr/gr_mod_mmdvm_multi2.cpp \
@@ -114,6 +120,7 @@ SOURCES += src/main.cpp\
     src/gr/dsss_decoder_cc_impl.cc \
     src/gr/gr_byte_source.cpp \
     src/gr/gr_bit_sink.cpp \
+    src/gr/gr_dmr_sink.cpp \
     src/gr/gr_sample_sink.cpp \
     src/gr/gr_demod_2fsk.cpp \
     src/gr/gr_demod_gmsk.cpp \
@@ -122,6 +129,7 @@ SOURCES += src/main.cpp\
     src/gr/gr_demod_nbfm.cpp \
     src/gr/gr_demod_bpsk.cpp \
     src/gr/gr_demod_dsss.cpp \
+    src/gr/gr_demod_dmr.cpp \
     src/gr/gr_demod_qpsk.cpp \
     src/gr/gr_demod_ssb.cpp \
     src/gr/gr_demod_wbfm.cpp \
@@ -142,22 +150,30 @@ SOURCES += src/main.cpp\
 
 
 SOURCES += $$files(src/M17/M17/*.cpp)
+SOURCES += $$files(src/MMDVM/*.cpp)
 
 
 
 HEADERS  += src/mainwindow.h\
+    src/DMR/dmrcontrol.h \
+    src/DMR/dmrtiming.h \
+    src/DMR/dmrutils.h \
         src/audio/audioencoder.h\
+        src/audio/vocoder_plugin.h\
         src/audio/audioprocessor.h \
     src/bursttimer.h \
     src/config_mmdvm.h \
+    src/DMR/dmrframe.h \
     src/ext/crc32.h \
     src/ext/devices.h \
     src/gpredictcontrol.h \
     src/gr/gr_demod_m17.h \
+    src/gr/gr_dmr_source.h \
     src/gr/gr_demod_mmdvm_multi.h \
     src/gr/gr_demod_mmdvm_multi2.h \
     src/gr/gr_mmdvm_sink.h \
     src/gr/gr_mmdvm_source.h \
+    src/gr/gr_mod_dmr.h \
     src/gr/gr_mod_m17.h \
     src/gr/gr_mod_mmdvm_multi.h \
     src/gr/gr_mod_mmdvm_multi2.h \
@@ -201,6 +217,7 @@ HEADERS  += src/mainwindow.h\
         src/limits.h \
         src/style.h \
         src/zeromqclient.h \
+        src/DMR/constants.h \
     src/qtgui/freqctrl.h \
     src/qtgui/plotter.h \
     src/qtgui/plotter_time.h \
@@ -223,6 +240,7 @@ HEADERS  += src/mainwindow.h\
     src/gr/dsss_decoder_cc_impl.h \
     src/gr/gr_byte_source.h \
     src/gr/gr_bit_sink.h \
+    src/gr/gr_dmr_sink.h \
     src/gr/gr_sample_sink.h \
     src/gr/gr_demod_2fsk.h \
     src/gr/gr_demod_gmsk.h \
@@ -230,6 +248,7 @@ HEADERS  += src/mainwindow.h\
     src/gr/gr_demod_am.h \
     src/gr/gr_demod_bpsk.h \
     src/gr/gr_demod_dsss.h \
+    src/gr/gr_demod_dmr.h \
     src/gr/gr_demod_nbfm.h \
     src/gr/gr_demod_qpsk.h \
     src/gr/gr_demod_ssb.h \
@@ -258,8 +277,11 @@ HEADERS  += src/mainwindow.h\
 
 HEADERS += $$files(src/M17/M17/*.hpp)
 HEADERS += $$files(src/M17/M17/*.h)
-
+HEADERS += $$files(src/MMDVM/*.h)
 INCLUDEPATH += $$_PRO_FILE_PWD_/src/M17/
+INCLUDEPATH += $$_PRO_FILE_PWD_/src/MMDVM/
+
+
 
 !isEmpty(LIBDIR) {
     LIBS += -L$$LIBDIR
@@ -281,7 +303,7 @@ LIBS += -lgnuradio-pmt -lgnuradio-analog -lgnuradio-fft -lgnuradio-vocoder -lgnu
         -lgnuradio-blocks -lgnuradio-filter -lgnuradio-digital -lgnuradio-runtime -lgnuradio-fec \
         -lboost_system$$BOOST_SUFFIX
 LIBS += -lrt -lpthread # need to include on some distros
-LIBS += -lprotobuf -lopus -lcodec2 -ljpeg -lconfig++ -lspeexdsp -lftdi -lsndfile -llog4cpp -lLimeSuite -lzmq
+LIBS += -lprotobuf -lopus -lcodec2 -ljpeg -lconfig++ -lspeexdsp -lftdi -lsndfile -llog4cpp -lLimeSuite -lzmq -ldl
 LIBS += -lSoapySDR
 
 
