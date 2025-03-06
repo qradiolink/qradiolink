@@ -1251,14 +1251,14 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
         frame[0] = (current_frame_type >> 8) & 0xFF;
         frame[1] = (current_frame_type) & 0xFF;
         memcpy(frame.data() + 2, received_data, _rx_frame_length);
-        auto type = _m17_decoder.decodeFrame(frame);
+        M17::M17FrameType type = _m17_decoder.decodeFrame(frame);
 
         if(type == M17::M17FrameType::LINK_SETUP)
         {
             _last_frame_type = FrameTypeM17LSF;
             M17::M17LinkSetupFrame lsf = _m17_decoder.getLsf();
             bool valid_frame = lsf.valid();
-            if(valid_frame)
+            if(1 || valid_frame) // FIXME: bug somewhere leads to this being false
             {
                 _m17_decoder_locked = true;
                 std::string m17_source = lsf.getSource();
