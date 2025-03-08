@@ -359,9 +359,9 @@ void CPlotter::mouseMoveEvent(QMouseEvent* event)
         {
             setCursor(QCursor(Qt::ClosedHandCursor));
             // move Y scale up/down
-            float delta_px = m_Yzero - pt.y();
-            float delta_db = delta_px * fabs(m_PandMindB - m_PandMaxdB) /
-                    (float)m_OverlayPixmap.height();
+            qint64 delta_px = m_Yzero - pt.y();
+            float delta_db = (float)delta_px * fabs(m_PandMindB - m_PandMaxdB) /
+                    m_OverlayPixmap.height();
             m_PandMindB -= delta_db;
             m_PandMaxdB -= delta_db;
             if (out_of_range(m_PandMindB, m_PandMaxdB))
@@ -825,7 +825,7 @@ void CPlotter::wheelEvent(QWheelEvent * event)
         float db_range = m_PandMaxdB - m_PandMindB;
         float y_range = (float)m_OverlayPixmap.height();
         float db_per_pix = db_range / y_range;
-        float fixed_db = m_PandMaxdB - pt.y() * db_per_pix;
+        float fixed_db = m_PandMaxdB - (float)pt.y() * db_per_pix;
 
         db_range = qBound(2.0f, db_range * zoom_fac, FFT_MAX_DB - FFT_MIN_DB);
         m_PandMaxdB = fixed_db + ratio * db_range;
@@ -1463,7 +1463,7 @@ void CPlotter::drawOverlay()
     }
 
     // draw amplitude values (y axis)
-    int dB = m_PandMaxdB;
+    int dB = (int)m_PandMaxdB;
     m_YAxisWidth = metrics.horizontalAdvance("-120 ");
     painter.setPen(QColor(PLOTTER_TEXT_COLOR));
     for (qint64 i = 0; i < m_VerDivs; i++)
@@ -1596,8 +1596,8 @@ qint64 CPlotter::freqFromX(qint64 x)
 
 float CPlotter::dbFromY(int y)
 {
-    float delta_px = m_Yzero - y;
-    float delta_db = delta_px * fabs(m_PandMindB - m_PandMaxdB) /
+    qint64 delta_px = 0 - (qint64)y;
+    float delta_db = (float)delta_px * fabs(m_PandMindB - m_PandMaxdB) /
             (float)m_OverlayPixmap.height();
     float db = m_PandMaxdB + delta_db;
     return db;
