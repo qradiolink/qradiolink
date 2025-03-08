@@ -77,7 +77,7 @@ gr_demod_gmsk::gr_demod_gmsk(std::vector<int>signature, int sps, int samp_rate, 
     polys.push_back(109);
     polys.push_back(79);
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _target_samp_rate/2, _target_samp_rate/2,
+    std::vector<float> taps = gr::filter::firdes::low_pass(interp, interp * _samp_rate, _target_samp_rate/2, _target_samp_rate/2,
                                                            gr::fft::window::WIN_BLACKMAN_HARRIS);
     _resampler = gr::filter::rational_resampler_ccf::make(interp, decim, taps);
     _resampler->set_thread_priority(99);
