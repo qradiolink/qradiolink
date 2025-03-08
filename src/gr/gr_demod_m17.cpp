@@ -78,10 +78,10 @@ gr_demod_m17::gr_demod_m17(std::vector<int>signature, int sps, int samp_rate, in
     _packer = gr::blocks::pack_k_bits_bb::make(2);
     _unpacker = gr::blocks::unpack_k_bits_bb::make(2);
     std::vector<int> map;
-    map.push_back(1);
     map.push_back(3);
-    map.push_back(0);
+    map.push_back(1);
     map.push_back(2);
+    map.push_back(0);
     _symbol_map = gr::digital::map_bb::make(map);
 
     connect(self(),0,_resampler,0);
