@@ -1148,6 +1148,7 @@ bool gr_modem::synchronize(int v_size, std::vector<unsigned char> *data)
                     && (_modem_type_rx != gr_modem_types::ModemType2FSK1K)
                     && (_modem_type_rx != gr_modem_types::ModemType4FSK1KFM)
                     && (_modem_type_rx != gr_modem_types::ModemTypeGMSK1K)
+                    && (_modem_type_rx != gr_modem_types::ModemTypeM17)
                     && (_current_frame_type == FrameTypeVoice))
             {
                 frame_length++; // reserved data
@@ -1164,7 +1165,9 @@ bool gr_modem::synchronize(int v_size, std::vector<unsigned char> *data)
             }
             if(_bit_buf_index >= bit_buf_len)
             {
+
                 unsigned char *frame_data = new unsigned char[frame_length];
+                memset(frame_data, 0, frame_length * sizeof(unsigned char));
                 packBytes(frame_data,_bit_buf,bit_buf_len);
                 processReceivedData(frame_data, _current_frame_type);
                 _sync_found = false;
@@ -1179,25 +1182,28 @@ bool gr_modem::synchronize(int v_size, std::vector<unsigned char> *data)
 int gr_modem::findSync(unsigned char bit)
 {
     _shift_reg = (_shift_reg << 1) | (bit & 0x1);
-    u_int32_t temp;
+    uint64_t temp;
     if(_modem_type_rx == gr_modem_types::ModemTypeM17)
     {
         temp = _shift_reg & 0xFFFF;
-        if(temp == FrameTypeM17Stream)
-        {
-            _sync_found = true;
-            return FrameTypeM17Stream;
-        }
         if(temp == FrameTypeM17LSF)
         {
             _sync_found = true;
             return FrameTypeM17LSF;
         }
-        temp = _shift_reg & 0xFFFFFFFF;
-        if(temp == FrameTypeM17EOT)
+        else if(temp == FrameTypeM17Stream)
         {
             _sync_found = true;
-            return FrameTypeM17EOT;
+            return FrameTypeM17Stream;
+        }
+        else
+        {
+            temp = _shift_reg & 0xFFFFFFFF;
+            if(temp == FrameTypeM17EOT)
+            {
+                _sync_found = true;
+                return FrameTypeM17EOT;
+            }
         }
         return FrameTypeNone;
     }
@@ -1275,7 +1281,7 @@ int gr_modem::findSync(unsigned char bit)
 }
 
 
-void gr_modem::processReceivedData(unsigned char *received_data, int current_frame_type)
+void gr_modem::processReceivedData(unsigned char *received_data, uint64_t current_frame_type)
 {
     if (current_frame_type == FrameTypeEnd)
     {
@@ -1368,14 +1374,14 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
         frame[0] = (current_frame_type >> 8) & 0xFF;
         frame[1] = (current_frame_type) & 0xFF;
         memcpy(frame.data() + 2, received_data, _rx_frame_length);
-        M17::M17FrameType type = _m17_decoder.decodeFrame(frame);
+        auto type = _m17_decoder.decodeFrame(frame);
 
         if(type == M17::M17FrameType::LINK_SETUP)
         {
             _last_frame_type = FrameTypeM17LSF;
             M17::M17LinkSetupFrame lsf = _m17_decoder.getLsf();
             bool valid_frame = lsf.valid();
-            if(1 || valid_frame) // FIXME: bug somewhere leads to this being false
+            if(valid_frame)
             {
                 _m17_decoder_locked = true;
                 std::string m17_source = lsf.getSource();
@@ -1386,7 +1392,7 @@ void gr_modem::processReceivedData(unsigned char *received_data, int current_fra
             }
         }
 
-        else if((type == M17::M17FrameType::STREAM))
+        else if(type == M17::M17FrameType::STREAM)
         {
             M17::M17StreamFrame sf = _m17_decoder.getStreamFrame();
             M17::M17LinkSetupFrame lsf = _m17_decoder.getLsf();

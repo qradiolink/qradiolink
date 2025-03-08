@@ -141,7 +141,7 @@ public slots:
 private:
     std::vector<unsigned char>* frame(unsigned char *encoded_audio,
                                       int data_size, int frame_type=FrameTypeVoice);
-    void processReceivedData(unsigned char* received_data, int current_frame_type);
+    void processReceivedData(unsigned char* received_data, uint64_t current_frame_type);
     void handleStreamEnd();
     int findSync(unsigned char bit);
     void transmit(QVector<std::vector<unsigned char>*> frames);
@@ -166,7 +166,7 @@ private:
     quint64 _frame_counter;
     int _last_frame_type;
     bool _sync_found;
-    int _current_frame_type;
+    uint64_t _current_frame_type;
     uint64_t _shift_reg;
     int _modem_sync;
 
