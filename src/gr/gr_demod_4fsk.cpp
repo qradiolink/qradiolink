@@ -98,7 +98,7 @@ gr_demod_4fsk::gr_demod_4fsk(std::vector<int>signature, int sps, int samp_rate, 
 
     int spacing = 1;
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(1, _samp_rate, _target_samp_rate/2, _target_samp_rate/2,
+    std::vector<float> taps = gr::filter::firdes::low_pass(interpolation, interpolation * _samp_rate, _target_samp_rate/2, _target_samp_rate/2,
                                                            gr::fft::window::WIN_BLACKMAN_HARRIS);
     std::vector<float> symbol_filter_taps = gr::filter::firdes::low_pass(1.0,
                                  _target_samp_rate, _target_samp_rate/_samples_per_symbol, _target_samp_rate/_samples_per_symbol/20,
