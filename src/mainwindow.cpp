@@ -1576,6 +1576,17 @@ void MainWindow::toggleSelfMute(bool mute)
 
 void MainWindow::toggleRXwin(bool value)
 {
+    if(((ui->rxModemTypeComboBox->currentIndex() == OperationMode::ModeMMDVM)
+            || (ui->rxModemTypeComboBox->currentIndex() == OperationMode::ModeMMDVMMulti)) && value)
+    {
+        QMessageBox errorDialog;
+        errorDialog.setIcon(QMessageBox::Critical);
+        errorDialog.setInformativeText(
+                    QString("Warning"));
+        errorDialog.setText("This RX mode can only be used from console");
+        errorDialog.exec();
+        return;
+    }
     emit setSampleRate(ui->sampleRateBox->currentText().toInt());
     emit setSampleRateTimeDomain(ui->timeSampleRateBox->currentText().toInt());
     emit setTimeDomainFilter(ui->spinBoxTimeFilterWidth->value());
@@ -1589,6 +1600,17 @@ void MainWindow::toggleRXwin(bool value)
 
 void MainWindow::toggleTXwin(bool value)
 {
+    if(((ui->txModemTypeComboBox->currentIndex() == OperationMode::ModeMMDVM)
+            || (ui->txModemTypeComboBox->currentIndex() == OperationMode::ModeMMDVMMulti)) && value)
+    {
+        QMessageBox errorDialog;
+        errorDialog.setIcon(QMessageBox::Critical);
+        errorDialog.setInformativeText(
+                    QString("Warning"));
+        errorDialog.setText("This RX mode can only be used from console");
+        errorDialog.exec();
+        return;
+    }
     emit toggleTX(value);
 }
 
@@ -1613,12 +1635,34 @@ void MainWindow::setFilterWidth(int index)
 
 void MainWindow::toggleRxMode(int value)
 {
+    if((value == OperationMode::ModeMMDVM)
+            || (value == OperationMode::ModeMMDVMMulti))
+    {
+        QMessageBox errorDialog;
+        errorDialog.setIcon(QMessageBox::Critical);
+        errorDialog.setInformativeText(
+                    QString("Warning"));
+        errorDialog.setText("This RX mode can only be used from console");
+        errorDialog.exec();
+        return;
+    }
     emit toggleRxModemMode(value);
     setFilterWidth(value);
 }
 
 void MainWindow::toggleTxMode(int value)
 {
+    if((value == OperationMode::ModeMMDVM)
+            || (value == OperationMode::ModeMMDVMMulti))
+    {
+        QMessageBox errorDialog;
+        errorDialog.setIcon(QMessageBox::Critical);
+        errorDialog.setInformativeText(
+                    QString("Warning"));
+        errorDialog.setText("This TX mode can only be used from console");
+        errorDialog.exec();
+        return;
+    }
     emit toggleTxModemMode(value);
 }
 

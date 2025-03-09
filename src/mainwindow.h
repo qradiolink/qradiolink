@@ -50,6 +50,7 @@
 #include "src/style.h"
 #include "src/qtgui/skinneddial.h"
 #include "ext/devices.h"
+#include "src/modem_types.h"
 
 
 typedef std::vector<std::complex<float>> complex_vector;
