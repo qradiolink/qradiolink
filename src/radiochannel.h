@@ -25,7 +25,8 @@
 #include <QFileInfo>
 #include <libconfig.h++>
 #include <string>
-#include "logger.h"
+#include "src/logger.h"
+#include "src/modem_types.h"
 
 struct radiochannel
 {

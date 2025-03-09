@@ -156,6 +156,10 @@ void RadioChannels::readConfig()
         {
             // FIXME: upgrade config!
         }
+        if(chan->rx_mode > OperationMode::ModeM17)
+            chan->rx_mode = OperationMode::ModeFM;
+        if(chan->tx_mode > OperationMode::ModeM17)
+            chan->tx_mode = OperationMode::ModeFM;
         _channels->push_back(chan);
     }
 
