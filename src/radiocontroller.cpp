@@ -2323,7 +2323,7 @@ void RadioController::toggleRxMode(int value)
         _step_hz = 10;
         _scan_step_hz = 12500;
         break;
-    case 38:
+    case OperationMode::ModeDMR:
         _rx_radio_type = radio_type::RADIO_TYPE_DIGITAL;
         _rx_mode = gr_modem_types::ModemTypeDMR;
         _step_hz = 10;
@@ -2494,7 +2494,7 @@ void RadioController::toggleTxMode(int value)
     case OperationMode::ModeM17:
         _tx_mode = gr_modem_types::ModemTypeM17;
         break;
-    case 38:
+    case OperationMode::ModeDMR:
         _tx_mode = gr_modem_types::ModemTypeDMR;
         break;
     default:
