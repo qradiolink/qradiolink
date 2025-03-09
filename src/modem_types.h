@@ -48,4 +48,49 @@ namespace gr_modem_types {
     };
 }
 
+namespace OperationMode {
+    enum
+    {
+        ModeFM = 0,
+        ModeNBFM = 1,
+        ModeWBFM = 2,
+        ModeUSB = 3,
+        ModeLSB = 4,
+        ModeFreeDV1600USB = 5,
+        ModeFreeDV700CUSB = 6,
+        ModeFreeDV700DUSB = 7,
+        ModeFreeDV800XAUSB = 8,
+        ModeFreeDV1600LSB = 9,
+        ModeFreeDV700CLSB = 10,
+        ModeFreeDV700DLSB = 11,
+        ModeFreeDV800XALSB = 12,
+        ModeAM = 13,
+        ModeBPSK2K = 14,
+        ModeBPSK1K = 15,
+        ModeQPSK2K = 16,
+        ModeQPSK10K = 17,
+        Mode2FSK2KFM = 18,
+        Mode2FSK1KFM = 19,
+        Mode2FSK2K = 20,
+        Mode2FSK1K = 21,
+        Mode2FSK10KFM = 22,
+        ModeGMSK2K = 23,
+        ModeGMSK1K = 24,
+        ModeGMSK10K = 25,
+        Mode4FSK2K = 26,
+        Mode4FSK2KFM = 27,
+        Mode4FSK1KFM = 28,
+        Mode4FSK10KFM = 29,
+        ModeQPSKVideo = 30,
+        ModeQPSK250K = 31,
+        Mode4FSK100K = 32,
+        ModeMMDVM = 33,
+        ModeMMDVMMulti = 34,
+        ModeM17 = 35,
+        ModeDMR = 36,
+    };
+}
+
+
+
 #endif // MODEM_TYPES_H

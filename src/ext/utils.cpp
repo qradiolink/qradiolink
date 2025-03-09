@@ -120,8 +120,6 @@ void buildModeList(QVector<QString> *operating_modes)
     operating_modes->push_back("Video QPSK 250K");
     operating_modes->push_back("IP QPSK 250K");
     operating_modes->push_back("IP 4FSK 100K");
-    operating_modes->push_back("Test tone");
-    operating_modes->push_back("PSK8");
     operating_modes->push_back("MMDVM");
     operating_modes->push_back("MMDVM multi");
     operating_modes->push_back("M17");
@@ -163,8 +161,6 @@ void buildFilterWidthList(std::vector<std::complex<int>>* filter_widths, std::ve
     filter_widths->push_back(std::complex<int>(-150000, 150000)); // QPSK 250K VIDEO
     filter_widths->push_back(std::complex<int>(-150000, 150000)); // QPSK 250K DATA
     filter_widths->push_back(std::complex<int>(-125000, 125000)); // 4FSK 100K DATA
-    filter_widths->push_back(std::complex<int>(100, 1000)); // CW K USB
-    filter_widths->push_back(std::complex<int>(-150, 150));  // PSK8
     filter_widths->push_back(std::complex<int>(-6250, 6250));  // MMDVM
     filter_widths->push_back(std::complex<int>(-6250, 6250));  // MMDVM multi channel
     filter_widths->push_back(std::complex<int>(-6250, 6250));  // M17
@@ -203,8 +199,6 @@ void buildFilterWidthList(std::vector<std::complex<int>>* filter_widths, std::ve
     ranges->push_back(std::complex<int>(-150000, 150000)); // QPSK 250K VIDEO
     ranges->push_back(std::complex<int>(-150000, 150000)); // QPSK 250K DATA
     ranges->push_back(std::complex<int>(-100000, 100000)); // 4FSK 100K DATA
-    ranges->push_back(std::complex<int>(100, 1000)); // CW K USB
-    ranges->push_back(std::complex<int>(-150, 150));  // PSK8
     ranges->push_back(std::complex<int>(-10000, 10000));  // MMDVM
     ranges->push_back(std::complex<int>(-10000, 10000));  // MMDVM multi channel
     ranges->push_back(std::complex<int>(-10000, 10000));  // M17
@@ -243,8 +237,6 @@ void buildFilterWidthList(std::vector<std::complex<int>>* filter_widths, std::ve
     symmetric->push_back(true); // QPSK 250K VIDEO
     symmetric->push_back(true); // QPSK 250K DATA
     symmetric->push_back(true); // 4FSK 100K DATA
-    symmetric->push_back(false); // CW K USB
-    symmetric->push_back(true); // PSK8
     symmetric->push_back(true); // MMDVM
     symmetric->push_back(true); // MMDVM multi channel
     symmetric->push_back(true); // M17
