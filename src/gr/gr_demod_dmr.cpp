@@ -49,10 +49,10 @@ gr_demod_dmr::gr_demod_dmr(std::vector<int>signature, int sps, int samp_rate) :
     gr::digital::constellation_rect::sptr constellation_4fsk = gr::digital::constellation_rect::make(
                 constellation_points, pre_diff, 2, 4, 1, 1.0, 1.0);
 
-    _filter_width = 8000.0f;
+    _filter_width = 5000.0f;
 
-    std::vector<float> taps = gr::filter::firdes::low_pass(3, _samp_rate * 3, _filter_width,
-                                _filter_width, gr::fft::window::WIN_BLACKMAN_HARRIS);
+    std::vector<float> taps = gr::filter::firdes::low_pass_2(3, _samp_rate * 3, _filter_width,
+                                2000, 60, gr::fft::window::WIN_BLACKMAN_HARRIS);
     unsigned int resampler_delay = (taps.size() - 1) / (2);
     _resampler = gr::filter::rational_resampler_ccf::make(3, 125, taps);
     //_resampler->declare_sample_delay(resampler_delay * 3);
