@@ -40,8 +40,6 @@ gr_mod_dmr::gr_mod_dmr(int sps, int samp_rate, int carrier_freq,
     std::vector<float> first_resampler_taps = gr::filter::firdes::root_raised_cosine(_samples_per_symbol,
           if_samp_rate, symbol_rate, 0.2, 25 * _samples_per_symbol);
     unsigned int first_resampler_delay = (first_resampler_taps.size() - 1) / 2;
-    // The interp FIR filter has different tag behaviour
-    //_interp_filter = gr::filter::interp_fir_filter_fff::make(_samples_per_symbol, first_resampler_taps);
     _first_resampler = gr::filter::rational_resampler_fff::make(_samples_per_symbol, 1, first_resampler_taps);
     //_first_resampler->declare_sample_delay(first_resampler_delay / _samples_per_symbol);
     _scale_pulses = gr::blocks::multiply_const_ff::make(0.66666666, 1);

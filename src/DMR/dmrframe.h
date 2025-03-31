@@ -40,11 +40,20 @@ enum DMRFrameType
     DMRFrameTypeVoiceSync = 2,
 };
 
+enum RECV_STATE
+{
+    RECV_NONE = 0,
+    RECV_DATA = 1,
+    RECV_VOICE_SYNC = 2,
+    RECV_VOICE = 3,
+};
+
 class DMRFrame
 {
 public:
     DMRFrame(uint8_t type);
     DMRFrame(std::vector<uint8_t> bits, uint8_t type);
+    DMRFrame(uint8_t *bytes, uint8_t type);
     ~DMRFrame();
     void constructCSBKFrame(CDMRCSBK &csbk);
     void constructLCFrame(CDMRLC *lc);

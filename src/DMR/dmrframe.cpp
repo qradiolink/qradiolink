@@ -34,6 +34,28 @@ DMRFrame::DMRFrame(uint8_t type)
     _symbol_map.push_back(1.0f);
 }
 
+DMRFrame::DMRFrame(uint8_t *bytes, uint8_t type)
+{
+    memset(_cach_data, 0, CACH_LENGTH_BYTES);
+    memcpy(_frame_data, bytes, FRAME_LENGTH_BYTES * sizeof(uint8_t));
+    _frame_type = type;
+    if(_frame_type == DMRFrameType::DMRFrameTypeData)
+    {
+        CDMRSlotType slot_type;
+        slot_type.putData(_frame_data);
+        _color_code = slot_type.getColorCode();
+        _data_type = slot_type.getDataType();
+    }
+    else if(_frame_type == DMRFrameType::DMRFrameTypeVoice)
+    {
+        _data_type = DT_VOICE;
+    }
+    else if(_frame_type == DMRFrameType::DMRFrameTypeVoiceSync)
+    {
+        _data_type = DT_VOICE_SYNC;
+    }
+}
+
 DMRFrame::DMRFrame(std::vector<uint8_t> bits, uint8_t type)
 {
     memset(_cach_data, 0, CACH_LENGTH_BYTES);
@@ -55,9 +77,6 @@ DMRFrame::DMRFrame(std::vector<uint8_t> bits, uint8_t type)
     else if(_frame_type == DMRFrameType::DMRFrameTypeVoiceSync)
     {
         _data_type = DT_VOICE_SYNC;
-        CDMRSlotType slot_type;
-        slot_type.putData(_frame_data);
-        _color_code = slot_type.getColorCode();
     }
 }
 

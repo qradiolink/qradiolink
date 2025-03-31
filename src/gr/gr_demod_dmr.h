@@ -1,4 +1,4 @@
-// Written by Adrian Musceac YO8RZZ , started July 2021.
+// Written by Adrian Musceac YO8RZZ , started October 2024.
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License as
@@ -24,7 +24,6 @@
 #include <gnuradio/filter/fft_filter_ccf.h>
 #include <gnuradio/filter/fft_filter_fff.h>
 #include <gnuradio/blocks/multiply_const.h>
-#include <gnuradio/digital/corr_est_cc.h>
 #include <gnuradio/digital/symbol_sync_ff.h>
 #include <gnuradio/analog/phase_modulator_fc.h>
 #include <gnuradio/filter/fir_filter.h>
@@ -36,10 +35,7 @@
 #include <gnuradio/blocks/pack_k_bits_bb.h>
 #include <gnuradio/blocks/unpack_k_bits_bb.h>
 #include <gnuradio/top_block.h>
-#include <gnuradio/blocks/vector_sink.h>
-#include <gnuradio/blocks/vector_source.h>
-#include "src/config_mmdvm.h"
-#include "rssi_tag_block.h"
+
 
 class gr_demod_dmr;
 
@@ -50,14 +46,11 @@ class gr_demod_dmr : public gr::hier_block2
 {
 public:
     explicit gr_demod_dmr(std::vector<int> signature, int sps, int samp_rate);
-    void calibrate_rssi(float level);
-
 
 private:
     gr::analog::quadrature_demod_cf::sptr _fm_demod;
     gr::blocks::multiply_const_ff::sptr _level_control;
     gr::filter::rational_resampler_ccf::sptr _resampler;
-    rssi_tag_block_sptr _rssi_tag_block;
     gr::blocks::float_to_complex::sptr _float_to_complex_corr;
     gr::blocks::complex_to_float::sptr _complex_to_float_corr;
     gr::filter::fft_filter_fff::sptr _symbol_filter;
@@ -65,20 +58,14 @@ private:
     gr::blocks::complex_to_float::sptr _complex_to_float;
     gr::blocks::interleave::sptr _interleave;
     gr::analog::phase_modulator_fc::sptr _phase_mod;
-    gr::digital::corr_est_cc::sptr _corr_est_bs_data;
-    gr::digital::corr_est_cc::sptr _corr_est_bs_voice;
-    gr::digital::corr_est_cc::sptr _corr_est_ms_data;
-    gr::digital::corr_est_cc::sptr _corr_est_ms_voice;
     gr::digital::binary_slicer_fb::sptr _slicer;
     gr::digital::map_bb::sptr _symbol_map;
     gr::blocks::pack_k_bits_bb::sptr _packer;
     gr::blocks::unpack_k_bits_bb::sptr _unpacker;
-
     int _sps;
     int _samp_rate;
     int _filter_width;
     float _target_samp_rate;
-
 
 };
 

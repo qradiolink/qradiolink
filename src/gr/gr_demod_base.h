@@ -65,6 +65,7 @@
 #include "rssi_block.h"
 #include "gr_sample_sink.h"
 #include "gr_dmr_sink.h"
+#include "gr_dmr_dmo_sink.h"
 
 class gr_demod_base : public QObject
 {
@@ -82,7 +83,7 @@ signals:
 public slots:
     void start(int buffer_size=0);
     void stop();
-    std::vector<DMRFrame> getDMRData();
+    std::vector<DMRFrame> getDMRData(bool dmo=false);
     std::vector<unsigned char> *getData();
     std::vector<unsigned char> *getData(int nr);
     std::vector<float> *getAudio();
@@ -178,6 +179,7 @@ private:
     gr_demod_mmdvm_multi2_sptr _mmdvm_demod_multi;
     gr_mmdvm_sink_sptr _mmdvm_sink;
     gr_dmr_sink_sptr _dmr_sink;
+    gr_dmr_dmo_sink_sptr _dmr_dmo_sink;
     gr_demod_m17_sptr _m17_demod;
     gr_demod_dmr_sptr _dmr_demod;
 

@@ -1024,7 +1024,8 @@ bool gr_modem::demodulate()
     }
     if(_modem_type_rx == gr_modem_types::ModemTypeDMR)
     {
-        std::vector<DMRFrame> frames = _gr_demod_base->getDMRData();
+        bool dmo_mode = (_settings->dmr_mode == DMR_MODE::DMR_MODE_DMO);
+        std::vector<DMRFrame> frames = _gr_demod_base->getDMRData(dmo_mode);
         if(frames.size() > 0)
         {
             _dmr_control->addFrames(frames);

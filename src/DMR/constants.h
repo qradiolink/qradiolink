@@ -2,12 +2,88 @@
 #define DMRCONSTANTS_H
 
 #include <gnuradio/gr_complex.h>
+#include "src/MMDVM/DMRDefines.h"
 
 const uint64_t MS_DATA_SYNC_BITS  = 0xD5D7F77FD757U;
 const uint64_t MS_VOICE_SYNC_BITS = 0x7F7D5DD57DFDU;
 const uint64_t BS_DATA_SYNC_BITS  = 0xDFF57D75DF5DU;
 const uint64_t BS_VOICE_SYNC_BITS = 0x755FD7DF75F7U;
 const uint64_t SYNC_BITS_MASK =     0xFFFFFFFFFFFFU;
+
+const uint8_t MAX_SYNC_SYMBOLS_ERRS = 2U;
+const uint8_t MAX_SYNC_BYTES_ERRS   = 3U;
+
+const uint8_t MAX_SYNC_LOST_FRAMES  = 13U;
+
+const uint8_t BIT_MASK_TABLE[] = {0x80U, 0x40U, 0x20U, 0x10U, 0x08U, 0x04U, 0x02U, 0x01U};
+
+const uint32_t DMO_BUFFER_LENGTH_SAMPLES = 1440U;
+const uint16_t NOENDPTR = 9999U;
+
+const uint8_t CONTROL_NONE  = 0x00U;
+const uint8_t CONTROL_VOICE = 0x20U;
+const uint8_t CONTROL_DATA  = 0x40U;
+
+
+const unsigned int DMR_RADIO_SYMBOL_LENGTH = 5U;      // At 24 kHz sample rate
+
+const unsigned int DMR_FRAME_LENGTH_SYMBOLS = DMR_FRAME_LENGTH_BYTES * 4U;
+const unsigned int DMR_FRAME_LENGTH_SAMPLES = DMR_FRAME_LENGTH_SYMBOLS * DMR_RADIO_SYMBOL_LENGTH;
+
+const unsigned int DMR_SYNC_LENGTH_SYMBOLS = DMR_SYNC_LENGTH_BYTES * 4U;
+const unsigned int DMR_SYNC_LENGTH_SAMPLES = DMR_SYNC_LENGTH_SYMBOLS * DMR_RADIO_SYMBOL_LENGTH;
+
+const unsigned int DMR_EMB_LENGTH_SYMBOLS = 8U;
+const unsigned int DMR_EMB_LENGTH_SAMPLES = DMR_EMB_LENGTH_SYMBOLS * DMR_RADIO_SYMBOL_LENGTH;
+
+const unsigned int DMR_EMBSIG_LENGTH_SYMBOLS = 16U;
+const unsigned int DMR_EMBSIG_LENGTH_SAMPLES = DMR_EMBSIG_LENGTH_SYMBOLS * DMR_RADIO_SYMBOL_LENGTH;
+
+const unsigned int DMR_SLOT_TYPE_LENGTH_SYMBOLS = 10U;
+const unsigned int DMR_SLOT_TYPE_LENGTH_SAMPLES = DMR_SLOT_TYPE_LENGTH_SYMBOLS * DMR_RADIO_SYMBOL_LENGTH;
+
+const unsigned int DMR_INFO_LENGTH_SYMBOLS = 98U;
+const unsigned int DMR_INFO_LENGTH_SAMPLES = DMR_INFO_LENGTH_SYMBOLS * DMR_RADIO_SYMBOL_LENGTH;
+
+const unsigned int DMR_AUDIO_LENGTH_SYMBOLS = 108U;
+const unsigned int DMR_AUDIO_LENGTH_SAMPLES = DMR_AUDIO_LENGTH_SYMBOLS * DMR_RADIO_SYMBOL_LENGTH;
+
+const unsigned int DMR_CACH_LENGTH_BYTES   = 3U;
+const unsigned int DMR_CACH_LENGTH_BITS    = DMR_CACH_LENGTH_BYTES * 8U;
+const unsigned int DMR_CACH_LENGTH_SYMBOLS = DMR_CACH_LENGTH_BYTES * 4U;
+const unsigned int DMR_CACH_LENGTH_SAMPLES = DMR_CACH_LENGTH_SYMBOLS * DMR_RADIO_SYMBOL_LENGTH;
+
+const uint8_t  DMR_SYNC_BYTES_LENGTH     = 7U;
+const uint8_t  DMR_MS_DATA_SYNC_BYTES[]  = {0x0DU, 0x5DU, 0x7FU, 0x77U, 0xFDU, 0x75U, 0x70U};
+const uint8_t  DMR_MS_VOICE_SYNC_BYTES[] = {0x07U, 0xF7U, 0xD5U, 0xDDU, 0x57U, 0xDFU, 0xD0U};
+const uint8_t  DMR_BS_DATA_SYNC_BYTES[]  = {0x0DU, 0xFFU, 0x57U, 0xD7U, 0x5DU, 0xF5U, 0xD0U};
+const uint8_t  DMR_BS_VOICE_SYNC_BYTES[] = {0x07U, 0x55U, 0xFDU, 0x7DU, 0xF7U, 0x5FU, 0x70U};
+const uint8_t  DMR_SYNC_BYTES_MASK[]     = {0x0FU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xF0U};
+
+const uint64_t DMR_MS_DATA_SYNC_BITS  = 0x0000D5D7F77FD757U;
+const uint64_t DMR_MS_VOICE_SYNC_BITS = 0x00007F7D5DD57DFDU;
+const uint64_t DMR_BS_DATA_SYNC_BITS  = 0x0000DFF57D75DF5DU;
+const uint64_t DMR_BS_VOICE_SYNC_BITS = 0x0000755FD7DF75F7U;
+const uint64_t DMR_SYNC_BITS_MASK     = 0x0000FFFFFFFFFFFFU;
+
+const uint32_t DMR_MS_DATA_SYNC_SYMBOLS  = 0x0076286EU;
+const uint32_t DMR_MS_VOICE_SYNC_SYMBOLS = 0x0089D791U;
+const uint32_t DMR_BS_DATA_SYNC_SYMBOLS  = 0x00439B4DU;
+const uint32_t DMR_BS_VOICE_SYNC_SYMBOLS = 0x00BC64B2U;
+const uint32_t DMR_SYNC_SYMBOLS_MASK     = 0x00FFFFFFU;
+
+// D     5      D     7      F     7      7     F      D     7      5     7
+// 11 01 01 01  11 01 01 11  11 11 01 11  01 11 11 11  11 01 01 11  01 01 01 11
+// -3 +3 +3 +3  -3 +3 +3 -3  -3 -3 +3 -3  +3 -3 -3 -3  -3 +3 +3 -3  +3 +3 +3 -3
+
+const int8_t DMR_MS_DATA_SYNC_SYMBOLS_VALUES[] = {-3, +3, +3, +3, -3, +3, +3, -3, -3, -3, +3, -3, +3, -3, -3, -3, -3, +3, +3, -3, +3, +3, +3, -3};
+
+// 7     F      7     D      5     D      D     5      7     D      F     D
+// 01 11 11 11  01 11 11 01  01 01 11 01  11 01 01 01  01 11 11 01  11 11 11 01
+// +3 -3 -3 -3  +3 -3 -3 +3  +3 +3 -3 +3  -3 +3 +3 +3  +3 -3 -3 +3  -3 -3 -3 +3
+
+const int8_t DMR_MS_VOICE_SYNC_SYMBOLS_VALUES[] = {+3, -3, -3, -3, +3, -3, -3, +3, +3, +3, -3, +3, -3, +3, +3, +3, +3, -3, -3, +3, -3, -3, -3, +3};
+
 
 const uint32_t SYNC_LENGTH_BITS = 48U;
 const uint32_t PAYLOAD_LENGTH_BITS = 108U;
@@ -20,6 +96,7 @@ const uint32_t FRAME_LENGTH_BYTES = FRAME_LENGTH_BITS / 8U;
 
 const uint32_t SYMBOL_LENGTH_SAMPLES = 5U;
 
+const uint32_t FRAME_LENGTH_SAMPLES = FRAME_LENGTH_BITS / 2 * SYMBOL_LENGTH_SAMPLES;
 const uint32_t TIMESLOT_LENGTH_SAMPLES = ((CACH_LENGTH_BITS / 2) * SYMBOL_LENGTH_SAMPLES) +
         (FRAME_LENGTH_BITS / 2 * SYMBOL_LENGTH_SAMPLES);
 const uint32_t CACH_AND_PAYLOAD_LENGTH_SAMPLES = ((CACH_LENGTH_BITS / 4) * SYMBOL_LENGTH_SAMPLES) +

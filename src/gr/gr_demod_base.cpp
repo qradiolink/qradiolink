@@ -166,6 +166,7 @@ gr_demod_base::gr_demod_base(BurstTimer *burst_timer, DMRTiming *dmrtiming, QObj
     _fft_sink = make_rx_fft_c(32768, gr::fft::window::WIN_BLACKMAN_HARRIS);
     _mmdvm_sink = make_gr_mmdvm_sink(burst_timer, 1, false, _use_tdma);
     _dmr_sink = make_gr_dmr_sink(dmrtiming);
+    _dmr_dmo_sink = make_gr_dmr_dmo_sink();
 
     _deframer1 = make_gr_deframer_bb(1);
     _deframer2 = make_gr_deframer_bb(1);
@@ -556,6 +557,7 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
             _top_block->disconnect(_dmr_demod,1,_const_valve,0);
             _top_block->disconnect(_const_valve,0,_constellation,0);
             _top_block->disconnect(_dmr_demod,2,_dmr_sink,0);
+            _top_block->disconnect(_dmr_demod,3,_dmr_dmo_sink,0);
             break;
         default:
             break;
@@ -809,6 +811,7 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
             _top_block->connect(_dmr_demod,1,_const_valve,0);
             _top_block->connect(_const_valve,0,_constellation,0);
             _top_block->connect(_dmr_demod,2,_dmr_sink,0);
+            _top_block->connect(_dmr_demod,3,_dmr_dmo_sink,0);
             break;
 
         default:
@@ -939,15 +942,25 @@ std::vector<unsigned char>* gr_demod_base::getData()
     return data;
 }
 
-std::vector<DMRFrame> gr_demod_base::getDMRData()
+std::vector<DMRFrame> gr_demod_base::getDMRData(bool dmo)
 {
     if(!_demod_running)
     {
         std::vector<DMRFrame> data;
         return data;
     }
-    std::vector<DMRFrame> data = _dmr_sink->get_data();
-    return data;
+    std::vector<DMRFrame> dl_data = _dmr_sink->get_data();
+    std::vector<DMRFrame> dmo_data = _dmr_dmo_sink->get_data();
+    if(dmo)
+    {
+        dl_data.clear();
+        return dmo_data;
+    }
+    else
+    {
+        dmo_data.clear();
+        return dl_data;
+    }
 }
 
 std::vector<float>* gr_demod_base::getAudio()

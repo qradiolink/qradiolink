@@ -254,7 +254,8 @@ bool DMRControl::processAudio(DMRFrame &frame)
     }
     if((_receiver_state == RECEIVER_STATE::STATE_AUDIO) || (_receiver_state == RECEIVER_STATE::STATE_LATE_ENTRY))
     {
-        if(_transmitter_state != TRANSMITTER_STATE::STATE_IDLE)
+        if((_settings->dmr_mode != DMR_MODE::DMR_MODE_DMO)
+                && (_transmitter_state != TRANSMITTER_STATE::STATE_IDLE))
             return true;
         unsigned char *codec_data = new unsigned char[27];
         if(frame.getVoice(codec_data))
@@ -443,6 +444,8 @@ bool DMRControl::processTimeslot(const DMRFrame &frame)
 {
     // FIXME: promiscuous breaks in funny ways
     uint8_t timeslot = frame.getSlotNo();
+    if(_settings->dmr_mode == DMR_MODE::DMR_MODE_DMO)
+        return true;
     if((timeslot != _settings->dmr_timeslot) && !_settings->dmr_promiscuous_mode)
         return false;
     if(_settings->dmr_promiscuous_mode)
@@ -635,7 +638,8 @@ void DMRControl::addFrames(std::vector<DMRFrame> frames)
             continue;
         }
         uint8_t timeslot = frame.getSlotNo();
-        if((timeslot != _settings->dmr_timeslot) && !_settings->dmr_promiscuous_mode)
+        if(((timeslot != _settings->dmr_timeslot) && !_settings->dmr_promiscuous_mode) &&
+                (_settings->dmr_mode != DMR_MODE::DMR_MODE_DMO))
             continue;
         uint8_t data_type= frame.getDataType();
 

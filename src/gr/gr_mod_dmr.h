@@ -8,7 +8,6 @@
 #include <gnuradio/filter/fft_filter_fff.h>
 #include <gnuradio/filter/rational_resampler.h>
 #include <gnuradio/blocks/multiply_const.h>
-#include <gnuradio/filter/interp_fir_filter.h>
 #include <gnuradio/blocks/multiply.h>
 #include <gnuradio/blocks/packed_to_unpacked.h>
 #include <gnuradio/endianness.h>
@@ -38,7 +37,6 @@ private:
     gr::blocks::multiply_const_cc::sptr _amplify;
     gr::blocks::multiply_const_cc::sptr _bb_gain;
     gr::filter::fft_filter_ccf::sptr _filter;
-    gr::filter::interp_fir_filter_fff::sptr _interp_filter;
     gr::blocks::multiply_ff::sptr _multiply;
     gr::blocks::packed_to_unpacked_bb::sptr _packed_to_unpacked;
     gr::digital::chunks_to_symbols_bf::sptr _chunks_to_symbols;

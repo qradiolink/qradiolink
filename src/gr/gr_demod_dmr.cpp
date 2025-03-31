@@ -1,4 +1,4 @@
-// Written by Adrian Musceac YO8RZZ , started July 2021.
+// Written by Adrian Musceac YO8RZZ , started October 2024.
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License as
@@ -23,6 +23,7 @@ gr_demod_dmr_sptr make_gr_demod_dmr(int sps, int samp_rate)
     signature.push_back(sizeof (gr_complex));
     signature.push_back(sizeof (gr_complex));
     signature.push_back(sizeof (unsigned char));
+    signature.push_back(sizeof (float));
     return gnuradio::get_initial_sptr(new gr_demod_dmr(signature, sps, samp_rate));
 }
 
@@ -31,7 +32,7 @@ gr_demod_dmr_sptr make_gr_demod_dmr(int sps, int samp_rate)
 gr_demod_dmr::gr_demod_dmr(std::vector<int>signature, int sps, int samp_rate) :
     gr::hier_block2 ("gr_demod_dmr",
                       gr::io_signature::make (1, 1, sizeof (gr_complex)),
-                      gr::io_signature::makev (3, 3, signature))
+                      gr::io_signature::makev (4, 4, signature))
 {
     _sps = sps;
     _target_samp_rate = 24000;
@@ -56,7 +57,6 @@ gr_demod_dmr::gr_demod_dmr(std::vector<int>signature, int sps, int samp_rate) :
     unsigned int resampler_delay = (taps.size() - 1) / (2);
     _resampler = gr::filter::rational_resampler_ccf::make(3, 125, taps);
     //_resampler->declare_sample_delay(resampler_delay * 3);
-    _rssi_tag_block = make_rssi_tag_block();
 
     _phase_mod = gr::analog::phase_modulator_fc::make(M_PI / 2);
     std::vector<float> symbol_filter_taps = gr::filter::firdes::root_raised_cosine(1,_target_samp_rate,
@@ -85,34 +85,13 @@ gr_demod_dmr::gr_demod_dmr(std::vector<int>signature, int sps, int samp_rate) :
     map.push_back(0);
     _symbol_map = gr::digital::map_bb::make(map);
 
-    std::vector<gr_complex> bs_data_symbols(BS_DATA_SYNC, BS_DATA_SYNC + sizeof(BS_DATA_SYNC) / sizeof(BS_DATA_SYNC[0]));
-    std::vector<gr_complex> bs_voice_symbols(BS_VOICE_SYNC, BS_VOICE_SYNC + sizeof(BS_VOICE_SYNC) / sizeof(BS_VOICE_SYNC[0]));
-    std::vector<gr_complex> ms_data_symbols(MS_DATA_SYNC, MS_DATA_SYNC + sizeof(MS_DATA_SYNC) / sizeof(MS_DATA_SYNC[0]));;
-    std::vector<gr_complex> ms_voice_symbols(MS_VOICE_SYNC, MS_VOICE_SYNC + sizeof(MS_VOICE_SYNC) / sizeof(MS_VOICE_SYNC[0]));
-
-    _corr_est_bs_data = gr::digital::corr_est_cc::make(bs_data_symbols, 5, 0, 0.99, gr::digital::THRESHOLD_DYNAMIC);
-    _corr_est_bs_voice = gr::digital::corr_est_cc::make(bs_voice_symbols, 5, 0, 0.99, gr::digital::THRESHOLD_DYNAMIC);
-    _corr_est_ms_data = gr::digital::corr_est_cc::make(ms_data_symbols, 5, 0, 0.9999, gr::digital::THRESHOLD_DYNAMIC);
-    _corr_est_ms_voice = gr::digital::corr_est_cc::make(ms_voice_symbols, 5, 0, 0.9999, gr::digital::THRESHOLD_DYNAMIC);
-
-
     connect(self(),0,_resampler,0);
     connect(_resampler,0,self(),0);
-    connect(_resampler,0,_rssi_tag_block,0);
-    connect(_rssi_tag_block,0,_fm_demod,0);
+    connect(_resampler,0,_fm_demod,0);
     connect(_fm_demod,0,_symbol_filter,0);
+
     connect(_symbol_filter,0,_symbol_sync,0);
-    //connect(_symbol_filter,0,_float_to_complex_corr,0);
-    //connect(_level_control,0,_symbol_sync,0);
-    //connect(_float_to_complex_corr,0,_corr_est_bs_data,0);
-    //connect(_corr_est_bs_data,0,_corr_est_bs_voice,0);
-    //connect(_corr_est_bs_data,0,_corr_est_ms_data,0);
-    //connect(_corr_est_ms_data,0,_corr_est_ms_voice,0);
-    //connect(_corr_est_bs_voice,0,_corr_est_ms_data,0);
-    //connect(_corr_est_ms_data,0,_corr_est_ms_voice,0);
-    //connect(_corr_est_bs_data,0,_complex_to_float_corr,0);
-    //connect(_complex_to_float_corr,0,_corr_slicer,0);
-    //connect(_corr_slicer,0,_level_control,0);
+    connect(_symbol_filter,0,self(),3);
     connect(_symbol_sync,0,_level_control,0);
     connect(_level_control,0,_phase_mod,0);
     connect(_phase_mod,0,self(),1);
@@ -125,12 +104,7 @@ gr_demod_dmr::gr_demod_dmr(std::vector<int>signature, int sps, int samp_rate) :
     connect(_symbol_map,0,_unpacker,0);
     connect(_unpacker,0,self(),2);
 
-
 }
 
-void gr_demod_dmr::calibrate_rssi(float level)
-{
-    _rssi_tag_block->calibrate_rssi(level);
-}
 
 

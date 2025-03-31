@@ -1,4 +1,4 @@
-// Written by Adrian Musceac YO8RZZ , started March 2016.
+// Written by Adrian Musceac YO8RZZ , started October 2024.
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License as
@@ -24,13 +24,7 @@
 #include "src/DMR/dmrframe.h"
 #include "src/DMR/dmrtiming.h"
 
-enum RECV_STATE
-{
-    RECV_NONE = 0,
-    RECV_DATA = 1,
-    RECV_VOICE_SYNC = 2,
-    RECV_VOICE = 3,
-};
+
 
 class gr_dmr_sink;
 typedef std::shared_ptr<gr_dmr_sink> gr_dmr_sink_sptr;

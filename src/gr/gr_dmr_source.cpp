@@ -1,6 +1,20 @@
-#include "gr_dmr_source.h"
-#include <QString>
+// Written by Adrian Musceac YO8RZZ , started October 2024.
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License as
+// published by the Free Software Foundation; either version 3 of the
+// License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+#include "gr_dmr_source.h"
 #include <gnuradio/pdu.h>
 
 static const pmt::pmt_t TIME_TAG = pmt::string_to_symbol("tx_time");
@@ -28,7 +42,6 @@ gr_dmr_source::gr_dmr_source(DMRTiming *dmrtiming) :
     message_port_register_in(port_id);
     set_msg_handler(port_id,
        [this](const pmt::pmt_t& msg) { message_handler_function(msg); });
-    //set_min_noutput_items(DMR_FRAME_LENGTH_BYTES + DMR_ZERO_TX_LENGTH_BYTES);
 }
 
 gr_dmr_source::~gr_dmr_source()
@@ -75,15 +88,6 @@ int gr_dmr_source::work(int noutput_items,
     (void) input_items;
     gr::thread::scoped_lock guard(_mutex);
     int frames_remaining = _frame_buffer.size();
-    /*
-    if(!_dmr_timing->get_tx())
-    {
-        guard.unlock();
-        struct timespec time_to_sleep = {0, 5000000L };
-        nanosleep(&time_to_sleep, NULL);
-        return 0;
-    }
-    */
     if(frames_remaining < 1)
     {
         return 0;
@@ -141,6 +145,5 @@ void gr_dmr_source::add_zero_tag(int offset, uint64_t num_samples, int which)
 {
     const pmt::pmt_t t_val = pmt::from_uint64((uint64_t)num_samples);
     uint64_t start = nitems_written(which) + (uint64_t)offset;
-    //std::cout << "Zero tag: " << num_samples << " Pos: " << nitems_written(which) + (uint64_t)offset << std::endl;
     this->add_item_tag(which, start, ZERO_TAG, t_val);
 }

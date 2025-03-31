@@ -51,6 +51,7 @@ SOURCES += src/main.cpp\
     src/ext/devices.cpp \
     src/gpredictcontrol.cpp \
     src/gr/gr_demod_m17.cpp \
+    src/gr/gr_dmr_dmo_sink.cpp \
     src/gr/gr_dmr_source.cpp \
     src/gr/gr_demod_mmdvm_multi.cpp \
     src/gr/gr_demod_mmdvm_multi2.cpp \
@@ -168,6 +169,7 @@ HEADERS  += src/mainwindow.h\
     src/ext/devices.h \
     src/gpredictcontrol.h \
     src/gr/gr_demod_m17.h \
+    src/gr/gr_dmr_dmo_sink.h \
     src/gr/gr_dmr_source.h \
     src/gr/gr_demod_mmdvm_multi.h \
     src/gr/gr_demod_mmdvm_multi2.h \

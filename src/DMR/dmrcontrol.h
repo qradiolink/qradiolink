@@ -59,7 +59,7 @@ namespace DMR_MODE
     {
         DMR_MODE_REPEATER = 0,
         DMR_MODE_DMO = 1,
-        DMR_MODE_TRUNKED,
+        DMR_MODE_TRUNKED = 2,
     };
 }
 
