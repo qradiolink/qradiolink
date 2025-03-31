@@ -300,8 +300,9 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
 {
     _demod_running = false;
     if(!_locked)
+    {
         _top_block->lock();
-
+    }
     _deframer_700_1->flush();
     _deframer_700_2->flush();
     _deframer1->flush();
@@ -819,9 +820,10 @@ void gr_demod_base::set_mode(int mode, bool disconnect, bool connect)
         }
         _mode = mode;
     }
-
     if(!_locked)
+    {
         _top_block->unlock();
+    }
     _demod_running = true;
 }
 
@@ -1046,9 +1048,13 @@ double gr_demod_base::get_freq()
 
 void gr_demod_base::set_rx_sensitivity(double value, std::string gain_stage)
 {
+    if(!_locked)
+        _top_block->lock();
     if(_lime_specific)
     {
         _limesdr_source->set_gain(int(value * 70.0d));
+        if(!_locked)
+            _top_block->unlock();
         return;
     }
     if(_uhd_specific)
@@ -1063,6 +1069,8 @@ void gr_demod_base::set_rx_sensitivity(double value, std::string gain_stage)
         {
             _uhd_source->set_gain(value);
         }
+        if(!_locked)
+            _top_block->unlock();
         return;
     }
     if (!_gain_range.empty() && (gain_stage.size() < 1))
@@ -1085,6 +1093,8 @@ void gr_demod_base::set_rx_sensitivity(double value, std::string gain_stage)
         _osmosdr_source->set_gain_mode(false);
         _osmosdr_source->set_gain(value, gain_stage);
     }
+    if(!_locked)
+        _top_block->unlock();
 }
 
 void gr_demod_base::enable_gui_const(bool value)
@@ -1144,7 +1154,8 @@ void gr_demod_base::enable_demodulator(bool value)
 
 void gr_demod_base::set_filter_width(int filter_width, int mode)
 {
-
+    if(!_locked)
+        _top_block->lock();
     switch(mode)
     {
     case gr_modem_types::ModemTypeWBFM:
@@ -1168,6 +1179,8 @@ void gr_demod_base::set_filter_width(int filter_width, int mode)
     default:
         break;
     }
+    if(!_locked)
+        _top_block->unlock();
 
 
 }

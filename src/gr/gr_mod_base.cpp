@@ -831,6 +831,7 @@ void gr_mod_base::tune(int64_t center_freq)
 
 void gr_mod_base::set_power(float value, std::string gain_stage)
 {
+    _top_block->lock();
     if(value > 1.0f) value = 1.0f;
     _tx_gain = value;
     if(_lime_specific)
@@ -864,6 +865,7 @@ void gr_mod_base::set_power(float value, std::string gain_stage)
             _osmosdr_sink->set_gain(value, gain_stage);
         }
     }
+    _top_block->unlock();
 }
 
 
@@ -877,6 +879,7 @@ void gr_mod_base::set_ctcss(float value)
 
 void gr_mod_base::set_filter_width(int filter_width, int mode)
 {
+    _top_block->lock();
     switch(mode)
     {
     case gr_modem_types::ModemTypeAM5000:
@@ -900,6 +903,7 @@ void gr_mod_base::set_filter_width(int filter_width, int mode)
     default:
         break;
     }
+    _top_block->unlock();
 }
 
 void gr_mod_base::set_bb_gain(float value)
@@ -962,6 +966,7 @@ void gr_mod_base::flush_sources()
 
 void gr_mod_base::set_bandwidth_specific()
 {
+    _top_block->lock();
     _osmo_filter_bw = (double)_samp_rate;
     if((_device_frequency < 30 * 1000 * 1000) && _lime_specific)
     {
@@ -977,6 +982,7 @@ void gr_mod_base::set_bandwidth_specific()
         _uhd_sink->set_bandwidth(_osmo_filter_bw);
     else
         _osmosdr_sink->set_bandwidth(_osmo_filter_bw);
+    _top_block->unlock();
 }
 
 void gr_mod_base::set_center_freq(double freq)
