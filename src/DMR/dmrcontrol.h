@@ -20,7 +20,6 @@
 #include <QObject>
 #include <vector>
 #include "src/settings.h"
-#include "src/audio/audioencoder.h"
 #include "src/logger.h"
 #include "src/DMR/dmrframe.h"
 #include "src/DMR/dmrutils.h"
