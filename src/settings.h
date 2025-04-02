@@ -132,6 +132,7 @@ public:
     QString vocoder_plugin_path;
     int dmr_mode;
     int dmr_vocoder;
+    int dmr_codec2_bitrate;
     int dmr_timeslot;
     int dmr_color_code;
     int dmr_promiscuous_mode;

@@ -24,7 +24,11 @@
 #include "src/settings.h"
 #include "src/audio/vocoder_plugin.h"
 
-
+enum DMR_CODEC2_BITRATE
+{
+    CODEC2_2400 = 0,
+    CODEC2_3200 = 1,
+};
 
 class AudioEncoder
 {

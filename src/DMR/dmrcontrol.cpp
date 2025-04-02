@@ -141,9 +141,24 @@ bool DMRControl::getTxAudio(DMRFrame &frame)
     unsigned char *audio_frame1 = _tx_frames[0];
     unsigned char *audio_frame2 = _tx_frames[1];
     unsigned char *audio_frame3 = _tx_frames[2];
-    ::memcpy(audio_data, audio_frame1, 9U);
-    ::memcpy(audio_data + 9U, audio_frame2, 9U);
-    ::memcpy(audio_data + 18U, audio_frame3, 9U);
+    if(_settings->dmr_vocoder)
+    {
+        ::memcpy(audio_data, audio_frame1, 9U);
+        ::memcpy(audio_data + 9U, audio_frame2, 9U);
+        ::memcpy(audio_data + 18U, audio_frame3, 9U);
+    }
+    else if (_settings->dmr_codec2_bitrate == DMR_CODEC2_BITRATE::CODEC2_2400)
+    {
+        ::memcpy(audio_data, audio_frame1, 6U);
+        ::memcpy(audio_data + 9U, audio_frame2, 6U);
+        ::memcpy(audio_data + 18U, audio_frame3, 6U);
+    }
+    else
+    {
+        ::memcpy(audio_data, audio_frame1, 8U);
+        ::memcpy(audio_data + 9U, audio_frame2, 8U);
+        ::memcpy(audio_data + 18U, audio_frame3, 8U);
+    }
     frame.setColorCode(_settings->dmr_color_code);
     frame.setSlotNo(_settings->dmr_timeslot);
     if(_FN_TX == 0)

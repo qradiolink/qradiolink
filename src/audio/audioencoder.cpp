@@ -216,7 +216,7 @@ unsigned char* AudioEncoder::encode_codec2_2400(short *audiobuffer, int audiobuf
 {
     _processor->filter_audio(audiobuffer, audiobuffersize);
     int bits = codec2_bits_per_frame(_codec2_2400);
-    int bytes = (bits + 4) / 8;
+    int bytes = bits / 8;
     unsigned char *encoded = new unsigned char[bytes];
     codec2_encode(_codec2_2400, encoded, audiobuffer);
     length = bytes;
@@ -283,7 +283,12 @@ short* AudioEncoder::decode_vocoder(unsigned char *audiobuffer, int audiobuffers
 {
     Q_UNUSED(audiobuffersize);
     if((!_vocoder_loaded) || (!_settings->dmr_vocoder))
-        return decode_codec2_2400(audiobuffer, audiobuffersize, samples);
+    {
+        if(_settings->dmr_codec2_bitrate == DMR_CODEC2_BITRATE::CODEC2_2400)
+            return decode_codec2_2400(audiobuffer, audiobuffersize, samples);
+        else
+            return decode_codec2_3200(audiobuffer, audiobuffersize, samples);
+    }
     samples = 160;
     short* decoded = new short[samples];
     memset(decoded,0,(samples)*sizeof(short));
@@ -294,7 +299,12 @@ short* AudioEncoder::decode_vocoder(unsigned char *audiobuffer, int audiobuffers
 unsigned char* AudioEncoder::encode_vocoder(short *audiobuffer, int audiobuffersize, int &length)
 {
     if((!_vocoder_loaded) || (!_settings->dmr_vocoder))
-        return encode_codec2_2400(audiobuffer, audiobuffersize, length);
+    {
+        if(_settings->dmr_codec2_bitrate == DMR_CODEC2_BITRATE::CODEC2_2400)
+            return encode_codec2_2400(audiobuffer, audiobuffersize, length);
+        else
+            return encode_codec2_3200(audiobuffer, audiobuffersize, length);
+    }
     length = 9;
     unsigned char* encoded = new unsigned char[length];
     _vocoder_plugin->encode_2450x1150(audiobuffer, encoded);

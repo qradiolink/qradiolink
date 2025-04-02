@@ -1000,6 +1000,14 @@ void Settings::readConfig()
     {
         dmr_talker_alias = "";
     }
+    try
+    {
+        dmr_codec2_bitrate = cfg.lookup("dmr_codec2_bitrate");
+    }
+    catch(const libconfig::SettingNotFoundException &nfex)
+    {
+        dmr_codec2_bitrate = 0;
+    }
 
 
 }
@@ -1113,6 +1121,7 @@ void Settings::saveConfig()
     root.add("dmr_call_type",libconfig::Setting::TypeInt) = dmr_call_type;
     root.add("dmr_timing_correction",libconfig::Setting::TypeInt) = dmr_timing_correction;
     root.add("dmr_talker_alias",libconfig::Setting::TypeString) = dmr_talker_alias.toStdString();
+    root.add("dmr_codec2_bitrate",libconfig::Setting::TypeInt) = dmr_codec2_bitrate;
     try
     {
         cfg.writeFile(_config_file->absoluteFilePath().toStdString().c_str());

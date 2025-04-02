@@ -694,6 +694,7 @@ void MainWindow::setConfig()
     ui->comboBoxDMRMode->setCurrentIndex(_settings->dmr_mode);
     ui->comboBoxDMRCallType->setCurrentIndex(_settings->dmr_call_type);
     ui->comboBoxDMRVocoder->setCurrentIndex(_settings->dmr_vocoder);
+    ui->comboBoxDMRCodec2Bitrate->setCurrentIndex(_settings->dmr_codec2_bitrate);
     ui->checkBoxDMRPromiscuousMode->setChecked((bool)_settings->dmr_promiscuous_mode);
     ui->lineEditDMRSourceID->setText(QString::number(_settings->dmr_source_id));
     ui->lineEditDMRDestinationID->setText(QString::number(_settings->dmr_destination_id));
@@ -768,6 +769,7 @@ void MainWindow::saveUiConfig()
     _settings->dmr_color_code = (int)(ui->spinBoxDMRColorCode->value());
     _settings->dmr_promiscuous_mode = (int)(ui->checkBoxDMRPromiscuousMode->isChecked());
     _settings->dmr_vocoder = ui->comboBoxDMRVocoder->currentIndex();
+    _settings->dmr_codec2_bitrate = ui->comboBoxDMRCodec2Bitrate->currentIndex();
     _settings->vocoder_plugin_path = ui->lineEditVocoderPluginPath->text();
     _settings->dmr_talker_alias = ui->lineEditDMRTalkerAlias->text();
     _settings->dmr_source_id = ui->lineEditDMRSourceID->text().toInt();
