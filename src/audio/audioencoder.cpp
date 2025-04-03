@@ -279,7 +279,7 @@ short* AudioEncoder::decode_codec2_3200(unsigned char *audiobuffer, int audiobuf
 }
 
 
-short* AudioEncoder::decode_vocoder(unsigned char *audiobuffer, int audiobuffersize, int &samples)
+short* AudioEncoder::decode_dmr(unsigned char *audiobuffer, int audiobuffersize, int &samples)
 {
     Q_UNUSED(audiobuffersize);
     samples = 160;
@@ -311,7 +311,7 @@ short* AudioEncoder::decode_vocoder(unsigned char *audiobuffer, int audiobuffers
     }
 }
 
-unsigned char* AudioEncoder::encode_vocoder(short *audiobuffer, int audiobuffersize, int &length)
+unsigned char* AudioEncoder::encode_dmr(short *audiobuffer, int audiobuffersize, int &length)
 {
     length = 9;
     unsigned char* encoded = new unsigned char[length];

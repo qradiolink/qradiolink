@@ -657,8 +657,8 @@ void RadioController::txAudio(short *audiobuffer, int audiobuffer_size,
         unsigned char *encoded_audio_frame1;
         unsigned char *encoded_audio_frame2;
 
-        encoded_audio_frame1 = _codec->encode_vocoder(frame1, audiobuffer_size/2, packet_size);
-        encoded_audio_frame2 = _codec->encode_vocoder(frame2, audiobuffer_size/2, packet_size);
+        encoded_audio_frame1 = _codec->encode_dmr(frame1, audiobuffer_size/2, packet_size);
+        encoded_audio_frame2 = _codec->encode_dmr(frame2, audiobuffer_size/2, packet_size);
         emit dmrAudioData(encoded_audio_frame1, packet_size);
         emit dmrAudioData(encoded_audio_frame2, packet_size);
     }
@@ -1426,9 +1426,9 @@ void RadioController::receiveDigitalAudio(unsigned char *data, int size)
         memcpy(frame1, data, size/3);
         memcpy(frame2, data + size/3, size/3);
         memcpy(frame3, data + 2*size/3, size/3);
-        short *audio_frame1 = _codec->decode_vocoder(frame1, size/3, samples);
-        short *audio_frame2 = _codec->decode_vocoder(frame2, size/3, samples);
-        short *audio_frame3 = _codec->decode_vocoder(frame3, size/3, samples);
+        short *audio_frame1 = _codec->decode_dmr(frame1, size/3, samples);
+        short *audio_frame2 = _codec->decode_dmr(frame2, size/3, samples);
+        short *audio_frame3 = _codec->decode_dmr(frame3, size/3, samples);
         audio_out = new short[samples * 3];
         memcpy(audio_out, audio_frame1, samples * sizeof(short));
         memcpy(audio_out + samples, audio_frame2, samples * sizeof(short));

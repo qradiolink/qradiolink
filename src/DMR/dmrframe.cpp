@@ -15,7 +15,6 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "dmrframe.h"
-#include <iostream>
 
 
 DMRFrame::DMRFrame(uint8_t type)
@@ -230,14 +229,6 @@ bool DMRFrame::validate()
                 }
                 break;
             }
-            case DT_RATE_1_DATA:
-            {
-                break;
-            }
-            case DT_IDLE:
-            {
-                break;
-            }
             default:
             {
                 return false;
@@ -258,8 +249,6 @@ int DMRFrame::runAudioFEC()
 {
     CAMBEFEC fec;
     int errors = fec.regenerateDMR(_frame_data);
-    //if(errors > 0)
-    //    qDebug() << " Audio frame errors: " << errors ;
     return errors;
 }
 

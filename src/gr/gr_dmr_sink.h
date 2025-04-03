@@ -19,7 +19,6 @@
 #define GR_DMR_SINK_H
 
 #include <gnuradio/sync_block.h>
-#include <gnuradio/sync_interpolator.h>
 #include <gnuradio/io_signature.h>
 #include "src/DMR/dmrframe.h"
 #include "src/DMR/dmrtiming.h"

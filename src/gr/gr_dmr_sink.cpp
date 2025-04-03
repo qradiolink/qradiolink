@@ -17,7 +17,6 @@
 
 #include "gr_dmr_sink.h"
 
-#include <iostream>
 
 static const pmt::pmt_t TIME_TAG = pmt::string_to_symbol("rx_time");
 
@@ -95,7 +94,6 @@ bool gr_dmr_sink::processBits(uint8_t bit, uint8_t ts_index)
                     DMRFrame frame(_bit_buffer[ts_index], frame_type);
                     if(_state[ts_index] == RECV_VOICE_SYNC)
                     {
-                        //std::cout << "Audio Sync Frame: " << _bit_buffer.size() << std::endl;
                         _state[ts_index] = RECV_VOICE;
                     }
                     if(_state[ts_index] == RECV_DATA)
@@ -116,7 +114,6 @@ bool gr_dmr_sink::processBits(uint8_t bit, uint8_t ts_index)
         {
             if(_bit_buffer[ts_index].size() >= CACH_LENGTH_BITS + FRAME_LENGTH_BITS)
             {
-                //std::cout << "Voice Frame: " << _bit_buffer.size() << std::endl;
                 DMRFrame frame(_bit_buffer[ts_index], DMRFrameType::DMRFrameTypeVoice);
                 frame.setFN(6 - _frames_to_receive[ts_index]);
                 bool cach_decoded = frame.setDownlink(_downlink[ts_index]);

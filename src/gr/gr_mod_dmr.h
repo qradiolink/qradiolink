@@ -1,3 +1,19 @@
+// Written by Adrian Musceac YO8RZZ , started October 2024.
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License as
+// published by the Free Software Foundation; either version 3 of the
+// License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 #ifndef GR_MOD_DMR_H
 #define GR_MOD_DMR_H
 
@@ -5,10 +21,9 @@
 #include <gnuradio/analog/frequency_modulator_fc.h>
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/filter/fft_filter_ccf.h>
-#include <gnuradio/filter/fft_filter_fff.h>
 #include <gnuradio/filter/rational_resampler.h>
-#include <gnuradio/blocks/multiply_const.h>
 #include <gnuradio/blocks/multiply.h>
+#include <gnuradio/blocks/multiply_const.h>
 #include <gnuradio/blocks/packed_to_unpacked.h>
 #include <gnuradio/endianness.h>
 #include <gnuradio/digital/chunks_to_symbols.h>

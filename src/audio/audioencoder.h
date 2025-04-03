@@ -44,12 +44,12 @@ public:
     unsigned char* encode_codec2_700(short *audiobuffer, int audiobuffersize, int &length);
     unsigned char* encode_codec2_2400(short *audiobuffer, int audiobuffersize, int &length);
     unsigned char* encode_codec2_3200(short *audiobuffer, int audiobuffersize, int &length);
-    unsigned char* encode_vocoder(short *audiobuffer, int audiobuffersize, int &length);
+    unsigned char* encode_dmr(short *audiobuffer, int audiobuffersize, int &length);
     short* decode_codec2_1400(unsigned char *audiobuffer, int audiobuffersize, int &samples);
     short* decode_codec2_700(unsigned char *audiobuffer, int audiobuffersize, int &samples);
     short* decode_codec2_2400(unsigned char *audiobuffer, int audiobuffersize, int &samples);
     short* decode_codec2_3200(unsigned char *audiobuffer, int audiobuffersize, int &samples);
-    short* decode_vocoder(unsigned char *audiobuffer, int audiobuffersize, int &samples);
+    short* decode_dmr(unsigned char *audiobuffer, int audiobuffersize, int &samples);
 
 
 private:

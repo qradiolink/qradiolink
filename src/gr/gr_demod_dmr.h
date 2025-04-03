@@ -26,7 +26,6 @@
 #include <gnuradio/blocks/multiply_const.h>
 #include <gnuradio/digital/symbol_sync_ff.h>
 #include <gnuradio/analog/phase_modulator_fc.h>
-#include <gnuradio/filter/fir_filter.h>
 #include <gnuradio/blocks/complex_to_float.h>
 #include <gnuradio/blocks/float_to_complex.h>
 #include <gnuradio/blocks/interleave.h>

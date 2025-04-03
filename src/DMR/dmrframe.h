@@ -19,7 +19,6 @@
 
 #include <vector>
 #include <string.h>
-#include <QDebug>
 #include "src/DMR/constants.h"
 #include "src/MMDVM/DMRData.h"
 #include "src/MMDVM/DMRSlotType.h"

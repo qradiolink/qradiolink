@@ -86,7 +86,7 @@ bool DMRTiming::timing_recent(uint8_t sn)
     (void) sn;
     // Unfortunately, gnuradio operates with large buffers, so timing updates can happen
     // at long intervals with multiples
-    // time bases for the slot received at once in large sample packets
+    // timestamps for the same slot received at once in large sample packets
     // Use a large time delta to check if timing information was recently acquired
     t2 = std::chrono::high_resolution_clock::now();
     uint64_t last_slot_time_update =
@@ -110,7 +110,6 @@ uint64_t DMRTiming::get_slot_times(uint8_t sn)
     std::scoped_lock<std::mutex> guard(_slot_mutex[sn]);
     if(_first)
     {
-        // acquire current slot timing
         _next_tx_time = _slot_times[sn] +
                 3 * SLOT_TIME +  // normally should be 2 slot periods, but since filter delay can't be controlled
                                  // properly in gnuradio, compensate for it here (but is buggy)
@@ -120,7 +119,6 @@ uint64_t DMRTiming::get_slot_times(uint8_t sn)
     }
     else
     {
-        // once time base was established, future bursts can occur at regular intervals
         _next_tx_time = _next_tx_time + 2 * SLOT_TIME;
     }
     return _next_tx_time;
