@@ -27,7 +27,7 @@ Requirements
 - Build dependencies on Debian 12 (Bookworm) with Qt 5.15 and GNU Radio 3.10: 
 
 <pre>
-$ sudo apt-get install gnuradio-dev protobuf-compiler gr-osmosdr gnuradio libvolk2-dev libvolk2-bin libprotobuf32 libprotobuf-dev libopus0 libopus-dev libspeexdsp1 libspeexdsp-dev libpulse0 libpulse-dev liblog4cpp5v5 libcodec2-1.0 libcodec2-dev libasound2 libasound2-dev libjpeg62-turbo libjpeg62-turbo-dev libconfig++9v5 libconfig++-dev qt5-qmake qtbase5-dev libqt5core5a libqt5gui5 libqt5network5 libqt5sql5 qtmultimedia5-dev libqt5multimediawidgets5 libqt5multimedia5-plugins libqt5multimedia5 libftdi-dev libftdi1 libsndfile1-dev libsndfile1 qtgstreamer-plugins-qt5 libgstreamer-plugins-bad1.0-0 liblimesuite-dev limesuite-udev liblimesuite22.09-1 libzmq3-dev libzmq5 libsoapysdr-dev libsoapysdr0.8 libuhd-dev libuhd4.3.0
+$ sudo apt-get install gnuradio-dev protobuf-compiler gr-osmosdr gnuradio libvolk2-dev libvolk2-bin libprotobuf32 libprotobuf-dev libopus0 libopus-dev libspeexdsp1 libspeexdsp-dev libpulse0 libpulse-dev liblog4cpp5v5 libcodec2-1.0 libcodec2-dev libasound2 libasound2-dev libjpeg62-turbo libjpeg62-turbo-dev libconfig++9v5 libconfig++-dev qt5-qmake qtbase5-dev libqt5core5a libqt5gui5 libqt5network5 libqt5sql5 qtmultimedia5-dev libqt5multimediawidgets5 libqt5multimedia5-plugins libqt5multimedia5 libftdi-dev libftdi1 libsndfile1-dev libsndfile1 qtgstreamer-plugins-qt5 libgstreamer-plugins-bad1.0-0 liblimesuite-dev limesuite-udev liblimesuite22.09-1 libzmq3-dev cppzmq-dev libzmq5 libsoapysdr-dev libsoapysdr0.8 libuhd-dev libuhd4.3.0
 </pre>
 
 - A version of qradiolink commpatible with GNU Radio 3.8 and usable with Debian 11 Bullseye and distributions with compatible package versions can be built using the **gr_3.8** branch of this repository

@@ -27,6 +27,7 @@ Build-Depends: debhelper-compat (= 13),
                qtmultimedia5-dev,
                liblimesuite-dev,
                libzmq3-dev,
+               cppzmq-dev,
                libsoapysdr-dev,
                libuhd-dev,
                libc6-dev
