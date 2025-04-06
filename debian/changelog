@@ -1,3 +1,16 @@
+qradiolink (0.9.1-2) experimental; urgency=medium
+
+  [ Adrian Musceac ]
+  * Rebased releases on GNU Radio 3.10
+  * Added DMR transceiver (repeater mode and DMO)
+  * Switch to using the polyphase channelizer and synthesizer for the multi-carrier mode
+  * Fixed regressions in some Opus 10K demodulators (2FSK, 4FSK, GMSK)
+  * Removed some broken operating modes
+
+
+ -- Adrian Musceac <adrian@qradiolink.org>  Sun, 06 Apr 2025 16:05:00 +0300
+
+
 qradiolink (0.9.1-1) experimental; urgency=medium
 
   [ Adrian Musceac ]
