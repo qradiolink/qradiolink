@@ -29,6 +29,7 @@ Build-Depends: debhelper-compat (= 13),
                libzmq3-dev,
                cppzmq-dev,
                libsoapysdr-dev,
+               liblog4cpp5-dev,
                libuhd-dev,
                libc6-dev
 
