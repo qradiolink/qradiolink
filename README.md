@@ -120,7 +120,7 @@ qmake .. INSTALL_PREFIX=/usr/local/bin LIBDIR=/opt/lib INCDIR=/opt/include
 Configuration and operation
 ----
 
-HTML documentation is available on the QRadioLink [documentation site](https://qradiolink.org/docs/home/index.html "documentation site")
+HTML documentation is available on the QRadioLink [documentation site](https://qradiolink.org/docs/ "documentation site")
 
 
 Known issues
