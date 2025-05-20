@@ -1,6 +1,8 @@
 #ifndef DMRCONSTANTS_H
 #define DMRCONSTANTS_H
 
+#include <cstdint>
+
 #include <gnuradio/gr_complex.h>
 #include "src/MMDVM/DMRDefines.h"
 
